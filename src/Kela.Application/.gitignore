@@ -1,0 +1,20 @@
+# Build results
+bin/
+obj/
+[Bb]uild/
+BuildHost-*/
+
+# NuGet
+*.nupkg
+*.snupkg
+
+# IDE
+.vs/
+.idea/
+*.user
+*.suo
+*.userosscache
+
+# OS
+.DS_Store
+Thumbs.db

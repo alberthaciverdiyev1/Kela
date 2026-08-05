@@ -1,0 +1,8 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/Kela.Api/Kela.Api.csproj" />
+    <Project Path="src/Kela.Application/Kela.Application.csproj" />
+    <Project Path="src/Kela.Domain/Kela.Domain.csproj" />
+    <Project Path="src/Kela.Infrastructure/Kela.Infrastructure.csproj" />
+  </Folder>
+</Solution>

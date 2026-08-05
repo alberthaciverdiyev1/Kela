@@ -1,0 +1,27 @@
+# Build results
+bin/
+obj/
+[Bb]uild/
+BuildHost-*/
+
+# NuGet
+*.nupkg
+*.snupkg
+
+# Environment / local config
+.env
+.env.*
+appsettings.*.local.json
+*.pfx
+*.key
+
+# IDE
+.vs/
+.idea/
+*.user
+*.suo
+*.userosscache
+
+# OS
+.DS_Store
+Thumbs.db

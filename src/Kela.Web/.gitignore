@@ -1,0 +1,40 @@
+# Build results
+bin/
+obj/
+[Bb]uild/
+BuildHost-*/
+
+# Client dependencies & build output
+node_modules/
+wwwroot/lib/
+wwwroot/build/
+
+# Compiled client assets (source lives in Assets/, outputs are generated)
+Assets/css/output.css
+Assets/js/bundle.js
+
+# NuGet
+*.nupkg
+*.snupkg
+
+# Test results
+[Tt]est[Rr]esult*/
+*.trx
+
+# Environment / local config
+.env
+.env.*
+appsettings.*.local.json
+*.pfx
+*.key
+
+# IDE
+.vs/
+.idea/
+*.user
+*.suo
+*.userosscache
+
+# OS
+.DS_Store
+Thumbs.db

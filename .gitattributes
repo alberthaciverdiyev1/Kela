@@ -1,0 +1,8 @@
+* text=auto eol=lf
+
+*.cs diff=csharp
+*.md diff=markdown
+
+/.gitattributes export-ignore
+/.gitignore export-ignore
+/.editorconfig export-ignore
