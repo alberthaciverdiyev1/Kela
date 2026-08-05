@@ -28,7 +28,7 @@ public static class DependencyInjection
                    .AddInterceptors(sp.GetRequiredService<TenantSaveChangesInterceptor>()));
 
         services.AddScoped<IUserRepository, UserRepository>();
-        services.AddScoped<IGradeRepository, GradeRepository>();
+        services.AddScoped<ISectionRepository, SectionRepository>();
         services.AddScoped<IUnitOfWork>(sp => sp.GetRequiredService<KelaDbContext>());
         services.AddScoped<IPasswordHasher, Pbkdf2PasswordHasher>();
 

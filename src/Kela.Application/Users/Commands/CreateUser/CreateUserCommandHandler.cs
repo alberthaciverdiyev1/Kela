@@ -21,41 +21,14 @@ internal sealed class CreateUserCommandHandler(
             throw new InvalidOperationException($"'{email}' email adresi zaten kayıtlı.");
         }
 
-        var user = new User
+        var user = new User(command.FirstName.Trim(), command.LastName.Trim(), email)
         {
-            Id = 0, // EF identity DB'de üretir
-            FirstName = command.FirstName.Trim(),
-            LastName = command.LastName.Trim(),
-            Email = email,
-            Password = passwordHasher.Hash(command.Password),
-            Role = command.Role,
-            Status = UserStatus.Active,
             CreatedAt = DateTime.UtcNow,
         };
 
-        switch (command.Role)
-        {
-            case Role.Teacher:
-                user.Teacher = new Teacher
-                {
-                    Id = 0
-                };
-                break;
-
-            case Role.Student:
-                user.Student = new Student
-                {
-                    Id = 0,
-                };
-                break;
-
-            case Role.Parent:
-                user.Parent = new Parent
-                {
-                    Id = 0,
-                };
-                break;
-        }
+        user.SetPasswordHash(passwordHasher.Hash(command.Password));
+        // Rol ↔ profil tutarlılığını domain garantiler: yalnızca role uyan tek profil kurulur.
+        user.AssignProfile(command.Role);
 
         users.Add(user);
         await unitOfWork.SaveChangesAsync(cancellationToken);

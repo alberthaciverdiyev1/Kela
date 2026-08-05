@@ -1,21 +1,21 @@
 using Kela.Application.Abstractions.Cqrs;
 using Kela.Application.Repositories;
-using Kela.Domain.Grades;
+using Kela.Domain.Sections;
 using Kela.Domain.Users.Enums;
 
-namespace Kela.Application.Grades.Commands.CreateGrade;
+namespace Kela.Application.Sections.Commands.CreateSection;
 
-internal sealed class CreateGradeCommandHandler(
-    IGradeRepository grades,
+internal sealed class CreateSectionCommandHandler(
+    ISectionRepository sections,
     IUserRepository users,
     IUnitOfWork unitOfWork)
-    : ICommandHandler<CreateGradeCommand, int>
+    : ICommandHandler<CreateSectionCommand, int>
 {
-    public async Task<int> Handle(CreateGradeCommand command, CancellationToken cancellationToken)
+    public async Task<int> Handle(CreateSectionCommand command, CancellationToken cancellationToken)
     {
         var name = command.Name.Trim();
 
-        if (await grades.NameExistsAsync(name, cancellationToken))
+        if (await sections.NameExistsAsync(name, cancellationToken))
         {
             throw new InvalidOperationException($"'{name}' adlı sınıf zaten kayıtlı.");
         }
@@ -25,19 +25,18 @@ internal sealed class CreateGradeCommandHandler(
             await EnsureTeacherExistsAsync(teacherId, cancellationToken);
         }
 
-        var grade = new Grade
+        var section = new Section
         {
-            Id = 0, // EF identity DB'de üretir
             Name = name,
             Level = command.Level,
             TeacherId = command.TeacherId,
             CreatedAt = DateTime.UtcNow,
         };
 
-        grades.Add(grade);
+        sections.Add(section);
         await unitOfWork.SaveChangesAsync(cancellationToken);
 
-        return grade.Id;
+        return section.Id;
     }
 
     private async Task EnsureTeacherExistsAsync(int teacherId, CancellationToken cancellationToken)

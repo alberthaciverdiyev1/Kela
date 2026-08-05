@@ -2,9 +2,12 @@ using System.Linq.Expressions;
 using System.Reflection;
 using Kela.Application.Abstractions.Tenancy;
 using Kela.Application.Repositories;
+using Kela.Domain.Attendances;
 using Kela.Domain.Common;
+using Kela.Domain.Sections;
+using Kela.Domain.Lessons;
+using Kela.Domain.Payments;
 using Kela.Domain.Subjects;
-using Kela.Domain.Grades;
 using Kela.Domain.Tenants;
 using Kela.Domain.Users;
 using Microsoft.EntityFrameworkCore;
@@ -17,7 +20,7 @@ public sealed class KelaDbContext(
     : DbContext(options), IUnitOfWork
 {
     // EF Core, query filter'daki field erişimini context instance'a bağlar.
-    // Tenant çözümlenmemişse null kalır → filter uygulanmaz (tüm kayıtlar görünür).
+    // Tenant çözümlenmemişse null kalır → FAIL-CLOSED: hiçbir kayıt görünmez (veri sızıntısı önlendi).
     // Middleware (TenantResolutionMiddleware) SetTenantId ile set eder.
     private int? _tenantId = currentTenant?.IsResolved == true ? currentTenant.TenantId : null;
 
@@ -31,8 +34,11 @@ public sealed class KelaDbContext(
     public DbSet<Teacher> Teachers => Set<Teacher>();
     public DbSet<Student> Students => Set<Student>();
     public DbSet<Parent> Parents => Set<Parent>();
-    public DbSet<Grade> Grades => Set<Grade>();
+    public DbSet<Section> Sections => Set<Section>();
     public DbSet<Subject> Subjects => Set<Subject>();
+    public DbSet<Lesson> Lessons => Set<Lesson>();
+    public DbSet<Attendance> Attendances => Set<Attendance>();
+    public DbSet<PaymentTrack> PaymentTracks => Set<PaymentTrack>();
     public DbSet<Tenant> Tenants => Set<Tenant>();
 
     public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
@@ -74,9 +80,10 @@ public sealed class KelaDbContext(
         var builder = modelBuilder.Entity<TEntity>();
         var existing = builder.Metadata.GetDeclaredQueryFilters().SingleOrDefault()?.Expression;
 
-        // _tenantId == null (çözümlenmedi) → tüm kayıtlar görünür.
+        // FAIL-CLOSED: _tenantId == null (çözümlenmedi) → hiçbir kayıt görünmez.
         // _tenantId != null → yalnızca o tenant'ın kayıtları görünür.
-        Expression<Func<TEntity, bool>> tenantFilter = e => _tenantId == null || e.TenantId == _tenantId;
+        // (Eskiden null → tüm kayıtlar görünürdü; bu veri sızıntısına yol açardı.)
+        Expression<Func<TEntity, bool>> tenantFilter = e => _tenantId != null && e.TenantId == _tenantId;
 
         if (existing is null)
         {

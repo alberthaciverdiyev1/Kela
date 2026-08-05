@@ -5,7 +5,11 @@ namespace Kela.Domain.Common;
 /// </summary>
 public abstract class BaseEntity<TId> : ISoftDeletable, IAuditableEntity
 {
-    public required TId Id { get; set; }
+    /// <summary>
+    /// Id'yi EF Core üretir (identity column). Uygulama kodu yalnızca
+    /// SaveChanges sonrasında okur; "Id = 0" ile elle set etmeye gerek yoktur.
+    /// </summary>
+    public TId Id { get; set; } = default!;
 
     public DateTime CreatedAt { get; set; }
     public DateTime? UpdatedAt { get; set; }

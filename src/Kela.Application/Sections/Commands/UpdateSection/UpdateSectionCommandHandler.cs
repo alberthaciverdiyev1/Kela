@@ -2,21 +2,21 @@ using Kela.Application.Abstractions.Cqrs;
 using Kela.Application.Repositories;
 using Kela.Domain.Users.Enums;
 
-namespace Kela.Application.Grades.Commands.UpdateGrade;
+namespace Kela.Application.Sections.Commands.UpdateSection;
 
-internal sealed class UpdateGradeCommandHandler(
-    IGradeRepository grades,
+internal sealed class UpdateSectionCommandHandler(
+    ISectionRepository sections,
     IUserRepository users,
     IUnitOfWork unitOfWork)
-    : ICommandHandler<UpdateGradeCommand>
+    : ICommandHandler<UpdateSectionCommand>
 {
-    public async Task Handle(UpdateGradeCommand command, CancellationToken cancellationToken)
+    public async Task Handle(UpdateSectionCommand command, CancellationToken cancellationToken)
     {
-        var grade = await grades.GetByIdAsync(command.Id, cancellationToken)
+        var section = await sections.GetByIdAsync(command.Id, cancellationToken)
             ?? throw new KeyNotFoundException($"Id = {command.Id} olan sınıf bulunamadı.");
 
         var name = command.Name.Trim();
-        if (name != grade.Name && await grades.NameExistsAsync(name, cancellationToken))
+        if (name != section.Name && await sections.NameExistsAsync(name, cancellationToken))
         {
             throw new InvalidOperationException($"'{name}' adlı sınıf zaten kayıtlı.");
         }
@@ -30,12 +30,12 @@ internal sealed class UpdateGradeCommandHandler(
             }
         }
 
-        grade.Name = name;
-        grade.Level = command.Level;
-        grade.TeacherId = command.TeacherId;
-        grade.UpdatedAt = DateTime.UtcNow;
+        section.Name = name;
+        section.Level = command.Level;
+        section.TeacherId = command.TeacherId;
+        section.UpdatedAt = DateTime.UtcNow;
 
-        grades.Update(grade);
+        sections.Update(section);
         await unitOfWork.SaveChangesAsync(cancellationToken);
     }
 }

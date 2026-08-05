@@ -1,6 +1,34 @@
 @Kela.Api_HostAddress = http://localhost:5117
+@TenantSlug = default
 
-GET {{Kela.Api_HostAddress}}/weatherforecast/
-Accept: application/json
+### Kullanıcı oluştur (tenant header'lı)
+POST {{Kela.Api_HostAddress}}/api/users
+X-Tenant-Slug: {{TenantSlug}}
+Content-Type: application/json
 
-###
+{
+  "firstName": "Ahmet",
+  "lastName": "Yılmaz",
+  "email": "ahmet@example.com",
+  "password": "sifre123",
+  "role": 3
+}
+
+### Login (tenant header'lı → cookie'ye tenant_id claim'i yazılır)
+POST {{Kela.Api_HostAddress}}/api/auth/login
+X-Tenant-Slug: {{TenantSlug}}
+Content-Type: application/json
+
+{
+  "email": "ahmet@example.com",
+  "password": "sifre123"
+}
+
+### Logout
+POST {{Kela.Api_HostAddress}}/api/auth/logout
+
+### Kullanıcı listesi (sayfalı — authenticated istekte tenant cookie'den gelir)
+GET {{Kela.Api_HostAddress}}/api/users?page=1&pageSize=20
+
+### Sınıf (şube) listesi (sayfalı)
+GET {{Kela.Api_HostAddress}}/api/sections?page=1&pageSize=20

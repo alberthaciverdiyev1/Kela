@@ -18,7 +18,9 @@ internal sealed class UserConfiguration : IEntityTypeConfiguration<User>
         builder.Property(u => u.FirstName).HasMaxLength(100).IsRequired();
         builder.Property(u => u.LastName).HasMaxLength(100).IsRequired();
         builder.Property(u => u.Email).HasMaxLength(255).IsRequired();
-        builder.Property(u => u.Password).HasMaxLength(500).IsRequired();
+        // C# adı PasswordHash; DB kolonu mevcut "Password" olarak korunur
+        // (migration'da drop+add yerine veri korunur). İleride RenameColumn ile düzeltilebilir.
+        builder.Property(u => u.PasswordHash).HasColumnName("Password").HasMaxLength(500).IsRequired();
 
         builder.Property(u => u.Role).HasConversion<int>().IsRequired();
         builder.Property(u => u.Status).HasConversion<int>().IsRequired();

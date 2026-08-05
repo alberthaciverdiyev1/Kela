@@ -18,7 +18,7 @@ internal sealed class LoginCommandHandler(
         // Kullanıcı yoksa da aynı sonucu dön → user enumeration koruması
         if (user is null
             || user.Status != UserStatus.Active
-            || !passwordHasher.Verify(command.Password, user.Password))
+            || !passwordHasher.Verify(command.Password, user.PasswordHash))
         {
             return null;
         }

@@ -10,8 +10,9 @@ internal sealed class ParentConfiguration : IEntityTypeConfiguration<Parent>
     {
         builder.ToTable("parents");
 
-        builder.HasKey(p => p.Id);
-        builder.Property(p => p.Id).UseIdentityColumn().ValueGeneratedOnAdd();
+        // Shared primary key: profil kendi Id'sini taşımaz, User.Id'yi anahtar yapar.
+        builder.HasKey(p => p.UserId);
+        builder.Property(p => p.UserId).ValueGeneratedNever();
 
         builder.Property(p => p.CreatedAt).IsRequired();
         builder.Property(p => p.UpdatedAt);
@@ -20,8 +21,6 @@ internal sealed class ParentConfiguration : IEntityTypeConfiguration<Parent>
             .WithOne(u => u.Parent)
             .HasForeignKey<Parent>(p => p.UserId)
             .OnDelete(DeleteBehavior.Cascade);
-
-        builder.HasIndex(p => p.UserId).IsUnique();
 
         // Soft-delete: yalnızca aktif kullanıcıya ait profiller görünür
         builder.HasQueryFilter(p => p.User == null || p.User.DeletedAt == null);

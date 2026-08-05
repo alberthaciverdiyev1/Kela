@@ -1,3 +1,4 @@
+using Kela.Application.Pagination;
 using Kela.Application.Repositories;
 using Kela.Domain.Users;
 using Kela.Infrastructure.Data;
@@ -18,8 +19,23 @@ internal sealed class UserRepository(KelaDbContext context) : IUserRepository
     public async Task<User?> GetByEmailAsync(string email, CancellationToken cancellationToken = default)
         => await Profiles.FirstOrDefaultAsync(u => u.Email == email, cancellationToken);
 
-    public async Task<List<User>> GetAllAsync(CancellationToken cancellationToken = default)
-        => await Profiles.AsNoTracking().ToListAsync(cancellationToken);
+    public async Task<PaginatedResult<User>> GetPageAsync(
+        int page, int pageSize, CancellationToken cancellationToken = default)
+    {
+        var query = Profiles.AsNoTracking();
+        var total = await query.CountAsync(cancellationToken);
+
+        var items = await query
+            .OrderBy(u => u.Id)
+            .Skip((page - 1) * pageSize)
+            .Take(pageSize)
+            .ToListAsync(cancellationToken);
+
+        return new PaginatedResult<User>(items, page, pageSize, total);
+    }
+
+    public Task<int> CountAsync(CancellationToken cancellationToken = default)
+        => context.Users.CountAsync(cancellationToken);
 
     public Task<bool> EmailExistsAsync(string email, CancellationToken cancellationToken = default)
         => context.Users.AnyAsync(u => u.Email == email, cancellationToken);

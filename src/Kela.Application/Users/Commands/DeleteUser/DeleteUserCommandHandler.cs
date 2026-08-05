@@ -13,7 +13,7 @@ internal sealed class DeleteUserCommandHandler(IUserRepository users, IUnitOfWor
 
         // Soft delete
         user.DeletedAt = DateTime.UtcNow;
-        user.Status = Kela.Domain.Users.Enums.UserStatus.Inactive;
+        user.SetStatus(Kela.Domain.Users.Enums.UserStatus.Inactive);
 
         users.Update(user);
         await unitOfWork.SaveChangesAsync(cancellationToken);

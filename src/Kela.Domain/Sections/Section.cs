@@ -1,9 +1,9 @@
 using Kela.Domain.Common;
 using Kela.Domain.Users;
 
-namespace Kela.Domain.Grades;
+namespace Kela.Domain.Sections;
 
-public class Grade : BaseEntity, ITenantEntity
+public class Section : BaseEntity, ITenantEntity
 {
     public int TenantId { get; set; }
     public string Name { get; set; } = string.Empty;

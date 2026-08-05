@@ -1,14 +1,14 @@
-using Kela.Domain.Grades;
+using Kela.Domain.Sections;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Kela.Infrastructure.Data.Configurations;
 
-internal sealed class GradeConfiguration : IEntityTypeConfiguration<Grade>
+internal sealed class SectionConfiguration : IEntityTypeConfiguration<Section>
 {
-    public void Configure(EntityTypeBuilder<Grade> builder)
+    public void Configure(EntityTypeBuilder<Section> builder)
     {
-        builder.ToTable("grades");
+        builder.ToTable("sections");
 
         builder.HasKey(g => g.Id);
         builder.Property(g => g.Id).UseIdentityColumn().ValueGeneratedOnAdd();
@@ -25,7 +25,7 @@ internal sealed class GradeConfiguration : IEntityTypeConfiguration<Grade>
             .OnDelete(DeleteBehavior.SetNull);
 
         builder.HasMany(g => g.Students)
-            .WithMany(s => s.Grades);
+            .WithMany(s => s.Sections);
 
         // Her tenant kendi "5-A"sını oluşturabilir
         builder.HasIndex(g => new { g.Name, g.TenantId }).IsUnique();

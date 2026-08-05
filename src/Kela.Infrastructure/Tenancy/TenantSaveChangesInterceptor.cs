@@ -32,7 +32,7 @@ internal sealed class TenantSaveChangesInterceptor(ICurrentTenant currentTenant)
 
     private void SetTenantId(DbContext? context)
     {
-        if (context is null || !currentTenant.IsResolved)
+        if (context is null)
         {
             return;
         }
@@ -47,6 +47,15 @@ internal sealed class TenantSaveChangesInterceptor(ICurrentTenant currentTenant)
             if (entry.State is not (EntityState.Added or EntityState.Modified))
             {
                 continue;
+            }
+
+            // FAIL-CLOSED: tenant çözümlenmeden tenant entity'si yazılamaz.
+            // Eski davranış sessizce geçiyordu → tenant'sız kayıtlar oluşuyordu.
+            if (!currentTenant.IsResolved)
+            {
+                throw new InvalidOperationException(
+                    "Tenant çözümlenmeden tenant entity'si eklenemez/değiştirilemez. " +
+                    "İstek, X-Tenant-Id/X-Tenant-Slug header veya tenant subdomain'i ile çözümlenmelidir.");
             }
 
             tenantEntity.TenantId = currentTenant.TenantId;

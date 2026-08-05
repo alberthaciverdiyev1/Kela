@@ -15,18 +15,16 @@ internal sealed class UpdateUserCommandHandler(
         var user = await users.GetByIdAsync(command.Id, cancellationToken)
             ?? throw new KeyNotFoundException($"Id = {command.Id} olan kullanıcı bulunamadı.");
 
-        user.FirstName = command.FirstName.Trim();
-        user.LastName = command.LastName.Trim();
-        user.UpdatedAt = DateTime.UtcNow;
+        user.SetName(command.FirstName, command.LastName);
 
         if (!string.IsNullOrWhiteSpace(command.Password))
         {
-            user.Password = passwordHasher.Hash(command.Password);
+            user.SetPasswordHash(passwordHasher.Hash(command.Password));
         }
 
         if (command.Status is not null)
         {
-            user.Status = command.Status.Value;
+            user.SetStatus(command.Status.Value);
         }
 
         users.Update(user);

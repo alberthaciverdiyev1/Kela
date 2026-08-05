@@ -1,6 +1,6 @@
-namespace Kela.Application.Grades.Dtos;
+namespace Kela.Application.Sections.Dtos;
 
-public sealed record GradeDto(
+public sealed record SectionDto(
     int Id,
     string Name,
     int Level,

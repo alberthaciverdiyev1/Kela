@@ -10,19 +10,17 @@ internal sealed class TeacherConfiguration : IEntityTypeConfiguration<Teacher>
     {
         builder.ToTable("teachers");
 
-        builder.HasKey(t => t.Id);
-        builder.Property(t => t.Id).UseIdentityColumn().ValueGeneratedOnAdd();
+        // Shared primary key: profil kendi Id'sini taşımaz, User.Id'yi anahtar yapar.
+        builder.HasKey(t => t.UserId);
+        builder.Property(t => t.UserId).ValueGeneratedNever();
 
         builder.Property(t => t.CreatedAt).IsRequired();
         builder.Property(t => t.UpdatedAt);
-
 
         builder.HasOne(t => t.User)
             .WithOne(u => u.Teacher)
             .HasForeignKey<Teacher>(t => t.UserId)
             .OnDelete(DeleteBehavior.Cascade);
-
-        builder.HasIndex(t => t.UserId).IsUnique();
 
         // Soft-delete: yalnızca aktif kullanıcıya ait profiller görünür
         builder.HasQueryFilter(t => t.User == null || t.User.DeletedAt == null);
