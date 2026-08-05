@@ -1,11 +1,13 @@
+using Kela.Domain.Attendances.Enums;
 using Kela.Domain.Common;
+using Kela.Domain.Subjects;
 using Kela.Domain.Users;
-using Kela.Domain.Users.Enums;
 
-namespace Kela.Domain;
+namespace Kela.Domain.Attendances;
 
-public class Attendance : BaseEntity
+public class Attendance : BaseEntity, ITenantEntity
 {
+    public int TenantId { get; set; }
     public int UserId { get; set; }
     public User? User { get; set; }
 

@@ -3,8 +3,9 @@ using Kela.Domain.Users;
 
 namespace Kela.Domain.Grades;
 
-public class Grade : BaseEntity
+public class Grade : BaseEntity, ITenantEntity
 {
+    public int TenantId { get; set; }
     public string Name { get; set; } = string.Empty;
     public int Level { get; set; }
     public int? TeacherId { get; set; }

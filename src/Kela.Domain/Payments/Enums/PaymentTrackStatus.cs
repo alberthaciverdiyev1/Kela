@@ -1,4 +1,4 @@
-namespace Kela.Domain.Users.Enums;
+namespace Kela.Domain.Payments.Enums;
 
 public enum PaymentTrackStatus
 {

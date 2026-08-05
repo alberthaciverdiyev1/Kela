@@ -62,20 +62,25 @@ namespace Kela.Infrastructure.Data.Migrations
                     b.Property<int?>("TeacherId")
                         .HasColumnType("integer");
 
+                    b.Property<int>("TenantId")
+                        .HasColumnType("integer");
+
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("timestamp with time zone");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("Name")
-                        .IsUnique();
-
                     b.HasIndex("TeacherId");
+
+                    b.HasIndex("TenantId");
+
+                    b.HasIndex("Name", "TenantId")
+                        .IsUnique();
 
                     b.ToTable("grades", (string)null);
                 });
 
-            modelBuilder.Entity("Kela.Domain.Subject", b =>
+            modelBuilder.Entity("Kela.Domain.Subjects.Subject", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -99,19 +104,62 @@ namespace Kela.Infrastructure.Data.Migrations
                     b.Property<int?>("TeacherId")
                         .HasColumnType("integer");
 
+                    b.Property<int>("TenantId")
+                        .HasColumnType("integer");
+
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("timestamp with time zone");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("Name")
-                        .IsUnique();
-
                     b.HasIndex("StudentId");
 
                     b.HasIndex("TeacherId");
 
+                    b.HasIndex("TenantId");
+
+                    b.HasIndex("Name", "TenantId")
+                        .IsUnique();
+
                     b.ToTable("subjects", (string)null);
+                });
+
+            modelBuilder.Entity("Kela.Domain.Tenants.Tenant", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTime?>("DeletedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)");
+
+                    b.Property<string>("Slug")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Slug", "DeletedAt")
+                        .IsUnique();
+
+                    b.ToTable("tenants", (string)null);
                 });
 
             modelBuilder.Entity("Kela.Domain.Users.Parent", b =>
@@ -128,6 +176,9 @@ namespace Kela.Infrastructure.Data.Migrations
                     b.Property<DateTime?>("DeletedAt")
                         .HasColumnType("timestamp with time zone");
 
+                    b.Property<int>("TenantId")
+                        .HasColumnType("integer");
+
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("timestamp with time zone");
 
@@ -135,6 +186,8 @@ namespace Kela.Infrastructure.Data.Migrations
                         .HasColumnType("integer");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("TenantId");
 
                     b.HasIndex("UserId")
                         .IsUnique();
@@ -156,6 +209,9 @@ namespace Kela.Infrastructure.Data.Migrations
                     b.Property<DateTime?>("DeletedAt")
                         .HasColumnType("timestamp with time zone");
 
+                    b.Property<int>("TenantId")
+                        .HasColumnType("integer");
+
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("timestamp with time zone");
 
@@ -163,6 +219,8 @@ namespace Kela.Infrastructure.Data.Migrations
                         .HasColumnType("integer");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("TenantId");
 
                     b.HasIndex("UserId")
                         .IsUnique();
@@ -184,6 +242,9 @@ namespace Kela.Infrastructure.Data.Migrations
                     b.Property<DateTime?>("DeletedAt")
                         .HasColumnType("timestamp with time zone");
 
+                    b.Property<int>("TenantId")
+                        .HasColumnType("integer");
+
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("timestamp with time zone");
 
@@ -191,6 +252,8 @@ namespace Kela.Infrastructure.Data.Migrations
                         .HasColumnType("integer");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("TenantId");
 
                     b.HasIndex("UserId")
                         .IsUnique();
@@ -242,15 +305,20 @@ namespace Kela.Infrastructure.Data.Migrations
                     b.Property<int>("Status")
                         .HasColumnType("integer");
 
+                    b.Property<int>("TenantId")
+                        .HasColumnType("integer");
+
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("timestamp with time zone");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("Email", "DeletedAt")
+                    b.HasIndex("TenantId");
+
+                    b.HasIndex("Email", "TenantId", "DeletedAt")
                         .IsUnique();
 
-                    b.HasIndex("Role", "Status");
+                    b.HasIndex("TenantId", "Role", "Status");
 
                     b.ToTable("users", (string)null);
                 });
@@ -280,7 +348,7 @@ namespace Kela.Infrastructure.Data.Migrations
                     b.Navigation("Teacher");
                 });
 
-            modelBuilder.Entity("Kela.Domain.Subject", b =>
+            modelBuilder.Entity("Kela.Domain.Subjects.Subject", b =>
                 {
                     b.HasOne("Kela.Domain.Users.Student", null)
                         .WithMany("Subjects")

@@ -78,7 +78,7 @@ namespace Kela.Infrastructure.Data.Migrations
                     b.ToTable("grades", (string)null);
                 });
 
-            modelBuilder.Entity("Kela.Domain.Subject", b =>
+            modelBuilder.Entity("Kela.Domain.Subjects.Subject", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -283,7 +283,7 @@ namespace Kela.Infrastructure.Data.Migrations
                     b.Navigation("Teacher");
                 });
 
-            modelBuilder.Entity("Kela.Domain.Subject", b =>
+            modelBuilder.Entity("Kela.Domain.Subjects.Subject", b =>
                 {
                     b.HasOne("Kela.Domain.Users.Student", null)
                         .WithMany("Subjects")

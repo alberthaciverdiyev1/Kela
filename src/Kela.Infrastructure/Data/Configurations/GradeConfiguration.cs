@@ -27,6 +27,7 @@ internal sealed class GradeConfiguration : IEntityTypeConfiguration<Grade>
         builder.HasMany(g => g.Students)
             .WithMany(s => s.Grades);
 
-        builder.HasIndex(g => g.Name).IsUnique();
+        // Her tenant kendi "5-A"sını oluşturabilir
+        builder.HasIndex(g => new { g.Name, g.TenantId }).IsUnique();
     }
 }

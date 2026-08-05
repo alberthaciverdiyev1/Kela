@@ -1,4 +1,4 @@
-using Kela.Domain;
+using Kela.Domain.Subjects;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -18,6 +18,7 @@ internal sealed class SubjectConfiguration : IEntityTypeConfiguration<Subject>
         builder.Property(s => s.CreatedAt).IsRequired();
         builder.Property(s => s.UpdatedAt);
 
-        builder.HasIndex(s => s.Name).IsUnique();
+        // Her tenant kendi "Matematik" dersini oluşturabilir
+        builder.HasIndex(s => new { s.Name, s.TenantId }).IsUnique();
     }
 }

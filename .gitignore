@@ -44,3 +44,4 @@ Thumbs.db
 # AI assistant config (internal only — not shared with the team)
 CLAUDE.md
 .claudeignore
+.editorconfig
