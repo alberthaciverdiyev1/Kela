@@ -2,20 +2,33 @@ using System.Text.Json.Serialization;
 
 namespace Kela.Api.Contracts;
 
-/// <summary>
-/// Tüm API yanıtları için ortak zarf (envelope).
-/// Her endpoint aynı JSON şeklini döner: { success, message, data, errors }.
-/// Tek mesaj <see cref="Message"/>'a, birden fazla hata/uyarı <see cref="Errors"/> listesine konur.
-/// Her ikisi de hem başarı hem hata durumunda kullanılabilir.
-/// </summary>
-/// <typeparam name="T">Yanıt verisinin tipi (genellikle Application'daki *Response).</typeparam>
+public sealed record ApiResponse(
+    [property: JsonPropertyName("success")]
+    bool IsSuccess,
+    [property: JsonPropertyName("message")]
+    string? Message,
+    [property: JsonPropertyName("errors")]
+    IReadOnlyCollection<string>? Errors = null)
+{
+    public static ApiResponse Success(string? message) => new(true, message);
+
+    public static ApiResponse Success(string? message, IReadOnlyCollection<string>? errors)
+        => new(true, message, errors);
+
+    public static ApiResponse Error(string? message) => new(false, message);
+
+    public static ApiResponse Error(string? message, IReadOnlyCollection<string>? errors)
+        => new(false, message, errors);
+}
+
 public sealed record ApiResponse<T>(
     [property: JsonPropertyName("success")]
     bool IsSuccess,
     [property: JsonPropertyName("message")]
     string? Message,
     [property: JsonPropertyName("data")] T? Data,
-    [property: JsonPropertyName("errors")] IReadOnlyCollection<string>? Errors = null)
+    [property: JsonPropertyName("errors")]
+    IReadOnlyCollection<string>? Errors = null)
 {
     public static ApiResponse<T> Success(T data) => new(true, null, data);
 

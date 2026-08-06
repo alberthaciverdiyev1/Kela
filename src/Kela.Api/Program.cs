@@ -3,8 +3,8 @@ using Kela.Api.Middleware;
 using Kela.Application;
 using Kela.Infrastructure;
 using Kela.Infrastructure.Data;
-using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.DataProtection;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -22,32 +22,30 @@ builder.Services
         builder.Configuration["DataProtection:KeysPath"]
         ?? Path.Combine(builder.Environment.ContentRootPath, "keys")));
 
-builder.Services
-    .AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
-    .AddCookie(options =>
-    {
-        options.Cookie.Name = "Kela.Auth";
-        options.Cookie.HttpOnly = true;
-        options.Cookie.SameSite = SameSiteMode.Lax;
-        options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
-        options.ExpireTimeSpan = TimeSpan.FromHours(8);
-        options.SlidingExpiration = true;
+// ASP.NET Core Identity cookie'si (IdentityConstants.ApplicationScheme).
+// AddIdentity (Infrastructure'da) bu şemayı + security-stamp doğrulamasını kurar;
+// burada yalnızca özelleştiriyoruz: cookie adı/süre ve API için redirect yerine 401/403.
+// Events'i mutasyona uğrattığımız için Identity'nin OnValidatePrincipal hook'u korunur.
+builder.Services.ConfigureApplicationCookie(options =>
+{
+    options.Cookie.Name = "Kela.Auth";
+    options.Cookie.HttpOnly = true;
+    options.Cookie.SameSite = SameSiteMode.Lax;
+    options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
+    options.ExpireTimeSpan = TimeSpan.FromHours(8);
+    options.SlidingExpiration = true;
 
-        // API: 401/403'ü login sayfasına redirect yerine durum kodu olarak dön
-        options.Events = new CookieAuthenticationEvents
-        {
-            OnRedirectToLogin = ctx =>
-            {
-                ctx.Response.StatusCode = StatusCodes.Status401Unauthorized;
-                return Task.CompletedTask;
-            },
-            OnRedirectToAccessDenied = ctx =>
-            {
-                ctx.Response.StatusCode = StatusCodes.Status403Forbidden;
-                return Task.CompletedTask;
-            },
-        };
-    });
+    options.Events.OnRedirectToLogin = ctx =>
+    {
+        ctx.Response.StatusCode = StatusCodes.Status401Unauthorized;
+        return Task.CompletedTask;
+    };
+    options.Events.OnRedirectToAccessDenied = ctx =>
+    {
+        ctx.Response.StatusCode = StatusCodes.Status403Forbidden;
+        return Task.CompletedTask;
+    };
+});
 
 builder.Services.AddAuthorization();
 
@@ -73,11 +71,22 @@ app.MapAuthEndpoints();
 
 using (var scope = app.Services.CreateScope())
 {
-    var db = scope.ServiceProvider.GetRequiredService<KelaDbContext>();
+    var services = scope.ServiceProvider;
+    var db = services.GetRequiredService<KelaDbContext>();
 
     if (app.Environment.IsDevelopment())
     {
         db.Database.Migrate();
+    }
+
+    // Sabit Identity rolleri: Admin/Teacher/Student/Parent (AspNetRoles).
+    var roleManager = services.GetRequiredService<RoleManager<IdentityRole<int>>>();
+    foreach (var roleName in new[] { "Admin", "Teacher", "Student", "Parent" })
+    {
+        if (!await roleManager.RoleExistsAsync(roleName))
+        {
+            await roleManager.CreateAsync(new IdentityRole<int>(roleName));
+        }
     }
 }
 

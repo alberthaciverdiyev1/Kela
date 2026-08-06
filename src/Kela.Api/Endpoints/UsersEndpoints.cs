@@ -22,7 +22,7 @@ public static class UsersEndpoints
         {
             var user = await users.GetByIdAsync(id, ct);
             return user is null
-                ? Results.NotFound(ApiResponse<object>.Error("Kayıt bulunamadı."))
+                ? Results.NotFound(ApiResponse.Error("Kayıt bulunamadı."))
                 : Results.Ok(ApiResponse<UserResponse>.Success(user));
         });
 

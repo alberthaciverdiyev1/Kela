@@ -1,17 +1,17 @@
 using Kela.Application.Features.Users.Requests;
 using Kela.Application.Features.Users.Responses;
 using Kela.Application.Pagination;
-using Kela.Application.Patterns;
 using Kela.Application.Validation;
 using Kela.Domain.Entities;
 using Kela.Domain.Enums;
+using Microsoft.AspNetCore.Identity;
 
 namespace Kela.Application.Features.Users;
 
 internal sealed class UserService(
     IUserRepository users,
-    IUnitOfWork unitOfWork,
-    IPasswordHasher passwordHasher,
+    UserManager<User> userManager,
+    RoleManager<IdentityRole<int>> roleManager,
     IValidator<CreateUserRequest> createValidator,
     IValidator<UpdateUserRequest> updateValidator) : IUserService
 {
@@ -19,17 +19,20 @@ internal sealed class UserService(
         int page, int pageSize, CancellationToken cancellationToken = default)
     {
         var result = await users.GetPageAsync(page, pageSize, cancellationToken);
-        return new PaginatedResult<UserResponse>(
-            result.Items.Select(u => u.ToResponse()).ToList(),
-            result.Page,
-            result.PageSize,
-            result.TotalCount);
+
+        var items = new List<UserResponse>(result.Items.Count);
+        foreach (var user in result.Items)
+        {
+            items.Add(user.ToResponse(await user.ResolveRoleAsync(userManager)));
+        }
+
+        return new PaginatedResult<UserResponse>(items, result.Page, result.PageSize, result.TotalCount);
     }
 
     public async Task<UserResponse?> GetByIdAsync(int id, CancellationToken cancellationToken = default)
     {
         var user = await users.GetByIdAsync(id, cancellationToken);
-        return user?.ToResponse();
+        return user is null ? null : user.ToResponse(await user.ResolveRoleAsync(userManager));
     }
 
     public async Task<int> CreateAsync(
@@ -37,24 +40,36 @@ internal sealed class UserService(
     {
         createValidator.Validate(request);
 
-        var normalizedEmail = request.Email.Trim().ToLowerInvariant();
+        var email = request.Email.Trim();
+        var normalizedEmail = email.ToLowerInvariant();
 
-        if (await users.EmailExistsAsync(normalizedEmail, cancellationToken))
+        if (await userManager.FindByEmailAsync(normalizedEmail) is not null)
         {
             throw new InvalidOperationException($"'{normalizedEmail}' email adresi zaten kayıtlı.");
         }
 
-        var user = new User(request.FirstName.Trim(), request.LastName.Trim(), normalizedEmail)
+        var user = new User(request.FirstName.Trim(), request.LastName.Trim(), email)
         {
             CreatedAt = DateTime.UtcNow,
         };
 
-        user.SetPasswordHash(passwordHasher.Hash(request.Password));
         // Rol ↔ profil tutarlılığını domain garantiler: yalnızca role uyan tek profil kurulur.
         user.AssignProfile(request.Role);
 
-        users.Add(user);
-        await unitOfWork.SaveChangesAsync(cancellationToken);
+        // Identity: parolayı hash'ler (PBKDF2), kullanıcıyı + profilini kaydeder.
+        var result = await userManager.CreateAsync(user, request.Password);
+        if (!result.Succeeded)
+        {
+            throw new InvalidOperationException(string.Join("; ", result.Errors.Select(e => e.Description)));
+        }
+
+        // Identity rol üyeliği (AspNetUserRoles).
+        var roleName = request.Role.ToString();
+        if (!await roleManager.RoleExistsAsync(roleName))
+        {
+            await roleManager.CreateAsync(new IdentityRole<int>(roleName));
+        }
+        await userManager.AddToRoleAsync(user, roleName);
 
         return user.Id;
     }
@@ -71,7 +86,8 @@ internal sealed class UserService(
 
         if (!string.IsNullOrWhiteSpace(request.Password))
         {
-            user.SetPasswordHash(passwordHasher.Hash(request.Password));
+            // .NET Identity'nin PasswordHasher'ı (PBKDF2) kullanılır.
+            user.PasswordHash = userManager.PasswordHasher.HashPassword(user, request.Password);
         }
 
         if (request.Status is not null)
@@ -79,8 +95,11 @@ internal sealed class UserService(
             user.SetStatus(request.Status.Value);
         }
 
-        users.Update(user);
-        await unitOfWork.SaveChangesAsync(cancellationToken);
+        var result = await userManager.UpdateAsync(user);
+        if (!result.Succeeded)
+        {
+            throw new InvalidOperationException(string.Join("; ", result.Errors.Select(e => e.Description)));
+        }
     }
 
     public async Task DeleteAsync(int id, CancellationToken cancellationToken = default)
@@ -92,7 +111,10 @@ internal sealed class UserService(
         user.DeletedAt = DateTime.UtcNow;
         user.SetStatus(UserStatus.Inactive);
 
-        users.Update(user);
-        await unitOfWork.SaveChangesAsync(cancellationToken);
+        var result = await userManager.UpdateAsync(user);
+        if (!result.Succeeded)
+        {
+            throw new InvalidOperationException(string.Join("; ", result.Errors.Select(e => e.Description)));
+        }
     }
 }

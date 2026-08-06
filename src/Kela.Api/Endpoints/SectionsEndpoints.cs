@@ -22,7 +22,7 @@ public static class SectionsEndpoints
         {
             var section = await sections.GetByIdAsync(id, ct);
             return section is null
-                ? Results.NotFound(ApiResponse<object>.Error("Kayıt bulunamadı."))
+                ? Results.NotFound(ApiResponse.Error("Kayıt bulunamadı."))
                 : Results.Ok(ApiResponse<SectionResponse>.Success(section));
         });
 

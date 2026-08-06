@@ -5,7 +5,6 @@ using Kela.Application.Pagination;
 using Kela.Application.Patterns;
 using Kela.Application.Validation;
 using Kela.Domain.Entities;
-using Kela.Domain.Enums;
 
 namespace Kela.Application.Features.Sections;
 
@@ -104,7 +103,7 @@ internal sealed class SectionService(
     private async Task EnsureTeacherExistsAsync(int teacherId, CancellationToken cancellationToken)
     {
         var user = await users.GetByIdAsync(teacherId, cancellationToken);
-        if (user is null || user.Role != Role.Teacher)
+        if (user is null || user.Teacher is null)
         {
             throw new InvalidOperationException($"Id = {teacherId} olan öğretmen bulunamadı.");
         }

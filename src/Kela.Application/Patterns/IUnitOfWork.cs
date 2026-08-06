@@ -1,4 +1,4 @@
-namespace Kela.Application.Repositories;
+namespace Kela.Application.Patterns;
 
 public interface IUnitOfWork
 {

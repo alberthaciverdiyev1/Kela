@@ -1,19 +1,23 @@
 using Kela.Domain.Common;
 using Kela.Domain.Enums;
+using Microsoft.AspNetCore.Identity;
 
 namespace Kela.Domain.Entities;
 
 /// <summary>
-/// Sistemin asıl kullanıcı aggregate'i.
+/// Sistemin asıl kullanıcı aggregate'i. ASP.NET Core Identity ile bütünleşiktir:
+/// parola hash'leme, parola doğrulama ve rol üyeliği Identity'nin
+/// (UserManager/RoleManager/PasswordHasher) sorumluluğudur — burada elle hash yoktur.
 /// Rol ↔ profil (Teacher/Student/Parent) tutarlılığı domain'de <see cref="AssignProfile"/>
-/// ile garanti edilir: yalnızca Role'a uyan tek profil kurulabilir.
+/// ile garanti edilir: yalnızca role uyan tek profil kurulabilir.
 /// </summary>
-public class User : BaseEntity
+public class User : IdentityUser<int>, ISoftDeletable, IAuditableEntity
 {
     public User(string firstName, string lastName, string email)
     {
         SetName(firstName, lastName);
         Email = email;
+        UserName = email;
     }
 
     private User()
@@ -24,22 +28,16 @@ public class User : BaseEntity
     public string FirstName { get; private set; } = string.Empty;
     public string LastName { get; private set; } = string.Empty;
 
-    public string Email { get; private set; } = string.Empty;
-
-    /// <summary>
-    /// Parola hash'idir; düz metin parola asla saklanmaz. Hash dışarıdan
-    /// doğrudan set edilemez — <see cref="SetPasswordHash"/> ile verilir.
-    /// </summary>
-    public string PasswordHash { get; private set; } = string.Empty;
-
-    public string PhoneNumber { get; private set; } = string.Empty;
-    public Role Role { get; private set; }
     public UserStatus Status { get; private set; } = UserStatus.Active;
 
-    // 1:1 profil ilişkileri. Yalnızca Role'a uyan biri dolu olabilir (AssignProfile garantisi).
+    // 1:1 profil ilişkileri. Yalnızca role uyan biri dolu olabilir (AssignProfile garantisi).
     public Teacher? Teacher { get; private set; }
     public Student? Student { get; private set; }
     public Parent? Parent { get; private set; }
+
+    public DateTime CreatedAt { get; set; }
+    public DateTime? UpdatedAt { get; set; }
+    public DateTime? DeletedAt { get; set; }
 
     public void SetName(string firstName, string lastName)
     {
@@ -51,20 +49,6 @@ public class User : BaseEntity
         UpdatedAt = DateTime.UtcNow;
     }
 
-    public void SetPhoneNumber(string phoneNumber)
-    {
-        PhoneNumber = phoneNumber?.Trim() ?? string.Empty;
-        UpdatedAt = DateTime.UtcNow;
-    }
-
-    /// <summary>Hash'lenmiş parolayı atar. Hash'lemeyi Application katmanı yapar (IPasswordHasher).</summary>
-    public void SetPasswordHash(string passwordHash)
-    {
-        ArgumentException.ThrowIfNullOrWhiteSpace(passwordHash, nameof(passwordHash));
-        PasswordHash = passwordHash;
-        UpdatedAt = DateTime.UtcNow;
-    }
-
     public void SetStatus(UserStatus status)
     {
         Status = status;
@@ -72,19 +56,20 @@ public class User : BaseEntity
     }
 
     /// <summary>
-    /// Rol atar ve yalnızca o role uyan profili kurar; diğer profilleri temizler.
-    /// Böylece "Role=Teacher iken Student profili" gibi tutarsız durum imkânsızdır.
-    /// Admin rolünün profili yoktur.
+    /// Role uyan tek profili kurar; diğer profilleri temizler.
+    /// Böylece "Teacher iken Student profili" gibi tutarsız durum imkânsızdır.
+    /// Admin rolünün profili yoktur. Identity rol üyeliği (AspNetUserRoles)
+    /// service katmanında UserManager ile yapılır.
     /// </summary>
     public void AssignProfile(Role role)
     {
-        Role = role;
         Teacher = null;
         Student = null;
         Parent = null;
 
-        Teacher = role == Role.Teacher ? new Teacher { User = this } : null;
-        Student = role == Role.Student ? new Student { User = this } : null;
-        Parent = role == Role.Parent ? new Parent { User = this } : null;
+        var now = DateTime.UtcNow;
+        Teacher = role == Role.Teacher ? new Teacher { User = this, CreatedAt = now } : null;
+        Student = role == Role.Student ? new Student { User = this, CreatedAt = now } : null;
+        Parent = role == Role.Parent ? new Parent { User = this, CreatedAt = now } : null;
     }
 }

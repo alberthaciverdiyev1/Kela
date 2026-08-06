@@ -1,13 +1,14 @@
 using Kela.Application.Patterns;
 using Kela.Domain.Entities;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
 namespace Kela.Infrastructure.Data;
 
 public sealed class KelaDbContext(DbContextOptions<KelaDbContext> options)
-    : DbContext(options), IUnitOfWork
+    : IdentityDbContext<User, IdentityRole<int>, int>(options), IUnitOfWork
 {
-    public DbSet<User> Users => Set<User>();
     public DbSet<Teacher> Teachers => Set<Teacher>();
     public DbSet<Student> Students => Set<Student>();
     public DbSet<Parent> Parents => Set<Parent>();

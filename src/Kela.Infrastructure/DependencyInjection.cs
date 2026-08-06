@@ -2,9 +2,11 @@ using Kela.Application;
 using Kela.Application.Features.Sections;
 using Kela.Application.Features.Users;
 using Kela.Application.Patterns;
+using Kela.Domain.Entities;
 using Kela.Infrastructure.Data;
 using Kela.Infrastructure.Repositories;
-using Kela.Infrastructure.Security;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -21,10 +23,34 @@ public static class DependencyInjection
         services.AddDbContext<KelaDbContext>(options =>
             options.UseNpgsql(connectionString));
 
+        // ASP.NET Core Identity (tam entegrasyon):
+        //   AddIdentity → UserManager, RoleManager, SignInManager + Identity cookie şeması
+        //   (IdentityConstants.ApplicationScheme) + security stamp doğrulaması kurar.
+        //   Parola hash'leme, lockout ve rol üyeliği buradan gelir — elle hash yoktur.
+        services
+            .AddIdentity<User, IdentityRole<int>>(options =>
+            {
+                options.User.RequireUniqueEmail = true;
+
+                // Kurallar CreateUserValidator/UpdateUserValidator ile uyumlu (min 6, başka kısıt yok).
+                options.Password.RequiredLength = 6;
+                options.Password.RequireNonAlphanumeric = false;
+                options.Password.RequireDigit = false;
+                options.Password.RequireLowercase = false;
+                options.Password.RequireUppercase = false;
+
+                options.Lockout.AllowedForNewUsers = true;
+                options.Lockout.MaxFailedAccessAttempts = 5;
+                options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(5);
+            })
+            .AddEntityFrameworkStores<KelaDbContext>();
+
+        // Display-name claim'ini "Ad Soyad" yapan özel claims factory (varsayılan: e-posta).
+        services.AddScoped<IUserClaimsPrincipalFactory<User>, KelaUserClaimsPrincipalFactory>();
+
         services.AddScoped<IUserRepository, UserRepository>();
         services.AddScoped<ISectionRepository, SectionRepository>();
         services.AddScoped<IUnitOfWork>(sp => sp.GetRequiredService<KelaDbContext>());
-        services.AddScoped<IPasswordHasher, Pbkdf2PasswordHasher>();
 
         return services;
     }
