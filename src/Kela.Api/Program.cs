@@ -3,6 +3,7 @@ using Kela.Api.Middleware;
 using Kela.Application;
 using Kela.Infrastructure;
 using Kela.Infrastructure.Data;
+using Kela.Infrastructure.Data.Seeds;
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -73,6 +74,7 @@ app.MapSectionsEndpoints();
 app.MapUsersEndpoints();
 app.MapAuthEndpoints();
 app.MapSiteConfigurationEndpoints();
+app.MapCitiesEndpoints();
 
 using (var scope = app.Services.CreateScope())
 {
@@ -92,6 +94,14 @@ using (var scope = app.Services.CreateScope())
         {
             await roleManager.CreateAsync(new IdentityRole<int>(roleName));
         }
+    }
+
+    // Başlangıç şehirleri (dump): Henüz Admin yok; tablo boşsa 4 dildeki
+    // örnek şehirler eklenir. CRUD arayüzü gelince Admin buradan yönetir.
+    if (!await db.Cities.AnyAsync())
+    {
+        db.Cities.AddRange(CitySeed.Build());
+        await db.SaveChangesAsync();
     }
 }
 

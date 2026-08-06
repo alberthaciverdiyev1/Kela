@@ -1,4 +1,5 @@
 using Kela.Application;
+using Kela.Application.Features.Cities;
 using Kela.Application.Features.Sections;
 using Kela.Application.Features.SiteConfiguration;
 using Kela.Application.Features.Users;
@@ -11,6 +12,7 @@ using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Npgsql;
 
 namespace Kela.Infrastructure;
 
@@ -21,8 +23,14 @@ public static class DependencyInjection
         var connectionString = configuration.GetConnectionString("Postgres")
             ?? throw new InvalidOperationException("'ConnectionStrings:Postgres' yapılandırması bulunamadı.");
 
+        // Npgsql veri kaynağı: Dictionary<string,string> gibi dinamik tiplerin jsonb
+        // sütunlarıyla okunup yazılması için EnableDynamicJson opt-in edilir (Npgsql 8+).
+        var dataSourceBuilder = new NpgsqlDataSourceBuilder(connectionString);
+        dataSourceBuilder.EnableDynamicJson();
+        var dataSource = dataSourceBuilder.Build();
+
         services.AddDbContext<KelaDbContext>(options =>
-            options.UseNpgsql(connectionString));
+            options.UseNpgsql(dataSource));
 
         // ASP.NET Core Identity (tam entegrasyon):
         //   AddIdentity → UserManager, RoleManager, SignInManager + Identity cookie şeması
@@ -51,6 +59,7 @@ public static class DependencyInjection
 
         services.AddScoped<IUserRepository, UserRepository>();
         services.AddScoped<ISectionRepository, SectionRepository>();
+        services.AddScoped<ICityRepository, CityRepository>();
         services.AddScoped<ISiteConfigurationRepository, SiteConfigurationRepository>();
         services.AddScoped<IUnitOfWork>(sp => sp.GetRequiredService<KelaDbContext>());
 

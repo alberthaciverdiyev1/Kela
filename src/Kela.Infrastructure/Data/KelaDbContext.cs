@@ -12,6 +12,7 @@ public sealed class KelaDbContext(DbContextOptions<KelaDbContext> options)
     public DbSet<Section> Sections => Set<Section>();
     public DbSet<StudentPaymentTrack> StudentPaymentTracks => Set<StudentPaymentTrack>();
     public DbSet<BaseSiteConfiguration> BaseSiteConfigurations => Set<BaseSiteConfiguration>();
+    public DbSet<City> Cities => Set<City>();
 
     public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
         => base.SaveChangesAsync(cancellationToken);
