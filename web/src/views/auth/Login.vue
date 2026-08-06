@@ -37,7 +37,7 @@
 <script setup>
 import {ref} from 'vue'
 import {useRoute, useRouter} from 'vue-router'
-import {useAuthStore} from '../../stores/auth'
+import {useAuthStore, homeRouteFor} from '../../stores/auth'
 import AuthCard from '../../components/ui/cards/AuthCard.vue'
 import TextInput from '../../components/ui/inputs/TextInput.vue'
 import PasswordInput from '../../components/ui/inputs/PasswordInput.vue'
@@ -66,7 +66,8 @@ async function submit() {
     const result = await auth.login({email: email.value.trim(), password: password.value})
 
     if (result.ok) {
-        router.push(route.query.redirect || {name: 'dashboard'})
+        // Rolün kendi paneline düş (teacher.dashboard / student.dashboard / parent.dashboard)
+        router.push(route.query.redirect || {name: homeRouteFor(auth.role)})
     } else {
         errorMessage.value = result.message
     }

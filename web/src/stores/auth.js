@@ -70,3 +70,19 @@ export const useAuthStore = defineStore('auth', {
     },
   },
 })
+
+// ─────────────────────────────────────────────────────────────
+// ROL BAZLI PANEL YÖNLENDİRMESİ (A planı)
+// Her rol kendi paneline düşer: /teacher/* , /student/* , /parent/*
+// Admin bu uygulamada YOK — ayrı yönetim panelindedir, buraya girerse
+// 'blocked' (Erişim Yok) sayfasına gider.
+// ─────────────────────────────────────────────────────────────
+export const ROLE_HOME = {
+  [ROLES.Teacher]: 'teacher.dashboard',
+  [ROLES.Student]: 'student.dashboard',
+  [ROLES.Parent]: 'parent.dashboard',
+}
+
+export function homeRouteFor(role) {
+  return ROLE_HOME[role] ?? 'blocked'
+}

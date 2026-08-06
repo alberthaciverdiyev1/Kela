@@ -1,27 +1,82 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import { useAuthStore, ROLES } from '../stores/auth'
+import { useAuthStore, ROLES, homeRouteFor } from '../stores/auth'
 
+// ─────────────────────────────────────────────────────────────
+// A PLANI — ROL BAZLI PANEL AĞAÇLARI
+// Tek uygulama, üç ayrı panel. Her rol kendi ağacına sahiptir:
+//   /teacher/*  → TeacherLayout (Ayarlar, Sınıflar...)
+//   /student/*  → StudentLayout (Derslerim...)
+//   /parent/*   → ParentLayout  (Çocuklarım...)
+// Başka bir rolün paneline URL'den bile girilemez (guard).
+// Admin burada değildir → 'blocked' sayfasına gider.
+// ─────────────────────────────────────────────────────────────
 const routes = [
   {
     path: '/',
     component: () => import('../layouts/AppLayout.vue'),
     meta: { requiresAuth: true },
     children: [
-      { path: '', redirect: '/dashboard' },
+      // Kök → rolün kendi paneline yönlendir
+      { path: '', redirect: () => ({ name: homeRouteFor(useAuthStore().role) }) },
+
+      // ── Teacher paneli ──
       {
-        path: 'dashboard',
-        name: 'dashboard',
-        component: () => import('../views/dashboard/Dashboard.vue'),
-        meta: { title: 'Dashboard' },
+        path: 'teacher/dashboard',
+        name: 'teacher.dashboard',
+        component: () => import('../views/teacher/TeacherDashboard.vue'),
+        meta: { title: 'Dashboard', requiresRole: [ROLES.Teacher] },
       },
       {
-        path: 'settings',
-        name: 'settings',
+        path: 'teacher/sections',
+        name: 'teacher.sections',
+        component: () => import('../views/common/ComingSoon.vue'),
+        meta: { title: 'Sınıflar', requiresRole: [ROLES.Teacher] },
+      },
+      {
+        path: 'teacher/settings',
+        name: 'teacher.settings',
         component: () => import('../views/settings/Settings.vue'),
         meta: { title: 'Ayarlar', requiresRole: [ROLES.Teacher] },
       },
+
+      // ── Student paneli ──
+      {
+        path: 'student/dashboard',
+        name: 'student.dashboard',
+        component: () => import('../views/student/StudentDashboard.vue'),
+        meta: { title: 'Dashboard', requiresRole: [ROLES.Student] },
+      },
+      {
+        path: 'student/courses',
+        name: 'student.courses',
+        component: () => import('../views/common/ComingSoon.vue'),
+        meta: { title: 'Derslerim', requiresRole: [ROLES.Student] },
+      },
+
+      // ── Parent paneli ──
+      {
+        path: 'parent/dashboard',
+        name: 'parent.dashboard',
+        component: () => import('../views/parent/ParentDashboard.vue'),
+        meta: { title: 'Dashboard', requiresRole: [ROLES.Parent] },
+      },
+      {
+        path: 'parent/children',
+        name: 'parent.children',
+        component: () => import('../views/common/ComingSoon.vue'),
+        meta: { title: 'Çocuklarım', requiresRole: [ROLES.Parent] },
+      },
     ],
   },
+
+  // Admin / bilinmeyen rol → ayrı yönetim paneli olduğu için buraya giremez
+  {
+    path: '/blocked',
+    name: 'blocked',
+    component: () => import('../views/NoAccess.vue'),
+    meta: { title: 'Erişim Yok' },
+  },
+
   {
     path: '/auth',
     component: () => import('../layouts/AuthLayout.vue'),
@@ -41,7 +96,12 @@ const routes = [
       },
     ],
   },
-  { path: '/:pathMatch(.*)*', redirect: '/dashboard' },
+
+  // Bilinmeyen yol → rolün kendi paneline
+  {
+    path: '/:pathMatch(.*)*',
+    redirect: () => ({ name: homeRouteFor(useAuthStore().role) }),
+  },
 ]
 
 const router = createRouter({
@@ -49,7 +109,10 @@ const router = createRouter({
   routes,
 })
 
-// Global guard: auth gerektiren rotaları kontrol et
+// Global guard:
+//  - auth gereken rota + oturum yok → login
+//  - guestOnly + oturum var → kendi paneline
+//  - rol korumalı rota + yetki yok → kendi paneline (admin → blocked)
 router.beforeEach((to) => {
   const auth = useAuthStore()
 
@@ -58,12 +121,11 @@ router.beforeEach((to) => {
   }
 
   if (to.meta.guestOnly && auth.isAuthenticated) {
-    return { name: 'dashboard' }
+    return { name: homeRouteFor(auth.role) }
   }
 
-  // Rol korumalı rotalar: yetersiz yetki → dashboard'a yönlendir
   if (to.meta.requiresRole && !to.meta.requiresRole.includes(auth.role)) {
-    return { name: 'dashboard' }
+    return { name: homeRouteFor(auth.role) }
   }
 
   return true

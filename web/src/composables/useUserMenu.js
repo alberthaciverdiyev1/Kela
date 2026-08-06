@@ -1,11 +1,10 @@
 import { ref, computed } from 'vue'
-import { useRouter } from 'vue-router'
 import { useAuthStore } from '../stores/auth'
 
-// Hem NavbarLayout hem SidebarLayout için ortak kullanıcı menüsü
+// Navbar ve Sidebar için ortak kullanıcı menüsü.
+// Ayarlar burada değil — rol bazlı nav menüsünde (teacher/student/parent).
 export function useUserMenu() {
   const auth = useAuthStore()
-  const router = useRouter()
   const menuRef = ref(null)
 
   const initials = computed(() => {
@@ -15,34 +14,13 @@ export function useUserMenu() {
     return (parts[0]?.[0] ?? '') + (parts[1]?.[0] ?? '')
   })
 
-  const userMenuItems = ref([])
-
-  // Profil + Çıkış (herkese); Ayarlar (site konfigürasyonu) yalnızca Teacher.
-  // Admin bu panelde değil, ayrı yönetim panelinde çalışır.
-  userMenuItems.value = [
-    {
-      label: 'Profil',
-      icon: 'pi pi-user',
-      command: () => router.push({ name: 'profile' }),
-    },
-  ]
-
-  if (auth.isTeacher) {
-    userMenuItems.value.push({
-      label: 'Ayarlar',
-      icon: 'pi pi-cog',
-      command: () => router.push({ name: 'settings' }),
-    })
-  }
-
-  userMenuItems.value.push(
-    { separator: true },
+  const userMenuItems = ref([
     {
       label: 'Çıkış Yap',
       icon: 'pi pi-sign-out',
       command: () => auth.logout(),
     },
-  )
+  ])
 
   function toggleMenu(event) {
     menuRef.value?.toggle(event)

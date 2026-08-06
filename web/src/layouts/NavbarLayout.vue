@@ -8,20 +8,31 @@
         </div>
       </template>
 
+      <template #center>
+        <IconField class="hidden md:flex w-72">
+          <InputIcon class="pi pi-search" />
+          <InputText placeholder="Ara..." class="w-full" />
+        </IconField>
+      </template>
 
       <template #end>
+        <div class="flex items-center gap-1">
+          <router-link
+            v-for="item in navItems"
+            :key="item.name"
+            :to="{ name: item.name }"
+            class="hidden lg:flex items-center gap-2 px-3 py-2 rounded-lg text-surface-600 transition-colors"
+            :class="isActive(item.name)
+              ? 'bg-primary-50 text-primary font-semibold'
+              : 'hover:bg-surface-100 hover:text-primary'"
+          >
+            <i :class="['pi', item.icon]"></i>
+            <span>{{ item.label }}</span>
+          </router-link>
+        </div>
+
         <div class="flex items-center gap-2">
           <Menu ref="menuRef" :model="userMenuItems" popup class="p-2" />
-
-          <Button
-            text
-            rounded
-            icon="pi pi-th-large"
-            label="Dashboard"
-            @click="goDashboard"
-            class="mr-2 hidden sm:inline-flex"
-          />
-
           <div class="flex items-center gap-2 cursor-pointer p-2 rounded-lg hover:bg-surface-100" @click="toggleMenu">
             <Avatar :label="initials" shape="circle" class="bg-primary text-white" />
             <span class="font-medium hidden sm:block">{{ auth.fullName }}</span>
@@ -42,15 +53,19 @@
 </template>
 
 <script setup>
-import { useRouter } from 'vue-router'
+import { useRoute } from 'vue-router'
 import { useUserMenu } from '../composables/useUserMenu'
 import { useSiteConfigStore } from '../stores/siteConfig'
 
-const router = useRouter()
+defineProps({
+  navItems: { type: Array, default: () => [] },
+})
+
+const route = useRoute()
 const config = useSiteConfigStore()
 const { auth, initials, userMenuItems, menuRef, toggleMenu } = useUserMenu()
 
-function goDashboard() {
-  router.push({ name: 'dashboard' })
+function isActive(name) {
+  return route.name === name
 }
 </script>

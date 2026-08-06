@@ -8,7 +8,7 @@
         <span class="font-bold text-xl text-primary">{{ config.siteName }}</span>
       </div>
 
-      <!-- Navigasyon -->
+      <!-- Rol bazlı navigasyon -->
       <nav class="flex-1 p-4 space-y-1 overflow-y-auto">
         <router-link
           v-for="item in navItems"
@@ -59,13 +59,13 @@ import { useRoute } from 'vue-router'
 import { useUserMenu } from '../composables/useUserMenu'
 import { useSiteConfigStore } from '../stores/siteConfig'
 
+defineProps({
+  navItems: { type: Array, default: () => [] },
+})
+
 const route = useRoute()
 const config = useSiteConfigStore()
 const { auth, initials, userMenuItems, menuRef, toggleMenu } = useUserMenu()
-
-const navItems = [
-  { label: 'Dashboard', icon: 'pi pi-th-large', name: 'dashboard' },
-]
 
 function isActive(name) {
   return route.name === name
