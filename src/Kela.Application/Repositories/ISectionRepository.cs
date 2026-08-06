@@ -1,5 +1,5 @@
 using Kela.Application.Pagination;
-using Kela.Domain.Sections;
+using Kela.Domain.Entities;
 
 namespace Kela.Application.Repositories;
 

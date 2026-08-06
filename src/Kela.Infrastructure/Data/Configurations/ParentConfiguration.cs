@@ -1,4 +1,4 @@
-using Kela.Domain.Users;
+using Kela.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 

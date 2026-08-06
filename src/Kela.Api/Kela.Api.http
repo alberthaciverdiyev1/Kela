@@ -1,9 +1,7 @@
 @Kela.Api_HostAddress = http://localhost:5117
-@TenantSlug = default
 
-### Kullanıcı oluştur (tenant header'lı)
+### Kullanıcı oluştur
 POST {{Kela.Api_HostAddress}}/api/users
-X-Tenant-Slug: {{TenantSlug}}
 Content-Type: application/json
 
 {
@@ -14,9 +12,8 @@ Content-Type: application/json
   "role": 3
 }
 
-### Login (tenant header'lı → cookie'ye tenant_id claim'i yazılır)
+### Login
 POST {{Kela.Api_HostAddress}}/api/auth/login
-X-Tenant-Slug: {{TenantSlug}}
 Content-Type: application/json
 
 {
@@ -27,7 +24,7 @@ Content-Type: application/json
 ### Logout
 POST {{Kela.Api_HostAddress}}/api/auth/logout
 
-### Kullanıcı listesi (sayfalı — authenticated istekte tenant cookie'den gelir)
+### Kullanıcı listesi (sayfalı)
 GET {{Kela.Api_HostAddress}}/api/users?page=1&pageSize=20
 
 ### Sınıf (şube) listesi (sayfalı)

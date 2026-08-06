@@ -1,10 +1,8 @@
-using Kela.Application.Abstractions.Security;
-using Kela.Application.Abstractions.Tenancy;
+using Kela.Application;
 using Kela.Application.Repositories;
 using Kela.Infrastructure.Data;
 using Kela.Infrastructure.Repositories;
 using Kela.Infrastructure.Security;
-using Kela.Infrastructure.Tenancy;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -18,14 +16,8 @@ public static class DependencyInjection
         var connectionString = configuration.GetConnectionString("Postgres")
             ?? throw new InvalidOperationException("'ConnectionStrings:Postgres' yapılandırması bulunamadı.");
 
-        // Multi-tenant altyapısı
-        // Tenant'ı Api/Web katmanındaki middleware SetTenant ile besler.
-        services.AddScoped<ICurrentTenant, TenantContext>();
-        services.AddScoped<TenantSaveChangesInterceptor>();
-
-        services.AddDbContext<KelaDbContext>((sp, options) =>
-            options.UseNpgsql(connectionString)
-                   .AddInterceptors(sp.GetRequiredService<TenantSaveChangesInterceptor>()));
+        services.AddDbContext<KelaDbContext>(options =>
+            options.UseNpgsql(connectionString));
 
         services.AddScoped<IUserRepository, UserRepository>();
         services.AddScoped<ISectionRepository, SectionRepository>();

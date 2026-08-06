@@ -1,4 +1,4 @@
-using Kela.Domain.Users;
+using Kela.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -29,9 +29,9 @@ internal sealed class UserConfiguration : IEntityTypeConfiguration<User>
         builder.Property(u => u.UpdatedAt);
         builder.Property(u => u.DeletedAt);
 
-        // Soft-delete + tenant: her tenant'ta eşsiz e-posta (silinenler hariç)
-        builder.HasIndex(u => new { u.Email, u.TenantId, u.DeletedAt }).IsUnique();
-        builder.HasIndex(u => new { u.TenantId, u.Role, u.Status });
+        // Soft-delete: eşsiz e-posta (silinenler hariç)
+        builder.HasIndex(u => new { u.Email, u.DeletedAt }).IsUnique();
+        builder.HasIndex(u => new { u.Role, u.Status });
 
         // Soft-delete global query filter
         builder.HasQueryFilter(u => u.DeletedAt == null);

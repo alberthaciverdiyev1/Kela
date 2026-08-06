@@ -1,4 +1,4 @@
-using Kela.Domain.Users.Enums;
+using Kela.Domain.Enums;
 
 namespace Kela.Application.Users.Dtos;
 

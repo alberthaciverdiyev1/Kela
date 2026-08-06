@@ -1,7 +1,5 @@
 using System.Security.Claims;
-using Kela.Application.Abstractions.Security;
-using Kela.Application.Users.Commands.Login;
-using MediatR;
+using Kela.Application.Users.Auth;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
@@ -11,16 +9,17 @@ namespace Kela.Api.Controllers;
 
 [ApiController]
 [Route("api/auth")]
-public sealed class AuthController(ISender sender) : ControllerBase
+public sealed class AuthController(IAuthService auth) : ControllerBase
 {
     /// <summary>
-    /// Kimlik doğrulama: başarılıysa tenant_id dahil claim'leri içeren
-    /// imzalı+şifreli cookie yazar (cookie-only yaklaşım).
+    /// Kimlik doğrulama: başarılıysa claim'leri içeren imzalı+şifreli cookie yazar (cookie-only yaklaşım).
     /// </summary>
     [HttpPost("login")]
-    public async Task<IActionResult> Login(LoginCommand command, CancellationToken cancellationToken)
+    public async Task<IActionResult> Login(
+        [FromBody] LoginRequest request,
+        CancellationToken cancellationToken)
     {
-        var result = await sender.Send(command, cancellationToken);
+        var result = await auth.LoginAsync(request.Email, request.Password, cancellationToken);
 
         if (result is null)
         {
@@ -36,7 +35,6 @@ public sealed class AuthController(ISender sender) : ControllerBase
             new(ClaimTypes.NameIdentifier, result.UserId.ToString()),
             new(ClaimTypes.Name, $"{result.FirstName} {result.LastName}"),
             new(ClaimTypes.Role, result.Role.ToString()),
-            new(AuthClaimTypes.TenantId, result.TenantId.ToString()),
         };
 
         var identity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
@@ -55,4 +53,6 @@ public sealed class AuthController(ISender sender) : ControllerBase
         await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
         return NoContent();
     }
+
+    public sealed record LoginRequest(string Email, string Password);
 }

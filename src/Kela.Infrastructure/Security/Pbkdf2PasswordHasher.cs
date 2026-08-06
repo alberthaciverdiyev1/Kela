@@ -1,5 +1,5 @@
 using System.Security.Cryptography;
-using Kela.Application.Abstractions.Security;
+using Kela.Application;
 
 namespace Kela.Infrastructure.Security;
 

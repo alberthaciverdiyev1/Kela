@@ -1,5 +1,5 @@
 using Kela.Application.Sections.Dtos;
-using Kela.Domain.Sections;
+using Kela.Domain.Entities;
 
 namespace Kela.Application.Sections;
 

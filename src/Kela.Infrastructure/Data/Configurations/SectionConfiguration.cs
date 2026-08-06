@@ -1,4 +1,4 @@
-using Kela.Domain.Sections;
+using Kela.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -27,7 +27,6 @@ internal sealed class SectionConfiguration : IEntityTypeConfiguration<Section>
         builder.HasMany(g => g.Students)
             .WithMany(s => s.Sections);
 
-        // Her tenant kendi "5-A"sını oluşturabilir
-        builder.HasIndex(g => new { g.Name, g.TenantId }).IsUnique();
+        builder.HasIndex(g => g.Name).IsUnique();
     }
 }
