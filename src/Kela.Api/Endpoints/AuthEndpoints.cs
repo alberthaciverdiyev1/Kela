@@ -17,7 +17,7 @@ public static class AuthEndpoints
         group.MapPost("/logout", async (SignInManager<User> signInManager) =>
         {
             await signInManager.SignOutAsync();
-            return Results.NoContent();
+            return ApiResponse.NoContent();
         }).RequireAuthorization();
 
         return app;
@@ -36,11 +36,9 @@ public static class AuthEndpoints
 
         if (result is null)
         {
-            return Results.Json(
-                ApiResponse.Error("E-posta veya şifre hatalı."),
-                statusCode: StatusCodes.Status401Unauthorized);
+            return ApiResponse.Unauthorized("E-posta veya şifre hatalı.");
         }
 
-        return Results.Ok(ApiResponse<LoginResponse>.Success(result));
+        return ApiResponse<LoginResponse>.Success(result);
     }
 }
