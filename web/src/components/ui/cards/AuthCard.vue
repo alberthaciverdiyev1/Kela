@@ -14,7 +14,7 @@
       <slot />
 
       <Divider class="my-6">
-        <span class="text-sm text-surface-400">veya</span>
+        <span class="text-sm text-surface-400">{{ i18n.t('common.or') }}</span>
       </Divider>
       <div class="text-center text-sm">
         <span class="text-surface-500">{{ footerPrompt }}</span>
@@ -27,6 +27,10 @@
 </template>
 
 <script setup>
+import { useI18nStore } from '../../../stores/i18n'
+
+const i18n = useI18nStore()
+
 defineProps({
   icon: { type: String, required: true },
   subtitle: { type: String, required: true },

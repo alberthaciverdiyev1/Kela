@@ -1,13 +1,13 @@
 <template>
   <div class="max-w-4xl mx-auto">
     <PageHeader
-      title="Site Ayarları"
-      subtitle="Site adı, renkleri ve arayüz düzeni tek yerden yönetilir. Kaydet'le tüm kullanıcılara yansır."
+      :title="i18n.t('settings.title')"
+      :subtitle="i18n.t('settings.subtitle')"
     />
 
     <!-- Durum mesajları -->
     <Message v-if="config.hasUnsavedChanges" severity="warn" :closable="false" class="mb-4">
-      Kaydedilmemiş değişiklikler var. "Kaydet" ile tüm kullanıcılara yansıtın.
+      {{ i18n.t('settings.unsaved') }}
     </Message>
     <Message v-if="config.error" severity="error" :closable="true" class="mb-4" @close="config.error = ''">
       {{ config.error }}
@@ -21,11 +21,11 @@
       <template #title>
         <div class="flex items-center gap-2">
           <i class="pi pi-globe text-primary"></i>
-          <span>Genel</span>
+          <span>{{ i18n.t('settings.general') }}</span>
         </div>
       </template>
       <template #content>
-        <label class="block text-sm font-medium text-surface-700 mb-2">Site Adı</label>
+        <label class="block text-sm font-medium text-surface-700 mb-2">{{ i18n.t('settings.siteName') }}</label>
         <InputText
           :model-value="config.siteName"
           @update:model-value="config.setSiteName($event)"
@@ -34,7 +34,7 @@
           placeholder="Kela LMS"
         />
         <p class="text-xs text-surface-400 mt-2">
-          Navbar/sidebar logosu ve alt bilgide görünür.
+          {{ i18n.t('settings.siteNameHint') }}
         </p>
       </template>
     </Card>
@@ -44,7 +44,7 @@
       <template #title>
         <div class="flex items-center gap-2">
           <i class="pi pi-bars text-primary"></i>
-          <span>Arayüz Düzeni</span>
+          <span>{{ i18n.t('settings.layout') }}</span>
         </div>
       </template>
 
@@ -76,8 +76,8 @@
                 <i v-if="config.isNavbar" class="pi pi-check text-white text-xs"></i>
               </span>
               <div>
-                <div class="font-semibold text-surface-800">Üst Menü (Navbar)</div>
-                <div class="text-sm text-surface-500">Sade, yatay üst menü</div>
+                <div class="font-semibold text-surface-800">{{ i18n.t('settings.navbarMode') }}</div>
+                <div class="text-sm text-surface-500">{{ i18n.t('settings.navbarModeDesc') }}</div>
               </div>
             </div>
           </button>
@@ -108,8 +108,8 @@
                 <i v-if="config.isSidebar" class="pi pi-check text-white text-xs"></i>
               </span>
               <div>
-                <div class="font-semibold text-surface-800">Yan Menü (Sidebar)</div>
-                <div class="text-sm text-surface-500">Solda sabit menü</div>
+                <div class="font-semibold text-surface-800">{{ i18n.t('settings.sidebarMode') }}</div>
+                <div class="text-sm text-surface-500">{{ i18n.t('settings.sidebarModeDesc') }}</div>
               </div>
             </div>
           </button>
@@ -122,7 +122,7 @@
       <template #title>
         <div class="flex items-center gap-2">
           <i class="pi pi-palette text-primary"></i>
-          <span>Site Renkleri</span>
+          <span>{{ i18n.t('settings.colors') }}</span>
         </div>
       </template>
 
@@ -134,7 +134,7 @@
             class="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-6 border-bottom-1 border-surface-100 pb-4 last:border-0 last:pb-0"
           >
             <div class="w-40 shrink-0">
-              <span class="font-semibold text-surface-800">{{ labels[name] }}</span>
+              <span class="font-semibold text-surface-800">{{ colorLabel(name) }}</span>
               <div class="text-xs text-surface-400 font-mono">--kela-{{ name }}*</div>
             </div>
 
@@ -144,7 +144,7 @@
                 :value="config.bases[name]"
                 @input="onColorChange(name, $event.target.value)"
                 class="w-11 h-11 rounded-lg border border-surface-200 cursor-pointer bg-transparent p-1"
-                :aria-label="`${labels[name]} seç`"
+                :aria-label="i18n.t('settings.colorSelect', { name: colorLabel(name) })"
               />
               <InputText
                 :model-value="config.bases[name]"
@@ -173,32 +173,32 @@
       <template #title>
         <div class="flex items-center gap-2">
           <i class="pi pi-eye text-primary"></i>
-          <span>Canlı Önizleme</span>
+          <span>{{ i18n.t('settings.preview') }}</span>
         </div>
       </template>
       <template #content>
         <div class="space-y-4">
           <div class="flex flex-wrap gap-2">
-            <Button label="Ana Buton" />
-            <Button label="İkincil" severity="secondary" />
-            <Button label="Başarı" severity="success" />
-            <Button label="Uyarı" severity="warning" />
-            <Button label="Hata" severity="danger" />
-            <Button label="Bilgi" severity="info" />
+            <Button :label="i18n.t('settings.btnPrimary')" />
+            <Button :label="i18n.t('settings.btnSecondary')" severity="secondary" />
+            <Button :label="i18n.t('settings.btnSuccess')" severity="success" />
+            <Button :label="i18n.t('settings.btnWarning')" severity="warning" />
+            <Button :label="i18n.t('settings.btnDanger')" severity="danger" />
+            <Button :label="i18n.t('settings.btnInfo')" severity="info" />
           </div>
           <div class="flex flex-wrap gap-2">
-            <span class="px-3 py-1 rounded-full text-sm font-medium bg-primary-100 text-primary-700">Ana Renk</span>
-            <span class="px-3 py-1 rounded-full text-sm font-medium bg-success-100 text-success-700">Başarı</span>
-            <span class="px-3 py-1 rounded-full text-sm font-medium bg-warning-100 text-warning-700">Uyarı</span>
-            <span class="px-3 py-1 rounded-full text-sm font-medium bg-error-100 text-error-700">Hata</span>
-            <span class="px-3 py-1 rounded-full text-sm font-medium bg-info-100 text-info-700">Bilgi</span>
+            <span class="px-3 py-1 rounded-full text-sm font-medium bg-primary-100 text-primary-700">{{ i18n.t('settings.tagPrimary') }}</span>
+            <span class="px-3 py-1 rounded-full text-sm font-medium bg-success-100 text-success-700">{{ i18n.t('settings.tagSuccess') }}</span>
+            <span class="px-3 py-1 rounded-full text-sm font-medium bg-warning-100 text-warning-700">{{ i18n.t('settings.tagWarning') }}</span>
+            <span class="px-3 py-1 rounded-full text-sm font-medium bg-error-100 text-error-700">{{ i18n.t('settings.tagDanger') }}</span>
+            <span class="px-3 py-1 rounded-full text-sm font-medium bg-info-100 text-info-700">{{ i18n.t('settings.tagInfo') }}</span>
           </div>
           <div class="flex flex-wrap gap-2">
-            <span class="px-3 py-1 rounded-md text-white text-sm font-semibold bg-primary">Filled Ana</span>
-            <span class="px-3 py-1 rounded-md text-white text-sm font-semibold bg-success">Filled Başarı</span>
-            <span class="px-3 py-1 rounded-md text-white text-sm font-semibold bg-warning">Filled Uyarı</span>
-            <span class="px-3 py-1 rounded-md text-white text-sm font-semibold bg-error">Filled Hata</span>
-            <span class="px-3 py-1 rounded-md text-white text-sm font-semibold bg-info">Filled Bilgi</span>
+            <span class="px-3 py-1 rounded-md text-white text-sm font-semibold bg-primary">{{ i18n.t('settings.filledPrimary') }}</span>
+            <span class="px-3 py-1 rounded-md text-white text-sm font-semibold bg-success">{{ i18n.t('settings.filledSuccess') }}</span>
+            <span class="px-3 py-1 rounded-md text-white text-sm font-semibold bg-warning">{{ i18n.t('settings.filledWarning') }}</span>
+            <span class="px-3 py-1 rounded-md text-white text-sm font-semibold bg-error">{{ i18n.t('settings.filledDanger') }}</span>
+            <span class="px-3 py-1 rounded-md text-white text-sm font-semibold bg-info">{{ i18n.t('settings.filledInfo') }}</span>
           </div>
         </div>
       </template>
@@ -207,14 +207,14 @@
     <!-- ════════ TEK KAYDET ════════ -->
     <div class="flex items-center gap-3">
       <Button
-        label="Kaydet"
+        :label="i18n.t('settings.save')"
         icon="pi pi-check"
         :disabled="!config.hasUnsavedChanges"
         :loading="config.loading"
         @click="save"
       />
       <Button
-        label="Varsayılanlara Dön"
+        :label="i18n.t('settings.reset')"
         icon="pi pi-refresh"
         text
         severity="secondary"
@@ -228,15 +228,30 @@
 <script setup>
 import { ref, onMounted } from 'vue'
 import { useSiteConfigStore } from '../../stores/siteConfig'
-import { COLOR_NAMES, COLOR_LABELS } from '../../theme/tokens'
+import { useI18n } from '../../stores/i18n'
+import { COLOR_NAMES } from '../../theme/tokens'
 import PageHeader from '../../components/ui/typography/PageHeader.vue'
 
 const config = useSiteConfigStore()
+const i18n = useI18n()
+
+// Renk adı → i18n anahtarı
+const COLOR_I18N = {
+  primary: 'settings.color.primary',
+  secondary: 'settings.color.secondary',
+  success: 'settings.color.success',
+  warning: 'settings.color.warning',
+  error: 'settings.color.error',
+  info: 'settings.color.info',
+}
 
 const colorNames = COLOR_NAMES
-const labels = COLOR_LABELS
 const scales = [50, 100, 200, 300, 400, 500, 600, 700, 800, 900]
 const savedMessage = ref('')
+
+function colorLabel(name) {
+  return i18n.t(COLOR_I18N[name] ?? name)
+}
 
 // Sayfa açıldığında sunucudan en güncel hali çek
 onMounted(() => config.refresh())
@@ -253,7 +268,7 @@ function onColorChange(name, value) {
 async function save() {
   const result = await config.save()
   if (result.ok) {
-    savedMessage.value = 'Site ayarları kaydedildi. Tüm kullanıcılara yansıdı.'
+    savedMessage.value = i18n.t('settings.saved')
   }
 }
 

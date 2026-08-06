@@ -1,10 +1,12 @@
 import { ref, computed } from 'vue'
 import { useAuthStore } from '../stores/auth'
+import { useI18nStore } from '../stores/i18n'
 
 // Navbar ve Sidebar için ortak kullanıcı menüsü.
 // Ayarlar burada değil — rol bazlı nav menüsünde (teacher/student/parent).
 export function useUserMenu() {
   const auth = useAuthStore()
+  const i18n = useI18nStore()
   const menuRef = ref(null)
 
   const initials = computed(() => {
@@ -14,9 +16,9 @@ export function useUserMenu() {
     return (parts[0]?.[0] ?? '') + (parts[1]?.[0] ?? '')
   })
 
-  const userMenuItems = ref([
+  const userMenuItems = computed(() => [
     {
-      label: 'Çıkış Yap',
+      label: i18n.t('nav.logout'),
       icon: 'pi pi-sign-out',
       command: () => auth.logout(),
     },

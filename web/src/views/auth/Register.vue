@@ -1,9 +1,9 @@
 <template>
   <AuthCard
     icon="pi pi-user-plus"
-    subtitle="Yeni hesap oluşturun"
-    footer-prompt="Zaten hesabınız var mı?"
-    footer-link-text="Giriş Yap"
+    :subtitle="i18n.t('auth.registerSubtitle')"
+    :footer-prompt="i18n.t('auth.haveAccount')"
+    :footer-link-text="i18n.t('auth.login')"
     footer-link-route="login"
   >
     <template #messages>
@@ -20,48 +20,48 @@
         <TextInput
           id="firstName"
           v-model="firstName"
-          label="Ad"
+          :label="i18n.t('auth.firstName')"
           autocomplete="given-name"
           :error="firstNameError"
-          @blur="firstNameError = firstName.trim() ? '' : 'Ad zorunludur.'"
+          @blur="firstNameError = firstName.trim() ? '' : i18n.t('auth.reqFirstName')"
         />
         <TextInput
           id="lastName"
           v-model="lastName"
-          label="Soyad"
+          :label="i18n.t('auth.lastName')"
           autocomplete="family-name"
           :error="lastNameError"
-          @blur="lastNameError = lastName.trim() ? '' : 'Soyad zorunludur.'"
+          @blur="lastNameError = lastName.trim() ? '' : i18n.t('auth.reqLastName')"
         />
       </div>
 
       <TextInput
         id="email"
         v-model="email"
-        label="E-posta"
+        :label="i18n.t('auth.email')"
         type="email"
         autocomplete="email"
         :error="emailError"
-        @blur="emailError = email.trim() ? (emailPattern.test(email.trim()) ? '' : 'Geçerli bir e-posta girin.') : 'E-posta zorunludur.'"
+        @blur="emailError = email.trim() ? (emailPattern.test(email.trim()) ? '' : i18n.t('auth.invalidEmail')) : i18n.t('auth.reqEmail')"
       />
 
       <PasswordInput
         id="password"
         v-model="password"
-        label="Şifre"
+        :label="i18n.t('auth.password')"
         :error="passwordError"
-        @blur="passwordError = password ? (password.length >= 6 ? '' : 'Şifre en az 6 karakter olmalıdır.') : 'Şifre zorunludur.'"
+        @blur="passwordError = password ? (password.length >= 6 ? '' : i18n.t('auth.passwordMin')) : i18n.t('auth.reqPassword')"
       />
 
       <PasswordInput
         id="confirmPassword"
         v-model="confirmPassword"
-        label="Şifre Tekrarı"
+        :label="i18n.t('auth.passwordConfirm')"
         :error="confirmError"
-        @blur="confirmError = confirmPassword ? (confirmPassword === password ? '' : 'Şifreler eşleşmiyor.') : 'Şifre tekrarı zorunludur.'"
+        @blur="confirmError = confirmPassword ? (confirmPassword === password ? '' : i18n.t('auth.passwordMismatch')) : i18n.t('auth.reqConfirmPassword')"
       />
 
-      <SubmitButton label="Kayıt Ol" icon="pi pi-check-circle" :loading="auth.loading" />
+      <SubmitButton :label="i18n.t('auth.register')" icon="pi pi-check-circle" :loading="auth.loading" />
     </form>
   </AuthCard>
 </template>
@@ -70,12 +70,14 @@
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAuthStore } from '../../stores/auth'
+import { useI18n } from '../../stores/i18n'
 import AuthCard from '../../components/ui/cards/AuthCard.vue'
 import TextInput from '../../components/ui/inputs/TextInput.vue'
 import PasswordInput from '../../components/ui/inputs/PasswordInput.vue'
 import SubmitButton from '../../components/ui/buttons/SubmitButton.vue'
 
 const auth = useAuthStore()
+const i18n = useI18n()
 const router = useRouter()
 
 const firstName = ref('')
@@ -96,17 +98,17 @@ const successMessage = ref('')
 const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
 
 function validate() {
-  firstNameError.value = firstName.value.trim() ? '' : 'Ad zorunludur.'
-  lastNameError.value = lastName.value.trim() ? '' : 'Soyad zorunludur.'
+  firstNameError.value = firstName.value.trim() ? '' : i18n.t('auth.reqFirstName')
+  lastNameError.value = lastName.value.trim() ? '' : i18n.t('auth.reqLastName')
   emailError.value = email.value.trim()
-    ? emailPattern.test(email.value.trim()) ? '' : 'Geçerli bir e-posta girin.'
-    : 'E-posta zorunludur.'
+    ? emailPattern.test(email.value.trim()) ? '' : i18n.t('auth.invalidEmail')
+    : i18n.t('auth.reqEmail')
   passwordError.value = password.value
-    ? password.value.length >= 6 ? '' : 'Şifre en az 6 karakter olmalıdır.'
-    : 'Şifre zorunludur.'
+    ? password.value.length >= 6 ? '' : i18n.t('auth.passwordMin')
+    : i18n.t('auth.reqPassword')
   confirmError.value = confirmPassword.value
-    ? confirmPassword.value === password.value ? '' : 'Şifreler eşleşmiyor.'
-    : 'Şifre tekrarı zorunludur.'
+    ? confirmPassword.value === password.value ? '' : i18n.t('auth.passwordMismatch')
+    : i18n.t('auth.reqConfirmPassword')
 
   return !firstNameError.value && !lastNameError.value && !emailError.value &&
     !passwordError.value && !confirmError.value
@@ -126,7 +128,7 @@ async function submit() {
   })
 
   if (result.ok) {
-    successMessage.value = 'Kaydınız oluşturuldu. Lütfen giriş yapın.'
+    successMessage.value = i18n.t('auth.registerSuccess')
     setTimeout(() => router.push({ name: 'login' }), 1500)
   } else {
     errorMessage.value = result.message

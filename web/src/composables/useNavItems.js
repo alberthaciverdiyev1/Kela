@@ -1,30 +1,32 @@
 import { computed } from 'vue'
 import { useAuthStore, ROLES } from '../stores/auth'
+import { useI18nStore } from '../stores/i18n'
 
 // Rol bazlı panel menüsü. Her rol kendi öğelerini görür;
-// başka rolün öğesi asla gösterilmez. Yeni panel öğesi eklemek için
-// role ait diziye giriş eklemek + router'a karşılık gelen rota açmak yeterli.
+// başka rolün öğesi asla gösterilmez. Etiketler aktif dile göre çevrilir.
 export function useNavItems() {
   const auth = useAuthStore()
+  const i18n = useI18nStore()
 
   const navItems = computed(() => {
+    const t = i18n.t
     switch (auth.role) {
       case ROLES.Teacher:
         return [
-          { label: 'Dashboard', icon: 'pi pi-th-large', name: 'teacher.dashboard' },
-          { label: 'Öğrenciler', icon: 'pi pi-user', name: 'teacher.students' },
-          { label: 'Sınıflar', icon: 'pi pi-users', name: 'teacher.sections' },
-          { label: 'Ayarlar', icon: 'pi pi-cog', name: 'teacher.settings' },
+          { label: t('nav.dashboard'), icon: 'pi pi-th-large', name: 'teacher.dashboard' },
+          { label: t('nav.students'), icon: 'pi pi-user', name: 'teacher.students' },
+          { label: t('nav.classes'), icon: 'pi pi-users', name: 'teacher.sections' },
+          { label: t('nav.settings'), icon: 'pi pi-cog', name: 'teacher.settings' },
         ]
       case ROLES.Student:
         return [
-          { label: 'Dashboard', icon: 'pi pi-th-large', name: 'student.dashboard' },
-          { label: 'Derslerim', icon: 'pi pi-book', name: 'student.courses' },
+          { label: t('nav.dashboard'), icon: 'pi pi-th-large', name: 'student.dashboard' },
+          { label: t('nav.myCourses'), icon: 'pi pi-book', name: 'student.courses' },
         ]
       case ROLES.Parent:
         return [
-          { label: 'Dashboard', icon: 'pi pi-th-large', name: 'parent.dashboard' },
-          { label: 'Çocuklarım', icon: 'pi pi-users', name: 'parent.children' },
+          { label: t('nav.dashboard'), icon: 'pi pi-th-large', name: 'parent.dashboard' },
+          { label: t('nav.myChildren'), icon: 'pi pi-users', name: 'parent.children' },
         ]
       default:
         return []

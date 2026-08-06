@@ -1,9 +1,9 @@
 <template>
     <AuthCard
         icon="pi pi-book"
-        subtitle="Hesabınıza giriş yapın"
-        footer-prompt="Hesabınız yok mu?"
-        footer-link-text="Kayıt Ol"
+        :subtitle="i18n.t('auth.loginSubtitle')"
+        :footer-prompt="i18n.t('auth.noAccount')"
+        :footer-link-text="i18n.t('auth.register')"
         footer-link-route="register"
     >
         <template #messages>
@@ -16,20 +16,20 @@
             <TextInput
                 id="email"
                 v-model="email"
-                label="E-posta"
+                :label="i18n.t('auth.email')"
                 type="email"
                 autocomplete="username"
                 :error="emailError"
-                @blur="emailError = email.trim() ? '' : 'E-posta zorunludur.'"
+                @blur="emailError = email.trim() ? '' : i18n.t('auth.reqEmail')"
             />
             <PasswordInput
                 id="password"
                 v-model="password"
-                label="Şifre"
+                :label="i18n.t('auth.password')"
                 :error="passwordError"
-                @blur="passwordError = password ? '' : 'Şifre zorunludur.'"
+                @blur="passwordError = password ? '' : i18n.t('auth.reqPassword')"
             />
-            <SubmitButton label="Giriş Yap" icon="pi pi-sign-in" :loading="auth.loading"/>
+            <SubmitButton :label="i18n.t('auth.login')" icon="pi pi-sign-in" :loading="auth.loading"/>
         </form>
     </AuthCard>
 </template>
@@ -38,12 +38,14 @@
 import {ref} from 'vue'
 import {useRoute, useRouter} from 'vue-router'
 import {useAuthStore, homeRouteFor} from '../../stores/auth'
+import {useI18n} from '../../stores/i18n'
 import AuthCard from '../../components/ui/cards/AuthCard.vue'
 import TextInput from '../../components/ui/inputs/TextInput.vue'
 import PasswordInput from '../../components/ui/inputs/PasswordInput.vue'
 import SubmitButton from '../../components/ui/buttons/SubmitButton.vue'
 
 const auth = useAuthStore()
+const i18n = useI18n()
 const route = useRoute()
 const router = useRouter()
 
@@ -54,8 +56,8 @@ const passwordError = ref('')
 const errorMessage = ref('')
 
 function validate() {
-    emailError.value = email.value.trim() ? '' : 'E-posta zorunludur.'
-    passwordError.value = password.value ? '' : 'Şifre zorunludur.'
+    emailError.value = email.value.trim() ? '' : i18n.t('auth.reqEmail')
+    passwordError.value = password.value ? '' : i18n.t('auth.reqPassword')
     return !emailError.value && !passwordError.value
 }
 

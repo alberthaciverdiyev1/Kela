@@ -1,10 +1,18 @@
 <template>
     <div class="auth-bg min-h-screen flex items-center justify-center p-4">
+        <!-- Dil seçici: giriş/kayıt sayfalarında sağ üstte -->
+        <div class="absolute top-4 right-4">
+            <LanguageSwitcher />
+        </div>
         <div class="w-full max-w-md">
             <router-view/>
         </div>
     </div>
 </template>
+
+<script setup>
+import LanguageSwitcher from '../components/LanguageSwitcher.vue'
+</script>
 
 <style scoped>
 .auth-bg {

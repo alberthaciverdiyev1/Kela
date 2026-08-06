@@ -6,7 +6,7 @@
           <div class="flex items-center gap-4">
             <Avatar :label="initials" size="xlarge" shape="circle" class="bg-white/20 text-white" />
             <div>
-              <h1 class="text-2xl font-bold m-0">Hoş geldin, {{ auth.fullName }}!</h1>
+              <h1 class="text-2xl font-bold m-0">{{ i18n.t('panel.welcome', { name: auth.fullName }) }}</h1>
               <div class="flex items-center gap-2 mt-2">
                 <Chip :label="auth.roleName" class="bg-white/20 text-white border-none" />
               </div>
@@ -17,16 +17,15 @@
     </Card>
 
     <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-      <StatCard icon="pi pi-users" icon-bg-class="bg-primary-50 text-primary" label="Çocuklarım" :value="0" />
-      <StatCard icon="pi pi-credit-card" icon-bg-class="bg-success-50 text-success-600" label="Ödemeler" :value="0" />
-      <StatCard icon="pi pi-megaphone" icon-bg-class="bg-warning-50 text-warning-600" label="Duyurular" :value="0" />
+      <StatCard icon="pi pi-users" icon-bg-class="bg-primary-50 text-primary" :label="i18n.t('nav.myChildren')" :value="0" />
+      <StatCard icon="pi pi-credit-card" icon-bg-class="bg-success-50 text-success-600" :label="i18n.t('nav.payments')" :value="0" />
+      <StatCard icon="pi pi-megaphone" icon-bg-class="bg-warning-50 text-warning-600" :label="i18n.t('nav.announcements')" :value="0" />
     </div>
 
     <Card class="border-none shadow rounded-2xl">
       <template #content>
         <Message severity="info" :closable="false">
-          Veli paneli: çocuklarının durumunu, ödemeleri ve duyuruları buradan takip edeceksin.
-          Çocuklarım sayfası yakında gelecek.
+          {{ i18n.t('parent.info') }}
         </Message>
       </template>
     </Card>
@@ -36,9 +35,11 @@
 <script setup>
 import { computed } from 'vue'
 import { useAuthStore } from '../../stores/auth'
+import { useI18n } from '../../stores/i18n'
 import StatCard from '../../components/ui/cards/StatCard.vue'
 
 const auth = useAuthStore()
+const i18n = useI18n()
 
 const initials = computed(() => {
   const name = auth.fullName.trim()

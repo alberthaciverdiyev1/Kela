@@ -2,6 +2,7 @@ import { defineStore } from 'pinia'
 import { authApi } from '../api/auth'
 import router from '../router'
 import { useSiteConfigStore } from './siteConfig'
+import { useI18nStore } from './i18n'
 
 // Roller — Identity rol adları (backend Kela.Domain/Common/RoleNames.cs).
 // Vue tarafı YALNIZCA öğrenci/öğretmen/veli içindir; Admin ayrı panelde yönetilir.
@@ -25,9 +26,14 @@ export const useAuthStore = defineStore('auth', {
     fullName: (state) =>
       state.user ? `${state.user.firstName} ${state.user.lastName}` : '',
     roleName: (state) => {
-      // Rol artık backend'den string gelir — önce ROLES'ta mı kontrol et,
-      // bilinmeyen rol adlarını da göster (Identity'e sonradan eklenen roller).
-      return ROLES[state.user?.role] ?? state.user?.role ?? 'Bilinmiyor'
+      // Rol backend'den string gelir — aktif dile çevrilir.
+      const i18n = useI18nStore()
+      const role = state.user?.role
+      if (!role) return i18n.t('common.unknownRole')
+      const key = `role.${role}`
+      const translated = i18n.t(key)
+      // Bilinmeyen rol adları (Identity'e sonradan eklenenler) olduğu gibi gösterilir.
+      return translated === key ? role : translated
     },
     isTeacher: (state) => state.user?.role === ROLES.Teacher,
   },

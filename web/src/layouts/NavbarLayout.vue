@@ -11,7 +11,7 @@
       <template #center>
         <IconField class="hidden md:flex w-72">
           <InputIcon class="pi pi-search" />
-          <InputText placeholder="Ara..." class="w-full" />
+          <InputText :placeholder="i18n.t('nav.search')" class="w-full" />
         </IconField>
       </template>
 
@@ -32,6 +32,7 @@
         </div>
 
         <div class="flex items-center gap-2">
+          <LanguageSwitcher />
           <Menu ref="menuRef" :model="userMenuItems" popup class="p-2" />
           <div class="flex items-center gap-2 cursor-pointer p-2 rounded-lg hover:bg-surface-100" @click="toggleMenu">
             <Avatar :label="initials" shape="circle" class="bg-primary text-white" />
@@ -56,6 +57,8 @@
 import { useRoute } from 'vue-router'
 import { useUserMenu } from '../composables/useUserMenu'
 import { useSiteConfigStore } from '../stores/siteConfig'
+import { useI18nStore } from '../stores/i18n'
+import LanguageSwitcher from '../components/LanguageSwitcher.vue'
 
 defineProps({
   navItems: { type: Array, default: () => [] },
@@ -63,6 +66,7 @@ defineProps({
 
 const route = useRoute()
 const config = useSiteConfigStore()
+const i18n = useI18nStore()
 const { auth, initials, userMenuItems, menuRef, toggleMenu } = useUserMenu()
 
 function isActive(name) {

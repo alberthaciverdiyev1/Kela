@@ -1,5 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import { useAuthStore, ROLES, homeRouteFor } from '../stores/auth'
+import { useI18nStore } from '../stores/i18n'
 
 // ─────────────────────────────────────────────────────────────
 // A PLANI — ROL BAZLI PANEL AĞAÇLARI
@@ -24,25 +25,25 @@ const routes = [
         path: 'teacher/dashboard',
         name: 'teacher.dashboard',
         component: () => import('../views/teacher/TeacherDashboard.vue'),
-        meta: { title: 'Dashboard', requiresRole: [ROLES.Teacher] },
+        meta: { title: 'nav.dashboard', requiresRole: [ROLES.Teacher] },
       },
       {
         path: 'teacher/students',
         name: 'teacher.students',
         component: () => import('../views/teacher/Students.vue'),
-        meta: { title: 'Öğrenciler', requiresRole: [ROLES.Teacher] },
+        meta: { title: 'nav.students', requiresRole: [ROLES.Teacher] },
       },
       {
         path: 'teacher/sections',
         name: 'teacher.sections',
         component: () => import('../views/common/ComingSoon.vue'),
-        meta: { title: 'Sınıflar', requiresRole: [ROLES.Teacher] },
+        meta: { title: 'nav.classes', requiresRole: [ROLES.Teacher] },
       },
       {
         path: 'teacher/settings',
         name: 'teacher.settings',
         component: () => import('../views/settings/Settings.vue'),
-        meta: { title: 'Ayarlar', requiresRole: [ROLES.Teacher] },
+        meta: { title: 'nav.settings', requiresRole: [ROLES.Teacher] },
       },
 
       // ── Student paneli ──
@@ -50,13 +51,13 @@ const routes = [
         path: 'student/dashboard',
         name: 'student.dashboard',
         component: () => import('../views/student/StudentDashboard.vue'),
-        meta: { title: 'Dashboard', requiresRole: [ROLES.Student] },
+        meta: { title: 'nav.dashboard', requiresRole: [ROLES.Student] },
       },
       {
         path: 'student/courses',
         name: 'student.courses',
         component: () => import('../views/common/ComingSoon.vue'),
-        meta: { title: 'Derslerim', requiresRole: [ROLES.Student] },
+        meta: { title: 'nav.myCourses', requiresRole: [ROLES.Student] },
       },
 
       // ── Parent paneli ──
@@ -64,13 +65,13 @@ const routes = [
         path: 'parent/dashboard',
         name: 'parent.dashboard',
         component: () => import('../views/parent/ParentDashboard.vue'),
-        meta: { title: 'Dashboard', requiresRole: [ROLES.Parent] },
+        meta: { title: 'nav.dashboard', requiresRole: [ROLES.Parent] },
       },
       {
         path: 'parent/children',
         name: 'parent.children',
         component: () => import('../views/common/ComingSoon.vue'),
-        meta: { title: 'Çocuklarım', requiresRole: [ROLES.Parent] },
+        meta: { title: 'nav.myChildren', requiresRole: [ROLES.Parent] },
       },
     ],
   },
@@ -80,7 +81,7 @@ const routes = [
     path: '/blocked',
     name: 'blocked',
     component: () => import('../views/NoAccess.vue'),
-    meta: { title: 'Erişim Yok' },
+    meta: { title: 'noAccess.title' },
   },
 
   {
@@ -92,13 +93,13 @@ const routes = [
         path: 'login',
         name: 'login',
         component: () => import('../views/auth/Login.vue'),
-        meta: { title: 'Giriş Yap' },
+        meta: { title: 'auth.login' },
       },
       {
         path: 'register',
         name: 'register',
         component: () => import('../views/auth/Register.vue'),
-        meta: { title: 'Kayıt Ol' },
+        meta: { title: 'auth.register' },
       },
     ],
   },
@@ -138,7 +139,9 @@ router.beforeEach((to) => {
 })
 
 router.afterEach((to) => {
-  document.title = to.meta.title ? `${to.meta.title} · Kela` : 'Kela'
+  const i18n = useI18nStore()
+  const title = to.meta.title ? i18n.t(to.meta.title) : 'Kela'
+  document.title = `${title} · Kela`
 })
 
 export default router

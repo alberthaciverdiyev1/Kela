@@ -6,10 +6,10 @@
     <!-- ════ ÜST BAR: başlık + Yeni Öğrenci (modal açar) ════ -->
     <div class="flex items-start justify-between gap-4 mb-6">
       <div>
-        <h1 class="text-2xl font-bold text-surface-800 mb-1">Öğrenciler</h1>
-        <p class="text-surface-500">Öğrenci oluştur — sistem mail ve şifreyi üretir, öğrenciye iletirsin.</p>
+        <h1 class="text-2xl font-bold text-surface-800 mb-1">{{ i18n.t('students.title') }}</h1>
+        <p class="text-surface-500">{{ i18n.t('students.subtitle') }}</p>
       </div>
-      <Button label="Yeni Öğrenci" icon="pi pi-user-plus" @click="openCreateDialog" />
+      <Button :label="i18n.t('students.new')" icon="pi pi-user-plus" @click="openCreateDialog" />
     </div>
 
     <!-- ════ ÖĞRENCİ LİSTESİ ════ -->
@@ -17,7 +17,7 @@
       <template #title>
         <div class="flex items-center gap-2">
           <i class="pi pi-users text-primary"></i>
-          <span>Öğrenci Listesi</span>
+          <span>{{ i18n.t('students.list') }}</span>
         </div>
       </template>
       <template #content>
@@ -33,16 +33,16 @@
           size="small"
           striped-rows
         >
-          <Column field="firstName" header="Ad" :sortable="true" />
-          <Column field="lastName" header="Soyad" :sortable="true" />
-          <Column field="phoneNumber" header="Telefon" />
-          <Column field="email" header="E-posta" />
-          <Column field="birthDate" header="Doğum Tarihi">
+          <Column field="firstName" :header="i18n.t('students.col.firstName')" :sortable="true" />
+          <Column field="lastName" :header="i18n.t('students.col.lastName')" :sortable="true" />
+          <Column field="phoneNumber" :header="i18n.t('students.col.phone')" />
+          <Column field="email" :header="i18n.t('students.col.email')" />
+          <Column field="birthDate" :header="i18n.t('students.col.birthDate')">
             <template #body="{ data }">
               {{ formatDate(data.birthDate) }}
             </template>
           </Column>
-          <Column field="cityName" header="Şehir" />
+          <Column field="cityName" :header="i18n.t('students.col.city')" />
           <Column header="" :style="{ width: '90px' }">
             <template #body="{ data }">
               <Button
@@ -58,7 +58,7 @@
           </Column>
           <template #empty>
             <div class="text-center text-surface-400 py-8">
-              Henüz öğrenci yok. Sağ üstteki "Yeni Öğrenci" ile ilk öğrenciyi oluştur.
+              {{ i18n.t('students.empty') }}
             </div>
           </template>
         </DataTable>
@@ -66,29 +66,29 @@
     </Card>
 
     <!-- ════ YENİ ÖĞRENCİ MODALI — Login input stilleri ════ -->
-    <Dialog v-model:visible="showCreateDialog" modal header="Yeni Öğrenci" :style="{ width: '440px' }">
+    <Dialog v-model:visible="showCreateDialog" modal :header="i18n.t('students.new')" :style="{ width: '440px' }">
       <form @submit.prevent="submit" class="flex flex-col gap-5 pt-1">
         <TextInput
           id="firstName"
           v-model="form.firstName"
-          label="Ad *"
+          :label="i18n.t('students.field.firstName')"
           :error="errors.firstName"
           autocomplete="off"
-          @blur="errors.firstName = form.firstName.trim() ? '' : 'Ad zorunludur.'"
+          @blur="errors.firstName = form.firstName.trim() ? '' : i18n.t('students.reqFirstName')"
         />
         <TextInput
           id="phoneNumber"
           v-model="form.phoneNumber"
-          label="Telefon *"
+          :label="i18n.t('students.field.phone')"
           type="tel"
           autocomplete="tel"
           :error="errors.phoneNumber"
-          @blur="errors.phoneNumber = form.phoneNumber.trim() ? '' : 'Telefon zorunludur.'"
+          @blur="errors.phoneNumber = form.phoneNumber.trim() ? '' : i18n.t('students.reqPhone')"
         />
         <TextInput
           id="email"
           v-model="form.email"
-          label="E-posta (opsiyonel)"
+          :label="i18n.t('students.field.email')"
           type="email"
           autocomplete="off"
           :error="errors.email"
@@ -97,17 +97,17 @@
         <TextInput
           id="lastName"
           v-model="form.lastName"
-          label="Soyad (opsiyonel)"
+          :label="i18n.t('students.field.lastName')"
           autocomplete="off"
         />
 
         <Message severity="info" :closable="false" class="!text-xs">
-          E-posta boş bırakılırsa sistem otomatik üretir. Mail ve şifre oluşturma sonrası tek ekranda gösterilir.
+          {{ i18n.t('students.info') }}
         </Message>
 
         <div class="flex justify-end gap-2 pt-1">
           <Button
-            label="Vazgeç"
+            :label="i18n.t('common.cancel')"
             icon="pi pi-times"
             text
             severity="secondary"
@@ -115,20 +115,20 @@
             :disabled="saving"
             @click="showCreateDialog = false"
           />
-          <Button label="Öğrenci Oluştur" icon="pi pi-user-plus" :loading="saving" type="submit" />
+          <Button :label="i18n.t('students.create')" icon="pi pi-user-plus" :loading="saving" type="submit" />
         </div>
       </form>
     </Dialog>
 
     <!-- ════ MAİL + ŞİFRE DIALOG — TEK KOPYALA BUTONU ════ -->
-    <Dialog v-model:visible="showCredentials" modal header="Öğrenci Oluşturuldu" :style="{ width: '460px' }">
+    <Dialog v-model:visible="showCredentials" modal :header="i18n.t('students.createdTitle')" :style="{ width: '460px' }">
       <div class="space-y-4">
         <Message severity="success" :closable="false" class="!text-sm">
-          Öğrenci başarıyla oluşturuldu. Giriş bilgilerini <strong>tek tıkla kopyala</strong> ve öğrenciye ilet.
+          {{ i18n.t('students.createdMsg') }}
         </Message>
 
         <div class="rounded-xl border border-surface-200 p-4">
-          <div class="text-xs text-surface-400 mb-2">E-posta | Şifre</div>
+          <div class="text-xs text-surface-400 mb-2">{{ i18n.t('students.emailPassword') }}</div>
           <div class="flex items-center gap-2">
             <InputText :model-value="credentialsText" readonly class="w-full font-mono text-sm" />
             <Button
@@ -136,18 +136,18 @@
               text
               rounded
               severity="info"
-              title="Kopyala"
+              :title="i18n.t('students.copy')"
               @click="copyCredentials"
             />
           </div>
         </div>
 
         <Message severity="warn" :closable="false" class="!text-sm">
-          Şifre yalnızca bu ekranda bir kez gösterilir. Sonradan görüntülenemez.
+          {{ i18n.t('students.passwordOnce') }}
         </Message>
 
         <div class="flex justify-end gap-2 pt-1">
-          <Button label="Tamam" icon="pi pi-check" @click="showCredentials = false" />
+          <Button :label="i18n.t('common.confirm')" icon="pi pi-check" @click="showCredentials = false" />
         </div>
       </div>
     </Dialog>
@@ -155,12 +155,14 @@
 </template>
 
 <script setup>
-import { ref, reactive, onMounted, computed } from 'vue'
+import { ref, reactive, onMounted, computed, watch } from 'vue'
 import { useToast } from 'primevue/usetoast'
 import { studentsApi } from '../../api/students'
+import { useI18n } from '../../stores/i18n'
 import TextInput from '../../components/ui/inputs/TextInput.vue'
 
 const toast = useToast()
+const i18n = useI18n()
 
 // ── Modal durumu ──
 const showCreateDialog = ref(false)
@@ -197,6 +199,9 @@ const credentialsText = computed(() => {
 
 onMounted(loadStudents)
 
+// Dil değişince listedeki şehir adları (çeviri) güncellensin
+watch(() => i18n.locale, () => loadStudents())
+
 function openCreateDialog() {
   resetForm()
   showCreateDialog.value = true
@@ -205,11 +210,11 @@ function openCreateDialog() {
 async function loadStudents() {
   loading.value = true
   try {
-    const res = await studentsApi.getPage(page.value, pageSize, 'tr')
+    const res = await studentsApi.getPage(page.value, pageSize, i18n.locale)
     students.value = res.items
     totalCount.value = res.totalCount
   } catch (e) {
-    toast.add({ severity: 'error', summary: 'Hata', detail: e.message, life: 4000 })
+    toast.add({ severity: 'error', summary: i18n.t('common.error'), detail: e.message, life: 4000 })
   } finally {
     loading.value = false
   }
@@ -223,12 +228,12 @@ function onPage(ev) {
 
 function validateEmail() {
   const email = form.email.trim()
-  errors.email = email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) ? 'Geçerli bir e-posta adresi girin.' : ''
+  errors.email = email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) ? i18n.t('students.invalidEmail') : ''
 }
 
 function validate() {
-  errors.firstName = form.firstName.trim() ? '' : 'Ad zorunludur.'
-  errors.phoneNumber = form.phoneNumber.trim() ? '' : 'Telefon zorunludur.'
+  errors.firstName = form.firstName.trim() ? '' : i18n.t('students.reqFirstName')
+  errors.phoneNumber = form.phoneNumber.trim() ? '' : i18n.t('students.reqPhone')
   validateEmail()
   return !errors.firstName && !errors.phoneNumber && !errors.email
 }
@@ -254,7 +259,7 @@ async function submit() {
     resetForm()
     await loadStudents()
   } catch (e) {
-    toast.add({ severity: 'error', summary: 'Oluşturulamadı', detail: e.message, life: 5000 })
+    toast.add({ severity: 'error', summary: i18n.t('students.createFail'), detail: e.message, life: 5000 })
   } finally {
     saving.value = false
   }
@@ -271,14 +276,15 @@ function resetForm() {
 }
 
 async function remove(student) {
-  if (!confirm(`${student.firstName} ${student.lastName || ''} öğrencisini silmek istediğine emin misin?`.trim())) return
+  const name = `${student.firstName} ${student.lastName || ''}`.trim()
+  if (!confirm(i18n.t('students.deleteConfirm', { name }))) return
   deletingId.value = student.id
   try {
     await studentsApi.remove(student.id)
-    toast.add({ severity: 'success', summary: 'Silindi', detail: 'Öğrenci silindi.', life: 3000 })
+    toast.add({ severity: 'success', summary: i18n.t('common.confirm'), detail: i18n.t('students.deleted'), life: 3000 })
     await loadStudents()
   } catch (e) {
-    toast.add({ severity: 'error', summary: 'Hata', detail: e.message, life: 4000 })
+    toast.add({ severity: 'error', summary: i18n.t('common.error'), detail: e.message, life: 4000 })
   } finally {
     deletingId.value = null
   }
@@ -294,9 +300,9 @@ function formatDate(value) {
 async function copyCredentials() {
   try {
     await navigator.clipboard.writeText(credentialsText.value)
-    toast.add({ severity: 'success', summary: 'Kopyalandı', detail: 'Mail ve şifre panoya kopyalandı.', life: 2500 })
+    toast.add({ severity: 'success', summary: i18n.t('students.copy'), detail: i18n.t('students.copied'), life: 2500 })
   } catch {
-    toast.add({ severity: 'warn', summary: 'Kopyalanamadı', detail: 'Manuel kopyala.', life: 3000 })
+    toast.add({ severity: 'warn', summary: i18n.t('students.copy'), detail: i18n.t('students.copyFailed'), life: 3000 })
   }
 }
 </script>

@@ -25,7 +25,8 @@
       </nav>
 
       <!-- Kullanıcı -->
-      <div class="p-4 border-t border-surface-100">
+      <div class="p-4 border-t border-surface-100 space-y-2">
+        <LanguageSwitcher />
         <Menu ref="menuRef" :model="userMenuItems" popup class="p-2" />
         <div
           class="flex items-center gap-3 p-2 rounded-lg hover:bg-surface-100 cursor-pointer"
@@ -58,6 +59,7 @@
 import { useRoute } from 'vue-router'
 import { useUserMenu } from '../composables/useUserMenu'
 import { useSiteConfigStore } from '../stores/siteConfig'
+import LanguageSwitcher from '../components/LanguageSwitcher.vue'
 
 defineProps({
   navItems: { type: Array, default: () => [] },
