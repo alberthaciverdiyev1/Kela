@@ -1,5 +1,6 @@
 using Kela.Application;
 using Kela.Application.Features.Sections;
+using Kela.Application.Features.SiteConfiguration;
 using Kela.Application.Features.Users;
 using Kela.Application.Patterns;
 using Kela.Domain.Entities;
@@ -50,6 +51,7 @@ public static class DependencyInjection
 
         services.AddScoped<IUserRepository, UserRepository>();
         services.AddScoped<ISectionRepository, SectionRepository>();
+        services.AddScoped<ISiteConfigurationRepository, SiteConfigurationRepository>();
         services.AddScoped<IUnitOfWork>(sp => sp.GetRequiredService<KelaDbContext>());
 
         return services;

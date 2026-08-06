@@ -3,7 +3,7 @@
 
 /* =========================================================
    Kela Tema Değişkenleri — Varsayılan palet.
-   Çalışma anında store (src/stores/theme.js) bu değerleri
+   Çalışma anında store (src/stores/siteConfig.js) bu değerleri
    documentElement üzerine INLINE olarak yazar ve ezer.
    => Rengi nerede değiştirirseniz değiştirin, bu :root bloğu
    sadece ilk açılışta (JS yüklenmeden önce) yedek görevi görür.

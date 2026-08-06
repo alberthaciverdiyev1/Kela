@@ -4,19 +4,10 @@
       <template #start>
         <div class="flex items-center gap-3">
           <Avatar icon="pi pi-book" shape="circle" class="bg-primary text-white" />
-          <span class="font-bold text-xl text-primary">Kela LMS</span>
+          <span class="font-bold text-xl text-primary">{{ config.siteName }}</span>
         </div>
       </template>
 
-      <!-- Ortada arama kutusu -->
-      <template #center>
-        <IconField icon-position="left" class="w-full max-w-md mx-auto">
-          <InputIcon>
-            <i class="pi pi-search"></i>
-          </InputIcon>
-          <InputText placeholder="Kurs, öğrenci, ödev ara..." class="w-full" />
-        </IconField>
-      </template>
 
       <template #end>
         <div class="flex items-center gap-2">
@@ -45,7 +36,7 @@
     </main>
 
     <footer class="text-center text-sm text-surface-400 py-4">
-      © {{ new Date().getFullYear() }} Kela LMS
+      © {{ new Date().getFullYear() }} {{ config.siteName }}
     </footer>
   </div>
 </template>
@@ -53,8 +44,10 @@
 <script setup>
 import { useRouter } from 'vue-router'
 import { useUserMenu } from '../composables/useUserMenu'
+import { useSiteConfigStore } from '../stores/siteConfig'
 
 const router = useRouter()
+const config = useSiteConfigStore()
 const { auth, initials, userMenuItems, menuRef, toggleMenu } = useUserMenu()
 
 function goDashboard() {

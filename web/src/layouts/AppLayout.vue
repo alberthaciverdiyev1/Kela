@@ -1,13 +1,13 @@
 <template>
-  <!-- Kullanıcı tercihine göre navigasyon düzeni (settings store) -->
+  <!-- Site konfigürasyonundaki arayüz düzenine göre navigasyon (navbar/sidebar) -->
   <NavbarLayout v-if="settings.isNavbar" />
   <SidebarLayout v-else />
 </template>
 
 <script setup>
-import { useSettingsStore } from '../stores/settings'
+import { useSiteConfigStore } from '../stores/siteConfig'
 import NavbarLayout from './NavbarLayout.vue'
 import SidebarLayout from './SidebarLayout.vue'
 
-const settings = useSettingsStore()
+const settings = useSiteConfigStore()
 </script>

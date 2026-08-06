@@ -17,25 +17,20 @@ export function useUserMenu() {
 
   const userMenuItems = ref([])
 
-  // Profil + (öğretmen/admin için) Site Tasarımı + Arayüz Düzeni + Çıkış
+  // Profil + Çıkış (herkese); Ayarlar (site konfigürasyonu) yalnızca Admin/Teacher.
   userMenuItems.value = [
     {
       label: 'Profil',
       icon: 'pi pi-user',
       command: () => router.push({ name: 'profile' }),
     },
-    {
-      label: 'Arayüz Düzeni',
-      icon: 'pi pi-bars',
-      command: () => router.push({ name: 'settings-layout' }),
-    },
   ]
 
   if (auth.isTeacher || auth.isAdmin) {
     userMenuItems.value.push({
-      label: 'Site Tasarımı',
-      icon: 'pi pi-palette',
-      command: () => router.push({ name: 'settings-theme' }),
+      label: 'Ayarlar',
+      icon: 'pi pi-cog',
+      command: () => router.push({ name: 'settings' }),
     })
   }
 

@@ -25,10 +25,17 @@ builder.Services
         builder.Configuration["DataProtection:KeysPath"]
         ?? Path.Combine(builder.Environment.ContentRootPath, "keys")));
 
+builder.Services.AddAuthorization();
+
+builder.Services
+    .AddApplication()
+    .AddInfrastructure(builder.Configuration);
+
 // ASP.NET Core Identity cookie'si (IdentityConstants.ApplicationScheme).
-// AddIdentity (Infrastructure'da) bu şemayı + security-stamp doğrulamasını kurar;
-// burada yalnızca özelleştiriyoruz: cookie adı/süre ve API için redirect yerine 401/403.
-// Events'i mutasyona uğrattığımız için Identity'nin OnValidatePrincipal hook'u korunur.
+// DİKKAT: AddInfrastructure'dan SONRA çağrılmalıdır — AddIdentity'nin AddCookie configure'u
+// Events'i yeni bir nesneyle değiştirir (OnValidatePrincipal dahil). Burada o nesneyi
+// MUTASYON ederiz; böylece hem Identity'nin security-stamp hook'u hem API için
+// redirect yerine 401/403 davranışı birlikte korunur.
 builder.Services.ConfigureApplicationCookie(options =>
 {
     options.Cookie.Name = "Kela.Auth";
@@ -50,12 +57,6 @@ builder.Services.ConfigureApplicationCookie(options =>
     };
 });
 
-builder.Services.AddAuthorization();
-
-builder.Services
-    .AddApplication()
-    .AddInfrastructure(builder.Configuration);
-
 var app = builder.Build();
 
 if (app.Environment.IsDevelopment())
@@ -71,6 +72,7 @@ app.UseAuthorization();
 app.MapSectionsEndpoints();
 app.MapUsersEndpoints();
 app.MapAuthEndpoints();
+app.MapSiteConfigurationEndpoints();
 
 using (var scope = app.Services.CreateScope())
 {

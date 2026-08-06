@@ -1,6 +1,7 @@
 import { defineStore } from 'pinia'
 import { authApi } from '../api/auth'
 import router from '../router'
+import { useSiteConfigStore } from './siteConfig'
 
 // Roller (backend Kela.Domain/Enums/Role.cs ile eşleşir)
 export const ROLES = {
@@ -39,6 +40,8 @@ export const useAuthStore = defineStore('auth', {
       this.loading = true
       try {
         this.user = await authApi.login(credentials)
+        // Giriş sonrası sunucudaki site konfigürasyonunu uygula (tek GET)
+        useSiteConfigStore().init()
         return { ok: true }
       } catch (error) {
         return { ok: false, message: error.message }

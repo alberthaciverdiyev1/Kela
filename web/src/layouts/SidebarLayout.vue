@@ -5,7 +5,7 @@
       <!-- Logo -->
       <div class="flex items-center gap-3 px-5 h-16 border-b border-surface-100">
         <Avatar icon="pi pi-book" shape="circle" class="bg-primary text-white" />
-        <span class="font-bold text-xl text-primary">Kela LMS</span>
+        <span class="font-bold text-xl text-primary">{{ config.siteName }}</span>
       </div>
 
       <!-- Navigasyon -->
@@ -48,7 +48,7 @@
       </main>
 
       <footer class="text-center text-sm text-surface-400 py-4">
-        © {{ new Date().getFullYear() }} Kela LMS
+        © {{ new Date().getFullYear() }} {{ config.siteName }}
       </footer>
     </div>
   </div>
@@ -57,8 +57,10 @@
 <script setup>
 import { useRoute } from 'vue-router'
 import { useUserMenu } from '../composables/useUserMenu'
+import { useSiteConfigStore } from '../stores/siteConfig'
 
 const route = useRoute()
+const config = useSiteConfigStore()
 const { auth, initials, userMenuItems, menuRef, toggleMenu } = useUserMenu()
 
 const navItems = [
