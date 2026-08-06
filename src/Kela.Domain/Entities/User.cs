@@ -13,14 +13,14 @@ namespace Kela.Domain.Entities;
 /// </summary>
 public class User : IdentityUser<int>, ISoftDeletable, IAuditableEntity
 {
-    public User(string firstName, string lastName, string email)
+    public User(string firstName, string? lastName, string email)
     {
         SetName(firstName, lastName);
         Email = email;
         UserName = email;
     }
 
-    public User(string firstName, string lastName, string email, string phoneNumber)
+    public User(string firstName, string? lastName, string email, string phoneNumber)
         : this(firstName, lastName, email)
     {
         SetPhoneNumber(phoneNumber);
@@ -32,7 +32,7 @@ public class User : IdentityUser<int>, ISoftDeletable, IAuditableEntity
     }
 
     public string FirstName { get; private set; } = string.Empty;
-    public string LastName { get; private set; } = string.Empty;
+    public string? LastName { get; private set; }
     // PhoneNumber bilinçli olarak yeniden bildirilmez: IdentityUser<int> zaten
     // public get/set verir ve AspNetUsers.PhoneNumber kolonuna eşlenir. Burada
     // bir hiding/override değil, doğrudan base property kullanılır — böylece
@@ -44,13 +44,12 @@ public class User : IdentityUser<int>, ISoftDeletable, IAuditableEntity
     public DateTime? UpdatedAt { get; set; }
     public DateTime? DeletedAt { get; set; }
 
-    public void SetName(string firstName, string lastName)
+    public void SetName(string firstName, string? lastName)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(firstName, nameof(firstName));
-        ArgumentException.ThrowIfNullOrWhiteSpace(lastName, nameof(lastName));
 
         FirstName = firstName.Trim();
-        LastName = lastName.Trim();
+        LastName = string.IsNullOrWhiteSpace(lastName) ? null : lastName.Trim();
         UpdatedAt = DateTime.UtcNow;
     }
 

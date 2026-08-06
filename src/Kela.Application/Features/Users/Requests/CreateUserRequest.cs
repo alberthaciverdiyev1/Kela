@@ -8,7 +8,7 @@ namespace Kela.Application.Features.Users.Requests;
 /// </summary>
 public sealed record CreateUserRequest(
     string FirstName,
-    string LastName,
+    string? LastName,
     string Email,
     string Password,
     string Role,

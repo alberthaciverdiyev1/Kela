@@ -39,7 +39,7 @@ internal sealed class AuthService(
 
         var role = await user.ResolveRoleAsync(userManager);
 
-        return new LoginResponse(user.Id, user.FirstName, user.LastName, role);
+        return new LoginResponse(user.Id, user.FirstName, user.LastName ?? string.Empty, role);
     }
 
     public async Task<RegisterResponse> RegisterAsync(
@@ -50,7 +50,7 @@ internal sealed class AuthService(
         var user = await CreateUserCoreAsync(
             request.FirstName, request.LastName, request.Email, request.Password, RoleNames.Teacher);
 
-        return new RegisterResponse(user.Id, user.FirstName, user.LastName, user.Email ?? string.Empty);
+        return new RegisterResponse(user.Id, user.FirstName, user.LastName ?? string.Empty, user.Email ?? string.Empty);
     }
 
     public async Task<int> CreateUserAsync(
@@ -68,7 +68,7 @@ internal sealed class AuthService(
     public Task LogoutAsync(CancellationToken cancellationToken = default) => signInManager.SignOutAsync();
 
     private async Task<User> CreateUserCoreAsync(
-        string firstName, string lastName, string email, string password, string role, string? phoneNumber = null)
+        string firstName, string? lastName, string email, string password, string role, string? phoneNumber = null)
     {
         var trimmedEmail = email.Trim();
         var normalizedEmail = trimmedEmail.ToLowerInvariant();
@@ -78,7 +78,7 @@ internal sealed class AuthService(
             throw new InvalidOperationException($"'{normalizedEmail}' email adresi zaten kayıtlı.");
         }
 
-        var user = new User(firstName.Trim(), lastName.Trim(), trimmedEmail)
+        var user = new User(firstName.Trim(), lastName, trimmedEmail)
         {
             CreatedAt = DateTime.UtcNow,
         };

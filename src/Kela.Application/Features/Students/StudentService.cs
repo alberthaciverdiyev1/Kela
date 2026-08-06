@@ -54,7 +54,8 @@ internal sealed class StudentService(
 
         await EnsureCityExistsAsync(request.CityId, cancellationToken);
 
-        var email = await GenerateUniqueEmailAsync(cancellationToken);
+        // E-posta kullanıcı verdiyse onu kullan, boşsa sistem üretir.
+        var email = await ResolveEmailAsync(request.Email, cancellationToken);
         var password = StudentCredentialsGenerator.GeneratePassword();
 
         // User'ı Student rolüyle oluştur (Identity: hash, rol üyeliği).
@@ -123,9 +124,25 @@ internal sealed class StudentService(
         await unitOfWork.SaveChangesAsync(cancellationToken);
     }
 
+    private async Task<string> ResolveEmailAsync(string? email, CancellationToken cancellationToken)
+    {
+        // Kullanıcı e-posta verdiyse eşsizliğini doğrula, boşsa sistem üretir.
+        if (string.IsNullOrWhiteSpace(email))
+        {
+            return await GenerateUniqueEmailAsync(cancellationToken);
+        }
+
+        var normalized = email.Trim().ToLowerInvariant();
+        if (await userManager.FindByEmailAsync(normalized) is not null)
+        {
+            throw new InvalidOperationException($"'{normalized}' e-posta adresi zaten kayıtlı.");
+        }
+        return normalized;
+    }
+
     private async Task<string> GenerateUniqueEmailAsync(CancellationToken cancellationToken)
     {
-        // Kullanıcı gereksinimi: mail sistemsel üretilir. Eşsiz olmalı
+        // E-posta boş bırakılırsa sistem üretir. Eşsiz olmalı
         // (Identity RequireUniqueEmail) — çakışırsa yeniden üret.
         for (var attempt = 0; attempt < 5; attempt++)
         {

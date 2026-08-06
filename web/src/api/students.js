@@ -16,7 +16,7 @@ export const studentsApi = {
   },
 
   create(payload) {
-    // { firstName, lastName, phoneNumber?, birthDate?, cityId? } — email/password SİSTEM üretir
+    // { firstName, phoneNumber, lastName?, email? } — email boşsa SİSTEM üretir; password her zaman sistem üretir
     return http.post('/students', payload)
   },
 

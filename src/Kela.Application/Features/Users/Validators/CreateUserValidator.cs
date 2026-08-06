@@ -11,9 +11,6 @@ internal sealed class CreateUserValidator : AbstractValidator<CreateUserRequest>
         RuleFor(x => x.FirstName)
             .Must(x => !string.IsNullOrWhiteSpace(x)).WithMessage("Ad zorunludur.");
 
-        RuleFor(x => x.LastName)
-            .Must(x => !string.IsNullOrWhiteSpace(x)).WithMessage("Soyad zorunludur.");
-
         RuleFor(x => x.Email)
             .Cascade(CascadeMode.Stop)
             .Must(x => !string.IsNullOrWhiteSpace(x)).WithMessage("E-posta zorunludur.")

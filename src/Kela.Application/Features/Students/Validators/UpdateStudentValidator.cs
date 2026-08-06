@@ -10,9 +10,6 @@ internal sealed class UpdateStudentValidator : AbstractValidator<UpdateStudentRe
         RuleFor(x => x.FirstName)
             .Must(x => !string.IsNullOrWhiteSpace(x)).WithMessage("Ad zorunludur.");
 
-        RuleFor(x => x.LastName)
-            .Must(x => !string.IsNullOrWhiteSpace(x)).WithMessage("Soyad zorunludur.");
-
         RuleFor(x => x.PhoneNumber)
             .Must(p => string.IsNullOrWhiteSpace(p) || p.Trim().Length <= 20)
             .WithMessage("Telefon en fazla 20 karakter olabilir.");

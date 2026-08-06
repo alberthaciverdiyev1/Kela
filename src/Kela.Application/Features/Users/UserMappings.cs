@@ -10,7 +10,7 @@ public static class UserMappings
     public static UserResponse ToResponse(this User user, string role) => new(
         user.Id,
         user.FirstName,
-        user.LastName,
+        user.LastName ?? string.Empty,
         user.Email ?? string.Empty,
         role,
         user.Status,
