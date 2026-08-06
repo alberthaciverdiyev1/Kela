@@ -17,7 +17,7 @@
 
     <form @submit.prevent="submit" class="flex flex-col gap-4">
       <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-        <TextInput
+        <FloatTextInput
           id="firstName"
           v-model="firstName"
           :label="i18n.t('auth.firstName')"
@@ -25,7 +25,7 @@
           :error="firstNameError"
           @blur="firstNameError = firstName.trim() ? '' : i18n.t('auth.reqFirstName')"
         />
-        <TextInput
+        <FloatTextInput
           id="lastName"
           v-model="lastName"
           :label="i18n.t('auth.lastName')"
@@ -35,7 +35,7 @@
         />
       </div>
 
-      <TextInput
+      <FloatTextInput
         id="email"
         v-model="email"
         :label="i18n.t('auth.email')"
@@ -72,7 +72,7 @@ import { useRouter } from 'vue-router'
 import { useAuthStore } from '../../stores/auth'
 import { useI18n } from '../../stores/i18n'
 import AuthCard from '../../components/ui/cards/AuthCard.vue'
-import TextInput from '../../components/ui/inputs/TextInput.vue'
+import FloatTextInput from '../../components/ui/inputs/FloatTextInput.vue'
 import PasswordInput from '../../components/ui/inputs/PasswordInput.vue'
 import SubmitButton from '../../components/ui/buttons/SubmitButton.vue'
 

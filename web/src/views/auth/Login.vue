@@ -13,7 +13,7 @@
         </template>
 
         <form @submit.prevent="submit" class="flex flex-col gap-5">
-            <TextInput
+            <FloatTextInput
                 id="email"
                 v-model="email"
                 :label="i18n.t('auth.email')"
@@ -40,7 +40,7 @@ import {useRoute, useRouter} from 'vue-router'
 import {useAuthStore, homeRouteFor} from '../../stores/auth'
 import {useI18n} from '../../stores/i18n'
 import AuthCard from '../../components/ui/cards/AuthCard.vue'
-import TextInput from '../../components/ui/inputs/TextInput.vue'
+import FloatTextInput from '../../components/ui/inputs/FloatTextInput.vue'
 import PasswordInput from '../../components/ui/inputs/PasswordInput.vue'
 import SubmitButton from '../../components/ui/buttons/SubmitButton.vue'
 
