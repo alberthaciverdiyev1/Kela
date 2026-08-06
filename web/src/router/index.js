@@ -2,25 +2,14 @@ import { createRouter, createWebHistory } from 'vue-router'
 import { useAuthStore, ROLES, homeRouteFor } from '../stores/auth'
 import { useI18nStore } from '../stores/i18n'
 
-// ─────────────────────────────────────────────────────────────
-// A PLANI — ROL BAZLI PANEL AĞAÇLARI
-// Tek uygulama, üç ayrı panel. Her rol kendi ağacına sahiptir:
-//   /teacher/*  → TeacherLayout (Ayarlar, Sınıflar...)
-//   /student/*  → StudentLayout (Derslerim...)
-//   /parent/*   → ParentLayout  (Çocuklarım...)
-// Başka bir rolün paneline URL'den bile girilemez (guard).
-// Admin burada değildir → 'blocked' sayfasına gider.
-// ─────────────────────────────────────────────────────────────
 const routes = [
   {
     path: '/',
     component: () => import('../layouts/AppLayout.vue'),
     meta: { requiresAuth: true },
     children: [
-      // Kök → rolün kendi paneline yönlendir
       { path: '', redirect: () => ({ name: homeRouteFor(useAuthStore().role) }) },
 
-      // ── Teacher paneli ──
       {
         path: 'teacher/dashboard',
         name: 'teacher.dashboard',
@@ -46,7 +35,6 @@ const routes = [
         meta: { title: 'nav.settings', requiresRole: [ROLES.Teacher] },
       },
 
-      // ── Student paneli ──
       {
         path: 'student/dashboard',
         name: 'student.dashboard',
@@ -60,7 +48,6 @@ const routes = [
         meta: { title: 'nav.myCourses', requiresRole: [ROLES.Student] },
       },
 
-      // ── Parent paneli ──
       {
         path: 'parent/dashboard',
         name: 'parent.dashboard',
@@ -76,7 +63,6 @@ const routes = [
     ],
   },
 
-  // Admin / bilinmeyen rol → ayrı yönetim paneli olduğu için buraya giremez
   {
     path: '/blocked',
     name: 'blocked',
@@ -104,7 +90,6 @@ const routes = [
     ],
   },
 
-  // Bilinmeyen yol → rolün kendi paneline
   {
     path: '/:pathMatch(.*)*',
     redirect: () => ({ name: homeRouteFor(useAuthStore().role) }),
@@ -116,10 +101,6 @@ const router = createRouter({
   routes,
 })
 
-// Global guard:
-//  - auth gereken rota + oturum yok → login
-//  - guestOnly + oturum var → kendi paneline
-//  - rol korumalı rota + yetki yok → kendi paneline (admin → blocked)
 router.beforeEach((to) => {
   const auth = useAuthStore()
 

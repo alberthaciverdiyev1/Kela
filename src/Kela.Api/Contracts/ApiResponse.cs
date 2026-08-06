@@ -3,12 +3,6 @@ using Microsoft.AspNetCore.Http;
 
 namespace Kela.Api.Contracts;
 
-/// <summary>
-/// Data içermeyen yanıt zarfı (mesaj-only): { statusCode, success, message, errors }.
-/// HTTP status kodu zarfın içinde taşınır; HTTP sonucunu (IResult) üreten fabrika metotları
-/// burada toplanır. 401/404, GlobalExceptionHandler ve "veri dönmeyen" yanıtlar bu formu kullanır.
-/// Data dönen yanıtlar için <see cref="ApiResponse{T}"/> kullanılır.
-/// </summary>
 public sealed record ApiResponse(
     [property: JsonPropertyName("statusCode")]
     int StatusCode,

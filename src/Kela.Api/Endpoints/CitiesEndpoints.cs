@@ -8,18 +8,6 @@ using Microsoft.AspNetCore.Builder;
 
 namespace Kela.Api.Endpoints;
 
-/// <summary>
-/// Şehirler — referans verisi (çevirili).
-/// Okuma (GET) giriş yapan herkese açıktır (öğretmen formlarında şehir seçimi
-/// için). Yazma (POST/PUT/DELETE) yalnızca Admin'i aittir.
-/// Tüm uçlar isteğe bağlı <c>lang</c> (az/en/ru/tr) alır; yanıt o dildeki
-/// adla döner (dil yoksa en → az → ilk mevcut ad sırasıyla düşer).
-///   GET    /api/cities?lang=tr&page=1&pageSize=10 → sayfalı liste (yerelleştirilmiş adlar)
-///   GET    /api/cities/1?lang=en                    → detay + tüm dillerdeki adlar
-///   POST   /api/cities                              → 4 dilde ad alır (az/en/ru/tr)  [Admin]
-///   PUT    /api/cities/1                            → 4 dildeki adları günceller       [Admin]
-///   DELETE /api/cities/1                            → şehri + çevirilerini siler       [Admin]
-/// </summary>
 public static class CitiesEndpoints
 {
     public static IEndpointRouteBuilder MapCitiesEndpoints(this IEndpointRouteBuilder app)

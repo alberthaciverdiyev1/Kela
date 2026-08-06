@@ -7,14 +7,6 @@ using Kela.Domain.Common;
 
 namespace Kela.Api.Endpoints;
 
-/// <summary>
-/// Öğrenci yönetimi — Teacher (kendi panelinden) ve Admin (ayrı yönetim panelinden).
-///   GET    /api/students?page=1&pageSize=10&lang=tr → sayfalı liste (şehir adı yerelleştirilmiş)
-///   GET    /api/students/1?lang=tr                   → detay
-///   POST   /api/students                             → User(Student) + StudentProfile; mail+şifre sistem üretir, yanıtta döner
-///   PUT    /api/students/1                           → ad/soyad/şehir/doğum günceller
-///   DELETE /api/students/1                           → soft delete (User Inactive)
-/// </summary>
 public static class StudentsEndpoints
 {
     public static IEndpointRouteBuilder MapStudentsEndpoints(this IEndpointRouteBuilder app)

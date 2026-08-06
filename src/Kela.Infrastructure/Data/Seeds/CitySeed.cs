@@ -3,11 +3,6 @@ using Kela.Domain.Entities;
 
 namespace Kela.Infrastructure.Data.Seeds;
 
-/// <summary>
-/// Başlangıç şehirleri (dump). Henüz Admin/CRUD arayüzü olmadığından
-/// tablo boşsa bu liste ilk açılışta eklenir — 4 dilde (az/en/ru/tr).
-/// Çeviriler tek jsonb sütununda (Dictionary&lt;string,string&gt;) saklanır.
-/// </summary>
 public static class CitySeed
 {
     public static readonly (string Az, string En, string Ru, string Tr)[] Items =

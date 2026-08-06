@@ -5,10 +5,8 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace Kela.Infrastructure.Data.Migrations
 {
-    /// <inheritdoc />
     public partial class StudentBirthDateAsDate : Migration
     {
-        /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.AlterColumn<DateOnly>(
@@ -21,7 +19,6 @@ namespace Kela.Infrastructure.Data.Migrations
                 oldNullable: true);
         }
 
-        /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.AlterColumn<DateTime>(

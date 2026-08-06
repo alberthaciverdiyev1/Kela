@@ -4,11 +4,6 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Kela.Infrastructure.Data.Configurations;
 
-/// <summary>
-/// Yalnızca User'a özgü alanları yapılandırır.
-/// Identity kolonları (Email, NormalizedEmail, PasswordHash, vb.) ve AspNet* tabloları
-/// IdentityDbContext tarafından kurulur (tablo adı "AspNetUsers") — burada tekrarlanmaz.
-/// </summary>
 internal sealed class UserConfiguration : IEntityTypeConfiguration<User>
 {
     public void Configure(EntityTypeBuilder<User> builder)

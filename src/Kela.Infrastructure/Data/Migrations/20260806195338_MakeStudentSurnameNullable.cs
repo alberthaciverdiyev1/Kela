@@ -4,10 +4,8 @@
 
 namespace Kela.Infrastructure.Data.Migrations
 {
-    /// <inheritdoc />
     public partial class MakeStudentSurnameNullable : Migration
     {
-        /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.AlterColumn<string>(
@@ -21,7 +19,6 @@ namespace Kela.Infrastructure.Data.Migrations
                 oldMaxLength: 100);
         }
 
-        /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.AlterColumn<string>(

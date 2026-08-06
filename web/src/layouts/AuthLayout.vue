@@ -1,6 +1,5 @@
 <template>
     <div class="auth-bg min-h-screen flex items-center justify-center p-4">
-        <!-- Dil seçici: giriş/kayıt sayfalarında sağ üstte -->
         <div class="absolute top-4 right-4">
             <LanguageSwitcher />
         </div>

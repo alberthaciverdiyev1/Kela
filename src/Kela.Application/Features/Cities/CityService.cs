@@ -86,7 +86,6 @@ internal sealed class CityService(
         await unitOfWork.SaveChangesAsync(cancellationToken);
     }
 
-    /// <summary>Dil anahtarlarını küçük harfe indirir, adlardaki boşlukları temizler.</summary>
     private static Dictionary<string, string> NormalizeTranslations(IReadOnlyDictionary<string, string> translations)
         => translations.ToDictionary(kv => LanguageCodes.Normalize(kv.Key), kv => kv.Value.Trim());
 }

@@ -12,15 +12,6 @@ const CACHE_KEY = 'kela.siteConfig'
 
 const NAV_MODES = { navbar: 'navbar', sidebar: 'sidebar' }
 
-// =========================================================
-// TEK SİTE KONFİGÜRASYON STORE'U
-// ---------------------------------------------------------
-// Backend'deki BaseSiteConfiguration entity'sinin birebir karşılığı.
-// Tüm site ayarları (renkler + arayüz düzeni + site adı) tek store'da,
-// tek init() ile yüklenir, tek save() ile kaydedilir.
-// Gelecekte yeni bir alan eklendiğinde: backend'e property + buraya state
-// eklemek yeterli — tüm kullanıcılar aynı GET ile otomatik görür.
-// =========================================================
 export const useSiteConfigStore = defineStore('siteConfig', {
   state: () => ({
     siteName: 'Kela LMS',
@@ -39,25 +30,20 @@ export const useSiteConfigStore = defineStore('siteConfig', {
   },
 
   actions: {
-    // Uygulama açılışında / giriş sonrası: önce önbellek (flash yok),
-    // sonra sunucudan güncel tek response.
     async init() {
       this.loadFromCache()
       await this.refresh()
     },
 
-    // Sunucudan tüm site konfigürasyonunu çek ve uygula
     async refresh() {
       try {
         const config = await configApi.getSiteConfig()
         this.applyConfig(config)
         this.saved = true
       } catch {
-        // oturum yok / sunucu yok → önbellek/varsayılan ile devam
       }
     },
 
-    // Tek response'u state'e uygula
     applyConfig(config) {
       if (!config) return
       if (config.siteName) this.siteName = config.siteName
@@ -74,7 +60,6 @@ export const useSiteConfigStore = defineStore('siteConfig', {
       }
     },
 
-    // Yerel önbellekten hızlı uygula (ilk boyama)
     loadFromCache() {
       try {
         const raw = localStorage.getItem(CACHE_KEY)
@@ -101,7 +86,6 @@ export const useSiteConfigStore = defineStore('siteConfig', {
       applyTheme(this.colors)
     },
 
-    // ── Yerel düzenlemeler (canlı önizleme, kaydetmez) ──
 
     setSiteName(value) {
       this.siteName = value
@@ -132,7 +116,6 @@ export const useSiteConfigStore = defineStore('siteConfig', {
       this.saved = false
     },
 
-    // ── Tek istekte tüm site konfigürasyonunu kaydet ──
     async save() {
       this.loading = true
       this.error = ''

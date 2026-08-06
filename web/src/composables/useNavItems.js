@@ -2,8 +2,6 @@ import { computed } from 'vue'
 import { useAuthStore, ROLES } from '../stores/auth'
 import { useI18nStore } from '../stores/i18n'
 
-// Rol bazlı panel menüsü. Her rol kendi öğelerini görür;
-// başka rolün öğesi asla gösterilmez. Etiketler aktif dile göre çevrilir.
 export function useNavItems() {
   const auth = useAuthStore()
   const i18n = useI18nStore()

@@ -7,10 +7,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 namespace Kela.Infrastructure.Data.Migrations
 {
-    /// <inheritdoc />
     public partial class CityTranslationsAsJsonb : Migration
     {
-        /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             // Önce jsonb sütunu EKLE (geçici nullable) — mevcut (seed) kayıtlar
@@ -45,7 +43,6 @@ namespace Kela.Infrastructure.Data.Migrations
                 name: "city_translations");
         }
 
-        /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropColumn(

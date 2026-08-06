@@ -1,12 +1,6 @@
 import { defineStore } from 'pinia'
 import { messages } from '../i18n/messages'
 
-// ─────────────────────────────────────────────────────────────
-// DİL / YERELSELLEŞTİRME STORE'U
-// 4 dil: az (varsayılan) / en / ru / tr. Seçim localStorage'da
-// "kela.lang" anahtarıyla saklanır; http.js her API isteğine
-// bu dili `lang` parametresi + Accept-Language header olarak ekler.
-// ─────────────────────────────────────────────────────────────
 
 export const LANGS = ['az', 'en', 'ru', 'tr']
 export const DEFAULT_LANG = 'az'
@@ -40,8 +34,6 @@ export const useI18nStore = defineStore('i18n', {
   }),
 
   getters: {
-    // Reaktif çeviri: t('key') veya t('key', { name: 'Ali' })
-    // Eksik anahtar → en'e, o da yoksa anahtarın kendisine düşer.
     t: (state) => (key, params) => {
       const dict = messages[state.locale] ?? messages[DEFAULT_LANG]
       let text = dict[key] ?? messages.en[key] ?? key
@@ -72,7 +64,6 @@ export const useI18nStore = defineStore('i18n', {
   },
 })
 
-// Bileşenlerde kullanım kolaylığı: const i18n = useI18n()
 export function useI18n() {
   return useI18nStore()
 }

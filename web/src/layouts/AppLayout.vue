@@ -1,5 +1,4 @@
 <template>
-  <!-- Rol bazlı panel menüsü + site config'e göre navbar/sidebar düzeni -->
   <NavbarLayout v-if="settings.isNavbar" :nav-items="navItems" />
   <SidebarLayout v-else :nav-items="navItems" />
 </template>

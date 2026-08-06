@@ -6,13 +6,6 @@ using Kela.Domain.Common;
 
 namespace Kela.Api.Endpoints;
 
-/// <summary>
-/// TEK uç: site geneli konfigürasyon.
-///   GET /api/site-config  → tüm ayarlar (giriş yapan herkes)
-///   PUT /api/site-config  → tüm ayarları güncelle (yalnızca Admin/Teacher)
-/// Yeni bir ayar eklemek için buraya yeni uç yazmaya gerek yok —
-/// entity + request/response'a alan eklemek yeterli.
-/// </summary>
 public static class SiteConfigurationEndpoints
 {
     public static IEndpointRouteBuilder MapSiteConfigurationEndpoints(this IEndpointRouteBuilder app)

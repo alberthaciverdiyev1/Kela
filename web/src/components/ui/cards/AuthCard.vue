@@ -1,7 +1,6 @@
 <template>
   <Card class="border-none shadow-2xl rounded-3xl overflow-hidden">
     <template #content>
-      <!-- Üst bant -->
       <div class="bg-primary text-white text-center py-8 rounded-3xl rounded-b-none -mt-6 -mx-6 mb-6">
         <div class="mx-auto w-16 h-16 bg-white/20 rounded-2xl flex items-center justify-center mb-3">
           <i :class="['pi', icon, 'text-3xl']"></i>

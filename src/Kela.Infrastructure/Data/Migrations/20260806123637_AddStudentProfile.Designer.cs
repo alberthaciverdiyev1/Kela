@@ -16,7 +16,6 @@ namespace Kela.Infrastructure.Data.Migrations
     [Migration("20260806123637_AddStudentProfile")]
     partial class AddStudentProfile
     {
-        /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618

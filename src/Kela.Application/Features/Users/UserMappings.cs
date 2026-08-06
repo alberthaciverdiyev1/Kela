@@ -16,11 +16,6 @@ public static class UserMappings
         user.Status,
         user.CreatedAt);
 
-    /// <summary>
-    /// Kullanıcının rolünü yalnızca Identity üyeliğinden (AspNetUserRoles) okur.
-    /// Rolün başka bir temsili yoktur; <see cref="RoleNames"/> adlarıyla eşleşen
-    /// ilk rol döner. Üyelik boşsa güvenli varsayılan Student'tır.
-    /// </summary>
     public static async Task<string> ResolveRoleAsync(this User user, UserManager<User> userManager)
     {
         var roles = await userManager.GetRolesAsync(user);

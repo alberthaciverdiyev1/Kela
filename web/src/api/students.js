@@ -1,22 +1,11 @@
 import http from './http'
 
-// ─────────────────────────────────────────────────────────────
-// ÖĞRENCİ YÖNETİMİ (Teacher paneli)
-// -------------------------------------------------------------
-//   GET    /api/students?page&pageSize&lang=tr → sayfalı liste
-//   POST   /api/students → sistem mail+şifre üretir, yanıtta döner
-//   DELETE /api/students/{id} → soft delete
-//
-// POST yanıtı: { id, userId, email, password, createdAt }
-//   — mail & şifre yalnızca oluşturma anında döner; öğrenciye iletilir.
-// ─────────────────────────────────────────────────────────────
 export const studentsApi = {
   getPage(page = 1, pageSize = 10, lang = 'tr') {
     return http.get('/students', { params: { page, pageSize, lang } })
   },
 
   create(payload) {
-    // { firstName, phoneNumber, lastName?, email? } — email boşsa SİSTEM üretir; password her zaman sistem üretir
     return http.post('/students', payload)
   },
 

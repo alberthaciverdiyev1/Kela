@@ -16,7 +16,6 @@ namespace Kela.Infrastructure.Data.Migrations
     [Migration("20260806125831_AddUserPhoneNumberMaxLength")]
     partial class AddUserPhoneNumberMaxLength
     {
-        /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618

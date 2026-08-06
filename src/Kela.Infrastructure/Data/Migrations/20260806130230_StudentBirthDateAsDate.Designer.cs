@@ -16,7 +16,6 @@ namespace Kela.Infrastructure.Data.Migrations
     [Migration("20260806130230_StudentBirthDateAsDate")]
     partial class StudentBirthDateAsDate
     {
-        /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618

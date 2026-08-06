@@ -15,7 +15,6 @@ namespace Kela.Infrastructure.Data.Migrations
     [Migration("20260806114625_ReplaceConfigWithSiteConfiguration")]
     partial class ReplaceConfigWithSiteConfiguration
     {
-        /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618

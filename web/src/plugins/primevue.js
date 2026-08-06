@@ -37,7 +37,6 @@ export function setupPrimeVue(app) {
     },
   })
 
-  // Global component kaydı
   app.component('Button', Button)
   app.component('InputText', InputText)
   app.component('Password', Password)

@@ -1,12 +1,5 @@
-// ─────────────────────────────────────────────────────────────
-// DİL SÖZLÜKLERİ — az / en / ru / tr
-// Varsayılan dil: az (Azerbaycan). Eksik anahtar varsa en'e, o da yoksa
-// anahtarın kendisine düşer (bkz. stores/i18n.js t()).
-// Yeni metin eklerken tüm dillere anahtarı eklemeyi unutma.
-// ─────────────────────────────────────────────────────────────
 
 const az = {
-  // ── ortak ──
   'common.or': 'və ya',
   'common.cancel': 'Ləğv et',
   'common.save': 'Saxla',
@@ -15,12 +8,10 @@ const az = {
   'common.error': 'Xəta',
   'common.unknownRole': 'Naməlum',
 
-  // ── rol adları ──
   'role.Teacher': 'Müəllim',
   'role.Student': 'Şagird',
   'role.Parent': 'Valideyn',
 
-  // ── navigasyon ──
   'nav.dashboard': 'Panel',
   'nav.students': 'Şagirdlər',
   'nav.classes': 'Siniflər',
@@ -35,7 +26,6 @@ const az = {
   'nav.logout': 'Çıxış',
   'nav.search': 'Axtar...',
 
-  // ── giriş / qeydiyyat ──
   'auth.loginSubtitle': 'Hesabınıza daxil olun',
   'auth.noAccount': 'Hesabınız yoxdur?',
   'auth.register': 'Qeydiyyat',
@@ -57,23 +47,19 @@ const az = {
   'auth.reqConfirmPassword': 'Şifrənin təkrarı mütləqdir.',
   'auth.registerSuccess': 'Qeydiyyatınız tamamlandı. Zəhmət olmasa daxil olun.',
 
-  // ── panel başlıqları ──
   'panel.welcome': 'Xoş gəldin, {name}!',
   'teacher.info': 'Müəllim paneli: siniflərinizi, şagirdlərinizi və ev tapşırıqlarını buradan idarə edəcəksiniz. Sinif səhifəsi tezliklə gələcək.',
   'student.info': 'Şagird paneli: dərslərinizi, davamiyyətinizi və qiymətlərinizi buradan izləyəcəksiniz. Dərslər səhifəsi tezliklə gələcək.',
   'parent.info': 'Valideyn paneli: övladlarınızın vəziyyətini, ödənişləri və elanları buradan izləyəcəksiniz. Övladlarım səhifəsi tezliklə gələcək.',
 
-  // ── gələcək səhifələr ──
   'comingSoon.title': 'Tezliklə',
   'comingSoon.desc': 'Bu səhifə hələ hazır deyil — tezliklə əlavə olunacaq.',
   'comingSoon.back': 'Panela qayıt',
 
-  // ── erişim yok ──
   'noAccess.title': 'Bu panela girişiniz yoxdur',
   'noAccess.desc1': 'Kela — şagird / müəllim / valideyn tətbiqidir.',
   'noAccess.desc2': 'İdarəetmə (Admin) ayrı paneldə aparılır.',
 
-  // ── ayarlar ──
   'settings.title': 'Sayt Parametrləri',
   'settings.subtitle': 'Sayt adı, rəngləri və interfeys düzümü tək yerdən idarə edilir. "Saxla" ilə bütün istifadəçilərə tətbiq olunur.',
   'settings.unsaved': 'Saxlanılmamış dəyişikliklər var. "Saxla" düyməsi ilə bütün istifadəçilərə tətbiq edin.',
@@ -114,7 +100,6 @@ const az = {
   'settings.color.info': 'Məlumat (Info)',
   'settings.colorSelect': '{name} seç',
 
-  // ── şagirdlər ──
   'students.title': 'Şagirdlər',
   'students.subtitle': 'Şagird yaradın — sistem e-poçt və şifrəni özü yaradır, şagirdə çatdırırsınız.',
   'students.new': 'Yeni Şagird',

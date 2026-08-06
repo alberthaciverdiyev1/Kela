@@ -3,13 +3,6 @@ using Microsoft.AspNetCore.Http;
 
 namespace Kela.Api.Contracts;
 
-/// <summary>
-/// Data taşıyan yanıt zarfı: { statusCode, success, message, data, errors }.
-/// HTTP status kodu zarfın içinde taşınır; HTTP sonucunu (IResult) üreten fabrika metotları
-/// burada toplanır. Liste, get-by-id, oluşturma (201) ve login gibi payload dönen yanıtlar
-/// bu formu kullanır. Data içermeyen yanıtlar için <see cref="ApiResponse"/> kullanılır.
-/// </summary>
-/// <typeparam name="T">Yanıt verisinin tipi (genellikle Application'daki *Response).</typeparam>
 public sealed record ApiResponse<T>(
     [property: JsonPropertyName("statusCode")]
     int StatusCode,

@@ -4,13 +4,6 @@ using Microsoft.AspNetCore.Identity;
 
 namespace Kela.Domain.Entities;
 
-/// <summary>
-/// Sistemin asıl kullanıcı aggregate'i. ASP.NET Core Identity ile bütünleşiktir:
-/// parola hash'leme, parola doğrulama ve rol üyeliği Identity'nin
-/// (UserManager/RoleManager/PasswordHasher) sorumluluğudur — burada elle hash yoktur.
-/// Kullanıcının rolü yalnızca Identity rol üyeliğinden (AspNetUserRoles) okunur;
-/// role göre ayrı profil tablosu yoktur.
-/// </summary>
 public class User : IdentityUser<int>, ISoftDeletable, IAuditableEntity
 {
     public User(string firstName, string? lastName, string email)

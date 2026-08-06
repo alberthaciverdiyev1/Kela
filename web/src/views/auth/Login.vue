@@ -68,7 +68,6 @@ async function submit() {
     const result = await auth.login({email: email.value.trim(), password: password.value})
 
     if (result.ok) {
-        // Rolün kendi paneline düş (teacher.dashboard / student.dashboard / parent.dashboard)
         router.push(route.query.redirect || {name: homeRouteFor(auth.role)})
     } else {
         errorMessage.value = result.message

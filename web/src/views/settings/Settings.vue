@@ -5,7 +5,6 @@
       :subtitle="i18n.t('settings.subtitle')"
     />
 
-    <!-- Durum mesajları -->
     <Message v-if="config.hasUnsavedChanges" severity="warn" :closable="false" class="mb-4">
       {{ i18n.t('settings.unsaved') }}
     </Message>
@@ -16,7 +15,6 @@
       {{ savedMessage }}
     </Message>
 
-    <!-- ════════ GENEL — Site adı ════════ -->
     <Card class="mb-4">
       <template #title>
         <div class="flex items-center gap-2">
@@ -39,7 +37,6 @@
       </template>
     </Card>
 
-    <!-- ════════ ARAYÜZ DÜZENİ ════════ -->
     <Card class="mb-4">
       <template #title>
         <div class="flex items-center gap-2">
@@ -50,7 +47,6 @@
 
       <template #content>
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
-          <!-- Navbar seçeneği -->
           <button
             type="button"
             class="rounded-2xl border-2 p-5 text-left transition-all cursor-pointer"
@@ -82,7 +78,6 @@
             </div>
           </button>
 
-          <!-- Sidebar seçeneği -->
           <button
             type="button"
             class="rounded-2xl border-2 p-5 text-left transition-all cursor-pointer"
@@ -117,7 +112,6 @@
       </template>
     </Card>
 
-    <!-- ════════ SİTE RENKLERİ ════════ -->
     <Card class="mb-4">
       <template #title>
         <div class="flex items-center gap-2">
@@ -168,7 +162,6 @@
       </template>
     </Card>
 
-    <!-- ════════ CANLI ÖNİZLEME ════════ -->
     <Card class="mb-4">
       <template #title>
         <div class="flex items-center gap-2">
@@ -204,7 +197,6 @@
       </template>
     </Card>
 
-    <!-- ════════ TEK KAYDET ════════ -->
     <div class="flex items-center gap-3">
       <Button
         :label="i18n.t('settings.save')"
@@ -235,7 +227,6 @@ import PageHeader from '../../components/ui/typography/PageHeader.vue'
 const config = useSiteConfigStore()
 const i18n = useI18n()
 
-// Renk adı → i18n anahtarı
 const COLOR_I18N = {
   primary: 'settings.color.primary',
   secondary: 'settings.color.secondary',
@@ -253,7 +244,6 @@ function colorLabel(name) {
   return i18n.t(COLOR_I18N[name] ?? name)
 }
 
-// Sayfa açıldığında sunucudan en güncel hali çek
 onMounted(() => config.refresh())
 
 function onColorChange(name, value) {
@@ -264,7 +254,6 @@ function onColorChange(name, value) {
   }
 }
 
-// TEK istek: tüm site konfigürasyonu (ad + renkler + düzen) birlikte kaydedilir
 async function save() {
   const result = await config.save()
   if (result.ok) {

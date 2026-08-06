@@ -5,11 +5,6 @@ using Microsoft.Extensions.Options;
 
 namespace Kela.Application.Features.Users;
 
-/// <summary>
-/// Identity'nin varsayılan claim üretimini (userId, roles, security stamp) kullanır;
-/// yalnızca display-name claim'ini (ClaimTypes.Name) "Ad Soyad" yapar.
-/// Varsayılan davranışta bu claim UserName'e (e-posta) eşittir.
-/// </summary>
 public sealed class KelaUserClaimsPrincipalFactory
     : UserClaimsPrincipalFactory<User, IdentityRole<int>>
 {

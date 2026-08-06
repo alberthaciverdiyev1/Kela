@@ -1,13 +1,6 @@
-// =========================================================
-// Kela Tema Tokenları — TEK KAYNAK NOKTASI
-// Sitede kullanılan TÜM anlamsal renkler burada tanımlıdır.
-// Bir rengi buradan (veya tema ayar sayfasından) değiştirmek
-// tüm siteyi (Tailwind + PrimeVue) değiştirir.
-// =========================================================
 
 export const COLOR_NAMES = ['primary', 'secondary', 'success', 'warning', 'error', 'info']
 
-// Tema ayar sayfasında gösterilecek Türkçe etiketler
 export const COLOR_LABELS = {
   primary: 'Ana Renk',
   secondary: 'İkincil Renk',
@@ -17,7 +10,6 @@ export const COLOR_LABELS = {
   info: 'Bilgi (Info)',
 }
 
-// ---------- Renk yardımcıları ----------
 function hexToRgb(hex) {
   const h = hex.replace('#', '')
   const full = h.length === 3 ? h.split('').map(c => c + c).join('') : h
@@ -43,7 +35,6 @@ function mix(a, b, weight) {
   })
 }
 
-// Tek bir base renkten 50-900 arası palette üretir (Tailwind tarzı)
 export function deriveShades(baseHex) {
   return {
     50: mix(baseHex, '#ffffff', 0.90),
@@ -59,7 +50,6 @@ export function deriveShades(baseHex) {
   }
 }
 
-// Varsayılan site teması (base renkler)
 export const DEFAULT_BASES = {
   primary: '#4f46e5',    // indigo
   secondary: '#64748b',  // slate
@@ -69,31 +59,22 @@ export const DEFAULT_BASES = {
   info: '#0ea5e9',       // sky
 }
 
-// Tam paletler (single source of truth)
 export const DEFAULT_THEME = Object.fromEntries(
   Object.entries(DEFAULT_BASES).map(([name, base]) => [name, deriveShades(base)]),
 )
 
-// ---------- Uygulama ----------
-// Renkleri documentElement üzerine inline CSS değişkeni olarak yazar.
-// Inline stiller her zaman stylesheet'leri ezer → çalışma anında tema değişimi garantidir.
 export function applyTheme(colors, root = document.documentElement) {
   for (const name of COLOR_NAMES) {
     const palette = colors[name] || DEFAULT_THEME[name]
     for (const [scale, value] of Object.entries(palette)) {
-      // Tailwind tokenları
       root.style.setProperty(`--kela-${name}-${scale}`, value)
-      // PrimeVue shade tokenları
       root.style.setProperty(`--p-${name}-${scale}`, value)
     }
-    // Alias: --kela-{name} = base (500)  →  bg-primary, text-primary vb.
     root.style.setProperty(`--kela-${name}`, palette['500'])
-    // PrimeVue ana renk
     root.style.setProperty(`--p-${name}-color`, palette['500'])
     root.style.setProperty(`--p-${name}-contrast-color`, '#ffffff')
   }
 
-  // Primary özel PrimeVue tokenları (hover/active/soft)
   const p = colors.primary || DEFAULT_THEME.primary
   root.style.setProperty('--p-primary-hover-color', p['600'])
   root.style.setProperty('--p-primary-active-color', p['700'])
@@ -102,7 +83,6 @@ export function applyTheme(colors, root = document.documentElement) {
   root.style.setProperty('--p-primary-subtle-hover-color', p['200'])
   root.style.setProperty('--p-primary-subtle-active-color', p['300'])
 
-  // Semantic PrimeVue soft tokenları
   for (const name of ['success', 'warning', 'error', 'info']) {
     const pal = colors[name] || DEFAULT_THEME[name]
     root.style.setProperty(`--p-${name}-soft-color`, pal['100'])

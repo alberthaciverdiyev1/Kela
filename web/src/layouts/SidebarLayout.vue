@@ -1,14 +1,11 @@
 <template>
   <div class="min-h-screen flex bg-surface-50">
-    <!-- Sol sidebar -->
     <aside class="w-64 shrink-0 bg-surface-0 border-r border-surface-200 flex flex-col">
-      <!-- Logo -->
       <div class="flex items-center gap-3 px-5 h-16 border-b border-surface-100">
         <Avatar icon="pi pi-book" shape="circle" class="bg-primary text-white" />
         <span class="font-bold text-xl text-primary">{{ config.siteName }}</span>
       </div>
 
-      <!-- Rol bazlı navigasyon -->
       <nav class="flex-1 p-4 space-y-1 overflow-y-auto">
         <router-link
           v-for="item in navItems"
@@ -24,7 +21,6 @@
         </router-link>
       </nav>
 
-      <!-- Kullanıcı -->
       <div class="p-4 border-t border-surface-100 space-y-2">
         <LanguageSwitcher />
         <Menu ref="menuRef" :model="userMenuItems" popup class="p-2" />
@@ -42,7 +38,6 @@
       </div>
     </aside>
 
-    <!-- İçerik -->
     <div class="flex-1 flex flex-col min-w-0">
       <main class="flex-1 p-6">
         <router-view />

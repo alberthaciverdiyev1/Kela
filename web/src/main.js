@@ -15,14 +15,10 @@ const pinia = createPinia()
 setActivePinia(pinia) // http.js interceptor'ı store'a pinia olmadan erişebilsin
 app.use(pinia)
 
-// http.js 401 handler'ı çıkışı tetikleyebilsin diye auth store'u bağla
 window.__kelaAuthStore = useAuthStore(pinia)
 
-// Site konfigürasyonunu uygula (ilk render'dan önce, flash olmadan).
-// init() önce yerel önbelleği senkron uygular, sonra backend'den tek GET ile çeker.
 useSiteConfigStore(pinia).init()
 
-// Varsayılan dil az; <html lang="az"> set et
 useI18nStore(pinia).setLocale(useI18nStore(pinia).locale)
 
 app.use(router)

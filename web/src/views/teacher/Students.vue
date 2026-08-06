@@ -1,9 +1,7 @@
 <template>
   <div class="space-y-6">
-    <!-- Durum mesajları -->
     <Toast />
 
-    <!-- ════ ÜST BAR: başlık + Yeni Öğrenci (modal açar) ════ -->
     <div class="flex items-start justify-between gap-4 mb-6">
       <div>
         <h1 class="text-2xl font-bold text-surface-800 mb-1">{{ i18n.t('students.title') }}</h1>
@@ -12,7 +10,6 @@
       <Button :label="i18n.t('students.new')" icon="pi pi-user-plus" @click="openCreateDialog" />
     </div>
 
-    <!-- ════ ÖĞRENCİ LİSTESİ ════ -->
     <Card class="border-none shadow rounded-2xl">
       <template #title>
         <div class="flex items-center gap-2">
@@ -65,7 +62,6 @@
       </template>
     </Card>
 
-    <!-- ════ YENİ ÖĞRENCİ MODALI — Login input stilleri ════ -->
     <Dialog v-model:visible="showCreateDialog" modal :header="i18n.t('students.new')" :style="{ width: '440px' }">
       <form @submit.prevent="submit" class="flex flex-col gap-5 pt-1">
         <TextInput
@@ -120,7 +116,6 @@
       </form>
     </Dialog>
 
-    <!-- ════ MAİL + ŞİFRE DIALOG — TEK KOPYALA BUTONU ════ -->
     <Dialog v-model:visible="showCredentials" modal :header="i18n.t('students.createdTitle')" :style="{ width: '460px' }">
       <div class="space-y-4">
         <Message severity="success" :closable="false" class="!text-sm">
@@ -164,10 +159,8 @@ import TextInput from '../../components/ui/inputs/TextInput.vue'
 const toast = useToast()
 const i18n = useI18n()
 
-// ── Modal durumu ──
 const showCreateDialog = ref(false)
 
-// ── Form durumu ──
 const form = reactive({
   firstName: '',
   lastName: '',
@@ -178,7 +171,6 @@ const errors = reactive({ firstName: '', phoneNumber: '', email: '' })
 
 const saving = ref(false)
 
-// ── Liste ──
 const students = ref([])
 const loading = ref(false)
 const totalCount = ref(0)
@@ -187,11 +179,9 @@ const pageSize = 10
 const first = ref(0)
 const deletingId = ref(null)
 
-// ── Oluşturma sonucu ──
 const showCredentials = ref(false)
 const createdCredentials = ref(null)
 
-// Tek kopyala → "mail | şifre"
 const credentialsText = computed(() => {
   if (!createdCredentials.value) return ''
   return `${createdCredentials.value.email} | ${createdCredentials.value.password}`
@@ -199,7 +189,6 @@ const credentialsText = computed(() => {
 
 onMounted(loadStudents)
 
-// Dil değişince listedeki şehir adları (çeviri) güncellensin
 watch(() => i18n.locale, () => loadStudents())
 
 function openCreateDialog() {
@@ -251,7 +240,6 @@ async function submit() {
     }
     const created = await studentsApi.create(payload)
 
-    // Sistem ürettiği mail + şifreyi göster (tek copy ile)
     createdCredentials.value = created
     showCreateDialog.value = false
     showCredentials.value = true
