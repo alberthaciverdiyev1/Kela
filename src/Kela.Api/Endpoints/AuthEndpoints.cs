@@ -1,6 +1,8 @@
 using System.Security.Claims;
-using Kela.Application.Users.Auth;
-using Kela.Application.Users.Auth.Requests;
+using Kela.Api.Contracts;
+using Kela.Application.Features.Users.Auth;
+using Kela.Application.Features.Users.Auth.Requests;
+using Kela.Application.Features.Users.Auth.Responses;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 
@@ -35,8 +37,8 @@ public static class AuthEndpoints
 
         if (result is null)
         {
-            return Results.Problem(
-                title: "E-posta veya şifre hatalı.",
+            return Results.Json(
+                ApiResponse<object>.Error("E-posta veya şifre hatalı."),
                 statusCode: StatusCodes.Status401Unauthorized);
         }
 
@@ -53,6 +55,6 @@ public static class AuthEndpoints
             CookieAuthenticationDefaults.AuthenticationScheme,
             new ClaimsPrincipal(identity));
 
-        return Results.Ok(result);
+        return Results.Ok(ApiResponse<LoginResponse>.Success(result));
     }
 }

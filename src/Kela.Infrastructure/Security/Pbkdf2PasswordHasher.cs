@@ -1,5 +1,5 @@
 using System.Security.Cryptography;
-using Kela.Application;
+using Kela.Application.Features.Users;
 
 namespace Kela.Infrastructure.Security;
 

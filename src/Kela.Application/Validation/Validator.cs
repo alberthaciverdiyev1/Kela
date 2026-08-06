@@ -9,7 +9,7 @@ public abstract class Validator<T> : IValidator<T>
 {
     public void Validate(T value)
     {
-        var errors = new Dictionary<string, string>();
+        var errors = new List<string>();
         ValidateCore(value, errors);
 
         if (errors.Count > 0)
@@ -18,8 +18,7 @@ public abstract class Validator<T> : IValidator<T>
         }
     }
 
-    protected abstract void ValidateCore(T value, Dictionary<string, string> errors);
+    protected abstract void ValidateCore(T value, List<string> errors);
 
-    protected static void AddError(Dictionary<string, string> errors, string propertyName, string error)
-        => errors[propertyName] = error;
+    protected static void AddError(List<string> errors, string error) => errors.Add(error);
 }

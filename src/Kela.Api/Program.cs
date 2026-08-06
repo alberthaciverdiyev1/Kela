@@ -10,7 +10,6 @@ using Microsoft.EntityFrameworkCore;
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddOpenApi();
-builder.Services.AddProblemDetails();
 builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
 
 // Cookie-only kimlik doğrulama:
@@ -72,7 +71,6 @@ app.MapSectionsEndpoints();
 app.MapUsersEndpoints();
 app.MapAuthEndpoints();
 
-// Geliştirme ortamı: migration'ları uygula
 using (var scope = app.Services.CreateScope())
 {
     var db = scope.ServiceProvider.GetRequiredService<KelaDbContext>();

@@ -1,6 +1,6 @@
+using Kela.Api.Contracts;
 using Kela.Application.Validation;
 using Microsoft.AspNetCore.Diagnostics;
-using Microsoft.AspNetCore.Mvc;
 
 namespace Kela.Api.Middleware;
 
@@ -11,12 +11,15 @@ public sealed class GlobalExceptionHandler(ILogger<GlobalExceptionHandler> logge
         Exception exception,
         CancellationToken cancellationToken)
     {
-        var (statusCode, message) = exception switch
+        var (statusCode, message, errors) = exception switch
         {
-            ValidationException => (StatusCodes.Status400BadRequest, "Doğrulama hatası."),
-            KeyNotFoundException => (StatusCodes.Status404NotFound, exception.Message),
-            InvalidOperationException => (StatusCodes.Status400BadRequest, exception.Message),
-            _ => (StatusCodes.Status500InternalServerError, "Beklenmeyen bir hata oluştu."),
+            ValidationException validation => (
+                StatusCodes.Status400BadRequest,
+                "Doğrulama hatası.",
+                (IReadOnlyCollection<string>?)validation.Errors),
+            KeyNotFoundException => (StatusCodes.Status404NotFound, exception.Message, null),
+            InvalidOperationException => (StatusCodes.Status400BadRequest, exception.Message, null),
+            _ => (StatusCodes.Status500InternalServerError, "Beklenmeyen bir hata oluştu.", null),
         };
 
         if (statusCode == StatusCodes.Status500InternalServerError)
@@ -26,18 +29,8 @@ public sealed class GlobalExceptionHandler(ILogger<GlobalExceptionHandler> logge
 
         httpContext.Response.StatusCode = statusCode;
 
-        var problem = new ProblemDetails
-        {
-            Status = statusCode,
-            Title = message,
-        };
-
-        if (exception is ValidationException validation)
-        {
-            problem.Extensions["errors"] = validation.Errors;
-        }
-
-        await httpContext.Response.WriteAsJsonAsync(problem, cancellationToken);
+        await httpContext.Response.WriteAsJsonAsync(
+            ApiResponse<object>.Error(message, errors), cancellationToken);
 
         return true;
     }

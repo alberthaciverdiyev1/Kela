@@ -5,12 +5,12 @@ namespace Kela.Application.Validation;
 /// </summary>
 public sealed class ValidationException : Exception
 {
-    public ValidationException(IReadOnlyDictionary<string, string> errors)
+    public ValidationException(IReadOnlyCollection<string> errors)
         : base("Doğrulama hatası.")
     {
         Errors = errors;
     }
 
-    /// <summary>Hata veren alan adı → hata mesajı.</summary>
-    public IReadOnlyDictionary<string, string> Errors { get; }
+    /// <summary>İhlal edilen kurallara ait hata mesajları.</summary>
+    public IReadOnlyCollection<string> Errors { get; }
 }

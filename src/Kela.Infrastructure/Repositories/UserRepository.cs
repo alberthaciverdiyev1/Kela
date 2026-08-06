@@ -1,5 +1,5 @@
+using Kela.Application.Features.Users;
 using Kela.Application.Pagination;
-using Kela.Application.Repositories;
 using Kela.Domain.Entities;
 using Kela.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;

@@ -1,5 +1,7 @@
 using Kela.Application;
-using Kela.Application.Repositories;
+using Kela.Application.Features.Sections;
+using Kela.Application.Features.Users;
+using Kela.Application.Patterns;
 using Kela.Infrastructure.Data;
 using Kela.Infrastructure.Repositories;
 using Kela.Infrastructure.Security;

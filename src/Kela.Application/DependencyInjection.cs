@@ -1,12 +1,12 @@
-using Kela.Application.Sections;
-using Kela.Application.Sections.Requests;
-using Kela.Application.Sections.Validators;
-using Kela.Application.Users;
-using Kela.Application.Users.Auth;
-using Kela.Application.Users.Auth.Requests;
-using Kela.Application.Users.Auth.Validators;
-using Kela.Application.Users.Requests;
-using Kela.Application.Users.Validators;
+using Kela.Application.Features.Sections;
+using Kela.Application.Features.Sections.Requests;
+using Kela.Application.Features.Sections.Validators;
+using Kela.Application.Features.Users;
+using Kela.Application.Features.Users.Auth;
+using Kela.Application.Features.Users.Auth.Requests;
+using Kela.Application.Features.Users.Auth.Validators;
+using Kela.Application.Features.Users.Requests;
+using Kela.Application.Features.Users.Validators;
 using Kela.Application.Validation;
 using Microsoft.Extensions.DependencyInjection;
 

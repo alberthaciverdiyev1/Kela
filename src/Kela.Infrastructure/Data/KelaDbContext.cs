@@ -1,4 +1,4 @@
-using Kela.Application.Repositories;
+using Kela.Application.Patterns;
 using Kela.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 
