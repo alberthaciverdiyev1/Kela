@@ -1,8 +1,9 @@
 using Kela.Domain.Enums;
 
-namespace Kela.Application.Users.Dtos;
+namespace Kela.Application.Users.Responses;
 
-public sealed record UserDto(
+/// <summary>Kullanıcı bilgisi (yalnızca okuma amaçlı yanıt).</summary>
+public sealed record UserResponse(
     int Id,
     string FirstName,
     string LastName,

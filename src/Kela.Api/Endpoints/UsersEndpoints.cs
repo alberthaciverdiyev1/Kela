@@ -1,5 +1,5 @@
 using Kela.Application.Users;
-using Kela.Domain.Enums;
+using Kela.Application.Users.Requests;
 
 namespace Kela.Api.Endpoints;
 
@@ -20,15 +20,13 @@ public static class UsersEndpoints
 
         group.MapPost("", async (CreateUserRequest request, IUserService users, CancellationToken ct) =>
         {
-            var id = await users.CreateAsync(
-                request.FirstName, request.LastName, request.Email, request.Password, request.Role, ct);
+            var id = await users.CreateAsync(request, ct);
             return Results.Created($"/api/users/{id}", new { id });
         });
 
         group.MapPut("/{id:int}", async (int id, UpdateUserRequest request, IUserService users, CancellationToken ct) =>
         {
-            await users.UpdateAsync(
-                id, request.FirstName, request.LastName, request.Password, request.Status, ct);
+            await users.UpdateAsync(id, request, ct);
             return Results.NoContent();
         });
 
@@ -40,17 +38,4 @@ public static class UsersEndpoints
 
         return app;
     }
-
-    public sealed record CreateUserRequest(
-        string FirstName,
-        string LastName,
-        string Email,
-        string Password,
-        Role Role);
-
-    public sealed record UpdateUserRequest(
-        string FirstName,
-        string LastName,
-        string? Password,
-        UserStatus? Status);
 }

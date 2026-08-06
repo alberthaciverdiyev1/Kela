@@ -1,11 +1,11 @@
-using Kela.Application.Sections.Dtos;
+using Kela.Application.Sections.Responses;
 using Kela.Domain.Entities;
 
 namespace Kela.Application.Sections;
 
 public static class SectionMappings
 {
-    public static SectionDto ToDto(this Section section) => new(
+    public static SectionResponse ToResponse(this Section section) => new(
         section.Id,
         section.Name,
         section.Level,

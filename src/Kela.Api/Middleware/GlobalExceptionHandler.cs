@@ -1,3 +1,4 @@
+using Kela.Application.Validation;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
 
@@ -12,6 +13,7 @@ public sealed class GlobalExceptionHandler(ILogger<GlobalExceptionHandler> logge
     {
         var (statusCode, message) = exception switch
         {
+            ValidationException => (StatusCodes.Status400BadRequest, "Doğrulama hatası."),
             KeyNotFoundException => (StatusCodes.Status404NotFound, exception.Message),
             InvalidOperationException => (StatusCodes.Status400BadRequest, exception.Message),
             _ => (StatusCodes.Status500InternalServerError, "Beklenmeyen bir hata oluştu."),
@@ -24,11 +26,18 @@ public sealed class GlobalExceptionHandler(ILogger<GlobalExceptionHandler> logge
 
         httpContext.Response.StatusCode = statusCode;
 
-        await httpContext.Response.WriteAsJsonAsync(new ProblemDetails
+        var problem = new ProblemDetails
         {
             Status = statusCode,
             Title = message,
-        }, cancellationToken);
+        };
+
+        if (exception is ValidationException validation)
+        {
+            problem.Extensions["errors"] = validation.Errors;
+        }
+
+        await httpContext.Response.WriteAsJsonAsync(problem, cancellationToken);
 
         return true;
     }

@@ -1,5 +1,6 @@
 using System.Security.Claims;
 using Kela.Application.Users.Auth;
+using Kela.Application.Users.Auth.Requests;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 
@@ -30,7 +31,7 @@ public static class AuthEndpoints
         HttpContext httpContext,
         CancellationToken ct)
     {
-        var result = await auth.LoginAsync(request.Email, request.Password, ct);
+        var result = await auth.LoginAsync(request, ct);
 
         if (result is null)
         {
@@ -54,6 +55,4 @@ public static class AuthEndpoints
 
         return Results.Ok(result);
     }
-
-    public sealed record LoginRequest(string Email, string Password);
 }

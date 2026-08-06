@@ -1,4 +1,5 @@
 using Kela.Application.Sections;
+using Kela.Application.Sections.Requests;
 
 namespace Kela.Api.Endpoints;
 
@@ -17,15 +18,15 @@ public static class SectionsEndpoints
             return section is null ? Results.NotFound() : Results.Ok(section);
         });
 
-        group.MapPost("", async (SectionRequest request, ISectionService sections, CancellationToken ct) =>
+        group.MapPost("", async (CreateSectionRequest request, ISectionService sections, CancellationToken ct) =>
         {
-            var id = await sections.CreateAsync(request.Name, request.Level, request.TeacherId, ct);
+            var id = await sections.CreateAsync(request, ct);
             return Results.Created($"/api/sections/{id}", new { id });
         });
 
-        group.MapPut("/{id:int}", async (int id, SectionRequest request, ISectionService sections, CancellationToken ct) =>
+        group.MapPut("/{id:int}", async (int id, UpdateSectionRequest request, ISectionService sections, CancellationToken ct) =>
         {
-            await sections.UpdateAsync(id, request.Name, request.Level, request.TeacherId, ct);
+            await sections.UpdateAsync(id, request, ct);
             return Results.NoContent();
         });
 
@@ -37,6 +38,4 @@ public static class SectionsEndpoints
 
         return app;
     }
-
-    public sealed record SectionRequest(string Name, int Level, int? TeacherId);
 }

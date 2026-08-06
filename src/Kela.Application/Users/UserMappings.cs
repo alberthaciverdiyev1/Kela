@@ -1,11 +1,11 @@
-using Kela.Application.Users.Dtos;
+using Kela.Application.Users.Responses;
 using Kela.Domain.Entities;
 
 namespace Kela.Application.Users;
 
 public static class UserMappings
 {
-    public static UserDto ToDto(this User user) => new(
+    public static UserResponse ToResponse(this User user) => new(
         user.Id,
         user.FirstName,
         user.LastName,

@@ -1,6 +1,13 @@
 using Kela.Application.Sections;
+using Kela.Application.Sections.Requests;
+using Kela.Application.Sections.Validators;
 using Kela.Application.Users;
 using Kela.Application.Users.Auth;
+using Kela.Application.Users.Auth.Requests;
+using Kela.Application.Users.Auth.Validators;
+using Kela.Application.Users.Requests;
+using Kela.Application.Users.Validators;
+using Kela.Application.Validation;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Kela.Application;
@@ -12,6 +19,13 @@ public static class DependencyInjection
         services.AddScoped<ISectionService, SectionService>();
         services.AddScoped<IUserService, UserService>();
         services.AddScoped<IAuthService, AuthService>();
+
+        // Request doğrulayıcılar (service'ler çağırır, hatayı ValidationException ile fırlatır).
+        services.AddScoped<IValidator<CreateSectionRequest>, CreateSectionValidator>();
+        services.AddScoped<IValidator<UpdateSectionRequest>, UpdateSectionValidator>();
+        services.AddScoped<IValidator<CreateUserRequest>, CreateUserValidator>();
+        services.AddScoped<IValidator<UpdateUserRequest>, UpdateUserValidator>();
+        services.AddScoped<IValidator<LoginRequest>, LoginValidator>();
 
         return services;
     }

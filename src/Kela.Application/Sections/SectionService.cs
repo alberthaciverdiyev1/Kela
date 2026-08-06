@@ -1,6 +1,8 @@
 using Kela.Application.Pagination;
 using Kela.Application.Repositories;
-using Kela.Application.Sections.Dtos;
+using Kela.Application.Sections.Requests;
+using Kela.Application.Sections.Responses;
+using Kela.Application.Validation;
 using Kela.Domain.Entities;
 using Kela.Domain.Enums;
 
@@ -9,36 +11,40 @@ namespace Kela.Application.Sections;
 internal sealed class SectionService(
     ISectionRepository sections,
     IUserRepository users,
-    IUnitOfWork unitOfWork) : ISectionService
+    IUnitOfWork unitOfWork,
+    IValidator<CreateSectionRequest> createValidator,
+    IValidator<UpdateSectionRequest> updateValidator) : ISectionService
 {
-    public async Task<PaginatedResult<SectionDto>> GetPageAsync(
+    public async Task<PaginatedResult<SectionResponse>> GetPageAsync(
         int page, int pageSize, CancellationToken cancellationToken = default)
     {
         var result = await sections.GetPageAsync(page, pageSize, cancellationToken);
-        return new PaginatedResult<SectionDto>(
-            result.Items.Select(s => s.ToDto()).ToList(),
+        return new PaginatedResult<SectionResponse>(
+            result.Items.Select(s => s.ToResponse()).ToList(),
             result.Page,
             result.PageSize,
             result.TotalCount);
     }
 
-    public async Task<SectionDto?> GetByIdAsync(int id, CancellationToken cancellationToken = default)
+    public async Task<SectionResponse?> GetByIdAsync(int id, CancellationToken cancellationToken = default)
     {
         var section = await sections.GetByIdAsync(id, cancellationToken);
-        return section?.ToDto();
+        return section?.ToResponse();
     }
 
     public async Task<int> CreateAsync(
-        string name, int level, int? teacherId, CancellationToken cancellationToken = default)
+        CreateSectionRequest request, CancellationToken cancellationToken = default)
     {
-        var trimmed = name.Trim();
+        createValidator.Validate(request);
+
+        var trimmed = request.Name.Trim();
 
         if (await sections.NameExistsAsync(trimmed, cancellationToken))
         {
             throw new InvalidOperationException($"'{trimmed}' adlı sınıf zaten kayıtlı.");
         }
 
-        if (teacherId is int id)
+        if (request.TeacherId is int id)
         {
             await EnsureTeacherExistsAsync(id, cancellationToken);
         }
@@ -46,8 +52,8 @@ internal sealed class SectionService(
         var section = new Section
         {
             Name = trimmed,
-            Level = level,
-            TeacherId = teacherId,
+            Level = request.Level,
+            TeacherId = request.TeacherId,
             CreatedAt = DateTime.UtcNow,
         };
 
@@ -58,25 +64,27 @@ internal sealed class SectionService(
     }
 
     public async Task UpdateAsync(
-        int id, string name, int level, int? teacherId, CancellationToken cancellationToken = default)
+        int id, UpdateSectionRequest request, CancellationToken cancellationToken = default)
     {
+        updateValidator.Validate(request);
+
         var section = await sections.GetByIdAsync(id, cancellationToken)
             ?? throw new KeyNotFoundException($"Id = {id} olan sınıf bulunamadı.");
 
-        var trimmed = name.Trim();
+        var trimmed = request.Name.Trim();
         if (trimmed != section.Name && await sections.NameExistsAsync(trimmed, cancellationToken))
         {
             throw new InvalidOperationException($"'{trimmed}' adlı sınıf zaten kayıtlı.");
         }
 
-        if (teacherId is int teacher)
+        if (request.TeacherId is int teacher)
         {
             await EnsureTeacherExistsAsync(teacher, cancellationToken);
         }
 
         section.Name = trimmed;
-        section.Level = level;
-        section.TeacherId = teacherId;
+        section.Level = request.Level;
+        section.TeacherId = request.TeacherId;
         section.UpdatedAt = DateTime.UtcNow;
 
         sections.Update(section);
