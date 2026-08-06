@@ -2,8 +2,6 @@ using Kela.Api.Contracts;
 using Kela.Application.Features.Users.Auth;
 using Kela.Application.Features.Users.Auth.Requests;
 using Kela.Application.Features.Users.Auth.Responses;
-using Kela.Domain.Entities;
-using Microsoft.AspNetCore.Identity;
 
 namespace Kela.Api.Endpoints;
 
@@ -13,20 +11,22 @@ public static class AuthEndpoints
     {
         var group = app.MapGroup("/api/auth");
 
+        group.MapPost("/register", Register);
         group.MapPost("/login", Login);
-        group.MapPost("/logout", async (SignInManager<User> signInManager) =>
-        {
-            await signInManager.SignOutAsync();
-            return ApiResponse.NoContent();
-        }).RequireAuthorization();
+        group.MapPost("/logout", Logout).RequireAuthorization();
 
         return app;
     }
 
-    /// <summary>
-    /// Giriş: IAuthService → SignInManager ile doğrular, lockout uygular ve
-    /// security stamp içeren Identity cookie'sini yazar (cookie-only yaklaşım).
-    /// </summary>
+    private static async Task<IResult> Register(
+        RegisterRequest request,
+        IAuthService auth,
+        CancellationToken ct)
+    {
+        var result = await auth.RegisterAsync(request, ct);
+        return ApiResponse<RegisterResponse>.Created($"/api/users/{result.UserId}", result);
+    }
+
     private static async Task<IResult> Login(
         LoginRequest request,
         IAuthService auth,
@@ -40,5 +40,11 @@ public static class AuthEndpoints
         }
 
         return ApiResponse<LoginResponse>.Success(result);
+    }
+
+    private static async Task<IResult> Logout(IAuthService auth, CancellationToken ct)
+    {
+        await auth.LogoutAsync(ct);
+        return ApiResponse.NoContent();
     }
 }

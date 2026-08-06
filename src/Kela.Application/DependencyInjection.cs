@@ -26,6 +26,7 @@ public static class DependencyInjection
         services.AddScoped<IValidator<CreateUserRequest>, CreateUserValidator>();
         services.AddScoped<IValidator<UpdateUserRequest>, UpdateUserValidator>();
         services.AddScoped<IValidator<LoginRequest>, LoginValidator>();
+        services.AddScoped<IValidator<RegisterRequest>, RegisterValidator>();
 
         return services;
     }
