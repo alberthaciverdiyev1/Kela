@@ -1,6 +1,7 @@
 using Kela.Api.Endpoints;
 using Kela.Api.Middleware;
 using Kela.Application;
+using Kela.Domain.Common;
 using Kela.Infrastructure;
 using Kela.Infrastructure.Data;
 using Kela.Infrastructure.Data.Seeds;
@@ -86,9 +87,9 @@ using (var scope = app.Services.CreateScope())
         db.Database.Migrate();
     }
 
-    // Sabit Identity rolleri: Admin/Teacher/Student/Parent (AspNetRoles).
+    // Sabit Identity rolleri: RoleNames.All'daki her rol (AspNetRoles).
     var roleManager = services.GetRequiredService<RoleManager<IdentityRole<int>>>();
-    foreach (var roleName in new[] { "Admin", "Teacher", "Student", "Parent" })
+    foreach (var roleName in RoleNames.All)
     {
         if (!await roleManager.RoleExistsAsync(roleName))
         {

@@ -2,6 +2,7 @@ using Kela.Api.Contracts;
 using Kela.Application.Features.SiteConfiguration;
 using Kela.Application.Features.SiteConfiguration.Requests;
 using Kela.Application.Features.SiteConfiguration.Responses;
+using Kela.Domain.Common;
 
 namespace Kela.Api.Endpoints;
 
@@ -28,7 +29,7 @@ public static class SiteConfigurationEndpoints
             await config.UpdateAsync(request, ct);
             return ApiResponse.NoContent();
         })
-        .RequireAuthorization(policy => policy.RequireRole("Admin", "Teacher"));
+        .RequireAuthorization(policy => policy.RequireRole(RoleNames.Admin, RoleNames.Teacher));
 
         return app;
     }

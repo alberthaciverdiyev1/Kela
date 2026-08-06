@@ -18,7 +18,7 @@ const routes = [
         path: 'settings',
         name: 'settings',
         component: () => import('../views/settings/Settings.vue'),
-        meta: { title: 'Ayarlar', requiresRole: [ROLES.Admin, ROLES.Teacher] },
+        meta: { title: 'Ayarlar', requiresRole: [ROLES.Teacher] },
       },
     ],
   },

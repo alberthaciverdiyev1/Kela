@@ -4,7 +4,7 @@ import http from './http'
 // SİTE KONFİGÜRASYONU — TEK entity, TEK request, TEK response
 // -------------------------------------------------------------
 //   GET /api/site-config  → tüm site ayarları (giriş yapan herkes)
-//   PUT /api/site-config  → tüm site ayarlarını güncelle (Admin/Teacher)
+//   PUT /api/site-config  → tüm site ayarlarını güncelle (Teacher)
 //
 // Yeni bir site ayarı eklendiğinde backend'e buraya da eklemek gerekmez:
 // response zaten tüm alanları getirir. İhtiyaç olursa tek metot kalır.

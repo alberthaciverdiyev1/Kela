@@ -17,7 +17,8 @@ export function useUserMenu() {
 
   const userMenuItems = ref([])
 
-  // Profil + Çıkış (herkese); Ayarlar (site konfigürasyonu) yalnızca Admin/Teacher.
+  // Profil + Çıkış (herkese); Ayarlar (site konfigürasyonu) yalnızca Teacher.
+  // Admin bu panelde değil, ayrı yönetim panelinde çalışır.
   userMenuItems.value = [
     {
       label: 'Profil',
@@ -26,7 +27,7 @@ export function useUserMenu() {
     },
   ]
 
-  if (auth.isTeacher || auth.isAdmin) {
+  if (auth.isTeacher) {
     userMenuItems.value.push({
       label: 'Ayarlar',
       icon: 'pi pi-cog',

@@ -2,6 +2,7 @@ using FluentValidation;
 using Kela.Application.Features.Users.Auth.Requests;
 using Kela.Application.Features.Users.Auth.Responses;
 using Kela.Application.Features.Users.Requests;
+using Kela.Domain.Common;
 using Kela.Domain.Entities;
 using Kela.Domain.Enums;
 using Microsoft.AspNetCore.Identity;
@@ -47,7 +48,7 @@ internal sealed class AuthService(
         await registerValidator.ValidateAndThrowAsync(request, cancellationToken);
 
         var user = await CreateUserCoreAsync(
-            request.FirstName, request.LastName, request.Email, request.Password, Role.Teacher);
+            request.FirstName, request.LastName, request.Email, request.Password, RoleNames.Teacher);
 
         return new RegisterResponse(user.Id, user.FirstName, user.LastName, user.Email ?? string.Empty);
     }
@@ -66,7 +67,7 @@ internal sealed class AuthService(
     public Task LogoutAsync(CancellationToken cancellationToken = default) => signInManager.SignOutAsync();
 
     private async Task<User> CreateUserCoreAsync(
-        string firstName, string lastName, string email, string password, Role role)
+        string firstName, string lastName, string email, string password, string role)
     {
         var trimmedEmail = email.Trim();
         var normalizedEmail = trimmedEmail.ToLowerInvariant();
@@ -89,13 +90,12 @@ internal sealed class AuthService(
         }
 
         // Identity rol üyeliği (AspNetUserRoles).
-        var roleName = role.ToString();
-        if (!await roleManager.RoleExistsAsync(roleName))
+        if (!await roleManager.RoleExistsAsync(role))
         {
-            await roleManager.CreateAsync(new IdentityRole<int>(roleName));
+            await roleManager.CreateAsync(new IdentityRole<int>(role));
         }
 
-        await userManager.AddToRoleAsync(user, roleName);
+        await userManager.AddToRoleAsync(user, role);
 
         return user;
     }

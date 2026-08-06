@@ -3,6 +3,7 @@ using Kela.Application.Features.Cities;
 using Kela.Application.Features.Cities.Requests;
 using Kela.Application.Features.Cities.Responses;
 using Kela.Application.Pagination;
+using Kela.Domain.Common;
 using Microsoft.AspNetCore.Builder;
 
 namespace Kela.Api.Endpoints;
@@ -22,7 +23,7 @@ public static class CitiesEndpoints
     public static IEndpointRouteBuilder MapCitiesEndpoints(this IEndpointRouteBuilder app)
     {
         var group = app.MapGroup("/api/cities")
-            .RequireAuthorization(policy => policy.RequireRole("Admin"));
+            .RequireAuthorization(policy => policy.RequireRole(RoleNames.Admin));
 
         group.MapGet("", async (int page, int pageSize, string? lang, ICityService cities, CancellationToken ct) =>
             ApiResponse<PaginatedResult<CityListItemResponse>>.Success(

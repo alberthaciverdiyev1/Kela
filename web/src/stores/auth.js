@@ -3,12 +3,14 @@ import { authApi } from '../api/auth'
 import router from '../router'
 import { useSiteConfigStore } from './siteConfig'
 
-// Roller (backend Kela.Domain/Enums/Role.cs ile eşleşir)
+// Roller — Identity rol adları (backend Kela.Domain/Common/RoleNames.cs).
+// Vue tarafı YALNIZCA öğrenci/öğretmen/veli içindir; Admin ayrı panelde yönetilir.
+// Bu yüzden Admin burada tanımlı değildir — admin kullanıcısı girse bile
+// teacher-only sayfalara erişemez, menüde admin öğesi görünmez.
 export const ROLES = {
-  Admin: 1,
-  Teacher: 2,
-  Student: 3,
-  Parent: 4,
+  Teacher: 'Teacher',
+  Student: 'Student',
+  Parent: 'Parent',
 }
 
 export const useAuthStore = defineStore('auth', {
@@ -23,16 +25,11 @@ export const useAuthStore = defineStore('auth', {
     fullName: (state) =>
       state.user ? `${state.user.firstName} ${state.user.lastName}` : '',
     roleName: (state) => {
-      const names = {
-        [ROLES.Admin]: 'Admin',
-        [ROLES.Teacher]: 'Teacher',
-        [ROLES.Student]: 'Student',
-        [ROLES.Parent]: 'Parent',
-      }
-      return names[state.user?.role] ?? 'Bilinmiyor'
+      // Rol artık backend'den string gelir — önce ROLES'ta mı kontrol et,
+      // bilinmeyen rol adlarını da göster (Identity'e sonradan eklenen roller).
+      return ROLES[state.user?.role] ?? state.user?.role ?? 'Bilinmiyor'
     },
     isTeacher: (state) => state.user?.role === ROLES.Teacher,
-    isAdmin: (state) => state.user?.role === ROLES.Admin,
   },
 
   actions: {
