@@ -12,6 +12,7 @@ export function useNavItems() {
       case ROLES.Teacher:
         return [
           { label: 'Dashboard', icon: 'pi pi-th-large', name: 'teacher.dashboard' },
+          { label: 'Öğrenciler', icon: 'pi pi-user', name: 'teacher.students' },
           { label: 'Sınıflar', icon: 'pi pi-users', name: 'teacher.sections' },
           { label: 'Ayarlar', icon: 'pi pi-cog', name: 'teacher.settings' },
         ]

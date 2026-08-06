@@ -8,5 +8,6 @@ namespace Kela.Application.Features.Students.Requests;
 public sealed record CreateStudentRequest(
     string FirstName,
     string LastName,
-    DateTime? BirthDate,
+    string? PhoneNumber,
+    DateOnly? BirthDate,
     int? CityId);

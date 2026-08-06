@@ -11,4 +11,5 @@ public sealed record CreateUserRequest(
     string LastName,
     string Email,
     string Password,
-    string Role);
+    string Role,
+    string? PhoneNumber = null);

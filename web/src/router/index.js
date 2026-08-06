@@ -27,6 +27,12 @@ const routes = [
         meta: { title: 'Dashboard', requiresRole: [ROLES.Teacher] },
       },
       {
+        path: 'teacher/students',
+        name: 'teacher.students',
+        component: () => import('../views/teacher/Students.vue'),
+        meta: { title: 'Öğrenciler', requiresRole: [ROLES.Teacher] },
+      },
+      {
         path: 'teacher/sections',
         name: 'teacher.sections',
         component: () => import('../views/common/ComingSoon.vue'),

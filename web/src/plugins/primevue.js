@@ -14,6 +14,14 @@ import Chip from 'primevue/chip'
 import FloatLabel from 'primevue/floatlabel'
 import IconField from 'primevue/iconfield'
 import InputIcon from 'primevue/inputicon'
+import Select from 'primevue/select'
+import DatePicker from 'primevue/datepicker'
+import Dialog from 'primevue/dialog'
+import DataTable from 'primevue/datatable'
+import Column from 'primevue/column'
+import Tag from 'primevue/tag'
+import Toast from 'primevue/toast'
+import ToastService from 'primevue/toastservice'
 
 export function setupPrimeVue(app) {
   app.use(PrimeVue, {
@@ -43,4 +51,12 @@ export function setupPrimeVue(app) {
   app.component('FloatLabel', FloatLabel)
   app.component('IconField', IconField)
   app.component('InputIcon', InputIcon)
+  app.component('Select', Select)
+  app.component('DatePicker', DatePicker)
+  app.component('Dialog', Dialog)
+  app.component('DataTable', DataTable)
+  app.component('Column', Column)
+  app.component('Tag', Tag)
+  app.component('Toast', Toast)
+  app.use(ToastService)
 }

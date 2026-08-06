@@ -59,7 +59,8 @@ internal sealed class StudentService(
 
         // User'ı Student rolüyle oluştur (Identity: hash, rol üyeliği).
         var userId = await auth.CreateUserAsync(new CreateUserRequest(
-            request.FirstName, request.LastName, email, password, RoleNames.Student),
+            request.FirstName, request.LastName, email, password, RoleNames.Student,
+            request.PhoneNumber),
             cancellationToken);
 
         var profile = new StudentProfile
@@ -91,6 +92,7 @@ internal sealed class StudentService(
         if (profile.User is not null)
         {
             profile.User.SetName(request.FirstName, request.LastName);
+            profile.User.SetPhoneNumber(request.PhoneNumber);
             await userManager.UpdateAsync(profile.User);
         }
 
@@ -153,6 +155,7 @@ internal sealed class StudentService(
             p.UserId,
             p.User?.FirstName ?? string.Empty,
             p.User?.LastName ?? string.Empty,
+            p.User?.PhoneNumber,
             p.User?.Email ?? string.Empty,
             p.BirthDate,
             p.CityId,

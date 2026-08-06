@@ -59,7 +59,8 @@ internal sealed class AuthService(
         await createUserValidator.ValidateAndThrowAsync(request, cancellationToken);
 
         var user = await CreateUserCoreAsync(
-            request.FirstName, request.LastName, request.Email, request.Password, request.Role);
+            request.FirstName, request.LastName, request.Email, request.Password, request.Role,
+            request.PhoneNumber);
 
         return user.Id;
     }
@@ -67,7 +68,7 @@ internal sealed class AuthService(
     public Task LogoutAsync(CancellationToken cancellationToken = default) => signInManager.SignOutAsync();
 
     private async Task<User> CreateUserCoreAsync(
-        string firstName, string lastName, string email, string password, string role)
+        string firstName, string lastName, string email, string password, string role, string? phoneNumber = null)
     {
         var trimmedEmail = email.Trim();
         var normalizedEmail = trimmedEmail.ToLowerInvariant();
@@ -81,6 +82,7 @@ internal sealed class AuthService(
         {
             CreatedAt = DateTime.UtcNow,
         };
+        user.SetPhoneNumber(phoneNumber);
 
         // Identity: parolayı hash'ler (PBKDF2) ve kullanıcıyı kaydeder.
         var result = await userManager.CreateAsync(user, password);

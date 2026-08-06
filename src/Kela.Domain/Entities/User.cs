@@ -20,6 +20,12 @@ public class User : IdentityUser<int>, ISoftDeletable, IAuditableEntity
         UserName = email;
     }
 
+    public User(string firstName, string lastName, string email, string phoneNumber)
+        : this(firstName, lastName, email)
+    {
+        SetPhoneNumber(phoneNumber);
+    }
+
     private User()
     {
         // EF Core materialization için
@@ -27,6 +33,10 @@ public class User : IdentityUser<int>, ISoftDeletable, IAuditableEntity
 
     public string FirstName { get; private set; } = string.Empty;
     public string LastName { get; private set; } = string.Empty;
+    // PhoneNumber bilinçli olarak yeniden bildirilmez: IdentityUser<int> zaten
+    // public get/set verir ve AspNetUsers.PhoneNumber kolonuna eşlenir. Burada
+    // bir hiding/override değil, doğrudan base property kullanılır — böylece
+    // EF'in map ettiği alan ile UserManager'ın okuduğu alan aynıdır.
 
     public UserStatus Status { get; private set; } = UserStatus.Active;
 
@@ -41,6 +51,12 @@ public class User : IdentityUser<int>, ISoftDeletable, IAuditableEntity
 
         FirstName = firstName.Trim();
         LastName = lastName.Trim();
+        UpdatedAt = DateTime.UtcNow;
+    }
+
+    public void SetPhoneNumber(string? phoneNumber)
+    {
+        PhoneNumber = string.IsNullOrWhiteSpace(phoneNumber) ? null : phoneNumber.Trim();
         UpdatedAt = DateTime.UtcNow;
     }
 

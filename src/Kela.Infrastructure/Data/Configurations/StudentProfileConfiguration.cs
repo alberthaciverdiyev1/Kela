@@ -13,7 +13,7 @@ internal sealed class StudentProfileConfiguration : IEntityTypeConfiguration<Stu
         builder.HasKey(p => p.Id);
         builder.Property(p => p.Id).UseIdentityColumn().ValueGeneratedOnAdd();
 
-        builder.Property(p => p.BirthDate);
+        builder.Property(p => p.BirthDate).HasColumnType("date");
 
         builder.Property(p => p.CreatedAt).IsRequired();
         builder.Property(p => p.UpdatedAt);

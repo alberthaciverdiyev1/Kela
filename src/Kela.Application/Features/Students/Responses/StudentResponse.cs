@@ -9,8 +9,9 @@ public sealed record StudentResponse(
     int UserId,
     string FirstName,
     string LastName,
+    string? PhoneNumber,
     string Email,
-    DateTime? BirthDate,
+    DateOnly? BirthDate,
     int? CityId,
     string? CityName,
     DateTime CreatedAt);

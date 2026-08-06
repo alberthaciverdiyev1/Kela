@@ -10,5 +10,5 @@ public class StudentProfile : BaseEntity
     public int? CityId { get; set; }
     public City? City { get; set; }
 
-    public DateTime? BirthDate { get; set; }
+    public DateOnly? BirthDate { get; set; }
 }
