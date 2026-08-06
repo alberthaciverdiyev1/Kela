@@ -11,14 +11,20 @@ const routes = [
       {
         path: 'dashboard',
         name: 'dashboard',
-        component: () => import('../views/dashboard/DashboardView.vue'),
+        component: () => import('../views/dashboard/Dashboard.vue'),
         meta: { title: 'Dashboard' },
       },
       {
         path: 'settings/theme',
         name: 'settings-theme',
-        component: () => import('../views/settings/ThemeView.vue'),
+        component: () => import('../views/settings/Theme.vue'),
         meta: { title: 'Site Tasarımı', requiresRole: [ROLES.Admin, ROLES.Teacher] },
+      },
+      {
+        path: 'settings/layout',
+        name: 'settings-layout',
+        component: () => import('../views/settings/Layout.vue'),
+        meta: { title: 'Arayüz Düzeni' },
       },
     ],
   },
@@ -30,13 +36,13 @@ const routes = [
       {
         path: 'login',
         name: 'login',
-        component: () => import('../views/auth/LoginView.vue'),
+        component: () => import('../views/auth/Login.vue'),
         meta: { title: 'Giriş Yap' },
       },
       {
         path: 'register',
         name: 'register',
-        component: () => import('../views/auth/RegisterView.vue'),
+        component: () => import('../views/auth/Register.vue'),
         meta: { title: 'Kayıt Ol' },
       },
     ],

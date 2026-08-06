@@ -12,6 +12,8 @@ import Avatar from 'primevue/avatar'
 import Divider from 'primevue/divider'
 import Chip from 'primevue/chip'
 import FloatLabel from 'primevue/floatlabel'
+import IconField from 'primevue/iconfield'
+import InputIcon from 'primevue/inputicon'
 
 export function setupPrimeVue(app) {
   app.use(PrimeVue, {
@@ -39,4 +41,6 @@ export function setupPrimeVue(app) {
   app.component('Divider', Divider)
   app.component('Chip', Chip)
   app.component('FloatLabel', FloatLabel)
+  app.component('IconField', IconField)
+  app.component('InputIcon', InputIcon)
 }

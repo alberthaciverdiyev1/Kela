@@ -21,6 +21,15 @@ export const useAuthStore = defineStore('auth', {
     role: (state) => state.user?.role ?? null,
     fullName: (state) =>
       state.user ? `${state.user.firstName} ${state.user.lastName}` : '',
+    roleName: (state) => {
+      const names = {
+        [ROLES.Admin]: 'Admin',
+        [ROLES.Teacher]: 'Teacher',
+        [ROLES.Student]: 'Student',
+        [ROLES.Parent]: 'Parent',
+      }
+      return names[state.user?.role] ?? 'Bilinmiyor'
+    },
     isTeacher: (state) => state.user?.role === ROLES.Teacher,
     isAdmin: (state) => state.user?.role === ROLES.Admin,
   },
