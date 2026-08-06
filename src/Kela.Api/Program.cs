@@ -10,6 +10,9 @@ using Microsoft.EntityFrameworkCore;
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddOpenApi();
+// .NET 10'da AddExceptionHandler<T> artık AddProblemDetails'i ÇAĞIRMAZ;
+// parametresiz UseExceptionHandler() IProblemDetailsService ister — bu yüzden açıkça eklenir.
+builder.Services.AddProblemDetails();
 builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
 
 // Cookie-only kimlik doğrulama:

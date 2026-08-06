@@ -32,6 +32,8 @@ bld/
 # Environment
 .env
 .env.*
+appsettings.json
+appsettings.*.json
 appsettings.*.local.json
 
 # OS
