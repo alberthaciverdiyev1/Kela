@@ -76,6 +76,7 @@ app.MapUsersEndpoints();
 app.MapAuthEndpoints();
 app.MapSiteConfigurationEndpoints();
 app.MapCitiesEndpoints();
+app.MapStudentsEndpoints();
 
 using (var scope = app.Services.CreateScope())
 {
