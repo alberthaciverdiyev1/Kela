@@ -9,9 +9,6 @@ namespace Kela.Infrastructure.Data;
 public sealed class KelaDbContext(DbContextOptions<KelaDbContext> options)
     : IdentityDbContext<User, IdentityRole<int>, int>(options), IUnitOfWork
 {
-    public DbSet<Teacher> Teachers => Set<Teacher>();
-    public DbSet<Student> Students => Set<Student>();
-    public DbSet<Parent> Parents => Set<Parent>();
     public DbSet<Section> Sections => Set<Section>();
     public DbSet<StudentPaymentTrack> StudentPaymentTracks => Set<StudentPaymentTrack>();
 

@@ -1,5 +1,6 @@
 using Kela.Api.Contracts;
 using Kela.Application.Features.Users;
+using Kela.Application.Features.Users.Auth;
 using Kela.Application.Features.Users.Requests;
 using Kela.Application.Features.Users.Responses;
 using Kela.Application.Pagination;
@@ -24,9 +25,9 @@ public static class UsersEndpoints
                 : ApiResponse<UserResponse>.Success(user);
         });
 
-        group.MapPost("", async (CreateUserRequest request, IUserService users, CancellationToken ct) =>
+        group.MapPost("", async (CreateUserRequest request, IAuthService auth, CancellationToken ct) =>
         {
-            var id = await users.CreateAsync(request, ct);
+            var id = await auth.CreateUserAsync(request, ct);
             return ApiResponse<object>.Created($"/api/users/{id}", new { id });
         });
 

@@ -1,51 +1,26 @@
+using FluentValidation;
 using Kela.Application.Features.Users.Auth.Requests;
-using Kela.Application.Validation;
 
 namespace Kela.Application.Features.Users.Auth.Validators;
 
-internal sealed class RegisterValidator : Validator<RegisterRequest>
+internal sealed class RegisterValidator : AbstractValidator<RegisterRequest>
 {
-    protected override void ValidateCore(RegisterRequest value, List<string> errors)
+    public RegisterValidator()
     {
-        if (string.IsNullOrWhiteSpace(value.FirstName))
-        {
-            AddError(errors, "Ad zorunludur.");
-        }
+        RuleFor(x => x.FirstName)
+            .Must(x => !string.IsNullOrWhiteSpace(x)).WithMessage("Ad zorunludur.");
 
-        if (string.IsNullOrWhiteSpace(value.LastName))
-        {
-            AddError(errors, "Soyad zorunludur.");
-        }
+        RuleFor(x => x.LastName)
+            .Must(x => !string.IsNullOrWhiteSpace(x)).WithMessage("Soyad zorunludur.");
 
-        if (string.IsNullOrWhiteSpace(value.Email))
-        {
-            AddError(errors, "E-posta zorunludur.");
-        }
-        else if (!IsValidEmail(value.Email))
-        {
-            AddError(errors, "Geçerli bir e-posta adresi girin.");
-        }
+        RuleFor(x => x.Email)
+            .Cascade(CascadeMode.Stop)
+            .Must(x => !string.IsNullOrWhiteSpace(x)).WithMessage("E-posta zorunludur.")
+            .EmailAddress().WithMessage("Geçerli bir e-posta adresi girin.");
 
-        if (string.IsNullOrWhiteSpace(value.Password))
-        {
-            AddError(errors, "Şifre zorunludur.");
-        }
-        else if (value.Password.Length < 6)
-        {
-            AddError(errors, "Şifre en az 6 karakter olmalıdır.");
-        }
-    }
-
-    private static bool IsValidEmail(string email)
-    {
-        try
-        {
-            var address = new System.Net.Mail.MailAddress(email);
-            return address.Address == email;
-        }
-        catch (FormatException)
-        {
-            return false;
-        }
+        RuleFor(x => x.Password)
+            .Cascade(CascadeMode.Stop)
+            .Must(x => !string.IsNullOrWhiteSpace(x)).WithMessage("Şifre zorunludur.")
+            .MinimumLength(6).WithMessage("Şifre en az 6 karakter olmalıdır.");
     }
 }

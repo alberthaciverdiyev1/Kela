@@ -1,20 +1,16 @@
+using FluentValidation;
 using Kela.Application.Features.Users.Auth.Requests;
-using Kela.Application.Validation;
 
 namespace Kela.Application.Features.Users.Auth.Validators;
 
-internal sealed class LoginValidator : Validator<LoginRequest>
+internal sealed class LoginValidator : AbstractValidator<LoginRequest>
 {
-    protected override void ValidateCore(LoginRequest value, List<string> errors)
+    public LoginValidator()
     {
-        if (string.IsNullOrWhiteSpace(value.Email))
-        {
-            AddError(errors, "E-posta zorunludur.");
-        }
+        RuleFor(x => x.Email)
+            .Must(x => !string.IsNullOrWhiteSpace(x)).WithMessage("E-posta zorunludur.");
 
-        if (string.IsNullOrWhiteSpace(value.Password))
-        {
-            AddError(errors, "Şifre zorunludur.");
-        }
+        RuleFor(x => x.Password)
+            .Must(x => !string.IsNullOrWhiteSpace(x)).WithMessage("Şifre zorunludur.");
     }
 }

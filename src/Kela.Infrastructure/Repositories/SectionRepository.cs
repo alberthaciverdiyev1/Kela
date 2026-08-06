@@ -9,8 +9,7 @@ namespace Kela.Infrastructure.Repositories;
 internal sealed class SectionRepository(KelaDbContext context) : ISectionRepository
 {
     private IQueryable<Section> Detailed => context.Sections
-        .Include(g => g.Teacher!)
-        .ThenInclude(t => t.User)
+        .Include(g => g.Teacher)
         .Include(g => g.Students);
 
     public async Task<Section?> GetByIdAsync(int id, CancellationToken cancellationToken = default)

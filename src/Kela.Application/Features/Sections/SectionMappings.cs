@@ -10,7 +10,7 @@ public static class SectionMappings
         section.Name,
         section.Level,
         section.TeacherId,
-        section.Teacher is null ? null : $"{section.Teacher.User.FirstName} {section.Teacher.User.LastName}",
+        section.Teacher is null ? null : $"{section.Teacher.FirstName} {section.Teacher.LastName}",
         section.Students.Count,
         section.CreatedAt);
 }

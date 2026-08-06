@@ -1,5 +1,5 @@
+using FluentValidation;
 using Kela.Api.Contracts;
-using Kela.Application.Validation;
 using Microsoft.AspNetCore.Diagnostics;
 
 namespace Kela.Api.Middleware;
@@ -13,10 +13,10 @@ public sealed class GlobalExceptionHandler(ILogger<GlobalExceptionHandler> logge
     {
         var (statusCode, message, errors) = exception switch
         {
-            ValidationException validation => (
+            FluentValidation.ValidationException validation => (
                 StatusCodes.Status400BadRequest,
                 "Doğrulama hatası.",
-                (IReadOnlyCollection<string>?)validation.Errors),
+                (IReadOnlyCollection<string>?)validation.Errors.Select(e => e.ErrorMessage).ToList()),
             KeyNotFoundException => (StatusCodes.Status404NotFound, exception.Message, null),
             InvalidOperationException => (StatusCodes.Status400BadRequest, exception.Message, null),
             _ => (StatusCodes.Status500InternalServerError, "Beklenmeyen bir hata oluştu.", null),

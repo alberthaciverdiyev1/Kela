@@ -1,25 +1,23 @@
+using FluentValidation;
 using Kela.Application.Features.Users.Requests;
-using Kela.Application.Validation;
 
 namespace Kela.Application.Features.Users.Validators;
 
-internal sealed class UpdateUserValidator : Validator<UpdateUserRequest>
+internal sealed class UpdateUserValidator : AbstractValidator<UpdateUserRequest>
 {
-    protected override void ValidateCore(UpdateUserRequest value, List<string> errors)
+    public UpdateUserValidator()
     {
-        if (string.IsNullOrWhiteSpace(value.FirstName))
-        {
-            AddError(errors, "Ad zorunludur.");
-        }
+        RuleFor(x => x.FirstName)
+            .Must(x => !string.IsNullOrWhiteSpace(x)).WithMessage("Ad zorunludur.");
 
-        if (string.IsNullOrWhiteSpace(value.LastName))
-        {
-            AddError(errors, "Soyad zorunludur.");
-        }
+        RuleFor(x => x.LastName)
+            .Must(x => !string.IsNullOrWhiteSpace(x)).WithMessage("Soyad zorunludur.");
 
-        if (!string.IsNullOrWhiteSpace(value.Password) && value.Password.Length < 6)
+        // Şifre opsiyonel: girildiyse en az 6 karakter olmalı.
+        When(x => !string.IsNullOrWhiteSpace(x.Password), () =>
         {
-            AddError(errors, "Şifre en az 6 karakter olmalıdır.");
-        }
+            RuleFor(x => x.Password)
+                .MinimumLength(6).WithMessage("Şifre en az 6 karakter olmalıdır.");
+        });
     }
 }

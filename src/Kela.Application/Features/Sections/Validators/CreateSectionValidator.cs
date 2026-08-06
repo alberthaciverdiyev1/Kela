@@ -1,24 +1,18 @@
+using FluentValidation;
 using Kela.Application.Features.Sections.Requests;
-using Kela.Application.Validation;
 
 namespace Kela.Application.Features.Sections.Validators;
 
-internal sealed class CreateSectionValidator : Validator<CreateSectionRequest>
+internal sealed class CreateSectionValidator : AbstractValidator<CreateSectionRequest>
 {
-    protected override void ValidateCore(CreateSectionRequest value, List<string> errors)
+    public CreateSectionValidator()
     {
-        if (string.IsNullOrWhiteSpace(value.Name))
-        {
-            AddError(errors, "Sınıf adı zorunludur.");
-        }
-        else if (value.Name.Trim().Length < 2)
-        {
-            AddError(errors, "Sınıf adı en az 2 karakter olmalıdır.");
-        }
+        RuleFor(x => x.Name)
+            .Cascade(CascadeMode.Stop)
+            .Must(x => !string.IsNullOrWhiteSpace(x)).WithMessage("Sınıf adı zorunludur.")
+            .Must(x => x.Trim().Length >= 2).WithMessage("Sınıf adı en az 2 karakter olmalıdır.");
 
-        if (value.Level < 1)
-        {
-            AddError(errors, "Level 1 veya daha büyük olmalıdır.");
-        }
+        RuleFor(x => x.Level)
+            .GreaterThanOrEqualTo(1).WithMessage("Level 1 veya daha büyük olmalıdır.");
     }
 }

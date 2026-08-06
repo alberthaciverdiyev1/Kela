@@ -24,8 +24,9 @@ internal sealed class SectionConfiguration : IEntityTypeConfiguration<Section>
             .HasForeignKey(g => g.TeacherId)
             .OnDelete(DeleteBehavior.SetNull);
 
+        // Öğrenciler = Student rolündeki kullanıcılar (User ↔ Section çoktan-çoğa).
         builder.HasMany(g => g.Students)
-            .WithMany(s => s.Sections);
+            .WithMany();
 
         builder.HasIndex(g => g.Name).IsUnique();
     }

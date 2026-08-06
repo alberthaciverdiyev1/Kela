@@ -1,16 +1,19 @@
+using FluentValidation;
 using Kela.Application.Features.Sections.Requests;
 using Kela.Application.Features.Sections.Responses;
 using Kela.Application.Features.Users;
 using Kela.Application.Pagination;
 using Kela.Application.Patterns;
-using Kela.Application.Validation;
 using Kela.Domain.Entities;
+using Kela.Domain.Enums;
+using Microsoft.AspNetCore.Identity;
 
 namespace Kela.Application.Features.Sections;
 
 internal sealed class SectionService(
     ISectionRepository sections,
     IUserRepository users,
+    UserManager<User> userManager,
     IUnitOfWork unitOfWork,
     IValidator<CreateSectionRequest> createValidator,
     IValidator<UpdateSectionRequest> updateValidator) : ISectionService
@@ -35,7 +38,7 @@ internal sealed class SectionService(
     public async Task<int> CreateAsync(
         CreateSectionRequest request, CancellationToken cancellationToken = default)
     {
-        createValidator.Validate(request);
+        await createValidator.ValidateAndThrowAsync(request, cancellationToken);
 
         var trimmed = request.Name.Trim();
 
@@ -66,7 +69,7 @@ internal sealed class SectionService(
     public async Task UpdateAsync(
         int id, UpdateSectionRequest request, CancellationToken cancellationToken = default)
     {
-        updateValidator.Validate(request);
+        await updateValidator.ValidateAndThrowAsync(request, cancellationToken);
 
         var section = await sections.GetByIdAsync(id, cancellationToken)
             ?? throw new KeyNotFoundException($"Id = {id} olan sınıf bulunamadı.");
@@ -103,7 +106,7 @@ internal sealed class SectionService(
     private async Task EnsureTeacherExistsAsync(int teacherId, CancellationToken cancellationToken)
     {
         var user = await users.GetByIdAsync(teacherId, cancellationToken);
-        if (user is null || user.Teacher is null)
+        if (user is null || !await userManager.IsInRoleAsync(user, Role.Teacher.ToString()))
         {
             throw new InvalidOperationException($"Id = {teacherId} olan öğretmen bulunamadı.");
         }

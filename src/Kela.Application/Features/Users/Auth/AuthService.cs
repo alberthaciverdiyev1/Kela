@@ -1,6 +1,7 @@
+using FluentValidation;
 using Kela.Application.Features.Users.Auth.Requests;
 using Kela.Application.Features.Users.Auth.Responses;
-using Kela.Application.Validation;
+using Kela.Application.Features.Users.Requests;
 using Kela.Domain.Entities;
 using Kela.Domain.Enums;
 using Microsoft.AspNetCore.Identity;
@@ -12,12 +13,13 @@ internal sealed class AuthService(
     RoleManager<IdentityRole<int>> roleManager,
     SignInManager<User> signInManager,
     IValidator<LoginRequest> loginValidator,
-    IValidator<RegisterRequest> registerValidator) : IAuthService
+    IValidator<RegisterRequest> registerValidator,
+    IValidator<CreateUserRequest> createUserValidator) : IAuthService
 {
     public async Task<LoginResponse?> LoginAsync(
         LoginRequest request, CancellationToken cancellationToken = default)
     {
-        loginValidator.Validate(request);
+        await loginValidator.ValidateAndThrowAsync(request, cancellationToken);
 
         var user = await userManager.FindByEmailAsync(request.Email.Trim());
 
@@ -42,32 +44,52 @@ internal sealed class AuthService(
     public async Task<RegisterResponse> RegisterAsync(
         RegisterRequest request, CancellationToken cancellationToken = default)
     {
-        registerValidator.Validate(request);
+        await registerValidator.ValidateAndThrowAsync(request, cancellationToken);
 
-        var email = request.Email.Trim();
-        var normalizedEmail = email.ToLowerInvariant();
+        var user = await CreateUserCoreAsync(
+            request.FirstName, request.LastName, request.Email, request.Password, Role.Teacher);
+
+        return new RegisterResponse(user.Id, user.FirstName, user.LastName, user.Email ?? string.Empty);
+    }
+
+    public async Task<int> CreateUserAsync(
+        CreateUserRequest request, CancellationToken cancellationToken = default)
+    {
+        await createUserValidator.ValidateAndThrowAsync(request, cancellationToken);
+
+        var user = await CreateUserCoreAsync(
+            request.FirstName, request.LastName, request.Email, request.Password, request.Role);
+
+        return user.Id;
+    }
+
+    public Task LogoutAsync(CancellationToken cancellationToken = default) => signInManager.SignOutAsync();
+
+    private async Task<User> CreateUserCoreAsync(
+        string firstName, string lastName, string email, string password, Role role)
+    {
+        var trimmedEmail = email.Trim();
+        var normalizedEmail = trimmedEmail.ToLowerInvariant();
 
         if (await userManager.FindByEmailAsync(normalizedEmail) is not null)
         {
             throw new InvalidOperationException($"'{normalizedEmail}' email adresi zaten kayıtlı.");
         }
 
-        var user = new User(request.FirstName.Trim(), request.LastName.Trim(), email)
+        var user = new User(firstName.Trim(), lastName.Trim(), trimmedEmail)
         {
             CreatedAt = DateTime.UtcNow,
         };
 
-        user.AssignProfile(Role.Teacher);
-
-        var result = await userManager.CreateAsync(user, request.Password);
-
+        // Identity: parolayı hash'ler (PBKDF2) ve kullanıcıyı kaydeder.
+        var result = await userManager.CreateAsync(user, password);
         if (!result.Succeeded)
         {
             throw new InvalidOperationException(string.Join("; ", result.Errors.Select(e => e.Description)));
         }
 
-        var roleName = Role.Teacher.ToString();
-
+        // Identity rol üyeliği (AspNetUserRoles).
+        var roleName = role.ToString();
         if (!await roleManager.RoleExistsAsync(roleName))
         {
             await roleManager.CreateAsync(new IdentityRole<int>(roleName));
@@ -75,8 +97,6 @@ internal sealed class AuthService(
 
         await userManager.AddToRoleAsync(user, roleName);
 
-        return new RegisterResponse(user.Id, user.FirstName, user.LastName, user.Email ?? string.Empty);
+        return user;
     }
-
-    public Task LogoutAsync(CancellationToken cancellationToken = default) => signInManager.SignOutAsync();
 }
