@@ -1,13 +1,12 @@
 namespace Kela.Application.Features.Students.Requests;
 
 /// <summary>
-/// Öğretmen/admin tarafından yeni öğrenci oluşturma isteği.
-/// Kimlik & login bilgileri User'a, öğrenciye özgü bilgiler StudentProfile'a yazılır.
+/// Öğretmen tarafından yeni öğrenci oluşturma isteği.
+/// Mail ve şifre GİRİLMEZ — sistem bunları rastgele üretir ve oluşturma
+/// yanıtında geri verir (bkz. StudentCreatedResponse).
 /// </summary>
 public sealed record CreateStudentRequest(
     string FirstName,
     string LastName,
-    string Email,
-    string Password,
     DateTime? BirthDate,
     int? CityId);

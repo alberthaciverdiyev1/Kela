@@ -46,17 +46,20 @@ internal sealed class StudentService(
         return student is null ? null : ToResponse(lang)(student);
     }
 
-    // ── Oluştur: Student rolünde User + bağlı StudentProfile ──
-    public async Task<int> CreateAsync(
+    // ── Oluştur: mail + şifre sistem üretir, yanıtta düz metin döner ──
+    public async Task<StudentCreatedResponse> CreateAsync(
         CreateStudentRequest request, CancellationToken cancellationToken = default)
     {
         await createValidator.ValidateAndThrowAsync(request, cancellationToken);
 
         await EnsureCityExistsAsync(request.CityId, cancellationToken);
 
+        var email = await GenerateUniqueEmailAsync(cancellationToken);
+        var password = StudentCredentialsGenerator.GeneratePassword();
+
         // User'ı Student rolüyle oluştur (Identity: hash, rol üyeliği).
         var userId = await auth.CreateUserAsync(new CreateUserRequest(
-            request.FirstName, request.LastName, request.Email, request.Password, RoleNames.Student),
+            request.FirstName, request.LastName, email, password, RoleNames.Student),
             cancellationToken);
 
         var profile = new StudentProfile
@@ -70,7 +73,8 @@ internal sealed class StudentService(
         students.Add(profile);
         await unitOfWork.SaveChangesAsync(cancellationToken);
 
-        return profile.Id;
+        // Düz metin şifre YALNIZCA bu yanıtta döner (öğretmen öğrenciye iletir).
+        return new StudentCreatedResponse(profile.Id, userId, email, password, profile.CreatedAt);
     }
 
     // ── Güncelle: User ad/soyad + StudentProfile şehir/doğum ──
@@ -115,6 +119,22 @@ internal sealed class StudentService(
         profile.UpdatedAt = DateTime.UtcNow;
         students.Remove(profile);
         await unitOfWork.SaveChangesAsync(cancellationToken);
+    }
+
+    private async Task<string> GenerateUniqueEmailAsync(CancellationToken cancellationToken)
+    {
+        // Kullanıcı gereksinimi: mail sistemsel üretilir. Eşsiz olmalı
+        // (Identity RequireUniqueEmail) — çakışırsa yeniden üret.
+        for (var attempt = 0; attempt < 5; attempt++)
+        {
+            var email = StudentCredentialsGenerator.GenerateEmail();
+            if (await userManager.FindByEmailAsync(email) is null)
+            {
+                return email;
+            }
+        }
+
+        throw new InvalidOperationException("Eşsiz bir öğrenci maili üretilemedi. Tekrar deneyin.");
     }
 
     private async Task EnsureCityExistsAsync(int? cityId, CancellationToken cancellationToken)

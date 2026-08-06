@@ -11,8 +11,11 @@ public interface IStudentService
 
     Task<StudentResponse?> GetByIdAsync(int id, string? language, CancellationToken cancellationToken = default);
 
-    /// <summary>Öğrenci oluşturur: Student rolünde User + bağlı StudentProfile.</summary>
-    Task<int> CreateAsync(CreateStudentRequest request, CancellationToken cancellationToken = default);
+    /// <summary>
+    /// Öğrenci oluşturur: Student rolünde User + bağlı StudentProfile.
+    /// Mail ve şifre SİSTEM tarafından rastgele üretilir ve yanıtta düz metin döner.
+    /// </summary>
+    Task<StudentCreatedResponse> CreateAsync(CreateStudentRequest request, CancellationToken cancellationToken = default);
 
     Task UpdateAsync(int id, UpdateStudentRequest request, CancellationToken cancellationToken = default);
 

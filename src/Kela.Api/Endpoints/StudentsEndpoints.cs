@@ -11,7 +11,7 @@ namespace Kela.Api.Endpoints;
 /// Öğrenci yönetimi — Teacher (kendi panelinden) ve Admin (ayrı yönetim panelinden).
 ///   GET    /api/students?page=1&pageSize=10&lang=tr → sayfalı liste (şehir adı yerelleştirilmiş)
 ///   GET    /api/students/1?lang=tr                   → detay
-///   POST   /api/students                             → User(Student) + StudentProfile oluşturur
+///   POST   /api/students                             → User(Student) + StudentProfile; mail+şifre sistem üretir, yanıtta döner
 ///   PUT    /api/students/1                           → ad/soyad/şehir/doğum günceller
 ///   DELETE /api/students/1                           → soft delete (User Inactive)
 /// </summary>
@@ -36,8 +36,10 @@ public static class StudentsEndpoints
 
         group.MapPost("", async (CreateStudentRequest request, IStudentService students, CancellationToken ct) =>
         {
-            var id = await students.CreateAsync(request, ct);
-            return ApiResponse<object>.Created($"/api/students/{id}", new { id });
+            // Yanıt, sistemin ürettiği mail + şifreyi düz metin döndürür —
+            // öğretmen öğrenciye iletmek için.
+            var created = await students.CreateAsync(request, ct);
+            return ApiResponse<StudentCreatedResponse>.Created($"/api/students/{created.Id}", created);
         });
 
         group.MapPut("/{id:int}", async (int id, UpdateStudentRequest request, IStudentService students, CancellationToken ct) =>
