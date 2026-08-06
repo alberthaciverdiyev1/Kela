@@ -1,0 +1,176 @@
+/* Tailwind v4 — tüm katmanlar 'tailwind' layer'ında */
+@import "tailwindcss" layer(tailwind);
+
+/* =========================================================
+   Kela Tema Değişkenleri — Varsayılan palet.
+   Çalışma anında store (src/stores/theme.js) bu değerleri
+   documentElement üzerine INLINE olarak yazar ve ezer.
+   => Rengi nerede değiştirirseniz değiştirin, bu :root bloğu
+   sadece ilk açılışta (JS yüklenmeden önce) yedek görevi görür.
+   ========================================================= */
+:root {
+  /* primary */
+  --kela-primary-50: #ededfc;
+  --kela-primary-100: #dcdcf9;
+  --kela-primary-200: #b9b9f3;
+  --kela-primary-300: #9696ec;
+  --kela-primary-400: #7373e6;
+  --kela-primary-500: #4f46e5;
+  --kela-primary-600: #433bc3;
+  --kela-primary-700: #3730a1;
+  --kela-primary-800: #2b257f;
+  --kela-primary-900: #201c5c;
+  /* secondary */
+  --kela-secondary-50: #f1f3f5;
+  --kela-secondary-100: #e2e6eb;
+  --kela-secondary-200: #c5cdd7;
+  --kela-secondary-300: #a9b4c3;
+  --kela-secondary-400: #8c9baf;
+  --kela-secondary-500: #64748b;
+  --kela-secondary-600: #556376;
+  --kela-secondary-700: #465261;
+  --kela-secondary-800: #37414c;
+  --kela-secondary-900: #283038;
+  /* success */
+  --kela-success-50: #f0fdf5;
+  --kela-success-100: #e1faeb;
+  --kela-success-200: #c3f5d7;
+  --kela-success-300: #a5f0c3;
+  --kela-success-400: #87ebaf;
+  --kela-success-500: #22c55e;
+  --kela-success-600: #1da750;
+  --kela-success-700: #178942;
+  --kela-success-800: #126b34;
+  --kela-success-900: #0d4d26;
+  /* warning */
+  --kela-warning-50: #fff9ed;
+  --kela-warning-100: #fef3db;
+  --kela-warning-200: #fde7b7;
+  --kela-warning-300: #fddb93;
+  --kela-warning-400: #fccf6f;
+  --kela-warning-500: #f59e0b;
+  --kela-warning-600: #d08609;
+  --kela-warning-700: #ab6e08;
+  --kela-warning-800: #865606;
+  --kela-warning-900: #613e05;
+  /* error */
+  --kela-error-50: #fff0f0;
+  --kela-error-100: #fee1e1;
+  --kela-error-200: #fdc3c3;
+  --kela-error-300: #fca5a5;
+  --kela-error-400: #fb8787;
+  --kela-error-500: #ef4444;
+  --kela-error-600: #cb3a3a;
+  --kela-error-700: #a83030;
+  --kela-error-800: #842626;
+  --kela-error-900: #601c1c;
+  /* info */
+  --kela-info-50: #effaff;
+  --kela-info-100: #dff5ff;
+  --kela-info-200: #bfebff;
+  --kela-info-300: #9fe1ff;
+  --kela-info-400: #7fd7ff;
+  --kela-info-500: #0ea5e9;
+  --kela-info-600: #0c8cc6;
+  --kela-info-700: #0a73a3;
+  --kela-info-800: #085a80;
+  --kela-info-900: #06415d;
+
+  /* Alias: --kela-{name} = base renk (500) → bg-primary, text-primary vb. */
+  --kela-primary: var(--kela-primary-500);
+  --kela-secondary: var(--kela-secondary-500);
+  --kela-success: var(--kela-success-500);
+  --kela-warning: var(--kela-warning-500);
+  --kela-error: var(--kela-error-500);
+  --kela-info: var(--kela-info-500);
+}
+
+/* =========================================================
+   Tailwind eşlemesi: bg-primary, text-success, bg-warning-50 vb.
+   Tüm utility'ler yukarıdaki kela değişkenlerini referans alır.
+   ========================================================= */
+@theme {
+  --color-primary: var(--kela-primary);
+  --color-primary-50: var(--kela-primary-50);
+  --color-primary-100: var(--kela-primary-100);
+  --color-primary-200: var(--kela-primary-200);
+  --color-primary-300: var(--kela-primary-300);
+  --color-primary-400: var(--kela-primary-400);
+  --color-primary-500: var(--kela-primary-500);
+  --color-primary-600: var(--kela-primary-600);
+  --color-primary-700: var(--kela-primary-700);
+  --color-primary-800: var(--kela-primary-800);
+  --color-primary-900: var(--kela-primary-900);
+
+  --color-secondary: var(--kela-secondary);
+  --color-secondary-50: var(--kela-secondary-50);
+  --color-secondary-100: var(--kela-secondary-100);
+  --color-secondary-200: var(--kela-secondary-200);
+  --color-secondary-300: var(--kela-secondary-300);
+  --color-secondary-400: var(--kela-secondary-400);
+  --color-secondary-500: var(--kela-secondary-500);
+  --color-secondary-600: var(--kela-secondary-600);
+  --color-secondary-700: var(--kela-secondary-700);
+  --color-secondary-800: var(--kela-secondary-800);
+  --color-secondary-900: var(--kela-secondary-900);
+
+  --color-success: var(--kela-success);
+  --color-success-50: var(--kela-success-50);
+  --color-success-100: var(--kela-success-100);
+  --color-success-200: var(--kela-success-200);
+  --color-success-300: var(--kela-success-300);
+  --color-success-400: var(--kela-success-400);
+  --color-success-500: var(--kela-success-500);
+  --color-success-600: var(--kela-success-600);
+  --color-success-700: var(--kela-success-700);
+  --color-success-800: var(--kela-success-800);
+  --color-success-900: var(--kela-success-900);
+
+  --color-warning: var(--kela-warning);
+  --color-warning-50: var(--kela-warning-50);
+  --color-warning-100: var(--kela-warning-100);
+  --color-warning-200: var(--kela-warning-200);
+  --color-warning-300: var(--kela-warning-300);
+  --color-warning-400: var(--kela-warning-400);
+  --color-warning-500: var(--kela-warning-500);
+  --color-warning-600: var(--kela-warning-600);
+  --color-warning-700: var(--kela-warning-700);
+  --color-warning-800: var(--kela-warning-800);
+  --color-warning-900: var(--kela-warning-900);
+
+  --color-error: var(--kela-error);
+  --color-error-50: var(--kela-error-50);
+  --color-error-100: var(--kela-error-100);
+  --color-error-200: var(--kela-error-200);
+  --color-error-300: var(--kela-error-300);
+  --color-error-400: var(--kela-error-400);
+  --color-error-500: var(--kela-error-500);
+  --color-error-600: var(--kela-error-600);
+  --color-error-700: var(--kela-error-700);
+  --color-error-800: var(--kela-error-800);
+  --color-error-900: var(--kela-error-900);
+
+  --color-info: var(--kela-info);
+  --color-info-50: var(--kela-info-50);
+  --color-info-100: var(--kela-info-100);
+  --color-info-200: var(--kela-info-200);
+  --color-info-300: var(--kela-info-300);
+  --color-info-400: var(--kela-info-400);
+  --color-info-500: var(--kela-info-500);
+  --color-info-600: var(--kela-info-600);
+  --color-info-700: var(--kela-info-700);
+  --color-info-800: var(--kela-info-800);
+  --color-info-900: var(--kela-info-900);
+}
+
+html, body {
+  margin: 0;
+  padding: 0;
+  min-height: 100%;
+  font-family: 'Segoe UI', Roboto, Arial, sans-serif;
+  background: #f4f5f7;
+}
+
+a {
+  text-decoration: none;
+}
