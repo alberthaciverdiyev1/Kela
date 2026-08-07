@@ -1,0 +1,71 @@
+@model Kela.Web.Models.Students.StudentsIndexViewModel
+@{
+    var oob = ViewData["Oob"] as bool? ?? false;
+    var search = Model.Search?.Trim();
+    var filtered = string.IsNullOrEmpty(search)
+        ? Model.Items
+        : Model.Items.Where(s =>
+            s.FirstName.Contains(search, StringComparison.OrdinalIgnoreCase)
+            || s.LastName.Contains(search, StringComparison.OrdinalIgnoreCase)
+            || (s.Email?.Contains(search, StringComparison.OrdinalIgnoreCase) ?? false)
+            || (s.PhoneNumber?.Contains(search, StringComparison.OrdinalIgnoreCase) ?? false)).ToList();
+}
+<div id="students-list" hx-swap-oob="@(oob ? "outerHTML" : null)">
+    @if (filtered.Count == 0)
+    {
+        <app-empty icon="students" text="@L.T("students.empty")" />
+    }
+    else
+    {
+        <div class="card table-card">
+            <div class="table-scroll">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>@L.T("students.col.firstName")</th>
+                            <th>@L.T("students.col.lastName")</th>
+                            <th>@L.T("students.col.phone")</th>
+                            <th>@L.T("students.col.email")</th>
+                            <th>@L.T("students.col.birthDate")</th>
+                            <th>@L.T("students.col.city")</th>
+                            <th class="col-actions"></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var s in filtered)
+                        {
+                            var ini = (s.FirstName.Length > 0 ? s.FirstName[..1] : "")
+                                + (s.LastName.Length > 0 ? s.LastName[..1] : "");
+                            <tr>
+                                <td>
+                                    <div class="cell-user">
+                                        <app-avatar initials="@ini" size="sm" />
+                                        <span class="cell-primary">@s.FirstName</span>
+                                    </div>
+                                </td>
+                                <td>@(string.IsNullOrEmpty(s.LastName) ? "—" : s.LastName)</td>
+                                <td>@(string.IsNullOrEmpty(s.PhoneNumber) ? "—" : s.PhoneNumber)</td>
+                                <td class="cell-email">@s.Email</td>
+                                <td>@(s.BirthDate?.ToString("dd.MM.yyyy") ?? "—")</td>
+                                <td>@(s.CityName ?? "—")</td>
+                                <td class="col-actions">
+                                    <app-btn icon-only variant="danger" icon="trash" icon-class="icon-sm"
+                                             title="@L.T("students.delete")"
+                                             hx-delete="/teacher/students/@s.Id/delete?page=@Model.Page"
+                                             hx-include="#students-search"
+                                             hx-target="#students-list" hx-swap="outerHTML"
+                                             hx-confirm="@L.T("students.deleteConfirm", new { name = $"{s.FirstName} {s.LastName}".Trim() })"
+                                             hx-disabled-elt="this" />
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+            <app-pager page="@Model.Page" total-pages="@Model.TotalPages"
+                       url="/teacher/students/table"
+                       hx-target="#students-list" hx-swap="outerHTML" hx-include="#students-search"
+                       prev-text="@L.T("pager.prev")" next-text="@L.T("pager.next")" />
+        </div>
+    }
+</div>

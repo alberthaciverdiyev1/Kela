@@ -1,0 +1,15 @@
+@using System.Security.Claims
+@{
+    var titleKey = ViewData["TitleKey"] as string ?? "comingSoon.title";
+    ViewData["Title"] = L.T(titleKey);
+    var role = User.FindFirstValue(ClaimTypes.Role) ?? "";
+    var home = AppConstants.HomeRouteFor(role);
+}
+<app-card center narrow>
+    <div class="plain-icon bg-primary-50 text-primary">
+        <app-icon name="sparkles" />
+    </div>
+    <h1>@L.T(titleKey)</h1>
+    <p>@L.T("comingSoon.desc")</p>
+    <app-btn href="@home" variant="secondary" icon="chevron-down" icon-class="icon-rotate-90">@L.T("comingSoon.back")</app-btn>
+</app-card>

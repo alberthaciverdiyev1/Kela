@@ -1,0 +1,114 @@
+@using System.Security.Claims
+@using Kela.Web.Infrastructure
+@using Microsoft.AspNetCore.Antiforgery
+@inject Localizer L
+@inject SiteConfigService SiteConfig
+@inject IAntiforgery Antiforgery
+@{
+    Layout = null;
+    await SiteConfig.LoadAsync();
+    var role = User.FindFirstValue(ClaimTypes.Role) ?? "";
+    var home = AppConstants.HomeRouteFor(role);
+    var fullName = User.Identity?.Name ?? "";
+    var parts = fullName.Split(' ', StringSplitOptions.RemoveEmptyEntries);
+    var initials = (parts.Length > 0 ? parts[0][..1] : "") + (parts.Length > 1 ? parts[1][..1] : "");
+    if (initials.Length == 0) initials = "?";
+    var roleKey = role switch
+    {
+        AppConstants.RoleTeacher => "role.Teacher",
+        AppConstants.RoleStudent => "role.Student",
+        AppConstants.RoleParent => "role.Parent",
+        _ => "common.unknownRole",
+    };
+    var path = Context.Request.Path.Value ?? "";
+    List<(string Label, string Url, string Icon)> navItems = role switch
+    {
+        AppConstants.RoleTeacher => [
+            (L.T("nav.dashboard"), "/teacher/dashboard", "dashboard"),
+            (L.T("nav.students"), "/teacher/students", "students"),
+            (L.T("nav.classes"), "/teacher/classes", "classes"),
+            (L.T("nav.settings"), "/teacher/settings", "settings"),
+        ],
+        AppConstants.RoleStudent => [
+            (L.T("nav.dashboard"), "/student/dashboard", "dashboard"),
+            (L.T("nav.myCourses"), "/student/courses", "book"),
+        ],
+        AppConstants.RoleParent => [
+            (L.T("nav.dashboard"), "/parent/dashboard", "dashboard"),
+            (L.T("nav.myChildren"), "/parent/children", "classes"),
+        ],
+        _ => [],
+    };
+
+    string Active(string url) => string.Equals(path, url, StringComparison.OrdinalIgnoreCase) ? "active" : "";
+}
+<!DOCTYPE html>
+<html lang="@L.Active">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="csrf-token" content="@Antiforgery.GetAndStoreTokens(Context).RequestToken" />
+    <title>@ViewData["Title"] - @SiteConfig.SiteName</title>
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+</head>
+<body>
+    <div class="app-shell">
+        <header class="navbar">
+            <div class="navbar-inner">
+                <div class="navbar-start">
+                    <a class="brand" href="@home">
+                        <app-icon name="book" />
+                        <span>@SiteConfig.SiteName</span>
+                    </a>
+                </div>
+                <nav class="navbar-center">
+                    @foreach (var item in navItems)
+                    {
+                        <a class="nav-link @Active(item.Url)" href="@item.Url">
+                            <app-icon name="@item.Icon" />
+                            <span>@item.Label</span>
+                        </a>
+                    }
+                </nav>
+                <div class="navbar-end">
+                    @await Html.PartialAsync("_LanguageSwitcher")
+                    <div class="user-menu">
+                        <button type="button" class="user-trigger" aria-haspopup="true">
+                            <app-avatar initials="@initials" />
+                            <span class="user-name">@fullName</span>
+                            <app-icon name="chevron-down" class="icon-xs" />
+                        </button>
+                        <div class="user-dropdown">
+                            <span class="user-chip">@L.T(roleKey)</span>
+                            <form method="post" asp-controller="Auth" asp-action="Logout">
+                                @Html.AntiForgeryToken()
+                                <button type="submit" class="dropdown-item">
+                                    <app-icon name="logout" />
+                                    <span>@L.T("nav.logout")</span>
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <main class="app-main">
+            @if (TempData["Success"] is string success)
+            {
+                <app-alert type="success" icon="check">@success</app-alert>
+            }
+            @if (TempData["Error"] is string error)
+            {
+                <app-alert type="error" icon="lock">@error</app-alert>
+            }
+            @RenderBody()
+        </main>
+
+        <footer class="app-footer">© @DateTime.Now.Year @SiteConfig.SiteName</footer>
+    </div>
+    <script src="~/lib/htmx/htmx.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

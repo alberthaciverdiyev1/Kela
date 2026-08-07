@@ -1,0 +1,31 @@
+@{
+    ViewData["Title"] = L.T("noAccess.title");
+    Layout = null;
+}
+<!DOCTYPE html>
+<html lang="@L.Active">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - Kela</title>
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+</head>
+<body class="plain-body">
+    <div class="plain-wrap">
+        <app-card center>
+            <div class="plain-icon bg-warning-100 text-warning">
+                <app-icon name="lock" />
+            </div>
+            <h1>@L.T("noAccess.title")</h1>
+            <p>@L.T("noAccess.desc1")</p>
+            <p>@L.T("noAccess.desc2")</p>
+            <form method="post" asp-controller="Auth" asp-action="Logout">
+                @Html.AntiForgeryToken()
+                <app-btn type="submit" variant="primary" icon="logout">@L.T("nav.logout")</app-btn>
+            </form>
+        </app-card>
+    </div>
+    <script src="~/lib/htmx/htmx.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+</body>
+</html>

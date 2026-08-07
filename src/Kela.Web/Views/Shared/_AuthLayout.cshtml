@@ -1,0 +1,26 @@
+@inject Localizer L
+@{
+    Layout = null;
+}
+<!DOCTYPE html>
+<html lang="@L.Active">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - Kela</title>
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+</head>
+<body class="auth-body">
+    <div class="auth-bg">
+        <div class="auth-corner">
+            @await Html.PartialAsync("_LanguageSwitcher")
+        </div>
+        <div class="auth-wrap">
+            @RenderBody()
+        </div>
+    </div>
+    <script src="~/lib/htmx/htmx.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

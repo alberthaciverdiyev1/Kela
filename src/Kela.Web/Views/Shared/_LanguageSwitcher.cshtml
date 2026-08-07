@@ -1,0 +1,26 @@
+@inject Localizer L
+@using Kela.Web.Infrastructure
+@{
+    var returnUrl = Context.Request.Path + Context.Request.QueryString;
+}
+@functions
+{
+    static string LangLabel(string code) => code switch
+    {
+        "az" => "Azərbaycanca",
+        "en" => "English",
+        "ru" => "Русский",
+        "tr" => "Türkçe",
+        _ => code,
+    };
+}
+<form method="post" asp-controller="Home" asp-action="Lang" class="lang-form">
+    @Html.AntiForgeryToken()
+    <input type="hidden" name="returnUrl" value="@returnUrl" />
+    <select name="lang" class="lang-select" onchange="this.form.submit()" aria-label="Language">
+        @foreach (var code in AppConstants.Langs)
+        {
+            <option value="@code" selected="@(code == L.Active)">@LangLabel(code)</option>
+        }
+    </select>
+</form>

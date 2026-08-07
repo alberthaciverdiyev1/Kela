@@ -1,0 +1,10 @@
+@model Kela.Web.Models.Students.CreateStudentSuccessViewModel
+@{
+    Layout = null;
+}
+@await Html.PartialAsync("_StudentsCreateFields", new Kela.Web.Models.Students.CreateStudentViewModel())
+@{
+    ViewData["Oob"] = true;
+}
+@await Html.PartialAsync("_StudentsTable", Model.List)
+@await Html.PartialAsync("_StudentsCredentialsDialog", Model.Credentials)

@@ -1,0 +1,27 @@
+@model Kela.Web.Models.Students.StudentsIndexViewModel
+@{
+    ViewData["Title"] = L.T("students.title");
+}
+<div class="stack">
+    <app-page-head title="@L.T("students.title")" subtitle="@L.T("students.subtitle")">
+        <app-btn variant="primary" icon="user-plus" onclick="document.getElementById('create-student-dialog').showModal()">@L.T("students.new")</app-btn>
+    </app-page-head>
+
+    <div class="students-toolbar">
+        <div class="search-box">
+            <app-icon name="search" class="icon-sm" />
+            <input id="students-search" name="search" class="search-input" type="search" placeholder="@L.T("nav.search")"
+                   value="@Model.Search" autocomplete="off"
+                   hx-get="/teacher/students/table"
+                   hx-trigger="input changed delay:500ms, search"
+                   hx-include="this"
+                   hx-target="#students-list" hx-swap="outerHTML" />
+        </div>
+    </div>
+
+    @await Html.PartialAsync("_StudentsTable", Model)
+
+    @await Html.PartialAsync("_StudentsCreateDialog", new Kela.Web.Models.Students.CreateStudentViewModel())
+
+    <dialog id="credentials-dialog" class="modal"></dialog>
+</div>

@@ -1,0 +1,44 @@
+@model Kela.Web.Models.Auth.LoginViewModel
+@{
+    ViewData["Title"] = L.T("auth.login");
+    Layout = "_AuthLayout";
+}
+<div class="auth-card">
+    <div class="auth-card-head">
+        <div class="auth-card-icon">
+            <app-icon name="lock" />
+        </div>
+        <h1 class="auth-card-title">@L.T("auth.login")</h1>
+        <p class="auth-card-subtitle">@L.T("auth.loginSubtitle")</p>
+    </div>
+
+    <div class="auth-card-body">
+        @if (TempData["Success"] is string success)
+        {
+            <app-alert type="success" icon="check">@success</app-alert>
+        }
+
+        <form method="post" asp-action="Login" novalidate>
+            @Html.AntiForgeryToken()
+            <input type="hidden" asp-for="ReturnUrl" />
+            <div asp-validation-summary="ModelOnly" class="validation-summary"></div>
+
+            <app-field for="Email" label="@L.T("auth.email")">
+                <input asp-for="Email" class="input" autocomplete="email" inputmode="email" placeholder="@L.T("auth.email")" />
+                <span asp-validation-for="Email" class="field-error"></span>
+            </app-field>
+
+            <app-field for="Password" label="@L.T("auth.password")">
+                <input asp-for="Password" type="password" class="input" autocomplete="current-password" placeholder="@L.T("auth.password")" />
+                <span asp-validation-for="Password" class="field-error"></span>
+            </app-field>
+
+            <app-btn type="submit" variant="primary" block>@L.T("auth.login")</app-btn>
+        </form>
+    </div>
+
+    <div class="auth-card-footer">
+        <span>@L.T("auth.noAccount")</span>
+        <a asp-controller="Auth" asp-action="Register">@L.T("auth.register")</a>
+    </div>
+</div>

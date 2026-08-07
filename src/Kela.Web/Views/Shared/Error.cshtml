@@ -1,0 +1,25 @@
+@{
+    ViewData["Title"] = "Hata";
+    Layout = null;
+}
+<!DOCTYPE html>
+<html lang="@L.Active">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - Kela</title>
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+</head>
+<body class="plain-body">
+    <div class="plain-wrap">
+        <app-card center>
+            <div class="plain-icon bg-error-100 text-error">
+                <app-icon name="lock" />
+            </div>
+            <h1>@L.T("common.error")</h1>
+            <p>@L.T("error.generic")</p>
+            <app-btn href="/" variant="primary">@L.T("comingSoon.back")</app-btn>
+        </app-card>
+    </div>
+</body>
+</html>
