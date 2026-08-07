@@ -77,6 +77,7 @@ app.MapSiteConfigurationEndpoints();
 app.MapCitiesEndpoints();
 app.MapStudentsEndpoints();
 app.MapWorkspacesEndpoints();
+app.MapAttendancesEndpoints();
 
 using (var scope = app.Services.CreateScope())
 {

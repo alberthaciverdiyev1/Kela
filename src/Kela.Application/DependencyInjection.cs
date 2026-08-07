@@ -1,4 +1,5 @@
 using FluentValidation;
+using Kela.Application.Features.Attendances;
 using Kela.Application.Features.Cities;
 using Kela.Application.Features.Students;
 using Kela.Application.Features.SiteConfiguration;
@@ -13,6 +14,7 @@ public static class DependencyInjection
 {
     public static IServiceCollection AddApplication(this IServiceCollection services)
     {
+        services.AddScoped<IAttendanceService, AttendanceService>();
         services.AddScoped<ICityService, CityService>();
         services.AddScoped<IStudentService, StudentService>();
         services.AddScoped<IUserService, UserService>();
