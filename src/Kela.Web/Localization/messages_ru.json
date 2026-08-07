@@ -171,5 +171,8 @@
   "attendance.saveSuccess": "Посещаемость сохранена.",
   "attendance.saveError": "Не удалось сохранить посещаемость.",
   "attendance.invalid": "Неверные данные посещаемости.",
-  "attendance.empty": "В этой рабочей области нет учеников."
+  "attendance.empty": "В этой рабочей области нет учеников.",
+  "attendance.chooseWorkspace": "Выберите рабочую область",
+  "attendance.noWorkspace": "У вас пока нет рабочих областей. Сначала создайте её.",
+  "attendance.selectHint": "Выберите рабочую область для отметки посещаемости."
 }

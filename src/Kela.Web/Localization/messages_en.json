@@ -171,5 +171,8 @@
   "attendance.saveSuccess": "Attendance saved.",
   "attendance.saveError": "Could not save attendance.",
   "attendance.invalid": "Invalid attendance data.",
-  "attendance.empty": "No students in this workspace."
+  "attendance.empty": "No students in this workspace.",
+  "attendance.chooseWorkspace": "Select workspace",
+  "attendance.noWorkspace": "You have no workspaces yet. Create one first.",
+  "attendance.selectHint": "Select a workspace to mark attendance."
 }

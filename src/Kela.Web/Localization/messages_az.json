@@ -171,5 +171,8 @@
   "attendance.saveSuccess": "Davamiyyət qeyd edildi.",
   "attendance.saveError": "Davamiyyət qeyd edilə bilmədi.",
   "attendance.invalid": "Yanlış davamiyyət məlumatı.",
-  "attendance.empty": "Bu iş sahəsində şagird yoxdur."
+  "attendance.empty": "Bu iş sahəsində şagird yoxdur.",
+  "attendance.chooseWorkspace": "İş sahəsi seçin",
+  "attendance.noWorkspace": "Hələ iş sahəniz yoxdur. Əvvəlcə iş sahəsi yaradın.",
+  "attendance.selectHint": "Davamiyyəti qeyd etmək üçün iş sahəsi seçin."
 }

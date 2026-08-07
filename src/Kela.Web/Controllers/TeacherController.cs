@@ -242,42 +242,51 @@ public sealed partial class TeacherController(IApiClient api, Localizer L) : Con
         return await WorkspaceStudentsSectionAsync(id, ct);
     }
 
-    [HttpGet("teacher/workspaces/{id:int}/attendance")]
-    public async Task<IActionResult> Attendance(int id, string? month, CancellationToken ct)
+    [HttpGet("teacher/attendance")]
+    public async Task<IActionResult> Attendance(int? workspaceId, string? month, CancellationToken ct)
     {
-        var workspace = await api.GetWorkspaceAsync(id, ct);
-        if (!workspace.Success || workspace.Data is null)
+        var (year, monthNumber) = ParseMonth(month);
+        var workspacesResult = await api.GetWorkspacesPageAsync(UserId, 1, 1000, ct);
+        var workspaces = (workspacesResult.Data?.Items ?? []).Select(w => new WorkspaceOption(w.Id, w.Name)).ToList();
+
+        var selected = workspaceId is > 0 ? workspaceId.Value : 0;
+        if (!workspaces.Any(w => w.Id == selected))
         {
-            return NotFound();
+            selected = 0;
         }
 
-        var (year, monthNumber) = ParseMonth(month);
-        var data = await api.GetAttendanceMonthAsync(id, year, monthNumber, ct);
+        if (selected == 0)
+        {
+            return View("Attendance/Index", new AttendancePageViewModel(0, "", year, monthNumber, [], [], workspaces));
+        }
+
+        var data = await api.GetAttendanceMonthAsync(selected, year, monthNumber, ct);
         if (!data.Success || data.Data is null)
         {
             return NotFound();
         }
 
-        return View("Workspaces/Attendance", new AttendancePageViewModel(
-            workspace.Data.Id,
-            workspace.Data.Name,
-            data.Data.Year,
-            data.Data.Month,
+        return View("Attendance/Index", new AttendancePageViewModel(
+            selected,
+            workspaces.First(w => w.Id == selected).Name,
+            year,
+            monthNumber,
             data.Data.Students,
-            data.Data.Records));
+            data.Data.Records,
+            workspaces));
     }
 
-    [HttpPut("teacher/workspaces/{id:int}/attendance")]
+    [HttpPut("teacher/attendance")]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> SetAttendance(int id, [FromBody] SetAttendanceRequest model, CancellationToken ct)
+    public async Task<IActionResult> SetAttendance([FromBody] SetAttendanceRequest model, CancellationToken ct)
     {
-        if (model is null || model.StudentId <= 0 || model.Date == default || model.Status is < 0 or > 4)
+        if (model is null || model.WorkspaceId <= 0 || model.StudentId <= 0 || model.Date == default || model.Status is < 0 or > 4)
         {
             Response.StatusCode = StatusCodes.Status400BadRequest;
             return Json(new { success = false, message = L.T("attendance.invalid") });
         }
 
-        var result = await api.SetAttendanceMarkAsync(id, model.Date, model.StudentId, model.Status, ct);
+        var result = await api.SetAttendanceMarkAsync(model.WorkspaceId, model.Date, model.StudentId, model.Status, ct);
 
         if (!result.Success)
         {

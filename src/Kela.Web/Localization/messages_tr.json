@@ -171,5 +171,8 @@
   "attendance.saveSuccess": "Yoklama kaydedildi.",
   "attendance.saveError": "Yoklama kaydedilemedi.",
   "attendance.invalid": "Geçersiz yoklama bilgisi.",
-  "attendance.empty": "Bu iş alanında öğrenci yok."
+  "attendance.empty": "Bu iş alanında öğrenci yok.",
+  "attendance.chooseWorkspace": "İş alanı seçin",
+  "attendance.noWorkspace": "Henüz iş alanınız yok. Önce bir iş alanı oluşturun.",
+  "attendance.selectHint": "Yoklamayı işlemek için bir iş alanı seçin."
 }

@@ -8,7 +8,7 @@
         <div class="flex gap-2">
             <app-btn variant="secondary" icon="arrow-left" href="/teacher/workspaces">@L.T("common.back")</app-btn>
             <app-btn variant="secondary" icon="calendar-check"
-                     href="/teacher/workspaces/@Model.Workspace.Id/attendance">@L.T("attendance.title")</app-btn>
+                     href="/teacher/attendance?workspaceId=@Model.Workspace.Id">@L.T("attendance.title")</app-btn>
             <app-btn variant="primary" icon="edit"
                      onclick="document.getElementById('rename-workspace-dialog').showModal()">@L.T("workspaces.rename")</app-btn>
         </div>

@@ -5,7 +5,8 @@
     if (!container) return;
 
     const picker = document.getElementById('attendance-picker');
-    const saveUrl = '/teacher/workspaces/' + container.dataset.workspaceId + '/attendance';
+    const saveUrl = '/teacher/attendance';
+    const workspaceId = parseInt(container.dataset.workspaceId, 10);
     const daysInMonth = parseInt(container.dataset.days, 10);
     const saveSuccess = container.dataset.saveSuccess;
     const saveError = container.dataset.saveError;
@@ -83,11 +84,11 @@
         cell.dataset.status = String(status);
         cell.title = status === 0 ? unknownLabel : (statusLabels[status] || '');
         if (cell.dataset.cellLayout === 'mobile') {
-            cell.className = 'attendance-cell flex size-7 items-center justify-center rounded-md text-xs font-semibold ' +
+            cell.className = 'attendance-cell flex size-10 items-center justify-center rounded-md text-sm font-semibold ' +
                 colorFor(status) + ' cursor-pointer transition hover:ring-2 hover:ring-primary/40 disabled:opacity-50 disabled:cursor-wait';
             cell.textContent = String(Number(cell.dataset.date.slice(-2)));
         } else {
-            cell.className = 'attendance-cell mx-auto flex size-6 items-center justify-center rounded-md ' +
+            cell.className = 'attendance-cell mx-auto flex size-9 items-center justify-center rounded-md ' +
                 colorFor(status) + ' cursor-pointer transition hover:ring-2 hover:ring-primary/40 disabled:opacity-50 disabled:cursor-wait';
             cell.innerHTML = status === 0
                 ? '<span class="size-1.5 rounded-full bg-base-content/20"></span>'
@@ -125,6 +126,7 @@
 
         try {
             const res = await Kela.axios.put(saveUrl, {
+                workspaceId: workspaceId,
                 studentId: studentId,
                 date: date,
                 status: newStatus
@@ -189,10 +191,25 @@
     }
 
     const monthInput = document.getElementById('attendance-month');
+    const workspaceSelect = document.getElementById('attendance-workspace');
+
+    function attendanceUrl(ws, month) {
+        const params = new URLSearchParams();
+        if (ws) params.set('workspaceId', ws);
+        if (month) params.set('month', month);
+        const query = params.toString();
+        return location.pathname + (query ? '?' + query : '');
+    }
+
+    if (workspaceSelect) {
+        workspaceSelect.addEventListener('change', function () {
+            window.location.href = attendanceUrl(workspaceSelect.value, monthInput ? monthInput.value : '');
+        });
+    }
     if (monthInput) {
         monthInput.addEventListener('change', function () {
             if (monthInput.value) {
-                window.location.href = location.pathname + '?month=' + encodeURIComponent(monthInput.value);
+                window.location.href = attendanceUrl(workspaceSelect ? workspaceSelect.value : '', monthInput.value);
             }
         });
     }
