@@ -88,11 +88,10 @@
         });
     }
 
-    let addForm = document.getElementById('add-students-form');
-    if (addForm) {
-        addForm.addEventListener('submit', function (event) {
+    document.addEventListener('submit', function (event) {
+        if (event.target && event.target.id === 'add-students-form') {
             event.preventDefault();
-            submitForm(addForm, null);
-        });
-    }
+            submitForm(event.target, null);
+        }
+    });
 })();

@@ -14,10 +14,10 @@
         _ => code,
     };
 }
-<form method="post" asp-controller="Home" asp-action="Lang" class="inline-flex">
+<form method="post" asp-controller="Home" asp-action="Lang" class="inline-flex" id="lang-form">
     @Html.AntiForgeryToken()
     <input type="hidden" name="returnUrl" value="@returnUrl" />
-    <select name="lang" class="select select-sm min-w-36" onchange="this.form.submit()" aria-label="Language">
+    <select name="lang" class="select select-sm min-w-36" onchange="this.form.requestSubmit()" aria-label="Language">
         @foreach (var code in AppConstants.Langs)
         {
             <option value="@code" selected="@(code == L.Active)">@LangLabel(code)</option>

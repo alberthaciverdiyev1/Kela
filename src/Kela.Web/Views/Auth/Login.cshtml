@@ -15,22 +15,12 @@
             <app-alert type="success" icon="check">@success</app-alert>
         }
 
-        <form method="post" asp-action="Login" novalidate>
+        <form method="post" asp-action="Login" novalidate id="login-form">
             @Html.AntiForgeryToken()
             <input type="hidden" asp-for="ReturnUrl" />
-            <div asp-validation-summary="ModelOnly" class="validation-summary mb-4 text-sm text-error"></div>
-
-            <app-field for="Email" label="@L.T("auth.email")">
-                <input asp-for="Email" class="input w-full" autocomplete="email" inputmode="email" placeholder="@L.T("auth.email")" />
-                <span asp-validation-for="Email" class="field-error text-error text-xs mt-1"></span>
-            </app-field>
-
-            <app-field for="Password" label="@L.T("auth.password")">
-                <input asp-for="Password" type="password" class="input w-full" autocomplete="current-password" placeholder="@L.T("auth.password")" />
-                <span asp-validation-for="Password" class="field-error text-error text-xs mt-1"></span>
-            </app-field>
-
-            <app-btn type="submit" variant="primary" block>@L.T("auth.login")</app-btn>
+            <div id="login-form-fields">
+                @await Html.PartialAsync("_LoginFields", Model)
+            </div>
         </form>
     </div>
 
@@ -39,3 +29,7 @@
         <a class="font-semibold text-primary" asp-controller="Auth" asp-action="Register">@L.T("auth.register")</a>
     </div>
 </div>
+
+@section Scripts {
+    <script src="~/src/pages/auth.js" asp-append-version="true"></script>
+}

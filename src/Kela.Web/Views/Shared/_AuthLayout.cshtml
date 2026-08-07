@@ -1,4 +1,6 @@
 @inject Localizer L
+@using Microsoft.AspNetCore.Antiforgery
+@inject IAntiforgery Antiforgery
 @{
     Layout = null;
 }
@@ -7,6 +9,7 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="csrf-token" content="@Antiforgery.GetAndStoreTokens(Context).RequestToken" />
     <title>@ViewData["Title"] - Kela</title>
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
 </head>

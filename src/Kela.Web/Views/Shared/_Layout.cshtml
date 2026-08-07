@@ -105,7 +105,7 @@
                     <div tabindex="0" class="dropdown-content menu z-50 mt-3 w-52 rounded-box bg-base-100 p-2 shadow-xl">
                         <li><span class="badge badge-ghost w-full">@L.T(roleKey)</span></li>
                         <li>
-                            <form method="post" asp-controller="Auth" asp-action="Logout" class="w-full">
+                            <form method="post" asp-controller="Auth" asp-action="Logout" class="w-full" id="logout-form">
                                 @Html.AntiForgeryToken()
                                 <button type="submit" class="flex w-full items-center gap-2 text-error">
                                     <app-icon name="logout" class="w-4 h-4" />

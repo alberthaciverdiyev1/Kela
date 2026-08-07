@@ -30,7 +30,7 @@ public sealed partial class AuthController(IApiClient api, Localizer l) : Contro
     {
         if (!IsLoginValid(model))
         {
-            return View(model);
+            return LoginError(model);
         }
 
         var result = await api.LoginAsync(model.Email.Trim(), model.Password, ct);
@@ -38,7 +38,7 @@ public sealed partial class AuthController(IApiClient api, Localizer l) : Contro
         if (!result.Success || result.Data is null || string.IsNullOrEmpty(result.SetCookie))
         {
             ModelState.AddModelError(string.Empty, result.Message ?? "Giriş başarısız oldu.");
-            return View(model);
+            return LoginError(model);
         }
 
         Response.Cookies.Append(AppConstants.ApiAuthCookie, result.SetCookie, AuthCookieOptions(TimeSpan.FromHours(8)));
@@ -50,12 +50,22 @@ public sealed partial class AuthController(IApiClient api, Localizer l) : Contro
         identity.AddClaim(new Claim(ClaimTypes.Role, data.Role));
         await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(identity));
 
-        if (!string.IsNullOrEmpty(model.ReturnUrl) && Url.IsLocalUrl(model.ReturnUrl))
+        var redirectUrl = (!string.IsNullOrEmpty(model.ReturnUrl) && Url.IsLocalUrl(model.ReturnUrl))
+            ? model.ReturnUrl
+            : AppConstants.HomeRouteFor(data.Role);
+
+        return IsAjax ? Json(new { redirect = redirectUrl }) : Redirect(redirectUrl);
+    }
+
+    private IActionResult LoginError(LoginViewModel model)
+    {
+        if (IsAjax)
         {
-            return Redirect(model.ReturnUrl);
+            Response.StatusCode = StatusCodes.Status422UnprocessableEntity;
+            return PartialView("_LoginFields", model);
         }
 
-        return Redirect(AppConstants.HomeRouteFor(data.Role));
+        return View(model);
     }
 
     [HttpGet]
@@ -67,7 +77,7 @@ public sealed partial class AuthController(IApiClient api, Localizer l) : Contro
     {
         if (!IsRegisterValid(model))
         {
-            return View(model);
+            return RegisterError(model);
         }
 
         var result = await api.RegisterAsync(new RegisterRequest(
@@ -88,11 +98,22 @@ public sealed partial class AuthController(IApiClient api, Localizer l) : Contro
                 ModelState.AddModelError(string.Empty, result.Message);
             }
 
-            return View(model);
+            return RegisterError(model);
         }
 
         TempData["Success"] = l.T("auth.registerSuccess");
-        return RedirectToAction(nameof(Login), "Auth");
+        return IsAjax ? Json(new { redirect = "/auth/login" }) : RedirectToAction(nameof(Login), "Auth");
+    }
+
+    private IActionResult RegisterError(RegisterViewModel model)
+    {
+        if (IsAjax)
+        {
+            Response.StatusCode = StatusCodes.Status422UnprocessableEntity;
+            return PartialView("_RegisterFields", model);
+        }
+
+        return View(model);
     }
 
     [HttpPost]
@@ -103,8 +124,10 @@ public sealed partial class AuthController(IApiClient api, Localizer l) : Contro
 
         await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
         Response.Cookies.Delete(AppConstants.ApiAuthCookie, AuthCookieOptions(null));
-        return RedirectToAction(nameof(Login), "Auth");
+        return IsAjax ? Json(new { redirect = "/auth/login" }) : RedirectToAction(nameof(Login), "Auth");
     }
+
+    private bool IsAjax => Request.Headers["X-Requested-With"] == "XMLHttpRequest";
 
     private bool IsLoginValid(LoginViewModel model)
     {

@@ -34,5 +34,18 @@
         if (el && el.tagName === 'DIALOG' && el.open) el.close();
     });
 
+    document.addEventListener('submit', function (event) {
+        let form = event.target;
+        if (!form || (form.id !== 'logout-form' && form.id !== 'lang-form')) return;
+        event.preventDefault();
+        Kela.axios.post(form.action, new FormData(form)).then(function () {
+            if (form.id === 'logout-form') window.location.href = '/auth/login';
+            else window.location.reload();
+        }).catch(function () {
+            if (form.id === 'logout-form') window.location.href = '/auth/login';
+            else window.location.reload();
+        });
+    });
+
     window.Kela = Kela;
 })();
