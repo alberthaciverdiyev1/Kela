@@ -17,6 +17,10 @@ public static class AttendancesEndpoints
             ApiResponse<AttendanceDayResponse>.Success(
                 await attendance.GetDayAsync(workspaceId, date, ct)));
 
+        group.MapGet("/month", async (int workspaceId, int year, int month, IAttendanceService attendance, CancellationToken ct) =>
+            ApiResponse<AttendanceMonthResponse>.Success(
+                await attendance.GetMonthAsync(workspaceId, year, month, ct)));
+
         group.MapPut("", async (int workspaceId, DateOnly date, SetAttendanceMarksRequest request, IAttendanceService attendance, CancellationToken ct) =>
         {
             await attendance.SetMarksAsync(workspaceId, date, request, ct);

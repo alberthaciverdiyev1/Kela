@@ -23,6 +23,24 @@ internal sealed class AttendanceService(
         return workspace.ToDayResponse(date, records);
     }
 
+    public async Task<AttendanceMonthResponse> GetMonthAsync(
+        int workspaceId, int year, int month, CancellationToken cancellationToken = default)
+    {
+        if (year < 1 || month is < 1 or > 12)
+        {
+            throw new InvalidOperationException("Geçersiz tarih aralığı.");
+        }
+
+        var workspace = await workspaces.GetByIdAsync(workspaceId, cancellationToken)
+            ?? throw new KeyNotFoundException($"Id = {workspaceId} olan iş alanı bulunamadı.");
+
+        var from = new DateOnly(year, month, 1);
+        var to = from.AddMonths(1).AddDays(-1);
+        var records = await attendance.GetMonthAsync(workspaceId, from, to, cancellationToken);
+
+        return workspace.ToMonthResponse(year, month, records);
+    }
+
     public async Task SetMarksAsync(
         int workspaceId, DateOnly date, SetAttendanceMarksRequest request, CancellationToken cancellationToken = default)
     {

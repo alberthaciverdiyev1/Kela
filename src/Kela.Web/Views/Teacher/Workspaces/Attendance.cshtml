@@ -1,0 +1,230 @@
+@model Kela.Web.Models.Attendances.AttendancePageViewModel
+@{
+    ViewData["Title"] = L.T("attendance.title");
+    var daysInMonth = DateTime.DaysInMonth(Model.Year, Model.Month);
+    var prevYear = Model.Month == 1 ? Model.Year - 1 : Model.Year;
+    var prevMonth = Model.Month == 1 ? 12 : Model.Month - 1;
+    var nextYear = Model.Month == 12 ? Model.Year + 1 : Model.Year;
+    var nextMonth = Model.Month == 12 ? 1 : Model.Month + 1;
+    var monthValue = $"{Model.Year:D4}-{Model.Month:D2}";
+    var prevMonthValue = $"{prevYear:D4}-{prevMonth:D2}";
+    var nextMonthValue = $"{nextYear:D4}-{nextMonth:D2}";
+    var recordsByStudentDate = Model.Records.ToDictionary(r => (r.StudentId, r.Date));
+
+    string StatusIcon(int status) => status switch
+    {
+        1 => "check-circle",
+        2 => "x",
+        3 => "clock",
+        4 => "shield",
+        _ => "",
+    };
+    string StatusColor(int status) => status switch
+    {
+        1 => "bg-success text-white",
+        2 => "bg-error text-white",
+        3 => "bg-warning text-white",
+        4 => "bg-info text-white",
+        _ => "bg-base-200 text-base-content/40",
+    };
+    string StatusLabelKey(int status) => status switch
+    {
+        1 => "attendance.status.present",
+        2 => "attendance.status.absent",
+        3 => "attendance.status.late",
+        4 => "attendance.status.excused",
+        _ => "attendance.status.unknown",
+    };
+}
+<div id="attendance-page"
+     data-workspace-id="@Model.WorkspaceId"
+     data-year="@Model.Year"
+     data-month="@Model.Month"
+     data-days="@daysInMonth"
+     data-label-unknown="@L.T("attendance.status.unknown")"
+     data-save-success="@L.T("attendance.saveSuccess")"
+     data-save-error="@L.T("attendance.saveError")">
+
+    <app-page-head title="@Model.WorkspaceName" subtitle="@L.T("attendance.subtitle", new { month = monthValue })">
+        <div class="flex gap-2">
+            <app-btn variant="secondary" icon="arrow-left" href="/teacher/workspaces/@Model.WorkspaceId">@L.T("common.back")</app-btn>
+        </div>
+    </app-page-head>
+
+    <div class="flex flex-wrap items-center gap-3">
+        <div class="flex items-center gap-1">
+            <a class="btn btn-ghost btn-square btn-sm" href="?month=@prevMonthValue" title="@L.T("attendance.prev")">@Html.Raw(Icons.Icon("chevron-left", "w-4 h-4"))</a>
+            <input type="month" id="attendance-month" class="input input-sm w-44 text-center" value="@monthValue"/>
+            <a class="btn btn-ghost btn-square btn-sm" href="?month=@nextMonthValue" title="@L.T("attendance.next")">@Html.Raw(Icons.Icon("chevron-right", "w-4 h-4"))</a>
+        </div>
+        <label class="input flex w-full max-w-xs items-center gap-2 input-sm">
+            <app-icon name="search" class="w-4 h-4 opacity-40"/>
+            <input id="attendance-search" type="search" class="grow" placeholder="@L.T("attendance.filter.search")" autocomplete="off"/>
+        </label>
+        <select id="attendance-status-filter" class="select select-sm w-40">
+            <option value="-1">@L.T("attendance.filter.all")</option>
+            <option value="0">@L.T("attendance.status.unknown")</option>
+            <option value="1">@L.T("attendance.status.present")</option>
+            <option value="2">@L.T("attendance.status.absent")</option>
+            <option value="3">@L.T("attendance.status.late")</option>
+            <option value="4">@L.T("attendance.status.excused")</option>
+        </select>
+    </div>
+
+    <div class="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-6">
+        <div class="flex items-center gap-3 rounded-box bg-base-100 p-4 shadow-sm">
+            <div class="flex size-10 items-center justify-center rounded-xl bg-primary/10 text-primary">@Html.Raw(Icons.Icon("students", "w-5 h-5"))</div>
+            <div>
+                <div class="text-xs text-base-content/60">@L.T("attendance.stats.total")</div>
+                <div id="stat-total" class="text-xl font-bold">@Model.Students.Count</div>
+            </div>
+        </div>
+        <div class="flex items-center gap-3 rounded-box bg-base-100 p-4 shadow-sm">
+            <div class="flex size-10 items-center justify-center rounded-xl bg-success/10 text-success">@Html.Raw(Icons.Icon("check-circle", "w-5 h-5"))</div>
+            <div>
+                <div class="text-xs text-base-content/60">@L.T("attendance.stats.present")</div>
+                <div id="stat-present" class="text-xl font-bold">0</div>
+            </div>
+        </div>
+        <div class="flex items-center gap-3 rounded-box bg-base-100 p-4 shadow-sm">
+            <div class="flex size-10 items-center justify-center rounded-xl bg-error/10 text-error">@Html.Raw(Icons.Icon("x", "w-5 h-5"))</div>
+            <div>
+                <div class="text-xs text-base-content/60">@L.T("attendance.stats.absent")</div>
+                <div id="stat-absent" class="text-xl font-bold">0</div>
+            </div>
+        </div>
+        <div class="flex items-center gap-3 rounded-box bg-base-100 p-4 shadow-sm">
+            <div class="flex size-10 items-center justify-center rounded-xl bg-warning/10 text-warning">@Html.Raw(Icons.Icon("clock", "w-5 h-5"))</div>
+            <div>
+                <div class="text-xs text-base-content/60">@L.T("attendance.stats.late")</div>
+                <div id="stat-late" class="text-xl font-bold">0</div>
+            </div>
+        </div>
+        <div class="flex items-center gap-3 rounded-box bg-base-100 p-4 shadow-sm">
+            <div class="flex size-10 items-center justify-center rounded-xl bg-info/10 text-info">@Html.Raw(Icons.Icon("shield", "w-5 h-5"))</div>
+            <div>
+                <div class="text-xs text-base-content/60">@L.T("attendance.stats.excused")</div>
+                <div id="stat-excused" class="text-xl font-bold">0</div>
+            </div>
+        </div>
+        <div class="flex items-center gap-3 rounded-box bg-base-100 p-4 shadow-sm">
+            <div class="flex size-10 items-center justify-center rounded-xl bg-secondary/10 text-secondary">@Html.Raw(Icons.Icon("percent", "w-5 h-5"))</div>
+            <div>
+                <div class="text-xs text-base-content/60">@L.T("attendance.stats.rate")</div>
+                <div id="stat-rate" class="text-xl font-bold">0%</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="hidden lg:block">
+        <div class="card bg-base-100 shadow-sm overflow-hidden">
+            @if (Model.Students.Count == 0)
+            {
+                <app-empty icon="calendar" text="@L.T("attendance.empty")"/>
+            }
+            else
+            {
+                <div class="attendance-scroll overflow-auto max-h-[70vh]">
+                    <table class="attendance-table table table-fixed w-full border-separate border-spacing-0 text-sm">
+                        <thead>
+                            <tr>
+                                <th class="sticky left-0 top-0 z-30 w-44 bg-base-200 px-3 py-2 text-left text-xs font-semibold uppercase tracking-wider text-base-content/50">@L.T("attendance.student")</th>
+                                @for (var day = 1; day <= daysInMonth; day++)
+                                {
+                                    <th class="sticky top-0 z-20 w-10 bg-base-200 py-2 text-center text-xs font-medium text-base-content/50">@day</th>
+                                }
+                            </tr>
+                        </thead>
+                        <tbody>
+                        @foreach (var s in Model.Students)
+                        {
+                            <tr class="hover:bg-base-200/50" data-student-row data-student-id="@s.Id" data-student-name="@s.Name.ToLowerInvariant()">
+                                <td class="sticky left-0 z-10 bg-base-100 px-3 py-1 font-medium">@s.Name</td>
+                                @for (var day = 1; day <= daysInMonth; day++)
+                                {
+                                    var date = new DateOnly(Model.Year, Model.Month, day);
+                                    var record = recordsByStudentDate.GetValueOrDefault((s.Id, date));
+                                    var status = record?.Status ?? 0;
+                                    <td class="p-0.5 text-center">
+                                        <button type="button"
+                                                data-cell
+                                                data-cell-layout="desktop"
+                                                data-student-id="@s.Id"
+                                                data-date="@date.ToString("yyyy-MM-dd")"
+                                                data-status="@status"
+                                                title="@L.T(StatusLabelKey(status))"
+                                                class="attendance-cell mx-auto flex size-6 items-center justify-center rounded-md @StatusColor(status) cursor-pointer transition hover:ring-2 hover:ring-primary/40 disabled:opacity-50 disabled:cursor-wait">
+                                            @if (status == 0)
+                                            {
+                                                <span class="size-1.5 rounded-full bg-base-content/20"></span>
+                                            }
+                                            else
+                                            {
+                                                @Html.Raw(Icons.Icon(StatusIcon(status), "w-3.5 h-3.5"))
+                                            }
+                                        </button>
+                                    </td>
+                                }
+                            </tr>
+                        }
+                        </tbody>
+                    </table>
+                </div>
+            }
+        </div>
+    </div>
+
+    <div class="grid grid-cols-1 gap-4 lg:hidden">
+        @if (Model.Students.Count == 0)
+        {
+            <app-empty icon="calendar" text="@L.T("attendance.empty")"/>
+        }
+        @foreach (var s in Model.Students)
+        {
+            <div class="card bg-base-100 shadow-sm p-4" data-student-card data-student-id="@s.Id" data-student-name="@s.Name.ToLowerInvariant()">
+                <div class="mb-3 flex items-center justify-between">
+                    <span class="text-sm font-semibold">@s.Name</span>
+                    <span class="badge badge-ghost">@L.T("attendance.student")</span>
+                </div>
+                <div class="flex flex-wrap gap-1.5">
+                    @for (var day = 1; day <= daysInMonth; day++)
+                    {
+                        var date = new DateOnly(Model.Year, Model.Month, day);
+                        var record = recordsByStudentDate.GetValueOrDefault((s.Id, date));
+                        var status = record?.Status ?? 0;
+                        <button type="button"
+                                data-cell
+                                data-cell-layout="mobile"
+                                data-student-id="@s.Id"
+                                data-date="@date.ToString("yyyy-MM-dd")"
+                                data-status="@status"
+                                title="@L.T(StatusLabelKey(status))"
+                                class="attendance-cell flex size-7 items-center justify-center rounded-md text-xs font-semibold @StatusColor(status) cursor-pointer transition hover:ring-2 hover:ring-primary/40 disabled:opacity-50 disabled:cursor-wait">
+                            @day
+                        </button>
+                    }
+                </div>
+            </div>
+        }
+    </div>
+</div>
+
+<div id="attendance-picker" class="fixed z-50 hidden w-44 rounded-box border border-base-200 bg-base-100 p-1.5 shadow-xl">
+    <button type="button" data-pick-status="1" class="flex w-full items-center gap-2.5 rounded-lg px-3 py-2 text-sm hover:bg-success/10 hover:text-success">
+        <span class="flex size-5 items-center justify-center rounded-md bg-success text-white">@Html.Raw(Icons.Icon("check-circle", "w-3 h-3"))</span>@L.T("attendance.status.present")
+    </button>
+    <button type="button" data-pick-status="2" class="flex w-full items-center gap-2.5 rounded-lg px-3 py-2 text-sm hover:bg-error/10 hover:text-error">
+        <span class="flex size-5 items-center justify-center rounded-md bg-error text-white">@Html.Raw(Icons.Icon("x", "w-3 h-3"))</span>@L.T("attendance.status.absent")
+    </button>
+    <button type="button" data-pick-status="3" class="flex w-full items-center gap-2.5 rounded-lg px-3 py-2 text-sm hover:bg-warning/10 hover:text-warning">
+        <span class="flex size-5 items-center justify-center rounded-md bg-warning text-white">@Html.Raw(Icons.Icon("clock", "w-3 h-3"))</span>@L.T("attendance.status.late")
+    </button>
+    <button type="button" data-pick-status="4" class="flex w-full items-center gap-2.5 rounded-lg px-3 py-2 text-sm hover:bg-info/10 hover:text-info">
+        <span class="flex size-5 items-center justify-center rounded-md bg-info text-white">@Html.Raw(Icons.Icon("shield", "w-3 h-3"))</span>@L.T("attendance.status.excused")
+    </button>
+</div>
+
+@section Scripts {
+    <script src="~/src/toast.js" asp-append-version="true"></script>
+    <script src="~/src/pages/attendance.js" asp-append-version="true"></script>
+}

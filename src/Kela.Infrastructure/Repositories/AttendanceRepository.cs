@@ -17,6 +17,14 @@ internal sealed class AttendanceRepository(KelaDbContext context) : IAttendanceR
             .OrderBy(a => a.StudentId)
             .ToListAsync(cancellationToken);
 
+    public Task<List<Attendance>> GetMonthAsync(
+        int workspaceId, DateOnly from, DateOnly to, CancellationToken cancellationToken = default)
+        => context.Attendances
+            .Where(a => a.WorkspaceId == workspaceId && a.Date >= from && a.Date <= to)
+            .OrderBy(a => a.Date)
+            .ThenBy(a => a.StudentId)
+            .ToListAsync(cancellationToken);
+
     public void Add(Attendance attendance) => context.Attendances.Add(attendance);
 
     public void Update(Attendance attendance) => context.Attendances.Update(attendance);

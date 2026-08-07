@@ -65,6 +65,17 @@ public sealed class ApiClient(HttpClient http) : IApiClient
     public Task<ApiResult<NoContentData>> RemoveStudentAsync(int id, int studentId, CancellationToken ct = default)
         => SendAsync<NoContentData>(HttpMethod.Delete, $"api/workspaces/{id}/students/{studentId}", null, ct);
 
+    public Task<ApiResult<AttendanceMonthResponse>> GetAttendanceMonthAsync(
+        int workspaceId, int year, int month, CancellationToken ct = default)
+        => SendAsync<AttendanceMonthResponse>(
+            HttpMethod.Get, $"api/workspaces/{workspaceId}/attendance/month?year={year}&month={month}", null, ct);
+
+    public Task<ApiResult<NoContentData>> SetAttendanceMarkAsync(
+        int workspaceId, DateOnly date, int studentId, int status, CancellationToken ct = default)
+        => SendAsync<NoContentData>(
+            HttpMethod.Put, $"api/workspaces/{workspaceId}/attendance?date={date:yyyy-MM-dd}",
+            new { marks = new[] { new { studentId, status } } }, ct);
+
     private async Task<ApiResult<T>> SendAsync<T>(
         HttpMethod method, string path, object? body, CancellationToken ct)
     {
@@ -128,4 +139,6 @@ public interface IApiClient
     Task<ApiResult<NoContentData>> DeleteWorkspaceAsync(int id, CancellationToken ct = default);
     Task<ApiResult<NoContentData>> AddStudentsAsync(int id, AddStudentsRequest request, CancellationToken ct = default);
     Task<ApiResult<NoContentData>> RemoveStudentAsync(int id, int studentId, CancellationToken ct = default);
+    Task<ApiResult<AttendanceMonthResponse>> GetAttendanceMonthAsync(int workspaceId, int year, int month, CancellationToken ct = default);
+    Task<ApiResult<NoContentData>> SetAttendanceMarkAsync(int workspaceId, DateOnly date, int studentId, int status, CancellationToken ct = default);
 }

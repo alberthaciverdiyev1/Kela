@@ -1,7 +1,9 @@
+using System.Globalization;
 using System.Security.Claims;
 using System.Text.RegularExpressions;
 using Kela.Web.Helpers;
 using Kela.Web.Localization;
+using Kela.Web.Models.Attendances;
 using Kela.Web.Models.Students;
 using Kela.Web.Models.Workspaces;
 using Microsoft.AspNetCore.Authorization;
@@ -240,10 +242,68 @@ public sealed partial class TeacherController(IApiClient api, Localizer L) : Con
         return await WorkspaceStudentsSectionAsync(id, ct);
     }
 
+    [HttpGet("teacher/workspaces/{id:int}/attendance")]
+    public async Task<IActionResult> Attendance(int id, string? month, CancellationToken ct)
+    {
+        var workspace = await api.GetWorkspaceAsync(id, ct);
+        if (!workspace.Success || workspace.Data is null)
+        {
+            return NotFound();
+        }
+
+        var (year, monthNumber) = ParseMonth(month);
+        var data = await api.GetAttendanceMonthAsync(id, year, monthNumber, ct);
+        if (!data.Success || data.Data is null)
+        {
+            return NotFound();
+        }
+
+        return View("Workspaces/Attendance", new AttendancePageViewModel(
+            workspace.Data.Id,
+            workspace.Data.Name,
+            data.Data.Year,
+            data.Data.Month,
+            data.Data.Students,
+            data.Data.Records));
+    }
+
+    [HttpPut("teacher/workspaces/{id:int}/attendance")]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> SetAttendance(int id, [FromBody] SetAttendanceRequest model, CancellationToken ct)
+    {
+        if (model is null || model.StudentId <= 0 || model.Date == default || model.Status is < 0 or > 4)
+        {
+            Response.StatusCode = StatusCodes.Status400BadRequest;
+            return Json(new { success = false, message = L.T("attendance.invalid") });
+        }
+
+        var result = await api.SetAttendanceMarkAsync(id, model.Date, model.StudentId, model.Status, ct);
+
+        if (!result.Success)
+        {
+            Response.StatusCode = StatusCodes.Status400BadRequest;
+            return Json(new { success = false, message = result.Message ?? L.T("attendance.saveError") });
+        }
+
+        return Json(new { success = true });
+    }
+
     public IActionResult Settings()
     {
         ViewData["TitleKey"] = "nav.settings";
         return View("~/Views/Shared/ComingSoon.cshtml");
+    }
+
+    private static (int Year, int Month) ParseMonth(string? month)
+    {
+        if (!string.IsNullOrWhiteSpace(month)
+            && DateOnly.TryParseExact(month, "yyyy-MM", CultureInfo.InvariantCulture, DateTimeStyles.None, out var parsed))
+        {
+            return (parsed.Year, parsed.Month);
+        }
+
+        var now = DateTime.Now;
+        return (now.Year, now.Month);
     }
 
     private async Task<IActionResult> WorkspaceStudentsSectionAsync(int id, CancellationToken ct)

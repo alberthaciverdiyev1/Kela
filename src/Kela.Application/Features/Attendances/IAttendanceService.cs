@@ -6,6 +6,7 @@ namespace Kela.Application.Features.Attendances;
 public interface IAttendanceService
 {
     Task<AttendanceDayResponse> GetDayAsync(int workspaceId, DateOnly date, CancellationToken cancellationToken = default);
+    Task<AttendanceMonthResponse> GetMonthAsync(int workspaceId, int year, int month, CancellationToken cancellationToken = default);
     Task SetMarksAsync(int workspaceId, DateOnly date, SetAttendanceMarksRequest request, CancellationToken cancellationToken = default);
     Task ClearMarkAsync(int workspaceId, int studentId, DateOnly date, CancellationToken cancellationToken = default);
 }

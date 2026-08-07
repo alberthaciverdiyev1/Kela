@@ -26,4 +26,19 @@ public static class AttendanceMappings
 
         return new AttendanceDayResponse(workspace.Id, date, entries);
     }
+
+    public static AttendanceMonthResponse ToMonthResponse(
+        this Workspace workspace, int year, int month, IReadOnlyList<Attendance> records)
+    {
+        var students = workspace.Students
+            .OrderBy(s => s.FirstName)
+            .Select(s => new AttendanceStudentResponse(s.Id, $"{s.FirstName} {s.LastName}".Trim()))
+            .ToList();
+
+        var recordList = records
+            .Select(r => new AttendanceRecordResponse(r.Id, r.StudentId, r.Date, r.Status, r.Note))
+            .ToList();
+
+        return new AttendanceMonthResponse(workspace.Id, year, month, students, recordList);
+    }
 }

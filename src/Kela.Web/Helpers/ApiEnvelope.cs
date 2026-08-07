@@ -85,3 +85,19 @@ public sealed record WorkspaceDetailResponse(
     int StudentCount,
     DateTime CreatedAt,
     IReadOnlyList<WorkspaceStudentResponse> Students);
+
+public sealed record AttendanceStudentResponse(int Id, string Name);
+
+public sealed record AttendanceRecordResponse(
+    int Id,
+    int StudentId,
+    DateOnly Date,
+    int Status,
+    string? Note);
+
+public sealed record AttendanceMonthResponse(
+    int WorkspaceId,
+    int Year,
+    int Month,
+    IReadOnlyList<AttendanceStudentResponse> Students,
+    IReadOnlyList<AttendanceRecordResponse> Records);
