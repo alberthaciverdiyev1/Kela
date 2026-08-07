@@ -1,5 +1,5 @@
 using System.Text.RegularExpressions;
-using Kela.Web.Infrastructure;
+using Kela.Web.Helpers;
 using Kela.Web.Localization;
 using Kela.Web.Models.Students;
 using Microsoft.AspNetCore.Authorization;
@@ -18,7 +18,7 @@ public sealed partial class TeacherController(IApiClient api, Localizer L) : Con
     public async Task<IActionResult> Students(CancellationToken ct)
     {
         var result = await api.GetStudentsPageAsync(1, PageSize, ct: ct);
-        return View(new StudentsIndexViewModel(
+        return View("Students/Students", new StudentsIndexViewModel(
             result.Data?.Items ?? [], result.Data?.Page ?? 1, PageSize, result.Data?.TotalCount ?? 0, null));
     }
 
@@ -26,7 +26,7 @@ public sealed partial class TeacherController(IApiClient api, Localizer L) : Con
     public async Task<IActionResult> StudentsTable(CancellationToken ct, int page = 1, string? search = null)
     {
         var result = await api.GetStudentsPageAsync(page, PageSize, search, ct);
-        return PartialView("_StudentsTable", new StudentsIndexViewModel(
+        return PartialView("Students/_StudentsTable", new StudentsIndexViewModel(
             result.Data?.Items ?? [], result.Data?.Page ?? 1, PageSize, result.Data?.TotalCount ?? 0, search));
     }
 
@@ -52,7 +52,7 @@ public sealed partial class TeacherController(IApiClient api, Localizer L) : Con
         if (!ModelState.IsValid)
         {
             Response.StatusCode = StatusCodes.Status422UnprocessableEntity;
-            return PartialView("_StudentsCreateFields", model);
+            return PartialView("Students/_StudentsCreateFields", model);
         }
 
         var created = await api.CreateStudentAsync(new CreateStudentRequest(
@@ -76,10 +76,10 @@ public sealed partial class TeacherController(IApiClient api, Localizer L) : Con
             }
 
             Response.StatusCode = StatusCodes.Status422UnprocessableEntity;
-            return PartialView("_StudentsCreateFields", model);
+            return PartialView("Students/_StudentsCreateFields", model);
         }
 
-        return PartialView("_StudentsCredentialsDialog", created.Data!);
+        return PartialView("Students/_StudentsCredentialsDialog", created.Data!);
     }
 
     [HttpDelete("teacher/students/{id:int}/delete")]
@@ -95,7 +95,7 @@ public sealed partial class TeacherController(IApiClient api, Localizer L) : Con
             page--;
         }
 
-        return PartialView("_StudentsTable", new StudentsIndexViewModel(
+        return PartialView("Students/_StudentsTable", new StudentsIndexViewModel(
             result.Data?.Items ?? [], result.Data?.Page ?? 1, PageSize, result.Data?.TotalCount ?? 0, search));
     }
 

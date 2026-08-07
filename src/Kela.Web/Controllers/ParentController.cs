@@ -1,4 +1,4 @@
-using Kela.Web.Infrastructure;
+using Kela.Web.Helpers;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 

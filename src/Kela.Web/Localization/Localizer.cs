@@ -1,6 +1,6 @@
 using System.Reflection;
 using System.Text.Json;
-using Kela.Web.Infrastructure;
+using Kela.Web.Helpers;
 
 namespace Kela.Web.Localization;
 

@@ -1,4 +1,4 @@
-using Kela.Web.Infrastructure;
+using Kela.Web.Helpers;
 
 namespace Kela.Web.Models.Students;
 

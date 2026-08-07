@@ -1,6 +1,6 @@
 using System.Security.Claims;
 using System.Text.RegularExpressions;
-using Kela.Web.Infrastructure;
+using Kela.Web.Helpers;
 using Kela.Web.Localization;
 using Kela.Web.Models.Auth;
 using Microsoft.AspNetCore.Authentication;

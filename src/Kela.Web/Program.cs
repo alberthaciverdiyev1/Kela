@@ -1,5 +1,5 @@
 using System.Net.Security;
-using Kela.Web.Infrastructure;
+using Kela.Web.Helpers;
 using Kela.Web.Localization;
 using Microsoft.AspNetCore.Authentication.Cookies;
 
@@ -88,5 +88,6 @@ app.UseAuthorization();
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id:int?}");
+
 
 app.Run();
