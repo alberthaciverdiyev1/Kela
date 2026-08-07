@@ -16,9 +16,20 @@ internal sealed class StudentRepository(KelaDbContext context) : IStudentReposit
         => await Detailed.FirstOrDefaultAsync(p => p.Id == id, cancellationToken);
 
     public async Task<PaginatedResult<StudentProfile>> GetPageAsync(
-        int page, int pageSize, CancellationToken cancellationToken = default)
+        int page, int pageSize, string? search, CancellationToken cancellationToken = default)
     {
         var query = Detailed.AsNoTracking();
+
+        if (!string.IsNullOrWhiteSpace(search))
+        {
+            var s = search.Trim();
+            query = query.Where(p => p.User != null && (
+                p.User.FirstName.ToLower().Contains(s.ToLower())
+                || (p.User.LastName != null && p.User.LastName.ToLower().Contains(s.ToLower()))
+                || (p.User.Email != null && p.User.Email.ToLower().Contains(s.ToLower()))
+                || (p.User.PhoneNumber != null && p.User.PhoneNumber.ToLower().Contains(s.ToLower()))));
+        }
+
         var total = await query.CountAsync(cancellationToken);
 
         var items = await query

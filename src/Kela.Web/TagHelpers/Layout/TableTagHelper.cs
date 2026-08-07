@@ -53,6 +53,7 @@ public sealed class TableTagHelper(Localizer localizer) : TagHelper
         builder.Append("</tr></thead>");
         builder.Append(content.GetContent());
         builder.Append("</table></div>");
+
         if (TotalPages > 1)
         {
             builder.Append(PagerHtml.Render(Page, TotalPages, PrevText, NextText));

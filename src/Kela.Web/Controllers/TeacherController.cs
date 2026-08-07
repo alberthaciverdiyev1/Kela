@@ -17,7 +17,7 @@ public sealed partial class TeacherController(IApiClient api, Localizer L) : Con
 
     public async Task<IActionResult> Students(CancellationToken ct)
     {
-        var result = await api.GetStudentsPageAsync(1, PageSize, ct);
+        var result = await api.GetStudentsPageAsync(1, PageSize, ct: ct);
         return View(new StudentsIndexViewModel(
             result.Data?.Items ?? [], result.Data?.Page ?? 1, PageSize, result.Data?.TotalCount ?? 0, null));
     }
@@ -25,7 +25,7 @@ public sealed partial class TeacherController(IApiClient api, Localizer L) : Con
     [HttpGet("teacher/students/table")]
     public async Task<IActionResult> StudentsTable(CancellationToken ct, int page = 1, string? search = null)
     {
-        var result = await api.GetStudentsPageAsync(page, PageSize, ct);
+        var result = await api.GetStudentsPageAsync(page, PageSize, search, ct);
         return PartialView("_StudentsTable", new StudentsIndexViewModel(
             result.Data?.Items ?? [], result.Data?.Page ?? 1, PageSize, result.Data?.TotalCount ?? 0, search));
     }
@@ -88,10 +88,10 @@ public sealed partial class TeacherController(IApiClient api, Localizer L) : Con
     {
         await api.DeleteStudentAsync(id, ct);
 
-        var result = await api.GetStudentsPageAsync(page, PageSize, ct);
+        var result = await api.GetStudentsPageAsync(page, PageSize, search, ct);
         if ((result.Data?.Items.Count ?? 0) == 0 && page > 1)
         {
-            result = await api.GetStudentsPageAsync(page - 1, PageSize, ct);
+            result = await api.GetStudentsPageAsync(page - 1, PageSize, search, ct);
             page--;
         }
 

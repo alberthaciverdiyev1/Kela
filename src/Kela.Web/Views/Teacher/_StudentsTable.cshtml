@@ -1,28 +1,17 @@
 @model Kela.Web.Models.Students.StudentsIndexViewModel
-@{
-    var search = Model.Search?.Trim();
-
-    var filtered = string.IsNullOrEmpty(search)
-        ? Model.Items
-        : Model.Items.Where(s =>
-            s.FirstName.Contains(search, StringComparison.OrdinalIgnoreCase)
-            || s.LastName.Contains(search, StringComparison.OrdinalIgnoreCase)
-            || (s.Email?.Contains(search, StringComparison.OrdinalIgnoreCase) ?? false)
-            || (s.PhoneNumber?.Contains(search, StringComparison.OrdinalIgnoreCase) ?? false)).ToList();
-}
 <div id="students-list">
     <app-table
-        empty="@(filtered.Count == 0)"
+        empty="@(Model.Items.Count == 0)"
         empty-icon="students"
         empty-text="@L.T("students.empty")"
-        columns="@(["students.col.firstName", "students.col.lastName", "students.col.phone", "students.col.email", "students.col.birthDate", "students.col.city"])"
+        columns="@(["students.col.firstName", "students.col.lastName", "students.col.phone", "students.col.email", "students.col.birthDate", "students.col.city","common.action"])"
         actions-column
         page="@Model.Page"
         total-pages="@Model.TotalPages"
         prev-text="@L.T("pager.prev")"
         next-text="@L.T("pager.next")">
         <tbody>
-        @foreach (var s in filtered)
+        @foreach (var s in Model.Items)
         {
             <tr>
                 <td>@Display.Render(s.FirstName)</td>

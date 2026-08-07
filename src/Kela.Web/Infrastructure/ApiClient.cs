@@ -21,9 +21,16 @@ public sealed class ApiClient(HttpClient http) : IApiClient
         => SendAsync<SiteConfigResponse>(HttpMethod.Get, "api/site-config", null, ct);
 
     public Task<ApiResult<PaginatedResult<StudentResponse>>> GetStudentsPageAsync(
-        int page, int pageSize, CancellationToken ct = default)
-        => SendAsync<PaginatedResult<StudentResponse>>(
-            HttpMethod.Get, $"api/students?page={page}&pageSize={pageSize}", null, ct);
+        int page, int pageSize, string? search = null, CancellationToken ct = default)
+    {
+        var url = $"api/students?page={page}&pageSize={pageSize}";
+        if (!string.IsNullOrWhiteSpace(search))
+        {
+            url += $"&search={Uri.EscapeDataString(search.Trim())}";
+        }
+
+        return SendAsync<PaginatedResult<StudentResponse>>(HttpMethod.Get, url, null, ct);
+    }
 
     public Task<ApiResult<StudentCreatedResponse>> CreateStudentAsync(
         CreateStudentRequest request, CancellationToken ct = default)
@@ -85,7 +92,7 @@ public interface IApiClient
     Task<ApiResult<RegisterResponse>> RegisterAsync(RegisterRequest request, CancellationToken ct = default);
     Task<ApiResult<NoContentData>> LogoutAsync(CancellationToken ct = default);
     Task<ApiResult<SiteConfigResponse>> GetSiteConfigAsync(CancellationToken ct = default);
-    Task<ApiResult<PaginatedResult<StudentResponse>>> GetStudentsPageAsync(int page, int pageSize, CancellationToken ct = default);
+    Task<ApiResult<PaginatedResult<StudentResponse>>> GetStudentsPageAsync(int page, int pageSize, string? search = null, CancellationToken ct = default);
     Task<ApiResult<StudentCreatedResponse>> CreateStudentAsync(CreateStudentRequest request, CancellationToken ct = default);
     Task<ApiResult<NoContentData>> DeleteStudentAsync(int id, CancellationToken ct = default);
 }
