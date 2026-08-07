@@ -356,6 +356,16 @@ a:hover { color: var(--kela-primary-700); }
     margin-top: 0.25rem;
 }
 
+.field:has(.field-error:not(:empty)) .input {
+    border-color: var(--kela-error);
+    background: var(--kela-error-50);
+}
+
+.field:has(.field-error:not(:empty)) .input:focus {
+    border-color: var(--kela-error);
+    box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.15);
+}
+
 .validation-summary {
     font-size: 0.875rem;
     color: var(--kela-error);
@@ -790,6 +800,7 @@ a:hover { color: var(--kela-primary-700); }
     border: 1px solid var(--surface-200);
     border-radius: 0.75rem;
     padding: 1rem;
+
 }
 
 .creds-label { font-size: 0.75rem; color: var(--surface-400); margin-bottom: 0.5rem; }
