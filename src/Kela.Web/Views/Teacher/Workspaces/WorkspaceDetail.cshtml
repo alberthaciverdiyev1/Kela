@@ -1,0 +1,33 @@
+@model Kela.Web.Models.Workspaces.WorkspaceDetailViewModel
+@{
+    ViewData["Title"] = Model.Workspace.Name;
+}
+<div class="flex flex-col gap-6">
+    <app-page-head title="@Model.Workspace.Name"
+                   subtitle="@L.T("workspaces.detail.studentCountSubtitle", new { count = Model.Workspace.StudentCount })">
+        <div class="flex gap-2">
+            <app-btn variant="secondary" icon="arrow-left" href="/teacher/workspaces">@L.T("common.back")</app-btn>
+            <app-btn variant="primary" icon="edit"
+                     onclick="document.getElementById('rename-workspace-dialog').showModal()">@L.T("workspaces.rename")</app-btn>
+        </div>
+    </app-page-head>
+
+    <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+        <app-stat icon="user-plus" label="@L.T("workspaces.detail.studentCount")" value="@Model.Workspace.StudentCount.ToString()"/>
+        <app-stat icon="calendar" tone="info" label="@L.T("workspaces.detail.created")"
+                  value="@Model.Workspace.CreatedAt.ToLocalTime().ToString("dd.MM.yyyy")"/>
+    </div>
+
+    @await Html.PartialAsync("~/Views/Teacher/Workspaces/_WorkspaceStudentsSection.cshtml", Model)
+
+    <app-modal id="rename-workspace-dialog" icon="edit" title="@L.T("workspaces.rename.title")"
+               form action="/teacher/workspaces/@Model.Workspace.Id/rename">
+        <div id="rename-form-fields">
+            @await Html.PartialAsync("~/Views/Teacher/Workspaces/_WorkspaceRenameFields.cshtml", new Kela.Web.Models.Workspaces.CreateWorkspaceViewModel())
+        </div>
+    </app-modal>
+</div>
+
+@section Scripts {
+    <script src="~/src/pages/workspaces.js" asp-append-version="true"></script>
+}

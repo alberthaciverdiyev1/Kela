@@ -58,3 +58,30 @@ public sealed record StudentResponse(
     DateTime CreatedAt);
 
 public sealed record StudentCreatedResponse(int Id, int UserId, string Email, string Password, DateTime CreatedAt);
+
+public sealed record WorkspaceCreatedResponse(int Id);
+
+public sealed record CreateWorkspaceRequest(string Name, int TeacherId);
+
+public sealed record UpdateWorkspaceRequest(string Name);
+
+public sealed record AddStudentsRequest(IReadOnlyList<int> StudentIds);
+
+public sealed record WorkspaceResponse(
+    int Id,
+    string Name,
+    int? TeacherId,
+    string? TeacherName,
+    int StudentCount,
+    DateTime CreatedAt);
+
+public sealed record WorkspaceStudentResponse(int Id, string FirstName, string LastName, string Email);
+
+public sealed record WorkspaceDetailResponse(
+    int Id,
+    string Name,
+    int? TeacherId,
+    string? TeacherName,
+    int StudentCount,
+    DateTime CreatedAt,
+    IReadOnlyList<WorkspaceStudentResponse> Students);

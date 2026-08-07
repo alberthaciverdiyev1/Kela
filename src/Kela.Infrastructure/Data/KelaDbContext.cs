@@ -9,11 +9,11 @@ namespace Kela.Infrastructure.Data;
 public sealed class KelaDbContext(DbContextOptions<KelaDbContext> options)
     : IdentityDbContext<User, IdentityRole<int>, int>(options), IUnitOfWork
 {
-    public DbSet<Section> Sections => Set<Section>();
     public DbSet<StudentPaymentTrack> StudentPaymentTracks => Set<StudentPaymentTrack>();
     public DbSet<BaseSiteConfiguration> BaseSiteConfigurations => Set<BaseSiteConfiguration>();
     public DbSet<City> Cities => Set<City>();
     public DbSet<StudentProfile> StudentProfiles => Set<StudentProfile>();
+    public DbSet<Workspace> Workspaces => Set<Workspace>();
 
     public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
         => base.SaveChangesAsync(cancellationToken);

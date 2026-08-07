@@ -1,9 +1,8 @@
-namespace Kela.Application.Features.Sections.Responses;
+namespace Kela.Application.Features.Workspaces.Responses;
 
-public sealed record SectionResponse(
+public sealed record WorkspaceResponse(
     int Id,
     string Name,
-    int Level,
     int? TeacherId,
     string? TeacherName,
     int StudentCount,

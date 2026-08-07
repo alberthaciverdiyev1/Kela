@@ -1,0 +1,38 @@
+@model Kela.Web.Models.Workspaces.WorkspacesIndexViewModel
+<div id="workspaces-list">
+    <app-table
+        empty="@(Model.Items.Count == 0)"
+        empty-icon="folder"
+        empty-text="@L.T("workspaces.empty")"
+        columns="@(["workspaces.col.name", "workspaces.col.students", "workspaces.col.created", "common.action"])"
+        actions-column
+        page="@Model.Page"
+        total-pages="@Model.TotalPages"
+        prev-text="@L.T("pager.prev")"
+        next-text="@L.T("pager.next")">
+        <tbody>
+        @foreach (var w in Model.Items)
+        {
+            <tr>
+                <td>
+                    <a class="flex items-center gap-2 font-medium text-primary hover:underline" href="/teacher/workspaces/@w.Id">
+                        <app-icon name="folder" class="w-4 h-4 opacity-60" />
+                        <span>@w.Name</span>
+                    </a>
+                </td>
+                <td>@w.StudentCount</td>
+                <td class="text-base-content/60">@w.CreatedAt.ToLocalTime().ToString("dd.MM.yyyy")</td>
+                <td class="w-1 whitespace-nowrap text-right">
+                    <app-btn icon-only variant="danger" icon="trash"
+                             icon-class="w-4 h-4"
+                             title="@L.T("students.delete")"
+                             data-delete-id="@w.Id"
+                             data-delete-url="/teacher/workspaces/@w.Id/delete"
+                             data-page="@Model.Page"
+                             data-confirm="@L.T("workspaces.deleteConfirm", new { name = w.Name })"/>
+                </td>
+            </tr>
+        }
+        </tbody>
+    </app-table>
+</div>

@@ -1,10 +1,10 @@
 using FluentValidation;
 using Kela.Application.Features.Cities;
 using Kela.Application.Features.Students;
-using Kela.Application.Features.Sections;
 using Kela.Application.Features.SiteConfiguration;
 using Kela.Application.Features.Users;
 using Kela.Application.Features.Users.Auth;
+using Kela.Application.Features.Workspaces;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Kela.Application;
@@ -13,12 +13,12 @@ public static class DependencyInjection
 {
     public static IServiceCollection AddApplication(this IServiceCollection services)
     {
-        services.AddScoped<ISectionService, SectionService>();
         services.AddScoped<ICityService, CityService>();
         services.AddScoped<IStudentService, StudentService>();
         services.AddScoped<IUserService, UserService>();
         services.AddScoped<IAuthService, AuthService>();
         services.AddScoped<ISiteConfigurationService, SiteConfigurationService>();
+        services.AddScoped<IWorkspaceService, WorkspaceService>();
 
         // FluentValidation: AbstractValidator<T> türevlerini IValidator<T> olarak otomatik kaydeder.
         // Validatörler internal olduğundan includeInternalTypes gerekir.

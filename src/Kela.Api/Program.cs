@@ -71,12 +71,12 @@ app.UseExceptionHandler();
 app.UseAuthentication();
 app.UseAuthorization();
 
-app.MapSectionsEndpoints();
 app.MapUsersEndpoints();
 app.MapAuthEndpoints();
 app.MapSiteConfigurationEndpoints();
 app.MapCitiesEndpoints();
 app.MapStudentsEndpoints();
+app.MapWorkspacesEndpoints();
 
 using (var scope = app.Services.CreateScope())
 {

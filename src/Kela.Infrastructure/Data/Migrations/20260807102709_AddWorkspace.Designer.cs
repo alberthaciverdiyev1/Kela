@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using Kela.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -12,9 +13,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Kela.Infrastructure.Data.Migrations
 {
     [DbContext(typeof(KelaDbContext))]
-    partial class KelaDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260807102709_AddWorkspace")]
+    partial class AddWorkspace
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -103,6 +106,44 @@ namespace Kela.Infrastructure.Data.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("cities", (string)null);
+                });
+
+            modelBuilder.Entity("Kela.Domain.Entities.Section", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTime?>("DeletedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<int>("Level")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)");
+
+                    b.Property<int?>("TeacherId")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Name")
+                        .IsUnique();
+
+                    b.HasIndex("TeacherId");
+
+                    b.ToTable("sections", (string)null);
                 });
 
             modelBuilder.Entity("Kela.Domain.Entities.StudentPaymentTrack", b =>
@@ -434,6 +475,21 @@ namespace Kela.Infrastructure.Data.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
+            modelBuilder.Entity("SectionUser", b =>
+                {
+                    b.Property<int>("SectionId")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("StudentsId")
+                        .HasColumnType("integer");
+
+                    b.HasKey("SectionId", "StudentsId");
+
+                    b.HasIndex("StudentsId");
+
+                    b.ToTable("SectionUser");
+                });
+
             modelBuilder.Entity("UserWorkspace", b =>
                 {
                     b.Property<int>("StudentsId")
@@ -447,6 +503,16 @@ namespace Kela.Infrastructure.Data.Migrations
                     b.HasIndex("WorkspaceId");
 
                     b.ToTable("workspace_students", (string)null);
+                });
+
+            modelBuilder.Entity("Kela.Domain.Entities.Section", b =>
+                {
+                    b.HasOne("Kela.Domain.Entities.User", "Teacher")
+                        .WithMany()
+                        .HasForeignKey("TeacherId")
+                        .OnDelete(DeleteBehavior.SetNull);
+
+                    b.Navigation("Teacher");
                 });
 
             modelBuilder.Entity("Kela.Domain.Entities.StudentPaymentTrack", b =>
@@ -535,6 +601,21 @@ namespace Kela.Infrastructure.Data.Migrations
                     b.HasOne("Kela.Domain.Entities.User", null)
                         .WithMany()
                         .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("SectionUser", b =>
+                {
+                    b.HasOne("Kela.Domain.Entities.Section", null)
+                        .WithMany()
+                        .HasForeignKey("SectionId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Kela.Domain.Entities.User", null)
+                        .WithMany()
+                        .HasForeignKey("StudentsId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
