@@ -13,13 +13,13 @@ public sealed class PageHeadTagHelper : TagHelper
         var content = await output.GetChildContentAsync();
 
         output.TagName = "div";
-        output.Attributes.SetAttribute("class", "page-head");
-        output.Content.AppendHtml("<div><h1 class=\"page-title\">");
+        output.Attributes.SetAttribute("class", "flex items-start justify-between gap-4 flex-wrap");
+        output.Content.AppendHtml("<div><h1 class=\"text-2xl font-bold text-base-content\">");
         output.Content.Append(Title ?? "");
         output.Content.AppendHtml("</h1>");
         if (Subtitle is not null)
         {
-            output.Content.AppendHtml("<p class=\"page-subtitle\">");
+            output.Content.AppendHtml("<p class=\"text-sm text-base-content/60\">");
             output.Content.Append(Subtitle);
             output.Content.AppendHtml("</p>");
         }

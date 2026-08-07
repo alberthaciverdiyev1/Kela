@@ -5,7 +5,7 @@
 <app-field for="PhoneNumber" label="@L.T("students.field.phone")" required="true"/>
 <app-field for="Email" label="@L.T("students.field.email")"/>
 <app-alert type="info">@L.T("students.info")</app-alert>
-<div class="modal-foot">
+<div class="flex justify-end gap-2">
     <app-btn variant="secondary"
              onclick="document.getElementById('create-student-dialog').close()">@L.T("common.cancel")</app-btn>
     <app-btn variant="primary" type="submit">@L.T("students.create")</app-btn>

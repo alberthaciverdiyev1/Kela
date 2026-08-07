@@ -10,14 +10,14 @@ public sealed class CardTagHelper : TagHelper
 
     public override void Process(TagHelperContext context, TagHelperOutput output)
     {
-        var cls = "card";
+        var cls = "card bg-base-100 shadow p-5";
         if (Center)
         {
-            cls += " card-center";
+            cls += " items-center text-center p-8";
         }
         if (Narrow)
         {
-            cls += " card-narrow";
+            cls += " w-full max-w-md mx-auto";
         }
 
         output.TagName = "div";

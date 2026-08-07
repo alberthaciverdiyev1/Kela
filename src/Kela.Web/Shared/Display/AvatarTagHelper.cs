@@ -11,9 +11,11 @@ public sealed class AvatarTagHelper : TagHelper
 
     public override void Process(TagHelperContext context, TagHelperOutput output)
     {
-        var cls = string.IsNullOrWhiteSpace(Size) ? "avatar" : $"avatar avatar-{Size}";
+        var sizeCls = string.IsNullOrWhiteSpace(Size) ? "w-8 h-8 text-xs" : "w-14 h-14 text-lg";
         var text = HtmlEncoder.Default.Encode(string.IsNullOrWhiteSpace(Initials) ? "?" : Initials);
         output.TagName = null;
-        output.Content.SetHtmlContent($"<span class=\"{cls}\">{text}</span>");
+        output.Content.SetHtmlContent(
+            $"<div class=\"avatar placeholder\"><div class=\"bg-primary text-white rounded-full {sizeCls}\">" +
+            $"<span>{text}</span></div></div>");
     }
 }

@@ -10,4 +10,9 @@
     <EmbeddedResource Include="Localization/messages_*.json" LogicalName="Kela.Web.Localization.%(Filename).json" />
   </ItemGroup>
 
+  <Target Name="BuildTailwindCss" BeforeTargets="BeforeBuild">
+    <Exec Command="npm install --prefix $(MSBuildProjectDirectory)" />
+    <Exec Command="npm run --prefix $(MSBuildProjectDirectory) build:css" />
+  </Target>
+
 </Project>

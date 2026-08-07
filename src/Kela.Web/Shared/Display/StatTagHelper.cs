@@ -14,11 +14,11 @@ public sealed class StatTagHelper : TagHelper
 
     public override void Process(TagHelperContext context, TagHelperOutput output)
     {
-        var tone = Tone switch
+        var (iconBg, iconColor) = Tone switch
         {
-            "success" => "success",
-            "warning" => "warning",
-            _ => "primary",
+            "success" => ("bg-success/10", "text-success"),
+            "warning" => ("bg-warning/10", "text-warning"),
+            _ => ("bg-primary/10", "text-primary"),
         };
 
         var label = HtmlEncoder.Default.Encode(Label ?? "");
@@ -26,9 +26,8 @@ public sealed class StatTagHelper : TagHelper
 
         output.TagName = null;
         output.Content.SetHtmlContent(
-            $"<div class=\"stat-card\"><span class=\"stat-icon bg-{tone}-50 text-{tone}\">" +
-            $"{Icons.Icon(Icon ?? "")}</span><div class=\"stat-meta\">" +
-            $"<span class=\"stat-label\">{label}</span><span class=\"stat-value\">{value}</span>" +
-            $"</div></div>");
+            $"<div class=\"stat flex items-center gap-3\"><div class=\"{iconBg} {iconColor} rounded-xl p-3 flex items-center\">" +
+            $"{Icons.Icon(Icon ?? "")}</div><div><div class=\"stat-title\">{label}</div>" +
+            $"<div class=\"stat-value\">{value}</div></div></div>");
     }
 }

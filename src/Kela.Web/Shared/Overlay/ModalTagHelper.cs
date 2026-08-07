@@ -31,7 +31,7 @@ public sealed class ModalTagHelper(IAntiforgery antiforgery, IHttpContextAccesso
 
         if (Form)
         {
-            builder.Append("<form class=\"modal-card\" method=\"post\" novalidate");
+            builder.Append("<form class=\"modal-box p-0 overflow-hidden\" method=\"post\" novalidate");
             if (!string.IsNullOrWhiteSpace(Action))
             {
                 builder.Append($" action=\"{HtmlEncoder.Default.Encode(Action)}\"");
@@ -43,19 +43,16 @@ public sealed class ModalTagHelper(IAntiforgery antiforgery, IHttpContextAccesso
         }
         else
         {
-            builder.Append("<div class=\"modal-card\">");
+            builder.Append("<div class=\"modal-box p-0 overflow-hidden\">");
         }
 
-        builder.Append("<div class=\"modal-head\"><span class=\"modal-icon");
-        if (IconSuccess)
-        {
-            builder.Append(" icon-success");
-        }
-        builder.Append("\">");
+        builder.Append("<div class=\"flex items-center gap-3 text-white");
+        builder.Append(IconSuccess ? " bg-success" : " bg-primary");
+        builder.Append("\"><span class=\"flex size-9 items-center justify-center rounded-lg bg-white/20\">");
         builder.Append(Icons.Icon(Icon ?? ""));
-        builder.Append("</span><h2>");
+        builder.Append("</span><h2 class=\"text-lg font-bold\">");
         builder.Append(HtmlEncoder.Default.Encode(Title ?? ""));
-        builder.Append("</h2></div><div class=\"modal-body\">");
+        builder.Append("</h2></div><div class=\"flex flex-col gap-4 px-6 py-5\">");
         builder.Append(content.GetContent());
         builder.Append("</div>");
         builder.Append(Form ? "</form>" : "</div>");

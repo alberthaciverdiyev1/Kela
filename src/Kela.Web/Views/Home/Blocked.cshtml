@@ -10,15 +10,15 @@
     <title>@ViewData["Title"] - Kela</title>
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
 </head>
-<body class="plain-body">
-    <div class="plain-wrap">
+<body class="flex min-h-screen items-center justify-center bg-base-200 p-4">
+    <div class="w-full max-w-md">
         <app-card center>
-            <div class="plain-icon bg-warning-100 text-warning">
+            <div class="mx-auto mb-4 flex size-16 items-center justify-center rounded-full bg-warning/10 text-warning">
                 <app-icon name="lock" />
             </div>
-            <h1>@L.T("noAccess.title")</h1>
-            <p>@L.T("noAccess.desc1")</p>
-            <p>@L.T("noAccess.desc2")</p>
+            <h1 class="text-2xl font-bold">@L.T("noAccess.title")</h1>
+            <p class="text-base-content/60">@L.T("noAccess.desc1")</p>
+            <p class="text-base-content/60">@L.T("noAccess.desc2")</p>
             <form method="post" asp-controller="Auth" asp-action="Logout">
                 @Html.AntiForgeryToken()
                 <app-btn type="submit" variant="primary" icon="logout">@L.T("nav.logout")</app-btn>

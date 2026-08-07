@@ -19,6 +19,14 @@ public sealed class AlertTagHelper : TagHelper
             _ => "info",
         };
 
+        var variant = type switch
+        {
+            "success" => "alert-success",
+            "error" => "alert-error",
+            "warning" => "alert-warning",
+            _ => "alert-info",
+        };
+
         var icon = string.IsNullOrWhiteSpace(Icon)
             ? type switch
             {
@@ -32,8 +40,8 @@ public sealed class AlertTagHelper : TagHelper
         var content = await output.GetChildContentAsync();
 
         output.TagName = "div";
-        output.Attributes.SetAttribute("class", $"alert alert-{type}");
-        output.Content.AppendHtml(Icons.Icon(icon, "icon-sm"));
+        output.Attributes.SetAttribute("class", $"alert {variant}");
+        output.Content.AppendHtml(Icons.Icon(icon, "w-4 h-4"));
         output.Content.AppendHtml("<span>");
         output.Content.AppendHtml(content.GetContent());
         output.Content.AppendHtml("</span>");

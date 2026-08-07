@@ -13,11 +13,11 @@ public sealed class PanelHeadTagHelper : TagHelper
 
     public override void Process(TagHelperContext context, TagHelperOutput output)
     {
-        var tone = Tone switch
+        var (from, to) = Tone switch
         {
-            "success" => "success",
-            "info" => "info",
-            _ => "primary",
+            "success" => ("from-success", "to-success/70"),
+            "info" => ("from-info", "to-info/70"),
+            _ => ("from-primary", "to-primary/70"),
         };
 
         var initials = HtmlEncoder.Default.Encode(string.IsNullOrWhiteSpace(Initials) ? "?" : Initials);
@@ -26,9 +26,10 @@ public sealed class PanelHeadTagHelper : TagHelper
 
         output.TagName = null;
         output.Content.SetHtmlContent(
-            $"<div class=\"panel-head panel-head-{tone}\"><span class=\"avatar avatar-lg\">{initials}</span>" +
-            $"<div class=\"panel-head-text\"><h1>{title}</h1>" +
-            (string.IsNullOrWhiteSpace(Chip) ? "" : $"<span class=\"chip\">{chip}</span>") +
+            $"<div class=\"bg-linear-to-r {from} {to} text-white rounded-box shadow-lg p-6 flex items-center gap-4\">" +
+            $"<div class=\"avatar placeholder\"><div class=\"bg-white/20 text-white rounded-full w-14 h-14 text-lg\"><span>{initials}</span></div></div>" +
+            $"<div class=\"flex flex-col items-start gap-2\"><h1 class=\"text-xl font-bold\">{title}</h1>" +
+            (string.IsNullOrWhiteSpace(Chip) ? "" : $"<span class=\"badge bg-white/20 text-white border-white/20\">{chip}</span>") +
             $"</div></div>");
     }
 }

@@ -19,10 +19,22 @@ public sealed class BtnTagHelper : TagHelper
         output.TagName = hasHref ? "a" : "button";
         output.TagMode = TagMode.StartTagAndEndTag;
 
-        var cls = IconOnly ? "btn-icon" : "btn";
+        var cls = "btn";
+        if (IconOnly)
+        {
+            cls += " btn-sm btn-square btn-ghost";
+        }
+
         if (!string.IsNullOrWhiteSpace(Variant))
         {
-            cls += $" btn-{Variant}";
+            cls += " " + (Variant switch
+            {
+                "primary" => "btn-primary",
+                "secondary" => "btn-secondary",
+                "info" => "btn-info",
+                "danger" => "btn-error",
+                _ => $"btn-{Variant}",
+            });
         }
 
         if (Block)

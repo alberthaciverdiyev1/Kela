@@ -25,6 +25,13 @@ bld/
 *.snupkg
 .nuget/
 
+# Node (Kela.Web)
+node_modules/
+
+# Generated / backup artifacts
+*.bak
+*.orig
+
 # Test results
 [Tt]est[Rr]esult*/
 *.trx

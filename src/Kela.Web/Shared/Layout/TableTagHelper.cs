@@ -28,8 +28,9 @@ public sealed class TableTagHelper(Localizer localizer) : TagHelper
         {
             var text = HtmlEncoder.Default.Encode(EmptyText ?? "");
             output.Content.SetHtmlContent(
-                $"<div class=\"card card-center\"><span class=\"empty-icon\">{Icons.Icon(EmptyIcon ?? "students", "icon-xl")}</span>" +
-                (string.IsNullOrWhiteSpace(EmptyText) ? "" : $"<p class=\"empty-text\">{text}</p>") +
+                $"<div class=\"card bg-base-100 shadow items-center text-center py-10 px-4\">" +
+                $"<span class=\"text-base-300 mb-3\">{Icons.Icon(EmptyIcon ?? "students", "w-12 h-12")}</span>" +
+                (string.IsNullOrWhiteSpace(EmptyText) ? "" : $"<p class=\"text-base-content/60 max-w-sm\">{text}</p>") +
                 $"</div>");
             return;
         }
@@ -37,18 +38,18 @@ public sealed class TableTagHelper(Localizer localizer) : TagHelper
         var content = await output.GetChildContentAsync();
 
         var builder = new StringBuilder();
-        builder.Append("<div class=\"card table-card\"><div class=\"table-scroll\"><table class=\"data-table\">");
+        builder.Append("<div class=\"card bg-base-100 shadow overflow-hidden\"><div class=\"overflow-x-auto\"><table class=\"table\">");
         builder.Append("<thead><tr>");
         if (Columns is not null)
         {
             foreach (var key in Columns)
             {
-                builder.Append($"<th>{HtmlEncoder.Default.Encode(localizer.T(key))}</th>");
+                builder.Append($"<th class=\"whitespace-nowrap text-xs font-semibold uppercase tracking-wider text-base-content/50\">{HtmlEncoder.Default.Encode(localizer.T(key))}</th>");
             }
         }
         if (ActionsColumn)
         {
-            builder.Append("<th class=\"col-actions\"></th>");
+            builder.Append("<th class=\"w-1 whitespace-nowrap text-right\"></th>");
         }
         builder.Append("</tr></thead>");
         builder.Append(content.GetContent());

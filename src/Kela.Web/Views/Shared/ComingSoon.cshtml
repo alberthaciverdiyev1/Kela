@@ -6,10 +6,10 @@
     var home = AppConstants.HomeRouteFor(role);
 }
 <app-card center narrow>
-    <div class="plain-icon bg-primary-50 text-primary">
+    <div class="mx-auto mb-4 flex size-16 items-center justify-center rounded-full bg-primary/10 text-primary">
         <app-icon name="sparkles" />
     </div>
-    <h1>@L.T(titleKey)</h1>
-    <p>@L.T("comingSoon.desc")</p>
-    <app-btn href="@home" variant="secondary" icon="chevron-down" icon-class="icon-rotate-90">@L.T("comingSoon.back")</app-btn>
+    <h1 class="text-2xl font-bold">@L.T(titleKey)</h1>
+    <p class="text-base-content/60">@L.T("comingSoon.desc")</p>
+    <app-btn href="@home" variant="secondary" icon="chevron-down" icon-class="-rotate-90">@L.T("comingSoon.back")</app-btn>
 </app-card>

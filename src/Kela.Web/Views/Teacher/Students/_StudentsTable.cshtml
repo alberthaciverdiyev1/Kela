@@ -17,15 +17,15 @@
                 <td>@Display.Render(s.FirstName)</td>
                 <td>@Display.Render(s.LastName)</td>
                 <td>@Display.Render(s.PhoneNumber)</td>
-                <td class="cell-email">@s.Email</td>
+                <td class="text-base-content/60">@s.Email</td>
                 <td>@Display.Render(s.BirthDate)</td>
                 <td>@Display.Render(s.CityName)</td>
-                <td class="col-actions">
+                <td class="w-1 whitespace-nowrap text-right">
                     <app-btn
                         icon-only
                         variant="danger"
                         icon="trash"
-                        icon-class="icon-sm"
+                        icon-class="w-4 h-4"
                         title="@L.T("students.delete")"
                         data-delete-id="@s.Id"
                         data-delete-url="/teacher/students/@s.Id/delete"

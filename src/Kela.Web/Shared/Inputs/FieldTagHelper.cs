@@ -27,18 +27,18 @@ public sealed class FieldTagHelper : TagHelper
 
         output.TagName = "div";
         output.TagMode = TagMode.StartTagAndEndTag;
-        output.Attributes.SetAttribute("class", "field");
+        output.Attributes.SetAttribute("class", "field mb-4");
 
         output.Content.AppendHtml("<label");
         if (For is not null)
         {
             output.Content.AppendHtml($" for=\"{HtmlEncoder.Default.Encode(For.Name)}\"");
         }
-        output.Content.AppendHtml(">");
+        output.Content.AppendHtml(" class=\"block text-sm font-semibold mb-1.5 text-base-content\">");
         output.Content.Append(Label ?? "");
         if (Required)
         {
-            output.Content.AppendHtml(" <span class=\"req\">*</span>");
+            output.Content.AppendHtml(" <span class=\"text-error\">*</span>");
         }
         output.Content.AppendHtml("</label>");
 
@@ -61,7 +61,7 @@ public sealed class FieldTagHelper : TagHelper
         var value = HtmlEncoder.Default.Encode(For.Model?.ToString() ?? "");
 
         var sb = new StringBuilder();
-        sb.Append($"<input id=\"{HtmlEncoder.Default.Encode(name)}\" name=\"{HtmlEncoder.Default.Encode(name)}\" type=\"{type}\" class=\"input\" value=\"{value}\"");
+        sb.Append($"<input id=\"{HtmlEncoder.Default.Encode(name)}\" name=\"{HtmlEncoder.Default.Encode(name)}\" type=\"{type}\" class=\"input w-full\" value=\"{value}\"");
         if (!string.IsNullOrWhiteSpace(autocomplete))
         {
             sb.Append($" autocomplete=\"{autocomplete}\"");
@@ -86,7 +86,7 @@ public sealed class FieldTagHelper : TagHelper
             : null;
         return string.IsNullOrWhiteSpace(error)
             ? ""
-            : $"<span class=\"field-error\">{HtmlEncoder.Default.Encode(error)}</span>";
+            : $"<span class=\"field-error text-error text-xs mt-1\">{HtmlEncoder.Default.Encode(error)}</span>";
     }
 
     private static string InferType(string name)

@@ -40,7 +40,9 @@
         _ => [],
     };
 
-    string Active(string url) => string.Equals(path, url, StringComparison.OrdinalIgnoreCase) ? "active" : "";
+    string Active(string url) => string.Equals(path, url, StringComparison.OrdinalIgnoreCase)
+        ? " bg-primary-50 text-primary font-semibold"
+        : "";
 }
 <!DOCTYPE html>
 <html lang="@L.Active">
@@ -51,62 +53,60 @@
     <title>@ViewData["Title"] - @SiteConfig.SiteName</title>
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
 </head>
-<body>
-    <div class="app-shell">
-        <header class="navbar">
-            <div class="navbar-inner">
-                <div class="navbar-start">
-                    <a class="brand" href="@home">
-                        <app-icon name="book" />
-                        <span>@SiteConfig.SiteName</span>
+<body class="flex min-h-screen flex-col bg-base-100">
+    <header class="sticky top-0 z-50 border-b border-base-300 bg-base-100 shadow-sm">
+        <div class="mx-auto flex h-16 w-full max-w-6xl items-center gap-4 px-4">
+            <a class="flex items-center gap-2 text-xl font-bold text-primary" href="@home">
+                <app-icon name="book" />
+                <span>@SiteConfig.SiteName</span>
+            </a>
+            <nav class="hidden items-center gap-1 md:flex">
+                @foreach (var item in navItems)
+                {
+                    <a class="flex items-center gap-2 rounded-lg px-3.5 py-2 text-sm font-medium text-base-content/60 hover:bg-base-200 hover:text-primary@(Active(item.Url))" href="@item.Url">
+                        <app-icon name="@item.Icon" class="w-4 h-4" />
+                        <span>@item.Label</span>
                     </a>
-                </div>
-                <nav class="navbar-center">
-                    @foreach (var item in navItems)
-                    {
-                        <a class="nav-link @Active(item.Url)" href="@item.Url">
-                            <app-icon name="@item.Icon" />
-                            <span>@item.Label</span>
-                        </a>
-                    }
-                </nav>
-                <div class="navbar-end">
-                    @await Html.PartialAsync("_LanguageSwitcher")
-                    <div class="user-menu">
-                        <button type="button" class="user-trigger" aria-haspopup="true">
-                            <app-avatar initials="@initials" />
-                            <span class="user-name">@fullName</span>
-                            <app-icon name="chevron-down" class="icon-xs" />
-                        </button>
-                        <div class="user-dropdown">
-                            <span class="user-chip">@L.T(roleKey)</span>
-                            <form method="post" asp-controller="Auth" asp-action="Logout">
+                }
+            </nav>
+            <div class="ml-auto flex items-center gap-2">
+                @await Html.PartialAsync("_LanguageSwitcher")
+                <div class="dropdown dropdown-end">
+                    <div tabindex="0" role="button" class="btn btn-ghost btn-sm gap-2">
+                        <app-avatar initials="@initials" />
+                        <span class="hidden md:inline">@fullName</span>
+                        <app-icon name="chevron-down" class="w-3.5 h-3.5" />
+                    </div>
+                    <div tabindex="0" class="dropdown-content menu z-50 mt-2 w-52 rounded-box bg-base-100 p-2 shadow-xl">
+                        <li><span class="badge w-full bg-primary/10 text-primary border-transparent">@L.T(roleKey)</span></li>
+                        <li>
+                            <form method="post" asp-controller="Auth" asp-action="Logout" class="w-full">
                                 @Html.AntiForgeryToken()
-                                <button type="submit" class="dropdown-item">
-                                    <app-icon name="logout" />
+                                <button type="submit" class="flex w-full items-center gap-2 text-error">
+                                    <app-icon name="logout" class="w-4 h-4" />
                                     <span>@L.T("nav.logout")</span>
                                 </button>
                             </form>
-                        </div>
+                        </li>
                     </div>
                 </div>
             </div>
-        </header>
+        </div>
+    </header>
 
-        <main class="app-main">
-            @if (TempData["Success"] is string success)
-            {
-                <app-alert type="success" icon="check">@success</app-alert>
-            }
-            @if (TempData["Error"] is string error)
-            {
-                <app-alert type="error" icon="lock">@error</app-alert>
-            }
-            @RenderBody()
-        </main>
+    <main class="mx-auto flex w-full max-w-6xl flex-1 flex-col gap-6 p-4 md:p-6">
+        @if (TempData["Success"] is string success)
+        {
+            <app-alert type="success" icon="check">@success</app-alert>
+        }
+        @if (TempData["Error"] is string error)
+        {
+            <app-alert type="error" icon="lock">@error</app-alert>
+        }
+        @RenderBody()
+    </main>
 
-        <footer class="app-footer">© @DateTime.Now.Year @SiteConfig.SiteName</footer>
-    </div>
+    <footer class="p-4 text-center text-xs text-base-content/40">© @DateTime.Now.Year @SiteConfig.SiteName</footer>
     <script src="~/lib/external/axios/axios.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
     @await RenderSectionAsync("Scripts", required: false)
