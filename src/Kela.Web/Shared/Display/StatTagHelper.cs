@@ -18,6 +18,7 @@ public sealed class StatTagHelper : TagHelper
         {
             "success" => ("bg-success/10", "text-success"),
             "warning" => ("bg-warning/10", "text-warning"),
+            "info" => ("bg-info/10", "text-info"),
             _ => ("bg-primary/10", "text-primary"),
         };
 
@@ -26,8 +27,9 @@ public sealed class StatTagHelper : TagHelper
 
         output.TagName = null;
         output.Content.SetHtmlContent(
-            $"<div class=\"stat flex items-center gap-3\"><div class=\"{iconBg} {iconColor} rounded-xl p-3 flex items-center\">" +
-            $"{Icons.Icon(Icon ?? "")}</div><div><div class=\"stat-title\">{label}</div>" +
-            $"<div class=\"stat-value\">{value}</div></div></div>");
+            $"<div class=\"flex items-center gap-4 rounded-box bg-base-100 p-5 shadow-sm\">" +
+            $"<div class=\"flex size-12 items-center justify-center rounded-xl {iconBg} {iconColor}\">{Icons.Icon(Icon ?? "")}</div>" +
+            $"<div><div class=\"text-sm text-base-content/60\">{label}</div>" +
+            $"<div class=\"text-2xl font-bold\">{value}</div></div></div>");
     }
 }

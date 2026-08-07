@@ -16,7 +16,7 @@ public sealed class EmptyTagHelper : TagHelper
 
         output.TagName = null;
         output.Content.SetHtmlContent(
-            $"<div class=\"card bg-base-100 shadow items-center text-center py-10 px-4\">" +
+            $"<div class=\"card bg-base-100 shadow-sm items-center text-center py-10 px-4\">" +
             $"<span class=\"text-base-300 mb-3\">{Icons.Icon(Icon ?? "students", "w-12 h-12")}</span>" +
             (Text is null ? "" : $"<p class=\"text-base-content/60 max-w-sm\">{text}</p>") +
             $"</div>");

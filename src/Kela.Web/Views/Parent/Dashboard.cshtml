@@ -9,13 +9,13 @@
 <div class="flex flex-col gap-6">
     <app-panel-head tone="info" initials="@initials" title="@L.T("panel.welcome", new { name })" chip="@L.T("role.Parent")" />
 
-    <div class="stats w-full shadow">
+    <div class="grid gap-4 sm:grid-cols-3">
         <app-stat icon="classes" tone="primary" label="@L.T("nav.myChildren")" value="0" />
         <app-stat icon="credit-card" tone="success" label="@L.T("nav.payments")" value="0" />
         <app-stat icon="megaphone" tone="warning" label="@L.T("nav.announcements")" value="0" />
     </div>
 
-    <div class="card bg-base-100 shadow p-5">
+    <div class="card bg-base-100 shadow-sm p-5">
         <app-alert type="info">@L.T("parent.info")</app-alert>
     </div>
 </div>

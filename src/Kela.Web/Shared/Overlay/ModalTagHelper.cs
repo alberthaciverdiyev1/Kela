@@ -46,9 +46,10 @@ public sealed class ModalTagHelper(IAntiforgery antiforgery, IHttpContextAccesso
             builder.Append("<div class=\"modal-box p-0 overflow-hidden\">");
         }
 
-        builder.Append("<div class=\"flex items-center gap-3 text-white");
-        builder.Append(IconSuccess ? " bg-success" : " bg-primary");
-        builder.Append("\"><span class=\"flex size-9 items-center justify-center rounded-lg bg-white/20\">");
+        builder.Append("<div class=\"flex items-center gap-3 border-b border-base-200 px-6 py-4\">");
+        builder.Append("<span class=\"flex size-9 items-center justify-center rounded-lg ");
+        builder.Append(IconSuccess ? "bg-success/10 text-success" : "bg-primary/10 text-primary");
+        builder.Append("\">");
         builder.Append(Icons.Icon(Icon ?? ""));
         builder.Append("</span><h2 class=\"text-lg font-bold\">");
         builder.Append(HtmlEncoder.Default.Encode(Title ?? ""));
