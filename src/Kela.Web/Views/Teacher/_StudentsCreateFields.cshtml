@@ -1,8 +1,5 @@
 @model Kela.Web.Models.Students.CreateStudentViewModel
-@{
-    var oob = ViewData["Oob"] as bool? ?? false;
-}
-<div id="create-form-fields" hx-swap-oob="@(oob ? "outerHTML" : null)">
+<div id="create-form-fields">
     @Html.ValidationSummary(true, "", new { @class = "validation-summary" })
     <app-field for="FirstName" label="@L.T("students.field.firstName")" required="true">
         <input id="FirstName" name="FirstName" class="input" value="@Model?.FirstName" autocomplete="off" />

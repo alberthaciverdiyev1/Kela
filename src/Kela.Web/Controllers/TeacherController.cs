@@ -3,6 +3,7 @@ using Kela.Web.Infrastructure;
 using Kela.Web.Localization;
 using Kela.Web.Models.Students;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Kela.Web.Controllers;
@@ -50,6 +51,7 @@ public sealed partial class TeacherController(IApiClient api, Localizer L) : Con
 
         if (!ModelState.IsValid)
         {
+            Response.StatusCode = StatusCodes.Status422UnprocessableEntity;
             return PartialView("_StudentsCreateFields", model);
         }
 
@@ -73,16 +75,11 @@ public sealed partial class TeacherController(IApiClient api, Localizer L) : Con
                 ModelState.AddModelError("", created.Message);
             }
 
+            Response.StatusCode = StatusCodes.Status422UnprocessableEntity;
             return PartialView("_StudentsCreateFields", model);
         }
 
-        var list = await api.GetStudentsPageAsync(1, PageSize, ct);
-        var listModel = new StudentsIndexViewModel(
-            list.Data?.Items ?? [], list.Data?.Page ?? 1, PageSize, list.Data?.TotalCount ?? 0, null);
-
-        Response.Headers["HX-Trigger"] = "kela:createDone";
-
-        return PartialView("_StudentsCreateSuccess", new CreateStudentSuccessViewModel(listModel, created.Data!));
+        return PartialView("_StudentsCredentialsDialog", created.Data!);
     }
 
     [HttpDelete("teacher/students/{id:int}/delete")]

@@ -14,11 +14,7 @@ public sealed class ModalTagHelper(IAntiforgery antiforgery, IHttpContextAccesso
     public string? Icon { get; set; }
     public bool IconSuccess { get; set; }
     public bool Form { get; set; }
-    public string? HxPost { get; set; }
-    public string? HxTarget { get; set; }
-    public string? HxSwap { get; set; }
-    public string? HxDisabledElt { get; set; }
-    public string? HxSwapOob { get; set; }
+    public string? Action { get; set; }
 
     public override async Task ProcessAsync(TagHelperContext context, TagHelperOutput output)
     {
@@ -30,31 +26,15 @@ public sealed class ModalTagHelper(IAntiforgery antiforgery, IHttpContextAccesso
         {
             output.Attributes.SetAttribute("id", Id);
         }
-        if (!string.IsNullOrWhiteSpace(HxSwapOob))
-        {
-            output.Attributes.SetAttribute("hx-swap-oob", HxSwapOob);
-        }
 
         var builder = new StringBuilder();
 
         if (Form)
         {
-            builder.Append("<form class=\"modal-card\" novalidate");
-            if (!string.IsNullOrWhiteSpace(HxPost))
+            builder.Append("<form class=\"modal-card\" method=\"post\" novalidate");
+            if (!string.IsNullOrWhiteSpace(Action))
             {
-                builder.Append($" hx-post=\"{HtmlEncoder.Default.Encode(HxPost)}\"");
-            }
-            if (!string.IsNullOrWhiteSpace(HxTarget))
-            {
-                builder.Append($" hx-target=\"{HtmlEncoder.Default.Encode(HxTarget)}\"");
-            }
-            if (!string.IsNullOrWhiteSpace(HxSwap))
-            {
-                builder.Append($" hx-swap=\"{HtmlEncoder.Default.Encode(HxSwap)}\"");
-            }
-            if (!string.IsNullOrWhiteSpace(HxDisabledElt))
-            {
-                builder.Append($" hx-disabled-elt=\"{HtmlEncoder.Default.Encode(HxDisabledElt)}\"");
+                builder.Append($" action=\"{HtmlEncoder.Default.Encode(Action)}\"");
             }
             builder.Append('>');
 

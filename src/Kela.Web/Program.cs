@@ -46,10 +46,9 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
         {
             OnRedirectToLogin = ctx =>
             {
-                if (ctx.Request.Headers["HX-Request"] == "true")
+                if (ctx.Request.Headers["X-Requested-With"] == "XMLHttpRequest")
                 {
                     ctx.Response.StatusCode = StatusCodes.Status401Unauthorized;
-                    ctx.Response.Headers["HX-Redirect"] = "/auth/login";
                 }
                 else
                 {
@@ -60,10 +59,9 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
             },
             OnRedirectToAccessDenied = ctx =>
             {
-                if (ctx.Request.Headers["HX-Request"] == "true")
+                if (ctx.Request.Headers["X-Requested-With"] == "XMLHttpRequest")
                 {
                     ctx.Response.StatusCode = StatusCodes.Status403Forbidden;
-                    ctx.Response.Headers["HX-Redirect"] = "/blocked";
                 }
                 else
                 {

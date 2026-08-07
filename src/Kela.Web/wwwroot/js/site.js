@@ -1,38 +1,38 @@
-document.addEventListener('htmx:configRequest', function (event) {
-    var meta = document.querySelector('meta[name="csrf-token"]');
-    if (meta) event.detail.headers['X-CSRF-Token'] = meta.content;
-});
+(function () {
+    'use strict';
 
-document.addEventListener('htmx:beforeSwap', function (event) {
-    if (event.detail.xhr.status === 401) {
-        window.location.href = '/auth/login';
-    }
-    if (event.detail.xhr.status === 403) {
-        window.location.href = '/blocked';
-    }
-});
+    let Kela = window.Kela || {};
 
-document.body.addEventListener('kela:createDone', function () {
-    var create = document.getElementById('create-student-dialog');
-    if (create && create.open) create.close();
-    var creds = document.getElementById('credentials-dialog');
-    if (creds) creds.showModal();
-});
+    Kela.csrfToken = function () {
+        let meta = document.querySelector('meta[name="csrf-token"]');
+        return meta ? meta.content : '';
+    };
 
-document.addEventListener('click', function (event) {
-    var el = event.target;
-    if (el && el.tagName === 'DIALOG' && el.open) el.close();
-});
+    Kela.axios = axios.create();
 
-function copyCredentials() {
-    var input = document.getElementById('credentials-text');
-    if (!input) return;
-    navigator.clipboard.writeText(input.value).then(function () {
-        var btn = document.getElementById('credentials-copy');
-        if (btn) {
-            var old = btn.innerHTML;
-            btn.innerHTML = '&#10003;';
-            setTimeout(function () { btn.innerHTML = old; }, 1200);
-        }
+    Kela.axios.interceptors.request.use(function (config) {
+        config.headers['X-CSRF-Token'] = Kela.csrfToken();
+        config.headers['X-Requested-With'] = 'XMLHttpRequest';
+        return config;
     });
-}
+
+    Kela.axios.interceptors.response.use(
+        function (response) {
+            return response;
+        },
+        function (error) {
+            if (error.response) {
+                if (error.response.status === 401) window.location.href = '/auth/login';
+                else if (error.response.status === 403) window.location.href = '/blocked';
+            }
+            return Promise.reject(error);
+        }
+    );
+
+    document.addEventListener('click', function (event) {
+        let el = event.target;
+        if (el && el.tagName === 'DIALOG' && el.open) el.close();
+    });
+
+    window.Kela = Kela;
+})();

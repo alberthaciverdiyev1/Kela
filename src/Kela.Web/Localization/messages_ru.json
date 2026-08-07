@@ -4,6 +4,7 @@
   "common.save": "Сохранить",
   "common.confirm": "ОК",
   "common.back": "Назад",
+  "common.action": "Action",
   "common.error": "Ошибка",
   "common.unknownRole": "Неизвестно",
   "role.Teacher": "Учитель",

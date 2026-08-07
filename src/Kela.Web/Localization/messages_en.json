@@ -4,6 +4,7 @@
   "common.save": "Save",
   "common.confirm": "OK",
   "common.back": "Back",
+  "common.action": "Action",
   "common.error": "Error",
   "common.unknownRole": "Unknown",
   "role.Teacher": "Teacher",

@@ -99,13 +99,7 @@ public sealed partial class AuthController(IApiClient api, Localizer l) : Contro
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Logout(CancellationToken ct)
     {
-        try
-        {
-            await api.LogoutAsync(ct);
-        }
-        catch
-        {
-        }
+        await api.LogoutAsync(ct);
 
         await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
         Response.Cookies.Delete(AppConstants.ApiAuthCookie, AuthCookieOptions(null));

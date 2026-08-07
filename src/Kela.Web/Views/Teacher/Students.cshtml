@@ -11,11 +11,7 @@
         <div class="search-box">
             <app-icon name="search" class="icon-sm" />
             <input id="students-search" name="search" class="search-input" type="search" placeholder="@L.T("nav.search")"
-                   value="@Model.Search" autocomplete="off"
-                   hx-get="/teacher/students/table"
-                   hx-trigger="input changed delay:500ms, search"
-                   hx-include="this"
-                   hx-target="#students-list" hx-swap="outerHTML" />
+                   value="@Model.Search" autocomplete="off" />
         </div>
     </div>
 
@@ -25,3 +21,7 @@
 
     <dialog id="credentials-dialog" class="modal"></dialog>
 </div>
+@section Scripts {
+    <script src="~/lib/internal/pagination.js" asp-append-version="true"></script>
+    <script src="~/src/pages/students.js" asp-append-version="true"></script>
+}
