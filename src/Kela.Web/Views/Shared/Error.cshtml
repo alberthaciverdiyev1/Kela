@@ -13,10 +13,10 @@
 <body class="flex min-h-screen items-center justify-center bg-base-200 p-4">
     <div class="w-full max-w-md">
         <app-card center>
-            <div class="mx-auto mb-4 flex size-16 items-center justify-center rounded-full bg-error/10 text-error">
-                <app-icon name="lock" />
+            <div class="mx-auto mb-4 text-error/60">
+                <app-icon name="lock" class="w-8 h-8" />
             </div>
-            <h1 class="text-2xl font-bold">@L.T("common.error")</h1>
+            <h1 class="text-xl font-semibold tracking-tight">@L.T("common.error")</h1>
             <p class="text-base-content/60">@L.T("error.generic")</p>
             <app-btn href="/" variant="primary">@L.T("comingSoon.back")</app-btn>
         </app-card>

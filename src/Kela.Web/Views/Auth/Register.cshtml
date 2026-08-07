@@ -3,12 +3,9 @@
     ViewData["Title"] = L.T("auth.register");
     Layout = "_AuthLayout";
 }
-<div class="card overflow-hidden rounded-box bg-base-100 shadow-md">
+<div class="card overflow-hidden border border-base-200 bg-base-100">
     <div class="border-b border-base-200 px-6 py-6 text-center">
-        <div class="mx-auto mb-3 flex size-12 items-center justify-center rounded-full bg-primary/10 text-primary">
-            <app-icon name="sparkles" />
-        </div>
-        <h1 class="text-2xl font-bold">@L.T("auth.register")</h1>
+        <h1 class="text-xl font-semibold tracking-tight">@L.T("auth.register")</h1>
         <p class="mt-1 text-sm text-base-content/60">@L.T("auth.registerSubtitle")</p>
     </div>
 
@@ -46,7 +43,7 @@
         </form>
     </div>
 
-    <div class="border-t border-base-300 bg-base-200 px-6 py-4 text-center text-sm text-base-content/60">
+    <div class="border-t border-base-200 bg-base-100 px-6 py-4 text-center text-sm text-base-content/60">
         <span>@L.T("auth.haveAccount")</span>
         <a class="font-semibold text-primary" asp-controller="Auth" asp-action="Login">@L.T("auth.login")</a>
     </div>

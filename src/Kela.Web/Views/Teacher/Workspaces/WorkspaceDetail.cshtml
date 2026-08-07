@@ -22,7 +22,7 @@
 
     @await Html.PartialAsync("~/Views/Teacher/Workspaces/_WorkspaceStudentsSection.cshtml", Model)
 
-    <app-modal id="rename-workspace-dialog" icon="edit" title="@L.T("workspaces.rename.title")"
+    <app-modal id="rename-workspace-dialog" title="@L.T("workspaces.rename.title")"
                form action="/teacher/workspaces/@Model.Workspace.Id/rename">
         <div id="rename-form-fields">
             @await Html.PartialAsync("~/Views/Teacher/Workspaces/_WorkspaceRenameFields.cshtml", new Kela.Web.Models.Workspaces.CreateWorkspaceViewModel())

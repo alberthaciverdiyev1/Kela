@@ -1,6 +1,6 @@
 @model Kela.Web.Models.Workspaces.WorkspaceDetailViewModel
 <div id="workspace-students-section" class="flex flex-col gap-6">
-    <div class="card bg-base-100 shadow-sm overflow-hidden">
+    <div class="card overflow-hidden border border-base-200 bg-base-100">
         <div class="flex items-center justify-between border-b border-base-200 px-5 py-4">
             <h2 class="text-base font-bold">@L.T("workspaces.detail.students")</h2>
             <span class="badge badge-ghost">@Model.Workspace.StudentCount</span>
@@ -44,7 +44,7 @@
         }
     </div>
 
-    <div class="card bg-base-100 shadow-sm">
+    <div class="card border border-base-200 bg-base-100">
         <div class="border-b border-base-200 px-5 py-4">
             <h2 class="text-base font-bold">@L.T("workspaces.detail.addStudents")</h2>
         </div>

@@ -10,7 +10,7 @@ public sealed class CardTagHelper : TagHelper
 
     public override void Process(TagHelperContext context, TagHelperOutput output)
     {
-        var cls = "card bg-base-100 shadow-sm p-5";
+        var cls = "card border border-base-200 bg-base-100 p-5";
         if (Center)
         {
             cls += " items-center text-center p-8";

@@ -28,7 +28,7 @@ public sealed class TableTagHelper(Localizer localizer) : TagHelper
         {
             var text = HtmlEncoder.Default.Encode(EmptyText ?? "");
             output.Content.SetHtmlContent(
-                $"<div class=\"card bg-base-100 shadow-sm items-center text-center py-10 px-4\">" +
+                $"<div class=\"card border border-base-200 bg-base-100 items-center text-center py-10 px-4\">" +
                 $"<span class=\"text-base-300 mb-3\">{Icons.Icon(EmptyIcon ?? "students", "w-12 h-12")}</span>" +
                 (string.IsNullOrWhiteSpace(EmptyText) ? "" : $"<p class=\"text-base-content/60 max-w-sm\">{text}</p>") +
                 $"</div>");
@@ -38,7 +38,7 @@ public sealed class TableTagHelper(Localizer localizer) : TagHelper
         var content = await output.GetChildContentAsync();
 
         var builder = new StringBuilder();
-        builder.Append("<div class=\"card bg-base-100 shadow-sm overflow-hidden\"><div class=\"overflow-x-auto\"><table class=\"table\">");
+        builder.Append("<div class=\"card overflow-hidden border border-base-200 bg-base-100\"><div class=\"overflow-x-auto\"><table class=\"table\">");
         builder.Append("<thead><tr>");
         if (Columns is not null)
         {

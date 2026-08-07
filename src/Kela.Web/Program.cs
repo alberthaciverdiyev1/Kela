@@ -1,11 +1,12 @@
 using System.Net.Security;
+using Kela.Web.Filters;
 using Kela.Web.Helpers;
 using Kela.Web.Localization;
 using Microsoft.AspNetCore.Authentication.Cookies;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddControllersWithViews();
+builder.Services.AddControllersWithViews(options => options.Filters.Add<SessionExpiredFilter>());
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddAntiforgery(o => o.HeaderName = "X-CSRF-Token");
 

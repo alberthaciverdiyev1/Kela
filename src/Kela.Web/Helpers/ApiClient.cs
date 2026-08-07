@@ -94,6 +94,21 @@ public sealed class ApiClient(HttpClient http) : IApiClient
             return new ApiResult<T>(true, status, default, null, setCookie);
         }
 
+        if (response.StatusCode is HttpStatusCode.Unauthorized or HttpStatusCode.Forbidden)
+        {
+            var raw = await response.Content.ReadAsStringAsync(ct);
+            if (string.IsNullOrWhiteSpace(raw))
+            {
+                throw new ApiSessionExpiredException(status);
+            }
+            var rejected = JsonSerializer.Deserialize<ApiEnvelope<T>>(raw, Json);
+            if (rejected is null)
+            {
+                return new ApiResult<T>(false, status, default, null, setCookie);
+            }
+            return new ApiResult<T>(rejected.Success, rejected.StatusCode, rejected.Data, rejected.Message, setCookie, rejected.Errors);
+        }
+
         var envelope = await response.Content.ReadFromJsonAsync<ApiEnvelope<T>>(Json, ct);
         if (envelope is null)
         {

@@ -1,5 +1,5 @@
 @model Kela.Web.Models.Students.CreateStudentViewModel
-<app-modal id="create-student-dialog" icon="user-plus" title="@L.T("students.new")"
+<app-modal id="create-student-dialog" title="@L.T("students.new")"
            form action="/teacher/students/create">
     <div id="create-form-fields">
         @await Html.PartialAsync("~/Views/Teacher/Students/_StudentsCreateFields.cshtml", Model)

@@ -31,9 +31,9 @@ public sealed class AlertTagHelper : TagHelper
             ? type switch
             {
                 "success" => "check",
-                "error" => "lock",
-                "warning" => "lock",
-                _ => "sparkles",
+                "error" => "x",
+                "warning" => "clock",
+                _ => "info",
             }
             : Icon;
 

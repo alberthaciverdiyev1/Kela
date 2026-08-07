@@ -14,12 +14,12 @@ public sealed class StatTagHelper : TagHelper
 
     public override void Process(TagHelperContext context, TagHelperOutput output)
     {
-        var (iconBg, iconColor) = Tone switch
+        var iconColor = Tone switch
         {
-            "success" => ("bg-success/10", "text-success"),
-            "warning" => ("bg-warning/10", "text-warning"),
-            "info" => ("bg-info/10", "text-info"),
-            _ => ("bg-primary/10", "text-primary"),
+            "success" => "text-success",
+            "warning" => "text-warning",
+            "info" => "text-info",
+            _ => "text-primary",
         };
 
         var label = HtmlEncoder.Default.Encode(Label ?? "");
@@ -27,9 +27,9 @@ public sealed class StatTagHelper : TagHelper
 
         output.TagName = null;
         output.Content.SetHtmlContent(
-            $"<div class=\"flex items-center gap-4 rounded-box bg-base-100 p-5 shadow-sm\">" +
-            $"<div class=\"flex size-12 items-center justify-center rounded-xl {iconBg} {iconColor}\">{Icons.Icon(Icon ?? "")}</div>" +
-            $"<div><div class=\"text-sm text-base-content/60\">{label}</div>" +
-            $"<div class=\"text-2xl font-bold\">{value}</div></div></div>");
+            $"<div class=\"flex items-center gap-4 rounded-box border border-base-200 bg-base-100 px-5 py-4\">" +
+            $"<span class=\"{iconColor}\">{Icons.Icon(Icon ?? "", "w-4 h-4")}</span>" +
+            $"<div><div class=\"text-xs font-medium uppercase tracking-wide text-base-content/50\">{label}</div>" +
+            $"<div class=\"text-2xl font-semibold tracking-tight text-base-content\">{value}</div></div></div>");
     }
 }
