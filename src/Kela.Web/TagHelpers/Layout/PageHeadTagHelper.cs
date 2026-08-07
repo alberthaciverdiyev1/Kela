@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Razor.TagHelpers;
 
-namespace Kela.Web.TagHelpers;
+namespace Kela.Web.TagHelpers.Layout;
 
 [HtmlTargetElement("app-page-head")]
 public sealed class PageHeadTagHelper : TagHelper

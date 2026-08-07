@@ -1,7 +1,7 @@
 using Kela.Web.Infrastructure;
 using Microsoft.AspNetCore.Razor.TagHelpers;
 
-namespace Kela.Web.TagHelpers;
+namespace Kela.Web.TagHelpers.Feedback;
 
 [HtmlTargetElement("app-alert")]
 public sealed class AlertTagHelper : TagHelper

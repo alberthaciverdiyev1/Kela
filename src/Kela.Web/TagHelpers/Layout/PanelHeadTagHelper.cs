@@ -1,7 +1,7 @@
 using System.Text.Encodings.Web;
 using Microsoft.AspNetCore.Razor.TagHelpers;
 
-namespace Kela.Web.TagHelpers;
+namespace Kela.Web.TagHelpers.Layout;
 
 [HtmlTargetElement("app-panel-head")]
 public sealed class PanelHeadTagHelper : TagHelper

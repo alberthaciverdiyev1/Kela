@@ -1,7 +1,7 @@
 using Kela.Web.Infrastructure;
 using Microsoft.AspNetCore.Razor.TagHelpers;
 
-namespace Kela.Web.TagHelpers;
+namespace Kela.Web.TagHelpers.Buttons;
 
 [HtmlTargetElement("app-btn")]
 public sealed class BtnTagHelper : TagHelper
@@ -23,6 +23,7 @@ public sealed class BtnTagHelper : TagHelper
         {
             cls += $" btn-{Variant}";
         }
+
         if (Block)
         {
             cls += " btn-block";

@@ -8,6 +8,10 @@
         <input id="FirstName" name="FirstName" class="input" value="@Model?.FirstName" autocomplete="off" />
         @Html.ValidationMessageFor(m => m.FirstName, "", new { @class = "field-error" })
     </app-field>
+    <app-field for="LastName" label="@L.T("students.field.lastName")">
+        <input id="LastName" name="LastName" class="input" autocomplete="off" value="@Model?.LastName" />
+        @Html.ValidationMessageFor(m => m.LastName, "", new { @class = "field-error" })
+    </app-field>
     <app-field for="PhoneNumber" label="@L.T("students.field.phone")" required="true">
         <input id="PhoneNumber" name="PhoneNumber" class="input" type="tel" autocomplete="tel" value="@Model?.PhoneNumber" />
         @Html.ValidationMessageFor(m => m.PhoneNumber, "", new { @class = "field-error" })
@@ -15,10 +19,6 @@
     <app-field for="Email" label="@L.T("students.field.email")">
         <input id="Email" name="Email" class="input" type="email" autocomplete="off" value="@Model?.Email" />
         @Html.ValidationMessageFor(m => m.Email, "", new { @class = "field-error" })
-    </app-field>
-    <app-field for="LastName" label="@L.T("students.field.lastName")">
-        <input id="LastName" name="LastName" class="input" autocomplete="off" value="@Model?.LastName" />
-        @Html.ValidationMessageFor(m => m.LastName, "", new { @class = "field-error" })
     </app-field>
     <app-alert type="info">@L.T("students.info")</app-alert>
     <div class="modal-foot">

@@ -1,7 +1,7 @@
 using System.Text.Encodings.Web;
 using Microsoft.AspNetCore.Razor.TagHelpers;
 
-namespace Kela.Web.TagHelpers;
+namespace Kela.Web.TagHelpers.Display;
 
 [HtmlTargetElement("app-avatar")]
 public sealed class AvatarTagHelper : TagHelper

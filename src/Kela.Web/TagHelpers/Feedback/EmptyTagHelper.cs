@@ -2,7 +2,7 @@ using System.Text.Encodings.Web;
 using Kela.Web.Infrastructure;
 using Microsoft.AspNetCore.Razor.TagHelpers;
 
-namespace Kela.Web.TagHelpers;
+namespace Kela.Web.TagHelpers.Feedback;
 
 [HtmlTargetElement("app-empty")]
 public sealed class EmptyTagHelper : TagHelper

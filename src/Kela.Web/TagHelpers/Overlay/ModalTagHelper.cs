@@ -4,7 +4,7 @@ using Kela.Web.Infrastructure;
 using Microsoft.AspNetCore.Antiforgery;
 using Microsoft.AspNetCore.Razor.TagHelpers;
 
-namespace Kela.Web.TagHelpers;
+namespace Kela.Web.TagHelpers.Overlay;
 
 [HtmlTargetElement("app-modal")]
 public sealed class ModalTagHelper(IAntiforgery antiforgery, IHttpContextAccessor http) : TagHelper

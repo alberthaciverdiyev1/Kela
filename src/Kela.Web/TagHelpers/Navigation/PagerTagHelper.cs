@@ -2,7 +2,7 @@ using System.Text;
 using System.Text.Encodings.Web;
 using Microsoft.AspNetCore.Razor.TagHelpers;
 
-namespace Kela.Web.TagHelpers;
+namespace Kela.Web.TagHelpers.Navigation;
 
 [HtmlTargetElement("app-pager")]
 public sealed class PagerTagHelper : TagHelper

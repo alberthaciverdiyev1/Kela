@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Razor.TagHelpers;
 
-namespace Kela.Web.TagHelpers;
+namespace Kela.Web.TagHelpers.Layout;
 
 [HtmlTargetElement("app-card")]
 public sealed class CardTagHelper : TagHelper
