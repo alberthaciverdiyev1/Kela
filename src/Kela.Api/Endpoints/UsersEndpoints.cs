@@ -13,9 +13,9 @@ public static class UsersEndpoints
     {
         var group = app.MapGroup("/api/users");
 
-        group.MapGet("", async (int page, int pageSize, IUserService users, CancellationToken ct) =>
+        group.MapGet("", async (int page, IUserService users, CancellationToken ct) =>
             ApiResponse<PaginatedResult<UserResponse>>.Success(
-                await users.GetPageAsync(page, pageSize, ct)));
+                await users.GetPageAsync(page, ct)));
 
         group.MapGet("/{id:int}", async (int id, IUserService users, CancellationToken ct) =>
         {

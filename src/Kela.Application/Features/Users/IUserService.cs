@@ -6,7 +6,7 @@ namespace Kela.Application.Features.Users;
 
 public interface IUserService
 {
-    Task<PaginatedResult<UserResponse>> GetPageAsync(int page, int pageSize, CancellationToken cancellationToken = default);
+    Task<PaginatedResult<UserResponse>> GetPageAsync(int page, CancellationToken cancellationToken = default);
     Task<UserResponse?> GetByIdAsync(int id, CancellationToken cancellationToken = default);
     Task UpdateAsync(int id, UpdateUserRequest request, CancellationToken cancellationToken = default);
     Task DeleteAsync(int id, CancellationToken cancellationToken = default);

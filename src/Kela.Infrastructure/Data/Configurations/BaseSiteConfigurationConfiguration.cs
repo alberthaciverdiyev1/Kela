@@ -25,6 +25,8 @@ internal sealed class BaseSiteConfigurationConfiguration : IEntityTypeConfigurat
 
         builder.Property(c => c.NavMode).HasMaxLength(16).IsRequired();
 
+        builder.Property(c => c.NotificationProvider).HasMaxLength(16).IsRequired();
+
         builder.Property(c => c.CreatedAt).IsRequired();
         builder.Property(c => c.UpdatedAt);
     }

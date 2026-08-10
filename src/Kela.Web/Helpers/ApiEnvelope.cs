@@ -33,7 +33,19 @@ public sealed record SiteConfigResponse(
     string WarningColor,
     string ErrorColor,
     string InfoColor,
-    string NavMode);
+    string NavMode,
+    string NotificationProvider);
+
+public sealed record UpdateSiteConfigRequest(
+    string SiteName,
+    string PrimaryColor,
+    string SecondaryColor,
+    string SuccessColor,
+    string WarningColor,
+    string ErrorColor,
+    string InfoColor,
+    string NavMode,
+    string NotificationProvider);
 
 public sealed record PaginatedResult<T>(IReadOnlyList<T> Items, int Page, int PageSize, int TotalCount);
 

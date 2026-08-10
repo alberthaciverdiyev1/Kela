@@ -213,10 +213,10 @@
             counts[newStatus]++;
             cells.forEach(function (c) { setCellStatus(c, newStatus); });
             renderStats();
-            Kela.toast(saveSuccess, 'success');
+            Kela.notify.success(saveSuccess);
         } catch (e) {
             cells.forEach(function (c) { setCellStatus(c, oldStatus); });
-            Kela.toast(saveError, 'error');
+            Kela.notify.error(saveError);
         } finally {
             cells.forEach(function (c) { c.disabled = false; });
         }

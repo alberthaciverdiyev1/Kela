@@ -30,7 +30,7 @@
                 '<p class="text-base-content/60 max-w-sm">' + Kela.esc(Kela.t('workspaces.empty')) + '</p></div>';
         }
 
-        let totalPages = Math.ceil(data.totalCount / data.pageSize);
+        let totalPages = Math.ceil(data.totalCount / (data.pageSize || 20));
         let html = '<div class="card overflow-hidden border border-base-200 bg-base-100"><div class="overflow-x-auto"><table class="table">';
         html += '<thead><tr>';
         html += '<th class="whitespace-nowrap bg-base-200/50 text-xs font-semibold uppercase tracking-wider text-base-content/50">' + Kela.esc(Kela.t('workspaces.col.name')) + '</th>';
@@ -148,6 +148,7 @@
                     });
                     let listEl2 = listEl();
                     if (listEl2) listEl2.innerHTML = renderWorkspaces(res.data);
+                    Kela.notify.success(Kela.t('workspaces.deleted'));
                 } catch (e) {
                     del.disabled = false;
                 }
@@ -169,6 +170,7 @@
                         '/teacher/workspaces/' + removeBtn.dataset.workspaceId + '/students/' + removeBtn.dataset.removeStudent
                     );
                     renderWorkspaceData(res.data);
+                    Kela.notify.success(Kela.t('workspaces.removedStudent'));
                 } catch (e) {
                     removeBtn.disabled = false;
                 }
@@ -224,6 +226,7 @@
             Kela.axios.post(form.action, new FormData(form)).then(function (res) {
                 if (submitBtn) submitBtn.disabled = false;
                 renderWorkspaceData(res.data);
+                Kela.notify.success(Kela.t('workspaces.addedStudents'));
             }).catch(function () {
                 if (submitBtn) submitBtn.disabled = false;
             });

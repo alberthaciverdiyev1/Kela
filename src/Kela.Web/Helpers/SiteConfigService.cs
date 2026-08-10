@@ -4,6 +4,7 @@ public sealed class SiteConfigService(IApiClient api)
 {
     public string SiteName { get; private set; } = "Kela";
     public string NavMode { get; private set; } = "navbar";
+    public string NotificationProvider { get; private set; } = "sweetalert";
 
     public async Task LoadAsync(CancellationToken ct = default)
     {
@@ -14,6 +15,7 @@ public sealed class SiteConfigService(IApiClient api)
             {
                 SiteName = result.Data.SiteName;
                 NavMode = result.Data.NavMode;
+                NotificationProvider = result.Data.NotificationProvider;
             }
         }
         catch

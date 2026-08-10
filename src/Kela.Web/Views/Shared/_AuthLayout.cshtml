@@ -1,8 +1,15 @@
 @inject Localizer L
 @using Microsoft.AspNetCore.Antiforgery
+@using System.Text.Json
+@using Kela.Web.Helpers
 @inject IAntiforgery Antiforgery
+@inject SiteConfigService SiteConfig
 @{
     Layout = null;
+    await SiteConfig.LoadAsync();
+    var notifications = new List<object>();
+    if (TempData["Success"] is string successMsg) notifications.Add(new { type = "success", message = successMsg });
+    if (TempData["Error"] is string errorMsg) notifications.Add(new { type = "error", message = errorMsg });
 }
 <!DOCTYPE html>
 <html lang="@L.Active">
@@ -10,10 +17,13 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="csrf-token" content="@Antiforgery.GetAndStoreTokens(Context).RequestToken" />
-    <title>@ViewData["Title"] - Kela</title>
+    <title>@ViewData["Title"] - @SiteConfig.SiteName</title>
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/lib/external/alertifyjs/alertify.min.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/lib/external/alertifyjs/themes/default.min.css" asp-append-version="true" />
 </head>
-<body class="min-h-screen bg-base-200">
+<body class="min-h-screen bg-base-200" data-notify-provider="@SiteConfig.NotificationProvider">
+    <script type="application/json" id="kela-notify">@Html.Raw(JsonSerializer.Serialize(notifications))</script>
     <div class="relative flex min-h-screen w-full items-center justify-center overflow-hidden bg-base-200 p-4">
         <div class="pointer-events-none absolute -left-24 -top-24 size-96 rounded-full bg-primary/5 blur-3xl"></div>
         <div class="pointer-events-none absolute -bottom-28 -right-20 size-[28rem] rounded-full bg-primary/5 blur-3xl"></div>
@@ -25,7 +35,10 @@
         </div>
     </div>
     <script src="~/lib/external/axios/axios.min.js"></script>
+    <script src="~/lib/external/sweetalert2/sweetalert2.all.min.js"></script>
+    <script src="~/lib/external/alertifyjs/alertify.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
+    <script src="~/src/notify.js" asp-append-version="true"></script>
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>

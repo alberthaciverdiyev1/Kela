@@ -12,10 +12,11 @@ internal sealed class CityRepository(KelaDbContext context) : ICityRepository
         => await context.Cities.FirstOrDefaultAsync(c => c.Id == id, cancellationToken);
 
     public async Task<PaginatedResult<City>> GetPageAsync(
-        int page, int pageSize, CancellationToken cancellationToken = default)
+        int page, CancellationToken cancellationToken = default)
     {
         var query = context.Cities.AsNoTracking();
         var total = await query.CountAsync(cancellationToken);
+        var pageSize = PaginationDefaults.PageSize;
 
         var items = await query
             .OrderBy(c => c.Id)

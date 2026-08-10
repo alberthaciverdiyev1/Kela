@@ -7,7 +7,7 @@ namespace Kela.Application.Features.Students;
 public interface IStudentService
 {
     Task<PaginatedResult<StudentResponse>> GetPageAsync(
-        int page, int pageSize, string? search, string? language, CancellationToken cancellationToken = default);
+        int page, string? search, string? language, CancellationToken cancellationToken = default);
 
     Task<StudentResponse?> GetByIdAsync(int id, string? language, CancellationToken cancellationToken = default);
 

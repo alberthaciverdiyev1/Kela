@@ -14,10 +14,11 @@ internal sealed class UserRepository(KelaDbContext context) : IUserRepository
         => await BaseQuery.FirstOrDefaultAsync(u => u.Id == id, cancellationToken);
 
     public async Task<PaginatedResult<User>> GetPageAsync(
-        int page, int pageSize, CancellationToken cancellationToken = default)
+        int page, CancellationToken cancellationToken = default)
     {
         var query = BaseQuery.AsNoTracking();
         var total = await query.CountAsync(cancellationToken);
+        var pageSize = PaginationDefaults.PageSize;
 
         var items = await query
             .OrderBy(u => u.Id)

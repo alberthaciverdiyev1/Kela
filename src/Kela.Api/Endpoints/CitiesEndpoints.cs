@@ -15,9 +15,9 @@ public static class CitiesEndpoints
         var group = app.MapGroup("/api/cities");
 
         // Okuma — giriş yapan herkes (dropdown/referans verisi).
-        group.MapGet("", async (int page, int pageSize, string? lang, ICityService cities, CancellationToken ct) =>
+        group.MapGet("", async (int page, string? lang, ICityService cities, CancellationToken ct) =>
             ApiResponse<PaginatedResult<CityListItemResponse>>.Success(
-                await cities.GetPageAsync(page, pageSize, lang, ct)))
+                await cities.GetPageAsync(page, lang, ct)))
             .RequireAuthorization();
 
         group.MapGet("/{id:int}", async (int id, string? lang, ICityService cities, CancellationToken ct) =>

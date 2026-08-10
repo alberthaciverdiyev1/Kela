@@ -22,6 +22,9 @@
         _ => "common.unknownRole",
     };
     var path = Context.Request.Path.Value ?? "";
+    var notifications = new List<object>();
+    if (TempData["Success"] is string successMsg) notifications.Add(new { type = "success", message = successMsg });
+    if (TempData["Error"] is string errorMsg) notifications.Add(new { type = "error", message = errorMsg });
     List<(string Label, string Url, string Icon)> navItems = role switch
     {
         AppConstants.RoleTeacher => [
@@ -54,8 +57,10 @@
     <meta name="csrf-token" content="@Antiforgery.GetAndStoreTokens(Context).RequestToken" />
     <title>@ViewData["Title"] - @SiteConfig.SiteName</title>
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/lib/external/alertifyjs/alertify.min.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/lib/external/alertifyjs/themes/default.min.css" asp-append-version="true" />
 </head>
-<body class="flex min-h-screen flex-col bg-base-200">
+<body class="flex min-h-screen flex-col bg-base-200" data-notify-provider="@SiteConfig.NotificationProvider">
     <header class="sticky top-0 z-50">
         <div class="navbar bg-base-100 shadow-sm">
             <div class="navbar-start">
@@ -122,22 +127,18 @@
 
     <main class="flex w-full flex-1 flex-col gap-6 p-4 md:p-6">
         <script type="application/json" id="kela-msgs" data-lang="@L.Active">@Html.Raw(JsonSerializer.Serialize(L.All))</script>
-        @if (TempData["Success"] is string success)
-        {
-            <app-alert type="success" icon="check">@success</app-alert>
-        }
-        @if (TempData["Error"] is string error)
-        {
-            <app-alert type="error" icon="lock">@error</app-alert>
-        }
+        <script type="application/json" id="kela-notify">@Html.Raw(JsonSerializer.Serialize(notifications))</script>
         @RenderBody()
     </main>
 
     <footer class="p-4 text-center text-xs text-base-content/40">© @DateTime.Now.Year @SiteConfig.SiteName</footer>
     <script src="~/lib/external/axios/axios.min.js"></script>
+    <script src="~/lib/external/sweetalert2/sweetalert2.all.min.js"></script>
+    <script src="~/lib/external/alertifyjs/alertify.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
     <script src="~/src/i18n.js" asp-append-version="true"></script>
     <script src="~/src/icons.js" asp-append-version="true"></script>
+    <script src="~/src/notify.js" asp-append-version="true"></script>
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>

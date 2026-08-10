@@ -97,6 +97,11 @@
             let currentMeta = document.querySelector('meta[name="csrf-token"]');
             if (csrf && currentMeta) currentMeta.setAttribute('content', csrf.getAttribute('content'));
 
+            let nextBody = doc.querySelector('body');
+            if (nextBody && document.body && nextBody.dataset.notifyProvider) {
+                document.body.dataset.notifyProvider = nextBody.dataset.notifyProvider;
+            }
+
             Kela.unmountPage();
 
             let header = document.querySelector('header');

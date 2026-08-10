@@ -14,9 +14,9 @@ public static class StudentsEndpoints
         var group = app.MapGroup("/api/students")
             .RequireAuthorization(policy => policy.RequireRole(RoleNames.Teacher, RoleNames.Admin));
 
-        group.MapGet("", async (int page, int pageSize, string? search, string? lang, IStudentService students, CancellationToken ct) =>
+        group.MapGet("", async (int page, string? search, string? lang, IStudentService students, CancellationToken ct) =>
             ApiResponse<PaginatedResult<StudentResponse>>.Success(
-                await students.GetPageAsync(page, pageSize, search, lang, ct)));
+                await students.GetPageAsync(page, search, lang, ct)));
 
         group.MapGet("/{id:int}", async (int id, string? lang, IStudentService students, CancellationToken ct) =>
         {

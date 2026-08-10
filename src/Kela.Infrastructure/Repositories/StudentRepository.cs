@@ -16,7 +16,7 @@ internal sealed class StudentRepository(KelaDbContext context) : IStudentReposit
         => await Detailed.FirstOrDefaultAsync(p => p.Id == id, cancellationToken);
 
     public async Task<PaginatedResult<StudentProfile>> GetPageAsync(
-        int page, int pageSize, string? search, CancellationToken cancellationToken = default)
+        int page, string? search, CancellationToken cancellationToken = default)
     {
         var query = Detailed.AsNoTracking();
 
@@ -31,6 +31,7 @@ internal sealed class StudentRepository(KelaDbContext context) : IStudentReposit
         }
 
         var total = await query.CountAsync(cancellationToken);
+        var pageSize = PaginationDefaults.PageSize;
 
         var items = await query
             .OrderBy(p => p.Id)

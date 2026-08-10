@@ -16,10 +16,10 @@ internal sealed class CityService(
 {
     // ── Liste: istenen dile göre yerelleştirilmiş ad ──
     public async Task<PaginatedResult<CityListItemResponse>> GetPageAsync(
-        int page, int pageSize, string? language, CancellationToken cancellationToken = default)
+        int page, string? language, CancellationToken cancellationToken = default)
     {
         var lang = LanguageCodes.Normalize(language);
-        var result = await cities.GetPageAsync(page, pageSize, cancellationToken);
+        var result = await cities.GetPageAsync(page, cancellationToken);
 
         return new PaginatedResult<CityListItemResponse>(
             result.Items.Select(c => new CityListItemResponse(

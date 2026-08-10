@@ -16,10 +16,11 @@ internal sealed class WorkspaceRepository(KelaDbContext context) : IWorkspaceRep
         => await Detailed.FirstOrDefaultAsync(w => w.Id == id, cancellationToken);
 
     public async Task<PaginatedResult<Workspace>> GetPageAsync(
-        int teacherId, int page, int pageSize, CancellationToken cancellationToken = default)
+        int teacherId, int page, CancellationToken cancellationToken = default)
     {
         var query = Detailed.AsNoTracking().Where(w => w.TeacherId == teacherId);
         var total = await query.CountAsync(cancellationToken);
+        var pageSize = PaginationDefaults.PageSize;
 
         var items = await query
             .OrderBy(w => w.Name)

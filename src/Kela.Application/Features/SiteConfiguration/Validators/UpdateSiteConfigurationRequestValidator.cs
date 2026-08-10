@@ -24,6 +24,10 @@ internal sealed class UpdateSiteConfigurationRequestValidator : AbstractValidato
         RuleFor(x => x.NavMode)
             .Must(x => x is "navbar" or "sidebar")
             .WithMessage("NavMode yalnızca 'navbar' veya 'sidebar' olabilir.");
+
+        RuleFor(x => x.NotificationProvider)
+            .Must(x => x is "sweetalert" or "alertify")
+            .WithMessage("NotificationProvider yalnızca 'sweetalert' veya 'alertify' olabilir.");
     }
 
     private static bool BeValidHex(string? value)

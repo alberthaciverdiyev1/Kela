@@ -20,10 +20,14 @@ public sealed class ApiClient(HttpClient http) : IApiClient
     public Task<ApiResult<SiteConfigResponse>> GetSiteConfigAsync(CancellationToken ct = default)
         => SendAsync<SiteConfigResponse>(HttpMethod.Get, "api/site-config", null, ct);
 
+    public Task<ApiResult<NoContentData>> UpdateSiteConfigAsync(
+        UpdateSiteConfigRequest request, CancellationToken ct = default)
+        => SendAsync<NoContentData>(HttpMethod.Put, "api/site-config", request, ct);
+
     public Task<ApiResult<PaginatedResult<StudentResponse>>> GetStudentsPageAsync(
-        int page, int pageSize, string? search = null, CancellationToken ct = default)
+        int page, string? search = null, CancellationToken ct = default)
     {
-        var url = $"api/students?page={page}&pageSize={pageSize}";
+        var url = $"api/students?page={page}";
         if (!string.IsNullOrWhiteSpace(search))
         {
             url += $"&search={Uri.EscapeDataString(search.Trim())}";
@@ -40,9 +44,9 @@ public sealed class ApiClient(HttpClient http) : IApiClient
         => SendAsync<NoContentData>(HttpMethod.Delete, $"api/students/{id}", null, ct);
 
     public Task<ApiResult<PaginatedResult<WorkspaceResponse>>> GetWorkspacesPageAsync(
-        int teacherId, int page, int pageSize, CancellationToken ct = default)
+        int teacherId, int page, CancellationToken ct = default)
         => SendAsync<PaginatedResult<WorkspaceResponse>>(
-            HttpMethod.Get, $"api/workspaces?teacherId={teacherId}&page={page}&pageSize={pageSize}", null, ct);
+            HttpMethod.Get, $"api/workspaces?teacherId={teacherId}&page={page}", null, ct);
 
     public Task<ApiResult<WorkspaceDetailResponse>> GetWorkspaceAsync(int id, CancellationToken ct = default)
         => SendAsync<WorkspaceDetailResponse>(HttpMethod.Get, $"api/workspaces/{id}", null, ct);
@@ -144,10 +148,11 @@ public interface IApiClient
     Task<ApiResult<RegisterResponse>> RegisterAsync(RegisterRequest request, CancellationToken ct = default);
     Task<ApiResult<NoContentData>> LogoutAsync(CancellationToken ct = default);
     Task<ApiResult<SiteConfigResponse>> GetSiteConfigAsync(CancellationToken ct = default);
-    Task<ApiResult<PaginatedResult<StudentResponse>>> GetStudentsPageAsync(int page, int pageSize, string? search = null, CancellationToken ct = default);
+    Task<ApiResult<NoContentData>> UpdateSiteConfigAsync(UpdateSiteConfigRequest request, CancellationToken ct = default);
+    Task<ApiResult<PaginatedResult<StudentResponse>>> GetStudentsPageAsync(int page, string? search = null, CancellationToken ct = default);
     Task<ApiResult<StudentCreatedResponse>> CreateStudentAsync(CreateStudentRequest request, CancellationToken ct = default);
     Task<ApiResult<NoContentData>> DeleteStudentAsync(int id, CancellationToken ct = default);
-    Task<ApiResult<PaginatedResult<WorkspaceResponse>>> GetWorkspacesPageAsync(int teacherId, int page, int pageSize, CancellationToken ct = default);
+    Task<ApiResult<PaginatedResult<WorkspaceResponse>>> GetWorkspacesPageAsync(int teacherId, int page, CancellationToken ct = default);
     Task<ApiResult<WorkspaceDetailResponse>> GetWorkspaceAsync(int id, CancellationToken ct = default);
     Task<ApiResult<WorkspaceCreatedResponse>> CreateWorkspaceAsync(CreateWorkspaceRequest request, CancellationToken ct = default);
     Task<ApiResult<NoContentData>> UpdateWorkspaceAsync(int id, UpdateWorkspaceRequest request, CancellationToken ct = default);

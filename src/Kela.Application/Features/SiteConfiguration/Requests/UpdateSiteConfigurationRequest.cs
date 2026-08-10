@@ -8,4 +8,5 @@ public sealed record UpdateSiteConfigurationRequest(
     string WarningColor,
     string ErrorColor,
     string InfoColor,
-    string NavMode);
+    string NavMode,
+    string NotificationProvider);

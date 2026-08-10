@@ -37,7 +37,7 @@
                 '<p class="text-base-content/60 max-w-sm">' + Kela.esc(Kela.t('students.empty')) + '</p></div>';
         }
 
-        let totalPages = Math.ceil(data.totalCount / data.pageSize);
+        let totalPages = Math.ceil(data.totalCount / (data.pageSize || 20));
         let html = '<div class="card overflow-hidden border border-base-200 bg-base-100"><div class="overflow-x-auto"><table class="table">';
         html += '<thead><tr>';
         ['students.col.firstName', 'students.col.lastName', 'students.col.phone', 'students.col.email', 'students.col.birthDate', 'students.col.city'].forEach(function (key) {
@@ -126,6 +126,7 @@
                 });
                 let list = listEl();
                 if (list) list.innerHTML = renderStudents(res.data);
+                Kela.notify.success(Kela.t('students.deleted'));
             } catch (e) {
                 del.disabled = false;
             }

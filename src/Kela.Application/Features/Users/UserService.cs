@@ -14,9 +14,9 @@ internal sealed class UserService(
     IValidator<UpdateUserRequest> updateValidator) : IUserService
 {
     public async Task<PaginatedResult<UserResponse>> GetPageAsync(
-        int page, int pageSize, CancellationToken cancellationToken = default)
+        int page, CancellationToken cancellationToken = default)
     {
-        var result = await users.GetPageAsync(page, pageSize, cancellationToken);
+        var result = await users.GetPageAsync(page, cancellationToken);
 
         var items = new List<UserResponse>(result.Items.Count);
         foreach (var user in result.Items)

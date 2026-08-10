@@ -20,13 +20,17 @@ public sealed class BaseSiteConfiguration
     // ── Arayüz ──
     public string NavMode { get; private set; } = "navbar";
 
+    // ── Bildirim Sistemi ──
+    public string NotificationProvider { get; private set; } = "sweetalert";
+
     public DateTime CreatedAt { get; set; }
     public DateTime? UpdatedAt { get; set; }
 
     public void Update(
         string siteName,
         string primary, string secondary, string success, string warning, string error, string info,
-        string navMode)
+        string navMode,
+        string notificationProvider)
     {
         SiteName = siteName;
         PrimaryColor = primary;
@@ -36,6 +40,7 @@ public sealed class BaseSiteConfiguration
         ErrorColor = error;
         InfoColor = info;
         NavMode = navMode;
+        NotificationProvider = notificationProvider;
         UpdatedAt = DateTime.UtcNow;
     }
 }

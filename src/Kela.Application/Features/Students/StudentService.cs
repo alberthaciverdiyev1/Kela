@@ -25,10 +25,10 @@ internal sealed class StudentService(
 {
     // ── Liste: User + City bilgisiyle, istenen dile göre şehir adı ──
     public async Task<PaginatedResult<StudentResponse>> GetPageAsync(
-        int page, int pageSize, string? search, string? language, CancellationToken cancellationToken = default)
+        int page, string? search, string? language, CancellationToken cancellationToken = default)
     {
         var lang = LanguageCodes.Normalize(language);
-        var result = await students.GetPageAsync(page, pageSize, search, cancellationToken);
+        var result = await students.GetPageAsync(page, search, cancellationToken);
 
         return new PaginatedResult<StudentResponse>(
             result.Items.Select(ToResponse(lang)).ToList(),

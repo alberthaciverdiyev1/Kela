@@ -27,7 +27,8 @@ internal sealed class SiteConfigurationService(
             request.SiteName.Trim(),
             request.PrimaryColor, request.SecondaryColor, request.SuccessColor,
             request.WarningColor, request.ErrorColor, request.InfoColor,
-            request.NavMode);
+            request.NavMode,
+            request.NotificationProvider);
 
         repository.Update(config);
         await unitOfWork.SaveChangesAsync(cancellationToken);
@@ -61,5 +62,6 @@ internal sealed class SiteConfigurationService(
             c.WarningColor,
             c.ErrorColor,
             c.InfoColor,
-            c.NavMode);
+            c.NavMode,
+            c.NotificationProvider);
 }
