@@ -1,0 +1,104 @@
+@model Kela.Web.Models.Settings.SiteSettingsViewModel
+@{
+    ViewData["Title"] = L.T("settings.title");
+}
+<div class="flex flex-col gap-6">
+    <app-page-head title="@L.T("settings.title")" subtitle="@L.T("settings.subtitle")"></app-page-head>
+
+    <form id="settings-form" method="post" asp-action="SaveSettings" novalidate>
+        @Html.AntiForgeryToken()
+        @Html.ValidationSummary(false, "", new { @class = "validation-summary" })
+
+        <div class="flex flex-col gap-6">
+            <app-card>
+                <h2 class="text-base font-bold">@L.T("settings.general")</h2>
+                <div class="mt-4 max-w-md">
+                    <app-field for="SiteName" label="@L.T("settings.siteName")" required="true"/>
+                    <p class="-mt-2 text-xs text-base-content/50">@L.T("settings.siteNameHint")</p>
+                </div>
+            </app-card>
+
+            <app-card>
+                <h2 class="text-base font-bold">@L.T("settings.layout")</h2>
+                <div class="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-2">
+                    <label class="flex cursor-pointer items-start gap-3 rounded-box border border-base-300 p-4 has-checked:border-primary has-checked:bg-primary-50">
+                        <input type="radio" name="NavMode" value="navbar" class="radio radio-sm mt-0.5" checked="@(Model.NavMode == "navbar")"/>
+                        <span>
+                            <span class="block text-sm font-semibold">@L.T("settings.navbarMode")</span>
+                            <span class="block text-xs text-base-content/60">@L.T("settings.navbarModeDesc")</span>
+                        </span>
+                    </label>
+                    <label class="flex cursor-pointer items-start gap-3 rounded-box border border-base-300 p-4 has-checked:border-primary has-checked:bg-primary-50">
+                        <input type="radio" name="NavMode" value="sidebar" class="radio radio-sm mt-0.5" checked="@(Model.NavMode == "sidebar")"/>
+                        <span>
+                            <span class="block text-sm font-semibold">@L.T("settings.sidebarMode")</span>
+                            <span class="block text-xs text-base-content/60">@L.T("settings.sidebarModeDesc")</span>
+                        </span>
+                    </label>
+                </div>
+            </app-card>
+
+            <app-card>
+                <div class="flex flex-wrap items-center justify-between gap-2">
+                    <h2 class="text-base font-bold">@L.T("settings.notifications")</h2>
+                    <button type="button" id="notify-preview" class="btn btn-sm btn-ghost">@L.T("settings.notifyPreview")</button>
+                </div>
+                <div class="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-2">
+                    <label class="flex cursor-pointer items-start gap-3 rounded-box border border-base-300 p-4 has-checked:border-primary has-checked:bg-primary-50">
+                        <input type="radio" name="NotificationProvider" value="sweetalert" class="radio radio-sm mt-0.5" checked="@(Model.NotificationProvider == "sweetalert")"/>
+                        <span>
+                            <span class="block text-sm font-semibold">SweetAlert2</span>
+                            <span class="block text-xs text-base-content/60">@L.T("settings.notifySweetAlertDesc")</span>
+                        </span>
+                    </label>
+                    <label class="flex cursor-pointer items-start gap-3 rounded-box border border-base-300 p-4 has-checked:border-primary has-checked:bg-primary-50">
+                        <input type="radio" name="NotificationProvider" value="alertify" class="radio radio-sm mt-0.5" checked="@(Model.NotificationProvider == "alertify")"/>
+                        <span>
+                            <span class="block text-sm font-semibold">AlertifyJS</span>
+                            <span class="block text-xs text-base-content/60">@L.T("settings.notifyAlertifyDesc")</span>
+                        </span>
+                    </label>
+                </div>
+            </app-card>
+
+            <app-card>
+                <h2 class="text-base font-bold">@L.T("settings.colors")</h2>
+                <div class="mt-4 grid grid-cols-2 gap-4 sm:grid-cols-3">
+                    <label class="flex items-center gap-3">
+                        <input type="color" name="PrimaryColor" value="@Model.PrimaryColor" class="size-9 cursor-pointer rounded-md border border-base-300 bg-transparent"/>
+                        <span class="text-sm">@L.T("settings.color.primary")</span>
+                    </label>
+                    <label class="flex items-center gap-3">
+                        <input type="color" name="SecondaryColor" value="@Model.SecondaryColor" class="size-9 cursor-pointer rounded-md border border-base-300 bg-transparent"/>
+                        <span class="text-sm">@L.T("settings.color.secondary")</span>
+                    </label>
+                    <label class="flex items-center gap-3">
+                        <input type="color" name="SuccessColor" value="@Model.SuccessColor" class="size-9 cursor-pointer rounded-md border border-base-300 bg-transparent"/>
+                        <span class="text-sm">@L.T("settings.color.success")</span>
+                    </label>
+                    <label class="flex items-center gap-3">
+                        <input type="color" name="WarningColor" value="@Model.WarningColor" class="size-9 cursor-pointer rounded-md border border-base-300 bg-transparent"/>
+                        <span class="text-sm">@L.T("settings.color.warning")</span>
+                    </label>
+                    <label class="flex items-center gap-3">
+                        <input type="color" name="ErrorColor" value="@Model.ErrorColor" class="size-9 cursor-pointer rounded-md border border-base-300 bg-transparent"/>
+                        <span class="text-sm">@L.T("settings.color.error")</span>
+                    </label>
+                    <label class="flex items-center gap-3">
+                        <input type="color" name="InfoColor" value="@Model.InfoColor" class="size-9 cursor-pointer rounded-md border border-base-300 bg-transparent"/>
+                        <span class="text-sm">@L.T("settings.color.info")</span>
+                    </label>
+                </div>
+            </app-card>
+
+            <div class="flex justify-end gap-2">
+                <app-btn variant="secondary" type="button" id="settings-reset">@L.T("settings.reset")</app-btn>
+                <app-btn variant="primary" type="submit" icon="check">@L.T("settings.save")</app-btn>
+            </div>
+        </div>
+    </form>
+</div>
+
+@section Scripts {
+    <script src="~/src/pages/settings.js" asp-append-version="true"></script>
+}
