@@ -1,0 +1,115 @@
+@model Kela.Web.Models.Lessons.LessonEditorViewModel
+@{
+    Layout = "_Layout";
+    var l = Model.Lesson;
+    var hasVideo = !string.IsNullOrEmpty(l.VideoPath);
+    var apiBase = Model.VideoStreamUrl.Substring(0, Model.VideoStreamUrl.IndexOf("/api/lessons"));
+}
+<div id="lesson-editor" class="flex flex-col gap-6"
+     data-content-id="@l.ContentId"
+     data-stream-url="@Model.VideoStreamUrl"
+     data-thumb-url="@(string.IsNullOrEmpty(l.ThumbnailPath) ? "" : apiBase + l.ThumbnailPath)"
+     data-has-video="@(hasVideo ? "true" : "false")"
+     data-duration="@l.DurationSeconds"
+     data-order="@l.OrderIndex">
+    <app-page-head title="@l.Title" subtitle="@L.T("lessons.editorSubtitle")">
+        <div class="flex gap-2">
+            <app-btn variant="secondary" icon="arrow-left" href="/teacher/library/lessons">@L.T("common.back")</app-btn>
+            @if (hasVideo)
+            {
+                <app-btn variant="primary" icon="upload" onclick="document.getElementById('lesson-video-dialog').showModal()">@L.T("lessons.replaceVideo")</app-btn>
+            }
+        </div>
+    </app-page-head>
+
+    <div class="grid gap-6 lg:grid-cols-3">
+        <div class="lg:col-span-2">
+            @if (hasVideo)
+            {
+                <div class="card overflow-hidden border border-base-200 bg-base-100">
+                    <video id="lesson-video" class="aspect-video w-full bg-black" controls playsinline
+                           poster="@(string.IsNullOrEmpty(l.ThumbnailPath) ? "" : apiBase + l.ThumbnailPath)"></video>
+                </div>
+            }
+            else
+            {
+                <label for="lesson-video-file-inline" class="card flex cursor-pointer flex-col items-center justify-center gap-3 border-2 border-dashed border-base-300 bg-base-100 px-6 py-16 text-center transition-colors hover:border-primary hover:bg-base-200/40">
+                    <span class="text-base-300">@Html.Raw(KelaIcon("video", "w-14 h-14"))</span>
+                    <p class="text-base-content/60">@L.T("lessons.noVideo")</p>
+                    <span class="btn btn-primary pointer-events-none">@Html.Raw(KelaIcon("upload", "w-4 h-4"))@L.T("lessons.uploadVideo")</span>
+                    <input id="lesson-video-file-inline" name="file" type="file" accept="video/*,.mkv" class="hidden" required />
+                </label>
+            }
+        </div>
+
+        <div class="flex flex-col gap-4">
+            <app-card>
+                <div class="flex items-center justify-between">
+                    <h3 class="text-sm font-semibold uppercase tracking-wider text-base-content/50">@L.T("lessons.details")</h3>
+                    <span class="badge @(l.IsPublished ? "badge-success" : "badge-warning")">@(l.IsPublished ? L.T("library.published") : L.T("library.draft"))</span>
+                </div>
+                <dl class="mt-4 flex flex-col gap-3 text-sm">
+                    <div class="flex items-center justify-between gap-2">
+                        <dt class="text-base-content/50">@L.T("lessons.duration")</dt>
+                        <dd id="lesson-duration" class="font-semibold">@FormatDuration(l.DurationSeconds)</dd>
+                    </div>
+                    <div class="flex items-center justify-between gap-2">
+                        <dt class="text-base-content/50">@L.T("lessons.thumbnail")</dt>
+                        <dd>
+                            @if (!string.IsNullOrEmpty(l.ThumbnailPath))
+                            {
+                                <img id="lesson-thumb" src="@(apiBase + l.ThumbnailPath)" alt="thumbnail" class="h-16 w-28 rounded-md object-cover ring-1 ring-base-200" />
+                            }
+                            else
+                            {
+                                <span class="text-base-content/40">@L.T("lessons.noThumbnail")</span>
+                            }
+                        </dd>
+                    </div>
+                </dl>
+            </app-card>
+
+            <app-card>
+                <h3 class="text-sm font-semibold uppercase tracking-wider text-base-content/50">@L.T("lessons.orderTitle")</h3>
+                <p class="mt-1 text-xs text-base-content/50">@L.T("lessons.orderHint")</p>
+                <form id="lesson-order-form" class="mt-3 flex items-end gap-2" novalidate>
+                    <div class="field mb-0 grow">
+                        <label class="block text-sm font-semibold mb-1.5 text-base-content" for="lesson-order">@L.T("lessons.orderLabel")</label>
+                        <input id="lesson-order" type="number" min="0" class="input w-full" value="@l.OrderIndex" autocomplete="off" />
+                    </div>
+                    <app-btn variant="primary" type="submit">@L.T("common.save")</app-btn>
+                </form>
+            </app-card>
+        </div>
+    </div>
+
+    <app-modal id="lesson-video-dialog" title="@L.T("lessons.uploadVideo")">
+        <form id="lesson-video-form" class="flex flex-col gap-4" novalidate>
+            <div class="field mb-0">
+                <label class="block text-sm font-semibold mb-1.5 text-base-content" for="lesson-video-file">@L.T("lessons.videoFile")</label>
+                <input id="lesson-video-file" name="file" type="file" accept="video/*,.mkv" class="file-input w-full" required />
+            </div>
+            <p class="text-xs text-base-content/50">@L.T("lessons.uploadHint")</p>
+            <div class="flex justify-end gap-2">
+                <app-btn variant="secondary" onclick="document.getElementById('lesson-video-dialog').close()">@L.T("common.cancel")</app-btn>
+                <app-btn variant="primary" type="submit">@L.T("lessons.upload")</app-btn>
+            </div>
+        </form>
+    </app-modal>
+</div>
+
+@section Scripts {
+    <script src="~/src/pages/lessonEditor.js" asp-append-version="true"></script>
+}
+
+@functions {
+    private static string FormatDuration(int seconds)
+    {
+        var ts = TimeSpan.FromSeconds(seconds);
+        return ts.TotalHours >= 1
+            ? $"{(int)ts.TotalHours}:{ts.Minutes:00}:{ts.Seconds:00}"
+            : $"{ts.Minutes:00}:{ts.Seconds:00}";
+    }
+
+    private static string KelaIcon(string name, string cls) => Kela.Web.Helpers.Icons.Icon(name, cls);
+}
