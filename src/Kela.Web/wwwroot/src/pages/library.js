@@ -44,14 +44,29 @@
     }
 
     const contentForm = document.getElementById('library-content-form');
+    const typeSelect = document.getElementById('library-content-type');
+    const videoField = document.getElementById('library-content-video-field');
+    const videoInput = document.getElementById('library-content-video');
+
+    // Video alanı yalnızca tür "Dərs" (0) seçiliyken gösterilir.
+    function updateVideoField() {
+        if (!videoField) return;
+        const t = TYPE != null ? TYPE : (typeSelect ? Number(typeSelect.value) : 0);
+        videoField.style.display = t === 0 ? '' : 'none';
+        if (videoInput) videoInput.value = '';
+    }
+    if (typeSelect) typeSelect.addEventListener('change', updateVideoField);
+    updateVideoField();
+
     if (contentForm) {
         contentForm.addEventListener('submit', function (event) {
             event.preventDefault();
             const title = document.getElementById('library-content-title').value.trim();
             if (!title) return;
-            const type = TYPE != null ? TYPE : Number(document.getElementById('library-content-type').value);
+            const type = TYPE != null ? TYPE : (typeSelect ? Number(typeSelect.value) : 0);
             const url = document.getElementById('library-content-url').value.trim();
             const description = document.getElementById('library-content-desc').value.trim();
+            const videoFile = videoInput && videoInput.files && videoInput.files[0];
             const btn = contentForm.querySelector('button[type="submit"]');
             if (btn) btn.disabled = true;
             fm.createContent({ title: title, type: type, url: url || null, description: description || null }).then(function (res) {
@@ -59,12 +74,28 @@
                 document.getElementById('library-content-title').value = '';
                 document.getElementById('library-content-url').value = '';
                 document.getElementById('library-content-desc').value = '';
+                if (videoInput) videoInput.value = '';
                 Kela.notify.success(Kela.t('library.created'));
                 let contentId = res && res.data ? res.data.contentId : null;
-                if (type === 1 && contentId) {
-                    Kela.navigate('/teacher/quizzes/' + contentId);
-                } else if (type === 0 && contentId) {
-                    Kela.navigate('/teacher/lessons/' + contentId);
+                const afterCreate = function () {
+                    if (type === 1 && contentId) {
+                        Kela.navigate('/teacher/quizzes/' + contentId);
+                    } else if (type === 0 && contentId) {
+                        Kela.navigate('/teacher/lessons/' + contentId);
+                    }
+                };
+                // Ders oluşturulduktan sonra seçilen video yüklenir.
+                if (type === 0 && contentId && videoFile) {
+                    const fd = new FormData();
+                    fd.append('file', videoFile);
+                    Kela.axios.post('/teacher/lessons/' + contentId + '/video', fd).then(function () {
+                        Kela.notify.success(Kela.t('lessons.videoUploaded'));
+                        afterCreate();
+                    }).catch(function () {
+                        afterCreate();
+                    });
+                } else {
+                    afterCreate();
                 }
             }).catch(function (e) {
                 Kela.notify.error(e && e.response && e.response.data && e.response.data.message

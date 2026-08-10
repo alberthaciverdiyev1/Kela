@@ -81,7 +81,15 @@ if (!app.Environment.IsDevelopment())
     app.UseExceptionHandler("/home/error");
 }
 
-app.UseStaticFiles();
+// Statik dosyalar için önbelleği yeniden doğrulamaya zorla: tarayıcı her zaman
+// güncel JS/CSS'i alır (asp-append-version ile içerik hash'i de değişir).
+app.UseStaticFiles(new StaticFileOptions
+{
+    OnPrepareResponse = ctx =>
+    {
+        ctx.Context.Response.Headers.CacheControl = "no-cache";
+    }
+});
 app.UseRouting();
 app.UseAuthentication();
 app.UseAuthorization();
