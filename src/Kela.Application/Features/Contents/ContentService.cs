@@ -1,6 +1,7 @@
 using FluentValidation;
 using Kela.Application.Features.Contents.Requests;
 using Kela.Application.Features.Contents.Responses;
+using Kela.Application.Features.Lessons;
 using Kela.Application.Features.Nodes;
 using Kela.Application.Features.Quizzes;
 using Kela.Application.Features.Users;
@@ -16,6 +17,7 @@ internal sealed class ContentService(
     IContentRepository contents,
     INodeRepository nodes,
     IQuizRepository quizzes,
+    ILessonRepository lessons,
     IUserRepository users,
     UserManager<User> userManager,
     IUnitOfWork unitOfWork,
@@ -86,6 +88,17 @@ internal sealed class ContentService(
             });
             await unitOfWork.SaveChangesAsync(cancellationToken);
         }
+        else if (request.Type == ContentType.Lesson)
+        {
+            lessons.Add(new Lesson
+            {
+                ContentId = content.Id,
+                TeacherId = request.TeacherId,
+                IsPublished = false,
+                CreatedAt = DateTime.UtcNow,
+            });
+            await unitOfWork.SaveChangesAsync(cancellationToken);
+        }
 
         return content.Id;
     }
@@ -136,12 +149,38 @@ internal sealed class ContentService(
 
         contents.Update(content);
         await unitOfWork.SaveChangesAsync(cancellationToken);
+
+        if (content.Type == ContentType.Lesson)
+        {
+            var lesson = await lessons.GetByContentIdAsync(content.Id, cancellationToken);
+            if (lesson is not null)
+            {
+                lesson.IsPublished = published;
+                lesson.UpdatedAt = DateTime.UtcNow;
+                lessons.Update(lesson);
+                await unitOfWork.SaveChangesAsync(cancellationToken);
+            }
+        }
     }
 
     public async Task DeleteAsync(int id, CancellationToken cancellationToken = default)
     {
         var content = await contents.GetByIdAsync(id, cancellationToken)
             ?? throw new KeyNotFoundException($"Id = {id} olan içerik bulunamadı.");
+
+        // Bağlı kayıtları içerik yumuşak-silmeden ÖNCE çek.
+        // (LessonRepository.Content navigasyonuna uygulanan DeletedAt filtreleri,
+        //  içerik silindikten sonra dersi de sorgudan eler — o zaman satır yetim kalır.)
+        Lesson? lesson = null;
+        Quiz? quiz = null;
+        if (content.Type == ContentType.Quiz)
+        {
+            quiz = await quizzes.GetByContentIdAsync(content.Id, cancellationToken);
+        }
+        else if (content.Type == ContentType.Lesson)
+        {
+            lesson = await lessons.GetByContentIdAsync(content.Id, cancellationToken);
+        }
 
         var now = DateTime.UtcNow;
         content.DeletedAt = now;
@@ -155,14 +194,15 @@ internal sealed class ContentService(
         contents.Update(content);
         await unitOfWork.SaveChangesAsync(cancellationToken);
 
-        if (content.Type == ContentType.Quiz)
+        if (quiz is not null)
         {
-            var quiz = await quizzes.GetByContentIdAsync(content.Id, cancellationToken);
-            if (quiz is not null)
-            {
-                quizzes.Remove(quiz);
-                await unitOfWork.SaveChangesAsync(cancellationToken);
-            }
+            quizzes.Remove(quiz);
+            await unitOfWork.SaveChangesAsync(cancellationToken);
+        }
+        else if (lesson is not null)
+        {
+            lessons.Remove(lesson);
+            await unitOfWork.SaveChangesAsync(cancellationToken);
         }
     }
 

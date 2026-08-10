@@ -5,6 +5,7 @@ using System.Text.RegularExpressions;
 using Kela.Web.Helpers;
 using Kela.Web.Localization;
 using Kela.Web.Models.Attendances;
+using Kela.Web.Models.Lessons;
 using Kela.Web.Models.Quizzes;
 using Kela.Web.Models.Settings;
 using Kela.Web.Models.Students;
@@ -15,8 +16,8 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Kela.Web.Controllers;
 
-[Authorize(Roles = AppConstants.RoleTeacher)]
-public sealed partial class TeacherController(IApiClient api, Localizer L) : Controller
+[Authorize(Roles = $"{AppConstants.RoleTeacher},{AppConstants.RoleAdmin}")]
+public sealed partial class TeacherController(IApiClient api, Localizer L, IConfiguration config) : Controller
 {
     private int UserId => int.TryParse(User.FindFirstValue(ClaimTypes.NameIdentifier), out var id) ? id : 0;
 
@@ -240,7 +241,7 @@ public sealed partial class TeacherController(IApiClient api, Localizer L) : Con
     [HttpGet("teacher/library")]
     public IActionResult Library() => RedirectToAction(nameof(LibraryByType), new { type = "quizzes" });
 
-    [HttpGet("teacher/library/{type:regex(^quizzes$)}")]
+    [HttpGet("teacher/library/{type:regex(^(quizzes|lessons)$)}")]
     public IActionResult LibraryByType(string type)
     {
         var contentType = ParseContentType(type);
@@ -262,6 +263,7 @@ public sealed partial class TeacherController(IApiClient api, Localizer L) : Con
 
     private static int? ParseContentType(string? type) => type?.ToLowerInvariant() switch
     {
+        "lessons" => 0,
         "quizzes" => 1,
         _ => null,
     };
@@ -428,6 +430,45 @@ public sealed partial class TeacherController(IApiClient api, Localizer L) : Con
     public async Task<IActionResult> RemoveQuizQuestion(int contentId, int questionId, CancellationToken ct)
     {
         var result = await api.RemoveQuizQuestionAsync(contentId, questionId, ct);
+        return result.Success ? Json(new { success = true }) : ApiError(result);
+    }
+
+    [HttpGet("teacher/lessons/{contentId:int}")]
+    public async Task<IActionResult> LessonEditor(int contentId, CancellationToken ct)
+    {
+        var result = await api.GetLessonAsync(contentId, ct);
+        if (!result.Success || result.Data is null)
+        {
+            return NotFound();
+        }
+
+        var lesson = result.Data;
+        var apiBase = (config["Api:BaseUrl"] ?? "https://localhost:7047").TrimEnd('/');
+        var model = new LessonEditorViewModel(lesson, $"{apiBase}/api/lessons/{contentId}/stream");
+        return View("Lessons/Editor", model);
+    }
+
+    [HttpPost("teacher/lessons/{contentId:int}/video")]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> UploadLessonVideo(int contentId, IFormFile file, CancellationToken ct)
+    {
+        if (file is null || file.Length == 0)
+        {
+            return Json(new { success = false, message = L.T("lessons.videoRequired") });
+        }
+
+        await using var stream = file.OpenReadStream();
+        var result = await api.UploadLessonVideoAsync(contentId, stream, file.FileName, ct);
+        return result.Success && result.Data is not null
+            ? Json(new { success = true, duration = result.Data.DurationSeconds, thumbnail = result.Data.ThumbnailPath })
+            : ApiError(result);
+    }
+
+    [HttpPost("teacher/lessons/{contentId:int}/order")]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> UpdateLessonOrder(int contentId, [FromBody] UpdateLessonOrderRequest model, CancellationToken ct)
+    {
+        var result = await api.UpdateLessonOrderAsync(contentId, model.OrderIndex, ct);
         return result.Success ? Json(new { success = true }) : ApiError(result);
     }
 

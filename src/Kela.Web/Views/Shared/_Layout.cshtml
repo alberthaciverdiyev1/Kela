@@ -30,11 +30,13 @@
     {
         AppConstants.RoleAdmin => [
             (L.T("nav.dashboard"), "/admin/dashboard", "dashboard"),
+            (L.T("nav.lessons"), "/teacher/library/lessons", "book"),
             (L.T("nav.questions"), "/admin/questions", "quiz"),
         ],
         AppConstants.RoleTeacher => [
             (L.T("nav.dashboard"), "/teacher/dashboard", "dashboard"),
             (L.T("nav.students"), "/teacher/students", "students"),
+            (L.T("nav.lessons"), "/teacher/library/lessons", "book"),
             (L.T("nav.quizzes"), "/teacher/library/quizzes", "quiz"),
             (L.T("nav.workspaces"), "/teacher/workspaces", "folder"),
             (L.T("nav.attendance"), "/teacher/attendance", "calendar-check"),

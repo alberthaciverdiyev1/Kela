@@ -14,5 +14,7 @@ public class Content : BaseEntity
     public string? Url { get; set; }
     public bool IsPublished { get; set; }
 
+    public Lesson? Lesson { get; set; }
+
     public ICollection<Node> Nodes { get; set; } = new List<Node>();
 }

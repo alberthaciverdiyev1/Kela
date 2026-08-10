@@ -20,6 +20,7 @@ public sealed class KelaDbContext(DbContextOptions<KelaDbContext> options)
     public DbSet<Question> Questions => Set<Question>();
     public DbSet<Quiz> Quizzes => Set<Quiz>();
     public DbSet<QuizQuestion> QuizQuestions => Set<QuizQuestion>();
+    public DbSet<Lesson> Lessons => Set<Lesson>();
 
     public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
         => base.SaveChangesAsync(cancellationToken);

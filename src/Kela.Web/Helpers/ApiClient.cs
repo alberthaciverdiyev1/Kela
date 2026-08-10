@@ -133,6 +133,23 @@ public sealed class ApiClient(HttpClient http) : IApiClient
     public Task<ApiResult<NoContentData>> RemoveQuizQuestionAsync(int contentId, int questionId, CancellationToken ct = default)
         => SendAsync<NoContentData>(HttpMethod.Delete, $"api/quizzes/{contentId}/questions/{questionId}", null, ct);
 
+    public Task<ApiResult<LessonResponse>> GetLessonAsync(int contentId, CancellationToken ct = default)
+        => SendAsync<LessonResponse>(HttpMethod.Get, $"api/lessons/{contentId}", null, ct);
+
+    public async Task<ApiResult<LessonResponse>> UploadLessonVideoAsync(int contentId, Stream fileStream, string fileName, CancellationToken ct = default)
+    {
+        using var content = new MultipartFormDataContent();
+        var fileContent = new StreamContent(fileStream);
+        fileContent.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue("application/octet-stream");
+        content.Add(fileContent, "file", fileName);
+        // Multipart içerik HTTP isteği gönderilirken async okunur;
+        // bu nedenle SendAsync'i bu kapsam içinde await'lemek gerekir (aksi halde content erken dispose edilir).
+        return await SendAsync<LessonResponse>(HttpMethod.Post, $"api/lessons/{contentId}/video", content, ct);
+    }
+
+    public Task<ApiResult<NoContentData>> UpdateLessonOrderAsync(int contentId, int orderIndex, CancellationToken ct = default)
+        => SendAsync<NoContentData>(HttpMethod.Put, $"api/lessons/{contentId}/order?orderIndex={orderIndex}", null, ct);
+
     public Task<ApiResult<AttendanceMonthResponse>> GetAttendanceMonthAsync(
         int workspaceId, int year, int month, CancellationToken ct = default)
         => SendAsync<AttendanceMonthResponse>(
@@ -144,13 +161,17 @@ public sealed class ApiClient(HttpClient http) : IApiClient
             HttpMethod.Put, $"api/workspaces/{workspaceId}/attendance?date={date:yyyy-MM-dd}",
             new { marks = new[] { new { studentId, status } } }, ct);
 
-    private async Task<ApiResult<T>> SendAsync<T>(
+    private Task<ApiResult<T>> SendAsync<T>(
         HttpMethod method, string path, object? body, CancellationToken ct)
+        => SendAsync<T>(method, path, body is null ? null : JsonContent.Create(body, options: Json), ct);
+
+    private async Task<ApiResult<T>> SendAsync<T>(
+        HttpMethod method, string path, HttpContent? content, CancellationToken ct)
     {
         using var request = new HttpRequestMessage(method, path);
-        if (body is not null)
+        if (content is not null)
         {
-            request.Content = JsonContent.Create(body, options: Json);
+            request.Content = content;
         }
 
         using var response = await http.SendAsync(request, ct);
@@ -244,4 +265,7 @@ public interface IApiClient
     Task<ApiResult<QuizResponse>> GetQuizByContentAsync(int contentId, CancellationToken ct = default);
     Task<ApiResult<NoContentData>> AddQuizQuestionsAsync(int contentId, AddQuizQuestionsRequest request, CancellationToken ct = default);
     Task<ApiResult<NoContentData>> RemoveQuizQuestionAsync(int contentId, int questionId, CancellationToken ct = default);
+    Task<ApiResult<LessonResponse>> GetLessonAsync(int contentId, CancellationToken ct = default);
+    Task<ApiResult<LessonResponse>> UploadLessonVideoAsync(int contentId, Stream fileStream, string fileName, CancellationToken ct = default);
+    Task<ApiResult<NoContentData>> UpdateLessonOrderAsync(int contentId, int orderIndex, CancellationToken ct = default);
 }

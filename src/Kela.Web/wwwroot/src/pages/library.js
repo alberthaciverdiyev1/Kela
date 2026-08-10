@@ -63,6 +63,8 @@
                 let contentId = res && res.data ? res.data.contentId : null;
                 if (type === 1 && contentId) {
                     Kela.navigate('/teacher/quizzes/' + contentId);
+                } else if (type === 0 && contentId) {
+                    Kela.navigate('/teacher/lessons/' + contentId);
                 }
             }).catch(function (e) {
                 Kela.notify.error(e && e.response && e.response.data && e.response.data.message

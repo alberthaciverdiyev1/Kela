@@ -199,6 +199,44 @@ namespace Kela.Infrastructure.Data.Migrations
                     b.ToTable("contents", (string)null);
                 });
 
+            modelBuilder.Entity("Kela.Domain.Entities.Lesson", b =>
+                {
+                    b.Property<int>("ContentId")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<int>("DurationSeconds")
+                        .HasColumnType("integer");
+
+                    b.Property<bool>("IsPublished")
+                        .HasColumnType("boolean");
+
+                    b.Property<int>("OrderIndex")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("TeacherId")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("ThumbnailPath")
+                        .HasMaxLength(500)
+                        .HasColumnType("character varying(500)");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("VideoPath")
+                        .HasMaxLength(500)
+                        .HasColumnType("character varying(500)");
+
+                    b.HasKey("ContentId");
+
+                    b.HasIndex("TeacherId");
+
+                    b.ToTable("lessons", (string)null);
+                });
+
             modelBuilder.Entity("Kela.Domain.Entities.Node", b =>
                 {
                     b.Property<int>("Id")
@@ -731,6 +769,25 @@ namespace Kela.Infrastructure.Data.Migrations
                         .HasForeignKey("TeacherId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("Teacher");
+                });
+
+            modelBuilder.Entity("Kela.Domain.Entities.Lesson", b =>
+                {
+                    b.HasOne("Kela.Domain.Entities.Content", "Content")
+                        .WithOne()
+                        .HasForeignKey("Kela.Domain.Entities.Lesson", "ContentId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Kela.Domain.Entities.User", "Teacher")
+                        .WithMany()
+                        .HasForeignKey("TeacherId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Content");
 
                     b.Navigation("Teacher");
                 });

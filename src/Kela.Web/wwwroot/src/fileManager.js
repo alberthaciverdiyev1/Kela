@@ -21,6 +21,38 @@
         let nodeMap = {};
         let currentId = null;
 
+        // Ders satırlarında yerinde video yükleme için gizli dosya girişi.
+        const videoInput = document.createElement('input');
+        videoInput.type = 'file';
+        videoInput.accept = 'video/*,.mkv';
+        videoInput.className = 'hidden';
+        videoInput.style.display = 'none';
+        document.body.appendChild(videoInput);
+        let videoUploadContentId = null;
+        videoInput.addEventListener('change', function () {
+            const file = videoInput.files && videoInput.files[0];
+            const contentId = videoUploadContentId;
+            videoUploadContentId = null;
+            videoInput.value = '';
+            if (!file || !contentId) return;
+
+            const fd = new FormData();
+            fd.append('file', file);
+            Kela.axios.post('/teacher/lessons/' + contentId + '/video', fd).then(function (res) {
+                const d = res.data || {};
+                if (!d.success) {
+                    Kela.notify.error(d.message || t('common.error'));
+                    return;
+                }
+                Kela.notify.success(t('lessons.videoUploaded'));
+                load();
+            }).catch(function (e) {
+                Kela.notify.error(e && e.response && e.response.data && e.response.data.message
+                    ? e.response.data.message
+                    : t('common.error'));
+            });
+        });
+
         function esc(v) {
             return Kela.esc ? Kela.esc(String(v == null ? '' : v)) : String(v);
         }
@@ -135,6 +167,13 @@
             let statusBadge = content && content.isPublished
                 ? '<span class="badge badge-success badge-sm">' + esc(t('library.published')) + '</span>'
                 : '<span class="badge badge-warning badge-sm">' + esc(t('library.draft')) + '</span>';
+            let videoBadge = '';
+            if (content && content.type === 0) {
+                let hasVideo = content.lesson && content.lesson.hasVideo;
+                videoBadge = hasVideo
+                    ? '<span class="badge badge-success badge-sm">' + esc(t('lessons.hasVideo')) + '</span>'
+                    : '<span class="badge badge-warning badge-sm">' + esc(t('lessons.noVideo')) + '</span>';
+            }
             let urlBtn = content && content.url
                 ? '<button type="button" class="btn btn-sm btn-square btn-ghost" title="' + esc(t('library.open')) + '" data-open-url="' + esc(content.url) + '">' + Kela.icon('external-link', 'w-4 h-4') + '</button>'
                 : '';
@@ -142,7 +181,8 @@
             return '<tr class="hover:bg-base-200/50">' +
                 '<td><a href="#" data-open-content="' + n.id + '" class="flex items-center gap-2 font-medium">' +
                 Kela.icon(info.icon, 'w-4 h-4 opacity-70') + '<span>' + esc(n.name) + '</span></a></td>' +
-                '<td><span class="badge badge-ghost badge-sm">' + esc(t(info.labelKey)) + '</span> ' + statusBadge + '</td>' +
+                '<td><span class="badge badge-ghost badge-sm">' + esc(t(info.labelKey)) + '</span> ' + statusBadge +
+                (videoBadge ? ' ' + videoBadge : '') + '</td>' +
                 '<td class="w-1 whitespace-nowrap text-right">' + urlBtn + nodeActions(n) + '</td>' +
                 '</tr>';
         }
@@ -153,6 +193,10 @@
                 let published = n.content && n.content.isPublished;
                 html += '<button type="button" class="btn btn-sm btn-square btn-ghost" title="' + esc(t('library.publish')) + '" data-toggle-publish="' + n.id + '">' +
                     Kela.icon(published ? 'eye-off' : 'eye', 'w-4 h-4') + '</button>';
+                if (n.content && n.content.type === 0) {
+                    html += '<button type="button" class="btn btn-sm btn-square btn-ghost" title="' + esc(t('lessons.uploadVideo')) + '" data-upload-video="' + n.content.id + '">' +
+                        Kela.icon('upload', 'w-4 h-4') + '</button>';
+                }
             }
             html += '<button type="button" class="btn btn-sm btn-square btn-ghost" title="' + esc(t('library.rename')) + '" data-rename="' + n.id + '">' + Kela.icon('edit', 'w-4 h-4') + '</button>';
             html += '<button type="button" class="btn btn-sm btn-square btn-ghost" title="' + esc(t('library.move')) + '" data-move="' + n.id + '">' + Kela.icon('move', 'w-4 h-4') + '</button>';
@@ -349,8 +393,9 @@
                 event.preventDefault();
                 let node = findNode(Number(openContent.getAttribute('data-open-content')));
                 if (node) {
-                    if (opts.context === 'library' && node.content && node.content.type === 1) {
-                        Kela.navigate('/teacher/quizzes/' + node.content.id);
+                    if (opts.context === 'library' && node.content && (node.content.type === 1 || node.content.type === 0)) {
+                        var route = node.content.type === 1 ? '/teacher/quizzes/' : '/teacher/lessons/';
+                        Kela.navigate(route + node.content.id);
                         return;
                     }
                     openPreview(node);
@@ -383,6 +428,14 @@
             if (del) {
                 let node = findNode(Number(del.getAttribute('data-delete-node')));
                 if (node) deleteNode(node);
+                return;
+            }
+
+            let uploadVideo = el.closest('[data-upload-video]');
+            if (uploadVideo) {
+                event.preventDefault();
+                videoUploadContentId = Number(uploadVideo.getAttribute('data-upload-video'));
+                videoInput.click();
                 return;
             }
 

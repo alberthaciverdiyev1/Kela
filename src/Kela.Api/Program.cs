@@ -1,4 +1,5 @@
 using Kela.Api.Endpoints;
+using Kela.Api.Media;
 using Kela.Api.Middleware;
 using Kela.Application;
 using Kela.Domain.Common;
@@ -8,6 +9,7 @@ using Kela.Infrastructure.Data.Seeds;
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.FileProviders;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -16,6 +18,9 @@ builder.Services.AddOpenApi();
 // parametresiz UseExceptionHandler() IProblemDetailsService ister — bu yüzden açıkça eklenir.
 builder.Services.AddProblemDetails();
 builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
+
+// Video/thumbnail işleme (ffprobe süre, ffmpeg thumbnail).
+builder.Services.AddSingleton<MediaProcessor>();
 
 // Cookie-only kimlik doğrulama:
 //   SetApplicationName sabit tutulur → API ile Web (Kela.Web) aynı cookie'yi paylaşabilir.
@@ -67,6 +72,17 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+
+// Yüklenen video/thumbnail dosyaları (thumbnail'lar statik; videolar akış endpoint'i ile korunur).
+var uploadsRoot = Path.GetFullPath(
+    builder.Configuration["Uploads:Root"] ?? Path.Combine(builder.Environment.ContentRootPath, "uploads"));
+Directory.CreateDirectory(uploadsRoot);
+app.UseStaticFiles(new StaticFileOptions
+{
+    FileProvider = new PhysicalFileProvider(uploadsRoot),
+    RequestPath = "/uploads",
+});
+
 app.UseExceptionHandler();
 app.UseAuthentication();
 app.UseAuthorization();
@@ -81,6 +97,7 @@ app.MapContentsEndpoints();
 app.MapNodesEndpoints();
 app.MapQuestionsEndpoints();
 app.MapQuizzesEndpoints();
+app.MapLessonsEndpoints();
 app.MapAttendancesEndpoints();
 
 using (var scope = app.Services.CreateScope())

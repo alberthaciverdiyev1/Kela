@@ -9,7 +9,9 @@ internal sealed class NodeRepository(KelaDbContext context) : INodeRepository
 {
     public async Task<List<Node>> GetByContextAsync(int? workspaceId, int? teacherId, CancellationToken cancellationToken = default)
     {
-        var query = context.Nodes.Include(n => n.Content);
+        var query = context.Nodes
+            .Include(n => n.Content)
+            .ThenInclude(c => c!.Lesson);
 
         if (workspaceId is not null)
         {
@@ -32,7 +34,10 @@ internal sealed class NodeRepository(KelaDbContext context) : INodeRepository
         => await context.Nodes.Where(n => n.ContentId == contentId).ToListAsync(cancellationToken);
 
     public async Task<Node?> GetByIdAsync(int id, CancellationToken cancellationToken = default)
-        => await context.Nodes.Include(n => n.Content).FirstOrDefaultAsync(n => n.Id == id, cancellationToken);
+        => await context.Nodes
+            .Include(n => n.Content)
+            .ThenInclude(c => c!.Lesson)
+            .FirstOrDefaultAsync(n => n.Id == id, cancellationToken);
 
     public void Add(Node node) => context.Nodes.Add(node);
 

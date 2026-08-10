@@ -124,13 +124,18 @@ public sealed record ContentResponse(
     bool IsPublished,
     DateTime CreatedAt);
 
+public sealed record LessonSummaryResponse(
+    bool HasVideo,
+    int DurationSeconds);
+
 public sealed record ContentSummaryResponse(
     int Id,
     string Title,
     string? Description,
     int Type,
     string? Url,
-    bool IsPublished);
+    bool IsPublished,
+    LessonSummaryResponse? Lesson = null);
 
 public sealed record NodeResponse(
     int Id,
@@ -175,6 +180,19 @@ public sealed record QuizResponse(
     string? Description,
     bool IsPublished,
     IReadOnlyList<QuizQuestionResponse> Questions);
+
+public sealed record LessonResponse(
+    int ContentId,
+    int TeacherId,
+    string Title,
+    string? Description,
+    string? VideoPath,
+    string? ThumbnailPath,
+    int DurationSeconds,
+    bool IsPublished,
+    int OrderIndex);
+
+public sealed record UpdateLessonOrderRequest(int OrderIndex);
 
 public sealed record CreateQuestionRequest(
     int TeacherId = 0,

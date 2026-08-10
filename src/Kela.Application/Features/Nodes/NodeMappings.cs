@@ -12,7 +12,10 @@ public static class NodeMappings
         content.Description,
         content.Type,
         content.Url,
-        content.IsPublished);
+        content.IsPublished,
+        content.Lesson is null ? null : new LessonSummaryResponse(
+            !string.IsNullOrEmpty(content.Lesson.VideoPath),
+            content.Lesson.DurationSeconds));
 
     public static NodeResponse ToResponse(this Node node, IReadOnlyList<NodeResponse> children) => new(
         node.Id,

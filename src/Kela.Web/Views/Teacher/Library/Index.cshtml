@@ -15,9 +15,12 @@
 <div id="library-page" class="flex flex-col gap-6"
      data-base="/teacher/library"
      data-type="@(contentType?.ToString() ?? "")">
-    <app-page-head title="@(typeKey is null ? L.T("library.title") : L.T(typeKey))" subtitle="@L.T("library.subtitle")">
+    <app-page-head title="@(typeKey is null ? L.T("library.title") : L.T(typeKey))" subtitle="@(contentType == 0 ? L.T("lessons.librarySubtitle") : L.T("library.subtitle"))">
         <div class="flex gap-2">
-            <app-btn variant="secondary" icon="quiz" href="/teacher/questions">@L.T("questions.title")</app-btn>
+            @if (contentType == 1)
+            {
+                <app-btn variant="secondary" icon="quiz" href="/teacher/questions">@L.T("questions.title")</app-btn>
+            }
             <app-btn variant="secondary" icon="folder-plus" onclick="document.getElementById('library-folder-dialog').showModal()">@L.T("library.newFolder")</app-btn>
             <app-btn variant="primary" icon="plus" onclick="document.getElementById('library-content-dialog').showModal()">@L.T("library.newContent")</app-btn>
         </div>
