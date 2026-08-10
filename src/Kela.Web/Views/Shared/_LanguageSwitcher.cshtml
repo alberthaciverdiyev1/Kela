@@ -2,25 +2,21 @@
 @using Kela.Web.Helpers
 @{
     var returnUrl = Context.Request.Path + Context.Request.QueryString;
-}
-@functions
-{
-    static string LangLabel(string code) => code switch
+    var langLabels = new Dictionary<string, string>
     {
-        "az" => "Azərbaycanca",
-        "en" => "English",
-        "ru" => "Русский",
-        "tr" => "Türkçe",
-        _ => code,
+        ["az"] = "Azərbaycanca",
+        ["en"] = "English",
+        ["ru"] = "Русский",
+        ["tr"] = "Türkçe",
     };
 }
 <form method="post" asp-controller="Home" asp-action="Lang" class="inline-flex" id="lang-form">
     @Html.AntiForgeryToken()
     <input type="hidden" name="returnUrl" value="@returnUrl" />
     <select name="lang" class="select select-sm min-w-36" onchange="this.form.requestSubmit()" aria-label="Language">
-        @foreach (var code in AppConstants.Langs)
+        @foreach (var lang in AppConstants.Langs)
         {
-            <option value="@code" selected="@(code == L.Active)">@LangLabel(code)</option>
+            <option value="@lang" selected="@(lang == L.Active)">@langLabels[lang]</option>
         }
     </select>
 </form>

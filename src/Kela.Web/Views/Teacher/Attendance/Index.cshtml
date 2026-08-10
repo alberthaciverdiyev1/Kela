@@ -1,5 +1,6 @@
 @model Kela.Web.Models.Attendances.AttendancePageViewModel
 @{
+    Layout = "_Layout";
     ViewData["Title"] = L.T("attendance.title");
     var hasWorkspace = Model.WorkspaceId > 0;
     var daysInMonth = hasWorkspace ? DateTime.DaysInMonth(Model.Year, Model.Month) : 0;
@@ -22,7 +23,8 @@
         <div class="flex gap-2">
             @if (hasWorkspace)
             {
-                <app-btn variant="secondary" icon="folder" href="/teacher/workspaces/@Model.WorkspaceId">@L.T("workspaces.title")</app-btn>
+                <app-btn variant="secondary" icon="folder"
+                         href="/teacher/workspaces/@Model.WorkspaceId">@L.T("workspaces.title")</app-btn>
             }
         </div>
     </app-page-head>
@@ -31,18 +33,21 @@
         <details class="dropdown" id="attendance-workspace-dd">
             <summary class="btn btn-sm gap-2 border border-base-300 bg-base-100">
                 <app-icon name="folder" class="w-4 h-4 opacity-60"/>
-                <span id="attendance-workspace-label">@(hasWorkspace ? Model.WorkspaceName : L.T("attendance.chooseWorkspace"))</span>
+                <span
+                    id="attendance-workspace-label">@(hasWorkspace ? Model.WorkspaceName : L.T("attendance.chooseWorkspace"))</span>
                 <app-icon name="chevron-down" class="w-3.5 h-3.5"/>
             </summary>
             <div class="dropdown-content z-50 mt-1 w-72 rounded-box border border-base-300 bg-base-100 p-2 shadow-xl">
                 <label class="input flex items-center gap-2 input-sm mb-2">
                     <app-icon name="search" class="w-4 h-4 opacity-40"/>
-                    <input id="attendance-workspace-search" type="search" class="grow" placeholder="@L.T("attendance.filter.search")" autocomplete="off"/>
+                    <input id="attendance-workspace-search" type="search" class="grow"
+                           placeholder="@L.T("attendance.filter.search")" autocomplete="off"/>
                 </label>
                 <ul id="attendance-workspace-list" class="menu menu-sm max-h-64 overflow-auto p-0">
                     @foreach (var w in Model.Workspaces)
                     {
-                        <li><a data-workspace-value="@w.Id" class="@(w.Id == Model.WorkspaceId ? "active" : "")">@w.Name</a></li>
+                        <li><a data-workspace-value="@w.Id"
+                               class="@(w.Id == Model.WorkspaceId ? "active" : "")">@w.Name</a></li>
                     }
                 </ul>
             </div>
@@ -50,13 +55,16 @@
         @if (hasWorkspace)
         {
             <div class="flex items-center gap-1">
-                <a class="btn btn-ghost btn-square btn-sm" href="?workspaceId=@Model.WorkspaceId&month=@prevMonthValue" title="@L.T("attendance.prev")">@Html.Raw(Icons.Icon("chevron-left", "w-4 h-4"))</a>
+                <a class="btn btn-ghost btn-square btn-sm" href="?workspaceId=@Model.WorkspaceId&month=@prevMonthValue"
+                   title="@L.T("attendance.prev")">@Html.Raw(Icons.Icon("chevron-left", "w-4 h-4"))</a>
                 <input type="month" id="attendance-month" class="input input-sm w-44 text-center" value="@monthValue"/>
-                <a class="btn btn-ghost btn-square btn-sm" href="?workspaceId=@Model.WorkspaceId&month=@nextMonthValue" title="@L.T("attendance.next")">@Html.Raw(Icons.Icon("chevron-right", "w-4 h-4"))</a>
+                <a class="btn btn-ghost btn-square btn-sm" href="?workspaceId=@Model.WorkspaceId&month=@nextMonthValue"
+                   title="@L.T("attendance.next")">@Html.Raw(Icons.Icon("chevron-right", "w-4 h-4"))</a>
             </div>
             <label class="input flex w-full max-w-xs items-center gap-2 input-sm">
                 <app-icon name="search" class="w-4 h-4 opacity-40"/>
-                <input id="attendance-search" type="search" class="grow" placeholder="@L.T("attendance.filter.search")" autocomplete="off"/>
+                <input id="attendance-search" type="search" class="grow" placeholder="@L.T("attendance.filter.search")"
+                       autocomplete="off"/>
             </label>
             <select id="attendance-status-filter" class="select select-sm w-40">
                 <option value="-1">@L.T("attendance.filter.all")</option>
@@ -73,42 +81,48 @@
         <div class="flex items-center gap-3 rounded-box border border-base-200 bg-base-100 px-4 py-3">
             <span class="text-primary">@Html.Raw(Icons.Icon("students", "w-4 h-4"))</span>
             <div>
-                <div class="text-xs font-medium uppercase tracking-wide text-base-content/50">@L.T("attendance.stats.total")</div>
+                <div
+                    class="text-xs font-medium uppercase tracking-wide text-base-content/50">@L.T("attendance.stats.total")</div>
                 <div id="stat-total" class="text-xl font-semibold tracking-tight">0</div>
             </div>
         </div>
         <div class="flex items-center gap-3 rounded-box border border-base-200 bg-base-100 px-4 py-3">
             <span class="text-success">@Html.Raw(Icons.Icon("check-circle", "w-4 h-4"))</span>
             <div>
-                <div class="text-xs font-medium uppercase tracking-wide text-base-content/50">@L.T("attendance.stats.present")</div>
+                <div
+                    class="text-xs font-medium uppercase tracking-wide text-base-content/50">@L.T("attendance.stats.present")</div>
                 <div id="stat-present" class="text-xl font-semibold tracking-tight">0</div>
             </div>
         </div>
         <div class="flex items-center gap-3 rounded-box border border-base-200 bg-base-100 px-4 py-3">
             <span class="text-error">@Html.Raw(Icons.Icon("x", "w-4 h-4"))</span>
             <div>
-                <div class="text-xs font-medium uppercase tracking-wide text-base-content/50">@L.T("attendance.stats.absent")</div>
+                <div
+                    class="text-xs font-medium uppercase tracking-wide text-base-content/50">@L.T("attendance.stats.absent")</div>
                 <div id="stat-absent" class="text-xl font-semibold tracking-tight">0</div>
             </div>
         </div>
         <div class="flex items-center gap-3 rounded-box border border-base-200 bg-base-100 px-4 py-3">
             <span class="text-warning">@Html.Raw(Icons.Icon("clock", "w-4 h-4"))</span>
             <div>
-                <div class="text-xs font-medium uppercase tracking-wide text-base-content/50">@L.T("attendance.stats.late")</div>
+                <div
+                    class="text-xs font-medium uppercase tracking-wide text-base-content/50">@L.T("attendance.stats.late")</div>
                 <div id="stat-late" class="text-xl font-semibold tracking-tight">0</div>
             </div>
         </div>
         <div class="flex items-center gap-3 rounded-box border border-base-200 bg-base-100 px-4 py-3">
             <span class="text-info">@Html.Raw(Icons.Icon("shield", "w-4 h-4"))</span>
             <div>
-                <div class="text-xs font-medium uppercase tracking-wide text-base-content/50">@L.T("attendance.stats.excused")</div>
+                <div
+                    class="text-xs font-medium uppercase tracking-wide text-base-content/50">@L.T("attendance.stats.excused")</div>
                 <div id="stat-excused" class="text-xl font-semibold tracking-tight">0</div>
             </div>
         </div>
         <div class="flex items-center gap-3 rounded-box border border-base-200 bg-base-100 px-4 py-3">
             <span class="text-secondary">@Html.Raw(Icons.Icon("percent", "w-4 h-4"))</span>
             <div>
-                <div class="text-xs font-medium uppercase tracking-wide text-base-content/50">@L.T("attendance.stats.rate")</div>
+                <div
+                    class="text-xs font-medium uppercase tracking-wide text-base-content/50">@L.T("attendance.stats.rate")</div>
                 <div id="stat-rate" class="text-xl font-semibold tracking-tight">0%</div>
             </div>
         </div>
@@ -124,18 +138,27 @@
     }
 </div>
 
-<div id="attendance-picker" class="fixed z-50 hidden w-44 rounded-box border border-base-200 bg-base-100 p-1.5 shadow-xl">
-    <button type="button" data-pick-status="1" class="flex w-full items-center gap-2.5 rounded-lg px-3 py-2 text-sm hover:bg-success/10 hover:text-success">
-        <span class="flex size-5 items-center justify-center rounded-md bg-success text-white">@Html.Raw(Icons.Icon("check-circle", "w-3 h-3"))</span>@L.T("attendance.status.present")
+<div id="attendance-picker"
+     class="fixed z-50 hidden w-44 rounded-box border border-base-200 bg-base-100 p-1.5 shadow-xl">
+    <button type="button" data-pick-status="1"
+            class="flex w-full items-center gap-2.5 rounded-lg px-3 py-2 text-sm hover:bg-success/10 hover:text-success">
+        <span
+            class="flex size-5 items-center justify-center rounded-md bg-success text-white">@Html.Raw(Icons.Icon("check-circle", "w-3 h-3"))</span>@L.T("attendance.status.present")
     </button>
-    <button type="button" data-pick-status="2" class="flex w-full items-center gap-2.5 rounded-lg px-3 py-2 text-sm hover:bg-error/10 hover:text-error">
-        <span class="flex size-5 items-center justify-center rounded-md bg-error text-white">@Html.Raw(Icons.Icon("x", "w-3 h-3"))</span>@L.T("attendance.status.absent")
+    <button type="button" data-pick-status="2"
+            class="flex w-full items-center gap-2.5 rounded-lg px-3 py-2 text-sm hover:bg-error/10 hover:text-error">
+        <span
+            class="flex size-5 items-center justify-center rounded-md bg-error text-white">@Html.Raw(Icons.Icon("x", "w-3 h-3"))</span>@L.T("attendance.status.absent")
     </button>
-    <button type="button" data-pick-status="3" class="flex w-full items-center gap-2.5 rounded-lg px-3 py-2 text-sm hover:bg-warning/10 hover:text-warning">
-        <span class="flex size-5 items-center justify-center rounded-md bg-warning text-white">@Html.Raw(Icons.Icon("clock", "w-3 h-3"))</span>@L.T("attendance.status.late")
+    <button type="button" data-pick-status="3"
+            class="flex w-full items-center gap-2.5 rounded-lg px-3 py-2 text-sm hover:bg-warning/10 hover:text-warning">
+        <span
+            class="flex size-5 items-center justify-center rounded-md bg-warning text-white">@Html.Raw(Icons.Icon("clock", "w-3 h-3"))</span>@L.T("attendance.status.late")
     </button>
-    <button type="button" data-pick-status="4" class="flex w-full items-center gap-2.5 rounded-lg px-3 py-2 text-sm hover:bg-info/10 hover:text-info">
-        <span class="flex size-5 items-center justify-center rounded-md bg-info text-white">@Html.Raw(Icons.Icon("shield", "w-3 h-3"))</span>@L.T("attendance.status.excused")
+    <button type="button" data-pick-status="4"
+            class="flex w-full items-center gap-2.5 rounded-lg px-3 py-2 text-sm hover:bg-info/10 hover:text-info">
+        <span
+            class="flex size-5 items-center justify-center rounded-md bg-info text-white">@Html.Raw(Icons.Icon("shield", "w-3 h-3"))</span>@L.T("attendance.status.excused")
     </button>
 </div>
 
