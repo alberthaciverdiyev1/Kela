@@ -342,7 +342,13 @@
             if (openContent) {
                 event.preventDefault();
                 let node = findNode(Number(openContent.getAttribute('data-open-content')));
-                if (node) openPreview(node);
+                if (node) {
+                    if (opts.context === 'library' && node.content && node.content.type === 1) {
+                        Kela.navigate('/teacher/quizzes/' + node.content.id);
+                        return;
+                    }
+                    openPreview(node);
+                }
                 return;
             }
 
@@ -415,8 +421,9 @@
             },
             createContent: function (payload) {
                 payload.parentId = currentId;
-                return Kela.axios.post(opts.createContentUrl, payload).then(function () {
+                return Kela.axios.post(opts.createContentUrl, payload).then(function (res) {
                     load();
+                    return res;
                 });
             }
         };

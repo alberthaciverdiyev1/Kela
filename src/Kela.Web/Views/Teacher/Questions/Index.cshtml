@@ -1,0 +1,32 @@
+@{
+    ViewData["Title"] = L.T("questions.title");
+}
+<div id="questions-page" class="flex flex-col gap-6">
+    <app-page-head title="@L.T("questions.title")" subtitle="@L.T("questions.subtitle")">
+        <app-btn variant="primary" icon="plus" onclick="document.getElementById('question-dialog').showModal()">@L.T("questions.new")</app-btn>
+    </app-page-head>
+
+    <div class="flex">
+        <label class="input flex w-full max-w-sm items-center gap-2">
+            <app-icon name="search" class="w-4 h-4 opacity-40" />
+            <input id="questions-search" class="grow" type="search" placeholder="@L.T("nav.search")" autocomplete="off" />
+        </label>
+    </div>
+
+    <div id="questions-list" class="flex flex-col gap-3"></div>
+
+    <app-modal id="question-dialog" title="@L.T("questions.new")">
+        <form id="question-form" class="flex flex-col gap-4" novalidate>
+            <input type="hidden" id="question-id" value="" />
+            @await Html.PartialAsync("~/Views/Teacher/Questions/_QuestionFields.cshtml", "question")
+            <div class="flex justify-end gap-2">
+                <app-btn variant="secondary" onclick="document.getElementById('question-dialog').close()">@L.T("common.cancel")</app-btn>
+                <app-btn variant="primary" type="submit">@L.T("common.save")</app-btn>
+            </div>
+        </form>
+    </app-modal>
+</div>
+
+@section Scripts {
+    <script src="~/src/pages/questions.js" asp-append-version="true"></script>
+}

@@ -2,6 +2,7 @@ using FluentValidation;
 using Kela.Application.Features.Contents.Requests;
 using Kela.Application.Features.Contents.Responses;
 using Kela.Application.Features.Nodes;
+using Kela.Application.Features.Quizzes;
 using Kela.Application.Features.Users;
 using Kela.Application.Patterns;
 using Kela.Domain.Common;
@@ -14,6 +15,7 @@ namespace Kela.Application.Features.Contents;
 internal sealed class ContentService(
     IContentRepository contents,
     INodeRepository nodes,
+    IQuizRepository quizzes,
     IUserRepository users,
     UserManager<User> userManager,
     IUnitOfWork unitOfWork,
@@ -71,6 +73,20 @@ internal sealed class ContentService(
         nodes.Add(node);
         await unitOfWork.SaveChangesAsync(cancellationToken);
 
+        if (request.Type == ContentType.Quiz)
+        {
+            quizzes.Add(new Quiz
+            {
+                ContentId = content.Id,
+                TeacherId = request.TeacherId,
+                Title = trimmed,
+                Description = request.Description,
+                IsPublished = false,
+                CreatedAt = DateTime.UtcNow,
+            });
+            await unitOfWork.SaveChangesAsync(cancellationToken);
+        }
+
         return content.Id;
     }
 
@@ -95,6 +111,19 @@ internal sealed class ContentService(
 
         contents.Update(content);
         await unitOfWork.SaveChangesAsync(cancellationToken);
+
+        if (content.Type == ContentType.Quiz)
+        {
+            var quiz = await quizzes.GetByContentIdAsync(content.Id, cancellationToken);
+            if (quiz is not null)
+            {
+                quiz.Title = content.Title;
+                quiz.Description = content.Description;
+                quiz.UpdatedAt = DateTime.UtcNow;
+                quizzes.Update(quiz);
+                await unitOfWork.SaveChangesAsync(cancellationToken);
+            }
+        }
     }
 
     public async Task SetPublishedAsync(int id, bool published, CancellationToken cancellationToken = default)
@@ -125,6 +154,16 @@ internal sealed class ContentService(
 
         contents.Update(content);
         await unitOfWork.SaveChangesAsync(cancellationToken);
+
+        if (content.Type == ContentType.Quiz)
+        {
+            var quiz = await quizzes.GetByContentIdAsync(content.Id, cancellationToken);
+            if (quiz is not null)
+            {
+                quizzes.Remove(quiz);
+                await unitOfWork.SaveChangesAsync(cancellationToken);
+            }
+        }
     }
 
     private async Task EnsureTeacherExistsAsync(int teacherId, CancellationToken cancellationToken)

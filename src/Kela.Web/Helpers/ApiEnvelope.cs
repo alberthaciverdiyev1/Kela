@@ -153,3 +153,46 @@ public sealed record AddContentRequest(int WorkspaceId = 0, int ContentId = 0, i
 public sealed record CopyFolderRequest(int WorkspaceId = 0, int SourceNodeId = 0, int? ParentId = null);
 
 public sealed record UpdateNodeRequest(string? Name, int? ParentId, int? Position);
+
+public sealed record QuestionResponse(
+    int Id,
+    int TeacherId,
+    string Text,
+    string OptionA,
+    string OptionB,
+    string OptionC,
+    string? OptionD,
+    string? OptionE,
+    int CorrectOption,
+    DateTime CreatedAt);
+
+public sealed record QuizQuestionResponse(int Position, QuestionResponse Question);
+
+public sealed record QuizResponse(
+    int ContentId,
+    int TeacherId,
+    string Title,
+    string? Description,
+    bool IsPublished,
+    IReadOnlyList<QuizQuestionResponse> Questions);
+
+public sealed record CreateQuestionRequest(
+    int TeacherId = 0,
+    string Text = "",
+    string OptionA = "",
+    string OptionB = "",
+    string OptionC = "",
+    string? OptionD = null,
+    string? OptionE = null,
+    int CorrectOption = 0);
+
+public sealed record UpdateQuestionRequest(
+    string Text = "",
+    string OptionA = "",
+    string OptionB = "",
+    string OptionC = "",
+    string? OptionD = null,
+    string? OptionE = null,
+    int CorrectOption = 0);
+
+public sealed record AddQuizQuestionsRequest(IReadOnlyList<int> QuestionIds);

@@ -48,12 +48,16 @@
             const description = document.getElementById('library-content-desc').value.trim();
             const btn = contentForm.querySelector('button[type="submit"]');
             if (btn) btn.disabled = true;
-            fm.createContent({ title: title, type: type, url: url || null, description: description || null }).then(function () {
+            fm.createContent({ title: title, type: type, url: url || null, description: description || null }).then(function (res) {
                 document.getElementById('library-content-dialog').close();
                 document.getElementById('library-content-title').value = '';
                 document.getElementById('library-content-url').value = '';
                 document.getElementById('library-content-desc').value = '';
                 Kela.notify.success(Kela.t('library.created'));
+                let contentId = res && res.data ? res.data.contentId : null;
+                if (type === 1 && contentId) {
+                    Kela.navigate('/teacher/quizzes/' + contentId);
+                }
             }).catch(function () {
             }).finally(function () {
                 if (btn) btn.disabled = false;

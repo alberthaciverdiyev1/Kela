@@ -3,6 +3,8 @@ using Kela.Application.Features.Attendances;
 using Kela.Application.Features.Cities;
 using Kela.Application.Features.Contents;
 using Kela.Application.Features.Nodes;
+using Kela.Application.Features.Questions;
+using Kela.Application.Features.Quizzes;
 using Kela.Application.Features.Students;
 using Kela.Application.Features.SiteConfiguration;
 using Kela.Application.Features.Users;
@@ -25,6 +27,8 @@ public static class DependencyInjection
         services.AddScoped<IWorkspaceService, WorkspaceService>();
         services.AddScoped<IContentService, ContentService>();
         services.AddScoped<INodeService, NodeService>();
+        services.AddScoped<IQuestionService, QuestionService>();
+        services.AddScoped<IQuizService, QuizService>();
 
         // FluentValidation: AbstractValidator<T> türevlerini IValidator<T> olarak otomatik kaydeder.
         // Validatörler internal olduğundan includeInternalTypes gerekir.

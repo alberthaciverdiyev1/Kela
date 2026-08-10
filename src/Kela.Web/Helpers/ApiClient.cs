@@ -112,6 +112,27 @@ public sealed class ApiClient(HttpClient http) : IApiClient
     public Task<ApiResult<NoContentData>> DeleteNodeAsync(int id, CancellationToken ct = default)
         => SendAsync<NoContentData>(HttpMethod.Delete, $"api/nodes/{id}", null, ct);
 
+    public Task<ApiResult<List<QuestionResponse>>> GetQuestionsAsync(int teacherId, CancellationToken ct = default)
+        => SendAsync<List<QuestionResponse>>(HttpMethod.Get, $"api/questions?teacherId={teacherId}", null, ct);
+
+    public Task<ApiResult<int>> CreateQuestionAsync(CreateQuestionRequest request, CancellationToken ct = default)
+        => SendAsync<int>(HttpMethod.Post, "api/questions", request, ct);
+
+    public Task<ApiResult<NoContentData>> UpdateQuestionAsync(int id, UpdateQuestionRequest request, CancellationToken ct = default)
+        => SendAsync<NoContentData>(HttpMethod.Put, $"api/questions/{id}", request, ct);
+
+    public Task<ApiResult<NoContentData>> DeleteQuestionAsync(int id, CancellationToken ct = default)
+        => SendAsync<NoContentData>(HttpMethod.Delete, $"api/questions/{id}", null, ct);
+
+    public Task<ApiResult<QuizResponse>> GetQuizByContentAsync(int contentId, CancellationToken ct = default)
+        => SendAsync<QuizResponse>(HttpMethod.Get, $"api/quizzes/{contentId}", null, ct);
+
+    public Task<ApiResult<NoContentData>> AddQuizQuestionsAsync(int contentId, AddQuizQuestionsRequest request, CancellationToken ct = default)
+        => SendAsync<NoContentData>(HttpMethod.Post, $"api/quizzes/{contentId}/questions", request, ct);
+
+    public Task<ApiResult<NoContentData>> RemoveQuizQuestionAsync(int contentId, int questionId, CancellationToken ct = default)
+        => SendAsync<NoContentData>(HttpMethod.Delete, $"api/quizzes/{contentId}/questions/{questionId}", null, ct);
+
     public Task<ApiResult<AttendanceMonthResponse>> GetAttendanceMonthAsync(
         int workspaceId, int year, int month, CancellationToken ct = default)
         => SendAsync<AttendanceMonthResponse>(
@@ -216,4 +237,11 @@ public interface IApiClient
     Task<ApiResult<int>> CopyFolderToWorkspaceAsync(CopyFolderRequest request, CancellationToken ct = default);
     Task<ApiResult<NoContentData>> UpdateNodeAsync(int id, UpdateNodeRequest request, CancellationToken ct = default);
     Task<ApiResult<NoContentData>> DeleteNodeAsync(int id, CancellationToken ct = default);
+    Task<ApiResult<List<QuestionResponse>>> GetQuestionsAsync(int teacherId, CancellationToken ct = default);
+    Task<ApiResult<int>> CreateQuestionAsync(CreateQuestionRequest request, CancellationToken ct = default);
+    Task<ApiResult<NoContentData>> UpdateQuestionAsync(int id, UpdateQuestionRequest request, CancellationToken ct = default);
+    Task<ApiResult<NoContentData>> DeleteQuestionAsync(int id, CancellationToken ct = default);
+    Task<ApiResult<QuizResponse>> GetQuizByContentAsync(int contentId, CancellationToken ct = default);
+    Task<ApiResult<NoContentData>> AddQuizQuestionsAsync(int contentId, AddQuizQuestionsRequest request, CancellationToken ct = default);
+    Task<ApiResult<NoContentData>> RemoveQuizQuestionAsync(int contentId, int questionId, CancellationToken ct = default);
 }

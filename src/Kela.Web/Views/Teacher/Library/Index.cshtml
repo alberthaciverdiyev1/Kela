@@ -4,6 +4,7 @@
 <div id="library-page" class="flex flex-col gap-6">
     <app-page-head title="@L.T("library.title")" subtitle="@L.T("library.subtitle")">
         <div class="flex gap-2">
+            <app-btn variant="secondary" icon="quiz" href="/teacher/questions">@L.T("questions.title")</app-btn>
             <app-btn variant="secondary" icon="folder-plus" onclick="document.getElementById('library-folder-dialog').showModal()">@L.T("library.newFolder")</app-btn>
             <app-btn variant="primary" icon="plus" onclick="document.getElementById('library-content-dialog').showModal()">@L.T("library.newContent")</app-btn>
         </div>

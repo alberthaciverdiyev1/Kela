@@ -79,6 +79,8 @@ app.MapStudentsEndpoints();
 app.MapWorkspacesEndpoints();
 app.MapContentsEndpoints();
 app.MapNodesEndpoints();
+app.MapQuestionsEndpoints();
+app.MapQuizzesEndpoints();
 app.MapAttendancesEndpoints();
 
 using (var scope = app.Services.CreateScope())

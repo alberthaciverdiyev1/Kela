@@ -4,6 +4,7 @@ using System.Text.RegularExpressions;
 using Kela.Web.Helpers;
 using Kela.Web.Localization;
 using Kela.Web.Models.Attendances;
+using Kela.Web.Models.Quizzes;
 using Kela.Web.Models.Settings;
 using Kela.Web.Models.Students;
 using Kela.Web.Models.Workspaces;
@@ -265,7 +266,7 @@ public sealed partial class TeacherController(IApiClient api, Localizer L) : Con
     public async Task<IActionResult> CreateLibraryContent([FromBody] CreateContentRequest model, CancellationToken ct)
     {
         var result = await api.CreateContentAsync(new CreateContentRequest(UserId, model.Title, model.Description, model.Type, model.Url, model.ParentId), ct);
-        return result.Success ? Json(new { success = true }) : ApiError(result);
+        return result.Success ? Json(new { success = true, contentId = result.Data }) : ApiError(result);
     }
 
     [HttpPut("teacher/library/content/{id:int}")]
@@ -336,6 +337,77 @@ public sealed partial class TeacherController(IApiClient api, Localizer L) : Con
     public async Task<IActionResult> CopyFolderToWorkspace(int id, [FromBody] CopyFolderRequest model, CancellationToken ct)
     {
         var result = await api.CopyFolderToWorkspaceAsync(new CopyFolderRequest(id, model.SourceNodeId, model.ParentId), ct);
+        return result.Success ? Json(new { success = true }) : ApiError(result);
+    }
+
+    [HttpGet("teacher/questions")]
+    public IActionResult Questions() => View("Questions/Index");
+
+    [HttpGet("teacher/questions/list")]
+    public async Task<IActionResult> QuestionsList(CancellationToken ct)
+    {
+        var result = await api.GetQuestionsAsync(UserId, ct);
+        return Json(result.Data ?? []);
+    }
+
+    [HttpPost("teacher/questions")]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> CreateQuestion([FromBody] CreateQuestionRequest model, CancellationToken ct)
+    {
+        var result = await api.CreateQuestionAsync(new CreateQuestionRequest(
+            UserId, model.Text, model.OptionA, model.OptionB, model.OptionC, model.OptionD, model.OptionE, model.CorrectOption), ct);
+        return result.Success ? Json(new { success = true, id = result.Data }) : ApiError(result);
+    }
+
+    [HttpPut("teacher/questions/{id:int}")]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> UpdateQuestion(int id, [FromBody] UpdateQuestionRequest model, CancellationToken ct)
+    {
+        var result = await api.UpdateQuestionAsync(id, model, ct);
+        return result.Success ? Json(new { success = true }) : ApiError(result);
+    }
+
+    [HttpDelete("teacher/questions/{id:int}")]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> DeleteQuestion(int id, CancellationToken ct)
+    {
+        var result = await api.DeleteQuestionAsync(id, ct);
+        return result.Success ? Json(new { success = true }) : ApiError(result);
+    }
+
+    [HttpGet("teacher/quizzes/{contentId:int}")]
+    public async Task<IActionResult> QuizEditor(int contentId, CancellationToken ct)
+    {
+        var result = await api.GetQuizByContentAsync(contentId, ct);
+        if (!result.Success || result.Data is null)
+        {
+            return NotFound();
+        }
+
+        var quiz = result.Data;
+        return View("Quizzes/Editor", new QuizEditorViewModel(quiz.ContentId, quiz.Title, quiz.Description, quiz.IsPublished));
+    }
+
+    [HttpGet("teacher/quizzes/{contentId:int}/data")]
+    public async Task<IActionResult> QuizData(int contentId, CancellationToken ct)
+    {
+        var result = await api.GetQuizByContentAsync(contentId, ct);
+        return result.Success && result.Data is not null ? Json(result.Data) : NotFound();
+    }
+
+    [HttpPost("teacher/quizzes/{contentId:int}/questions")]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> AddQuizQuestions(int contentId, [FromBody] AddQuizQuestionsRequest model, CancellationToken ct)
+    {
+        var result = await api.AddQuizQuestionsAsync(contentId, model, ct);
+        return result.Success ? Json(new { success = true }) : ApiError(result);
+    }
+
+    [HttpDelete("teacher/quizzes/{contentId:int}/questions/{questionId:int}")]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> RemoveQuizQuestion(int contentId, int questionId, CancellationToken ct)
+    {
+        var result = await api.RemoveQuizQuestionAsync(contentId, questionId, ct);
         return result.Success ? Json(new { success = true }) : ApiError(result);
     }
 
