@@ -1,5 +1,7 @@
+using System.Security.Claims;
 using Kela.Api.Contracts;
 using Kela.Application.Features.Users;
+using Microsoft.AspNetCore.Authentication;
 using Kela.Application.Features.Users.Auth;
 using Kela.Application.Features.Users.Requests;
 using Kela.Application.Features.Users.Responses;
@@ -12,6 +14,20 @@ public static class UsersEndpoints
     public static IEndpointRouteBuilder MapUsersEndpoints(this IEndpointRouteBuilder app)
     {
         var group = app.MapGroup("/api/users");
+
+        group.MapGet("/me", async (ClaimsPrincipal principal, IUserService users, CancellationToken ct) =>
+        {
+            var raw = principal.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (!int.TryParse(raw, out var userId))
+            {
+                return ApiResponse.Unauthorized("Kimlik doğrulama gerekli.");
+            }
+
+            var user = await users.GetByIdAsync(userId, ct);
+            return user is null
+                ? ApiResponse.NotFound("Kayıt bulunamadı.")
+                : ApiResponse<UserResponse>.Success(user);
+        }).RequireAuthorization();
 
         group.MapGet("", async (int page, IUserService users, CancellationToken ct) =>
             ApiResponse<PaginatedResult<UserResponse>>.Success(
