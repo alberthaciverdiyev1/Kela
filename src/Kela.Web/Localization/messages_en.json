@@ -253,5 +253,8 @@
   "quiz.removeConfirm": "Remove \"{text}\" from the quiz?",
   "quiz.questionAdded": "Questions added.",
   "quiz.questionRemoved": "Question removed.",
-  "quiz.created": "Question created and added to the quiz."
+  "quiz.created": "Question created and added to the quiz.",
+  "role.Admin": "Admin",
+  "nav.questions": "Question Bank",
+  "admin.info": "Admin panel: you can manage the question bank here."
 }

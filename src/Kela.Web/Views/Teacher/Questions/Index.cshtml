@@ -1,8 +1,9 @@
 @{
     Layout = "_Layout";
     ViewData["Title"] = L.T("questions.title");
+    var questionsBase = User.IsInRole(AppConstants.RoleAdmin) ? "/admin/questions" : "/teacher/questions";
 }
-<div id="questions-page" class="flex flex-col gap-6">
+<div id="questions-page" class="flex flex-col gap-6" data-base="@questionsBase">
     <app-page-head title="@L.T("questions.title")" subtitle="@L.T("questions.subtitle")">
         <app-btn variant="primary" icon="plus" onclick="document.getElementById('question-dialog').showModal()">@L.T("questions.new")</app-btn>
     </app-page-head>

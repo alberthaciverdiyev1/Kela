@@ -16,6 +16,7 @@ public static class AppConstants
 
     public static string HomeRouteFor(string role) => role switch
     {
+        RoleAdmin => "/admin/dashboard",
         RoleTeacher => "/teacher/dashboard",
         RoleStudent => "/student/dashboard",
         RoleParent => "/parent/dashboard",

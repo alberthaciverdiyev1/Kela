@@ -16,6 +16,7 @@
     if (initials.Length == 0) initials = "?";
     var roleKey = role switch
     {
+        AppConstants.RoleAdmin => "role.Admin",
         AppConstants.RoleTeacher => "role.Teacher",
         AppConstants.RoleStudent => "role.Student",
         AppConstants.RoleParent => "role.Parent",
@@ -27,6 +28,10 @@
     if (TempData["Error"] is string errorMsg) notifications.Add(new { type = "error", message = errorMsg });
     List<(string Label, string Url, string Icon)> navItems = role switch
     {
+        AppConstants.RoleAdmin => [
+            (L.T("nav.dashboard"), "/admin/dashboard", "dashboard"),
+            (L.T("nav.questions"), "/admin/questions", "quiz"),
+        ],
         AppConstants.RoleTeacher => [
             (L.T("nav.dashboard"), "/teacher/dashboard", "dashboard"),
             (L.T("nav.students"), "/teacher/students", "students"),

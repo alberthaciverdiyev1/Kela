@@ -4,6 +4,7 @@
     const page = document.getElementById('questions-page');
     if (!page) return;
 
+    const BASE = page.dataset.base || '/teacher/questions';
     const LIST_ID = 'questions-list';
     const SEARCH_ID = 'questions-search';
 
@@ -87,7 +88,7 @@
     }
 
     function load() {
-        Kela.axios.get('/teacher/questions/list').then(function (res) {
+        Kela.axios.get(BASE + '/list').then(function (res) {
             items = res.data || [];
             renderList();
         }).catch(function () { });
@@ -148,8 +149,8 @@
             let btn = form.querySelector('button[type="submit"]');
             if (btn) btn.disabled = true;
             let req = id
-                ? Kela.axios.put('/teacher/questions/' + id, payload)
-                : Kela.axios.post('/teacher/questions', payload);
+                ? Kela.axios.put(BASE + '/' + id, payload)
+                : Kela.axios.post(BASE, payload);
             req.then(function () {
                 document.getElementById('question-dialog').close();
                 load();
@@ -180,7 +181,7 @@
             let id = Number(del.getAttribute('data-delete-id'));
             let message = del.getAttribute('data-confirm') || t('questions.deleteConfirm', { text: '' });
             if (!confirm(message)) return;
-            Kela.axios.delete('/teacher/questions/' + id).then(function () {
+            Kela.axios.delete(BASE + '/' + id).then(function () {
                 load();
                 Kela.notify.success(t('questions.deleted'));
             }).catch(function () { });

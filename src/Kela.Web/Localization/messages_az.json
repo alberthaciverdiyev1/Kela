@@ -253,5 +253,8 @@
   "quiz.removeConfirm": "{text} sualını viktorinadan çıxarmaq istədiyinizə əminsiniz?",
   "quiz.questionAdded": "Suallar əlavə edildi.",
   "quiz.questionRemoved": "Sual çıxarıldı.",
-  "quiz.created": "Sual yaradıldı və viktorinaya əlavə edildi."
+  "quiz.created": "Sual yaradıldı və viktorinaya əlavə edildi.",
+  "role.Admin": "Admin",
+  "nav.questions": "Sual Bankası",
+  "admin.info": "Administrator paneli: sual bankasını idarə edə bilərsiniz."
 }
