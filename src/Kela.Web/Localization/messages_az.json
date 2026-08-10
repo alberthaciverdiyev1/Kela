@@ -256,5 +256,10 @@
   "quiz.created": "Sual yaradıldı və viktorinaya əlavə edildi.",
   "role.Admin": "Admin",
   "nav.questions": "Sual Bankası",
-  "admin.info": "Administrator paneli: sual bankasını idarə edə bilərsiniz."
+  "admin.info": "Administrator paneli: sual bankasını idarə edə bilərsiniz.",
+  "nav.lessons": "Dərslər",
+  "nav.quizzes": "Quizlər",
+  "nav.pdf": "PDF",
+  "nav.video": "Videolar",
+  "nav.links": "Linklər"
 }

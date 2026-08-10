@@ -91,8 +91,8 @@ public sealed class ApiClient(HttpClient http) : IApiClient
     public Task<ApiResult<NoContentData>> DeleteContentAsync(int id, CancellationToken ct = default)
         => SendAsync<NoContentData>(HttpMethod.Delete, $"api/contents/{id}", null, ct);
 
-    public Task<ApiResult<List<NodeResponse>>> GetLibraryTreeAsync(int teacherId, CancellationToken ct = default)
-        => SendAsync<List<NodeResponse>>(HttpMethod.Get, $"api/nodes/tree?teacherId={teacherId}", null, ct);
+    public Task<ApiResult<List<NodeResponse>>> GetLibraryTreeAsync(int teacherId, int? type = null, CancellationToken ct = default)
+        => SendAsync<List<NodeResponse>>(HttpMethod.Get, $"api/nodes/tree?teacherId={teacherId}{(type is not null ? $"&type={type}" : "")}", null, ct);
 
     public Task<ApiResult<List<NodeResponse>>> GetWorkspaceTreeAsync(int workspaceId, CancellationToken ct = default)
         => SendAsync<List<NodeResponse>>(HttpMethod.Get, $"api/nodes/tree?workspaceId={workspaceId}", null, ct);
@@ -230,7 +230,7 @@ public interface IApiClient
     Task<ApiResult<NoContentData>> UpdateContentAsync(int id, UpdateContentRequest request, CancellationToken ct = default);
     Task<ApiResult<NoContentData>> SetContentPublishedAsync(int id, bool published, CancellationToken ct = default);
     Task<ApiResult<NoContentData>> DeleteContentAsync(int id, CancellationToken ct = default);
-    Task<ApiResult<List<NodeResponse>>> GetLibraryTreeAsync(int teacherId, CancellationToken ct = default);
+    Task<ApiResult<List<NodeResponse>>> GetLibraryTreeAsync(int teacherId, int? type = null, CancellationToken ct = default);
     Task<ApiResult<List<NodeResponse>>> GetWorkspaceTreeAsync(int workspaceId, CancellationToken ct = default);
     Task<ApiResult<int>> CreateFolderAsync(CreateFolderRequest request, CancellationToken ct = default);
     Task<ApiResult<int>> AddContentToWorkspaceAsync(AddContentRequest request, CancellationToken ct = default);

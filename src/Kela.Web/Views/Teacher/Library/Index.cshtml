@@ -1,9 +1,21 @@
 @{
     Layout = "_Layout";
-    ViewData["Title"] = L.T("library.title");
+    var contentType = ViewData["LibraryType"] as int?;
+    var typeKey = contentType switch
+    {
+        0 => "nav.lessons",
+        1 => "nav.quizzes",
+        2 => "nav.pdf",
+        3 => "nav.video",
+        4 => "nav.links",
+        _ => null,
+    };
+    ViewData["Title"] = typeKey is null ? L.T("library.title") : L.T(typeKey);
 }
-<div id="library-page" class="flex flex-col gap-6">
-    <app-page-head title="@L.T("library.title")" subtitle="@L.T("library.subtitle")">
+<div id="library-page" class="flex flex-col gap-6"
+     data-base="/teacher/library"
+     data-type="@(contentType?.ToString() ?? "")">
+    <app-page-head title="@(typeKey is null ? L.T("library.title") : L.T(typeKey))" subtitle="@L.T("library.subtitle")">
         <div class="flex gap-2">
             <app-btn variant="secondary" icon="quiz" href="/teacher/questions">@L.T("questions.title")</app-btn>
             <app-btn variant="secondary" icon="folder-plus" onclick="document.getElementById('library-folder-dialog').showModal()">@L.T("library.newFolder")</app-btn>
@@ -37,12 +49,12 @@
         </div>
         <div class="field mb-0">
             <label class="block text-sm font-semibold mb-1.5 text-base-content" for="library-content-type">@L.T("library.type")</label>
-            <select id="library-content-type" name="type" class="select w-full">
-                <option value="0">@L.T("contentType.Lesson")</option>
-                <option value="1">@L.T("contentType.Quiz")</option>
-                <option value="2">@L.T("contentType.Pdf")</option>
-                <option value="3">@L.T("contentType.Video")</option>
-                <option value="4">@L.T("contentType.Link")</option>
+            <select id="library-content-type" name="type" class="select w-full" @(contentType is null ? "" : "disabled")>
+                <option value="0" selected="@(contentType == 0)">@L.T("contentType.Lesson")</option>
+                <option value="1" selected="@(contentType == 1)">@L.T("contentType.Quiz")</option>
+                <option value="2" selected="@(contentType == 2)">@L.T("contentType.Pdf")</option>
+                <option value="3" selected="@(contentType == 3)">@L.T("contentType.Video")</option>
+                <option value="4" selected="@(contentType == 4)">@L.T("contentType.Link")</option>
             </select>
         </div>
         <div class="field mb-0">

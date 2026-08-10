@@ -237,14 +237,33 @@ public sealed partial class TeacherController(IApiClient api, Localizer L) : Con
     }
 
     [HttpGet("teacher/library")]
-    public IActionResult Library() => View("Library/Index");
+    public IActionResult Library() => RedirectToAction(nameof(LibraryByType), new { type = "quizzes" });
+
+    [HttpGet("teacher/library/{type:regex(^quizzes$)}")]
+    public IActionResult LibraryByType(string type)
+    {
+        var contentType = ParseContentType(type);
+        if (contentType is null)
+        {
+            return NotFound();
+        }
+
+        ViewData["LibraryType"] = contentType;
+        return View("Library/Index");
+    }
 
     [HttpGet("teacher/library/tree")]
-    public async Task<IActionResult> LibraryTree(CancellationToken ct)
+    public async Task<IActionResult> LibraryTree(int? type, CancellationToken ct)
     {
-        var result = await api.GetLibraryTreeAsync(UserId, ct);
+        var result = await api.GetLibraryTreeAsync(UserId, type, ct);
         return Json(result.Data ?? []);
     }
+
+    private static int? ParseContentType(string? type) => type?.ToLowerInvariant() switch
+    {
+        "quizzes" => 1,
+        _ => null,
+    };
 
     [HttpGet("teacher/library/contents")]
     public async Task<IActionResult> LibraryContents(CancellationToken ct)

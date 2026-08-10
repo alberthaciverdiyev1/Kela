@@ -36,8 +36,14 @@
             });
         }
 
+        function treeUrl() {
+            let url = opts.treeUrl;
+            if (opts.type != null) url += (url.indexOf('?') !== -1 ? '&' : '?') + 'type=' + opts.type;
+            return url;
+        }
+
         function load() {
-            return Kela.axios.get(opts.treeUrl).then(function (res) {
+            return Kela.axios.get(treeUrl()).then(function (res) {
                 tree = res.data || [];
                 nodeMap = {};
                 indexTree(tree);

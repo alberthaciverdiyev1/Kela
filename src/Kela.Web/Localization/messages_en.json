@@ -256,5 +256,10 @@
   "quiz.created": "Question created and added to the quiz.",
   "role.Admin": "Admin",
   "nav.questions": "Question Bank",
-  "admin.info": "Admin panel: you can manage the question bank here."
+  "admin.info": "Admin panel: you can manage the question bank here.",
+  "nav.lessons": "Lessons",
+  "nav.quizzes": "Quizzes",
+  "nav.pdf": "PDF",
+  "nav.video": "Videos",
+  "nav.links": "Links"
 }

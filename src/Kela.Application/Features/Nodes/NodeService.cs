@@ -19,10 +19,11 @@ internal sealed class NodeService(
     IValidator<CopyFolderRequest> copyFolderValidator,
     IValidator<UpdateNodeRequest> updateNodeValidator) : INodeService
 {
-    public async Task<List<NodeResponse>> GetLibraryTreeAsync(int teacherId, CancellationToken cancellationToken = default)
+    public async Task<List<NodeResponse>> GetLibraryTreeAsync(int teacherId, ContentType? type = null, CancellationToken cancellationToken = default)
     {
         var items = await nodes.GetByContextAsync(null, teacherId, cancellationToken);
-        return items.ToTree();
+        var tree = items.ToTree();
+        return type is null ? tree : tree.FilterByType(type.Value);
     }
 
     public async Task<List<NodeResponse>> GetWorkspaceTreeAsync(int workspaceId, CancellationToken cancellationToken = default)

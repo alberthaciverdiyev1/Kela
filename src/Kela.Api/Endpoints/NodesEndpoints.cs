@@ -3,6 +3,7 @@ using Kela.Application.Features.Nodes;
 using Kela.Application.Features.Nodes.Requests;
 using Kela.Application.Features.Nodes.Responses;
 using Kela.Domain.Common;
+using Kela.Domain.Enums;
 
 namespace Kela.Api.Endpoints;
 
@@ -13,7 +14,7 @@ public static class NodesEndpoints
         var group = app.MapGroup("/api/nodes")
             .RequireAuthorization(policy => policy.RequireRole(RoleNames.Teacher, RoleNames.Admin));
 
-        group.MapGet("/tree", async (int? workspaceId, int? teacherId, INodeService nodes, CancellationToken ct) =>
+        group.MapGet("/tree", async (int? workspaceId, int? teacherId, ContentType? type, INodeService nodes, CancellationToken ct) =>
         {
             if (workspaceId is not null)
             {
@@ -22,7 +23,7 @@ public static class NodesEndpoints
 
             if (teacherId is not null)
             {
-                return ApiResponse<List<NodeResponse>>.Success(await nodes.GetLibraryTreeAsync(teacherId.Value, ct));
+                return ApiResponse<List<NodeResponse>>.Success(await nodes.GetLibraryTreeAsync(teacherId.Value, type, ct));
             }
 
             return ApiResponse.BadRequest("workspaceId veya teacherId belirtilmelidir.");

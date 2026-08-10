@@ -256,5 +256,10 @@
   "quiz.created": "Soru oluşturuldu ve quiz'e eklendi.",
   "role.Admin": "Admin",
   "nav.questions": "Soru Bankası",
-  "admin.info": "Yönetici paneli: soru bankasını buradan yönetebilirsiniz."
+  "admin.info": "Yönetici paneli: soru bankasını buradan yönetebilirsiniz.",
+  "nav.lessons": "Dersler",
+  "nav.quizzes": "Quizler",
+  "nav.pdf": "PDF",
+  "nav.video": "Videolar",
+  "nav.links": "Bağlantılar"
 }

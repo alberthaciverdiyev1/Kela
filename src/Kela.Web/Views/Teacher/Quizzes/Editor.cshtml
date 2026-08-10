@@ -6,7 +6,7 @@
 <div id="quiz-editor" class="flex flex-col gap-6" data-content-id="@Model.ContentId">
     <app-page-head title="@Model.Title" subtitle="@L.T("quiz.editorSubtitle")">
         <div class="flex gap-2">
-            <app-btn variant="secondary" icon="arrow-left" href="/teacher/library">@L.T("common.back")</app-btn>
+            <app-btn variant="secondary" icon="arrow-left" href="/teacher/library/quizzes">@L.T("common.back")</app-btn>
             <app-btn variant="secondary" icon="plus" onclick="document.getElementById('quiz-new-question-dialog').showModal()">@L.T("quiz.newQuestion")</app-btn>
             <app-btn variant="primary" icon="copy" onclick="document.getElementById('quiz-add-question-dialog').showModal()">@L.T("quiz.addQuestion")</app-btn>
         </div>

@@ -1,5 +1,6 @@
 using Kela.Application.Features.Nodes.Responses;
 using Kela.Domain.Entities;
+using Kela.Domain.Enums;
 
 namespace Kela.Application.Features.Nodes;
 
@@ -43,5 +44,30 @@ public static class NodeMappings
             .OrderBy(n => n.Position)
             .Select(Build)
             .ToList();
+    }
+
+    public static List<NodeResponse> FilterByType(this List<NodeResponse> nodes, ContentType type)
+    {
+        return nodes
+            .Select(n => FilterNode(n, type))
+            .Where(n => n is not null)
+            .Cast<NodeResponse>()
+            .ToList();
+    }
+
+    private static NodeResponse? FilterNode(NodeResponse node, ContentType type)
+    {
+        if (node.Kind == NodeType.Content)
+        {
+            return node.Content is not null && node.Content.Type == type ? node : null;
+        }
+
+        var children = node.Children
+            .Select(c => FilterNode(c, type))
+            .Where(c => c is not null)
+            .Cast<NodeResponse>()
+            .ToList();
+
+        return children.Count == 0 ? null : node with { Children = children };
     }
 }

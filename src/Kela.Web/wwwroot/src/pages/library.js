@@ -4,11 +4,14 @@
     const page = document.getElementById('library-page');
     if (!page) return;
 
+    const TYPE = page.dataset.type ? Number(page.dataset.type) : null;
+
     const fm = Kela.fileManager({
         el: '#library-list',
         crumbEl: '#library-breadcrumb',
         treeUrl: '/teacher/library/tree',
         context: 'library',
+        type: TYPE,
         nodeBaseUrl: '/teacher/nodes/',
         updateContentUrl: '/teacher/library/content/',
         publishContentUrl: '/teacher/library/content/',
@@ -43,7 +46,7 @@
             event.preventDefault();
             const title = document.getElementById('library-content-title').value.trim();
             if (!title) return;
-            const type = Number(document.getElementById('library-content-type').value);
+            const type = TYPE != null ? TYPE : Number(document.getElementById('library-content-type').value);
             const url = document.getElementById('library-content-url').value.trim();
             const description = document.getElementById('library-content-desc').value.trim();
             const btn = contentForm.querySelector('button[type="submit"]');
