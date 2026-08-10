@@ -21,19 +21,13 @@ public sealed partial class TeacherController(IApiClient api, Localizer L) : Con
 
     public IActionResult Dashboard() => View();
 
-    public async Task<IActionResult> Students(CancellationToken ct)
-    {
-        var result = await api.GetStudentsPageAsync(1, PageSize, ct: ct);
-        return View("Students/Students", new StudentsIndexViewModel(
-            result.Data?.Items ?? [], result.Data?.Page ?? 1, PageSize, result.Data?.TotalCount ?? 0, null));
-    }
+    public IActionResult Students() => View("Students/Students");
 
     [HttpGet("teacher/students/table")]
     public async Task<IActionResult> StudentsTable(CancellationToken ct, int page = 1, string? search = null)
     {
         var result = await api.GetStudentsPageAsync(page, PageSize, search, ct);
-        return PartialView("Students/_StudentsTable", new StudentsIndexViewModel(
-            result.Data?.Items ?? [], result.Data?.Page ?? 1, PageSize, result.Data?.TotalCount ?? 0, search));
+        return Json(result.Data ?? new PaginatedResult<StudentResponse>([], page, PageSize, 0));
     }
 
     [HttpPost("teacher/students/create")]
@@ -57,8 +51,7 @@ public sealed partial class TeacherController(IApiClient api, Localizer L) : Con
 
         if (!ModelState.IsValid)
         {
-            Response.StatusCode = StatusCodes.Status422UnprocessableEntity;
-            return PartialView("Students/_StudentsCreateFields", model);
+            return ValidationErrors();
         }
 
         var created = await api.CreateStudentAsync(new CreateStudentRequest(
@@ -81,11 +74,11 @@ public sealed partial class TeacherController(IApiClient api, Localizer L) : Con
                 ModelState.AddModelError("", created.Message);
             }
 
-            Response.StatusCode = StatusCodes.Status422UnprocessableEntity;
-            return PartialView("Students/_StudentsCreateFields", model);
+            return ValidationErrors();
         }
 
-        return PartialView("Students/_StudentsCredentialsDialog", created.Data!);
+        Response.StatusCode = StatusCodes.Status201Created;
+        return Json(created.Data!);
     }
 
     [HttpDelete("teacher/students/{id:int}/delete")]
@@ -101,24 +94,17 @@ public sealed partial class TeacherController(IApiClient api, Localizer L) : Con
             page--;
         }
 
-        return PartialView("Students/_StudentsTable", new StudentsIndexViewModel(
-            result.Data?.Items ?? [], result.Data?.Page ?? 1, PageSize, result.Data?.TotalCount ?? 0, search));
+        return Json(result.Data ?? new PaginatedResult<StudentResponse>([], page, PageSize, 0));
     }
 
     [HttpGet("teacher/workspaces")]
-    public async Task<IActionResult> Index(CancellationToken ct)
-    {
-        var result = await api.GetWorkspacesPageAsync(UserId, 1, PageSize, ct);
-        return View("Workspaces/Workspaces", new WorkspacesIndexViewModel(
-            result.Data?.Items ?? [], result.Data?.Page ?? 1, PageSize, result.Data?.TotalCount ?? 0));
-    }
+    public IActionResult Index() => View("Workspaces/Workspaces");
 
     [HttpGet("teacher/workspaces/table")]
     public async Task<IActionResult> WorkspacesTable(CancellationToken ct, int page = 1)
     {
         var result = await api.GetWorkspacesPageAsync(UserId, page, PageSize, ct);
-        return PartialView("Workspaces/_WorkspacesTable", new WorkspacesIndexViewModel(
-            result.Data?.Items ?? [], result.Data?.Page ?? 1, PageSize, result.Data?.TotalCount ?? 0));
+        return Json(result.Data ?? new PaginatedResult<WorkspaceResponse>([], page, PageSize, 0));
     }
 
     [HttpPost("teacher/workspaces/create")]
@@ -132,8 +118,7 @@ public sealed partial class TeacherController(IApiClient api, Localizer L) : Con
 
         if (!ModelState.IsValid)
         {
-            Response.StatusCode = StatusCodes.Status422UnprocessableEntity;
-            return PartialView("Workspaces/_WorkspaceCreateFields", model);
+            return ValidationErrors();
         }
 
         var created = await api.CreateWorkspaceAsync(new CreateWorkspaceRequest(model.Name!.Trim(), UserId), ct);
@@ -150,8 +135,7 @@ public sealed partial class TeacherController(IApiClient api, Localizer L) : Con
                 ModelState.AddModelError("", created.Message);
             }
 
-            Response.StatusCode = StatusCodes.Status422UnprocessableEntity;
-            return PartialView("Workspaces/_WorkspaceCreateFields", model);
+            return ValidationErrors();
         }
 
         return Json(new { redirect = $"/teacher/workspaces/{created.Data.Id}" });
@@ -166,11 +150,20 @@ public sealed partial class TeacherController(IApiClient api, Localizer L) : Con
             return NotFound();
         }
 
-        var students = await api.GetStudentsPageAsync(1, 1000, ct: ct);
-        var inWorkspace = workspace.Data.Students.Select(s => s.Id).ToHashSet();
-        var available = (students.Data?.Items ?? []).Where(s => !inWorkspace.Contains(s.UserId)).ToList();
+        var data = workspace.Data;
+        return View("Workspaces/WorkspaceDetail", new WorkspaceShellViewModel(data.Id, data.Name, data.StudentCount, data.CreatedAt));
+    }
 
-        return View("Workspaces/WorkspaceDetail", new WorkspaceDetailViewModel(workspace.Data, available));
+    [HttpGet("teacher/workspaces/{id:int}/data")]
+    public async Task<IActionResult> WorkspaceData(int id, CancellationToken ct)
+    {
+        var data = await WorkspaceDataAsync(id, ct);
+        if (data is null)
+        {
+            return NotFound();
+        }
+
+        return Json(data);
     }
 
     [HttpPost("teacher/workspaces/{id:int}/rename")]
@@ -184,8 +177,7 @@ public sealed partial class TeacherController(IApiClient api, Localizer L) : Con
 
         if (!ModelState.IsValid)
         {
-            Response.StatusCode = StatusCodes.Status422UnprocessableEntity;
-            return PartialView("Workspaces/_WorkspaceRenameFields", model);
+            return ValidationErrors();
         }
 
         var result = await api.UpdateWorkspaceAsync(id, new UpdateWorkspaceRequest(model.Name!.Trim()), ct);
@@ -202,8 +194,7 @@ public sealed partial class TeacherController(IApiClient api, Localizer L) : Con
                 ModelState.AddModelError("", result.Message);
             }
 
-            Response.StatusCode = StatusCodes.Status422UnprocessableEntity;
-            return PartialView("Workspaces/_WorkspaceRenameFields", model);
+            return ValidationErrors();
         }
 
         return Json(new { redirect = $"/teacher/workspaces/{id}" });
@@ -222,8 +213,7 @@ public sealed partial class TeacherController(IApiClient api, Localizer L) : Con
             page--;
         }
 
-        return PartialView("Workspaces/_WorkspacesTable", new WorkspacesIndexViewModel(
-            result.Data?.Items ?? [], result.Data?.Page ?? 1, PageSize, result.Data?.TotalCount ?? 0));
+        return Json(result.Data ?? new PaginatedResult<WorkspaceResponse>([], page, PageSize, 0));
     }
 
     [HttpPost("teacher/workspaces/{id:int}/students")]
@@ -231,7 +221,8 @@ public sealed partial class TeacherController(IApiClient api, Localizer L) : Con
     public async Task<IActionResult> AddWorkspaceStudents(int id, AddWorkspaceStudentsViewModel model, CancellationToken ct)
     {
         await api.AddStudentsAsync(id, new AddStudentsRequest(model.StudentIds), ct);
-        return await WorkspaceStudentsSectionAsync(id, ct);
+        var data = await WorkspaceDataAsync(id, ct);
+        return data is null ? NotFound() : Json(data);
     }
 
     [HttpDelete("teacher/workspaces/{id:int}/students/{studentId:int}")]
@@ -239,7 +230,8 @@ public sealed partial class TeacherController(IApiClient api, Localizer L) : Con
     public async Task<IActionResult> RemoveWorkspaceStudent(int id, int studentId, CancellationToken ct)
     {
         await api.RemoveStudentAsync(id, studentId, ct);
-        return await WorkspaceStudentsSectionAsync(id, ct);
+        var data = await WorkspaceDataAsync(id, ct);
+        return data is null ? NotFound() : Json(data);
     }
 
     [HttpGet("teacher/attendance")]
@@ -255,25 +247,26 @@ public sealed partial class TeacherController(IApiClient api, Localizer L) : Con
             selected = 0;
         }
 
-        if (selected == 0)
+        var name = selected == 0 ? "" : workspaces.First(w => w.Id == selected).Name;
+        return View("Attendance/Index", new AttendancePageViewModel(selected, name, year, monthNumber, workspaces));
+    }
+
+    [HttpGet("teacher/attendance/data")]
+    public async Task<IActionResult> AttendanceData(int? workspaceId, string? month, CancellationToken ct)
+    {
+        if (workspaceId is not > 0)
         {
-            return View("Attendance/Index", new AttendancePageViewModel(0, "", year, monthNumber, [], [], workspaces));
+            return BadRequest();
         }
 
-        var data = await api.GetAttendanceMonthAsync(selected, year, monthNumber, ct);
+        var (year, monthNumber) = ParseMonth(month);
+        var data = await api.GetAttendanceMonthAsync(workspaceId.Value, year, monthNumber, ct);
         if (!data.Success || data.Data is null)
         {
             return NotFound();
         }
 
-        return View("Attendance/Index", new AttendancePageViewModel(
-            selected,
-            workspaces.First(w => w.Id == selected).Name,
-            year,
-            monthNumber,
-            data.Data.Students,
-            data.Data.Records,
-            workspaces));
+        return Json(data.Data);
     }
 
     [HttpPut("teacher/attendance")]
@@ -315,19 +308,30 @@ public sealed partial class TeacherController(IApiClient api, Localizer L) : Con
         return (now.Year, now.Month);
     }
 
-    private async Task<IActionResult> WorkspaceStudentsSectionAsync(int id, CancellationToken ct)
+    private IActionResult ValidationErrors()
+    {
+        Response.StatusCode = StatusCodes.Status422UnprocessableEntity;
+        var errors = ModelState
+            .SelectMany(kv => kv.Value?.Errors.Select(e => (kv.Key, e.ErrorMessage)) ?? [])
+            .Where(x => !string.IsNullOrWhiteSpace(x.ErrorMessage))
+            .GroupBy(x => x.Key)
+            .ToDictionary(g => g.Key, g => string.Join(" ", g.Select(x => x.ErrorMessage)));
+        return Json(new { success = false, errors });
+    }
+
+    private async Task<WorkspaceDataResponse?> WorkspaceDataAsync(int id, CancellationToken ct)
     {
         var workspace = await api.GetWorkspaceAsync(id, ct);
         if (!workspace.Success || workspace.Data is null)
         {
-            return NotFound();
+            return null;
         }
 
         var students = await api.GetStudentsPageAsync(1, 1000, ct: ct);
         var inWorkspace = workspace.Data.Students.Select(s => s.Id).ToHashSet();
         var available = (students.Data?.Items ?? []).Where(s => !inWorkspace.Contains(s.UserId)).ToList();
 
-        return PartialView("Workspaces/_WorkspaceStudentsSection", new WorkspaceDetailViewModel(workspace.Data, available));
+        return new WorkspaceDataResponse(workspace.Data, available);
     }
 
     private static string? NullIfBlank(string? value) => string.IsNullOrWhiteSpace(value) ? null : value.Trim();

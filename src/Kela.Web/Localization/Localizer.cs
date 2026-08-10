@@ -17,6 +17,9 @@ public sealed class Localizer(IHttpContextAccessor contextAccessor)
         }
     }
 
+    public IReadOnlyDictionary<string, string> All =>
+        Dictionaries.TryGetValue(Active, out var dict) ? dict : Dictionaries["en"];
+
     public string T(string key, object? parameters = null)
     {
         if (Dictionaries.TryGetValue(Active, out var dict) && dict.TryGetValue(key, out var value))

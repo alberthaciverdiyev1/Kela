@@ -1,4 +1,3 @@
-@model Kela.Web.Models.Workspaces.WorkspacesIndexViewModel
 @{
     ViewData["Title"] = L.T("workspaces.title");
 }
@@ -7,7 +6,7 @@
         <app-btn variant="primary" icon="plus" onclick="document.getElementById('create-workspace-dialog').showModal()">@L.T("workspaces.new")</app-btn>
     </app-page-head>
 
-    @await Html.PartialAsync("~/Views/Teacher/Workspaces/_WorkspacesTable.cshtml", Model)
+    <div id="workspaces-list" class="flex flex-col gap-6"></div>
 
     @await Html.PartialAsync("~/Views/Teacher/Workspaces/_WorkspaceCreateDialog.cshtml", new Kela.Web.Models.Workspaces.CreateWorkspaceViewModel())
 </div>

@@ -11,6 +11,7 @@ public sealed class StatTagHelper : TagHelper
     public string Tone { get; set; } = "primary";
     public string? Label { get; set; }
     public string? Value { get; set; }
+    public string? Id { get; set; }
 
     public override void Process(TagHelperContext context, TagHelperOutput output)
     {
@@ -26,10 +27,11 @@ public sealed class StatTagHelper : TagHelper
         var value = HtmlEncoder.Default.Encode(Value ?? "");
 
         output.TagName = null;
+        var id = string.IsNullOrWhiteSpace(Id) ? "" : $" id=\"{HtmlEncoder.Default.Encode(Id)}\"";
         output.Content.SetHtmlContent(
             $"<div class=\"flex items-center gap-4 rounded-box border border-base-200 bg-base-100 px-5 py-4\">" +
             $"<span class=\"{iconColor}\">{Icons.Icon(Icon ?? "", "w-4 h-4")}</span>" +
             $"<div><div class=\"text-xs font-medium uppercase tracking-wide text-base-content/50\">{label}</div>" +
-            $"<div class=\"text-2xl font-semibold tracking-tight text-base-content\">{value}</div></div></div>");
+            $"<div{id} class=\"text-2xl font-semibold tracking-tight text-base-content\">{value}</div></div></div>");
     }
 }

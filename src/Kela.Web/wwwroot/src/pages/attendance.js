@@ -5,19 +5,16 @@
     if (!container) return;
 
     const picker = document.getElementById('attendance-picker');
+    const grid = document.getElementById('attendance-grid');
     const saveUrl = '/teacher/attendance';
     const workspaceId = parseInt(container.dataset.workspaceId, 10);
+    const year = parseInt(container.dataset.year, 10);
+    const month = parseInt(container.dataset.month, 10);
     const daysInMonth = parseInt(container.dataset.days, 10);
-    const saveSuccess = container.dataset.saveSuccess;
-    const saveError = container.dataset.saveError;
-    const unknownLabel = container.dataset.labelUnknown;
-
-    const ICON_PATHS = {
-        'check-circle': '<path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/>',
-        'x': '<line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>',
-        'clock': '<circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>',
-        'shield': '<path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>'
-    };
+    const saveSuccess = Kela.t('attendance.saveSuccess');
+    const saveError = Kela.t('attendance.saveError');
+    const unknownLabel = Kela.t('attendance.status.unknown');
+    const studentLabel = Kela.t('attendance.student');
 
     const statusLabels = {};
     picker.querySelectorAll('[data-pick-status]').forEach(function (b) {
@@ -27,9 +24,16 @@
     const statuses = new Map();
     const counts = [0, 0, 0, 0, 0];
     let activeCell = null;
+    let studentIds = [];
+    let studentNames = {};
 
-    function svgIcon(name, cls) {
-        return '<svg class="' + cls + '" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="20" height="20">' + ICON_PATHS[name] + '</svg>';
+    function dateStr(y, m, d) {
+        return y + '-' + String(m).padStart(2, '0') + '-' + String(d).padStart(2, '0');
+    }
+
+    function statusFor(id, date) {
+        let map = statuses.get(id);
+        return map ? (map.get(date) || 0) : 0;
     }
 
     function iconNameFor(status) {
@@ -47,26 +51,91 @@
             : 'bg-base-200 text-base-content/40';
     }
 
+    function cellHtml(layout, id, date, status) {
+        let title = status === 0 ? unknownLabel : (statusLabels[status] || '');
+        if (layout === 'mobile') {
+            return '<button type="button" data-cell data-cell-layout="mobile" data-student-id="' + id + '" data-date="' + date + '" data-status="' + status + '" title="' + Kela.esc(title) + '" class="attendance-cell flex size-10 items-center justify-center rounded-md text-sm font-semibold ' + colorFor(status) + ' cursor-pointer transition hover:ring-2 hover:ring-primary/40 disabled:opacity-50 disabled:cursor-wait">' + String(Number(date.slice(-2))) + '</button>';
+        }
+        let inner = status === 0
+            ? '<span class="size-1.5 rounded-full bg-base-content/20"></span>'
+            : Kela.icon(iconNameFor(status), 'w-3.5 h-3.5');
+        return '<button type="button" data-cell data-cell-layout="desktop" data-student-id="' + id + '" data-date="' + date + '" data-status="' + status + '" title="' + Kela.esc(title) + '" class="attendance-cell mx-auto flex size-9 items-center justify-center rounded-md ' + colorFor(status) + ' cursor-pointer transition hover:ring-2 hover:ring-primary/40 disabled:opacity-50 disabled:cursor-wait">' + inner + '</button>';
+    }
+
+    function renderDesktop() {
+        let html = '<div class="hidden lg:block"><div class="card overflow-hidden border border-base-200 bg-base-100">';
+        html += '<div class="attendance-scroll overflow-auto max-h-[calc(100vh-260px)]">';
+        html += '<table class="attendance-table table table-fixed w-full border-separate border-spacing-0 text-sm">';
+        html += '<thead><tr>';
+        html += '<th class="sticky left-0 top-0 z-30 w-56 bg-base-200 px-3 py-3 text-left text-xs font-semibold uppercase tracking-wider text-base-content/50">' + Kela.esc(Kela.t('attendance.student')) + '</th>';
+        for (let day = 1; day <= daysInMonth; day++) {
+            html += '<th class="sticky top-0 z-20 w-14 bg-base-200 py-3 text-center text-sm font-medium text-base-content/50">' + day + '</th>';
+        }
+        html += '</tr></thead><tbody>';
+        studentIds.forEach(function (id) {
+            html += '<tr class="hover:bg-base-200/50" data-student-row data-student-id="' + id + '" data-student-name="' + Kela.esc(studentNames[id].toLowerCase()) + '">';
+            html += '<td class="sticky left-0 z-10 bg-base-100 px-3 py-2 font-medium">' + Kela.esc(studentNames[id]) + '</td>';
+            for (let day = 1; day <= daysInMonth; day++) {
+                let date = dateStr(year, month, day);
+                html += '<td class="p-1 text-center">' + cellHtml('desktop', id, date, statusFor(id, date)) + '</td>';
+            }
+            html += '</tr>';
+        });
+        html += '</tbody></table></div></div></div>';
+        return html;
+    }
+
+    function renderMobile() {
+        let html = '<div class="grid grid-cols-1 gap-4 lg:hidden">';
+        studentIds.forEach(function (id) {
+            html += '<div class="card border border-base-200 bg-base-100 p-4" data-student-card data-student-id="' + id + '" data-student-name="' + Kela.esc(studentNames[id].toLowerCase()) + '">';
+            html += '<div class="mb-3 flex items-center justify-between"><span class="text-sm font-semibold">' + Kela.esc(studentNames[id]) + '</span><span class="badge badge-ghost">' + Kela.esc(studentLabel) + '</span></div>';
+            html += '<div class="flex flex-wrap gap-1.5">';
+            for (let day = 1; day <= daysInMonth; day++) {
+                let date = dateStr(year, month, day);
+                html += cellHtml('mobile', id, date, statusFor(id, date));
+            }
+            html += '</div></div>';
+        });
+        html += '</div>';
+        return html;
+    }
+
+    function renderGrid(data) {
+        studentIds = [];
+        studentNames = {};
+        (data.students || []).forEach(function (s) {
+            studentIds.push(s.id);
+            studentNames[s.id] = s.name;
+        });
+
+        statuses.clear();
+        counts[0] = counts[1] = counts[2] = counts[3] = counts[4] = 0;
+        (data.records || []).forEach(function (r) {
+            let map = statuses.get(r.studentId);
+            if (!map) {
+                map = new Map();
+                statuses.set(r.studentId, map);
+            }
+            map.set(r.date, r.status);
+            counts[r.status]++;
+        });
+
+        if (!grid) return;
+        if (!studentIds.length) {
+            grid.innerHTML = '<div class="card border border-base-200 bg-base-100 items-center text-center py-10 px-4">' +
+                '<span class="text-base-300 mb-3">' + Kela.icon('calendar', 'w-12 h-12') + '</span>' +
+                '<p class="text-base-content/60 max-w-sm">' + Kela.esc(Kela.t('attendance.empty')) + '</p></div>';
+        } else {
+            grid.innerHTML = renderDesktop() + renderMobile();
+        }
+        renderStats();
+        applyFilters();
+    }
+
     function setText(id, value) {
         const el = document.getElementById(id);
         if (el) el.textContent = String(value);
-    }
-
-    function initStatuses() {
-        document.querySelectorAll('[data-cell]').forEach(function (cell) {
-            const studentId = parseInt(cell.dataset.studentId, 10);
-            const date = cell.dataset.date;
-            const status = parseInt(cell.dataset.status, 10);
-            let map = statuses.get(studentId);
-            if (!map) {
-                map = new Map();
-                statuses.set(studentId, map);
-            }
-            if (status > 0 && !map.has(date)) {
-                map.set(date, status);
-                counts[status]++;
-            }
-        });
     }
 
     function renderStats() {
@@ -92,7 +161,7 @@
                 colorFor(status) + ' cursor-pointer transition hover:ring-2 hover:ring-primary/40 disabled:opacity-50 disabled:cursor-wait';
             cell.innerHTML = status === 0
                 ? '<span class="size-1.5 rounded-full bg-base-content/20"></span>'
-                : svgIcon(iconNameFor(status), 'w-3.5 h-3.5');
+                : Kela.icon(iconNameFor(status), 'w-3.5 h-3.5');
         }
     }
 
@@ -203,18 +272,18 @@
 
     if (workspaceSelect) {
         workspaceSelect.addEventListener('change', function () {
-            window.location.href = attendanceUrl(workspaceSelect.value, monthInput ? monthInput.value : '');
+            Kela.navigate(attendanceUrl(workspaceSelect.value, monthInput ? monthInput.value : ''));
         });
     }
     if (monthInput) {
         monthInput.addEventListener('change', function () {
             if (monthInput.value) {
-                window.location.href = attendanceUrl(workspaceSelect ? workspaceSelect.value : '', monthInput.value);
+                Kela.navigate(attendanceUrl(workspaceSelect ? workspaceSelect.value : '', monthInput.value));
             }
         });
     }
 
-    document.addEventListener('click', function (event) {
+    Kela.onPageEvent('click', function (event) {
         const cell = event.target.closest('[data-cell]');
         if (cell && !cell.disabled) {
             openPicker(cell);
@@ -229,6 +298,15 @@
         closePicker();
     });
 
-    initStatuses();
-    renderStats();
+    if (grid) {
+        Kela.axios.get('/teacher/attendance/data', {
+            params: {
+                workspaceId: String(workspaceId),
+                month: dateStr(year, month, 1).slice(0, 7)
+            }
+        }).then(function (res) {
+            renderGrid(res.data);
+        }).catch(function () {
+        });
+    }
 })();

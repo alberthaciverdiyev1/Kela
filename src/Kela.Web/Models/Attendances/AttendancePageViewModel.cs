@@ -1,5 +1,3 @@
-using Kela.Web.Helpers;
-
 namespace Kela.Web.Models.Attendances;
 
 public sealed record WorkspaceOption(int Id, string Name);
@@ -9,8 +7,6 @@ public sealed record AttendancePageViewModel(
     string WorkspaceName,
     int Year,
     int Month,
-    IReadOnlyList<AttendanceStudentResponse> Students,
-    IReadOnlyList<AttendanceRecordResponse> Records,
     IReadOnlyList<WorkspaceOption> Workspaces);
 
 public sealed record SetAttendanceRequest(int WorkspaceId, int StudentId, DateOnly Date, int Status);

@@ -1,4 +1,3 @@
-@model Kela.Web.Models.Students.StudentsIndexViewModel
 @{
     ViewData["Title"] = L.T("students.title");
 }
@@ -10,12 +9,11 @@
     <div class="flex">
         <label class="input flex w-full max-w-sm items-center gap-2">
             <app-icon name="search" class="w-4 h-4 opacity-40" />
-            <input id="students-search" name="search" class="grow" type="search" placeholder="@L.T("nav.search")"
-                   value="@Model.Search" autocomplete="off" />
+            <input id="students-search" name="search" class="grow" type="search" placeholder="@L.T("nav.search")" autocomplete="off" />
         </label>
     </div>
 
-    @await Html.PartialAsync("~/Views/Teacher/Students/_StudentsTable.cshtml", Model)
+    <div id="students-list" class="flex flex-col gap-6"></div>
 
     @await Html.PartialAsync("~/Views/Teacher/Students/_StudentsCreateDialog.cshtml", new Kela.Web.Models.Students.CreateStudentViewModel())
 

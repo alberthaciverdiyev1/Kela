@@ -10,41 +10,12 @@
     var monthValue = $"{Model.Year:D4}-{Model.Month:D2}";
     var prevMonthValue = $"{prevYear:D4}-{prevMonth:D2}";
     var nextMonthValue = $"{nextYear:D4}-{nextMonth:D2}";
-    var recordsByStudentDate = Model.Records.ToDictionary(r => (r.StudentId, r.Date));
-
-    string StatusIcon(int status) => status switch
-    {
-        1 => "check-circle",
-        2 => "x",
-        3 => "clock",
-        4 => "shield",
-        _ => "",
-    };
-    string StatusColor(int status) => status switch
-    {
-        1 => "bg-success text-white",
-        2 => "bg-error text-white",
-        3 => "bg-warning text-white",
-        4 => "bg-info text-white",
-        _ => "bg-base-200 text-base-content/40",
-    };
-    string StatusLabelKey(int status) => status switch
-    {
-        1 => "attendance.status.present",
-        2 => "attendance.status.absent",
-        3 => "attendance.status.late",
-        4 => "attendance.status.excused",
-        _ => "attendance.status.unknown",
-    };
 }
 <div id="attendance-page"
      data-workspace-id="@Model.WorkspaceId"
      data-year="@Model.Year"
      data-month="@Model.Month"
-     data-days="@daysInMonth"
-     data-label-unknown="@L.T("attendance.status.unknown")"
-     data-save-success="@L.T("attendance.saveSuccess")"
-     data-save-error="@L.T("attendance.saveError")">
+     data-days="@daysInMonth">
 
     <app-page-head title="@L.T("attendance.title")"
                    subtitle="@(hasWorkspace ? Model.WorkspaceName : L.T("attendance.selectHint"))">
@@ -94,7 +65,7 @@
             <span class="text-primary">@Html.Raw(Icons.Icon("students", "w-4 h-4"))</span>
             <div>
                 <div class="text-xs font-medium uppercase tracking-wide text-base-content/50">@L.T("attendance.stats.total")</div>
-                <div id="stat-total" class="text-xl font-semibold tracking-tight">@Model.Students.Count</div>
+                <div id="stat-total" class="text-xl font-semibold tracking-tight">0</div>
             </div>
         </div>
         <div class="flex items-center gap-3 rounded-box border border-base-200 bg-base-100 px-4 py-3">
@@ -140,97 +111,7 @@
     }
     else
     {
-        <div class="hidden lg:block">
-            <div class="card overflow-hidden border border-base-200 bg-base-100">
-                @if (Model.Students.Count == 0)
-                {
-                    <app-empty icon="calendar" text="@L.T("attendance.empty")"/>
-                }
-                else
-                {
-                    <div class="attendance-scroll overflow-auto max-h-[calc(100vh-260px)]">
-                        <table class="attendance-table table table-fixed w-full border-separate border-spacing-0 text-sm">
-                            <thead>
-                                <tr>
-                                    <th class="sticky left-0 top-0 z-30 w-56 bg-base-200 px-3 py-3 text-left text-xs font-semibold uppercase tracking-wider text-base-content/50">@L.T("attendance.student")</th>
-                                    @for (var day = 1; day <= daysInMonth; day++)
-                                    {
-                                        <th class="sticky top-0 z-20 w-14 bg-base-200 py-3 text-center text-sm font-medium text-base-content/50">@day</th>
-                                    }
-                                </tr>
-                            </thead>
-                            <tbody>
-                            @foreach (var s in Model.Students)
-                            {
-                                <tr class="hover:bg-base-200/50" data-student-row data-student-id="@s.Id" data-student-name="@s.Name.ToLowerInvariant()">
-                                    <td class="sticky left-0 z-10 bg-base-100 px-3 py-2 font-medium">@s.Name</td>
-                                    @for (var day = 1; day <= daysInMonth; day++)
-                                    {
-                                        var date = new DateOnly(Model.Year, Model.Month, day);
-                                        var record = recordsByStudentDate.GetValueOrDefault((s.Id, date));
-                                        var status = record?.Status ?? 0;
-                                        <td class="p-1 text-center">
-                                            <button type="button"
-                                                    data-cell
-                                                    data-cell-layout="desktop"
-                                                    data-student-id="@s.Id"
-                                                    data-date="@date.ToString("yyyy-MM-dd")"
-                                                    data-status="@status"
-                                                    title="@L.T(StatusLabelKey(status))"
-                                                    class="attendance-cell mx-auto flex size-9 items-center justify-center rounded-md @StatusColor(status) cursor-pointer transition hover:ring-2 hover:ring-primary/40 disabled:opacity-50 disabled:cursor-wait">
-                                                @if (status == 0)
-                                                {
-                                                    <span class="size-1.5 rounded-full bg-base-content/20"></span>
-                                                }
-                                                else
-                                                {
-                                                    @Html.Raw(Icons.Icon(StatusIcon(status), "w-3.5 h-3.5"))
-                                                }
-                                            </button>
-                                        </td>
-                                    }
-                                </tr>
-                            }
-                            </tbody>
-                        </table>
-                    </div>
-                }
-            </div>
-        </div>
-
-        <div class="grid grid-cols-1 gap-4 lg:hidden">
-            @if (Model.Students.Count == 0)
-            {
-                <app-empty icon="calendar" text="@L.T("attendance.empty")"/>
-            }
-            @foreach (var s in Model.Students)
-            {
-                <div class="card border border-base-200 bg-base-100 p-4" data-student-card data-student-id="@s.Id" data-student-name="@s.Name.ToLowerInvariant()">
-                    <div class="mb-3 flex items-center justify-between">
-                        <span class="text-sm font-semibold">@s.Name</span>
-                        <span class="badge badge-ghost">@L.T("attendance.student")</span>
-                    </div>
-                    <div class="flex flex-wrap gap-1.5">
-                        @for (var day = 1; day <= daysInMonth; day++)
-                        {
-                            var date = new DateOnly(Model.Year, Model.Month, day);
-                            var record = recordsByStudentDate.GetValueOrDefault((s.Id, date));
-                            var status = record?.Status ?? 0;
-                            <button type="button"
-                                    data-cell
-                                    data-cell-layout="mobile"
-                                    data-student-id="@s.Id"
-                                    data-date="@date.ToString("yyyy-MM-dd")"
-                                    data-status="@status"
-                                    title="@L.T(StatusLabelKey(status))"
-                                    class="attendance-cell flex size-10 items-center justify-center rounded-md text-sm font-semibold @StatusColor(status) cursor-pointer transition hover:ring-2 hover:ring-primary/40 disabled:opacity-50 disabled:cursor-wait">
-                                @day
-                            </button>
-                        }
-                    </div>
-                </div>
-            }
-        </div>
+        <div id="attendance-grid" class="flex flex-col gap-6"></div>
     }
 </div>
 

@@ -1,4 +1,5 @@
 @using System.Security.Claims
+@using System.Text.Json
 @using Kela.Web.Helpers
 @using Microsoft.AspNetCore.Antiforgery
 @inject Localizer L
@@ -120,6 +121,7 @@
     </header>
 
     <main class="flex w-full flex-1 flex-col gap-6 p-4 md:p-6">
+        <script type="application/json" id="kela-msgs" data-lang="@L.Active">@Html.Raw(JsonSerializer.Serialize(L.All))</script>
         @if (TempData["Success"] is string success)
         {
             <app-alert type="success" icon="check">@success</app-alert>
@@ -134,6 +136,8 @@
     <footer class="p-4 text-center text-xs text-base-content/40">© @DateTime.Now.Year @SiteConfig.SiteName</footer>
     <script src="~/lib/external/axios/axios.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
+    <script src="~/src/i18n.js" asp-append-version="true"></script>
+    <script src="~/src/icons.js" asp-append-version="true"></script>
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>
