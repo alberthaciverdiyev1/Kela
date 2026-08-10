@@ -6,7 +6,7 @@ namespace Kela.Application.Features.Workspaces;
 
 public interface IWorkspaceService
 {
-    Task<PaginatedResult<WorkspaceResponse>> GetPageAsync(int teacherId, int page, CancellationToken cancellationToken = default);
+    Task<PaginatedResult<WorkspaceResponse>> GetPageAsync(int teacherId, int page, string? search, CancellationToken cancellationToken = default);
     Task<WorkspaceDetailResponse?> GetByIdAsync(int id, CancellationToken cancellationToken = default);
     Task<int> CreateAsync(CreateWorkspaceRequest request, CancellationToken cancellationToken = default);
     Task UpdateAsync(int id, UpdateWorkspaceRequest request, CancellationToken cancellationToken = default);

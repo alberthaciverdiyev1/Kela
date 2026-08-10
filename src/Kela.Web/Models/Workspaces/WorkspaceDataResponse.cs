@@ -4,4 +4,7 @@ namespace Kela.Web.Models.Workspaces;
 
 public sealed record WorkspaceDataResponse(
     WorkspaceDetailResponse Workspace,
-    IReadOnlyList<StudentResponse> AvailableStudents);
+    IReadOnlyList<StudentResponse> AvailableStudents,
+    int Page,
+    int TotalPages,
+    int TotalAvailable);

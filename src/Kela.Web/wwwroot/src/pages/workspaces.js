@@ -2,9 +2,15 @@
     'use strict';
 
     const LIST_ID = 'workspaces-list';
+    const SEARCH_ID = 'workspaces-search';
 
     function listEl() {
         return document.getElementById(LIST_ID);
+    }
+
+    function searchValue() {
+        let input = document.getElementById(SEARCH_ID);
+        return input ? input.value.trim() : '';
     }
 
     function fmtDate(v) {
@@ -58,8 +64,10 @@
         return html;
     }
 
-    function renderStudentsSection(w, available) {
+    function renderStudentsSection(data) {
+        let w = data.workspace;
         let students = w.students || [];
+        let available = data.availableStudents || [];
         let html = '<div class="card overflow-hidden border border-base-200 bg-base-100">';
         html += '<div class="flex items-center justify-between border-b border-base-200 px-5 py-4">' +
             '<h2 class="text-base font-bold">' + Kela.esc(Kela.t('workspaces.detail.students')) + '</h2>' +
@@ -92,8 +100,12 @@
         html += '<div class="card border border-base-200 bg-base-100">';
         html += '<div class="border-b border-base-200 px-5 py-4"><h2 class="text-base font-bold">' + Kela.esc(Kela.t('workspaces.detail.addStudents')) + '</h2></div>';
         html += '<div class="px-5 py-4">';
+        html += '<label class="input flex items-center gap-2 mb-3 max-w-sm">' +
+            Kela.icon('search', 'w-4 h-4 opacity-40') +
+            '<input id="available-students-search" type="search" class="grow" placeholder="' + Kela.esc(Kela.t('nav.search')) + '" autocomplete="off"></label>';
         if (!available.length) {
-            html += '<p class="text-sm text-base-content/50">' + Kela.esc(Kela.t('workspaces.detail.noAvailable')) + '</p>';
+            let emptyKey = data.totalAvailable === 0 ? 'workspaces.detail.noAvailable' : 'workspaces.detail.noMatches';
+            html += '<p class="text-sm text-base-content/50">' + Kela.esc(Kela.t(emptyKey)) + '</p>';
         } else {
             html += '<form id="add-students-form" method="post" action="/teacher/workspaces/' + w.id + '/students" novalidate>';
             html += '<div class="grid grid-cols-1 gap-2 sm:grid-cols-2">';
@@ -106,6 +118,10 @@
                 '<button type="submit" class="btn btn-primary">' + Kela.icon('user-plus') + Kela.esc(Kela.t('workspaces.detail.add')) + '</button>' +
                 '</div></form>';
         }
+        if (data.totalPages > 1) {
+            html += '<div id="available-students-pager" class="mt-2">' +
+                Kela.Pager.render({ page: data.page, totalPages: data.totalPages }) + '</div>';
+        }
         html += '</div></div>';
         return html;
     }
@@ -117,12 +133,14 @@
         let statCreated = document.getElementById('stat-created');
         if (statCreated) statCreated.textContent = fmtDate(w.createdAt);
         let section = document.getElementById('workspace-students-section');
-        if (section) section.innerHTML = renderStudentsSection(w, data.availableStudents);
+        if (section) section.innerHTML = renderStudentsSection(data);
     }
 
-    async function loadWorkspaceData(id) {
+    async function loadWorkspaceData(id, search, page) {
         try {
-            let res = await Kela.axios.get('/teacher/workspaces/' + id + '/data');
+            let res = await Kela.axios.get('/teacher/workspaces/' + id + '/data', {
+                params: { search: search || '', page: page || 1 }
+            });
             renderWorkspaceData(res.data);
         } catch (e) {
         }
@@ -133,18 +151,38 @@
         let paged = new Kela.PagedList({
             url: '/teacher/workspaces/table',
             target: '#' + LIST_ID,
-            render: renderWorkspaces
+            render: renderWorkspaces,
+            params: function () {
+                return { search: searchValue() };
+            }
         });
         paged.load(1);
+
+        let searchInput = document.getElementById(SEARCH_ID);
+        if (searchInput) {
+            let debounce;
+            searchInput.addEventListener('input', function () {
+                clearTimeout(debounce);
+                debounce = setTimeout(function () {
+                    paged.load(1);
+                }, 500);
+            });
+            searchInput.addEventListener('search', function () {
+                paged.load(1);
+            });
+        }
 
         Kela.onPageEvent('click', async function (event) {
             let del = event.target.closest('[data-delete-id]');
             if (del) {
                 if (del.dataset.confirm && !confirm(del.dataset.confirm)) return;
                 del.disabled = true;
+                let params = { page: del.dataset.page || '1' };
+                let search = searchValue();
+                if (search) params.search = search;
                 try {
                     let res = await Kela.axios.delete(del.dataset.deleteUrl, {
-                        params: { page: del.dataset.page || '1' }
+                        params: params
                     });
                     let listEl2 = listEl();
                     if (listEl2) listEl2.innerHTML = renderWorkspaces(res.data);
@@ -159,22 +197,47 @@
     let section = document.getElementById('workspace-students-section');
     if (section) {
         let wsId = section.dataset.workspaceId;
-        loadWorkspaceData(wsId);
+        let availableState = { search: '', page: 1 };
+        let avDebounce;
+
+        function refreshAvailable() {
+            loadWorkspaceData(wsId, availableState.search, availableState.page);
+        }
+
+        loadWorkspaceData(wsId, '', 1);
 
         Kela.onPageEvent('click', async function (event) {
             let removeBtn = event.target.closest('[data-remove-student]');
             if (removeBtn) {
                 removeBtn.disabled = true;
                 try {
-                    let res = await Kela.axios.delete(
+                    await Kela.axios.delete(
                         '/teacher/workspaces/' + removeBtn.dataset.workspaceId + '/students/' + removeBtn.dataset.removeStudent
                     );
-                    renderWorkspaceData(res.data);
+                    refreshAvailable();
                     Kela.notify.success(Kela.t('workspaces.removedStudent'));
                 } catch (e) {
                     removeBtn.disabled = false;
                 }
+                return;
             }
+
+            let pagerBtn = event.target.closest('#available-students-pager .pager-btn');
+            if (pagerBtn && !pagerBtn.disabled && pagerBtn.dataset.page) {
+                availableState.page = parseInt(pagerBtn.dataset.page, 10);
+                refreshAvailable();
+            }
+        });
+
+        Kela.onPageEvent('input', function (event) {
+            let input = event.target;
+            if (!input || input.id !== 'available-students-search') return;
+            clearTimeout(avDebounce);
+            avDebounce = setTimeout(function () {
+                availableState.search = input.value.trim();
+                availableState.page = 1;
+                refreshAvailable();
+            }, 500);
         });
     }
 

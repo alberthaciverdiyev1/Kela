@@ -1,6 +1,8 @@
 using Kela.Application;
 using Kela.Application.Features.Attendances;
 using Kela.Application.Features.Cities;
+using Kela.Application.Features.Contents;
+using Kela.Application.Features.Nodes;
 using Kela.Application.Features.Students;
 using Kela.Application.Features.SiteConfiguration;
 using Kela.Application.Features.Users;
@@ -65,6 +67,8 @@ public static class DependencyInjection
         services.AddScoped<IStudentRepository, StudentRepository>();
         services.AddScoped<ISiteConfigurationRepository, SiteConfigurationRepository>();
         services.AddScoped<IWorkspaceRepository, WorkspaceRepository>();
+        services.AddScoped<IContentRepository, ContentRepository>();
+        services.AddScoped<INodeRepository, NodeRepository>();
         services.AddScoped<IUnitOfWork>(sp => sp.GetRequiredService<KelaDbContext>());
 
         return services;

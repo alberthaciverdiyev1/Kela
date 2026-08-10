@@ -1,0 +1,66 @@
+@{
+    ViewData["Title"] = L.T("library.title");
+}
+<div id="library-page" class="flex flex-col gap-6">
+    <app-page-head title="@L.T("library.title")" subtitle="@L.T("library.subtitle")">
+        <div class="flex gap-2">
+            <app-btn variant="secondary" icon="folder-plus" onclick="document.getElementById('library-folder-dialog').showModal()">@L.T("library.newFolder")</app-btn>
+            <app-btn variant="primary" icon="plus" onclick="document.getElementById('library-content-dialog').showModal()">@L.T("library.newContent")</app-btn>
+        </div>
+    </app-page-head>
+
+    <nav id="library-breadcrumb" class="flex flex-wrap items-center gap-1 text-sm"></nav>
+
+    <div id="library-list" class="flex flex-col gap-3"></div>
+</div>
+
+<app-modal id="library-folder-dialog" title="@L.T("library.newFolder")">
+    <form id="library-folder-form" class="flex flex-col gap-4" novalidate>
+        <div class="field mb-0">
+            <label class="block text-sm font-semibold mb-1.5 text-base-content" for="library-folder-name">@L.T("library.folderName")</label>
+            <input id="library-folder-name" name="name" class="input w-full" type="text" autocomplete="off" />
+        </div>
+        <div class="flex justify-end gap-2">
+            <app-btn variant="secondary" onclick="document.getElementById('library-folder-dialog').close()">@L.T("common.cancel")</app-btn>
+            <app-btn variant="primary" type="submit">@L.T("common.save")</app-btn>
+        </div>
+    </form>
+</app-modal>
+
+<app-modal id="library-content-dialog" title="@L.T("library.newContent")">
+    <form id="library-content-form" class="flex flex-col gap-4" novalidate>
+        <div class="field mb-0">
+            <label class="block text-sm font-semibold mb-1.5 text-base-content" for="library-content-title">@L.T("library.titleField")</label>
+            <input id="library-content-title" name="title" class="input w-full" type="text" autocomplete="off" />
+        </div>
+        <div class="field mb-0">
+            <label class="block text-sm font-semibold mb-1.5 text-base-content" for="library-content-type">@L.T("library.type")</label>
+            <select id="library-content-type" name="type" class="select w-full">
+                <option value="0">@L.T("contentType.Lesson")</option>
+                <option value="1">@L.T("contentType.Quiz")</option>
+                <option value="2">@L.T("contentType.Pdf")</option>
+                <option value="3">@L.T("contentType.Video")</option>
+                <option value="4">@L.T("contentType.Link")</option>
+            </select>
+        </div>
+        <div class="field mb-0">
+            <label class="block text-sm font-semibold mb-1.5 text-base-content" for="library-content-url">@L.T("library.url")</label>
+            <input id="library-content-url" name="url" class="input w-full" type="url" placeholder="https://..." autocomplete="off" />
+        </div>
+        <div class="field mb-0">
+            <label class="block text-sm font-semibold mb-1.5 text-base-content" for="library-content-desc">@L.T("library.description")</label>
+            <textarea id="library-content-desc" name="description" class="textarea w-full" rows="3"></textarea>
+        </div>
+        <div class="flex justify-end gap-2">
+            <app-btn variant="secondary" onclick="document.getElementById('library-content-dialog').close()">@L.T("common.cancel")</app-btn>
+            <app-btn variant="primary" type="submit">@L.T("common.save")</app-btn>
+        </div>
+    </form>
+</app-modal>
+
+<div id="file-manager-modals"></div>
+
+@section Scripts {
+    <script src="~/src/fileManager.js" asp-append-version="true"></script>
+    <script src="~/src/pages/library.js" asp-append-version="true"></script>
+}

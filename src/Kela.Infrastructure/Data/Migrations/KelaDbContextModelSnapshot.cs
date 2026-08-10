@@ -153,6 +153,105 @@ namespace Kela.Infrastructure.Data.Migrations
                     b.ToTable("cities", (string)null);
                 });
 
+            modelBuilder.Entity("Kela.Domain.Entities.Content", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTime?>("DeletedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Description")
+                        .HasMaxLength(2000)
+                        .HasColumnType("character varying(2000)");
+
+                    b.Property<bool>("IsPublished")
+                        .HasColumnType("boolean");
+
+                    b.Property<int>("TeacherId")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)");
+
+                    b.Property<int>("Type")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Url")
+                        .HasMaxLength(500)
+                        .HasColumnType("character varying(500)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("TeacherId", "Type");
+
+                    b.ToTable("contents", (string)null);
+                });
+
+            modelBuilder.Entity("Kela.Domain.Entities.Node", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<int?>("ContentId")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTime?>("DeletedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<int>("Kind")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)");
+
+                    b.Property<int?>("ParentId")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("Position")
+                        .HasColumnType("integer");
+
+                    b.Property<int?>("TeacherId")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<int?>("WorkspaceId")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ContentId");
+
+                    b.HasIndex("ParentId");
+
+                    b.HasIndex("TeacherId", "ParentId", "Position");
+
+                    b.HasIndex("WorkspaceId", "ParentId", "Position");
+
+                    b.ToTable("nodes", (string)null);
+                });
+
             modelBuilder.Entity("Kela.Domain.Entities.StudentPaymentTrack", b =>
                 {
                     b.Property<int>("Id")
@@ -516,6 +615,48 @@ namespace Kela.Infrastructure.Data.Migrations
                     b.Navigation("Workspace");
                 });
 
+            modelBuilder.Entity("Kela.Domain.Entities.Content", b =>
+                {
+                    b.HasOne("Kela.Domain.Entities.User", "Teacher")
+                        .WithMany()
+                        .HasForeignKey("TeacherId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Teacher");
+                });
+
+            modelBuilder.Entity("Kela.Domain.Entities.Node", b =>
+                {
+                    b.HasOne("Kela.Domain.Entities.Content", "Content")
+                        .WithMany("Nodes")
+                        .HasForeignKey("ContentId")
+                        .OnDelete(DeleteBehavior.SetNull);
+
+                    b.HasOne("Kela.Domain.Entities.Node", "Parent")
+                        .WithMany("Children")
+                        .HasForeignKey("ParentId")
+                        .OnDelete(DeleteBehavior.Cascade);
+
+                    b.HasOne("Kela.Domain.Entities.User", "Teacher")
+                        .WithMany()
+                        .HasForeignKey("TeacherId")
+                        .OnDelete(DeleteBehavior.Cascade);
+
+                    b.HasOne("Kela.Domain.Entities.Workspace", "Workspace")
+                        .WithMany("Nodes")
+                        .HasForeignKey("WorkspaceId")
+                        .OnDelete(DeleteBehavior.Cascade);
+
+                    b.Navigation("Content");
+
+                    b.Navigation("Parent");
+
+                    b.Navigation("Teacher");
+
+                    b.Navigation("Workspace");
+                });
+
             modelBuilder.Entity("Kela.Domain.Entities.StudentPaymentTrack", b =>
                 {
                     b.HasOne("Kela.Domain.Entities.User", "Student")
@@ -619,6 +760,21 @@ namespace Kela.Infrastructure.Data.Migrations
                         .HasForeignKey("WorkspaceId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("Kela.Domain.Entities.Content", b =>
+                {
+                    b.Navigation("Nodes");
+                });
+
+            modelBuilder.Entity("Kela.Domain.Entities.Node", b =>
+                {
+                    b.Navigation("Children");
+                });
+
+            modelBuilder.Entity("Kela.Domain.Entities.Workspace", b =>
+                {
+                    b.Navigation("Nodes");
                 });
 #pragma warning restore 612, 618
         }

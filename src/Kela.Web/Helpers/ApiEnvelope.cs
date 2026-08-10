@@ -113,3 +113,43 @@ public sealed record AttendanceMonthResponse(
     int Month,
     IReadOnlyList<AttendanceStudentResponse> Students,
     IReadOnlyList<AttendanceRecordResponse> Records);
+
+public sealed record ContentResponse(
+    int Id,
+    int TeacherId,
+    string Title,
+    string? Description,
+    int Type,
+    string? Url,
+    bool IsPublished,
+    DateTime CreatedAt);
+
+public sealed record ContentSummaryResponse(
+    int Id,
+    string Title,
+    string? Description,
+    int Type,
+    string? Url,
+    bool IsPublished);
+
+public sealed record NodeResponse(
+    int Id,
+    string Name,
+    int Kind,
+    int Position,
+    int? ParentId,
+    int? ContentId,
+    ContentSummaryResponse? Content,
+    IReadOnlyList<NodeResponse> Children);
+
+public sealed record CreateContentRequest(int TeacherId = 0, string Title = "", string? Description = null, int Type = 0, string? Url = null, int? ParentId = null);
+
+public sealed record UpdateContentRequest(string Title, string? Description, string? Url);
+
+public sealed record CreateFolderRequest(int? WorkspaceId, int? TeacherId, string Name, int? ParentId);
+
+public sealed record AddContentRequest(int WorkspaceId = 0, int ContentId = 0, int? ParentId = null);
+
+public sealed record CopyFolderRequest(int WorkspaceId = 0, int SourceNodeId = 0, int? ParentId = null);
+
+public sealed record UpdateNodeRequest(string? Name, int? ParentId, int? Position);

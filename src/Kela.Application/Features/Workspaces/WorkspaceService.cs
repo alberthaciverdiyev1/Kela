@@ -19,9 +19,9 @@ internal sealed class WorkspaceService(
     IValidator<UpdateWorkspaceRequest> updateValidator) : IWorkspaceService
 {
     public async Task<PaginatedResult<WorkspaceResponse>> GetPageAsync(
-        int teacherId, int page, CancellationToken cancellationToken = default)
+        int teacherId, int page, string? search, CancellationToken cancellationToken = default)
     {
-        var result = await workspaces.GetPageAsync(teacherId, page, cancellationToken);
+        var result = await workspaces.GetPageAsync(teacherId, page, search, cancellationToken);
         return new PaginatedResult<WorkspaceResponse>(
             result.Items.Select(w => w.ToResponse()).ToList(),
             result.Page,

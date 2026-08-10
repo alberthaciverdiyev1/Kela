@@ -9,4 +9,6 @@ public class Workspace : BaseEntity
     public User? Teacher { get; set; }
 
     public ICollection<User> Students { get; set; } = new List<User>();
+    public ICollection<Node> Nodes { get; set; } = new List<Node>();
+
 }

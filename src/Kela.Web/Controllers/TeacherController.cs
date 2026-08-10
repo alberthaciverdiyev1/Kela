@@ -102,9 +102,9 @@ public sealed partial class TeacherController(IApiClient api, Localizer L) : Con
     public IActionResult Index() => View("Workspaces/Workspaces");
 
     [HttpGet("teacher/workspaces/table")]
-    public async Task<IActionResult> WorkspacesTable(CancellationToken ct, int page = 1)
+    public async Task<IActionResult> WorkspacesTable(CancellationToken ct, int page = 1, string? search = null)
     {
-        var result = await api.GetWorkspacesPageAsync(UserId, page, ct);
+        var result = await api.GetWorkspacesPageAsync(UserId, page, search, ct);
         return Json(result.Data ?? new PaginatedResult<WorkspaceResponse>([], page, 20, 0));
     }
 
@@ -156,9 +156,9 @@ public sealed partial class TeacherController(IApiClient api, Localizer L) : Con
     }
 
     [HttpGet("teacher/workspaces/{id:int}/data")]
-    public async Task<IActionResult> WorkspaceData(int id, CancellationToken ct)
+    public async Task<IActionResult> WorkspaceData(int id, CancellationToken ct, string? search = null, int page = 1)
     {
-        var data = await WorkspaceDataAsync(id, ct);
+        var data = await WorkspaceDataAsync(search, page, id, ct);
         if (data is null)
         {
             return NotFound();
@@ -203,14 +203,14 @@ public sealed partial class TeacherController(IApiClient api, Localizer L) : Con
 
     [HttpDelete("teacher/workspaces/{id:int}/delete")]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> DeleteWorkspace(int id, CancellationToken ct, int page = 1)
+    public async Task<IActionResult> DeleteWorkspace(int id, CancellationToken ct, int page = 1, string? search = null)
     {
         await api.DeleteWorkspaceAsync(id, ct);
 
-        var result = await api.GetWorkspacesPageAsync(UserId, page, ct);
+        var result = await api.GetWorkspacesPageAsync(UserId, page, search, ct);
         if ((result.Data?.Items.Count ?? 0) == 0 && page > 1)
         {
-            result = await api.GetWorkspacesPageAsync(UserId, page - 1, ct);
+            result = await api.GetWorkspacesPageAsync(UserId, page - 1, search, ct);
             page--;
         }
 
@@ -222,7 +222,7 @@ public sealed partial class TeacherController(IApiClient api, Localizer L) : Con
     public async Task<IActionResult> AddWorkspaceStudents(int id, AddWorkspaceStudentsViewModel model, CancellationToken ct)
     {
         await api.AddStudentsAsync(id, new AddStudentsRequest(model.StudentIds), ct);
-        var data = await WorkspaceDataAsync(id, ct);
+        var data = await WorkspaceDataAsync(null, 1, id, ct);
         return data is null ? NotFound() : Json(data);
     }
 
@@ -231,15 +231,128 @@ public sealed partial class TeacherController(IApiClient api, Localizer L) : Con
     public async Task<IActionResult> RemoveWorkspaceStudent(int id, int studentId, CancellationToken ct)
     {
         await api.RemoveStudentAsync(id, studentId, ct);
-        var data = await WorkspaceDataAsync(id, ct);
+        var data = await WorkspaceDataAsync(null, 1, id, ct);
         return data is null ? NotFound() : Json(data);
+    }
+
+    [HttpGet("teacher/library")]
+    public IActionResult Library() => View("Library/Index");
+
+    [HttpGet("teacher/library/tree")]
+    public async Task<IActionResult> LibraryTree(CancellationToken ct)
+    {
+        var result = await api.GetLibraryTreeAsync(UserId, ct);
+        return Json(result.Data ?? []);
+    }
+
+    [HttpGet("teacher/library/contents")]
+    public async Task<IActionResult> LibraryContents(CancellationToken ct)
+    {
+        var result = await api.GetContentsAsync(UserId, ct);
+        return Json(result.Data ?? []);
+    }
+
+    [HttpPost("teacher/library/folder")]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> CreateLibraryFolder([FromBody] CreateFolderRequest model, CancellationToken ct)
+    {
+        var result = await api.CreateFolderAsync(new CreateFolderRequest(null, UserId, model.Name, model.ParentId), ct);
+        return result.Success ? Json(new { success = true }) : ApiError(result);
+    }
+
+    [HttpPost("teacher/library/content")]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> CreateLibraryContent([FromBody] CreateContentRequest model, CancellationToken ct)
+    {
+        var result = await api.CreateContentAsync(new CreateContentRequest(UserId, model.Title, model.Description, model.Type, model.Url, model.ParentId), ct);
+        return result.Success ? Json(new { success = true }) : ApiError(result);
+    }
+
+    [HttpPut("teacher/library/content/{id:int}")]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> UpdateLibraryContent(int id, [FromBody] UpdateContentRequest model, CancellationToken ct)
+    {
+        var result = await api.UpdateContentAsync(id, model, ct);
+        return result.Success ? Json(new { success = true }) : ApiError(result);
+    }
+
+    [HttpPut("teacher/library/content/{id:int}/publish")]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> SetContentPublished(int id, bool published, CancellationToken ct)
+    {
+        var result = await api.SetContentPublishedAsync(id, published, ct);
+        return result.Success ? Json(new { success = true }) : ApiError(result);
+    }
+
+    [HttpDelete("teacher/library/content/{id:int}")]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> DeleteLibraryContent(int id, CancellationToken ct)
+    {
+        var result = await api.DeleteContentAsync(id, ct);
+        return result.Success ? Json(new { success = true }) : ApiError(result);
+    }
+
+    [HttpPut("teacher/nodes/{id:int}")]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> UpdateNode(int id, [FromBody] UpdateNodeRequest model, CancellationToken ct)
+    {
+        var result = await api.UpdateNodeAsync(id, model, ct);
+        return result.Success ? Json(new { success = true }) : ApiError(result);
+    }
+
+    [HttpDelete("teacher/nodes/{id:int}")]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> DeleteNode(int id, CancellationToken ct)
+    {
+        var result = await api.DeleteNodeAsync(id, ct);
+        return result.Success ? Json(new { success = true }) : ApiError(result);
+    }
+
+    [HttpGet("teacher/workspaces/{id:int}/tree")]
+    public async Task<IActionResult> WorkspaceTree(int id, CancellationToken ct)
+    {
+        var result = await api.GetWorkspaceTreeAsync(id, ct);
+        return Json(result.Data ?? []);
+    }
+
+    [HttpPost("teacher/workspaces/{id:int}/folder")]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> CreateWorkspaceFolder(int id, [FromBody] CreateFolderRequest model, CancellationToken ct)
+    {
+        var result = await api.CreateFolderAsync(new CreateFolderRequest(id, null, model.Name, model.ParentId), ct);
+        return result.Success ? Json(new { success = true }) : ApiError(result);
+    }
+
+    [HttpPost("teacher/workspaces/{id:int}/content")]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> AddWorkspaceContent(int id, [FromBody] AddContentRequest model, CancellationToken ct)
+    {
+        var result = await api.AddContentToWorkspaceAsync(new AddContentRequest(id, model.ContentId, model.ParentId), ct);
+        return result.Success ? Json(new { success = true }) : ApiError(result);
+    }
+
+    [HttpPost("teacher/workspaces/{id:int}/copy-folder")]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> CopyFolderToWorkspace(int id, [FromBody] CopyFolderRequest model, CancellationToken ct)
+    {
+        var result = await api.CopyFolderToWorkspaceAsync(new CopyFolderRequest(id, model.SourceNodeId, model.ParentId), ct);
+        return result.Success ? Json(new { success = true }) : ApiError(result);
+    }
+
+    private IActionResult ApiError<T>(ApiResult<T> result)
+    {
+        var message = result.Message
+            ?? result.Errors?.FirstOrDefault()
+            ?? L.T("common.error");
+        Response.StatusCode = StatusCodes.Status422UnprocessableEntity;
+        return Json(new { success = false, message });
     }
 
     [HttpGet("teacher/attendance")]
     public async Task<IActionResult> Attendance(int? workspaceId, string? month, CancellationToken ct)
     {
         var (year, monthNumber) = ParseMonth(month);
-        var workspacesResult = await api.GetWorkspacesPageAsync(UserId, 1, ct);
+        var workspacesResult = await api.GetWorkspacesPageAsync(UserId, 1, null, ct);
         var workspaces = (workspacesResult.Data?.Items ?? []).Select(w => new WorkspaceOption(w.Id, w.Name)).ToList();
 
         var selected = workspaceId is > 0 ? workspaceId.Value : 0;
@@ -368,7 +481,7 @@ public sealed partial class TeacherController(IApiClient api, Localizer L) : Con
         return Json(new { success = false, errors });
     }
 
-    private async Task<WorkspaceDataResponse?> WorkspaceDataAsync(int id, CancellationToken ct)
+    private async Task<WorkspaceDataResponse?> WorkspaceDataAsync(string? search, int page, int id, CancellationToken ct)
     {
         var workspace = await api.GetWorkspaceAsync(id, ct);
         if (!workspace.Success || workspace.Data is null)
@@ -376,11 +489,48 @@ public sealed partial class TeacherController(IApiClient api, Localizer L) : Con
             return null;
         }
 
-        var students = await api.GetStudentsPageAsync(1, ct: ct);
         var inWorkspace = workspace.Data.Students.Select(s => s.Id).ToHashSet();
-        var available = (students.Data?.Items ?? []).Where(s => !inWorkspace.Contains(s.UserId)).ToList();
+        var inWorkspaceMatches = workspace.Data.Students.Count(s => MatchesStudentSearch(s, search));
+        var totalMatching = 0;
 
-        return new WorkspaceDataResponse(workspace.Data, available);
+        var available = new List<StudentResponse>();
+        var wantedStart = (page - 1) * 20;
+        var wantedEnd = page * 20;
+        var apiPage = 1;
+
+        while (available.Count < wantedEnd)
+        {
+            var result = await api.GetStudentsPageAsync(apiPage, search, ct);
+            if (result.Data is null)
+            {
+                break;
+            }
+
+            totalMatching = result.Data.TotalCount;
+            available.AddRange(result.Data.Items.Where(s => !inWorkspace.Contains(s.UserId)));
+
+            var lastPage = (int)Math.Ceiling(totalMatching / 20.0);
+            if (apiPage >= lastPage)
+            {
+                break;
+            }
+
+            apiPage++;
+        }
+
+        var totalAvailable = Math.Max(0, totalMatching - inWorkspaceMatches);
+        var totalPages = totalAvailable == 0 ? 1 : (int)Math.Ceiling(totalAvailable / 20.0);
+        var pageItems = available.Skip(wantedStart).Take(20).ToList();
+
+        return new WorkspaceDataResponse(workspace.Data, pageItems, page, totalPages, totalAvailable);
+    }
+
+    private static bool MatchesStudentSearch(WorkspaceStudentResponse s, string? search)
+    {
+        if (string.IsNullOrWhiteSpace(search)) return true;
+        var q = search.Trim().ToLowerInvariant();
+        return (s.FirstName + " " + s.LastName).ToLowerInvariant().Contains(q)
+            || s.Email.ToLowerInvariant().Contains(q);
     }
 
     private static string? NullIfBlank(string? value) => string.IsNullOrWhiteSpace(value) ? null : value.Trim();

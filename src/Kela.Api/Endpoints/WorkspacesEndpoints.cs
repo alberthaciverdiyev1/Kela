@@ -14,9 +14,9 @@ public static class WorkspacesEndpoints
         var group = app.MapGroup("/api/workspaces")
             .RequireAuthorization(policy => policy.RequireRole(RoleNames.Teacher, RoleNames.Admin));
 
-        group.MapGet("", async (int teacherId, int page, IWorkspaceService workspaces, CancellationToken ct) =>
+        group.MapGet("", async (int teacherId, int page, string? search, IWorkspaceService workspaces, CancellationToken ct) =>
             ApiResponse<PaginatedResult<WorkspaceResponse>>.Success(
-                await workspaces.GetPageAsync(teacherId, page, ct)));
+                await workspaces.GetPageAsync(teacherId, page, search, ct)));
 
         group.MapGet("/{id:int}", async (int id, IWorkspaceService workspaces, CancellationToken ct) =>
         {

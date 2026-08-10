@@ -260,7 +260,11 @@
     }
 
     const monthInput = document.getElementById('attendance-month');
-    const workspaceSelect = document.getElementById('attendance-workspace');
+    const workspaceDd = document.getElementById('attendance-workspace-dd');
+    const workspaceLabel = document.getElementById('attendance-workspace-label');
+    const workspaceSearch = document.getElementById('attendance-workspace-search');
+    const workspaceList = document.getElementById('attendance-workspace-list');
+    let selectedWorkspaceId = workspaceId;
 
     function attendanceUrl(ws, month) {
         const params = new URLSearchParams();
@@ -270,15 +274,47 @@
         return location.pathname + (query ? '?' + query : '');
     }
 
-    if (workspaceSelect) {
-        workspaceSelect.addEventListener('change', function () {
-            Kela.navigate(attendanceUrl(workspaceSelect.value, monthInput ? monthInput.value : ''));
+    function renderWorkspaceList(items) {
+        if (!workspaceList) return;
+        if (!items.length) {
+            workspaceList.innerHTML = '<li class="p-2 text-sm text-base-content/50">' + Kela.esc(Kela.t('workspaces.empty')) + '</li>';
+            return;
+        }
+        workspaceList.innerHTML = items.map(function (w) {
+            const active = w.id === selectedWorkspaceId ? ' active' : '';
+            return '<li><a data-workspace-value="' + w.id + '" class="' + active + '">' + Kela.esc(w.name) + '</a></li>';
+        }).join('');
+    }
+
+    if (workspaceSearch) {
+        let wsDebounce;
+        workspaceSearch.addEventListener('input', function () {
+            clearTimeout(wsDebounce);
+            const q = workspaceSearch.value.trim();
+            wsDebounce = setTimeout(function () {
+                Kela.axios.get('/teacher/workspaces/table', {
+                    params: { search: q, page: 1 }
+                }).then(function (res) {
+                    renderWorkspaceList(res.data.items || []);
+                }).catch(function () {
+                });
+            }, 300);
         });
     }
+
+    Kela.onPageEvent('click', function (event) {
+        const wsItem = event.target.closest('#attendance-workspace-list [data-workspace-value]');
+        if (wsItem) {
+            selectedWorkspaceId = parseInt(wsItem.dataset.workspaceValue, 10);
+            if (workspaceLabel) workspaceLabel.textContent = wsItem.textContent;
+            if (workspaceDd) workspaceDd.removeAttribute('open');
+            Kela.navigate(attendanceUrl(selectedWorkspaceId, monthInput ? monthInput.value : ''));
+        }
+    });
     if (monthInput) {
         monthInput.addEventListener('change', function () {
             if (monthInput.value) {
-                Kela.navigate(attendanceUrl(workspaceSelect ? workspaceSelect.value : '', monthInput.value));
+                Kela.navigate(attendanceUrl(selectedWorkspaceId, monthInput.value));
             }
         });
     }
