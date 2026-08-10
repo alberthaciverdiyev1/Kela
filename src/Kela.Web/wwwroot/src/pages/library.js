@@ -33,7 +33,10 @@
                 document.getElementById('library-folder-dialog').close();
                 document.getElementById('library-folder-name').value = '';
                 Kela.notify.success(Kela.t('library.created'));
-            }).catch(function () {
+            }).catch(function (e) {
+                Kela.notify.error(e && e.response && e.response.data && e.response.data.message
+                    ? e.response.data.message
+                    : Kela.t('common.error'));
             }).finally(function () {
                 if (btn) btn.disabled = false;
             });
@@ -61,7 +64,10 @@
                 if (type === 1 && contentId) {
                     Kela.navigate('/teacher/quizzes/' + contentId);
                 }
-            }).catch(function () {
+            }).catch(function (e) {
+                Kela.notify.error(e && e.response && e.response.data && e.response.data.message
+                    ? e.response.data.message
+                    : Kela.t('common.error'));
             }).finally(function () {
                 if (btn) btn.disabled = false;
             });

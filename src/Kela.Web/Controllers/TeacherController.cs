@@ -1,3 +1,4 @@
+using System.Linq;
 using System.Globalization;
 using System.Security.Claims;
 using System.Text.RegularExpressions;
@@ -432,9 +433,10 @@ public sealed partial class TeacherController(IApiClient api, Localizer L) : Con
 
     private IActionResult ApiError<T>(ApiResult<T> result)
     {
-        var message = result.Message
-            ?? result.Errors?.FirstOrDefault()
-            ?? L.T("common.error");
+        var message = result.Errors is { Count: > 0 }
+            ? result.Errors.First()
+            : result.Message
+              ?? L.T("common.error");
         Response.StatusCode = StatusCodes.Status422UnprocessableEntity;
         return Json(new { success = false, message });
     }

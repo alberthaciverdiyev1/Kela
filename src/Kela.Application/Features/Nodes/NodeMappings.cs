@@ -62,6 +62,13 @@ public static class NodeMappings
             return node.Content is not null && node.Content.Type == type ? node : null;
         }
 
+        // Keep empty folders so users can build structure on a type-filtered page
+        // (e.g. create a folder on the quizzes page before adding quizzes into it).
+        if (node.Children.Count == 0)
+        {
+            return node;
+        }
+
         var children = node.Children
             .Select(c => FilterNode(c, type))
             .Where(c => c is not null)

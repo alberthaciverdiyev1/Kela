@@ -18,6 +18,12 @@
         return Kela.t(key, params);
     }
 
+    function errMsg(e) {
+        return e && e.response && e.response.data && e.response.data.message
+            ? e.response.data.message
+            : t('common.error');
+    }
+
     function letters() {
         return ['A', 'B', 'C', 'D', 'E'];
     }
@@ -135,7 +141,9 @@
                 addDialog.close();
                 load();
                 Kela.notify.success(t('quiz.questionAdded'));
-            }).catch(function () { }).finally(function () {
+            }).catch(function (e) {
+                Kela.notify.error(errMsg(e));
+            }).finally(function () {
                 addConfirm.disabled = false;
             });
         });
@@ -165,7 +173,9 @@
             }).then(function () {
                 load();
                 Kela.notify.success(t('quiz.created'));
-            }).catch(function () { }).finally(function () {
+            }).catch(function (e) {
+                Kela.notify.error(errMsg(e));
+            }).finally(function () {
                 if (btn) btn.disabled = false;
             });
         });
@@ -181,7 +191,9 @@
         Kela.axios.delete('/teacher/quizzes/' + contentId + '/questions/' + qid).then(function () {
             load();
             Kela.notify.success(t('quiz.questionRemoved'));
-        }).catch(function () { });
+        }).catch(function (e) {
+            Kela.notify.error(errMsg(e));
+        });
     });
 
     load();

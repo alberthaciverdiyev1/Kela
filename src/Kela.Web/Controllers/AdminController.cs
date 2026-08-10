@@ -1,3 +1,4 @@
+using System.Linq;
 using System.Security.Claims;
 using Kela.Web.Helpers;
 using Kela.Web.Localization;
@@ -50,9 +51,10 @@ public sealed class AdminController(IApiClient api, Localizer L) : Controller
 
     private IActionResult ApiError<T>(ApiResult<T> result)
     {
-        var message = result.Message
-            ?? result.Errors?.FirstOrDefault()
-            ?? L.T("common.error");
+        var message = result.Errors is { Count: > 0 }
+            ? result.Errors.First()
+            : result.Message
+              ?? L.T("common.error");
         Response.StatusCode = StatusCodes.Status422UnprocessableEntity;
         return Json(new { success = false, message });
     }
