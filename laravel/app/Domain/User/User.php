@@ -95,8 +95,10 @@ class User extends Authenticatable implements FilamentUser, HasName
     public function homeRoute(): string
     {
         return match (true) {
-            $this->isAdmin() => '/admin/dashboard',
-            $this->isTeacher() => '/teacher/dashboard',
+            // Varsayılan yön Filament paneline gider.
+            $this->isAdmin() => '/admin',
+            $this->isTeacher() => '/admin',
+            // Öğrenci/veli Filament'e erişemez; özel blade panellerinde kalır.
             $this->isStudent() => '/student/dashboard',
             $this->isParent() => '/parent/dashboard',
             default => '/blocked',

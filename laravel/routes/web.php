@@ -10,7 +10,8 @@ Route::get('/auth/login', [AuthController::class, 'showLogin'])->name('auth.logi
 Route::post('/auth/login', [AuthController::class, 'login'])->name('auth.login.post');
 Route::post('/auth/logout', [AuthController::class, 'logout'])->name('auth.logout')->middleware('auth');
 
-Route::get('/', fn () => redirect('/auth/login'));
+// Varsayılan giriş noktası Filament panelidir.
+Route::get('/', fn () => redirect('/admin'));
 
 // --- Admin ---
 Route::prefix('admin')->middleware(['auth', 'role:Admin'])->group(function () {
