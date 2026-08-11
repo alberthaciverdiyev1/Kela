@@ -1,8 +1,8 @@
 <?php
 
-use App\Http\Controllers\AuthController;
-use App\Http\Controllers\DashboardController;
-use App\Http\Controllers\LessonMediaController;
+use App\Infrastructure\Http\Controllers\AuthController;
+use App\Infrastructure\Http\Controllers\DashboardController;
+use App\Infrastructure\Http\Controllers\LessonMediaController;
 use Illuminate\Support\Facades\Route;
 
 // --- Auth ---

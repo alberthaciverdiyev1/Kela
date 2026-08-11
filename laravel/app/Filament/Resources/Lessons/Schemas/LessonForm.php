@@ -30,13 +30,13 @@ class LessonForm
                 FileUpload::make('video_path')
                     ->label('Video faylı')
                     ->disk('local')
-                    ->directory(\App\Services\MediaProcessor::VIDEOS_DIR)
+                    ->directory(\App\Infrastructure\Media\MediaProcessor::VIDEOS_DIR)
                     ->acceptedFileTypes([
                         'video/mp4', 'video/webm', 'video/ogg',
                         'video/quicktime', 'video/x-m4v',
                         'video/x-matroska', 'video/x-msvideo', 'video/mpeg',
                     ])
-                    ->maxSize(\App\Services\MediaProcessor::MAX_VIDEO_MB * 1024)
+                    ->maxSize(\App\Infrastructure\Media\MediaProcessor::MAX_VIDEO_MB * 1024)
                     ->helperText('Maksimum 512 MB — MP4, WebM, MKV, AVI, MOV')
                     ->openable()
                     ->downloadable()

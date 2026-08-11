@@ -27,6 +27,7 @@ bld/
 
 # Node
 node_modules/
+laravel/node_modules/
 
 # SvelteKit (Frontend)
 .svelte-kit/

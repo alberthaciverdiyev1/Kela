@@ -1,0 +1,80 @@
+<?php
+
+namespace App\Infrastructure\Persistence\Repositories;
+
+use App\Domain\Student\StudentRepository;
+use App\Domain\User\User;
+use Illuminate\Support\Collection;
+use Illuminate\Support\Str;
+
+class EloquentStudentRepository implements StudentRepository
+{
+    public function create(array $data): User
+    {
+        $user = User::create([
+            'first_name' => $data['first_name'],
+            'last_name' => $data['last_name'] ?? null,
+            'email' => $data['email'],
+            'password' => $data['password'] ?? Str::random(16),
+            'status' => $data['status'] ?? User::STATUS_ACTIVE,
+        ]);
+        $user->assignRole(User::ROLE_STUDENT);
+
+        // İsteğe bağlı profil məlumatları varsa StudentProfile yaradılır.
+        if (isset($data['city_id']) || isset($data['birth_date']) || isset($data['phone'])) {
+            $user->studentProfile()->create([
+                'city_id' => $data['city_id'] ?? null,
+                'birth_date' => $data['birth_date'] ?? null,
+                'phone' => $data['phone'] ?? null,
+            ]);
+        }
+
+        return $user->load('studentProfile');
+    }
+
+    public function update(int $id, array $data): User
+    {
+        $user = User::findOrFail($id);
+        $user->update([
+            'first_name' => $data['first_name'] ?? $user->first_name,
+            'last_name' => $data['last_name'] ?? $user->last_name,
+            'email' => $data['email'] ?? $user->email,
+            'status' => $data['status'] ?? $user->status,
+        ]);
+
+        if ($user->studentProfile) {
+            $user->studentProfile->update([
+                'city_id' => $data['city_id'] ?? $user->studentProfile->city_id,
+                'birth_date' => $data['birth_date'] ?? $user->studentProfile->birth_date,
+                'phone' => $data['phone'] ?? $user->studentProfile->phone,
+            ]);
+        }
+
+        return $user->load('studentProfile');
+    }
+
+    public function find(int $id): ?User
+    {
+        return User::with('studentProfile')->find($id);
+    }
+
+    public function delete(int $id): bool
+    {
+        $user = User::find($id);
+        if (! $user) {
+            return false;
+        }
+
+        $user->studentProfile()?->delete();
+
+        return (bool) $user->delete();
+    }
+
+    public function all(): Collection
+    {
+        return User::role(User::ROLE_STUDENT)
+            ->with('studentProfile')
+            ->orderBy('first_name')
+            ->get();
+    }
+}

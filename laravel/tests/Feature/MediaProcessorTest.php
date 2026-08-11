@@ -2,7 +2,7 @@
 
 namespace Tests\Feature;
 
-use App\Services\MediaProcessor;
+use App\Infrastructure\Media\MediaProcessor;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
 use Tests\TestCase;

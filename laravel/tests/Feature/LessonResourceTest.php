@@ -3,9 +3,9 @@
 namespace Tests\Feature;
 
 use App\Filament\Resources\Lessons\Pages\CreateLesson;
-use App\Models\Content;
-use App\Models\Lesson;
-use App\Models\User;
+use App\Domain\Content\Content;
+use App\Domain\Lesson\Lesson;
+use App\Domain\User\User;
 use Filament\Facades\Filament;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Livewire\Livewire;

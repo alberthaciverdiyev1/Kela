@@ -2,8 +2,8 @@
 
 namespace App\Policies;
 
-use App\Models\Lesson;
-use App\Models\User;
+use App\Domain\Lesson\Lesson;
+use App\Domain\User\User;
 
 class LessonPolicy
 {

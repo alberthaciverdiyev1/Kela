@@ -1,18 +1,16 @@
 @php
-    /** @var \App\Models\Lesson $lesson */
-    $streamUrl = route('lesson.video.stream', $lesson->content_id);
-    $thumbUrl = $lesson->thumbnail_path
-        ? route('lesson.thumbnail', $lesson->content_id)
-        : null;
+    /** @var bool $hasVideo */
+    /** @var string $streamUrl */
+    /** @var string|null $thumbUrl */
 @endphp
 
 <div class="overflow-hidden rounded-xl border border-gray-200 dark:border-gray-700">
-    @if ($lesson->has_video)
+    @if ($hasVideo)
         <video
             class="block aspect-video w-full bg-black"
             controls
             preload="metadata"
-            poster="{{ $thumbUrl }}"
+            @if ($thumbUrl) poster="{{ $thumbUrl }}" @endif
             src="{{ $streamUrl }}">
             <p>Brauzeriniz video oynatmanı dəstəkləmir.</p>
         </video>

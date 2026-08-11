@@ -2,7 +2,7 @@
 
 namespace App\Filament\Resources\Lessons\Schemas;
 
-use App\Models\Lesson;
+use App\Domain\Lesson\Lesson;
 use Filament\Infolists\Components\IconEntry;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Infolists\Components\ViewEntry;
@@ -17,7 +17,15 @@ class LessonInfolist
             ->components([
                 ViewEntry::make('video_player')
                     ->view('filament.resources.lessons.video-player')
-                    ->viewData(fn (Lesson $record): array => ['lesson' => $record])
+                    ->viewData(function (Lesson $record): array {
+                        return [
+                            'hasVideo' => $record->has_video,
+                            'streamUrl' => route('lesson.video.stream', $record->getKey()),
+                            'thumbUrl' => $record->thumbnail_path
+                                ? route('lesson.thumbnail', $record->getKey())
+                                : null,
+                        ];
+                    })
                     ->columnSpanFull(),
 
                 TextEntry::make('content.title')

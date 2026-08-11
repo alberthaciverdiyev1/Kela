@@ -2,7 +2,8 @@
 
 namespace App\Filament\Resources\Lessons\Tables;
 
-use App\Models\Lesson;
+use App\Application\Lesson\LessonService;
+use App\Domain\Lesson\Lesson;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
@@ -66,11 +67,8 @@ class LessonsTable
                     DeleteBulkAction::make(),
                 ]),
             ])
-            ->modifyQueryUsing(fn (Builder $query): Builder => $query
-                ->when(
-                    ! auth()->user()->isAdmin(),
-                    fn (Builder $q): Builder => $q->where('teacher_id', auth()->id()),
-                )
-                ->with('content'));
+            ->modifyQueryUsing(function (Builder $query): Builder {
+                return app(LessonService::class)->scopeQueryFor($query, auth()->id());
+            });
     }
 }

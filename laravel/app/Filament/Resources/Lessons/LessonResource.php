@@ -9,7 +9,7 @@ use App\Filament\Resources\Lessons\Pages\ViewLesson;
 use App\Filament\Resources\Lessons\Schemas\LessonForm;
 use App\Filament\Resources\Lessons\Schemas\LessonInfolist;
 use App\Filament\Resources\Lessons\Tables\LessonsTable;
-use App\Models\Lesson;
+use App\Domain\Lesson\Lesson;
 use BackedEnum;
 use Filament\Resources\Resource;
 use UnitEnum;
