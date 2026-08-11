@@ -86,4 +86,16 @@ class EloquentStudentRepository implements StudentRepository
             ->orderBy('first_name')
             ->get();
     }
+
+    public function availableForWorkspace(?string $search = null): Collection
+    {
+        return User::role(User::ROLE_STUDENT)
+            ->when($search, fn ($q) => $q->where(function ($q) use ($search) {
+                $q->where('first_name', 'ilike', "%{$search}%")
+                    ->orWhere('last_name', 'ilike', "%{$search}%")
+                    ->orWhere('email', 'ilike', "%{$search}%");
+            }))
+            ->orderBy('first_name')
+            ->get(['users.id', 'users.first_name', 'users.last_name', 'users.email']);
+    }
 }

@@ -6,12 +6,20 @@ use App\Domain\City\CityRepository;
 use App\Domain\Content\ContentRepository;
 use App\Domain\Course\CourseRepository;
 use App\Domain\Lesson\LessonRepository;
+use App\Domain\Node\NodeRepository;
+use App\Domain\Question\QuestionRepository;
+use App\Domain\Quiz\QuizRepository;
 use App\Domain\Student\StudentRepository;
+use App\Domain\Workspace\WorkspaceRepository;
 use App\Infrastructure\Media\SafeThumbnailService;
 use App\Infrastructure\Persistence\Repositories\EloquentCityRepository;
 use App\Infrastructure\Persistence\Repositories\EloquentContentRepository;
 use App\Infrastructure\Persistence\Repositories\EloquentLessonRepository;
+use App\Infrastructure\Persistence\Repositories\EloquentNodeRepository;
+use App\Infrastructure\Persistence\Repositories\EloquentQuestionRepository;
+use App\Infrastructure\Persistence\Repositories\EloquentQuizRepository;
 use App\Infrastructure\Persistence\Repositories\EloquentStudentRepository;
+use App\Infrastructure\Persistence\Repositories\EloquentWorkspaceRepository;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\ServiceProvider;
 use MmesDesign\FilamentFileManager\Services\ThumbnailService;
@@ -28,6 +36,10 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(ContentRepository::class, EloquentContentRepository::class);
         $this->app->bind(StudentRepository::class, EloquentStudentRepository::class);
         $this->app->bind(CityRepository::class, EloquentCityRepository::class);
+        $this->app->bind(NodeRepository::class, EloquentNodeRepository::class);
+        $this->app->bind(WorkspaceRepository::class, EloquentWorkspaceRepository::class);
+        $this->app->bind(QuizRepository::class, EloquentQuizRepository::class);
+        $this->app->bind(QuestionRepository::class, EloquentQuestionRepository::class);
         // Filament dosya yöneticisi paketi ThumbnailService'i GD ile kurmaya çalışır.
         // Bu sistemde GD yüklü olmadığından (sudo yok) GD'siz SafeThumbnailService kullanılır.
         $this->app->bind(ThumbnailService::class, SafeThumbnailService::class);

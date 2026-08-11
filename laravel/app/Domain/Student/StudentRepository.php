@@ -20,4 +20,7 @@ interface StudentRepository
 
     /** @return Collection<int, User> */
     public function all(): Collection;
+
+    /** Optional axtarışla tələbə siyahısı (workspace seçici üçün). */
+    public function availableForWorkspace(?string $search = null): Collection;
 }

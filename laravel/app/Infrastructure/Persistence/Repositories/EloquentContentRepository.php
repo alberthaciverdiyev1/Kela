@@ -27,4 +27,24 @@ class EloquentContentRepository implements ContentRepository
     {
         return Content::find($id);
     }
+
+    public function countByType(int $teacherId): array
+    {
+        return Content::query()
+            ->where('teacher_id', $teacherId)
+            ->selectRaw('type, count(*) as total')
+            ->groupBy('type')
+            ->pluck('total', 'type')
+            ->map(fn ($v) => (int) $v)
+            ->all();
+    }
+
+    public function allForTeacher(int $teacherId): array
+    {
+        return Content::query()
+            ->where('teacher_id', $teacherId)
+            ->get(['id', 'title'])
+            ->pluck('title', 'id')
+            ->all();
+    }
 }
