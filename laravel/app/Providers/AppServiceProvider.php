@@ -62,5 +62,15 @@ class AppServiceProvider extends ServiceProvider
         // Ortaq UI komponentləri resources/views/common/components/teacher-da saxlanır.
         // x-teacher.card nöqtə sintaksisi alt-qovluq kimi çözülür: common/components/teacher/card.
         Blade::anonymousComponentPath(resource_path('views/common/components'));
+
+        // Sanctum session auth (JS → /api/v1) üçün stateful host lazımdır.
+        // Cari istifadə olunan host (localhost:8080, 127.0.0.1:8080 və s.)
+        // avtomatik əlavə olunur ki, hansı host/port ilə girilsə də işləsin.
+        if (! $this->app->runningInConsole()) {
+            config(['sanctum.stateful' => array_values(array_unique([
+                ...config('sanctum.stateful'),
+                request()->getHttpHost(),
+            ]))]);
+        }
     }
 }

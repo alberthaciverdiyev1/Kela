@@ -26,6 +26,7 @@ Route::middleware(['auth', 'role:Admin,Teacher'])->group(function () {
         Route::get('/', [StudentController::class, 'index'])->name('teacher.students.index');
         Route::get('/create', [StudentController::class, 'create'])->name('teacher.students.create');
         Route::post('/', [StudentController::class, 'store'])->name('teacher.students.store');
+        Route::get('/table', [StudentController::class, 'tableFragment'])->name('teacher.students.table');
         Route::get('/{student}/edit', [StudentController::class, 'edit'])->name('teacher.students.edit');
         Route::post('/{student}', [StudentController::class, 'update'])->name('teacher.students.update');
         Route::delete('/{student}', [StudentController::class, 'destroy'])->name('teacher.students.destroy');

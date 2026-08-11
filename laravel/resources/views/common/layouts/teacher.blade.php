@@ -95,5 +95,6 @@
     </div>
 
     @stack('scripts')
+    @vite('resources/js/teacher/index.js')
 </body>
 </html>

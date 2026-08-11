@@ -1,61 +1,49 @@
 import Alpine from 'alpinejs';
+import axios from 'axios';
+import deleteForm from './teacher/delete-form';
 
 window.Alpine = Alpine;
-Alpine.start();
+window.axios = axios;
+
+axios.defaults.headers.common['Accept'] = 'application/json';
+
+// CSRF token-i hər istəkdə meta-dan təzə oxu (köhnə fetch davranışı).
+// Niyə? Session regenerate olarsa (login/çıxış) və ya səhifə uzun müddət
+// açıq qalarsa köhnə token-i göndərmək 419 CSRF mismatch verir.
+axios.interceptors.request.use((config) => {
+    config.headers['X-CSRF-TOKEN'] =
+        document.querySelector('meta[name="csrf-token"]')?.content ?? '';
+    return config;
+});
 
 /**
- * Session-auth JSON API helper (Sanctum web-guard fallback).
- * Web səhifələri yalnız lazım olan hissələri yeniləmək üçün /api/v1/* çağırır.
+ * JSON API köməkçisi (axios). Web səhifələri yalnız lazım olan hissəni
+ * /api/v1/* endpointləri ilə yeniləyir (Sanctum sessiya auth).
  */
-const csrf = () => document.querySelector('meta[name="csrf-token"]')?.content ?? '';
-
 window.KelaApi = async (method, url, body = null) => {
-    const res = await fetch(url, {
-        method,
-        headers: {
-            'Accept': 'application/json',
-            'X-CSRF-TOKEN': csrf(),
-            ...(body ? { 'Content-Type': 'application/json' } : {}),
-        },
-        body: body ? JSON.stringify(body) : null,
-    });
-    if (!res.ok) {
+    try {
+        const res = await axios({ method, url, data: body ?? undefined });
+        return res.status === 204 ? null : res.data;
+    } catch (err) {
         let msg = 'Xəta baş verdi.';
-        try { const j = await res.json(); msg = j.message || msg; } catch { /* json deyil */ }
+        if (err.response?.data?.message) msg = err.response.data.message;
         throw new Error(msg);
     }
-    return res.status === 204 ? null : res.json();
 };
 
-/** Server-rendered fragment-i yenidən çəkir; JS DOM-a yalnız bu hissəni yazır. */
+/** Server-rendered fragment-i yenidən çəkir (axios). */
 window.KelaFragment = async (url) => {
-    const res = await fetch(url, { headers: { 'Accept': 'text/html', 'X-CSRF-TOKEN': csrf() } });
-    if (!res.ok) throw new Error('Bölmə yüklənə bilmədi.');
-    return res.text();
+    try {
+        const res = await axios.get(url, { responseType: 'text' });
+        return res.data;
+    } catch {
+        throw new Error('Bölmə yüklənə bilmədi.');
+    }
 };
 
-/**
- * İndeks səhifələrində silmə formaları:
- * <form method="POST" action="...destroy" data-api-delete="/api/v1/students/1" data-confirm="...">
- * JS confirm + API DELETE edir; JS olmayan tərzdə normal submit işləyir.
- */
-document.addEventListener('submit', (e) => {
-    const form = e.target.closest('form[data-api-delete]');
-    if (!form) return;
+// Ümumi komponentlər (silmə formaları).
+Alpine.data('deleteForm', deleteForm);
 
-    if (!window.confirm(form.dataset.confirm || 'Silmək istəyirsiniz?')) {
-        e.preventDefault();
-        return;
-    }
-
-    e.preventDefault();
-    const btn = form.querySelector('[type="submit"]');
-    if (btn) btn.disabled = true;
-
-    KelaApi('DELETE', form.dataset.apiDelete)
-        .then(() => { window.location.reload(); })
-        .catch((err) => {
-            window.alert(err.message);
-            if (btn) btn.disabled = false;
-        });
-});
+// Alpine.start() burada DEYİL — hər səhifənin öz entry faylı başladır
+// (teacher/index.js, teacher/quiz-editor.js, teacher/workspace.js).
+// start() idempotentdir, buna görə təhlükəsizdir.

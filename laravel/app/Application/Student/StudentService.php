@@ -64,10 +64,14 @@ class StudentService
             ->paginate($search, $perPage)
             ->through(fn (User $student): array => [
                 'id' => (int) $student->id,
+                'first_name' => $student->first_name,
+                'last_name' => $student->last_name,
                 'full_name' => $student->full_name,
                 'email' => $student->email,
                 'city' => $student->studentProfile?->city?->name('az'),
+                'city_id' => $student->studentProfile?->city_id,
                 'birth_date' => $student->studentProfile?->birth_date?->format('d M Y'),
+                'birth_date_iso' => $student->studentProfile?->birth_date?->format('Y-m-d'),
                 'status' => (int) $student->status,
             ]);
     }

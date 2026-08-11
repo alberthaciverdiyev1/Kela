@@ -25,10 +25,30 @@ class StudentController
     public function index(Request $request): View
     {
         $search = (string) $request->string('search');
+        $students = $this->students->paginate($search ?: null, 15);
 
         return view('teacher.students.index', [
-            'students' => $this->students->paginate($search ?: null, 15),
+            'students' => $students,
             'search' => $search,
+            'cities' => $this->cities->options(),
+            'statuses' => $this->statuses(),
+            'fragmentUrl' => route('teacher.students.table', array_filter([
+                'search' => $search ?: null,
+                'page' => $students->currentPage() > 1 ? $students->currentPage() : null,
+            ])),
+        ]);
+    }
+
+    /**
+     * Cədvəl fragmenti — JS list.refresh() tərəfindən yenidən çəkilir
+     * (server-rendered; mutasiyadan sonra yalnız bu hissə yenilənir).
+     */
+    public function tableFragment(Request $request): View
+    {
+        $search = (string) $request->string('search');
+
+        return view('teacher.students._table', [
+            'students' => $this->students->paginate($search ?: null, 15),
         ]);
     }
 
@@ -110,11 +130,16 @@ class StudentController
             'creating' => $creating,
             'student' => $student,
             'cities' => $this->cities->options(),
-            'statuses' => [
-                UserStatus::ACTIVE => 'Aktiv',
-                UserStatus::INACTIVE => 'Deaktiv',
-                UserStatus::SUSPENDED => 'Dayandırılmış',
-            ],
+            'statuses' => $this->statuses(),
         ]);
+    }
+
+    protected function statuses(): array
+    {
+        return [
+            UserStatus::ACTIVE => 'Aktiv',
+            UserStatus::INACTIVE => 'Deaktiv',
+            UserStatus::SUSPENDED => 'Dayandırılmış',
+        ];
     }
 }

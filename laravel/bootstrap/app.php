@@ -21,6 +21,14 @@ return Application::configure(basePath: dirname(__DIR__))
 
         // Doğrulamasız kullanıcıyı doğrudan giriş sayfasına yönlendir.
         $middleware->redirectGuestsTo('/auth/login');
+
+        // Browser-dəki JS (sessiya ilə auth) /api/v1/* çağırdıqda Sanctum-un
+        // session-u tanıması üçün stateful middleware lazımdır. Bunun sayəsində
+        // auth:sanctum web guard vasitəsilə session istifadəçisini doğrulayır
+        // (Bearer token tələb olunmadan) — əks halda 401 Unauthenticated olur.
+        $middleware->api(prepend: [
+            \Laravel\Sanctum\Http\Middleware\EnsureFrontendRequestsAreStateful::class,
+        ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         $exceptions->shouldRenderJsonWhen(

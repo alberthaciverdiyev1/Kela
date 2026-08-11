@@ -60,12 +60,12 @@
                                 <form
                                     method="POST"
                                     action="{{ route('teacher.lessons.destroy', $lesson['content_id']) }}"
-                                    data-api-delete="/api/v1/lessons/{{ $lesson['content_id'] }}"
-                                    data-confirm="Bu dərsi silmək istəyirsiniz?"
+                                    x-data="deleteForm({ url: '/api/v1/lessons/{{ $lesson['content_id'] }}', message: 'Bu dərsi silmək istəyirsiniz?' })"
+                                    @submit.prevent="submit"
                                 >
                                     @csrf
                                     @method('DELETE')
-                                    <x-teacher.button type="submit" variant="ghost" size="sm" icon="trash">Sil</x-teacher.button>
+                                    <x-teacher.button type="submit" variant="ghost" size="sm" icon="trash" x-bind:disabled="busy">Sil</x-teacher.button>
                                 </form>
                             </div>
                         </td>

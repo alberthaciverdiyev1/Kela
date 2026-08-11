@@ -43,12 +43,12 @@
                                 <form
                                     method="POST"
                                     action="{{ route('teacher.workspaces.destroy', $ws['id']) }}"
-                                    data-api-delete="/api/v1/workspaces/{{ $ws['id'] }}"
-                                    data-confirm="Bu workspace silinsin?"
+                                    x-data="deleteForm({ url: '/api/v1/workspaces/{{ $ws['id'] }}', message: 'Bu workspace silinsin?' })"
+                                    @submit.prevent="submit"
                                 >
                                     @csrf
                                     @method('DELETE')
-                                    <x-teacher.button type="submit" variant="ghost" size="sm" icon="trash">Sil</x-teacher.button>
+                                    <x-teacher.button type="submit" variant="ghost" size="sm" icon="trash" x-bind:disabled="busy">Sil</x-teacher.button>
                                 </form>
                             </div>
                         </td>
