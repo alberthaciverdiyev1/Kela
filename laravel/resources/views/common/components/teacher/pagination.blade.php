@@ -7,7 +7,7 @@
             {{ $paginator->firstItem() ?? 0 }}–{{ $paginator->lastItem() ?? 0 }} / {{ $paginator->total() }}
         </p>
         <div class="join">
-            {{ $paginator->onEachSide(1)->links('vendor.pagination.daisyui') }}
+            {{ $paginator->onEachSide(1)->links('common.pagination.daisyui') }}
         </div>
     </div>
 @endif

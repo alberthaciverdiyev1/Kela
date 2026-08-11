@@ -1,4 +1,4 @@
-@extends('layouts.teacher')
+@extends('common.layouts.teacher')
 @section('title', $heading)
 @section('content')
 <div class="mx-auto max-w-2xl space-y-6">

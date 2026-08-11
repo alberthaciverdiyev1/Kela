@@ -1,4 +1,4 @@
-@extends('layouts.teacher')
+@extends('common.layouts.teacher')
 @section('title', $lessonData['title'].' - Kela')
 @section('content')
 <div class="mx-auto max-w-3xl space-y-6">

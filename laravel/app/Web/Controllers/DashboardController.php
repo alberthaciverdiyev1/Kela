@@ -11,21 +11,21 @@ class DashboardController extends Controller
     public function teacher()
     {
         // Layered qayda: controller modellərə toxunmur, DashboardService-ə gedir.
-        return view('dashboards.teacher', app(DashboardService::class)->counts());
+        return view('teacher.dashboard', app(DashboardService::class)->counts());
     }
 
     public function student()
     {
-        return view('dashboards.student');
+        return view('student.dashboard');
     }
 
     public function parent()
     {
-        return view('dashboards.parent');
+        return view('family.dashboard');
     }
 
     public function blocked()
     {
-        return view('dashboards.blocked');
+        return view('common.blocked');
     }
 }

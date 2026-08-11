@@ -1,4 +1,4 @@
-@extends('layouts.teacher')
+@extends('common.layouts.teacher')
 @section('title', 'Dərslər - Kela')
 @section('content')
 <div class="space-y-6">

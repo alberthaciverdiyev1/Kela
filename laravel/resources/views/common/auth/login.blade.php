@@ -1,4 +1,4 @@
-@extends('layouts.app')
+@extends('common.layouts.app')
 
 @section('title', 'Login - Kela')
 

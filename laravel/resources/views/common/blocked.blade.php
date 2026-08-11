@@ -1,4 +1,4 @@
-@extends('layouts.app')
+@extends('common.layouts.app')
 @section('title', 'No Access - Kela')
 @section('content')
     <div class="card mx-auto mt-16 max-w-md border border-base-300 bg-base-100 text-center">

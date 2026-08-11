@@ -1,4 +1,4 @@
-@extends('layouts.teacher')
+@extends('common.layouts.teacher')
 @section('title', 'Quiz Redaktoru - Kela')
 @section('content')
 <div class="mx-auto max-w-4xl space-y-6" id="quiz-editor" data-content-id="{{ $contentId }}">

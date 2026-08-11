@@ -28,7 +28,7 @@
                         </a>
                     </td>
                     <td><x-teacher.badge color="gray">Qovluq</x-teacher.badge></td>
-                    <td class="text-right"><x-workspace-node-actions :node-id="$folder['node_id']" :name="$folder['name']" :is-folder="true" /></td>
+                    <td class="text-right"><x-teacher.workspace-node-actions :node-id="$folder['node_id']" :name="$folder['name']" :is-folder="true" /></td>
                 </tr>
             @endforeach
 
@@ -67,7 +67,7 @@
                             @endif
                         </div>
                     </td>
-                    <td class="text-right"><x-workspace-node-actions :node-id="$content['node_id']" :name="$content['title']" :is-folder="false" /></td>
+                    <td class="text-right"><x-teacher.workspace-node-actions :node-id="$content['node_id']" :name="$content['title']" :is-folder="false" /></td>
                 </tr>
             @endforeach
         </x-teacher.table>

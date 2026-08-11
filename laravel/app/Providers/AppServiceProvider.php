@@ -22,6 +22,7 @@ use App\Infrastructure\Persistence\Repositories\EloquentStudentRepository;
 use App\Infrastructure\Persistence\Repositories\EloquentUserRepository;
 use App\Infrastructure\Persistence\Repositories\EloquentWorkspaceRepository;
 use Illuminate\Database\Eloquent\Factories\Factory;
+use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -57,5 +58,9 @@ class AppServiceProvider extends ServiceProvider
         Factory::guessFactoryNamesUsing(
             fn (string $modelName): string => 'Database\\Factories\\'.class_basename($modelName).'Factory'
         );
+
+        // Ortaq UI komponentləri resources/views/common/components/teacher-da saxlanır.
+        // x-teacher.card nöqtə sintaksisi alt-qovluq kimi çözülür: common/components/teacher/card.
+        Blade::anonymousComponentPath(resource_path('views/common/components'));
     }
 }
