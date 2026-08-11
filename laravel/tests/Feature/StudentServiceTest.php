@@ -41,7 +41,7 @@ class StudentServiceTest extends TestCase
     {
         $city = City::create([
             'name' => 'Bakı',
-            'name_translations' => json_encode(['az' => 'Bakı', 'en' => 'Baku']),
+            'name_translations' => ['az' => 'Bakı', 'en' => 'Baku'],
         ]);
 
         $student = app(StudentService::class)->create([

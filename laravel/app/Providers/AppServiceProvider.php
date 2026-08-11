@@ -2,10 +2,12 @@
 
 namespace App\Providers;
 
+use App\Domain\City\CityRepository;
 use App\Domain\Content\ContentRepository;
 use App\Domain\Course\CourseRepository;
 use App\Domain\Lesson\LessonRepository;
 use App\Domain\Student\StudentRepository;
+use App\Infrastructure\Persistence\Repositories\EloquentCityRepository;
 use App\Infrastructure\Persistence\Repositories\EloquentContentRepository;
 use App\Infrastructure\Persistence\Repositories\EloquentLessonRepository;
 use App\Infrastructure\Persistence\Repositories\EloquentStudentRepository;
@@ -23,6 +25,7 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(LessonRepository::class, EloquentLessonRepository::class);
         $this->app->bind(ContentRepository::class, EloquentContentRepository::class);
         $this->app->bind(StudentRepository::class, EloquentStudentRepository::class);
+        $this->app->bind(CityRepository::class, EloquentCityRepository::class);
         // Course hələlik cədvəlsizdir; istifadə edilərsə ayrıca implementasiya tələb olunur.
         $this->app->bind(CourseRepository::class, fn () => throw new \LogicException(
             'Course cədvəli hələ mövcud deyil. EloquentCourseRepository əlavə olunmalıdır.'

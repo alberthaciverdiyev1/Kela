@@ -4,6 +4,7 @@ namespace App\Application\Student;
 
 use App\Domain\Student\StudentRepository;
 use App\Domain\User\User;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Collection;
 
 /**
@@ -41,5 +42,13 @@ class StudentService
     public function list(): Collection
     {
         return $this->students->all();
+    }
+
+    /** Cədvəl üçün sorğunu yalnız Student roluna məhdudlaşdırır. */
+    public function scopeQueryFor(Builder $query): Builder
+    {
+        return $query
+            ->role(User::ROLE_STUDENT)
+            ->with('studentProfile.city');
     }
 }

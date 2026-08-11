@@ -42,7 +42,8 @@ class User extends Authenticatable implements FilamentUser, HasName
     public const ROLE_PARENT = 'Parent';
 
     public const STATUS_ACTIVE = 1;
-    public const STATUS_INACTIVE = 0;
+    public const STATUS_INACTIVE = 2;
+    public const STATUS_SUSPENDED = 3;
 
     public const ALL_ROLES = [
         self::ROLE_ADMIN,

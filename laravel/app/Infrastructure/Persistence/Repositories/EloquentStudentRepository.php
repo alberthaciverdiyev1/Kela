@@ -21,11 +21,10 @@ class EloquentStudentRepository implements StudentRepository
         $user->assignRole(User::ROLE_STUDENT);
 
         // İsteğe bağlı profil məlumatları varsa StudentProfile yaradılır.
-        if (isset($data['city_id']) || isset($data['birth_date']) || isset($data['phone'])) {
+        if (isset($data['city_id']) || isset($data['birth_date'])) {
             $user->studentProfile()->create([
                 'city_id' => $data['city_id'] ?? null,
                 'birth_date' => $data['birth_date'] ?? null,
-                'phone' => $data['phone'] ?? null,
             ]);
         }
 
@@ -42,12 +41,22 @@ class EloquentStudentRepository implements StudentRepository
             'status' => $data['status'] ?? $user->status,
         ]);
 
-        if ($user->studentProfile) {
-            $user->studentProfile->update([
-                'city_id' => $data['city_id'] ?? $user->studentProfile->city_id,
-                'birth_date' => $data['birth_date'] ?? $user->studentProfile->birth_date,
-                'phone' => $data['phone'] ?? $user->studentProfile->phone,
-            ]);
+        // Şifrə verilibsə yenilənir (boş gələrsə dəyişilmir).
+        if (! empty($data['password'])) {
+            $user->update(['password' => $data['password']]);
+        }
+
+        // Profil yoxdursa yaradılır, varsa güncəllənir.
+        $profile = $user->studentProfile()->first();
+        $profileData = [
+            'city_id' => $data['city_id'] ?? $profile?->city_id,
+            'birth_date' => $data['birth_date'] ?? $profile?->birth_date,
+        ];
+
+        if ($profile) {
+            $profile->update($profileData);
+        } elseif (isset($data['city_id']) || isset($data['birth_date'])) {
+            $user->studentProfile()->create($profileData);
         }
 
         return $user->load('studentProfile');
