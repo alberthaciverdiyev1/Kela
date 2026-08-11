@@ -2,6 +2,7 @@
 
 namespace App\Domain\Content;
 
+use App\Domain\Content\Values\ContentType;
 use App\Domain\User\User;
 use App\Domain\Node\Node;
 use App\Domain\Lesson\Lesson;
@@ -17,19 +18,13 @@ class Content extends Model
 {
     use SoftDeletes;
 
-    public const TYPE_LESSON = 0;
-    public const TYPE_QUIZ = 1;
-    public const TYPE_PDF = 2;
-    public const TYPE_VIDEO = 3;
-    public const TYPE_LINK = 4;
+    public const TYPE_LESSON = ContentType::LESSON;
+    public const TYPE_QUIZ = ContentType::QUIZ;
+    public const TYPE_PDF = ContentType::PDF;
+    public const TYPE_VIDEO = ContentType::VIDEO;
+    public const TYPE_LINK = ContentType::LINK;
 
-    public const ALL_TYPES = [
-        self::TYPE_LESSON,
-        self::TYPE_QUIZ,
-        self::TYPE_PDF,
-        self::TYPE_VIDEO,
-        self::TYPE_LINK,
-    ];
+    public const ALL_TYPES = ContentType::ALL;
 
     protected $fillable = [
         'teacher_id',
@@ -79,13 +74,6 @@ class Content extends Model
 
     public function typeLabel(): string
     {
-        return match ($this->type) {
-            self::TYPE_LESSON => 'Lesson',
-            self::TYPE_QUIZ => 'Quiz',
-            self::TYPE_PDF => 'Pdf',
-            self::TYPE_VIDEO => 'Video',
-            self::TYPE_LINK => 'Link',
-            default => 'Unknown',
-        };
+        return ContentType::label($this->type);
     }
 }

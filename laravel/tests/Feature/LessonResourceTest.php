@@ -2,13 +2,10 @@
 
 namespace Tests\Feature;
 
-use App\Filament\Resources\Lessons\Pages\CreateLesson;
 use App\Domain\Content\Content;
 use App\Domain\Lesson\Lesson;
 use App\Domain\User\User;
-use Filament\Facades\Filament;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Livewire\Livewire;
 use Spatie\Permission\Models\Role;
 use Tests\TestCase;
 
@@ -36,25 +33,20 @@ class LessonResourceTest extends TestCase
 
         $this->otherTeacher = User::factory()->create();
         $this->otherTeacher->assignRole(User::ROLE_TEACHER);
-
-        Filament::setCurrentPanel('admin');
     }
 
-    public function test_teacher_can_list_and_create_lesson_via_filament(): void
+    public function test_teacher_can_list_and_create_lesson(): void
     {
         $this->actingAs($this->teacher);
 
-        $this->get('/admin/lessons')->assertOk();
+        $this->get('/teacher/lessons')->assertOk();
 
-        Livewire::test(CreateLesson::class)
-            ->fillForm([
-                'title' => 'Riyaziyyat Dərsi 1',
-                'description' => 'Kəsrlərə giriş',
-                'is_published' => true,
-                'order_index' => 2,
-            ])
-            ->call('create')
-            ->assertHasNoFormErrors();
+        $this->post('/teacher/lessons', [
+            'title' => 'Riyaziyyat Dərsi 1',
+            'description' => 'Kəsrlərə giriş',
+            'is_published' => '1',
+            'order_index' => 2,
+        ])->assertRedirect(route('teacher.lessons.index'));
 
         $this->assertDatabaseCount('contents', 1);
         $this->assertDatabaseCount('lessons', 1);
@@ -77,7 +69,7 @@ class LessonResourceTest extends TestCase
         $this->createLessonFor($this->otherTeacher, 'Başqasının dərsi');
 
         $this->actingAs($this->teacher);
-        $this->get('/admin/lessons')
+        $this->get('/teacher/lessons')
             ->assertOk()
             ->assertSee('Mənim dərsim')
             ->assertDontSee('Başqasının dərsi');
@@ -89,7 +81,7 @@ class LessonResourceTest extends TestCase
         $this->createLessonFor($this->otherTeacher, 'Başqasının dərsi');
 
         $this->actingAs($this->admin);
-        $this->get('/admin/lessons')
+        $this->get('/teacher/lessons')
             ->assertOk()
             ->assertSee('Mənim dərsim')
             ->assertSee('Başqasının dərsi');
@@ -100,8 +92,9 @@ class LessonResourceTest extends TestCase
         $lesson = $this->createLessonFor($this->otherTeacher, 'Başqasının dərsi');
 
         $this->actingAs($this->teacher);
-        $this->get("/admin/lessons/{$lesson->content_id}/edit")->assertForbidden();
-        $this->get("/admin/lessons/{$lesson->content_id}")->assertForbidden();
+        $this->get("/teacher/lessons/{$lesson->content_id}/edit")->assertForbidden();
+        $this->get("/teacher/lessons/{$lesson->content_id}")->assertForbidden();
+        $this->post("/teacher/lessons/{$lesson->content_id}", ['title' => 'Hack'])->assertForbidden();
     }
 
     public function test_teacher_can_view_and_stream_own_lesson_video(): void
@@ -111,7 +104,7 @@ class LessonResourceTest extends TestCase
 
         $this->actingAs($this->teacher);
 
-        $this->get("/admin/lessons/{$lesson->content_id}")->assertOk();
+        $this->get("/teacher/lessons/{$lesson->content_id}")->assertOk();
 
         $this->get("/lesson/{$lesson->content_id}/stream")
             ->assertOk()
@@ -134,11 +127,21 @@ class LessonResourceTest extends TestCase
     {
         $lesson = $this->createLessonFor($this->teacher, 'Silinəcək');
 
-        // Filament'in DeleteAction'ı model->delete() çağırır; cascade davranışı burada doğrulanır.
         $lesson->delete();
 
         $this->assertSoftDeleted('contents', ['id' => $lesson->content_id]);
         $this->assertDatabaseMissing('lessons', ['content_id' => $lesson->content_id]);
+    }
+
+    public function test_teacher_can_delete_own_lesson_via_web_route(): void
+    {
+        $lesson = $this->createLessonFor($this->teacher, 'Silinəcək');
+
+        $this->actingAs($this->teacher);
+        $this->delete("/teacher/lessons/{$lesson->content_id}")
+            ->assertRedirect(route('teacher.lessons.index'));
+
+        $this->assertSoftDeleted('contents', ['id' => $lesson->content_id]);
     }
 
     private function createLessonFor(User $teacher, string $title): Lesson

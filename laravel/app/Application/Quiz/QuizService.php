@@ -7,10 +7,13 @@ use App\Domain\Content\ContentRepository;
 use App\Domain\Question\QuestionRepository;
 use App\Domain\Quiz\Quiz;
 use App\Domain\Quiz\QuizRepository;
+use App\Domain\User\User;
+use Illuminate\Contracts\Pagination\LengthAwarePaginator;
+use Illuminate\Database\Eloquent\Builder;
 
 /**
  * Quiz əməliyyatları: CRUD + quiz-sual əlaqəsi.
- * Filament bu servisi çağırır.
+ * Web/API bu servisi çağırır.
  */
 class QuizService
 {
@@ -24,6 +27,46 @@ class QuizService
     public function find(int $contentId): ?Quiz
     {
         return $this->quizzes->find($contentId);
+    }
+
+    /** Cədvəl üçün istifadəçinin görə biləcəyi quizlərlə məhdud sorğu. */
+    public function scopeQueryFor(Builder $query, int $actingUserId): Builder
+    {
+        $isAdmin = User::find($actingUserId)?->isAdmin() ?? false;
+
+        return $this->quizzes->scopeForUser($query, $actingUserId, $isAdmin);
+    }
+
+    /** Cədvəl üçün axtarış + səhifələnmiş quiz siyahısı (array DTO). */
+    public function paginate(int $actingUserId, ?string $search = null, int $perPage = 15): LengthAwarePaginator
+    {
+        $isAdmin = User::find($actingUserId)?->isAdmin() ?? false;
+
+        return $this->quizzes
+            ->paginateForUser($actingUserId, $isAdmin, $search, $perPage)
+            ->through(fn (Quiz $quiz): array => [
+                'content_id' => (int) $quiz->content_id,
+                'title' => $quiz->title,
+                'description' => $quiz->description,
+                'questions_count' => (int) ($quiz->questions_count ?? 0),
+                'is_published' => (bool) $quiz->is_published,
+                'created_at' => $quiz->created_at?->format('d M Y'),
+            ]);
+    }
+
+    /** Quiz redaktor formu üçün başlıq/təsvir/yayım statusu. */
+    public function formData(int $contentId): array
+    {
+        $quiz = $this->quizzes->find($contentId);
+        if ($quiz === null || $quiz->content === null) {
+            return [];
+        }
+
+        return [
+            'title' => $quiz->content->title,
+            'description' => $quiz->content->description,
+            'is_published' => (bool) $quiz->content->is_published,
+        ];
     }
 
     /** Quiz + Content (type=quiz) + kitabxana node-u yaradır. */
@@ -144,5 +187,57 @@ class QuizService
         }
 
         $this->quizzes->removeQuestion($quiz, $questionId);
+    }
+
+    /**
+     * Sualı quizdə bir sıra yuxarı/aşağı hərəkət etdirir (position dəyişimi).
+     *
+     * @param  string  $direction  'up' | 'down'
+     */
+    public function moveQuestion(int $contentId, int $questionId, string $direction, int $actingUserId): void
+    {
+        $quiz = $this->quizzes->find($contentId);
+        if ($quiz === null) {
+            throw new \RuntimeException('Quiz tapılmadı.');
+        }
+        if ($quiz->teacher_id !== $actingUserId) {
+            throw new \RuntimeException('Bu quizdə dəyişiklik etmə icazəniz yoxdur.');
+        }
+
+        $ids = $this->quizzes->questionIds($quiz);
+        $index = array_search($questionId, $ids, true);
+        if ($index === false) {
+            return;
+        }
+
+        $swapIndex = $direction === 'up' ? $index - 1 : $index + 1;
+        if ($swapIndex < 0 || $swapIndex >= count($ids)) {
+            return; // sərhəddə — hərəkət yoxdur
+        }
+
+        $otherId = $ids[$swapIndex];
+
+        // Pivot position-larını dəyişdir (1-based).
+        $this->quizzes->setQuestionPosition($quiz, $questionId, $swapIndex + 1);
+        $this->quizzes->setQuestionPosition($quiz, $otherId, $index + 1);
+    }
+
+    /** Sual bankından quizə əlavə etmək üçün mövcud sual id-ləri. */
+    public function availableQuestionIds(int $contentId, int $teacherId): array
+    {
+        $quiz = $this->quizzes->find($contentId);
+        if ($quiz === null) {
+            return [];
+        }
+
+        $existing = $this->quizzes->questionIds($quiz);
+
+        return $this->questions
+            ->listForTeacher($teacherId)
+            ->pluck('id')
+            ->map(fn ($id) => (int) $id)
+            ->diff($existing)
+            ->values()
+            ->all();
     }
 }

@@ -1,7 +1,0 @@
-@model Kela.Web.Models.Workspaces.CreateWorkspaceViewModel
-<app-modal id="create-workspace-dialog" title="@L.T("workspaces.new")"
-           form action="/teacher/workspaces/create">
-    <div id="create-form-fields">
-        @await Html.PartialAsync("~/Views/Teacher/Workspaces/_WorkspaceCreateFields.cshtml", Model)
-    </div>
-</app-modal>

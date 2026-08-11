@@ -12,15 +12,15 @@ use Symfony\Component\Process\Process;
  */
 class MediaProcessor
 {
-    public const MAX_VIDEO_MB = 512;
+    public const int MAX_VIDEO_MB = 512;
 
-    private const VIDEO_EXTENSIONS = [
+    private const array VIDEO_EXTENSIONS = [
         'mp4', 'webm', 'ogg', 'mov', 'm4v', 'mkv', 'avi', 'mpg', 'mpeg',
     ];
 
     /** Depolama köküne göre disk dizinleri (local disk = storage/app). */
-    public const VIDEOS_DIR = 'uploads/videos';
-    public const THUMBNAILS_DIR = 'uploads/thumbnails';
+    public const string VIDEOS_DIR = 'uploads/videos';
+    public const string THUMBNAILS_DIR = 'uploads/thumbnails';
 
     /**
      * Zaten diske kaydedilmiş bir videodan süre ve thumbnail üretir.

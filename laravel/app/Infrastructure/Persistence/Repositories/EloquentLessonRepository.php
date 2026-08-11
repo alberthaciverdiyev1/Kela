@@ -4,6 +4,7 @@ namespace App\Infrastructure\Persistence\Repositories;
 
 use App\Domain\Lesson\Lesson;
 use App\Domain\Lesson\LessonRepository;
+use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Builder;
 
 class EloquentLessonRepository implements LessonRepository
@@ -34,5 +35,18 @@ class EloquentLessonRepository implements LessonRepository
         return $query
             ->when(! $isAdmin, fn (Builder $q): Builder => $q->where('teacher_id', $actingUserId))
             ->with('content');
+    }
+
+    public function paginateForUser(int $actingUserId, bool $isAdmin, ?string $search, int $perPage): LengthAwarePaginator
+    {
+        return Lesson::query()
+            ->when(! $isAdmin, fn (Builder $q): Builder => $q->where('lessons.teacher_id', $actingUserId))
+            ->with('content')
+            ->when($search, fn (Builder $q): Builder => $q->whereHas(
+                'content',
+                fn (Builder $c): Builder => $c->where('title', 'ilike', "%{$search}%")
+            ))
+            ->orderBy('lessons.order_index')
+            ->paginate($perPage);
     }
 }

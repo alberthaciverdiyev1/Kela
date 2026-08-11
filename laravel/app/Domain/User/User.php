@@ -8,12 +8,11 @@ use App\Domain\Student\StudentProfile;
 use App\Domain\Question\Question;
 use App\Domain\Lesson\Lesson;
 use App\Domain\Quiz\Quiz;
+use App\Domain\User\Values\UserRole;
+use App\Domain\User\Values\UserStatus;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Database\Factories\UserFactory;
-use Filament\Models\Contracts\FilamentUser;
-use Filament\Models\Contracts\HasName;
-use Filament\Panel;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Hidden;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -23,34 +22,25 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Laravel\Sanctum\HasApiTokens;
 use Spatie\Permission\Traits\HasRoles;
 
 #[Fillable(['first_name', 'last_name', 'email', 'password', 'status'])]
 #[Hidden(['password', 'remember_token'])]
-class User extends Authenticatable implements FilamentUser, HasName
+class User extends Authenticatable
 {
-    use HasFactory, Notifiable, HasRoles, SoftDeletes;
+    use HasApiTokens, HasFactory, Notifiable, HasRoles, SoftDeletes;
 
-    public function canAccessPanel(Panel $panel): bool
-    {
-        return $this->hasAnyRole([self::ROLE_ADMIN, self::ROLE_TEACHER]);
-    }
+    public const ROLE_ADMIN = UserRole::ADMIN;
+    public const ROLE_TEACHER = UserRole::TEACHER;
+    public const ROLE_STUDENT = UserRole::STUDENT;
+    public const ROLE_PARENT = UserRole::PARENT;
 
-    public const ROLE_ADMIN = 'Admin';
-    public const ROLE_TEACHER = 'Teacher';
-    public const ROLE_STUDENT = 'Student';
-    public const ROLE_PARENT = 'Parent';
+    public const STATUS_ACTIVE = UserStatus::ACTIVE;
+    public const STATUS_INACTIVE = UserStatus::INACTIVE;
+    public const STATUS_SUSPENDED = UserStatus::SUSPENDED;
 
-    public const STATUS_ACTIVE = 1;
-    public const STATUS_INACTIVE = 2;
-    public const STATUS_SUSPENDED = 3;
-
-    public const ALL_ROLES = [
-        self::ROLE_ADMIN,
-        self::ROLE_TEACHER,
-        self::ROLE_STUDENT,
-        self::ROLE_PARENT,
-    ];
+    public const ALL_ROLES = UserRole::ALL;
 
     protected function casts(): array
     {
@@ -63,12 +53,6 @@ class User extends Authenticatable implements FilamentUser, HasName
     public function getFullNameAttribute(): string
     {
         return trim($this->first_name . ' ' . ($this->last_name ?? ''));
-    }
-
-    /** Filament user menüsü/avatarı üçün görüntülenen ad. */
-    public function getFilamentName(): string
-    {
-        return $this->full_name ?: ($this->email ?? '');
     }
 
     public function isAdmin(): bool
@@ -95,10 +79,10 @@ class User extends Authenticatable implements FilamentUser, HasName
     public function homeRoute(): string
     {
         return match (true) {
-            // Varsayılan yön Filament paneline gider.
-            $this->isAdmin() => '/admin',
-            $this->isTeacher() => '/admin',
-            // Öğrenci/veli Filament'e erişemez; özel blade panellerinde kalır.
+            // Admin/Müəllim özəl (blade) teacher panelinə gedir.
+            $this->isAdmin() => '/teacher/dashboard',
+            $this->isTeacher() => '/teacher/dashboard',
+            // Öğrenci/veli özəl blade panellərində qalır.
             $this->isStudent() => '/student/dashboard',
             $this->isParent() => '/parent/dashboard',
             default => '/blocked',

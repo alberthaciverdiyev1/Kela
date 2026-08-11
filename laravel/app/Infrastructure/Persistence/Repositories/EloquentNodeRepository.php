@@ -2,56 +2,12 @@
 
 namespace App\Infrastructure\Persistence\Repositories;
 
-use App\Domain\Content\Content;
 use App\Domain\Node\Node;
 use App\Domain\Node\NodeRepository;
 use Illuminate\Support\Collection;
 
 class EloquentNodeRepository implements NodeRepository
 {
-    public function libraryFolders(int $teacherId, ?int $parentId = null): Collection
-    {
-        return Node::query()
-            ->where('teacher_id', $teacherId)
-            ->whereNull('workspace_id')
-            ->where('kind', Node::KIND_FOLDER)
-            ->where('parent_id', $parentId)
-            ->orderBy('position')
-            ->orderBy('name')
-            ->get();
-    }
-
-    public function libraryContents(int $teacherId, ?int $parentId = null, ?int $type = null): Collection
-    {
-        return Node::query()
-            ->where('teacher_id', $teacherId)
-            ->whereNull('workspace_id')
-            ->where('kind', Node::KIND_CONTENT)
-            ->where('parent_id', $parentId)
-            ->when($type !== null, fn ($q) => $q->whereHas(
-                'content',
-                fn ($c) => $c->where('type', $type)
-            ))
-            ->with([
-                'content',
-                'content.lesson',
-                'content.quiz' => fn ($q) => $q->withCount('questions'),
-            ])
-            ->orderBy('position')
-            ->orderBy('name')
-            ->get();
-    }
-
-    public function allLibraryFolders(int $teacherId): Collection
-    {
-        return Node::query()
-            ->where('teacher_id', $teacherId)
-            ->whereNull('workspace_id')
-            ->where('kind', Node::KIND_FOLDER)
-            ->orderBy('name')
-            ->get();
-    }
-
     public function workspaceFolders(int $workspaceId, ?int $parentId = null): Collection
     {
         return Node::query()

@@ -7,7 +7,7 @@ use Illuminate\Support\Collection;
 
 /**
  * Şəhərlərlə bağlı tətbiq səviyyəli əməliyyatlar.
- * Filament bu servisi çağırır — City modelinə birbaşa toxunmaz.
+ * Web/API bu servisi çağırır — City modelinə birbaşa toxunmaz.
  */
 class CityService
 {

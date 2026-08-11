@@ -10,8 +10,8 @@ use App\Domain\Node\NodeRepository;
 use App\Domain\Question\QuestionRepository;
 use App\Domain\Quiz\QuizRepository;
 use App\Domain\Student\StudentRepository;
+use App\Domain\User\UserRepository;
 use App\Domain\Workspace\WorkspaceRepository;
-use App\Infrastructure\Media\SafeThumbnailService;
 use App\Infrastructure\Persistence\Repositories\EloquentCityRepository;
 use App\Infrastructure\Persistence\Repositories\EloquentContentRepository;
 use App\Infrastructure\Persistence\Repositories\EloquentLessonRepository;
@@ -19,10 +19,10 @@ use App\Infrastructure\Persistence\Repositories\EloquentNodeRepository;
 use App\Infrastructure\Persistence\Repositories\EloquentQuestionRepository;
 use App\Infrastructure\Persistence\Repositories\EloquentQuizRepository;
 use App\Infrastructure\Persistence\Repositories\EloquentStudentRepository;
+use App\Infrastructure\Persistence\Repositories\EloquentUserRepository;
 use App\Infrastructure\Persistence\Repositories\EloquentWorkspaceRepository;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\ServiceProvider;
-use MmesDesign\FilamentFileManager\Services\ThumbnailService;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -35,14 +35,12 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(LessonRepository::class, EloquentLessonRepository::class);
         $this->app->bind(ContentRepository::class, EloquentContentRepository::class);
         $this->app->bind(StudentRepository::class, EloquentStudentRepository::class);
+        $this->app->bind(UserRepository::class, EloquentUserRepository::class);
         $this->app->bind(CityRepository::class, EloquentCityRepository::class);
         $this->app->bind(NodeRepository::class, EloquentNodeRepository::class);
         $this->app->bind(WorkspaceRepository::class, EloquentWorkspaceRepository::class);
         $this->app->bind(QuizRepository::class, EloquentQuizRepository::class);
         $this->app->bind(QuestionRepository::class, EloquentQuestionRepository::class);
-        // Filament dosya yöneticisi paketi ThumbnailService'i GD ile kurmaya çalışır.
-        // Bu sistemde GD yüklü olmadığından (sudo yok) GD'siz SafeThumbnailService kullanılır.
-        $this->app->bind(ThumbnailService::class, SafeThumbnailService::class);
         // Course hələlik cədvəlsizdir; istifadə edilərsə ayrıca implementasiya tələb olunur.
         $this->app->bind(CourseRepository::class, fn () => throw new \LogicException(
             'Course cədvəli hələ mövcud deyil. EloquentCourseRepository əlavə olunmalıdır.'

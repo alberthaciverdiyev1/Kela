@@ -4,6 +4,7 @@ namespace App\Infrastructure\Persistence\Repositories;
 
 use App\Domain\Student\StudentRepository;
 use App\Domain\User\User;
+use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
 
@@ -85,6 +86,19 @@ class EloquentStudentRepository implements StudentRepository
             ->with('studentProfile')
             ->orderBy('first_name')
             ->get();
+    }
+
+    public function paginate(?string $search = null, int $perPage = 15): LengthAwarePaginator
+    {
+        return User::role(User::ROLE_STUDENT)
+            ->with('studentProfile.city')
+            ->when($search, fn ($q) => $q->where(function ($q) use ($search) {
+                $q->where('first_name', 'ilike', "%{$search}%")
+                    ->orWhere('last_name', 'ilike', "%{$search}%")
+                    ->orWhere('email', 'ilike', "%{$search}%");
+            }))
+            ->orderBy('first_name')
+            ->paginate($perPage);
     }
 
     public function availableForWorkspace(?string $search = null): Collection

@@ -6,7 +6,7 @@ use App\Domain\Question\Question;
 use App\Domain\Question\QuestionRepository;
 
 /**
- * Sual bankı əməliyyatları. Filament bu servisi çağırır.
+ * Sual bankı əməliyyatları. Web/API bu servisi çağırır.
  */
 class QuestionService
 {
@@ -18,6 +18,25 @@ class QuestionService
     public function find(int $id): ?Question
     {
         return $this->questions->find($id);
+    }
+
+    /** Sual redaktor formu üçün sahə dəyərləri. */
+    public function formData(int $id): array
+    {
+        $question = $this->questions->find($id);
+        if ($question === null) {
+            return [];
+        }
+
+        return [
+            'text' => $question->text,
+            'option_a' => $question->option_a,
+            'option_b' => $question->option_b,
+            'option_c' => $question->option_c,
+            'option_d' => $question->option_d,
+            'option_e' => $question->option_e,
+            'correct_option' => (int) $question->correct_option,
+        ];
     }
 
     public function create(int $teacherId, array $data): Question

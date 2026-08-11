@@ -2,6 +2,8 @@
 
 namespace App\Domain\Workspace;
 
+use Illuminate\Contracts\Pagination\LengthAwarePaginator;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Collection;
 
 /**
@@ -11,6 +13,12 @@ interface WorkspaceRepository
 {
     /** Teacher-in workspaceləri (tələbə sayı ilə). */
     public function listForTeacher(int $teacherId): Collection;
+
+    /** Sorğunu verilən istifadəçinin görə biləcəyi workspacelərlə məhdudlaşdırır. */
+    public function scopeForUser(Builder $query, int $actingUserId, bool $isAdmin): Builder;
+
+    /** Axtarış + səhifələmə ilə istifadəçinin görə biləcəyi workspacelər (admin cədvəli üçün). */
+    public function paginateForUser(int $actingUserId, bool $isAdmin, ?string $search = null, int $perPage = 15): LengthAwarePaginator;
 
     public function create(int $teacherId, string $name): Workspace;
 

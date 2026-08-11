@@ -6,8 +6,11 @@ use App\Domain\Content\ContentRepository;
 use App\Domain\Node\Node;
 use App\Domain\Node\NodeRepository;
 use App\Domain\Student\StudentRepository;
+use App\Domain\User\User;
 use App\Domain\Workspace\Workspace;
 use App\Domain\Workspace\WorkspaceRepository;
+use Illuminate\Contracts\Pagination\LengthAwarePaginator;
+use Illuminate\Database\Eloquent\Builder;
 
 /**
  * Workspace əməliyyatları: CRUD + workspace node ağacı (file-manager tərzi).
@@ -39,6 +42,44 @@ class WorkspaceService
     public function find(int $workspaceId): ?Workspace
     {
         return $this->workspaces->find($workspaceId);
+    }
+
+    /** Cədvəl üçün istifadəçinin görə biləcəyi workspacelərlə məhdud sorğu. */
+    public function scopeQueryFor(Builder $query, int $actingUserId): Builder
+    {
+        $isAdmin = User::find($actingUserId)?->isAdmin() ?? false;
+
+        return $this->workspaces->scopeForUser($query, $actingUserId, $isAdmin);
+    }
+
+    /** Admin cədvəli üçün axtarış + səhifələnmiş workspace siyahısı (array). */
+    public function paginate(int $actingUserId, ?string $search = null, int $perPage = 15): LengthAwarePaginator
+    {
+        $isAdmin = User::find($actingUserId)?->isAdmin() ?? false;
+
+        return $this->workspaces
+            ->paginateForUser($actingUserId, $isAdmin, $search, $perPage)
+            ->through(fn (Workspace $w): array => [
+                'id' => (int) $w->id,
+                'name' => $w->name,
+                'student_count' => (int) $w->students_count,
+                'content_count' => (int) $w->content_count,
+                'created_at' => $w->created_at?->toDateString(),
+            ]);
+    }
+
+    /** Workspace redaktor formu üçün ad + yaradılma tarixi. */
+    public function formData(int $workspaceId): array
+    {
+        $workspace = $this->workspaces->find($workspaceId);
+        if ($workspace === null) {
+            return [];
+        }
+
+        return [
+            'name' => $workspace->name,
+            'created_at' => $workspace->created_at?->toDateString(),
+        ];
     }
 
     public function create(int $teacherId, string $name): Workspace

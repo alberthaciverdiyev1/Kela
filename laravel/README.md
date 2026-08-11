@@ -1,58 +1,89 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# Kela — Education Platform
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+Laravel 13 tətbiqi: dərslər, quizlər, iş sahələri və şagirdlər üçün təhsil idarəetmə platforması. **Frontend və backend tam ayrıdır** — səhifələr server-rendered Blade ilə çəkilir, JS yalnız lazım olan hissəni `/api/v1` JSON endpointləri ilə yeniləyir. Modellərə birbaşa toxunulmur — hər şey Application servisləri üzərindən axır.
 
-## About Laravel
+## Layering — Web / API / Core
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
-
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
-
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
-
-## Learning Laravel
-
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
-
-In addition, [Laracasts](https://laracasts.com) contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
-
-You can also watch bite-sized lessons with real-world projects on [Laravel Learn](https://laravel.com/learn), where you will be guided through building a Laravel application from scratch while learning PHP fundamentals.
-
-## Agentic Development
-
-Laravel's predictable structure and conventions make it ideal for AI coding agents like Claude Code, Cursor, and GitHub Copilot. Install [Laravel Boost](https://laravel.com/docs/ai) to supercharge your AI workflow:
-
-```bash
-composer require laravel/boost --dev
-
-php artisan boost:install
+```
+┌──────────────────────────────┐     ┌──────────────────────────────────────┐
+│ WEB (server-rendered Blade)  │     │ API (backend JSON)                   │
+│ app/Web/Controllers/**       │     │ app/Api/Controllers/**  (thin JSON)  │
+│ app/Web/Controllers/Teacher/ │     │ app/Api/Middleware/**   (role 403)   │
+│ app/Web/Middleware/**        │     │ app/Api/Resources/**    (JSON map)   │
+│ resources/views/teacher/**   │     │ routes/api.php  →  /api/v1/*        │
+│ routes/web.php               │     │                                      │
+└──────────────┬───────────────┘     └──────────────┬───────────────────────┘
+               │                                    │
+               └──────────► Application services ◄──┘
+                           (app/Application/**)
+                                   │
+                                   ▼
+                        Domain / Infrastructure repos
+                        (app/Domain/**, app/Infrastructure/Persistence/**)
 ```
 
-Boost provides your agent 15+ tools and skills that help agents build Laravel applications while following best practices.
+**Qızıl qayda:** nə Web controller, nə də API controller modellərlə birbaşa danışmır. Hər ikisi yalnız `app/Application/**` servisləri üzərindən işləyir.
 
-## Contributing
+## Backend API (v1)
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+- Bazası: `routes/api.php` (prefix `/api/v1`), auth: **Sanctum Bearer token**
+- Giriş: `POST /api/v1/auth/login` → `{ token, token_type, user }`
+- Web səhifələrindən edilən JS çağrıları sessiya (cookie) ilə də doğrulanır (`auth:sanctum` web-guard fallback).
+- Admin/Müəllim resursları `role_api:Admin,Teacher` ilə qorunur (student üçün 403).
 
-## Code of Conduct
+| Metod | Endpoint | Açıqlama |
+|---|---|---|
+| POST | `/auth/login` | token əldə et |
+| POST | `/auth/logout` | tokenləri ləğv et |
+| GET | `/auth/me` | cari istifadəçi |
+| GET | `/cities` | lüğət məlumatı |
+| CRUD | `/students` | şagirdlər |
+| CRUD | `/lessons` | dərslər (show → `viewer.stream_url/thumbnail_url`) |
+| GET | `/lessons/{contentId}/stream` `/thumbnail` | video/şəkil media |
+| CRUD | `/quizzes` | quizlər (show → `questions`) |
+| POST/DELETE | `/quizzes/{id}/questions[/{questionId}]` | sual əlavə/çıxar |
+| POST | `/quizzes/{id}/questions/{qid}/move` | sıralama (`up`/`down`) |
+| CRUD | `/questions` | sual bankı |
+| CRUD | `/workspaces` | iş sahələri (show → `students` + `directory`) |
+| POST/DELETE | `/workspaces/{id}/students[/{studentId}]` | şagird əlavə/çıxar |
+| POST | `/workspaces/{id}/folders` `/contents` | qovluq/məzmun |
+| POST | `/workspaces/{id}/nodes/{nodeId}/move` `/rename` | node hərəkəti/adı |
+| DELETE | `/workspaces/{id}/nodes/{nodeId}` | node/qovluq ağacını sil |
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+İstifadə nümunəsi:
 
-## Security Vulnerabilities
+```bash
+TOKEN=$(curl -s -X POST http://localhost:8000/api/v1/auth/login \
+  -H "Accept: application/json" -H "Content-Type: application/json" \
+  -d '{"email":"teacher@example.com","password":"password"}' | jq -r .data.token)
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+curl http://localhost:8000/api/v1/lessons -H "Authorization: Bearer $TOKEN"
+```
 
-## License
+## Frontend (Web UI — Teacher Paneli)
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+- `app/Web/Controllers/Teacher/**` — server-rendered səhifə controller-ları (`teacher.lessons.index` kimi)
+- `app/Web/Controllers/**` — auth/media/dashboard controller-ları
+- `resources/views/teacher/**` — səhifə görünüşləri (Blade)
+- `resources/views/components/teacher/**` — anonim komponentlər (`x-teacher.card`, `x-teacher.button`, ...)
+- `resources/views/layouts/teacher.blade.php` — panel layout-u
+- `routes/web.php` — səhifə marşrutları (`/teacher/dashboard`, `/teacher/lessons`, `/teacher/quizzes`, `/teacher/students`, `/teacher/workspaces`)
+- Auth: web sessiya (`/auth/login`); rol yoxlaması `role:Admin,Teacher` ilə
+
+### "Server-rendered + JS yeniləmə" yanaşması
+
+Səhifələr ilk dəfə tam serverdə çəkilir. Yalnız dinamik hissələr JS ilə yenilənir:
+
+- **Quiz redaktoru** — sual əlavə/düzləndir/sırala/çıxar: JS `/api/v1/quizzes/*` çağırır, sonra `GET /teacher/quizzes/{id}/questions` server-rendered fragment-i yenidən çəkib DOM-da əvəz edir.
+- **Workspace file-manager** — qovluq naviqasiyası GET linkləri (server), node əməliyyatları JS → `/api/v1/workspaces/*`, kataloq `GET /teacher/workspaces/{id}/directory` fragment-i ilə təzələnir.
+- **İndeks səhifələrində silmə** — JS confirm + API DELETE, sonra səhifə yenilənir.
+- **Axtarış** — sadə GET form (`?search=`) ilə server-rendered.
+- **Tema (açıq/tünd)** — Alpine + `localStorage` (FOUC qarşısı alınır).
+
+Alpine + yardımçılar (`KelaApi`, `KelaFragment`) `resources/js/app.js`-dədir; Livewire istifadə edilmir.
+
+## Test
+
+```bash
+php artisan test   # 53 test / 220 assertion
+```

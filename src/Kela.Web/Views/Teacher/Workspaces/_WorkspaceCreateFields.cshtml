@@ -1,8 +1,0 @@
-@model Kela.Web.Models.Workspaces.CreateWorkspaceViewModel
-@Html.ValidationSummary(false, "", new { @class = "validation-summary" })
-<app-field for="Name" label="@L.T("workspaces.field.name")" required="true"/>
-<div class="flex justify-end gap-2">
-    <app-btn variant="secondary"
-             onclick="document.getElementById('create-workspace-dialog').close()">@L.T("common.cancel")</app-btn>
-    <app-btn variant="primary" type="submit">@L.T("workspaces.create")</app-btn>
-</div>

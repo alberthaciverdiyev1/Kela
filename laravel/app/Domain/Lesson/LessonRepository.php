@@ -2,6 +2,7 @@
 
 namespace App\Domain\Lesson;
 
+use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Builder;
 
 /**
@@ -20,4 +21,7 @@ interface LessonRepository
 
     /** Sorğunu verilən istifadəçinin görə biləcəyi dərslərlə məhdudlaşdırır. */
     public function scopeForUser(Builder $query, int $actingUserId, bool $isAdmin): Builder;
+
+    /** Cədvəl üçün axtarış + səhifələnmiş dərs siyahısı. */
+    public function paginateForUser(int $actingUserId, bool $isAdmin, ?string $search, int $perPage): LengthAwarePaginator;
 }

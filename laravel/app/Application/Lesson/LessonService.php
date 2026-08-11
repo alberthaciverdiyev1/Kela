@@ -8,11 +8,12 @@ use App\Domain\Lesson\Lesson;
 use App\Domain\Lesson\LessonRepository;
 use App\Domain\User\User;
 use App\Infrastructure\Media\MediaProcessor;
+use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Builder;
 
 /**
  * Dərslərlə bağlı tətbiq səviyyəli əməliyyatlar (use cases).
- * Filament bu servisi çağırır — Content/Lesson modellərinə birbaşa toxunmaz.
+ * Web/API bu servisi çağırır — Content/Lesson modellərinə birbaşa toxunmaz.
  */
 class LessonService
 {
@@ -105,5 +106,43 @@ class LessonService
         $isAdmin = User::find($actingUserId)?->isAdmin() ?? false;
 
         return $this->lessons->scopeForUser($query, $actingUserId, $isAdmin);
+    }
+
+    /** Cədvəl üçün axtarış + səhifələnmiş dərs siyahısı (array DTO). */
+    public function paginate(int $actingUserId, ?string $search = null, int $perPage = 15): LengthAwarePaginator
+    {
+        $isAdmin = User::find($actingUserId)?->isAdmin() ?? false;
+
+        return $this->lessons
+            ->paginateForUser($actingUserId, $isAdmin, $search, $perPage)
+            ->through(fn (Lesson $lesson): array => [
+                'content_id' => (int) $lesson->content_id,
+                'title' => $lesson->content?->title ?? '',
+                'description' => $lesson->content?->description,
+                'has_video' => (bool) $lesson->has_video,
+                'duration_label' => $lesson->duration_label,
+                'is_published' => (bool) $lesson->is_published,
+                'order_index' => (int) $lesson->order_index,
+                'created_at' => $lesson->created_at?->format('d M Y'),
+            ]);
+    }
+
+    /** Dərs səhifəsində video player üçün lazım olan bütün məlumat. */
+    public function viewerData(int $contentId): array
+    {
+        $lesson = $this->lessons->find($contentId);
+        if ($lesson === null) {
+            return [
+                'hasVideo' => false,
+                'streamUrl' => route('lesson.video.stream', $contentId),
+                'thumbUrl' => null,
+            ];
+        }
+
+        return [
+            'hasVideo' => (bool) $lesson->has_video,
+            'streamUrl' => route('lesson.video.stream', $contentId),
+            'thumbUrl' => $lesson->thumbnail_path ? route('lesson.thumbnail', $contentId) : null,
+        ];
     }
 }

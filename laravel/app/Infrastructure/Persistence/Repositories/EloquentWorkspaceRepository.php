@@ -4,6 +4,8 @@ namespace App\Infrastructure\Persistence\Repositories;
 
 use App\Domain\Workspace\Workspace;
 use App\Domain\Workspace\WorkspaceRepository;
+use Illuminate\Contracts\Pagination\LengthAwarePaginator;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Collection;
 
 class EloquentWorkspaceRepository implements WorkspaceRepository
@@ -15,6 +17,24 @@ class EloquentWorkspaceRepository implements WorkspaceRepository
             ->withCount('students')
             ->orderBy('name')
             ->get();
+    }
+
+    public function scopeForUser(Builder $query, int $actingUserId, bool $isAdmin): Builder
+    {
+        return $query
+            ->when(! $isAdmin, fn (Builder $q): Builder => $q->where('teacher_id', $actingUserId))
+            ->withCount('students');
+    }
+
+    public function paginateForUser(int $actingUserId, bool $isAdmin, ?string $search = null, int $perPage = 15): LengthAwarePaginator
+    {
+        return Workspace::query()
+            ->when(! $isAdmin, fn (Builder $q): Builder => $q->where('teacher_id', $actingUserId))
+            ->when($search, fn (Builder $q) => $q->where('name', 'ilike', "%{$search}%"))
+            ->withCount('students')
+            ->withCount(['nodes as content_count' => fn ($q) => $q->whereNotNull('content_id')])
+            ->orderBy('name')
+            ->paginate($perPage);
     }
 
     public function create(int $teacherId, string $name): Workspace

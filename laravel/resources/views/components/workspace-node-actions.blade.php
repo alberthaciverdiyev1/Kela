@@ -3,29 +3,33 @@
 <div class="flex items-center justify-end gap-1">
     {{-- Rename --}}
     <button
-        wire:click="renameNode({{ $nodeId }})"
+        data-node-action="rename"
+        data-node-id="{{ $nodeId }}"
+        data-node-name="{{ $name }}"
         title="Adını dəyiş"
-        class="rounded-lg p-1.5 text-gray-500 hover:bg-gray-100 hover:text-gray-700"
+        class="rounded-lg p-1.5 text-base-content/50 hover:bg-base-200 hover:text-base-content"
     >
-        <x-heroicon-o-pencil-square class="h-4 w-4" />
+        <x-icon name="heroicon-o-pencil-square" class="size-4" />
     </button>
 
     {{-- Move --}}
     <button
-        wire:click="openMove({{ $nodeId }})"
+        data-node-action="move"
+        data-node-id="{{ $nodeId }}"
         title="Daşı"
-        class="rounded-lg p-1.5 text-gray-500 hover:bg-gray-100 hover:text-gray-700"
+        class="rounded-lg p-1.5 text-base-content/50 hover:bg-base-200 hover:text-base-content"
     >
-        <x-heroicon-o-arrows-right-left class="h-4 w-4" />
+        <x-icon name="heroicon-o-arrows-right-left" class="size-4" />
     </button>
 
     {{-- Delete --}}
     <button
-        wire:confirm="'{{ $name }}' silinsin?"
-        wire:click="deleteNode({{ $nodeId }})"
+        data-node-action="delete"
+        data-node-id="{{ $nodeId }}"
+        data-node-name="{{ $name }}"
         title="Sil"
-        class="rounded-lg p-1.5 text-red-500 hover:bg-red-50 hover:text-red-700"
+        class="rounded-lg p-1.5 text-error/70 hover:bg-error/10 hover:text-error"
     >
-        <x-heroicon-o-trash class="h-4 w-4" />
+        <x-icon name="heroicon-o-trash" class="size-4" />
     </button>
 </div>

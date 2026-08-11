@@ -10,15 +10,6 @@ use Illuminate\Support\Collection;
  */
 interface NodeRepository
 {
-    /** Teacher kitabxanasındakı qovluqlar (kind=0), opsional ana qovluq altında. */
-    public function libraryFolders(int $teacherId, ?int $parentId = null): Collection;
-
-    /** Teacher kitabxanasındakı məzmun node-ları (kind=1), opsional tip filtri ilə. */
-    public function libraryContents(int $teacherId, ?int $parentId = null, ?int $type = null): Collection;
-
-    /** Move dropdown üçün teacher-in bütün qovluqları (ağac). */
-    public function allLibraryFolders(int $teacherId): Collection;
-
     /** Workspace-dəki qovluqlar, opsional ana qovluq altında. */
     public function workspaceFolders(int $workspaceId, ?int $parentId = null): Collection;
 
