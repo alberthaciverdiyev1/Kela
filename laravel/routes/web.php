@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\LessonMediaController;
 use Illuminate\Support\Facades\Route;
 
 // --- Auth ---
@@ -29,6 +30,12 @@ Route::prefix('student')->middleware(['auth', 'role:Student'])->group(function (
 // --- Parent ---
 Route::prefix('parent')->middleware(['auth', 'role:Parent'])->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'parent'])->name('parent.dashboard');
+});
+
+// --- Ders medyası (video akışı + thumbnail) ---
+Route::prefix('lesson')->middleware('auth')->group(function () {
+    Route::get('/{contentId}/stream', [LessonMediaController::class, 'stream'])->name('lesson.video.stream');
+    Route::get('/{contentId}/thumbnail', [LessonMediaController::class, 'thumbnail'])->name('lesson.thumbnail');
 });
 
 // --- Blocked / fallback ---

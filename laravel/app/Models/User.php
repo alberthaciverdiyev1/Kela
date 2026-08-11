@@ -4,6 +4,9 @@ namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Database\Factories\UserFactory;
+use Filament\Models\Contracts\FilamentUser;
+use Filament\Models\Contracts\HasName;
+use Filament\Panel;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Hidden;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -17,9 +20,14 @@ use Spatie\Permission\Traits\HasRoles;
 
 #[Fillable(['first_name', 'last_name', 'email', 'password', 'status'])]
 #[Hidden(['password', 'remember_token'])]
-class User extends Authenticatable
+class User extends Authenticatable implements FilamentUser, HasName
 {
     use HasFactory, Notifiable, HasRoles, SoftDeletes;
+
+    public function canAccessPanel(Panel $panel): bool
+    {
+        return $this->hasAnyRole([self::ROLE_ADMIN, self::ROLE_TEACHER]);
+    }
 
     public const ROLE_ADMIN = 'Admin';
     public const ROLE_TEACHER = 'Teacher';
@@ -47,6 +55,12 @@ class User extends Authenticatable
     public function getFullNameAttribute(): string
     {
         return trim($this->first_name . ' ' . ($this->last_name ?? ''));
+    }
+
+    /** Filament user menüsü/avatarı üçün görüntülenen ad. */
+    public function getFilamentName(): string
+    {
+        return $this->full_name ?: ($this->email ?? '');
     }
 
     public function isAdmin(): bool

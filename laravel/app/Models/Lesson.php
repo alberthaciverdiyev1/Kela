@@ -52,4 +52,12 @@ class Lesson extends Model
             ? sprintf('%d:%02d:%02d', $h, $m, $sec)
             : sprintf('%02d:%02d', $m, $sec);
     }
+
+    /** Dərs silinəndə əlaqəli Content də (soft) silinir — .NET davranışı ilə uyğun. */
+    protected static function booted(): void
+    {
+        static::deleting(function (Lesson $lesson): void {
+            $lesson->content?->delete();
+        });
+    }
 }
