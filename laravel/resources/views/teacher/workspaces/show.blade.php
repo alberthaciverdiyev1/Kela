@@ -331,9 +331,9 @@
                             <input
                                 type="checkbox"
                                 class="checkbox checkbox-primary checkbox-sm shrink-0"
-                                :checked="isFolderSelected(row)"
+                                :checked="isFolderSelected(row) || isFolderCovered(row)"
                                 @change="toggleFolderSelection(row)"
-                                :disabled="row.count === 0 || row.folder_id == null"
+                                :disabled="row.count === 0 || row.folder_id == null || isFolderCovered(row)"
                             />
                             <x-icon name="heroicon-o-folder" class="size-4 text-primary/70" />
                             <span class="min-w-0 flex-1 truncate" x-text="row.name"></span>

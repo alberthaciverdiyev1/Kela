@@ -182,6 +182,8 @@ export default function workspaceManager(config) {
                             depth: i,
                             folder_id: ids[i] ?? null,
                             type: c.type,
+                            // Kökdən bu qovluğa qədər bütün ata id-ləri (kaskad seçim üçün)
+                            path_ids: ids.slice(0, i + 1),
                             children: [],
                             contents: [],
                         };
@@ -230,6 +232,7 @@ export default function workspaceManager(config) {
                         count: vis,
                         folder_id: node.folder_id,
                         type: node.type,
+                        path_ids: node.path_ids,
                     });
                 }
 
@@ -253,6 +256,11 @@ export default function workspaceManager(config) {
         },
 
         // ── Seçim — ────────────────────────────────────────────────────────
+        //
+        // Kaskad qaydası: bir qovluq işarələndikdə onun bütün alt qovluqları
+        // və içindəki məzmunlar da seçilir; işarə silinəndə bütün alt ağac
+        // seçimdən çıxarılır. Beləliklə "üst qovluq" ilə "alt ağac" heç vaxt
+        // bir-birindən ayrılmır.
 
         isFolderSelected(f) {
             return this.selectedFolders.some(
@@ -260,18 +268,12 @@ export default function workspaceManager(config) {
             );
         },
 
-        toggleFolderSelection(f) {
-            if (this.isFolderSelected(f)) {
-                this.selectedFolders = this.selectedFolders.filter(
-                    (x) => !(x.folder_id === f.folder_id && x.type === f.type),
-                );
-            } else {
-                this.selectedFolders.push({
-                    folder_id: f.folder_id,
-                    type: f.type,
-                    name: f.name,
-                });
-            }
+        /** Qovluq seçilmiş hər hansı bir ATA qovluğun altındadırmı? */
+        isFolderCovered(f) {
+            const path = f.path_ids || [f.folder_id];
+            return this.selectedFolders.some(
+                (x) => x.type === f.type && x.folder_id !== f.folder_id && path.includes(x.folder_id),
+            );
         },
 
         /** Məzmun seçilmiş bir bank qovluğunun altındadırmı? */
@@ -285,6 +287,88 @@ export default function workspaceManager(config) {
         /** Məzmun seçilib (ayrıca və ya qovluq vasitəsilə)? */
         isContentSelected(c) {
             return this.selectedContentIds.includes(c.content_id) || this.isContentCoveredByFolder(c);
+        },
+
+        /** Ağacda verilmiş bank qovluğunun düyününü tapır. */
+        findTreeFolderNode(type, folderId) {
+            const walk = (node) => {
+                if (node.type === type && node.folder_id === folderId) return node;
+                for (const child of node.children) {
+                    const hit = walk(child);
+                    if (hit) return hit;
+                }
+                return null;
+            };
+            return walk(this.contentTree);
+        },
+
+        /** Qovluğun bütün ALT ağacı: alt qovluqlar + içlərindəki məzmunlar. */
+        subtreeOf(f) {
+            const node = this.findTreeFolderNode(f.type, f.folder_id);
+            const folders = [];
+            const contents = [];
+            if (!node) return { folders, contents };
+
+            const walk = (n) => {
+                for (const child of n.children) {
+                    folders.push({
+                        folder_id: child.folder_id,
+                        type: child.type,
+                        name: child.name,
+                        path_ids: child.path_ids,
+                    });
+                    walk(child);
+                }
+                for (const c of n.contents) {
+                    contents.push(c);
+                }
+            };
+            walk(node);
+
+            return { folders, contents };
+        },
+
+        /** Qovluq işarələndi: özü + bütün alt ağacı seçimə əlavə et. */
+        addSubtreeSelection(f) {
+            const { folders, contents } = this.subtreeOf(f);
+            for (const x of [f, ...folders]) {
+                if (!this.isFolderSelected(x)) {
+                    this.selectedFolders.push({
+                        folder_id: x.folder_id,
+                        type: x.type,
+                        name: x.name,
+                        path_ids: x.path_ids,
+                    });
+                }
+            }
+            for (const c of contents) {
+                if (!this.selectedContentIds.includes(c.content_id)) {
+                    this.selectedContentIds.push(c.content_id);
+                }
+            }
+        },
+
+        /** Qovluğun işarəsi silindi: özü + bütün alt ağacı seçimdən çıxar. */
+        removeSubtreeSelection(f) {
+            const { folders, contents } = this.subtreeOf(f);
+            const removeKeys = new Set(
+                [f, ...folders].map((x) => x.folder_id + ':' + x.type),
+            );
+            this.selectedFolders = this.selectedFolders.filter(
+                (x) => !removeKeys.has(x.folder_id + ':' + x.type),
+            );
+            const contentIds = new Set(contents.map((c) => c.content_id));
+            this.selectedContentIds = this.selectedContentIds.filter(
+                (id) => !contentIds.has(id),
+            );
+        },
+
+        toggleFolderSelection(f) {
+            if (this.isFolderSelected(f)) {
+                this.removeSubtreeSelection(f);
+            } else {
+                this.addSubtreeSelection(f);
+            }
         },
 
         updateContentSelection(e) {
@@ -301,6 +385,11 @@ export default function workspaceManager(config) {
             }
         },
 
+        /** Başqa seçilmiş qovluq tərəfindən örtülməyən (ən üst) seçilmiş qovluqlar. */
+        get topLevelSelectedFolders() {
+            return this.selectedFolders.filter((f) => !this.isFolderCovered(f));
+        },
+
         /** Qovluqla örtülməyən ayrıca seçilmiş məzmunlar (move-content-lə əlavə ediləcək). */
         get effectiveIndividualContents() {
             return this.selectedContentIds.filter((id) => {
@@ -309,12 +398,16 @@ export default function workspaceManager(config) {
             });
         },
 
+        get selectedFolderCount() {
+            return this.topLevelSelectedFolders.length;
+        },
+
         get selectedContentCount() {
-            return this.selectedFolders.length + this.effectiveIndividualContents.length;
+            return this.selectedFolderCount + this.effectiveIndividualContents.length;
         },
 
         get selectionSummary() {
-            const folders = this.selectedFolders.length;
+            const folders = this.selectedFolderCount;
             const contents = this.effectiveIndividualContents.length;
             if (folders > 0 && contents > 0) {
                 return folders + ' qovluq, ' + contents + ' məzmun seçildi';
@@ -347,8 +440,9 @@ export default function workspaceManager(config) {
             }
 
             try {
-                // 1) Bütöv qovluqlar — strukturu ilə birlikdə.
-                for (const f of this.selectedFolders) {
+                // 1) Bütöv qovluqlar — strukturu ilə birlikdə (ən üst seçilmişlər,
+                //    alt ağac add-folder tərəfindən avtomatik gətirilir).
+                for (const f of this.topLevelSelectedFolders) {
                     await KelaApi('POST', '/api/v1/workspace-folders/add-folder', {
                         folder_type: f.type === 1 ? 'quiz' : 'lesson',
                         bank_folder_id: f.folder_id,

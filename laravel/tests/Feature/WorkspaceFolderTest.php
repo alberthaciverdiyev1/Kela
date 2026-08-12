@@ -442,6 +442,10 @@ class WorkspaceFolderTest extends TestCase
         $this->assertStringContainsString('isContentCoveredByFolder', $html);
         $this->assertStringContainsString('selectionSummary', $html);
 
+        // Kaskad seçim: üst qovluq alt ağacı yönetir (seçilmiş ata → alt qovluq covered)
+        $this->assertStringContainsString('isFolderCovered(row)', $html);
+        $this->assertStringContainsString('isFolderSelected(row) || isFolderCovered(row)', $html);
+
         // Modal yeni dizayn elementləri
         $this->assertStringContainsString('Haraya:', $html);
         $this->assertStringContainsString('updateContentSelection($event)', $html);
