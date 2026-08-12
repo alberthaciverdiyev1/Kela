@@ -32,6 +32,8 @@ export default function workspaceManager(config) {
         showContentMove: false,
         showContentAdd: false,
         showStudent: false,
+        // Kataloq görünümü: 'list' | 'grid' (localStorage-da saxlanılır).
+        viewMode: localStorage.getItem('workspace-view') || 'list',
 
         editingFolderId: null,
         moveFolderId: null,
@@ -43,6 +45,15 @@ export default function workspaceManager(config) {
         selectedContentIds: [],
         // Seçilmiş bank qovluqları: { folder_id, type, name } — bütöv qovluq əlavəsi üçün.
         selectedFolders: [],
+
+        // ── Kataloq görünümü ───────────────────────────────────────────────
+
+        setViewMode(mode) {
+            this.viewMode = mode;
+            try {
+                localStorage.setItem('workspace-view', mode);
+            } catch (e) { /* localStorage əlçatan deyilsə sadəcə seans üçün qalır */ }
+        },
 
         // ── Qovluq əməliyyatları ───────────────────────────────────────────
 

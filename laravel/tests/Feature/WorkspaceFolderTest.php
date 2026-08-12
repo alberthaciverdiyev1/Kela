@@ -107,6 +107,14 @@ class WorkspaceFolderTest extends TestCase
         $this->assertStringContainsString('data-content-action="remove"', $html);
         $this->assertStringContainsString('Workspace-dən çıxar', $html);
 
+        // List/Grid görünüm keçidi mövcuddur
+        $this->assertStringContainsString('setViewMode(\'list\')', $html);
+        $this->assertStringContainsString('setViewMode(\'grid\')', $html);
+        $this->assertStringContainsString('viewMode === \'list\'', $html);
+        $this->assertStringContainsString('viewMode === \'grid\'', $html);
+        $this->assertStringContainsString('Liste görünümü', $html);
+        $this->assertStringContainsString('Grid görünümü', $html);
+
         // Alt qovluq səhifəsi: breadcrumb + folder-dəki məzmunlar
         $html = $this->get("/teacher/workspaces/{$workspaceId}?folder_id={$folder->id}")->assertOk()->getContent();
         $this->assertStringContainsString('Riyaziyyat', $html);
