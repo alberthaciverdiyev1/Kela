@@ -43,9 +43,9 @@
     <div class="flex min-h-screen flex-col">
         {{-- Teacher panel üst navbar --}}
         <header class="sticky top-0 z-40 border-b border-base-300 bg-base-100 shadow-sm">
-            <div class="flex h-16 items-center gap-6 px-6">
+            <div class="grid h-16 grid-cols-[auto_1fr_auto] items-center gap-4 px-6">
                 <a href="/teacher/dashboard" class="text-lg font-bold tracking-tight text-base-content">Kela</a>
-                <nav class="flex items-center gap-1 text-sm font-medium">
+                <nav class="flex items-center justify-center gap-1 text-sm font-medium">
                     @foreach($nav as $item)
                         <a href="{{ $item['url'] }}"
                            @class([
@@ -57,7 +57,7 @@
                         </a>
                     @endforeach
                 </nav>
-                <div class="ms-auto flex items-center gap-3">
+                <div class="flex items-center justify-end gap-3">
                     <button
                         type="button"
                         x-data="{ dark: document.documentElement.getAttribute('data-theme') === 'filament-dark' }"
