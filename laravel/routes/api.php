@@ -10,6 +10,7 @@ use App\Api\Controllers\QuizController;
 use App\Api\Controllers\QuizFolderController;
 use App\Api\Controllers\StudentController;
 use App\Api\Controllers\WorkspaceController;
+use App\Api\Controllers\WorkspaceFolderController;
 use App\Web\Controllers\LessonMediaController;
 use Illuminate\Support\Facades\Route;
 
@@ -84,5 +85,13 @@ Route::middleware(['auth:sanctum', 'role_api:Admin,Teacher'])->group(function ()
     // İş sahəsi → şagird əlaqələri
     Route::post('/workspaces/{workspace}/students', [WorkspaceController::class, 'attachStudents']);
     Route::delete('/workspaces/{workspace}/students/{studentId}', [WorkspaceController::class, 'detachStudent']);
+
+    // Workspace qovluqları (workspace = base folder)
+    Route::get('/workspaces/{workspace}/folders/directory', [WorkspaceFolderController::class, 'directory']);
+    Route::post('/workspaces/{workspace}/folders', [WorkspaceFolderController::class, 'store']);
+    Route::post('/workspaces/{workspace}/folders/{folderId}/rename', [WorkspaceFolderController::class, 'rename']);
+    Route::post('/workspaces/{workspace}/folders/{folderId}/move', [WorkspaceFolderController::class, 'move']);
+    Route::delete('/workspaces/{workspace}/folders/{folderId}', [WorkspaceFolderController::class, 'destroy']);
+    Route::post('/workspace-folders/move-content', [WorkspaceFolderController::class, 'moveContent']);
 
 });

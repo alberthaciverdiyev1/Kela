@@ -3,6 +3,7 @@
 namespace App\Web\Controllers\Teacher;
 
 use App\Application\Workspace\WorkspaceService;
+use App\Application\WorkspaceFolder\WorkspaceFolderService;
 use App\Domain\Workspace\Workspace;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -10,12 +11,14 @@ use Illuminate\View\View;
 
 /**
  * İş sahəsi səhifələri — server-rendered Blade.
- * Tələbə əməliyyatları JS vasitəsilə /api/v1-ə gedir.
+ * İş sahəsi base folder kimidir: içində qovluq, quiz, dərs təşkil olunur.
+ * Qovluq/quiz/dərs əməliyyatları JS vasitəsilə /api/v1-ə gedir.
  */
 class WorkspaceController
 {
     public function __construct(
         private readonly WorkspaceService $workspaces,
+        private readonly WorkspaceFolderService $workspaceFolders,
     ) {
     }
 
@@ -51,18 +54,24 @@ class WorkspaceController
             ->with('success', 'Workspace yaradıldı.');
     }
 
-    public function show(int $workspace): View
+    public function show(Request $request, int $workspace): View
     {
         $model = $this->workspaces->find($workspace);
         $this->assertAccess($model);
 
         $actingId = $this->actingId($model);
-        $students = $this->workspaces->studentList($actingId, $workspace);
+        $currentFolderId = (int) $request->integer('folder_id') ?: null;
+
+        // Qovluq sahibini doğrulamaq üçün service-ə acting id ötürürük.
+        $directory = $this->workspaceFolders->directory($workspace, $currentFolderId, $actingId);
 
         return view('teacher.workspaces.show', [
             'workspaceId' => $workspace,
             'workspaceName' => $model->name,
-            'students' => $students,
+            'currentFolderId' => $currentFolderId,
+            'directory' => $directory,
+            'folderTree' => $this->workspaceFolders->folderTree($workspace, $actingId, $currentFolderId),
+            'students' => $this->workspaces->studentList($actingId, $workspace),
             'availableStudents' => collect($this->workspaces->availableStudents($actingId, $workspace))
                 ->pluck('name', 'id')
                 ->map(fn ($name) => (string) $name)

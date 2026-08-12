@@ -4,6 +4,8 @@
 @php
     $workspaceConfig = [
         'workspaceId' => (int) $workspaceId,
+        'folderId' => $currentFolderId,
+        'folderTree' => $folderTree,
     ];
 @endphp
 <div
@@ -20,7 +22,140 @@
         </x-slot:actions>
     </x-teacher.heading>
 
-    {{-- Students --}}
+    {{-- Toolbar --}}
+    <div class="flex flex-wrap items-center gap-2">
+        <button type="button" class="btn btn-sm btn-ghost border border-base-300" @click="openFolderAdd()">
+            <x-icon name="heroicon-o-folder-plus" class="size-4" /> Yeni Qovluq
+        </button>
+        <x-teacher.button
+            href="{{ route('teacher.quizzes.create', ['workspace_id' => $workspaceId, 'ws_folder_id' => $currentFolderId]) }}"
+            variant="secondary"
+            size="sm"
+            icon="clipboard-document-list"
+        >Yeni Quiz</x-teacher.button>
+        <x-teacher.button
+            href="{{ route('teacher.lessons.create', ['workspace_id' => $workspaceId, 'ws_folder_id' => $currentFolderId]) }}"
+            variant="secondary"
+            size="sm"
+            icon="academic-cap"
+        >Yeni Dərs</x-teacher.button>
+    </div>
+
+    {{-- Kataloq: breadcrumb + qovluq/content cədvəli --}}
+    <x-teacher.card :padding="false" @click="onTableClick($event)">
+        {{-- Breadcrumb --}}
+        <nav class="flex flex-wrap items-center gap-1 border-b border-base-300 px-4 py-2 text-sm">
+            <a href="{{ route('teacher.workspaces.show', $workspaceId) }}" class="inline-flex items-center gap-1 rounded px-2 py-1 font-medium text-primary hover:bg-primary/10">
+                <x-icon name="heroicon-o-squares-2x2" class="size-4" />
+                {{ $workspaceName }}
+            </a>
+            @foreach ($directory['breadcrumbs'] as $crumb)
+                <span class="text-base-content/30">/</span>
+                <a href="{{ route('teacher.workspaces.show', ['workspace' => $workspaceId, 'folder_id' => $crumb['id']]) }}" class="rounded px-2 py-1 font-medium text-base-content/70 hover:bg-base-200">
+                    {{ $crumb['name'] }}
+                </a>
+            @endforeach
+        </nav>
+
+        @if (count($directory['folders']) === 0 && count($directory['contents']) === 0)
+            <x-teacher.empty-state icon="folder-open" title="Burada hələ heç nə yoxdur" description="Yeni qovluq açın və ya quiz/dərs əlavə edin." />
+        @else
+            <x-teacher.table :headers="['Ad', 'Tip', 'Yayım', 'Yaradılıb', '']">
+                @foreach ($directory['folders'] as $folder)
+                    <tr class="transition hover:bg-base-200/50">
+                        <td class="font-medium">
+                            <a href="{{ route('teacher.workspaces.show', ['workspace' => $workspaceId, 'folder_id' => $folder['id']]) }}" class="inline-flex items-center gap-2 text-primary hover:underline">
+                                <x-icon name="heroicon-o-folder" class="size-4 opacity-60" />
+                                {{ $folder['name'] }}
+                            </a>
+                        </td>
+                        <td>
+                            <x-teacher.badge color="gray">Qovluq · {{ $folder['content_count'] }} məzmun</x-teacher.badge>
+                        </td>
+                        <td>—</td>
+                        <td>—</td>
+                        <td class="text-right">
+                            <div class="flex items-center justify-end gap-1">
+                                <button
+                                    data-folder-action="rename"
+                                    data-folder-id="{{ $folder['id'] }}"
+                                    data-folder-name="{{ $folder['name'] }}"
+                                    title="Adını dəyiş"
+                                    class="rounded-lg p-1.5 text-base-content/50 hover:bg-base-200 hover:text-base-content"
+                                >
+                                    <x-icon name="heroicon-o-pencil-square" class="size-4" />
+                                </button>
+                                <button
+                                    data-folder-action="move"
+                                    data-folder-id="{{ $folder['id'] }}"
+                                    title="Daşı"
+                                    class="rounded-lg p-1.5 text-base-content/50 hover:bg-base-200 hover:text-base-content"
+                                >
+                                    <x-icon name="heroicon-o-arrows-right-left" class="size-4" />
+                                </button>
+                                <button
+                                    data-folder-action="delete"
+                                    data-folder-id="{{ $folder['id'] }}"
+                                    data-folder-name="{{ $folder['name'] }}"
+                                    title="Sil"
+                                    class="rounded-lg p-1.5 text-error/70 hover:bg-error/10 hover:text-error"
+                                >
+                                    <x-icon name="heroicon-o-trash" class="size-4" />
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                @endforeach
+
+                @foreach ($directory['contents'] as $item)
+                    <tr class="transition hover:bg-base-200/50">
+                        <td class="font-medium text-base-content">
+                            @if ($item['type'] === \App\Domain\Content\Content::TYPE_QUIZ)
+                                <a href="{{ route('teacher.quizzes.edit', $item['content_id']) }}" class="inline-flex items-center gap-2 hover:text-primary">
+                                    <x-icon name="heroicon-o-clipboard-document-list" class="size-4 opacity-60" />
+                                    {{ $item['title'] }}
+                                </a>
+                            @else
+                                <a href="{{ route('teacher.lessons.edit', $item['content_id']) }}" class="inline-flex items-center gap-2 hover:text-primary">
+                                    <x-icon name="heroicon-o-academic-cap" class="size-4 opacity-60" />
+                                    {{ $item['title'] }}
+                                </a>
+                            @endif
+                        </td>
+                        <td>
+                            <x-teacher.badge :color="$item['type'] === \App\Domain\Content\Content::TYPE_QUIZ ? 'blue' : 'green'">{{ $item['type_label'] }}</x-teacher.badge>
+                        </td>
+                        <td>
+                            <x-teacher.badge :color="$item['is_published'] ? 'green' : 'yellow'">
+                                {{ $item['is_published'] ? 'Yayımlandı' : 'Qaralama' }}
+                            </x-teacher.badge>
+                        </td>
+                        <td class="text-base-content/70">{{ $item['created_at'] }}</td>
+                        <td class="text-right">
+                            <div class="flex items-center justify-end gap-1">
+                                <button
+                                    data-content-action="move"
+                                    data-content-id="{{ $item['content_id'] }}"
+                                    data-content-title="{{ $item['title'] }}"
+                                    title="Qovluğa daşı"
+                                    class="rounded-lg p-1.5 text-base-content/50 hover:bg-base-200 hover:text-base-content"
+                                >
+                                    <x-icon name="heroicon-o-arrows-right-left" class="size-4" />
+                                </button>
+                                @if ($item['type'] === \App\Domain\Content\Content::TYPE_QUIZ)
+                                    <x-teacher.button href="{{ route('teacher.quizzes.edit', $item['content_id']) }}" variant="ghost" size="sm" icon="pencil-square">Redaktə</x-teacher.button>
+                                @else
+                                    <x-teacher.button href="{{ route('teacher.lessons.edit', $item['content_id']) }}" variant="ghost" size="sm" icon="pencil-square">Redaktə</x-teacher.button>
+                                @endif
+                            </div>
+                        </td>
+                    </tr>
+                @endforeach
+            </x-teacher.table>
+        @endif
+    </x-teacher.card>
+
+    {{-- Tələbələr --}}
     <div class="space-y-3">
         <div class="flex items-center justify-between">
             <h3 class="flex items-center gap-2 text-lg font-semibold text-base-content">
@@ -59,7 +194,75 @@
         @endif
     </div>
 
-    {{-- Student dialog --}}
+    {{-- Yeni Qovluq dialog --}}
+    <div x-show="showFolderAdd" x-transition.opacity class="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4">
+        <div class="w-full max-w-md rounded-xl border border-base-300 bg-base-100 p-6 shadow-xl">
+            <h3 class="mb-4 text-lg font-semibold text-base-content">Yeni Qovluq</h3>
+            <input
+                x-ref="folderNameInput"
+                type="text"
+                placeholder="Qovluq adı"
+                class="input input-bordered w-full text-sm"
+            />
+            <div class="mt-4 flex justify-end gap-2">
+                <button type="button" class="btn btn-sm btn-ghost" @click="showFolderAdd = false">Ləğv et</button>
+                <button type="button" class="btn btn-sm btn-primary" @click="saveFolder()">Yarat</button>
+            </div>
+        </div>
+    </div>
+
+    {{-- Qovluq adını dəyiş dialog --}}
+    <div x-show="showFolderRename" x-transition.opacity class="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4">
+        <div class="w-full max-w-md rounded-xl border border-base-300 bg-base-100 p-6 shadow-xl">
+            <h3 class="mb-4 text-lg font-semibold text-base-content">Qovluq adını dəyiş</h3>
+            <input
+                x-ref="folderRenameInput"
+                type="text"
+                placeholder="Yeni ad"
+                class="input input-bordered w-full text-sm"
+            />
+            <div class="mt-4 flex justify-end gap-2">
+                <button type="button" class="btn btn-sm btn-ghost" @click="showFolderRename = false">Ləğv et</button>
+                <button type="button" class="btn btn-sm btn-primary" @click="saveFolderRename()">Saxla</button>
+            </div>
+        </div>
+    </div>
+
+    {{-- Qovluq daşı dialog --}}
+    <div x-show="showFolderMove" x-transition.opacity class="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4">
+        <div class="w-full max-w-md rounded-xl border border-base-300 bg-base-100 p-6 shadow-xl">
+            <h3 class="mb-4 text-lg font-semibold text-base-content">Qovluğu daşı</h3>
+            <select x-ref="folderMoveSelect" class="select select-bordered w-full text-sm">
+                <option value="">Kökə</option>
+                <template x-for="(f, i) in folderTree" :key="f.id">
+                    <option :value="f.id" x-text="'&nbsp;'.repeat(f.depth) + f.name"></option>
+                </template>
+            </select>
+            <div class="mt-4 flex justify-end gap-2">
+                <button type="button" class="btn btn-sm btn-ghost" @click="showFolderMove = false">Ləğv et</button>
+                <button type="button" class="btn btn-sm btn-primary" @click="saveFolderMove()">Daşı</button>
+            </div>
+        </div>
+    </div>
+
+    {{-- Məzmun daşı dialog --}}
+    <div x-show="showContentMove" x-transition.opacity class="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4">
+        <div class="w-full max-w-md rounded-xl border border-base-300 bg-base-100 p-6 shadow-xl">
+            <h3 class="mb-4 text-lg font-semibold text-base-content">Məzmunu qovluğa daşı</h3>
+            <select x-ref="contentMoveSelect" class="select select-bordered w-full text-sm">
+                <option value="">Bu workspace-in kökünə</option>
+                <template x-for="(f, i) in folderTree" :key="f.id">
+                    <option :value="f.id" x-text="'&nbsp;'.repeat(f.depth) + f.name"></option>
+                </template>
+            </select>
+            <div class="mt-4 flex justify-end gap-2">
+                <button type="button" class="btn btn-sm btn-ghost" @click="showContentMove = false">Ləğv et</button>
+                <button type="button" class="btn btn-sm btn-primary" @click="saveContentMove()">Daşı</button>
+            </div>
+        </div>
+    </div>
+
+    {{-- Tələbə dialog --}}
     <div x-show="showStudent" x-transition.opacity class="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4">
         <div class="w-full max-w-md rounded-xl border border-base-300 bg-base-100 p-6 shadow-xl">
             <h3 class="mb-4 text-lg font-semibold text-base-content">Tələbə Əlavə Et</h3>

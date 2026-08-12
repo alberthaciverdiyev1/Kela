@@ -4,6 +4,7 @@ namespace App\Web\Controllers\Teacher;
 
 use App\Application\Lesson\LessonService;
 use App\Application\LessonFolder\LessonFolderService;
+use App\Application\WorkspaceFolder\WorkspaceFolderService;
 use App\Domain\Lesson\Lesson;
 use App\Infrastructure\Media\MediaProcessor;
 use Illuminate\Http\RedirectResponse;
@@ -19,6 +20,7 @@ class LessonController
     public function __construct(
         private readonly LessonService $lessons,
         private readonly LessonFolderService $lessonFolders,
+        private readonly WorkspaceFolderService $workspaceFolders,
     ) {
     }
 
@@ -47,6 +49,11 @@ class LessonController
             'lesson' => null,
             'folderTree' => $this->lessonFolders->folderTree((int) auth()->id()),
             'selectedFolderId' => $selectedFolder,
+            'workspaceContext' => $this->workspaceFolders->resolveContextFor(
+                (int) $request->integer('workspace_id') ?: null,
+                (int) $request->integer('ws_folder_id') ?: null,
+                (int) auth()->id(),
+            ),
         ]);
     }
 
@@ -54,6 +61,16 @@ class LessonController
     {
         $data = $this->validated($request);
         $data['folder_id'] = $this->lessonFolders->resolveFolderFor((int) auth()->id(), $data['folder_id'] ?? null);
+
+        $context = $this->workspaceFolders->resolveContextFor(
+            (int) $request->integer('workspace_id') ?: null,
+            (int) $request->integer('ws_folder_id') ?: null,
+            (int) auth()->id(),
+        );
+        if ($context !== null) {
+            $data['workspace_id'] = $context['workspace_id'];
+            $data['ws_folder_id'] = $context['folder_id'];
+        }
 
         $path = $this->storeVideo($request);
         if ($path !== null) {
@@ -113,6 +130,11 @@ class LessonController
                 'order_index' => (int) $model->order_index,
             ],
             'folderTree' => $this->lessonFolders->folderTree((int) auth()->id()),
+            'workspaceContext' => $this->workspaceFolders->resolveContextFor(
+                (int) ($model->content?->workspace_id ?? 0) ?: null,
+                (int) ($model->content?->folder_id ?? 0) ?: null,
+                (int) auth()->id(),
+            ),
         ]);
     }
 
@@ -126,6 +148,16 @@ class LessonController
 
         $data = $this->validated($request);
         $data['folder_id'] = $this->lessonFolders->resolveFolderFor((int) auth()->id(), $data['folder_id'] ?? null);
+
+        $context = $this->workspaceFolders->resolveContextFor(
+            (int) $request->integer('workspace_id') ?: null,
+            (int) $request->integer('ws_folder_id') ?: null,
+            (int) auth()->id(),
+        );
+        if ($context !== null) {
+            $data['workspace_id'] = $context['workspace_id'];
+            $data['ws_folder_id'] = $context['folder_id'];
+        }
 
         $newPath = $this->storeVideo($request);
         $data['video_path'] = $newPath ?? $model->video_path;
@@ -157,6 +189,8 @@ class LessonController
             'is_published' => ['nullable', 'boolean'],
             'order_index' => ['integer', 'min:0'],
             'folder_id' => ['nullable', 'integer'],
+            'workspace_id' => ['nullable', 'integer'],
+            'ws_folder_id' => ['nullable', 'integer'],
         ]);
 
         $data['is_published'] = $request->boolean('is_published');

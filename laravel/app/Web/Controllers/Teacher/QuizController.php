@@ -5,6 +5,7 @@ namespace App\Web\Controllers\Teacher;
 use App\Application\Question\QuestionService;
 use App\Application\Quiz\QuizService;
 use App\Application\QuizFolder\QuizFolderService;
+use App\Application\WorkspaceFolder\WorkspaceFolderService;
 use App\Domain\Quiz\Quiz;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -20,6 +21,7 @@ class QuizController
     public function __construct(
         private readonly QuizService $quizzes,
         private readonly QuizFolderService $quizFolders,
+        private readonly WorkspaceFolderService $workspaceFolders,
         private readonly QuestionService $questions,
     ) {
     }
@@ -49,6 +51,11 @@ class QuizController
             'quiz' => null,
             'folderTree' => $this->quizFolders->folderTree((int) auth()->id()),
             'selectedFolderId' => $selectedFolder,
+            'workspaceContext' => $this->workspaceFolders->resolveContextFor(
+                (int) $request->integer('workspace_id') ?: null,
+                (int) $request->integer('ws_folder_id') ?: null,
+                (int) auth()->id(),
+            ),
         ]);
     }
 
@@ -56,6 +63,16 @@ class QuizController
     {
         $data = $this->validated($request);
         $data['folder_id'] = $this->quizFolders->resolveFolderFor((int) auth()->id(), $data['folder_id'] ?? null);
+
+        $context = $this->workspaceFolders->resolveContextFor(
+            (int) $request->integer('workspace_id') ?: null,
+            (int) $request->integer('ws_folder_id') ?: null,
+            (int) auth()->id(),
+        );
+        if ($context !== null) {
+            $data['workspace_id'] = $context['workspace_id'];
+            $data['ws_folder_id'] = $context['folder_id'];
+        }
 
         $quiz = $this->quizzes->create((int) auth()->id(), $data);
 
@@ -67,13 +84,19 @@ class QuizController
     public function edit(int $quiz): View
     {
         $this->assertAccess($this->quizzes->find($quiz));
+        $formData = $this->quizzes->formData($quiz);
 
         return view('teacher.quizzes.edit', [
             'contentId' => $quiz,
-            'quiz' => $this->quizzes->formData($quiz),
+            'quiz' => $formData,
             'questions' => $this->quizzes->questionList($quiz),
             'bankOptions' => $this->bankOptions($quiz),
             'folderTree' => $this->quizFolders->folderTree((int) auth()->id()),
+            'workspaceContext' => $this->workspaceFolders->resolveContextFor(
+                (int) ($formData['workspace_id'] ?? 0) ?: null,
+                (int) ($formData['ws_folder_id'] ?? 0) ?: null,
+                (int) auth()->id(),
+            ),
         ]);
     }
 
@@ -94,6 +117,16 @@ class QuizController
 
         $data = $this->validated($request);
         $data['folder_id'] = $this->quizFolders->resolveFolderFor((int) auth()->id(), $data['folder_id'] ?? null);
+
+        $context = $this->workspaceFolders->resolveContextFor(
+            (int) $request->integer('workspace_id') ?: null,
+            (int) $request->integer('ws_folder_id') ?: null,
+            (int) auth()->id(),
+        );
+        if ($context !== null) {
+            $data['workspace_id'] = $context['workspace_id'];
+            $data['ws_folder_id'] = $context['folder_id'];
+        }
 
         $this->quizzes->update($quiz, $data);
 
@@ -116,6 +149,8 @@ class QuizController
             'description' => ['nullable', 'string'],
             'is_published' => ['nullable', 'boolean'],
             'folder_id' => ['nullable', 'integer'],
+            'workspace_id' => ['nullable', 'integer'],
+            'ws_folder_id' => ['nullable', 'integer'],
         ]);
 
         $data['is_published'] = $request->boolean('is_published');

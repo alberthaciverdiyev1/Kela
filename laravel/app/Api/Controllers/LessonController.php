@@ -4,6 +4,7 @@ namespace App\Api\Controllers;
 
 use App\Application\Lesson\LessonService;
 use App\Application\LessonFolder\LessonFolderService;
+use App\Application\WorkspaceFolder\WorkspaceFolderService;
 use App\Domain\Lesson\Lesson;
 use App\Api\Resources\LessonResource;
 use Illuminate\Http\JsonResponse;
@@ -16,6 +17,7 @@ class LessonController
     public function __construct(
         private readonly LessonService $lessons,
         private readonly LessonFolderService $lessonFolders,
+        private readonly WorkspaceFolderService $workspaceFolders,
     ) {
     }
 
@@ -38,9 +40,21 @@ class LessonController
             'is_published' => ['nullable', 'boolean'],
             'order_index' => ['nullable', 'integer'],
             'folder_id' => ['nullable', 'integer'],
+            'workspace_id' => ['nullable', 'integer'],
+            'ws_folder_id' => ['nullable', 'integer'],
         ]);
 
         $data['folder_id'] = $this->lessonFolders->resolveFolderFor((int) $request->user()->id, $data['folder_id'] ?? null);
+
+        $context = $this->workspaceFolders->resolveContextFor(
+            (int) ($data['workspace_id'] ?? 0) ?: null,
+            (int) ($data['ws_folder_id'] ?? 0) ?: null,
+            (int) $request->user()->id,
+        );
+        if ($context !== null) {
+            $data['workspace_id'] = $context['workspace_id'];
+            $data['ws_folder_id'] = $context['folder_id'];
+        }
 
         $lesson = $this->lessons->create((int) $request->user()->id, $data);
 
@@ -73,9 +87,21 @@ class LessonController
             'is_published' => ['nullable', 'boolean'],
             'order_index' => ['nullable', 'integer'],
             'folder_id' => ['nullable', 'integer'],
+            'workspace_id' => ['nullable', 'integer'],
+            'ws_folder_id' => ['nullable', 'integer'],
         ]);
 
         $data['folder_id'] = $this->lessonFolders->resolveFolderFor((int) $request->user()->id, $data['folder_id'] ?? null);
+
+        $context = $this->workspaceFolders->resolveContextFor(
+            (int) ($data['workspace_id'] ?? 0) ?: null,
+            (int) ($data['ws_folder_id'] ?? 0) ?: null,
+            (int) $request->user()->id,
+        );
+        if ($context !== null) {
+            $data['workspace_id'] = $context['workspace_id'];
+            $data['ws_folder_id'] = $context['folder_id'];
+        }
 
         $lesson = $this->lessons->update($contentId, $data);
 

@@ -40,6 +40,8 @@ class LessonService
 
         $content = $this->contents->create([
             'teacher_id' => $teacherId,
+            'workspace_id' => $data['workspace_id'] ?? null,
+            'folder_id' => $data['ws_folder_id'] ?? null,
             'title' => $data['title'] ?? '',
             'description' => $data['description'] ?? null,
             'type' => Content::TYPE_LESSON,
@@ -77,6 +79,12 @@ class LessonService
 
         if ($lesson->content) {
             $this->contents->update($lesson->content, [
+                'workspace_id' => array_key_exists('workspace_id', $data)
+                    ? ($data['workspace_id'] ?: null)
+                    : $lesson->content->workspace_id,
+                'folder_id' => array_key_exists('ws_folder_id', $data)
+                    ? ($data['ws_folder_id'] ?: null)
+                    : $lesson->content->folder_id,
                 'title' => $data['title'] ?? '',
                 'description' => $data['description'] ?? null,
                 'is_published' => (bool) ($data['is_published'] ?? false),

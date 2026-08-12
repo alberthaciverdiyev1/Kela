@@ -4,6 +4,7 @@ namespace App\Api\Controllers;
 
 use App\Application\Quiz\QuizService;
 use App\Application\QuizFolder\QuizFolderService;
+use App\Application\WorkspaceFolder\WorkspaceFolderService;
 use App\Domain\Quiz\Quiz;
 use App\Api\Resources\QuizResource;
 use Illuminate\Http\JsonResponse;
@@ -15,6 +16,7 @@ class QuizController
     public function __construct(
         private readonly QuizService $quizzes,
         private readonly QuizFolderService $quizFolders,
+        private readonly WorkspaceFolderService $workspaceFolders,
     ) {
     }
 
@@ -35,9 +37,21 @@ class QuizController
             'description' => ['nullable', 'string'],
             'is_published' => ['nullable', 'boolean'],
             'folder_id' => ['nullable', 'integer'],
+            'workspace_id' => ['nullable', 'integer'],
+            'ws_folder_id' => ['nullable', 'integer'],
         ]);
 
         $data['folder_id'] = $this->quizFolders->resolveFolderFor((int) $request->user()->id, $data['folder_id'] ?? null);
+
+        $context = $this->workspaceFolders->resolveContextFor(
+            (int) ($data['workspace_id'] ?? 0) ?: null,
+            (int) ($data['ws_folder_id'] ?? 0) ?: null,
+            (int) $request->user()->id,
+        );
+        if ($context !== null) {
+            $data['workspace_id'] = $context['workspace_id'];
+            $data['ws_folder_id'] = $context['folder_id'];
+        }
 
         $quiz = $this->quizzes->create((int) $request->user()->id, $data);
 
@@ -64,9 +78,21 @@ class QuizController
             'description' => ['nullable', 'string'],
             'is_published' => ['nullable', 'boolean'],
             'folder_id' => ['nullable', 'integer'],
+            'workspace_id' => ['nullable', 'integer'],
+            'ws_folder_id' => ['nullable', 'integer'],
         ]);
 
         $data['folder_id'] = $this->quizFolders->resolveFolderFor((int) $request->user()->id, $data['folder_id'] ?? null);
+
+        $context = $this->workspaceFolders->resolveContextFor(
+            (int) ($data['workspace_id'] ?? 0) ?: null,
+            (int) ($data['ws_folder_id'] ?? 0) ?: null,
+            (int) $request->user()->id,
+        );
+        if ($context !== null) {
+            $data['workspace_id'] = $context['workspace_id'];
+            $data['ws_folder_id'] = $context['folder_id'];
+        }
 
         return new QuizResource($this->quizzes->update($contentId, $data));
     }

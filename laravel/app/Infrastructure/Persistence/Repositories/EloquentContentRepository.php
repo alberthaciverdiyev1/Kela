@@ -47,4 +47,17 @@ class EloquentContentRepository implements ContentRepository
             ->pluck('title', 'id')
             ->all();
     }
+
+    public function contentsForWorkspace(int $workspaceId, ?int $folderId): \Illuminate\Support\Collection
+    {
+        $query = Content::query()->where('workspace_id', $workspaceId);
+
+        if ($folderId === null) {
+            $query->whereNull('folder_id');
+        } else {
+            $query->where('folder_id', $folderId);
+        }
+
+        return $query->orderByDesc('created_at')->get();
+    }
 }

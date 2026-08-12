@@ -20,4 +20,7 @@ interface ContentRepository
 
     /** Teacher-in bütün məzmunları (id, title). */
     public function allForTeacher(int $teacherId): array;
+
+    /** Workspace-in verilmiş qovluğundakı content-lər (Collection). */
+    public function contentsForWorkspace(int $workspaceId, ?int $folderId): \Illuminate\Support\Collection;
 }

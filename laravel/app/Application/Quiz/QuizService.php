@@ -68,6 +68,8 @@ class QuizService
             'description' => $quiz->content->description,
             'is_published' => (bool) $quiz->content->is_published,
             'folder_id' => $quiz->folder_id ? (int) $quiz->folder_id : null,
+            'workspace_id' => $quiz->content->workspace_id ? (int) $quiz->content->workspace_id : null,
+            'ws_folder_id' => $quiz->content->folder_id ? (int) $quiz->content->folder_id : null,
         ];
     }
 
@@ -81,6 +83,8 @@ class QuizService
 
         $content = $this->contents->create([
             'teacher_id' => $teacherId,
+            'workspace_id' => $data['workspace_id'] ?? null,
+            'folder_id' => $data['ws_folder_id'] ?? null,
             'title' => $title,
             'description' => $data['description'] ?? null,
             'type' => Content::TYPE_QUIZ,
@@ -115,6 +119,12 @@ class QuizService
 
         if ($quiz->content) {
             $this->contents->update($quiz->content, [
+                'workspace_id' => array_key_exists('workspace_id', $data)
+                    ? ($data['workspace_id'] ?: null)
+                    : $quiz->content->workspace_id,
+                'folder_id' => array_key_exists('ws_folder_id', $data)
+                    ? ($data['ws_folder_id'] ?: null)
+                    : $quiz->content->folder_id,
                 'title' => $quiz->title,
                 'description' => $quiz->description,
                 'is_published' => $quiz->is_published,

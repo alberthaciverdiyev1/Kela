@@ -6,6 +6,8 @@ use App\Domain\Content\Values\ContentType;
 use App\Domain\User\User;
 use App\Domain\Lesson\Lesson;
 use App\Domain\Quiz\Quiz;
+use App\Domain\Workspace\Workspace;
+use App\Domain\WorkspaceFolder\WorkspaceFolder;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -26,6 +28,8 @@ class Content extends Model
 
     protected $fillable = [
         'teacher_id',
+        'workspace_id',
+        'folder_id',
         'title',
         'description',
         'type',
@@ -43,6 +47,18 @@ class Content extends Model
     public function teacher(): BelongsTo
     {
         return $this->belongsTo(User::class, 'teacher_id');
+    }
+
+    /** Content-in aid olduğu workspace (base folder). */
+    public function workspace(): BelongsTo
+    {
+        return $this->belongsTo(Workspace::class, 'workspace_id');
+    }
+
+    /** Workspace daxilindəki qovluq (null = workspace kökü). */
+    public function folder(): BelongsTo
+    {
+        return $this->belongsTo(WorkspaceFolder::class, 'folder_id');
     }
 
     public function lesson(): HasOne

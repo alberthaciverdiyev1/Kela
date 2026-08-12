@@ -18,6 +18,8 @@
         >
             @csrf
 
+            @include('teacher.partials._workspace-context', ['workspaceContext' => $workspaceContext ?? null])
+
             <x-teacher.field label="Başlıq" name="title" :required="true">
                 <x-teacher.input name="title" value="{{ old('title', $lesson['title'] ?? '') }}" />
             </x-teacher.field>
