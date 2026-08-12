@@ -238,21 +238,8 @@
 
                 @foreach ($lessons as $lesson)
                     <div class="group relative flex flex-col items-center rounded-lg border border-base-300 bg-base-100 p-2 text-center transition hover:border-primary/40 hover:shadow-sm">
-                        <a href="{{ route('teacher.lessons.show', $lesson['content_id']) }}" class="relative flex size-20 items-center justify-center rounded-xl bg-success/10 text-success transition group-hover:bg-success/15">
-                            <x-icon name="heroicon-o-academic-cap" class="size-[66px]" />
-                            {{-- Tip rozeti (count kimi, sağ üst) --}}
-                            <span class="absolute -right-2 -top-2 flex size-5 items-center justify-center rounded-full bg-success text-[10px] font-bold leading-none text-success-content" title="{{ $lesson['has_video'] ? 'Video dərs' : 'Qeyd dərsi' }}">
-                                <x-icon name="heroicon-o-academic-cap" class="size-3" />
-                            </span>
-                            @if ($lesson['is_published'])
-                                <span class="absolute -bottom-2 -right-2 flex size-5 items-center justify-center rounded-full bg-success text-[10px] font-bold leading-none text-success-content" title="Yayımlandı">
-                                    <x-icon name="heroicon-o-check-circle" class="size-3" />
-                                </span>
-                            @else
-                                <span class="absolute -bottom-2 -right-2 flex size-5 items-center justify-center rounded-full bg-warning text-[10px] font-bold leading-none text-warning-content" title="Qaralama">
-                                    <x-icon name="heroicon-o-pencil-square" class="size-3" />
-                                </span>
-                            @endif
+                        <a href="{{ route('teacher.lessons.show', $lesson['content_id']) }}" class="relative flex size-20 items-center justify-center rounded-xl transition {{ $lesson['is_published'] ? 'bg-success/10 text-success group-hover:bg-success/15' : 'bg-warning/10 text-warning group-hover:bg-warning/15' }}">
+                            <x-icon name="heroicon-o-video-camera" class="size-[66px]" />
                         </a>
                         <a href="{{ route('teacher.lessons.show', $lesson['content_id']) }}" class="mt-1.5 block w-full truncate text-xs font-medium leading-tight text-base-content transition hover:text-primary" title="{{ $lesson['title'] }}">
                             {{ $lesson['title'] }}

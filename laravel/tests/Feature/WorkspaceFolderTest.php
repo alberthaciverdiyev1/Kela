@@ -84,6 +84,26 @@ class WorkspaceFolderTest extends TestCase
         ])->getKey();
     }
 
+    public function test_workspace_index_page_offers_list_grid_toggle(): void
+    {
+        $this->makeWorkspace($this->teacher->id, 'Sınaq Qrupu');
+
+        $this->actingAs($this->teacher);
+
+        $html = $this->get('/teacher/workspaces')->assertOk()->getContent();
+        $this->assertStringContainsString('Sınaq Qrupu', $html);
+        $this->assertStringContainsString('x-data="workspaceList()"', $html);
+
+        // List/Grid görünüm keçidi və grid kartları mövcuddur
+        $this->assertStringContainsString('setViewMode(\'list\')', $html);
+        $this->assertStringContainsString('setViewMode(\'grid\')', $html);
+        $this->assertStringContainsString('viewMode === \'list\'', $html);
+        $this->assertStringContainsString('viewMode === \'grid\'', $html);
+        $this->assertStringContainsString('Liste görünümü', $html);
+        $this->assertStringContainsString('Grid görünümü', $html);
+        $this->assertStringContainsString('grid-cols-6', $html);
+    }
+
     public function test_workspace_show_page_renders_folder_catalog_and_content(): void
     {
         $workspaceId = $this->makeWorkspace($this->teacher->id);

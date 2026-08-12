@@ -225,21 +225,8 @@
 
                 @foreach ($quizzes as $quiz)
                     <div class="group relative flex flex-col items-center rounded-lg border border-base-300 bg-base-100 p-2 text-center transition hover:border-primary/40 hover:shadow-sm">
-                        <a href="{{ route('teacher.quizzes.edit', $quiz['content_id']) }}" class="relative flex size-20 items-center justify-center rounded-xl bg-info/10 text-info transition group-hover:bg-info/15">
+                        <a href="{{ route('teacher.quizzes.edit', $quiz['content_id']) }}" class="relative flex size-20 items-center justify-center rounded-xl transition {{ $quiz['is_published'] ? 'bg-info/10 text-info group-hover:bg-info/15' : 'bg-warning/10 text-warning group-hover:bg-warning/15' }}">
                             <x-icon name="heroicon-o-clipboard-document-list" class="size-[66px]" />
-                            {{-- Tip rozeti (count kimi, sağ üst) --}}
-                            <span class="absolute -right-2 -top-2 flex size-5 items-center justify-center rounded-full bg-info text-[10px] font-bold leading-none text-info-content" title="{{ $quiz['questions_count'] }} sual">
-                                <x-icon name="heroicon-o-clipboard-document-list" class="size-3" />
-                            </span>
-                            @if ($quiz['is_published'])
-                                <span class="absolute -bottom-2 -right-2 flex size-5 items-center justify-center rounded-full bg-success text-[10px] font-bold leading-none text-success-content" title="Yayımlandı">
-                                    <x-icon name="heroicon-o-check-circle" class="size-3" />
-                                </span>
-                            @else
-                                <span class="absolute -bottom-2 -right-2 flex size-5 items-center justify-center rounded-full bg-warning text-[10px] font-bold leading-none text-warning-content" title="Qaralama">
-                                    <x-icon name="heroicon-o-pencil-square" class="size-3" />
-                                </span>
-                            @endif
                         </a>
                         <a href="{{ route('teacher.quizzes.edit', $quiz['content_id']) }}" class="mt-1.5 block w-full truncate text-xs font-medium leading-tight text-base-content transition hover:text-primary" title="{{ $quiz['title'] }}">
                             {{ $quiz['title'] }}

@@ -569,5 +569,24 @@ export default function workspaceManager(config) {
 
 // Alpine-də qeydiyyat: blade-də x-data="workspaceManager(...)" işləyə bilsin.
 Alpine.data('workspaceManager', workspaceManager);
-// Alpine-i işə salır. Bu entry yalnız workspace səhifəsində yüklənir.
+
+/**
+ * Workspace indeks səhifəsi üçün sadə görünüm idarəçisi (List / Grid).
+ */
+function workspaceList() {
+    return {
+        // Kataloq görünümü: 'list' | 'grid' (localStorage-da saxlanılır).
+        viewMode: localStorage.getItem('workspace-view') || 'list',
+
+        setViewMode(mode) {
+            this.viewMode = mode;
+            try {
+                localStorage.setItem('workspace-view', mode);
+            } catch (e) { /* localStorage əlçatan deyilsə sadəcə seans üçün qalır */ }
+        },
+    };
+}
+Alpine.data('workspaceList', workspaceList);
+
+// Alpine-i işə salır. Bu entry yalnız workspace səhifələrində yüklənir.
 Alpine.start();
