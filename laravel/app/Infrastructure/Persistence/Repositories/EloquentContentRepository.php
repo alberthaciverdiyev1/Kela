@@ -77,4 +77,22 @@ class EloquentContentRepository implements ContentRepository
             ->whereIn('folder_id', $folderIds)
             ->get();
     }
+
+    public function deleteContentsInFolders(array $folderIds): void
+    {
+        foreach (Content::query()->whereIn('folder_id', $folderIds)->get() as $content) {
+            if ($content->isQuiz()) {
+                $content->quiz?->delete();
+            } elseif ($content->isLesson()) {
+                // Lesson silinəndə hook content-i də silir.
+                $content->lesson?->delete();
+            }
+
+            // Lesson hook-u content-i silməyibsə (lesson qeydi yoxdursa) əl ilə sil.
+            $content->refresh();
+            if ($content->deleted_at === null) {
+                $content->delete();
+            }
+        }
+    }
 }

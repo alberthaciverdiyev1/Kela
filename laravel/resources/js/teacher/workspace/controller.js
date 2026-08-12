@@ -115,7 +115,7 @@ export default function workspaceManager(config) {
         async handleFolderDelete(btn) {
             const id = btn.dataset.folderId;
             const name = btn.dataset.folderName || 'Qovluq';
-            if (!window.confirm(`'${name}' qovluğu silinsin? (İçindəki məzmun kökə daşınacaq.)`)) return;
+            if (!window.confirm(`'${name}' qovluğu və içindəki bütün məzmunlar silinsin? (Bu əməliyyat geri qaytarıla bilməz.)`)) return;
             try {
                 await KelaApi('DELETE', `/api/v1/workspaces/${this.workspaceId}/folders/${id}`);
                 window.location.reload();

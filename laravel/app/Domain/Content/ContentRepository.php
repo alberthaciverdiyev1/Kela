@@ -29,4 +29,7 @@ interface ContentRepository
 
     /** Verilmiş qovluq id-lərindəki bütün məzmunlar (Collection). */
     public function contentsInFolders(array $folderIds): \Illuminate\Support\Collection;
+
+    /** Verilmiş qovluq id-lərindəki məzmunları quiz/lesson qeydləri ilə birlikdə silir. */
+    public function deleteContentsInFolders(array $folderIds): void;
 }

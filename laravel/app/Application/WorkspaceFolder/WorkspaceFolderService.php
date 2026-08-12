@@ -167,6 +167,14 @@ class WorkspaceFolderService
     public function deleteFolder(int $workspaceId, int $folderId, int $actingUserId): void
     {
         $this->assertFolderOwner($folderId, $workspaceId, $actingUserId);
+
+        // Alt ağacdakı bütün qovluq id-ləri (özləri də daxil).
+        $ids = $this->folders->descendantIds($folderId);
+
+        // İçindəki məzmunları quiz/lesson qeydləri ilə birlikdə sil.
+        $this->contents->deleteContentsInFolders($ids);
+
+        // Qovluq ağacını sil.
         $this->folders->deleteTree($folderId);
     }
 

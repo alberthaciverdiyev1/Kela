@@ -170,21 +170,39 @@ class WorkspaceFolderTest extends TestCase
         $this->assertEquals($parent->id, $this->folders()->find($child->id)->parent_id);
     }
 
-    public function test_api_deletes_folder_moving_content_to_root(): void
+    public function test_api_deletes_folder_with_its_contents(): void
     {
         Sanctum::actingAs($this->teacher);
         $workspaceId = $this->makeWorkspace($this->teacher->id);
 
+        // Qovluq ağacı: Silinəcək → Alt; bir də kontrol (kökdə) qovluq
         $folder = $this->folders()->createFolder($workspaceId, 'Silinəcək', null, $this->teacher->id);
+        $child = $this->folders()->createFolder($workspaceId, 'Alt', $folder->id, $this->teacher->id);
+        $other = $this->folders()->createFolder($workspaceId, 'Kontrol', null, $this->teacher->id);
+
+        // İçərilər: Silinəcək-də quiz, Alt-da dərs, Kontrol-da quiz
         $quizId = $this->makeQuizInWorkspace($this->teacher->id, $workspaceId, $folder->id);
+        $lessonId = $this->makeLessonInWorkspace($this->teacher->id, $workspaceId, $child->id);
+        $otherQuizId = $this->makeQuizInWorkspace($this->teacher->id, $workspaceId, $other->id);
 
         $this->deleteJson("/api/v1/workspaces/{$workspaceId}/folders/{$folder->id}")->assertOk();
 
-        // Qovluq silindi, content kökə düşdü (workspace-də qalır)
+        // Qovluq ağacı silindi
         $this->assertNull($this->folders()->find($folder->id));
-        $form = $this->quizzes()->formData($quizId);
+        $this->assertNull($this->folders()->find($child->id));
+
+        // İçindəki məzmunlar da silindi (quiz + lesson + content)
+        $this->assertNull($this->quizzes()->find($quizId));
+        $this->assertNull(app(\App\Domain\Lesson\LessonRepository::class)->find($lessonId));
+        $this->assertNull(app(\App\Domain\Content\ContentRepository::class)->find($quizId));
+        $this->assertNull(app(\App\Domain\Content\ContentRepository::class)->find($lessonId));
+
+        // Kontrol qovluq və içindəki məzmun toxunulmadı
+        $this->assertNotNull($this->folders()->find($other->id));
+        $this->assertNotNull($this->quizzes()->find($otherQuizId));
+        $form = $this->quizzes()->formData($otherQuizId);
         $this->assertEquals($workspaceId, $form['workspace_id']);
-        $this->assertNull($form['ws_folder_id']);
+        $this->assertEquals($other->id, $form['ws_folder_id']);
     }
 
     public function test_folder_ownership_prevents_cross_teacher_access(): void
