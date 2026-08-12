@@ -3,6 +3,7 @@
 namespace App\Domain\Lesson;
 
 use App\Domain\Content\Content;
+use App\Domain\LessonFolder\LessonFolder;
 use App\Domain\User\User;
 
 use Illuminate\Database\Eloquent\Model;
@@ -16,6 +17,7 @@ class Lesson extends Model
     protected $fillable = [
         'content_id',
         'teacher_id',
+        'folder_id',
         'video_path',
         'thumbnail_path',
         'duration_seconds',
@@ -38,6 +40,11 @@ class Lesson extends Model
     public function teacher(): BelongsTo
     {
         return $this->belongsTo(User::class, 'teacher_id');
+    }
+
+    public function folder(): BelongsTo
+    {
+        return $this->belongsTo(LessonFolder::class, 'folder_id');
     }
 
     public function getHasVideoAttribute(): bool

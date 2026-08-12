@@ -3,6 +3,7 @@
 namespace App\Api\Controllers;
 
 use App\Application\Lesson\LessonService;
+use App\Application\LessonFolder\LessonFolderService;
 use App\Domain\Lesson\Lesson;
 use App\Api\Resources\LessonResource;
 use Illuminate\Http\JsonResponse;
@@ -12,8 +13,10 @@ use Illuminate\Pagination\LengthAwarePaginator;
 
 class LessonController
 {
-    public function __construct(private readonly LessonService $lessons)
-    {
+    public function __construct(
+        private readonly LessonService $lessons,
+        private readonly LessonFolderService $lessonFolders,
+    ) {
     }
 
     public function index(Request $request): LengthAwarePaginator
@@ -21,6 +24,7 @@ class LessonController
         return $this->lessons->paginate(
             (int) $request->user()->id,
             $request->string('search')->toString() ?: null,
+            (int) $request->integer('folder_id'),
             (int) $request->integer('per_page', 15),
         );
     }
@@ -33,7 +37,10 @@ class LessonController
             'video_path' => ['nullable', 'string'],
             'is_published' => ['nullable', 'boolean'],
             'order_index' => ['nullable', 'integer'],
+            'folder_id' => ['nullable', 'integer'],
         ]);
+
+        $data['folder_id'] = $this->lessonFolders->resolveFolderFor((int) $request->user()->id, $data['folder_id'] ?? null);
 
         $lesson = $this->lessons->create((int) $request->user()->id, $data);
 
@@ -65,7 +72,10 @@ class LessonController
             'video_path' => ['nullable', 'string'],
             'is_published' => ['nullable', 'boolean'],
             'order_index' => ['nullable', 'integer'],
+            'folder_id' => ['nullable', 'integer'],
         ]);
+
+        $data['folder_id'] = $this->lessonFolders->resolveFolderFor((int) $request->user()->id, $data['folder_id'] ?? null);
 
         $lesson = $this->lessons->update($contentId, $data);
 

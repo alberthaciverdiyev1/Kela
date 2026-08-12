@@ -26,6 +26,20 @@
                 <x-teacher.textarea name="description" rows="4">{{ old('description', $lesson['description'] ?? '') }}</x-teacher.textarea>
             </x-teacher.field>
 
+            <x-teacher.field label="Qovluq" name="folder_id" hint="Boş buraxsanız dərs kökdə saxlanılır.">
+                <select name="folder_id" class="select select-bordered w-full text-sm">
+                    <option value="">Kök (qovluq seçilməyib)</option>
+                    @foreach ($folderTree as $folder)
+                        <option
+                            value="{{ $folder['id'] }}"
+                            @selected(old('folder_id', $selectedFolderId ?? $lesson['folder_id'] ?? null) == $folder['id'])
+                        >
+                            {{ str_repeat('— ', $folder['depth']) }}{{ $folder['name'] }}
+                        </option>
+                    @endforeach
+                </select>
+            </x-teacher.field>
+
             <x-teacher.field
                 label="Video faylı"
                 name="video"

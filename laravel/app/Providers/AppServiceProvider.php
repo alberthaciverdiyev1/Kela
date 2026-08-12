@@ -5,6 +5,7 @@ namespace App\Providers;
 use App\Domain\City\CityRepository;
 use App\Domain\Content\ContentRepository;
 use App\Domain\Lesson\LessonRepository;
+use App\Domain\LessonFolder\LessonFolderRepository;
 use App\Domain\Question\QuestionRepository;
 use App\Domain\QuestionFolder\QuestionFolderRepository;
 use App\Domain\Quiz\QuizRepository;
@@ -14,6 +15,7 @@ use App\Domain\User\UserRepository;
 use App\Domain\Workspace\WorkspaceRepository;
 use App\Infrastructure\Persistence\Repositories\EloquentCityRepository;
 use App\Infrastructure\Persistence\Repositories\EloquentContentRepository;
+use App\Infrastructure\Persistence\Repositories\EloquentLessonFolderRepository;
 use App\Infrastructure\Persistence\Repositories\EloquentLessonRepository;
 use App\Infrastructure\Persistence\Repositories\EloquentQuestionFolderRepository;
 use App\Infrastructure\Persistence\Repositories\EloquentQuestionRepository;
@@ -35,6 +37,7 @@ class AppServiceProvider extends ServiceProvider
     {
         // Domain kontraktları -> Infrastructure (Eloquent) implementasiyaları.
         $this->app->bind(LessonRepository::class, EloquentLessonRepository::class);
+        $this->app->bind(LessonFolderRepository::class, EloquentLessonFolderRepository::class);
         $this->app->bind(ContentRepository::class, EloquentContentRepository::class);
         $this->app->bind(StudentRepository::class, EloquentStudentRepository::class);
         $this->app->bind(UserRepository::class, EloquentUserRepository::class);

@@ -13,6 +13,8 @@ class DatabaseSeeder extends Seeder
             CitySeeder::class,
             DemoUserSeeder::class,
             SiteConfigSeeder::class,
+            DemoContentSeeder::class,
+            DemoLessonContentSeeder::class,
         ]);
     }
 }

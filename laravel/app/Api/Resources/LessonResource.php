@@ -12,6 +12,7 @@ class LessonResource extends JsonResource
     {
         return [
             'content_id' => (int) $this->content_id,
+            'folder_id' => $this->folder_id ? (int) $this->folder_id : null,
             'title' => $this->content?->title ?? '',
             'description' => $this->content?->description,
             'is_published' => (bool) $this->is_published,

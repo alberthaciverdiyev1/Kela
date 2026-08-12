@@ -14,6 +14,7 @@ export default defineConfig({
                 'resources/js/teacher/workspace/controller.js',
                 'resources/js/teacher/question/controller.js',
                 'resources/js/teacher/quiz/controller.js',
+                'resources/js/teacher/lesson/controller.js',
                 'resources/js/teacher/student/controller.js',
             ],
             refresh: true,

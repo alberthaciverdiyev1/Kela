@@ -49,6 +49,7 @@ class LessonService
         return $this->lessons->create([
             'content_id' => $content->id,
             'teacher_id' => $teacherId,
+            'folder_id' => $data['folder_id'] ?? null,
             'video_path' => $data['video_path'] ?? null,
             'thumbnail_path' => $data['thumbnail_path'] ?? null,
             'duration_seconds' => (int) ($data['duration_seconds'] ?? 0),
@@ -83,12 +84,27 @@ class LessonService
         }
 
         return $this->lessons->update($lesson, [
+            'folder_id' => $data['folder_id'] ?? $lesson->folder_id,
             'video_path' => $data['video_path'] ?? null,
             'thumbnail_path' => $data['thumbnail_path'] ?? null,
             'duration_seconds' => (int) ($data['duration_seconds'] ?? 0),
             'is_published' => (bool) ($data['is_published'] ?? false),
             'order_index' => (int) ($data['order_index'] ?? 0),
         ]);
+    }
+
+    /** Dərsi qovluğa daşıyır (null → kökə). */
+    public function moveToFolder(int $contentId, ?int $folderId, int $actingUserId): Lesson
+    {
+        $lesson = $this->lessons->find($contentId);
+        if ($lesson === null) {
+            throw new \RuntimeException('Dərs tapılmadı.');
+        }
+        if ($lesson->teacher_id !== $actingUserId) {
+            throw new \RuntimeException('Bu dərsi daşımağa icazəniz yoxdur.');
+        }
+
+        return $this->lessons->moveToFolder($lesson, $folderId);
     }
 
     /** Dərs silinir; Lesson::deleting hadisəsi bağlı Content-i də silir. */
@@ -109,14 +125,15 @@ class LessonService
     }
 
     /** Cədvəl üçün axtarış + səhifələnmiş dərs siyahısı (array DTO). */
-    public function paginate(int $actingUserId, ?string $search = null, int $perPage = 15): LengthAwarePaginator
+    public function paginate(int $actingUserId, ?string $search = null, int $folderId = 0, int $perPage = 15): LengthAwarePaginator
     {
         $isAdmin = User::find($actingUserId)?->isAdmin() ?? false;
 
         return $this->lessons
-            ->paginateForUser($actingUserId, $isAdmin, $search, $perPage)
+            ->paginateForUser($actingUserId, $isAdmin, $search, $folderId, $perPage)
             ->through(fn (Lesson $lesson): array => [
                 'content_id' => (int) $lesson->content_id,
+                'folder_id' => $lesson->folder_id ? (int) $lesson->folder_id : null,
                 'title' => $lesson->content?->title ?? '',
                 'description' => $lesson->content?->description,
                 'has_video' => (bool) $lesson->has_video,

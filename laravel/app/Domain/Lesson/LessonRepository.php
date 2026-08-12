@@ -23,5 +23,8 @@ interface LessonRepository
     public function scopeForUser(Builder $query, int $actingUserId, bool $isAdmin): Builder;
 
     /** Cədvəl üçün axtarış + səhifələnmiş dərs siyahısı. */
-    public function paginateForUser(int $actingUserId, bool $isAdmin, ?string $search, int $perPage): LengthAwarePaginator;
+    public function paginateForUser(int $actingUserId, bool $isAdmin, ?string $search, int $folderId, int $perPage): LengthAwarePaginator;
+
+    /** Dərsi qovluğa daşıyır (null → kökə). */
+    public function moveToFolder(Lesson $lesson, ?int $folderId): Lesson;
 }

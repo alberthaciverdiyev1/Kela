@@ -3,6 +3,7 @@
 use App\Api\Controllers\AuthController;
 use App\Api\Controllers\CityController;
 use App\Api\Controllers\LessonController;
+use App\Api\Controllers\LessonFolderController;
 use App\Api\Controllers\QuestionController;
 use App\Api\Controllers\QuestionFolderController;
 use App\Api\Controllers\QuizController;
@@ -66,6 +67,14 @@ Route::middleware(['auth:sanctum', 'role_api:Admin,Teacher'])->group(function ()
     Route::post('/quiz-folders/{folderId}/move', [QuizFolderController::class, 'move']);
     Route::delete('/quiz-folders/{folderId}', [QuizFolderController::class, 'destroy']);
     Route::post('/quiz-folders/move-quiz', [QuizFolderController::class, 'moveQuiz']);
+
+    // Dərs qovluqları
+    Route::get('/lesson-folders/directory', [LessonFolderController::class, 'directory']);
+    Route::post('/lesson-folders', [LessonFolderController::class, 'store']);
+    Route::post('/lesson-folders/{folderId}/rename', [LessonFolderController::class, 'rename']);
+    Route::post('/lesson-folders/{folderId}/move', [LessonFolderController::class, 'move']);
+    Route::delete('/lesson-folders/{folderId}', [LessonFolderController::class, 'destroy']);
+    Route::post('/lesson-folders/move-lesson', [LessonFolderController::class, 'moveLesson']);
 
     // Quiz → sual əlaqələri
     Route::post('/quizzes/{contentId}/questions', [QuizController::class, 'addQuestion']);

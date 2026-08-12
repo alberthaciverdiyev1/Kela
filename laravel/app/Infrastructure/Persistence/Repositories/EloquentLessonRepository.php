@@ -37,16 +37,25 @@ class EloquentLessonRepository implements LessonRepository
             ->with('content');
     }
 
-    public function paginateForUser(int $actingUserId, bool $isAdmin, ?string $search, int $perPage): LengthAwarePaginator
+    public function paginateForUser(int $actingUserId, bool $isAdmin, ?string $search, int $folderId, int $perPage): LengthAwarePaginator
     {
         return Lesson::query()
             ->when(! $isAdmin, fn (Builder $q): Builder => $q->where('lessons.teacher_id', $actingUserId))
             ->with('content')
+            ->when($folderId === 0, fn (Builder $q): Builder => $q->whereNull('lessons.folder_id'))
+            ->when($folderId > 0, fn (Builder $q): Builder => $q->where('lessons.folder_id', $folderId))
             ->when($search, fn (Builder $q): Builder => $q->whereHas(
                 'content',
                 fn (Builder $c): Builder => $c->where('title', 'ilike', "%{$search}%")
             ))
             ->orderBy('lessons.order_index')
             ->paginate($perPage);
+    }
+
+    public function moveToFolder(Lesson $lesson, ?int $folderId): Lesson
+    {
+        $lesson->update(['folder_id' => $folderId]);
+
+        return $lesson;
     }
 }

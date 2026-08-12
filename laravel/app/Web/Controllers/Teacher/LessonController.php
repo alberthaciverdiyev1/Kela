@@ -3,6 +3,7 @@
 namespace App\Web\Controllers\Teacher;
 
 use App\Application\Lesson\LessonService;
+use App\Application\LessonFolder\LessonFolderService;
 use App\Domain\Lesson\Lesson;
 use App\Infrastructure\Media\MediaProcessor;
 use Illuminate\Http\RedirectResponse;
@@ -15,33 +16,44 @@ use Illuminate\View\View;
  */
 class LessonController
 {
-    public function __construct(private readonly LessonService $lessons)
-    {
+    public function __construct(
+        private readonly LessonService $lessons,
+        private readonly LessonFolderService $lessonFolders,
+    ) {
     }
 
     public function index(Request $request): View
     {
         $search = (string) $request->string('search');
+        $folderId = (int) $request->integer('folder_id');
 
         return view('teacher.lessons.index', [
-            'lessons' => $this->lessons->paginate((int) auth()->id(), $search ?: null, 15),
+            'lessons' => $this->lessons->paginate((int) auth()->id(), $search ?: null, $folderId, 15),
             'search' => $search,
+            'folderId' => $folderId,
+            'folders' => $this->lessonFolders->directory((int) auth()->id(), $folderId ?: null),
+            'folderTree' => $this->lessonFolders->folderTree((int) auth()->id()),
         ]);
     }
 
-    public function create(): View
+    public function create(Request $request): View
     {
+        $selectedFolder = $this->lessonFolders->resolveFolderFor((int) auth()->id(), (int) $request->integer('folder_id') ?: null);
+
         return view('teacher.lessons.form', [
             'heading' => 'Yeni Dərs',
             'subtitle' => 'Yeni dərs əlavə et',
             'creating' => true,
             'lesson' => null,
+            'folderTree' => $this->lessonFolders->folderTree((int) auth()->id()),
+            'selectedFolderId' => $selectedFolder,
         ]);
     }
 
     public function store(Request $request): RedirectResponse
     {
         $data = $this->validated($request);
+        $data['folder_id'] = $this->lessonFolders->resolveFolderFor((int) auth()->id(), $data['folder_id'] ?? null);
 
         $path = $this->storeVideo($request);
         if ($path !== null) {
@@ -96,9 +108,11 @@ class LessonController
                 'title' => $model->content?->title ?? '',
                 'description' => $model->content?->description ?? '',
                 'video_path' => $model->video_path ?? '',
+                'folder_id' => $model->folder_id ? (int) $model->folder_id : null,
                 'is_published' => (bool) $model->is_published,
                 'order_index' => (int) $model->order_index,
             ],
+            'folderTree' => $this->lessonFolders->folderTree((int) auth()->id()),
         ]);
     }
 
@@ -111,6 +125,7 @@ class LessonController
         $this->assertAccess($model);
 
         $data = $this->validated($request);
+        $data['folder_id'] = $this->lessonFolders->resolveFolderFor((int) auth()->id(), $data['folder_id'] ?? null);
 
         $newPath = $this->storeVideo($request);
         $data['video_path'] = $newPath ?? $model->video_path;
@@ -141,6 +156,7 @@ class LessonController
             'video' => ['nullable', 'file', 'max:524288', 'mimetypes:video/mp4,video/webm,video/ogg,video/quicktime,video/x-m4v,video/x-matroska,video/x-msvideo,video/mpeg'],
             'is_published' => ['nullable', 'boolean'],
             'order_index' => ['integer', 'min:0'],
+            'folder_id' => ['nullable', 'integer'],
         ]);
 
         $data['is_published'] = $request->boolean('is_published');
