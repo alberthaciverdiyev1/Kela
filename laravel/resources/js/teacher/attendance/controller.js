@@ -37,12 +37,41 @@ export default function attendanceMonth(config) {
         buildDates() {
             const [y, m] = this.month.split('-').map(Number);
             const count = new Date(y, m, 0).getDate();
+            const today = new Date().toISOString().slice(0, 10);
+            const weekdayLabels = ['B.', 'B.E.', 'Ç.A.', 'Ç.', 'C.A.', 'C.', 'Ş.'];
             this.dates = [];
             for (let d = 1; d <= count; d++) {
                 const iso = `${y}-${String(m).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
                 const dow = new Date(y, m - 1, d).getDay(); // 0 = Bazar
-                this.dates.push({ day: d, iso, weekend: dow === 0 || dow === 6 });
+                this.dates.push({
+                    day: d,
+                    iso,
+                    weekend: dow === 0 || dow === 6,
+                    weekdayLabel: weekdayLabels[dow],
+                    isToday: iso === today,
+                });
             }
+        },
+
+        /** Şagirdin ay üzrə status özeti: { present, absent, late, excused, total }. */
+        studentSummary(studentId) {
+            const summary = { present: 0, absent: 0, late: 0, excused: 0 };
+            this.dates.forEach((dt) => {
+                const s = this.getStatus(studentId, dt.iso);
+                if (s === 1) summary.present++;
+                if (s === 2) summary.absent++;
+                if (s === 3) summary.late++;
+                if (s === 4) summary.excused++;
+            });
+            summary.total = summary.present + summary.absent + summary.late + summary.excused;
+            return summary;
+        },
+
+        /** Popover başlığı: tarix · şagird adı. */
+        get popoverTitle() {
+            if (!this.activeCell) return '';
+            const name = this.students.find((st) => st.id === this.activeCell.studentId)?.name || '';
+            return `${this.activeCell.iso} · ${name}`;
         },
 
         shiftMonth(delta) {
@@ -126,13 +155,12 @@ export default function attendanceMonth(config) {
 
         cellClass(studentId, iso) {
             const s = this.getStatus(studentId, iso);
-            const base = 'hover:ring-1 hover:ring-base-content/30';
             switch (s) {
-                case 1: return 'bg-success/20 text-success ' + base;
-                case 2: return 'bg-error/20 text-error ' + base;
-                case 3: return 'bg-warning/20 text-warning ' + base;
-                case 4: return 'bg-info/20 text-info ' + base;
-                default: return 'text-base-content/15 hover:bg-base-200 ' + base;
+                case 1: return 'bg-success text-success-content shadow-sm hover:bg-success/85';
+                case 2: return 'bg-error text-error-content shadow-sm hover:bg-error/85';
+                case 3: return 'bg-warning text-warning-content shadow-sm hover:bg-warning/85';
+                case 4: return 'bg-info text-info-content shadow-sm hover:bg-info/85';
+                default: return 'text-base-content/20 hover:bg-base-200 hover:text-base-content/50';
             }
         },
 
