@@ -4,8 +4,10 @@ namespace App\Application\WorkspaceFolder;
 
 use App\Domain\Content\Content;
 use App\Domain\Content\ContentRepository;
+use App\Domain\Lesson\Lesson;
 use App\Domain\Lesson\LessonRepository;
 use App\Domain\LessonFolder\LessonFolderRepository;
+use App\Domain\Quiz\Quiz;
 use App\Domain\Quiz\QuizRepository;
 use App\Domain\QuizFolder\QuizFolderRepository;
 use App\Domain\Workspace\Workspace;
@@ -81,37 +83,46 @@ class WorkspaceFolderService
     {
         return $this->contents
             ->availableForWorkspace($actingUserId, [Content::TYPE_QUIZ, Content::TYPE_LESSON])
-            ->map(fn (Content $c) => [
-                'content_id' => (int) $c->id,
-                'title' => $c->title,
-                'type' => (int) $c->type,
-                'type_label' => $c->typeLabel(),
-                'is_published' => (bool) $c->is_published,
-                'folder_id' => $c->folder_id ? (int) $c->folder_id : null,
-                'folder_path' => $this->bankFolderPathFor($c),
-            ])
+            ->map(function (Content $c): array {
+                $chain = $this->bankFolderChainFor($c);
+
+                return [
+                    'content_id' => (int) $c->id,
+                    'title' => $c->title,
+                    'type' => (int) $c->type,
+                    'type_label' => $c->typeLabel(),
+                    'is_published' => (bool) $c->is_published,
+                    'folder_id' => $c->folder_id ? (int) $c->folder_id : null,
+                    'folder_path' => $chain['names'],
+                    'folder_path_ids' => $chain['ids'],
+                ];
+            })
             ->values()
             ->all();
     }
 
-    /** Content-in bank qovluğunun kökdən yarpağa ad zənciri (boş = kökdədir). */
-    protected function bankFolderPathFor(Content $content): array
+    /**
+     * Content-in bank qovluğunun kökdən yarpağa zənciri.
+     * names: qovluq adları; ids: müvafiq bank qovluq id-ləri (boş = kökdədir).
+     * Bank qovluğu contents.folder_id DEYİL — quizzes/lessons.folder_id-dir.
+     */
+    protected function bankFolderChainFor(Content $content): array
     {
-        // Bank qovluğu contents.folder_id DEYİL — quizzes/lessons.folder_id-dir.
         $folderId = $content->isQuiz()
             ? $this->quizzes->find((int) $content->id)?->folder_id
             : $this->lessons->find((int) $content->id)?->folder_id;
 
         if ($folderId === null) {
-            return [];
+            return ['names' => [], 'ids' => []];
         }
 
         $folderRepo = $content->isQuiz() ? $this->quizFolders : $this->lessonFolders;
+        $crumbs = $folderRepo->breadcrumbs((int) $folderId);
 
-        return array_map(
-            fn (array $f): string => $f['name'],
-            $folderRepo->breadcrumbs((int) $folderId),
-        );
+        return [
+            'names' => array_map(fn (array $f): string => $f['name'], $crumbs),
+            'ids' => array_map(fn (array $f): int => (int) $f['id'], $crumbs),
+        ];
     }
 
     public function createFolder(int $workspaceId, string $name, ?int $parentId, int $actingUserId): WorkspaceFolder
@@ -217,6 +228,97 @@ class WorkspaceFolderService
         $content->update(['workspace_id' => null, 'folder_id' => null]);
 
         return $content;
+    }
+
+    /**
+     * Bank qovluğunu bütün alt qovluqları və içindəki məzmunları ilə workspace-ə əlavə edir.
+     *
+     * - Qovluq strukturu workspace-də əks olunur (eyni adlı qovluq varsa yenidən yaradılmır).
+     * - Yalnız heç bir workspace-ə bağlanmamış (kütüphanədəki) məzmunlar daşınır.
+     * - Əlavə edilmiş qovluq sayı və daşınan məzmun sayını qaytarır.
+     */
+    public function addFolderToWorkspace(
+        string $bankType,       // 'quiz' | 'lesson'
+        int $bankFolderId,
+        int $workspaceId,
+        ?int $targetFolderId,   // workspace qovluğu (null = workspace kökü)
+        int $actingUserId,
+    ): array {
+        $this->assertWorkspaceOwner($workspaceId, $actingUserId);
+        if ($targetFolderId !== null) {
+            $this->assertFolderOwner($targetFolderId, $workspaceId, $actingUserId);
+        }
+
+        $bankRepo = $bankType === 'quiz' ? $this->quizFolders : $this->lessonFolders;
+        $bankFolder = $bankRepo->find($bankFolderId);
+        if ($bankFolder === null || $bankFolder->teacher_id !== $actingUserId) {
+            throw new \RuntimeException('Qovluq tapılmadı.');
+        }
+
+        $bankFolders = $bankRepo->allFoldersFor($actingUserId)->keyBy('id');
+        $subtreeIds = $bankRepo->descendantIds($bankFolderId);
+
+        // Bank qovluq id → workspace qovluq id xəritəsi.
+        $mapping = [];
+        $walk = function (int $fid, ?int $wsParentId) use (&$walk, &$mapping, $bankFolders, $subtreeIds, $workspaceId): void {
+            $folder = $bankFolders->get($fid);
+            if ($folder === null) {
+                return;
+            }
+            $wsFolder = $this->findOrCreateWorkspaceFolder($workspaceId, $wsParentId, $folder->name);
+            $mapping[$fid] = (int) $wsFolder->id;
+
+            foreach ($bankFolders as $candidate) {
+                if ((int) $candidate->parent_id === $fid && in_array((int) $candidate->id, $subtreeIds, true)) {
+                    $walk((int) $candidate->id, (int) $wsFolder->id);
+                }
+            }
+        };
+        $walk($bankFolderId, $targetFolderId);
+
+        // Məzmunları müvafiq workspace qovluğuna daşı (yalnız kütüphanədəkilər).
+        $moved = 0;
+        foreach ($mapping as $fid => $wsFolderId) {
+            foreach ($this->contentsInBankFolder($fid, $bankType, $actingUserId) as $content) {
+                $content->update([
+                    'workspace_id' => $workspaceId,
+                    'folder_id' => $wsFolderId,
+                ]);
+                $moved++;
+            }
+        }
+
+        return [
+            'folders' => count($mapping),
+            'contents' => $moved,
+        ];
+    }
+
+    /** Bank qovluğundakı hələ workspace-ə bağlanmamış content-lər. */
+    protected function contentsInBankFolder(int $bankFolderId, string $bankType, int $actingUserId): \Illuminate\Support\Collection
+    {
+        $ids = ($bankType === 'quiz' ? Quiz::query() : Lesson::query())
+            ->where('folder_id', $bankFolderId)
+            ->pluck('content_id');
+
+        return Content::query()
+            ->whereIn('id', $ids)
+            ->where('teacher_id', $actingUserId)
+            ->whereNull('workspace_id')
+            ->get();
+    }
+
+    /** Verilmiş ana qovluq altında eyni adlı qovluq varsa onu, yoxsa yenisini qaytarır. */
+    protected function findOrCreateWorkspaceFolder(int $workspaceId, ?int $parentId, string $name): WorkspaceFolder
+    {
+        $existing = $this->folders->foldersFor($workspaceId, $parentId)
+            ->first(fn (WorkspaceFolder $f): bool => $f->name === $name);
+
+        if ($existing !== null) {
+            return $existing;
+        }
+
+        return $this->folders->create($workspaceId, $name, $parentId);
     }
 
     /**

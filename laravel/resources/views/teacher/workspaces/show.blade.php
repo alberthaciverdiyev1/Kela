@@ -259,7 +259,10 @@
         <div class="flex w-full max-w-2xl flex-col overflow-hidden rounded-xl bg-base-100 shadow-2xl">
             {{-- Başlıq --}}
             <div class="flex items-center justify-between gap-4 px-6 py-4">
-                <h3 class="text-lg font-semibold text-base-content">Məzmun əlavə et</h3>
+                <div>
+                    <h3 class="text-lg font-semibold text-base-content">Məzmun əlavə et</h3>
+                    <p class="mt-0.5 text-xs text-base-content/50">Qovluğu bütöv (içindəki məzmunlarla) və ya məzmunları ayrıca seçə bilərsiniz.</p>
+                </div>
                 <button
                     type="button"
                     @click="showContentAdd = false"
@@ -319,21 +322,29 @@
 
                 <template x-for="(row, i) in visibleContentRows" :key="row.key">
                     <div class="space-y-0.5">
-                        {{-- Qovluq başlığı --}}
-                        <div
+                        {{-- Qovluq başlığı (bütöv əlavə edilə bilər) --}}
+                        <label
                             x-show="row.kind === 'folder'"
-                            class="flex items-center gap-2 pt-3 pb-1 text-xs font-semibold uppercase tracking-wide text-base-content/50"
+                            class="flex cursor-pointer items-center gap-2 pt-3 pb-1 text-xs font-semibold uppercase tracking-wide text-base-content/50"
                             :style="'padding-left: ' + (row.depth * 16 + 4) + 'px'"
                         >
+                            <input
+                                type="checkbox"
+                                class="checkbox checkbox-primary checkbox-sm shrink-0"
+                                :checked="isFolderSelected(row)"
+                                @change="toggleFolderSelection(row)"
+                                :disabled="row.count === 0 || row.folder_id == null"
+                            />
                             <x-icon name="heroicon-o-folder" class="size-4 text-primary/70" />
                             <span class="min-w-0 flex-1 truncate" x-text="row.name"></span>
                             <span class="text-base-content/40" x-text="row.count"></span>
-                        </div>
+                        </label>
 
                         {{-- Məzmun sətri --}}
                         <label
                             x-show="row.kind === 'content'"
                             class="flex cursor-pointer select-none items-center gap-3 rounded-lg px-3 py-2 text-sm transition hover:bg-base-200/60"
+                            :class="isContentSelected(row.c) ? 'bg-primary/5' : ''"
                             :style="'padding-left: ' + (row.depth * 16 + 12) + 'px'"
                         >
                             <input
@@ -341,6 +352,8 @@
                                 :value="row.c.content_id"
                                 class="checkbox checkbox-primary checkbox-sm shrink-0"
                                 @change="updateContentSelection($event)"
+                                :checked="isContentSelected(row.c)"
+                                :disabled="isContentCoveredByFolder(row.c)"
                             />
                             <span class="min-w-0 flex-1 truncate text-base-content" x-text="row.c.title"></span>
                             <span
@@ -358,7 +371,7 @@
                 <span
                     class="text-sm font-medium"
                     :class="selectedContentCount > 0 ? 'text-primary' : 'text-base-content/50'"
-                    x-text="selectedContentCount > 0 ? selectedContentCount + ' seçildi' : 'Seçilməyib'"
+                    x-text="selectionSummary"
                 ></span>
                 <div class="flex items-center gap-2">
                     <button type="button" class="btn btn-sm btn-ghost" @click="showContentAdd = false">Ləğv et</button>

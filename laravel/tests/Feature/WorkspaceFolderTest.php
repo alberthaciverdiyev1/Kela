@@ -299,6 +299,107 @@ class WorkspaceFolderTest extends TestCase
 
         // Cəbr altındakı quiz üçün path kökdən yarpağa
         $this->assertSame(['Riyaziyyat', 'Cəbr'], $byTitle['Cəbr Quiz']['folder_path']);
+        $this->assertSame([(int) $math->id, (int) $algebra->id], $byTitle['Cəbr Quiz']['folder_path_ids']);
+
+        // Kökdəki quiz üçün ids də boşdur
+        $this->assertSame([], $byTitle['Kök Quiz']['folder_path_ids']);
+    }
+
+    public function test_api_adds_bank_folder_with_structure_to_workspace(): void
+    {
+        Sanctum::actingAs($this->teacher);
+        $workspaceId = $this->makeWorkspace($this->teacher->id);
+        $target = $this->folders()->createFolder($workspaceId, 'Fənn Testləri', null, $this->teacher->id);
+
+        // Bank qovluq ağacı: Riyaziyyat → Cəbr; bir də kənar (kontrol) qovluq
+        $quizFolderSvc = app(\App\Application\QuizFolder\QuizFolderService::class);
+        $math = $quizFolderSvc->createFolder($this->teacher->id, 'Riyaziyyat');
+        $algebra = $quizFolderSvc->createFolder($this->teacher->id, 'Cəbr', $math->id);
+        $other = $quizFolderSvc->createFolder($this->teacher->id, 'Fizika');
+
+        $quiz1 = $this->quizzes()->create($this->teacher->id, ['title' => 'Sinaq 1', 'folder_id' => $math->id])->getKey();
+        $quiz2 = $this->quizzes()->create($this->teacher->id, ['title' => 'Sinaq 2', 'folder_id' => $algebra->id])->getKey();
+        $quiz3 = $this->quizzes()->create($this->teacher->id, ['title' => 'Fizika Quiz', 'folder_id' => $other->id])->getKey();
+
+        $json = $this->postJson('/api/v1/workspace-folders/add-folder', [
+            'folder_type' => 'quiz',
+            'bank_folder_id' => $math->id,
+            'workspace_id' => $workspaceId,
+            'folder_id' => $target->id,
+        ])->assertOk()->json();
+
+        $this->assertSame(2, $json['folders']);  // Riyaziyyat + Cəbr
+        $this->assertSame(2, $json['contents']); // hər ikisi kütüphanədə idi
+
+        // Workspace qovluq strukturu hədəf altında əks olundu
+        $wsFolders = app(\App\Domain\WorkspaceFolder\WorkspaceFolderRepository::class)->allFoldersFor($workspaceId);
+        $mathWs = $wsFolders->firstWhere('name', 'Riyaziyyat');
+        $algebraWs = $wsFolders->firstWhere('name', 'Cəbr');
+
+        $this->assertNotNull($mathWs);
+        $this->assertNotNull($algebraWs);
+        $this->assertEquals($target->id, $mathWs->parent_id);
+        $this->assertEquals($mathWs->id, $algebraWs->parent_id);
+        $this->assertNull($wsFolders->firstWhere('name', 'Fizika')); // kontrol toxunulmadı
+
+        // Məzmunlar müvafiq workspace qovluğuna düşdü
+        $f1 = $this->quizzes()->formData($quiz1);
+        $f2 = $this->quizzes()->formData($quiz2);
+        $f3 = $this->quizzes()->formData($quiz3);
+
+        $this->assertEquals($workspaceId, $f1['workspace_id']);
+        $this->assertEquals($mathWs->id, $f1['ws_folder_id']);
+        $this->assertEquals($workspaceId, $f2['workspace_id']);
+        $this->assertEquals($algebraWs->id, $f2['ws_folder_id']);
+        $this->assertNull($f3['workspace_id']); // kənar qovluqdakı quiz hələ kütüphanədə
+        $this->assertNull($f3['ws_folder_id']);
+    }
+
+    public function test_api_add_folder_reuses_same_name_folder_and_skips_attached(): void
+    {
+        Sanctum::actingAs($this->teacher);
+        $workspaceId = $this->makeWorkspace($this->teacher->id);
+
+        $quizFolderSvc = app(\App\Application\QuizFolder\QuizFolderService::class);
+        $bank = $quizFolderSvc->createFolder($this->teacher->id, 'Riyaziyyat');
+
+        // Bank qovluğunda 2 quiz: biri artıq başqa workspace-də, biri kütüphanədə
+        $unattached = $this->quizzes()->create($this->teacher->id, ['title' => 'Yeni Quiz', 'folder_id' => $bank->id])->getKey();
+        $otherWsId = $this->makeWorkspace($this->teacher->id, 'Digər Qrup');
+        $attached = $this->quizzes()->create($this->teacher->id, [
+            'title' => 'Bağlı Quiz', 'folder_id' => $bank->id,
+            'workspace_id' => $otherWsId,
+        ])->getKey();
+
+        // İlk əlavə: "Riyaziyyat" workspace qovluğu yaradılır
+        $this->postJson('/api/v1/workspace-folders/add-folder', [
+            'folder_type' => 'quiz',
+            'bank_folder_id' => $bank->id,
+            'workspace_id' => $workspaceId,
+            'folder_id' => null,
+        ])->assertOk();
+
+        // İkinci əlavə eyni adlı qovluğu təkrarlamır
+        $json = $this->postJson('/api/v1/workspace-folders/add-folder', [
+            'folder_type' => 'quiz',
+            'bank_folder_id' => $bank->id,
+            'workspace_id' => $workspaceId,
+            'folder_id' => null,
+        ])->assertOk()->json();
+
+        $this->assertSame(1, $json['folders']); // yenidən yaratmadı — eyni qovluğu qaytardı
+        $this->assertSame(0, $json['contents']);
+
+        $wsFolders = app(\App\Domain\WorkspaceFolder\WorkspaceFolderRepository::class)->allFoldersFor($workspaceId);
+        $this->assertCount(1, $wsFolders->where('name', 'Riyaziyyat'));
+
+        // Kütüphanədəki quiz workspace-ə düşdü, bağlı olan toxunulmadı
+        $f = $this->quizzes()->formData($unattached);
+        $this->assertEquals($workspaceId, $f['workspace_id']);
+        $this->assertNotNull($f['ws_folder_id']);
+
+        $attachedForm = $this->quizzes()->formData($attached);
+        $this->assertEquals($otherWsId, $attachedForm['workspace_id']);
     }
 
     public function test_workspace_show_page_offers_add_existing_content(): void
@@ -334,6 +435,12 @@ class WorkspaceFolderTest extends TestCase
         $this->assertStringNotContainsString('toggleContentFolder', $html);
         $this->assertStringNotContainsString('row.collapsed', $html);
         $this->assertStringNotContainsString('chevron-right', $html);
+
+        // Bütöv qovluq əlavəsi: qovluq checkbox + seçim metodu
+        $this->assertStringContainsString('isFolderSelected(row)', $html);
+        $this->assertStringContainsString('toggleFolderSelection(row)', $html);
+        $this->assertStringContainsString('isContentCoveredByFolder', $html);
+        $this->assertStringContainsString('selectionSummary', $html);
 
         // Modal yeni dizayn elementləri
         $this->assertStringContainsString('Haraya:', $html);

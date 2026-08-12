@@ -101,6 +101,33 @@ class WorkspaceFolderController
         return response()->json(['message' => 'Qovluq silindi.']);
     }
 
+    /** Bank qovluğunu (içindəki məzmunlarla birlikdə) workspace-ə əlavə edir. */
+    public function addFolder(Request $request): JsonResponse
+    {
+        $data = $request->validate([
+            'folder_type' => ['required', 'string', 'in:quiz,lesson'],
+            'bank_folder_id' => ['required', 'integer'],
+            'workspace_id' => ['required', 'integer'],
+            'folder_id' => ['nullable', 'integer'],
+        ]);
+
+        $this->authorizeWorkspace($this->workspaces->find((int) $data['workspace_id']), $request);
+
+        $result = $this->folders->addFolderToWorkspace(
+            $data['folder_type'],
+            (int) $data['bank_folder_id'],
+            (int) $data['workspace_id'],
+            $data['folder_id'] ?? null,
+            (int) $request->user()->id,
+        );
+
+        return response()->json([
+            'message' => 'Qovluq və içindəki məzmunlar əlavə edildi.',
+            'folders' => $result['folders'],
+            'contents' => $result['contents'],
+        ]);
+    }
+
     /** Content-i workspace qovluğuna daşıyır (null → workspace kökü). */
     public function moveContent(Request $request): JsonResponse
     {

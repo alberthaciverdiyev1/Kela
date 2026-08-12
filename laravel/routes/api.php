@@ -93,6 +93,7 @@ Route::middleware(['auth:sanctum', 'role_api:Admin,Teacher'])->group(function ()
     Route::post('/workspaces/{workspace}/folders/{folderId}/move', [WorkspaceFolderController::class, 'move']);
     Route::delete('/workspaces/{workspace}/folders/{folderId}', [WorkspaceFolderController::class, 'destroy']);
     Route::post('/workspace-folders/move-content', [WorkspaceFolderController::class, 'moveContent']);
+    Route::post('/workspace-folders/add-folder', [WorkspaceFolderController::class, 'addFolder']);
     Route::get('/workspaces/{workspace}/available-contents', [WorkspaceFolderController::class, 'availableContents']);
 
 });

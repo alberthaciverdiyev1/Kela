@@ -41,6 +41,8 @@ export default function workspaceManager(config) {
         contentSearch: '',
         contentTypeFilter: '',
         selectedContentIds: [],
+        // Seçilmiş bank qovluqları: { folder_id, type, name } — bütöv qovluq əlavəsi üçün.
+        selectedFolders: [],
 
         // ── Qovluq əməliyyatları ───────────────────────────────────────────
 
@@ -160,22 +162,26 @@ export default function workspaceManager(config) {
 
         /** availableContents → bank qovluq ağacı (folder_path üzrə). */
         get contentTree() {
-            const root = { key: '', name: '', depth: -1, children: [], contents: [] };
+            const root = { key: '', name: '', depth: -1, children: [], contents: [], folder_id: null, type: null };
             const nodes = { '': root };
 
             for (const c of this.availableContents) {
-                const path = c.folder_path || [];
+                const names = c.folder_path || [];
+                const ids = c.folder_path_ids || [];
                 let parent = root;
                 let acc = [];
 
-                for (const name of path) {
-                    acc.push(name);
-                    const key = acc.join(' › ');
+                for (let i = 0; i < names.length; i++) {
+                    acc.push(names[i]);
+                    // Açar tipə görə unikaldır — quiz/dərs qovluğu eyni adda ola bilər.
+                    const key = c.type + '::' + acc.join(' › ');
                     if (!nodes[key]) {
                         nodes[key] = {
                             key,
-                            name,
-                            depth: acc.length - 1,
+                            name: names[i],
+                            depth: i,
+                            folder_id: ids[i] ?? null,
+                            type: c.type,
                             children: [],
                             contents: [],
                         };
@@ -222,6 +228,8 @@ export default function workspaceManager(config) {
                         name: node.name,
                         depth: node.depth,
                         count: vis,
+                        folder_id: node.folder_id,
+                        type: node.type,
                     });
                 }
 
@@ -246,8 +254,44 @@ export default function workspaceManager(config) {
 
         // ── Seçim — ────────────────────────────────────────────────────────
 
+        isFolderSelected(f) {
+            return this.selectedFolders.some(
+                (x) => x.folder_id === f.folder_id && x.type === f.type,
+            );
+        },
+
+        toggleFolderSelection(f) {
+            if (this.isFolderSelected(f)) {
+                this.selectedFolders = this.selectedFolders.filter(
+                    (x) => !(x.folder_id === f.folder_id && x.type === f.type),
+                );
+            } else {
+                this.selectedFolders.push({
+                    folder_id: f.folder_id,
+                    type: f.type,
+                    name: f.name,
+                });
+            }
+        },
+
+        /** Məzmun seçilmiş bir bank qovluğunun altındadırmı? */
+        isContentCoveredByFolder(c) {
+            const ids = c.folder_path_ids || [];
+            return this.selectedFolders.some(
+                (f) => f.type === c.type && ids.includes(f.folder_id),
+            );
+        },
+
+        /** Məzmun seçilib (ayrıca və ya qovluq vasitəsilə)? */
+        isContentSelected(c) {
+            return this.selectedContentIds.includes(c.content_id) || this.isContentCoveredByFolder(c);
+        },
+
         updateContentSelection(e) {
             const id = Number(e.target.value);
+            const c = this.availableContents.find((x) => x.content_id === id);
+            if (c && this.isContentCoveredByFolder(c)) return; // qovluq vasitəsilə seçilib
+
             if (e.target.checked) {
                 if (!this.selectedContentIds.includes(id)) {
                     this.selectedContentIds.push(id);
@@ -257,14 +301,38 @@ export default function workspaceManager(config) {
             }
         },
 
+        /** Qovluqla örtülməyən ayrıca seçilmiş məzmunlar (move-content-lə əlavə ediləcək). */
+        get effectiveIndividualContents() {
+            return this.selectedContentIds.filter((id) => {
+                const c = this.availableContents.find((x) => x.content_id === id);
+                return c && !this.isContentCoveredByFolder(c);
+            });
+        },
+
         get selectedContentCount() {
-            return this.selectedContentIds.length;
+            return this.selectedFolders.length + this.effectiveIndividualContents.length;
+        },
+
+        get selectionSummary() {
+            const folders = this.selectedFolders.length;
+            const contents = this.effectiveIndividualContents.length;
+            if (folders > 0 && contents > 0) {
+                return folders + ' qovluq, ' + contents + ' məzmun seçildi';
+            }
+            if (folders > 0) {
+                return folders + ' qovluq seçildi';
+            }
+            if (contents > 0) {
+                return contents + ' məzmun seçildi';
+            }
+            return 'Seçilməyib';
         },
 
         openContentAdd() {
             this.contentSearch = '';
             this.contentTypeFilter = '';
             this.selectedContentIds = [];
+            this.selectedFolders = [];
             this.showContentAdd = true;
         },
 
@@ -273,13 +341,23 @@ export default function workspaceManager(config) {
                 ? Number(this.$refs.contentAddSelect.value)
                 : null;
 
-            if (this.selectedContentIds.length === 0) {
-                window.alert('Ən azı bir məzmun seçin.');
+            if (this.selectedContentCount === 0) {
+                window.alert('Ən azı bir qovluq və ya məzmun seçin.');
                 return;
             }
 
             try {
-                for (const id of this.selectedContentIds) {
+                // 1) Bütöv qovluqlar — strukturu ilə birlikdə.
+                for (const f of this.selectedFolders) {
+                    await KelaApi('POST', '/api/v1/workspace-folders/add-folder', {
+                        folder_type: f.type === 1 ? 'quiz' : 'lesson',
+                        bank_folder_id: f.folder_id,
+                        workspace_id: this.workspaceId,
+                        folder_id: targetFolder,
+                    });
+                }
+                // 2) Qovluqla örtülməyən ayrıca seçilmiş məzmunlar.
+                for (const id of this.effectiveIndividualContents) {
                     await KelaApi('POST', '/api/v1/workspace-folders/move-content', {
                         content_id: id,
                         workspace_id: this.workspaceId,
