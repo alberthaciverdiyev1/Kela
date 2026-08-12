@@ -4,21 +4,20 @@ namespace App\Providers;
 
 use App\Domain\City\CityRepository;
 use App\Domain\Content\ContentRepository;
-use App\Domain\Course\CourseRepository;
 use App\Domain\Lesson\LessonRepository;
-use App\Domain\Node\NodeRepository;
 use App\Domain\Question\QuestionRepository;
 use App\Domain\QuestionFolder\QuestionFolderRepository;
 use App\Domain\Quiz\QuizRepository;
+use App\Domain\QuizFolder\QuizFolderRepository;
 use App\Domain\Student\StudentRepository;
 use App\Domain\User\UserRepository;
 use App\Domain\Workspace\WorkspaceRepository;
 use App\Infrastructure\Persistence\Repositories\EloquentCityRepository;
 use App\Infrastructure\Persistence\Repositories\EloquentContentRepository;
 use App\Infrastructure\Persistence\Repositories\EloquentLessonRepository;
-use App\Infrastructure\Persistence\Repositories\EloquentNodeRepository;
 use App\Infrastructure\Persistence\Repositories\EloquentQuestionFolderRepository;
 use App\Infrastructure\Persistence\Repositories\EloquentQuestionRepository;
+use App\Infrastructure\Persistence\Repositories\EloquentQuizFolderRepository;
 use App\Infrastructure\Persistence\Repositories\EloquentQuizRepository;
 use App\Infrastructure\Persistence\Repositories\EloquentStudentRepository;
 use App\Infrastructure\Persistence\Repositories\EloquentUserRepository;
@@ -40,15 +39,11 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(StudentRepository::class, EloquentStudentRepository::class);
         $this->app->bind(UserRepository::class, EloquentUserRepository::class);
         $this->app->bind(CityRepository::class, EloquentCityRepository::class);
-        $this->app->bind(NodeRepository::class, EloquentNodeRepository::class);
         $this->app->bind(WorkspaceRepository::class, EloquentWorkspaceRepository::class);
         $this->app->bind(QuizRepository::class, EloquentQuizRepository::class);
         $this->app->bind(QuestionRepository::class, EloquentQuestionRepository::class);
         $this->app->bind(QuestionFolderRepository::class, EloquentQuestionFolderRepository::class);
-        // Course hələlik cədvəlsizdir; istifadə edilərsə ayrıca implementasiya tələb olunur.
-        $this->app->bind(CourseRepository::class, fn () => throw new \LogicException(
-            'Course cədvəli hələ mövcud deyil. EloquentCourseRepository əlavə olunmalıdır.'
-        ));
+        $this->app->bind(QuizFolderRepository::class, EloquentQuizFolderRepository::class);
     }
 
     /**

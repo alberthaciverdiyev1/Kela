@@ -32,7 +32,6 @@ class EloquentWorkspaceRepository implements WorkspaceRepository
             ->when(! $isAdmin, fn (Builder $q): Builder => $q->where('teacher_id', $actingUserId))
             ->when($search, fn (Builder $q) => $q->where('name', 'ilike', "%{$search}%"))
             ->withCount('students')
-            ->withCount(['nodes as content_count' => fn ($q) => $q->whereNotNull('content_id')])
             ->orderBy('name')
             ->paginate($perPage);
     }

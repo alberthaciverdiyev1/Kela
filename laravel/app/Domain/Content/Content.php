@@ -4,13 +4,11 @@ namespace App\Domain\Content;
 
 use App\Domain\Content\Values\ContentType;
 use App\Domain\User\User;
-use App\Domain\Node\Node;
 use App\Domain\Lesson\Lesson;
 use App\Domain\Quiz\Quiz;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
@@ -45,11 +43,6 @@ class Content extends Model
     public function teacher(): BelongsTo
     {
         return $this->belongsTo(User::class, 'teacher_id');
-    }
-
-    public function nodes(): HasMany
-    {
-        return $this->hasMany(Node::class, 'content_id');
     }
 
     public function lesson(): HasOne

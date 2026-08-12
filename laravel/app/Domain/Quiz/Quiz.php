@@ -5,6 +5,7 @@ namespace App\Domain\Quiz;
 use App\Domain\Content\Content;
 use App\Domain\User\User;
 use App\Domain\Question\Question;
+use App\Domain\QuizFolder\QuizFolder;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -18,6 +19,7 @@ class Quiz extends Model
     protected $fillable = [
         'content_id',
         'teacher_id',
+        'folder_id',
         'title',
         'description',
         'is_published',
@@ -38,6 +40,12 @@ class Quiz extends Model
     public function teacher(): BelongsTo
     {
         return $this->belongsTo(User::class, 'teacher_id');
+    }
+
+    /** Quiz-in yerləşdiyi qovluq (null → kök/sahəsiz). */
+    public function folder(): BelongsTo
+    {
+        return $this->belongsTo(QuizFolder::class, 'folder_id');
     }
 
     public function questions(): BelongsToMany

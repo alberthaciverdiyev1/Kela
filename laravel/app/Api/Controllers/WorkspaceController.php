@@ -43,7 +43,6 @@ class WorkspaceController
         return response()->json([
             'data' => new WorkspaceResource($model),
             'students' => $this->workspaces->studentList((int) $request->user()->id, $workspace),
-            'directory' => $this->workspaces->directory((int) $request->user()->id, $workspace),
         ]);
     }
 
@@ -65,84 +64,6 @@ class WorkspaceController
         $this->workspaces->delete((int) $request->user()->id, $workspace);
 
         return response()->json(['message' => 'İş sahəsi silindi.']);
-    }
-
-    public function createFolder(Request $request, int $workspace): JsonResponse
-    {
-        $this->authorizeAccess($this->workspaces->find($workspace));
-
-        $data = $request->validate([
-            'name' => ['required', 'string', 'max:255'],
-            'parent_id' => ['nullable', 'integer'],
-        ]);
-
-        $folder = $this->workspaces->createFolder(
-            (int) $request->user()->id,
-            $workspace,
-            $data['name'],
-            $data['parent_id'] ?? null,
-        );
-
-        return response()->json([
-            'data' => ['id' => (int) $folder->id, 'name' => $folder->name],
-        ], 201);
-    }
-
-    public function addContent(Request $request, int $workspace): JsonResponse
-    {
-        $this->authorizeAccess($this->workspaces->find($workspace));
-
-        $data = $request->validate([
-            'content_id' => ['required', 'integer'],
-            'parent_id' => ['nullable', 'integer'],
-        ]);
-
-        $node = $this->workspaces->addContent(
-            (int) $request->user()->id,
-            $workspace,
-            (int) $data['content_id'],
-            $data['parent_id'] ?? null,
-        );
-
-        return response()->json([
-            'data' => ['id' => (int) $node->id, 'content_id' => (int) $node->content_id],
-        ], 201);
-    }
-
-    public function removeNode(Request $request, int $workspace, int $nodeId): JsonResponse
-    {
-        $this->authorizeAccess($this->workspaces->find($workspace));
-
-        // Məzmun node-u və ya qovluq ağacı silinir (məzmun kitabxanada qalır).
-        $this->workspaces->deleteNode((int) $request->user()->id, $workspace, $nodeId);
-
-        return response()->json(['message' => 'Element silindi.']);
-    }
-
-    public function renameNode(Request $request, int $workspace, int $nodeId): JsonResponse
-    {
-        $this->authorizeAccess($this->workspaces->find($workspace));
-
-        $data = $request->validate([
-            'name' => ['required', 'string', 'max:255'],
-        ]);
-
-        $this->workspaces->renameNode((int) $request->user()->id, $workspace, $nodeId, $data['name']);
-
-        return response()->json(['message' => 'Ad yeniləndi.']);
-    }
-
-    public function moveNode(Request $request, int $workspace, int $nodeId): JsonResponse
-    {
-        $this->authorizeAccess($this->workspaces->find($workspace));
-
-        $data = $request->validate([
-            'parent_id' => ['nullable', 'integer'],
-        ]);
-
-        $this->workspaces->moveNode((int) $request->user()->id, $workspace, $nodeId, $data['parent_id'] ?? null);
-
-        return response()->json(['message' => 'Daşındı.']);
     }
 
     public function attachStudents(Request $request, int $workspace): JsonResponse

@@ -25,7 +25,7 @@
         @if ($workspaces->isEmpty())
             <x-teacher.empty-state icon="squares-2x2" title="Workspace tapılmadı" description="Axtarışı dəyişin və ya yeni workspace yaradın." />
         @else
-            <x-teacher.table :headers="['Ad', 'Tələbə', 'Məzmun', 'Yaradılıb', '']">
+            <x-teacher.table :headers="['Ad', 'Tələbə', 'Yaradılıb', '']">
                 @foreach ($workspaces as $ws)
                     <tr class="transition hover:bg-base-200/50">
                         <td class="font-medium text-base-content">
@@ -34,7 +34,6 @@
                         <td class="text-base-content/70">
                             <x-teacher.badge color="blue">{{ $ws['student_count'] }} şagird</x-teacher.badge>
                         </td>
-                        <td class="text-base-content/70">{{ $ws['content_count'] }} məzmun</td>
                         <td class="text-base-content/70">{{ $ws['created_at'] ?? '—' }}</td>
                         <td class="text-right">
                             <div class="flex items-center justify-end gap-1">

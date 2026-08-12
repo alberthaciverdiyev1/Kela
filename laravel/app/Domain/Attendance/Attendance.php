@@ -13,13 +13,13 @@ class Attendance extends Model
 {
     use SoftDeletes;
 
-    public const STATUS_UNKNOWN = 0;
-    public const STATUS_PRESENT = 1;
-    public const STATUS_ABSENT = 2;
-    public const STATUS_LATE = 3;
-    public const STATUS_EXCUSED = 4;
+    public const int STATUS_UNKNOWN = 0;
+    public const int STATUS_PRESENT = 1;
+    public const int STATUS_ABSENT = 2;
+    public const int STATUS_LATE = 3;
+    public const int STATUS_EXCUSED = 4;
 
-    public const STATUS_LABELS = [
+    public const array STATUS_LABELS = [
         self::STATUS_UNKNOWN => 'unknown',
         self::STATUS_PRESENT => 'present',
         self::STATUS_ABSENT => 'absent',

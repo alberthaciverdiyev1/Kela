@@ -3,7 +3,6 @@
 namespace App\Domain\Workspace;
 
 use App\Domain\User\User;
-use App\Domain\Node\Node;
 use App\Domain\Attendance\Attendance;
 
 use Illuminate\Database\Eloquent\Model;
@@ -26,11 +25,6 @@ class Workspace extends Model
     public function students(): BelongsToMany
     {
         return $this->belongsToMany(User::class, 'workspace_students', 'workspace_id', 'student_id');
-    }
-
-    public function nodes(): HasMany
-    {
-        return $this->hasMany(Node::class, 'workspace_id');
     }
 
     public function attendances(): HasMany

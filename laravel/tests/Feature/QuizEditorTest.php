@@ -2,10 +2,8 @@
 
 namespace Tests\Feature;
 
-use App\Application\Lesson\LessonService;
 use App\Application\Question\QuestionService;
 use App\Application\Quiz\QuizService;
-use App\Application\Workspace\WorkspaceService;
 use App\Domain\User\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Laravel\Sanctum\Sanctum;
@@ -182,64 +180,5 @@ class QuizEditorTest extends TestCase
 
         $this->attach($quizId, $q2->id);
         $this->assertEquals([], $svc->availableQuestionIds($quizId, $this->teacher->id));
-    }
-
-    public function test_workspace_file_manager_tree_and_node_actions_via_api(): void
-    {
-        $this->actingAs($this->teacher);
-
-        $ws = app(WorkspaceService::class);
-        $lessonId = app(LessonService::class)
-            ->create($this->teacher->id, ['title' => 'Riyaziyyat', 'is_published' => true])
-            ->content_id;
-
-        $workspace = $ws->create($this->teacher->id, 'Sinif 3A');
-
-        $this->get("/teacher/workspaces/{$workspace->id}")->assertOk()->assertSee('Sinif 3A');
-
-        Sanctum::actingAs($this->teacher);
-
-        // Məzmun əlavə et
-        $node = $this->postJson("/api/v1/workspaces/{$workspace->id}/contents", [
-            'content_id' => $lessonId,
-        ])->assertStatus(201)->json('data');
-
-        // Kataloq fragment-də görünür
-        $this->get("/teacher/workspaces/{$workspace->id}/directory")
-            ->assertOk()
-            ->assertSee('Riyaziyyat')
-            ->assertSee('data-node-action');
-
-        // Qovluq yarat
-        $folder = $this->postJson("/api/v1/workspaces/{$workspace->id}/folders", [
-            'name' => 'Əlavələr',
-        ])->assertStatus(201)->json('data');
-
-        // Qovluğu adlandır (node adı kataloqda göstərilir)
-        $this->postJson("/api/v1/workspaces/{$workspace->id}/nodes/{$folder['id']}/rename", [
-            'name' => 'Yenilənmiş qovluq',
-        ])->assertOk();
-
-        // Məzmun node-u qovluğa daşı
-        $this->postJson("/api/v1/workspaces/{$workspace->id}/nodes/{$node['id']}/move", [
-            'parent_id' => $folder['id'],
-        ])->assertOk();
-
-        // Node qovluğun içindədir; kökdə yalnız qovluq görünür.
-        $dir = $ws->directory($this->teacher->id, $workspace->id);
-        $this->assertCount(1, $dir['folders']);
-        $this->assertEquals('Yenilənmiş qovluq', $dir['folders'][0]['name']);
-        $this->assertCount(0, $dir['contents']);
-
-        $inside = $ws->directory($this->teacher->id, $workspace->id, $folder['id']);
-        $this->assertCount(1, $inside['contents']);
-        $this->assertEquals('Riyaziyyat', $inside['contents'][0]['title']);
-
-        // Qovluğu sil (ağac)
-        $this->deleteJson("/api/v1/workspaces/{$workspace->id}/nodes/{$folder['id']}")->assertOk();
-
-        $dir = $ws->directory($this->teacher->id, $workspace->id);
-        $this->assertCount(0, $dir['folders']);
-        $this->assertCount(0, $dir['contents']);
     }
 }

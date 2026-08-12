@@ -4,6 +4,7 @@ namespace App\Web\Controllers\Teacher;
 
 use App\Application\Question\QuestionService;
 use App\Application\Quiz\QuizService;
+use App\Application\QuizFolder\QuizFolderService;
 use App\Domain\Quiz\Quiz;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -18,6 +19,7 @@ class QuizController
 {
     public function __construct(
         private readonly QuizService $quizzes,
+        private readonly QuizFolderService $quizFolders,
         private readonly QuestionService $questions,
     ) {
     }
@@ -25,26 +27,35 @@ class QuizController
     public function index(Request $request): View
     {
         $search = (string) $request->string('search');
+        $folderId = (int) $request->integer('folder_id');
 
         return view('teacher.quizzes.index', [
-            'quizzes' => $this->quizzes->paginate((int) auth()->id(), $search ?: null, 15),
+            'quizzes' => $this->quizzes->paginate((int) auth()->id(), $search ?: null, $folderId, 15),
             'search' => $search,
+            'folderId' => $folderId,
+            'folders' => $this->quizFolders->directory((int) auth()->id(), $folderId ?: null),
+            'folderTree' => $this->quizFolders->folderTree((int) auth()->id()),
         ]);
     }
 
-    public function create(): View
+    public function create(Request $request): View
     {
+        $selectedFolder = $this->quizFolders->resolveFolderFor((int) auth()->id(), (int) $request->integer('folder_id') ?: null);
+
         return view('teacher.quizzes.form', [
             'heading' => 'Yeni Quiz',
             'subtitle' => 'Yeni quiz əlavə et',
             'creating' => true,
             'quiz' => null,
+            'folderTree' => $this->quizFolders->folderTree((int) auth()->id()),
+            'selectedFolderId' => $selectedFolder,
         ]);
     }
 
     public function store(Request $request): RedirectResponse
     {
         $data = $this->validated($request);
+        $data['folder_id'] = $this->quizFolders->resolveFolderFor((int) auth()->id(), $data['folder_id'] ?? null);
 
         $quiz = $this->quizzes->create((int) auth()->id(), $data);
 
@@ -62,6 +73,7 @@ class QuizController
             'quiz' => $this->quizzes->formData($quiz),
             'questions' => $this->quizzes->questionList($quiz),
             'bankOptions' => $this->bankOptions($quiz),
+            'folderTree' => $this->quizFolders->folderTree((int) auth()->id()),
         ]);
     }
 
@@ -81,6 +93,7 @@ class QuizController
         $this->assertAccess($this->quizzes->find($quiz));
 
         $data = $this->validated($request);
+        $data['folder_id'] = $this->quizFolders->resolveFolderFor((int) auth()->id(), $data['folder_id'] ?? null);
 
         $this->quizzes->update($quiz, $data);
 
@@ -102,6 +115,7 @@ class QuizController
             'title' => ['required', 'string', 'max:200'],
             'description' => ['nullable', 'string'],
             'is_published' => ['nullable', 'boolean'],
+            'folder_id' => ['nullable', 'integer'],
         ]);
 
         $data['is_published'] = $request->boolean('is_published');

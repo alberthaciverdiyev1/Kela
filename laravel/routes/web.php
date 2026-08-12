@@ -49,7 +49,6 @@ Route::middleware(['auth', 'role:Admin,Teacher'])->group(function () {
         Route::get('/{workspace}', [WorkspaceController::class, 'show'])->name('teacher.workspaces.show');
         Route::get('/{workspace}/edit', [WorkspaceController::class, 'edit'])->name('teacher.workspaces.edit');
         Route::post('/{workspace}', [WorkspaceController::class, 'update'])->name('teacher.workspaces.update');
-        Route::get('/{workspace}/directory', [WorkspaceController::class, 'directoryFragment'])->name('teacher.workspaces.directory');
         Route::delete('/{workspace}', [WorkspaceController::class, 'destroy'])->name('teacher.workspaces.destroy');
     });
 

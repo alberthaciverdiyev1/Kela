@@ -14,16 +14,19 @@ class EloquentQuizRepository implements QuizRepository
         return Quiz::create([
             'content_id' => $contentId,
             'teacher_id' => $teacherId,
+            'folder_id' => $data['folder_id'] ?? null,
             'title' => $data['title'] ?? '',
             'description' => $data['description'] ?? null,
             'is_published' => (bool) ($data['is_published'] ?? false),
         ]);
     }
 
-    public function paginateForUser(int $actingUserId, bool $isAdmin, ?string $search, int $perPage): LengthAwarePaginator
+    public function paginateForUser(int $actingUserId, bool $isAdmin, ?string $search, int $folderId = 0, int $perPage = 15): LengthAwarePaginator
     {
         return Quiz::query()
             ->when(! $isAdmin, fn (Builder $q): Builder => $q->where('quizzes.teacher_id', $actingUserId))
+            ->when($folderId === 0, fn (Builder $q): Builder => $q->whereNull('quizzes.folder_id'))
+            ->when($folderId > 0, fn (Builder $q): Builder => $q->where('quizzes.folder_id', $folderId))
             ->with('content')
             ->withCount('questions')
             ->when($search, fn (Builder $q): Builder => $q->where('quizzes.title', 'ilike', "%{$search}%"))
@@ -46,10 +49,18 @@ class EloquentQuizRepository implements QuizRepository
     public function update(Quiz $quiz, array $data): Quiz
     {
         $quiz->update([
+            'folder_id' => $data['folder_id'] ?? $quiz->folder_id,
             'title' => $data['title'] ?? $quiz->title,
             'description' => $data['description'] ?? $quiz->description,
             'is_published' => (bool) ($data['is_published'] ?? $quiz->is_published),
         ]);
+
+        return $quiz;
+    }
+
+    public function moveToFolder(Quiz $quiz, ?int $folderId): Quiz
+    {
+        $quiz->update(['folder_id' => $folderId]);
 
         return $quiz;
     }

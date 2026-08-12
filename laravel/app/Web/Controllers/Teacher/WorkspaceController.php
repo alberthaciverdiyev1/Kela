@@ -2,7 +2,6 @@
 
 namespace App\Web\Controllers\Teacher;
 
-use App\Application\Content\ContentService;
 use App\Application\Workspace\WorkspaceService;
 use App\Domain\Workspace\Workspace;
 use Illuminate\Http\RedirectResponse;
@@ -11,14 +10,12 @@ use Illuminate\View\View;
 
 /**
  * İş sahəsi səhifələri — server-rendered Blade.
- * Qovluq naviqasiyası GET linkləri (server), node əməliyyatları JS → /api/v1,
- * kataloq isə server-rendered fragment ilə yenilənir.
+ * Tələbə əməliyyatları JS vasitəsilə /api/v1-ə gedir.
  */
 class WorkspaceController
 {
     public function __construct(
         private readonly WorkspaceService $workspaces,
-        private readonly ContentService $contents,
     ) {
     }
 
@@ -54,50 +51,22 @@ class WorkspaceController
             ->with('success', 'Workspace yaradıldı.');
     }
 
-    public function show(Request $request, int $workspace): View
+    public function show(int $workspace): View
     {
         $model = $this->workspaces->find($workspace);
         $this->assertAccess($model);
 
         $actingId = $this->actingId($model);
-        $parentId = $request->integer('parent_id') ?: null;
-        $dir = $this->workspaces->directory($actingId, $workspace, $parentId);
         $students = $this->workspaces->studentList($actingId, $workspace);
 
         return view('teacher.workspaces.show', [
             'workspaceId' => $workspace,
             'workspaceName' => $model->name,
-            'parentId' => $parentId,
-            'folders' => $dir['folders'],
-            'contents' => $dir['contents'],
-            'breadcrumbs' => $dir['breadcrumbs'],
             'students' => $students,
-            'contentOptions' => $this->contents->allContentOptions($actingId),
             'availableStudents' => collect($this->workspaces->availableStudents($actingId, $workspace))
                 ->pluck('name', 'id')
                 ->map(fn ($name) => (string) $name)
                 ->all(),
-            'folderTree' => $this->workspaces->folderTree($actingId, $workspace),
-        ]);
-    }
-
-    /** JS-in kataloqu yeniləməsi üçün server-rendered fragment. */
-    public function directoryFragment(Request $request, int $workspace): View
-    {
-        $model = $this->workspaces->find($workspace);
-        $this->assertAccess($model);
-
-        $actingId = $this->actingId($model);
-        $parentId = $request->integer('parent_id') ?: null;
-        $dir = $this->workspaces->directory($actingId, $workspace, $parentId);
-
-        return view('teacher.workspaces._directory', [
-            'workspaceId' => $workspace,
-            'parentId' => $parentId,
-            'folders' => $dir['folders'],
-            'contents' => $dir['contents'],
-            'breadcrumbs' => $dir['breadcrumbs'],
-            'folderTree' => $this->workspaces->folderTree($actingId, $workspace),
         ]);
     }
 

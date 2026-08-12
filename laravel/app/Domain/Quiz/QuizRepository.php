@@ -12,8 +12,8 @@ interface QuizRepository
 {
     public function create(int $contentId, int $teacherId, array $data): Quiz;
 
-    /** Cədvəl üçün axtarış + səhifələnmiş quiz siyahısı. */
-    public function paginateForUser(int $actingUserId, bool $isAdmin, ?string $search, int $perPage): LengthAwarePaginator;
+    /** Cədvəl üçün axtarış + səhifələnmiş quiz siyahısı (0 = kök, >0 = qovluq). */
+    public function paginateForUser(int $actingUserId, bool $isAdmin, ?string $search, int $folderId = 0, int $perPage = 15): LengthAwarePaginator;
 
     public function find(int $contentId): ?Quiz;
 
@@ -21,6 +21,9 @@ interface QuizRepository
     public function scopeForUser(Builder $query, int $actingUserId, bool $isAdmin): Builder;
 
     public function update(Quiz $quiz, array $data): Quiz;
+
+    /** Quiz-i qovluğa daşıyır (null → kökə). */
+    public function moveToFolder(Quiz $quiz, ?int $folderId): Quiz;
 
     public function delete(Quiz $quiz): bool;
 

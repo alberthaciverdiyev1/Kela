@@ -226,21 +226,12 @@ class ApiTest extends TestCase
         $ws = $this->postJson('/api/v1/workspaces', ['name' => 'Sinif 3A'])
             ->assertStatus(201)->json('data');
 
-        // add a lesson content to workspace
-        $lessonId = app(\App\Application\Lesson\LessonService::class)
-            ->create($this->teacher->id, ['title' => 'Riyaziyyat', 'is_published' => true])
-            ->content_id;
-
-        $this->postJson("/api/v1/workspaces/{$ws['id']}/contents", [
-            'content_id' => $lessonId,
-        ])->assertStatus(201);
-
-        // show → directory contains it
+        // show → workspace + students (node ağacı yoxdur)
         $this->getJson("/api/v1/workspaces/{$ws['id']}")
             ->assertOk()
-            ->assertJsonStructure(['data', 'students', 'directory'])
+            ->assertJsonStructure(['data', 'students'])
             ->assertJsonPath('data.name', 'Sinif 3A')
-            ->assertJsonCount(1, 'directory.contents');
+            ->assertJsonCount(0, 'students');
 
         // attach student
         $this->postJson("/api/v1/workspaces/{$ws['id']}/students", [

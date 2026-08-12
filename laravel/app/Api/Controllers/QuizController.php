@@ -3,6 +3,7 @@
 namespace App\Api\Controllers;
 
 use App\Application\Quiz\QuizService;
+use App\Application\QuizFolder\QuizFolderService;
 use App\Domain\Quiz\Quiz;
 use App\Api\Resources\QuizResource;
 use Illuminate\Http\JsonResponse;
@@ -11,8 +12,10 @@ use Illuminate\Pagination\LengthAwarePaginator;
 
 class QuizController
 {
-    public function __construct(private readonly QuizService $quizzes)
-    {
+    public function __construct(
+        private readonly QuizService $quizzes,
+        private readonly QuizFolderService $quizFolders,
+    ) {
     }
 
     public function index(Request $request): LengthAwarePaginator
@@ -20,6 +23,7 @@ class QuizController
         return $this->quizzes->paginate(
             (int) $request->user()->id,
             $request->string('search')->toString() ?: null,
+            (int) $request->integer('folder_id'),
             (int) $request->integer('per_page', 15),
         );
     }
@@ -30,7 +34,10 @@ class QuizController
             'title' => ['required', 'string', 'max:255'],
             'description' => ['nullable', 'string'],
             'is_published' => ['nullable', 'boolean'],
+            'folder_id' => ['nullable', 'integer'],
         ]);
+
+        $data['folder_id'] = $this->quizFolders->resolveFolderFor((int) $request->user()->id, $data['folder_id'] ?? null);
 
         $quiz = $this->quizzes->create((int) $request->user()->id, $data);
 
@@ -56,7 +63,10 @@ class QuizController
             'title' => ['required', 'string', 'max:255'],
             'description' => ['nullable', 'string'],
             'is_published' => ['nullable', 'boolean'],
+            'folder_id' => ['nullable', 'integer'],
         ]);
+
+        $data['folder_id'] = $this->quizFolders->resolveFolderFor((int) $request->user()->id, $data['folder_id'] ?? null);
 
         return new QuizResource($this->quizzes->update($contentId, $data));
     }

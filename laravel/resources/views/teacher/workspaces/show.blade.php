@@ -4,8 +4,6 @@
 @php
     $workspaceConfig = [
         'workspaceId' => (int) $workspaceId,
-        'parentId' => $parentId !== null ? (int) $parentId : null,
-        'fragmentUrl' => route('teacher.workspaces.directory', [$workspaceId, 'parent_id' => $parentId ?? null]),
     ];
 @endphp
 <div
@@ -14,7 +12,7 @@
     @keydown.escape.window="closeAll()"
 >
     {{-- Header --}}
-    <x-teacher.heading :subtitle="count($students).' tələbə · '.count($contents).' məzmun'">
+    <x-teacher.heading :subtitle="count($students).' tələbə'">
         {{ $workspaceName }}
         <x-slot:actions>
             <x-teacher.button href="{{ route('teacher.workspaces.index') }}" variant="ghost" icon="arrow-left">Geri</x-teacher.button>
@@ -22,37 +20,17 @@
         </x-slot:actions>
     </x-teacher.heading>
 
-    {{-- Toolbar --}}
-    <div class="flex flex-wrap items-center gap-2">
-        <button type="button" class="btn btn-sm btn-ghost border border-base-300" @click="showFolder = true">
-            <x-icon name="heroicon-o-folder-plus" class="size-4" /> Yeni Qovluq
-        </button>
-        <button type="button" class="btn btn-sm btn-primary" @click="showContent = true">
-            <x-icon name="heroicon-o-plus" class="size-4" /> Kitabxanadan Məzmun
-        </button>
-        <button type="button" class="btn btn-sm btn-ghost border border-base-300" @click="showStudent = true">
-            <x-icon name="heroicon-o-user-plus" class="size-4" /> Tələbə Əlavə Et
-        </button>
-    </div>
-
-    {{-- Kataloq (JS fragment ilə yenilənir) --}}
-    <div id="directory" x-ref="directory" @click="onDirectoryClick($event)" class="space-y-4">
-        @include('teacher.workspaces._directory', [
-            'workspaceId' => $workspaceId,
-            'parentId' => $parentId,
-            'folders' => $folders,
-            'contents' => $contents,
-            'breadcrumbs' => $breadcrumbs,
-            'folderTree' => $folderTree,
-        ])
-    </div>
-
     {{-- Students --}}
     <div class="space-y-3">
-        <h3 class="flex items-center gap-2 text-lg font-semibold text-base-content">
-            Tələbələr
-            <x-teacher.badge color="blue">{{ count($students) }}</x-teacher.badge>
-        </h3>
+        <div class="flex items-center justify-between">
+            <h3 class="flex items-center gap-2 text-lg font-semibold text-base-content">
+                Tələbələr
+                <x-teacher.badge color="blue">{{ count($students) }}</x-teacher.badge>
+            </h3>
+            <button type="button" class="btn btn-sm btn-ghost border border-base-300" @click="showStudent = true">
+                <x-icon name="heroicon-o-user-plus" class="size-4" /> Tələbə Əlavə Et
+            </button>
+        </div>
 
         @if (count($students) === 0)
             <x-teacher.empty-state icon="user-group" title="Tələbə yoxdur" description="Bu workspace-ə tələbə əlavə edin." />
@@ -79,72 +57,6 @@
                 </x-teacher.table>
             </x-teacher.card>
         @endif
-    </div>
-
-    {{-- Rename dialog --}}
-    <div x-show="showRename" x-transition.opacity class="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4">
-        <div class="w-full max-w-md rounded-xl border border-base-300 bg-base-100 p-6 shadow-xl">
-            <h3 class="mb-4 text-lg font-semibold text-base-content">Adını dəyiş</h3>
-            <input
-                x-ref="renameInput"
-                type="text"
-                x-model="renameName"
-                class="input input-bordered w-full text-sm"
-                placeholder="Yeni ad"
-            />
-            <div class="mt-4 flex justify-end gap-2">
-                <button type="button" class="btn btn-sm btn-ghost" @click="showRename = false">Ləğv et</button>
-                <button type="button" class="btn btn-sm btn-primary" @click="saveRename()">Saxla</button>
-            </div>
-        </div>
-    </div>
-
-    {{-- Move dialog --}}
-    <div x-show="showMove" x-transition.opacity class="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4">
-        <div class="w-full max-w-md rounded-xl border border-base-300 bg-base-100 p-6 shadow-xl">
-            <h3 class="mb-4 text-lg font-semibold text-base-content">Daşı</h3>
-            <select x-ref="moveSelect" class="select select-bordered w-full text-sm"></select>
-            <p class="mt-2 text-xs text-base-content/50">Hədəf qovluğa daşımaq üçün seçin; boş qalsa kökə daşınır.</p>
-            <div class="mt-4 flex justify-end gap-2">
-                <button type="button" class="btn btn-sm btn-ghost" @click="showMove = false">Ləğv et</button>
-                <button type="button" class="btn btn-sm btn-primary" @click="saveMove()">Daşı</button>
-            </div>
-        </div>
-    </div>
-
-    {{-- Folder dialog --}}
-    <div x-show="showFolder" x-transition.opacity class="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4">
-        <div class="w-full max-w-md rounded-xl border border-base-300 bg-base-100 p-6 shadow-xl">
-            <h3 class="mb-4 text-lg font-semibold text-base-content">Yeni Qovluq</h3>
-            <input
-                x-ref="folderNameInput"
-                type="text"
-                x-model="folderName"
-                placeholder="Qovluq adı"
-                class="input input-bordered w-full text-sm"
-            />
-            <div class="mt-4 flex justify-end gap-2">
-                <button type="button" class="btn btn-sm btn-ghost" @click="showFolder = false">Ləğv et</button>
-                <button type="button" class="btn btn-sm btn-primary" @click="saveFolder()">Yarat</button>
-            </div>
-        </div>
-    </div>
-
-    {{-- Content dialog --}}
-    <div x-show="showContent" x-transition.opacity class="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4">
-        <div class="w-full max-w-md rounded-xl border border-base-300 bg-base-100 p-6 shadow-xl">
-            <h3 class="mb-4 text-lg font-semibold text-base-content">Kitabxanadan Məzmun</h3>
-            <select x-ref="contentSelect" class="select select-bordered w-full text-sm">
-                <option value="">Seçin...</option>
-                @foreach ($contentOptions as $value => $label)
-                    <option value="{{ $value }}">{{ $label }}</option>
-                @endforeach
-            </select>
-            <div class="mt-4 flex justify-end gap-2">
-                <button type="button" class="btn btn-sm btn-ghost" @click="showContent = false">Ləğv et</button>
-                <button type="button" class="btn btn-sm btn-primary" @click="saveContent()">Əlavə Et</button>
-            </div>
-        </div>
     </div>
 
     {{-- Student dialog --}}

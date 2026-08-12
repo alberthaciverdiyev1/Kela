@@ -38,14 +38,15 @@ class QuizService
     }
 
     /** Cədvəl üçün axtarış + səhifələnmiş quiz siyahısı (array DTO). */
-    public function paginate(int $actingUserId, ?string $search = null, int $perPage = 15): LengthAwarePaginator
+    public function paginate(int $actingUserId, ?string $search = null, int $folderId = 0, int $perPage = 15): LengthAwarePaginator
     {
         $isAdmin = User::find($actingUserId)?->isAdmin() ?? false;
 
         return $this->quizzes
-            ->paginateForUser($actingUserId, $isAdmin, $search, $perPage)
+            ->paginateForUser($actingUserId, $isAdmin, $search, $folderId, $perPage)
             ->through(fn (Quiz $quiz): array => [
                 'content_id' => (int) $quiz->content_id,
+                'folder_id' => $quiz->folder_id ? (int) $quiz->folder_id : null,
                 'title' => $quiz->title,
                 'description' => $quiz->description,
                 'questions_count' => (int) ($quiz->questions_count ?? 0),
@@ -66,6 +67,7 @@ class QuizService
             'title' => $quiz->content->title,
             'description' => $quiz->content->description,
             'is_published' => (bool) $quiz->content->is_published,
+            'folder_id' => $quiz->folder_id ? (int) $quiz->folder_id : null,
         ];
     }
 
@@ -89,6 +91,7 @@ class QuizService
             'title' => $title,
             'description' => $data['description'] ?? null,
             'is_published' => (bool) ($data['is_published'] ?? false),
+            'folder_id' => $data['folder_id'] ?? null,
         ]);
     }
 
@@ -105,6 +108,9 @@ class QuizService
             'is_published' => array_key_exists('is_published', $data)
                 ? (bool) $data['is_published']
                 : $quiz->is_published,
+            'folder_id' => array_key_exists('folder_id', $data)
+                ? ($data['folder_id'] ?: null)
+                : $quiz->folder_id,
         ]);
 
         if ($quiz->content) {
@@ -116,6 +122,20 @@ class QuizService
         }
 
         return $quiz;
+    }
+
+    /** Quiz-i qovluğa daşıyır (null → kökə). */
+    public function moveToFolder(int $contentId, ?int $folderId, int $actingUserId): Quiz
+    {
+        $quiz = $this->quizzes->find($contentId);
+        if ($quiz === null) {
+            throw new \RuntimeException('Quiz tapılmadı.');
+        }
+        if ($quiz->teacher_id !== $actingUserId) {
+            throw new \RuntimeException('Bu quizi daşımağa icazəniz yoxdur.');
+        }
+
+        return $this->quizzes->moveToFolder($quiz, $folderId);
     }
 
     /** Quiz + Content (soft) silinir. */

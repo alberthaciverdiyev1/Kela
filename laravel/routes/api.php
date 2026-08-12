@@ -6,6 +6,7 @@ use App\Api\Controllers\LessonController;
 use App\Api\Controllers\QuestionController;
 use App\Api\Controllers\QuestionFolderController;
 use App\Api\Controllers\QuizController;
+use App\Api\Controllers\QuizFolderController;
 use App\Api\Controllers\StudentController;
 use App\Api\Controllers\WorkspaceController;
 use App\Web\Controllers\LessonMediaController;
@@ -58,17 +59,20 @@ Route::middleware(['auth:sanctum', 'role_api:Admin,Teacher'])->group(function ()
     Route::delete('/question-folders/{folderId}', [QuestionFolderController::class, 'destroy']);
     Route::post('/question-folders/move-question', [QuestionFolderController::class, 'moveQuestion']);
 
+    // Quiz qovluqları
+    Route::get('/quiz-folders/directory', [QuizFolderController::class, 'directory']);
+    Route::post('/quiz-folders', [QuizFolderController::class, 'store']);
+    Route::post('/quiz-folders/{folderId}/rename', [QuizFolderController::class, 'rename']);
+    Route::post('/quiz-folders/{folderId}/move', [QuizFolderController::class, 'move']);
+    Route::delete('/quiz-folders/{folderId}', [QuizFolderController::class, 'destroy']);
+    Route::post('/quiz-folders/move-quiz', [QuizFolderController::class, 'moveQuiz']);
+
     // Quiz → sual əlaqələri
     Route::post('/quizzes/{contentId}/questions', [QuizController::class, 'addQuestion']);
     Route::delete('/quizzes/{contentId}/questions/{questionId}', [QuizController::class, 'removeQuestion']);
     Route::post('/quizzes/{contentId}/questions/{questionId}/move', [QuizController::class, 'moveQuestion']);
 
-    // İş sahəsi → qovluq/məzmun/şagird əlaqələri
-    Route::post('/workspaces/{workspace}/folders', [WorkspaceController::class, 'createFolder']);
-    Route::post('/workspaces/{workspace}/contents', [WorkspaceController::class, 'addContent']);
-    Route::post('/workspaces/{workspace}/nodes/{nodeId}/move', [WorkspaceController::class, 'moveNode']);
-    Route::post('/workspaces/{workspace}/nodes/{nodeId}/rename', [WorkspaceController::class, 'renameNode']);
-    Route::delete('/workspaces/{workspace}/nodes/{nodeId}', [WorkspaceController::class, 'removeNode']);
+    // İş sahəsi → şagird əlaqələri
     Route::post('/workspaces/{workspace}/students', [WorkspaceController::class, 'attachStudents']);
     Route::delete('/workspaces/{workspace}/students/{studentId}', [WorkspaceController::class, 'detachStudent']);
 
