@@ -128,6 +128,35 @@ class WorkspaceFolderController
         ]);
     }
 
+    /** İçeriği workspace-dən kütüphanəyə geri göndərir. */
+    public function removeContent(Request $request): JsonResponse
+    {
+        $data = $request->validate([
+            'content_id' => ['required', 'integer'],
+        ]);
+
+        $content = $this->folders->findContent((int) $data['content_id']);
+        $this->authorizeContentAccess($content);
+        if ($content->workspace_id === null) {
+            return response()->json(['message' => 'Məzmun workspace-də deyil.'], 422);
+        }
+
+        $this->folders->removeContentFromWorkspace((int) $data['content_id'], (int) $request->user()->id);
+
+        return response()->json(['message' => 'Məzmun workspace-dən çıxarıldı.']);
+    }
+
+    /** Qovluğu (içindəki məzmunlarla) workspace-dən kütüphanəyə geri göndərir. */
+    public function removeFolder(Request $request, int $workspace, int $folderId): JsonResponse
+    {
+        $this->authorizeWorkspace($this->workspaces->find($workspace), $request);
+        $this->authorizeFolder($this->folders->find($folderId), $workspace);
+
+        $this->folders->removeFolderFromWorkspace($folderId, (int) $request->user()->id);
+
+        return response()->json(['message' => 'Qovluq və içindəki məzmunlar çıxarıldı.']);
+    }
+
     /** Content-i workspace qovluğuna daşıyır (null → workspace kökü). */
     public function moveContent(Request $request): JsonResponse
     {

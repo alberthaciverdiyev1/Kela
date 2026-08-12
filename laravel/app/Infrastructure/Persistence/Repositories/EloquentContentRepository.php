@@ -70,4 +70,11 @@ class EloquentContentRepository implements ContentRepository
             ->orderByDesc('created_at')
             ->get(['id', 'title', 'type', 'is_published', 'folder_id']);
     }
+
+    public function contentsInFolders(array $folderIds): \Illuminate\Support\Collection
+    {
+        return Content::query()
+            ->whereIn('folder_id', $folderIds)
+            ->get();
+    }
 }

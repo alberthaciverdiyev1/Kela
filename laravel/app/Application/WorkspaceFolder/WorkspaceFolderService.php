@@ -321,6 +321,40 @@ class WorkspaceFolderService
         return $this->folders->create($workspaceId, $name, $parentId);
     }
 
+    /** İçeriği workspace-dən kütüphanəyə geri göndərir (workspace daxilindəki qovluq da təmizlənir). */
+    public function removeContentFromWorkspace(int $contentId, int $actingUserId): void
+    {
+        $content = $this->assertContentOwner($contentId, $actingUserId);
+        if ($content->workspace_id === null) {
+            throw new \RuntimeException('Content workspace-də deyil.');
+        }
+        $content->update(['workspace_id' => null, 'folder_id' => null]);
+    }
+
+    /**
+     * Qovluğu bütün alt qovluqları və içindəki məzmunlarla birlikdə workspace-dən
+     * kütüphanəyə geri göndərir. Qovluq ağacı silinir, məzmunlar kütüphanəyə düşür.
+     */
+    public function removeFolderFromWorkspace(int $folderId, int $actingUserId): void
+    {
+        $folder = $this->folders->find($folderId);
+        if ($folder === null) {
+            throw new \RuntimeException('Qovluq tapılmadı.');
+        }
+        $this->assertWorkspaceOwner((int) $folder->workspace_id, $actingUserId);
+
+        // Alt ağacdakı bütün qovluq id-ləri (özləri də daxil).
+        $ids = $this->folders->descendantIds($folderId);
+
+        // Bütün məzmunları kütüphanəyə geri göndər.
+        foreach ($this->contents->contentsInFolders($ids) as $content) {
+            $content->update(['workspace_id' => null, 'folder_id' => null]);
+        }
+
+        // Qovluq ağacını sil.
+        $this->folders->deleteTree($folderId);
+    }
+
     /**
      * Quiz/dərs yaratmaq üçün workspace kontekstini doğrulayıb qaytarır.
      * Keçərsiz id verilərsə null qayıdır (kontekst yoxdur).

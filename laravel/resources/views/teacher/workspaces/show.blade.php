@@ -86,6 +86,15 @@
                                     <x-icon name="heroicon-o-arrows-right-left" class="size-4" />
                                 </button>
                                 <button
+                                    data-folder-action="remove"
+                                    data-folder-id="{{ $folder['id'] }}"
+                                    data-folder-name="{{ $folder['name'] }}"
+                                    title="Workspace-dən çıxar"
+                                    class="rounded-lg p-1.5 text-base-content/50 hover:bg-warning/10 hover:text-warning"
+                                >
+                                    <x-icon name="heroicon-o-arrow-up-tray" class="size-4" />
+                                </button>
+                                <button
                                     data-folder-action="delete"
                                     data-folder-id="{{ $folder['id'] }}"
                                     data-folder-name="{{ $folder['name'] }}"
@@ -133,6 +142,15 @@
                                     class="rounded-lg p-1.5 text-base-content/50 hover:bg-base-200 hover:text-base-content"
                                 >
                                     <x-icon name="heroicon-o-arrows-right-left" class="size-4" />
+                                </button>
+                                <button
+                                    data-content-action="remove"
+                                    data-content-id="{{ $item['content_id'] }}"
+                                    data-content-title="{{ $item['title'] }}"
+                                    title="Workspace-dən çıxar"
+                                    class="rounded-lg p-1.5 text-base-content/50 hover:bg-warning/10 hover:text-warning"
+                                >
+                                    <x-icon name="heroicon-o-arrow-up-tray" class="size-4" />
                                 </button>
                                 @if ($item['type'] === \App\Domain\Content\Content::TYPE_QUIZ)
                                     <x-teacher.button href="{{ route('teacher.quizzes.edit', $item['content_id']) }}" variant="ghost" size="sm" icon="pencil-square">Redaktə</x-teacher.button>

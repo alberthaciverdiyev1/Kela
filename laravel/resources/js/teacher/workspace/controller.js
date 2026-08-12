@@ -124,6 +124,32 @@ export default function workspaceManager(config) {
             }
         },
 
+        /** Qovluğu içindəki məzmunlarla birlikdə kütüphanəyə geri göndərir. */
+        async handleFolderRemove(btn) {
+            const id = btn.dataset.folderId;
+            const name = btn.dataset.folderName || 'Qovluq';
+            if (!window.confirm(`'${name}' qovluğu və içindəki məzmunlar workspace-dən çıxarılsın? (Kütüphanəyə qayıdacaq.)`)) return;
+            try {
+                await KelaApi('POST', `/api/v1/workspaces/${this.workspaceId}/folders/${id}/remove`);
+                window.location.reload();
+            } catch (err) {
+                window.alert(err.message);
+            }
+        },
+
+        /** İçeriği workspace-dən kütüphanəyə geri göndərir. */
+        async handleContentRemove(btn) {
+            const id = btn.dataset.contentId;
+            const title = btn.dataset.contentTitle || 'Məzmun';
+            if (!window.confirm(`'${title}' workspace-dən çıxarılsın? (Kütüphanəyə qayıdacaq.)`)) return;
+            try {
+                await KelaApi('POST', '/api/v1/workspace-folders/remove-content', { content_id: id });
+                window.location.reload();
+            } catch (err) {
+                window.alert(err.message);
+            }
+        },
+
         // ── Məzmun əməliyyatları ───────────────────────────────────────────
 
         openContentMove(btn) {
@@ -508,12 +534,14 @@ export default function workspaceManager(config) {
                 if (action === 'rename') this.openFolderRename(fBtn);
                 else if (action === 'move') this.openFolderMove(fBtn);
                 else if (action === 'delete') this.handleFolderDelete(fBtn);
+                else if (action === 'remove') this.handleFolderRemove(fBtn);
                 return;
             }
             const cBtn = e.target.closest('[data-content-action]');
             if (cBtn) {
                 const action = cBtn.dataset.contentAction;
                 if (action === 'move') this.openContentMove(cBtn);
+                else if (action === 'remove') this.handleContentRemove(cBtn);
             }
         },
 

@@ -102,6 +102,11 @@ class WorkspaceFolderTest extends TestCase
         $this->assertStringContainsString('data-folder-action', $html);
         $this->assertStringContainsString('data-content-action', $html);
 
+        // Workspace-dən çıxarma butonları mövcuddur
+        $this->assertStringContainsString('data-folder-action="remove"', $html);
+        $this->assertStringContainsString('data-content-action="remove"', $html);
+        $this->assertStringContainsString('Workspace-dən çıxar', $html);
+
         // Alt qovluq səhifəsi: breadcrumb + folder-dəki məzmunlar
         $html = $this->get("/teacher/workspaces/{$workspaceId}?folder_id={$folder->id}")->assertOk()->getContent();
         $this->assertStringContainsString('Riyaziyyat', $html);
@@ -197,6 +202,10 @@ class WorkspaceFolderTest extends TestCase
             'workspace_id' => $workspaceId,
             'folder_id' => null,
         ])->assertStatus(403);
+        $this->postJson('/api/v1/workspace-folders/remove-content', [
+            'content_id' => $quizId,
+        ])->assertStatus(403);
+        $this->postJson("/api/v1/workspaces/{$workspaceId}/folders/{$folder->id}/remove")->assertStatus(403);
     }
 
     public function test_quiz_form_renders_workspace_context(): void
@@ -400,6 +409,74 @@ class WorkspaceFolderTest extends TestCase
 
         $attachedForm = $this->quizzes()->formData($attached);
         $this->assertEquals($otherWsId, $attachedForm['workspace_id']);
+    }
+
+    public function test_api_removes_content_from_workspace_to_library(): void
+    {
+        Sanctum::actingAs($this->teacher);
+        $workspaceId = $this->makeWorkspace($this->teacher->id);
+        $folder = $this->folders()->createFolder($workspaceId, 'Qovluq', null, $this->teacher->id);
+
+        // Workspace qovluğunda quiz + kökdə dərs
+        $quizId = $this->makeQuizInWorkspace($this->teacher->id, $workspaceId, $folder->id);
+        $lessonId = $this->makeLessonInWorkspace($this->teacher->id, $workspaceId);
+
+        // Quiz workspace-dən çıxarılır → kütüphanəyə dönür, qovluqdan da çıxar
+        $this->postJson('/api/v1/workspace-folders/remove-content', ['content_id' => $quizId])->assertOk();
+
+        $form = $this->quizzes()->formData($quizId);
+        $this->assertNull($form['workspace_id']);
+        $this->assertNull($form['ws_folder_id']);
+
+        // Artıq available siyahısında yenidən görünür
+        $available = $this->getJson("/api/v1/workspaces/{$workspaceId}/available-contents")
+            ->assertOk()->json('data');
+        $titles = array_column($available, 'title');
+        $this->assertContains('Workspace Quiz', $titles);
+        $this->assertNotContains('Workspace Dərsi', $titles); // dərs hələ workspace-dədir
+
+        // Dərs də workspace-dən çıxarıla bilər
+        $this->postJson('/api/v1/workspace-folders/remove-content', ['content_id' => $lessonId])->assertOk();
+
+        // İkinci dəfə çıxarmaq xətadır — artıq workspace-də deyil
+        $this->postJson('/api/v1/workspace-folders/remove-content', ['content_id' => $lessonId])->assertStatus(422);
+    }
+
+    public function test_api_removes_folder_tree_with_contents_to_library(): void
+    {
+        Sanctum::actingAs($this->teacher);
+        $workspaceId = $this->makeWorkspace($this->teacher->id);
+
+        // Qovluq ağacı: Riyaziyyat → Cəbr; bir də başqa (kontrol) qovluq
+        $math = $this->folders()->createFolder($workspaceId, 'Riyaziyyat', null, $this->teacher->id);
+        $algebra = $this->folders()->createFolder($workspaceId, 'Cəbr', $math->id, $this->teacher->id);
+        $other = $this->folders()->createFolder($workspaceId, 'Fizika', null, $this->teacher->id);
+
+        $quizInMath = $this->makeQuizInWorkspace($this->teacher->id, $workspaceId, $math->id);
+        $lessonInAlgebra = $this->makeLessonInWorkspace($this->teacher->id, $workspaceId, $algebra->id);
+        $quizInOther = $this->makeQuizInWorkspace($this->teacher->id, $workspaceId, $other->id);
+
+        // Riyaziyyat + alt ağacı workspace-dən çıxar
+        $this->postJson("/api/v1/workspaces/{$workspaceId}/folders/{$math->id}/remove")->assertOk();
+
+        // Qovluq ağacı silindi
+        $this->assertNull($this->folders()->find($math->id));
+        $this->assertNull($this->folders()->find($algebra->id));
+
+        // Alt ağacdakı məzmunlar kütüphanəyə döndü
+        $f1 = $this->quizzes()->formData($quizInMath);
+        $f3 = $this->quizzes()->formData($quizInOther);
+        $lesson = Content::find($lessonInAlgebra);
+
+        $this->assertNull($f1['workspace_id']);
+        $this->assertNull($f1['ws_folder_id']);
+        $this->assertNull($lesson->workspace_id);
+        $this->assertNull($lesson->folder_id);
+
+        // Kontrol qovluq və içindəki məzmun toxunulmadı
+        $this->assertNotNull($this->folders()->find($other->id));
+        $this->assertEquals($workspaceId, $f3['workspace_id']);
+        $this->assertEquals($other->id, $f3['ws_folder_id']);
     }
 
     public function test_workspace_show_page_offers_add_existing_content(): void
