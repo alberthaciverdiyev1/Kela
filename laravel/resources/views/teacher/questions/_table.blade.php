@@ -73,13 +73,22 @@
                         'option_d' => $q['options']['D'] ?? '',
                         'option_e' => $q['options']['E'] ?? '',
                         'correct_option' => $q['correct_option'],
+                        'explanation' => $q['explanation'],
                     ];
                 @endphp
                 <tr>
                     <td class="max-w-md">
                         <span class="inline-flex items-start gap-2 text-base-content">
                             <x-icon name="heroicon-o-question-mark-circle" class="mt-0.5 size-4 shrink-0 opacity-60" />
-                            <span class="font-medium">{{ $q['text'] }}</span>
+                            <span class="min-w-0">
+                                <span class="rich-preview block font-medium">{!! $q['text'] !!}</span>
+                                @if ($q['explanation'])
+                                    <span class="mt-0.5 flex items-center gap-1 text-xs text-base-content/50">
+                                        <x-icon name="heroicon-o-light-bulb" class="size-3.5 shrink-0 text-amber-500" />
+                                        {{ Str::limit($q['explanation'], 90) }}
+                                    </span>
+                                @endif
+                            </span>
                         </span>
                     </td>
                     <td>
@@ -119,7 +128,7 @@
                             <button
                                 data-question-action="delete"
                                 data-question-id="{{ $q['id'] }}"
-                                data-question-text="{{ Str::limit($q['text'], 50) }}"
+                                data-question-text="{{ Str::limit(strip_tags($q['text']), 50) }}"
                                 title="Sil"
                                 class="rounded-lg p-1.5 text-error/70 hover:bg-error/10 hover:text-error"
                             >

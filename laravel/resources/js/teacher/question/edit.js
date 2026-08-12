@@ -47,41 +47,54 @@ export default function createBankEditor() {
         },
 
         /**
-         * openQuestionEdit(fields, question) — Sual düzləndirmə formunu doldurur.
+         * openQuestionEdit(form, question) — Sual düzləndirmə formunu doldurur.
          */
-        openQuestionEdit(fields, question) {
-            fields.qText.value = question.text || '';
-            fields.qOptionA.value = question.option_a || '';
-            fields.qOptionB.value = question.option_b || '';
-            fields.qOptionC.value = question.option_c || '';
-            fields.qOptionD.value = question.option_d || '';
-            fields.qOptionE.value = question.option_e || '';
-            fields.qCorrectOption.value = String(question.correct_option ?? 0);
+        openQuestionEdit(form, question) {
+            Object.assign(form, {
+                text: question.text || '',
+                option_a: question.option_a || '',
+                option_b: question.option_b || '',
+                option_c: question.option_c || '',
+                option_d: question.option_d || '',
+                option_e: question.option_e || '',
+                correct_option: question.correct_option ?? 0,
+                explanation: question.explanation || '',
+            });
         },
 
         /**
-         * buildQuestionPayload(fields) — Sual formunu API formatına yığır.
+         * buildQuestionPayload(form) — Sual formunu API formatına yığır.
          * folder_id göndərilmir — sualın yeri dəyişməz, yalnız məzmun yenilənir.
+         * text rich text HTML ola bilər — boşluq yoxlaması düz mətnə görədir.
          */
-        buildQuestionPayload(fields) {
+        buildQuestionPayload(form) {
+            const correct = Number(form.correct_option) || 0;
+
             return {
-                text: fields.qText.value.trim(),
-                option_a: fields.qOptionA.value.trim(),
-                option_b: fields.qOptionB.value.trim(),
-                option_c: fields.qOptionC.value.trim() || null,
-                option_d: fields.qOptionD.value.trim() || null,
-                option_e: fields.qOptionE.value.trim() || null,
-                correct_option: Number(fields.qCorrectOption.value),
+                text: (form.text || '').trim(),
+                option_a: form.option_a.trim(),
+                option_b: form.option_b.trim(),
+                option_c: form.option_c.trim() || null,
+                option_d: form.option_d.trim() || null,
+                option_e: form.option_e.trim() || null,
+                correct_option: correct,
+                explanation: (form.explanation || '').trim() || null,
             };
         },
 
         /**
-         * updateQuestion(fields, id) — Mövcud sualın məzmununu yeniləyir.
+         * updateQuestion(form, id) — Mövcud sualın məzmununu yeniləyir.
          */
-        async updateQuestion(fields, id) {
-            const payload = this.buildQuestionPayload(fields);
-            if (!payload.text || !payload.option_a || !payload.option_b) {
+        async updateQuestion(form, id) {
+            const payload = this.buildQuestionPayload(form);
+            const plainText = payload.text.replace(/<[^>]*>/g, '');
+            if (!plainText.trim() || !payload.option_a || !payload.option_b) {
                 window.alert('Sual mətni və ən azı A, B seçimləri tələb olunur.');
+                return false;
+            }
+            const correctText = [payload.option_a, payload.option_b, payload.option_c, payload.option_d, payload.option_e][payload.correct_option];
+            if (!correctText) {
+                window.alert('Doğru cavab kimi işarələnmiş seçim boşdur — əvvəlcə onu doldurun.');
                 return false;
             }
             try {

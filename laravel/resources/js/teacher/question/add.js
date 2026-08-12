@@ -2,7 +2,12 @@
  * ADD — Sual bankına qovluq / sual əlavə et.
  *
  *   POST /api/v1/question-folders            (name, parent_id)
- *   POST /api/v1/questions                   (text, options, correct_option, folder_id)
+ *   POST /api/v1/questions                   (text, options, correct_option,
+ *                                             explanation, folder_id)
+ *
+ * Qovluq formu $refs ilə DOM-dan oxunur (fields), sual formu isə reaktiv
+ * qForm obyektidir — həm saxla üçün payload, həm də canlı önizləmə mənbəyi.
+ * Sual mətni rich text HTML ola bilər (contenteditable editörü ilə yazılır).
  */
 export default function createBankAdder({ parentId }) {
     return {
@@ -42,41 +47,56 @@ export default function createBankAdder({ parentId }) {
         },
 
         /**
-         * openQuestion(fields, folderId) — Sual dialoqunda formu təmizləyir.
+         * openQuestion(form) — Sual dialoqunda formu təmizləyir (default dəyərlər).
          */
-        openQuestion(fields) {
-            fields.qText.value = '';
-            fields.qOptionA.value = '';
-            fields.qOptionB.value = '';
-            fields.qOptionC.value = '';
-            fields.qOptionD.value = '';
-            fields.qOptionE.value = '';
-            fields.qCorrectOption.value = '0';
+        openQuestion(form) {
+            Object.assign(form, {
+                text: '',
+                option_a: '',
+                option_b: '',
+                option_c: '',
+                option_d: '',
+                option_e: '',
+                correct_option: 0,
+                explanation: '',
+            });
         },
 
         /**
-         * buildQuestionPayload(fields, folderId) — Sual formunu API formatına yığır.
+         * buildQuestionPayload(form) — Sual formunu API formatına yığır.
+         * Boş seçimlər null göndərilir; doğru cavab seçimə işarə edir.
+         * text rich text HTML ola bilər — boşluq yoxlaması düz mətnə görədir.
          */
-        buildQuestionPayload(fields, folderId) {
+        buildQuestionPayload(form) {
+            const correct = Number(form.correct_option) || 0;
+
             return {
-                text: fields.qText.value.trim(),
-                option_a: fields.qOptionA.value.trim(),
-                option_b: fields.qOptionB.value.trim(),
-                option_c: fields.qOptionC.value.trim() || null,
-                option_d: fields.qOptionD.value.trim() || null,
-                option_e: fields.qOptionE.value.trim() || null,
-                correct_option: Number(fields.qCorrectOption.value),
-                folder_id: folderId ?? null,
+                text: (form.text || '').trim(),
+                option_a: form.option_a.trim(),
+                option_b: form.option_b.trim(),
+                option_c: form.option_c.trim() || null,
+                option_d: form.option_d.trim() || null,
+                option_e: form.option_e.trim() || null,
+                correct_option: correct,
+                explanation: (form.explanation || '').trim() || null,
+                folder_id: parentId ?? null,
             };
         },
 
         /**
-         * addQuestion(fields, folderId) — Yeni sualı API-ə göndərir.
+         * addQuestion(form) — Yeni sualı API-ə göndərir.
+         * Doğru cavab işarələnmiş seçimin metni boşdursa xəbərdarlıq edir.
          */
-        async addQuestion(fields, folderId) {
-            const payload = this.buildQuestionPayload(fields, folderId);
-            if (!payload.text || !payload.option_a || !payload.option_b) {
+        async addQuestion(form) {
+            const payload = this.buildQuestionPayload(form);
+            const plainText = payload.text.replace(/<[^>]*>/g, '');
+            if (!plainText.trim() || !payload.option_a || !payload.option_b) {
                 window.alert('Sual mətni və ən azı A, B seçimləri tələb olunur.');
+                return false;
+            }
+            const correctText = [payload.option_a, payload.option_b, payload.option_c, payload.option_d, payload.option_e][payload.correct_option];
+            if (!correctText) {
+                window.alert('Doğru cavab kimi işarələnmiş seçim boşdur — əvvəlcə onu doldurun.');
                 return false;
             }
             try {

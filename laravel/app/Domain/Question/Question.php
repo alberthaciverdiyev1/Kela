@@ -25,6 +25,7 @@ class Question extends Model
         'option_d',
         'option_e',
         'correct_option',
+        'explanation',
     ];
 
     public function teacher(): BelongsTo

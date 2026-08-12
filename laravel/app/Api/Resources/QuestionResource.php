@@ -15,6 +15,7 @@ class QuestionResource extends JsonResource
             'text' => $this->text,
             'options' => $this->options(),
             'correct_option' => (int) $this->correct_option,
+            'explanation' => $this->explanation,
             'created_at' => $this->created_at?->toIso8601String(),
         ];
     }

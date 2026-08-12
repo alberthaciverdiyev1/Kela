@@ -55,10 +55,14 @@ class QuizEditorTest extends TestCase
         $html = $this->get("/teacher/quizzes/{$quizId}/edit")->assertOk()->getContent();
 
         $this->assertStringContainsString('data-content-id="'.$quizId.'"', $html);
-        $this->assertStringContainsString('add-question-btn', $html);
-        $this->assertStringContainsString('Sual Əlavə Et', $html);
         $this->assertStringContainsString('bank-btn', $html);
         $this->assertStringContainsString('questions-list', $html);
+        $this->assertStringContainsString('Sual Bankına Get', $html);
+
+        // Quiz redaktoru sual YARATMIR — inline sual formu olmamalıdır.
+        $this->assertStringNotContainsString('add-question-btn', $html);
+        $this->assertStringNotContainsString('Sual Əlavə Et', $html);
+        $this->assertStringNotContainsString('showQuestion', $html);
 
         // Sual siyahısı fragment-də də mövcuddur
         $this->get("/teacher/quizzes/{$quizId}/questions")

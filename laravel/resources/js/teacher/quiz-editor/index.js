@@ -1,11 +1,14 @@
 /**
  * Quiz redaktoru — giriş nöqtəsi (Alpine komponenti).
  *
- * CRUD funksiyaları ayrı modullarda saxlanılır:
- *   list.js   → sual siyahısını yenilə (LIST)
- *   add.js    → yeni sual / bankdan əlavə et (ADD)
- *   edit.js   → sualı düzləndir / sırala (EDIT)
- *   delete.js → sualı quizdən çıxar (DELETE)
+ * Quiz redaktoru YALNIZ kompozisiya alətidir: bankdan sual seç, sırala, çıxar.
+ * Sual yaratma/düzləndirmə Sual Bankı modulundadır (teacher/question) — burada
+ * inline sual formu YOXDUR.
+ *
+ *   list.js   → sual siyahısını yenilə   (LIST)
+ *   add.js    → bankdan sual əlavə et     (ADD — yalnız addFromBank)
+ *   edit.js   → sıralama                  (EDIT — yalnız move)
+ *   delete.js → sualı quizdən çıxar       (DELETE)
  */
 import Alpine from 'alpinejs';
 import createQuestionList from './list';
@@ -20,19 +23,8 @@ export default function quizEditor(config) {
         api: '/api/v1/quizzes/' + config.quizId,
         questionCount: config.questionCount,
 
-        // dialoq / form vəziyyəti
-        showQuestion: false,
+        // dialoq vəziyyəti (yalnız bank seçimi)
         showBank: false,
-        questionTitle: 'Sual Əlavə Et',
-        editingId: null,
-
-        qText: '',
-        qOptionA: '',
-        qOptionB: '',
-        qOptionC: '',
-        qOptionD: '',
-        qOptionE: '',
-        qCorrectOption: '0',
         bankQuestionId: '',
 
         // CRUD modulları (init-də qurulur)
@@ -47,27 +39,9 @@ export default function quizEditor(config) {
                 getListEl: () => this.$refs.questionsList,
                 setCount: (n) => { this.questionCount = n; },
             });
-            this.adder = createQuestionAdder({
-                api: this.api,
-                getPayload: () => this.questionPayload(),
-            });
-            this.updater = createQuestionUpdater({
-                api: this.api,
-                getPayload: () => this.questionPayload(),
-            });
+            this.adder = createQuestionAdder({ api: this.api });
+            this.updater = createQuestionUpdater({ api: this.api });
             this.remover = createQuestionRemover({ api: this.api });
-        },
-
-        questionPayload() {
-            return {
-                text: this.qText,
-                option_a: this.qOptionA,
-                option_b: this.qOptionB,
-                option_c: this.qOptionC,
-                option_d: this.qOptionD,
-                option_e: this.qOptionE,
-                correct_option: Number(this.qCorrectOption),
-            };
         },
 
         get questionsList() {
@@ -78,45 +52,9 @@ export default function quizEditor(config) {
             await this.list.refresh();
         },
 
-        openAdd() {
-            this.editingId = null;
-            this.questionTitle = 'Sual Əlavə Et';
-            this.resetForm();
-            this.showQuestion = true;
-        },
-
-        openEdit(btn) {
-            const q = JSON.parse(btn.dataset.question || '{}');
-            this.editingId = Number(btn.dataset.questionId);
-            this.questionTitle = 'Sualı Düzləndir';
-            this.qText = q.text || '';
-            this.qOptionA = q.option_a || '';
-            this.qOptionB = q.option_b || '';
-            this.qOptionC = q.option_c || '';
-            this.qOptionD = q.option_d || '';
-            this.qOptionE = q.option_e || '';
-            this.qCorrectOption = String(q.correct_option ?? 0);
-            this.showQuestion = true;
-        },
-
-        resetForm() {
-            this.qText = '';
-            this.qOptionA = '';
-            this.qOptionB = '';
-            this.qOptionC = '';
-            this.qOptionD = '';
-            this.qOptionE = '';
-            this.qCorrectOption = '0';
-        },
-
-        async saveQuestion() {
-            const ok = this.editingId
-                ? await this.updater.update(this.editingId)
-                : await this.adder.add();
-            if (!ok) return;
-            this.showQuestion = false;
-            this.resetForm();
-            await this.refresh();
+        openBank() {
+            this.bankQuestionId = '';
+            this.showBank = true;
         },
 
         async addFromBank() {
@@ -124,11 +62,6 @@ export default function quizEditor(config) {
             if (!ok) return;
             this.showBank = false;
             await this.refresh();
-        },
-
-        openBank() {
-            this.bankQuestionId = '';
-            this.showBank = true;
         },
 
         async move(id, direction) {
@@ -149,7 +82,6 @@ export default function quizEditor(config) {
             const id = btn.dataset.questionId;
             if (action === 'move') this.move(id, btn.dataset.direction);
             else if (action === 'remove') this.remove(id);
-            else if (action === 'edit') this.openEdit(btn);
         },
     };
 }

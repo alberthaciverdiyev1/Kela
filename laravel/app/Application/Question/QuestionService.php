@@ -36,6 +36,7 @@ class QuestionService
             'option_d' => $question->option_d,
             'option_e' => $question->option_e,
             'correct_option' => (int) $question->correct_option,
+            'explanation' => $question->explanation,
         ];
     }
 
@@ -43,16 +44,7 @@ class QuestionService
     {
         $this->validate($data);
 
-        return $this->questions->create($teacherId, [
-            'folder_id' => $data['folder_id'] ?? null,
-            'text' => trim($data['text']),
-            'option_a' => $data['option_a'] ?? null,
-            'option_b' => $data['option_b'] ?? null,
-            'option_c' => $data['option_c'] ?? null,
-            'option_d' => $data['option_d'] ?? null,
-            'option_e' => $data['option_e'] ?? null,
-            'correct_option' => (int) ($data['correct_option'] ?? 0),
-        ]);
+        return $this->questions->create($teacherId, $this->payload($data, create: true));
     }
 
     public function update(int $id, array $data, int $actingUserId): Question
@@ -60,16 +52,7 @@ class QuestionService
         $question = $this->assertOwned($id, $actingUserId);
         $this->validate($data);
 
-        return $this->questions->update($question, [
-            'folder_id' => $data['folder_id'] ?? $question->folder_id,
-            'text' => trim($data['text']),
-            'option_a' => $data['option_a'] ?? $question->option_a,
-            'option_b' => $data['option_b'] ?? $question->option_b,
-            'option_c' => $data['option_c'] ?? $question->option_c,
-            'option_d' => $data['option_d'] ?? $question->option_d,
-            'option_e' => $data['option_e'] ?? $question->option_e,
-            'correct_option' => (int) ($data['correct_option'] ?? $question->correct_option),
-        ]);
+        return $this->questions->update($question, $this->payload($data, $question));
     }
 
     public function delete(int $id, int $actingUserId): void
@@ -96,6 +79,7 @@ class QuestionService
                 'text' => $q->text,
                 'options' => $q->options(),
                 'correct_option' => $q->correct_option,
+                'explanation' => $q->explanation,
                 'used_in_quizzes' => (int) $q->quizzes_count,
                 'created_at' => $q->created_at?->toDateTimeString(),
             ])
@@ -123,10 +107,55 @@ class QuestionService
         return $question;
     }
 
+    /**
+     * DB-yə yazılacaq təmiz sahə dəstini qurur.
+     * $question verilərsə (update) qarışıq dəyərlər mövcud dəyərdən alınır.
+     */
+    protected function payload(array $data, ?Question $question = null, bool $create = false): array
+    {
+        $fallback = fn (string $key, $default) => $question?->{$key} ?? $default;
+
+        return [
+            'folder_id' => $create
+                ? ($data['folder_id'] ?? null)
+                : ($data['folder_id'] ?? $question?->folder_id),
+            'text' => $this->sanitizeHtml((string) ($data['text'] ?? $fallback('text', ''))),
+            'option_a' => $data['option_a'] ?? $fallback('option_a', null),
+            'option_b' => $data['option_b'] ?? $fallback('option_b', null),
+            'option_c' => $data['option_c'] ?? $fallback('option_c', null),
+            'option_d' => $data['option_d'] ?? $fallback('option_d', null),
+            'option_e' => $data['option_e'] ?? $fallback('option_e', null),
+            'correct_option' => (int) ($data['correct_option'] ?? $fallback('correct_option', 0)),
+            'explanation' => $this->nullable($data['explanation'] ?? $fallback('explanation', null)),
+        ];
+    }
+
+    /**
+     * Rich text məzmununu təhlükəsiz formatlama HTML-ə daraldır.
+     * İcazəli teqlər qalır, bütün atributlar silinir (onclick, onerror və s. qarşısı).
+     */
+    protected function sanitizeHtml(string $html): string
+    {
+        $allowed = '<p><br><strong><b><em><i><u><s><strike><ol><ul><li><h1><h2><h3><h4><h5><h6><blockquote><sub><sup><code><pre><span><div>';
+        $html = strip_tags($html, $allowed);
+        // Bütün atributları təmizlə: <strong class="x" onclick="..."> → <strong>
+        $html = preg_replace('/<(\w+)\s[^>]*>/', '<$1>', $html);
+
+        return trim($html);
+    }
+
+    protected function nullable(mixed $value): ?string
+    {
+        $value = trim((string) $value);
+
+        return $value === '' ? null : $value;
+    }
+
     protected function validate(array $data): void
     {
-        $text = trim($data['text'] ?? '');
-        if ($text === '') {
+        // Rich text məzmun ola bilər — düz mətnə çevirib boş olub-olmadığını yoxlayırıq.
+        $plain = trim(strip_tags($data['text'] ?? ''));
+        if ($plain === '') {
             throw new \InvalidArgumentException('Sual mətni boş ola bilməz.');
         }
 

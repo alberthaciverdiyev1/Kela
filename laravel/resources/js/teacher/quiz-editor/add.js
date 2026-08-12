@@ -1,27 +1,12 @@
 /**
- * ADD — Quiz-ə sual əlavə et.
+ * ADD — Quiz-ə bankdan sual əlavə et.
  *
- * Yeni sual: POST /api/v1/questions (sual bankına), sonra
- * POST /api/v1/quizzes/{id}/questions (quizə bağla).
- * Bankdan: POST /api/v1/quizzes/{id}/questions.
+ * POST /api/v1/quizzes/{id}/questions  (question_id)
+ *
+ * Sual yaratma Sual Bankı modulundadır (teacher/question) — burada yalnız
+ * mövcud bank sualını quizə bağlamaq var.
  */
-export default function createQuestionAdder({ api, getPayload }) {
-    async function add() {
-        const payload = getPayload();
-        if (!payload.text.trim() || !payload.option_a || !payload.option_b) {
-            window.alert('Sual mətni və ən azı A, B seçimləri tələb olunur.');
-            return false;
-        }
-        try {
-            const created = await KelaApi('POST', '/api/v1/questions', payload);
-            await KelaApi('POST', `${api}/questions`, { question_id: created.data.id });
-            return true;
-        } catch (err) {
-            window.alert(err.message);
-            return false;
-        }
-    }
-
+export default function createQuestionAdder({ api }) {
     async function addFromBank(questionId) {
         if (!questionId) {
             window.alert('Sual seçin.');
@@ -36,5 +21,5 @@ export default function createQuestionAdder({ api, getPayload }) {
         }
     }
 
-    return { add, addFromBank };
+    return { addFromBank };
 }

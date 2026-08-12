@@ -42,7 +42,23 @@ export default function questionBank(config) {
         moveTargetId: null,   // daşınacaq qovluq (folder move) üçün
         moveQuestionId: null, // daşınacaq sual (question move) üçün
 
-        // ── Form sahələri ($refs ilə DOM-dan) ──────────────────────────────
+        /**
+         * Sual formu — reaktiv x-model obyekti. Modullar bu obyekti alır;
+         * həm saxla zamanı payload qurulur, həm də canlı önizləmə buradan oxunur.
+         */
+        qForm: {
+            text: '',
+            option_a: '',
+            option_b: '',
+            option_c: '',
+            option_d: '',
+            option_e: '',
+            correct_option: 0,
+            explanation: '',
+        },
+
+        // ── Form sahələri ──────────────────────────────────────────────────
+        // Qovluq dialoqları $refs ilə DOM-dan oxunur.
         getFolderFields() {
             return {
                 folderName: this.$refs.folderNameInput,
@@ -50,16 +66,69 @@ export default function questionBank(config) {
             };
         },
 
+        // Sual formu reaktiv qForm-dur (x-model) — modullar onu alır.
         getQuestionFields() {
-            return {
-                qText: this.$refs.qText,
-                qOptionA: this.$refs.qOptionA,
-                qOptionB: this.$refs.qOptionB,
-                qOptionC: this.$refs.qOptionC,
-                qOptionD: this.$refs.qOptionD,
-                qOptionE: this.$refs.qOptionE,
-                qCorrectOption: this.$refs.qCorrectOption,
-            };
+            return this.qForm;
+        },
+
+        // ── Rich text editörü (contenteditable + toolbar) ──────────────────
+        init() {
+            this.$nextTick(() => this.bindRichEditor());
+        },
+
+        /**
+         * bindRichEditor() — contenteditable sual sahəsinə input dinləyicisini bağlar.
+         * Dəyişikliklər qForm.text-ə yazılır → canlı önizləmə avtomatik yenilənir.
+         */
+        bindRichEditor() {
+            const el = this.$refs?.qFormText;
+            if (!el || el.__kelaRichBound) return;
+            el.__kelaRichBound = true;
+            el.addEventListener('input', () => {
+                this.qForm.text = el.innerHTML;
+            });
+        },
+
+        /**
+         * setEditorContent() — qForm.text dəyərini editör DOM-a yazır.
+         * Dialog açıldıqda form təmizlənir/doldurulur; DOM da sinxron edilməlidir.
+         */
+        setEditorContent() {
+            const el = this.$refs?.qFormText;
+            if (el && el.innerHTML !== this.qForm.text) {
+                el.innerHTML = this.qForm.text;
+            }
+        },
+
+        /**
+         * execRich(cmd, value) — toolbar düymələri üçün dokument komandası.
+         * Sual sahəsində formatlama tətbiq edir, sonra qForm.text-i yeniləyir.
+         */
+        execRich(cmd, value = null) {
+            const el = this.$refs?.qFormText;
+            if (!el) return;
+            el.focus();
+            document.execCommand(cmd, false, value);
+            el.dispatchEvent(new Event('input'));
+        },
+
+        // ── Canlı önizləmə ─────────────────────────────────────────────────
+        previewOptions() {
+            const f = this.qForm;
+            const keys = ['option_a', 'option_b', 'option_c', 'option_d', 'option_e'];
+            const correct = Number(f.correct_option);
+            const options = [];
+            for (let i = 0; i < 5; i++) {
+                const value = String(f[keys[i]] ?? '').trim();
+                if (value) {
+                    options.push({
+                        letter: String.fromCharCode(65 + i),
+                        text: value,
+                        isCorrect: i === correct,
+                    });
+                }
+            }
+            return options;
         },
 
         /**
@@ -125,7 +194,11 @@ export default function questionBank(config) {
             this.editingQuestionId = null;
             this.questionTitle = 'Yeni Sual';
             this.showQuestion = true;
-            this.$nextTick(() => adder.openQuestion(this.getQuestionFields()));
+            adder.openQuestion(this.getQuestionFields());
+            this.$nextTick(() => {
+                this.setEditorContent();
+                this.$refs?.qFormText?.focus();
+            });
         },
 
         openQuestionEdit(btn) {
@@ -133,14 +206,18 @@ export default function questionBank(config) {
             this.editingQuestionId = Number(btn.dataset.questionId);
             this.questionTitle = 'Sualı Düzləndir';
             this.showQuestion = true;
-            this.$nextTick(() => editor.openQuestionEdit(this.getQuestionFields(), q));
+            editor.openQuestionEdit(this.getQuestionFields(), q);
+            this.$nextTick(() => {
+                this.setEditorContent();
+                this.$refs?.qFormText?.focus();
+            });
         },
 
         async saveQuestion() {
-            const fields = this.getQuestionFields();
+            const form = this.getQuestionFields();
             const ok = this.editingQuestionId
-                ? await editor.updateQuestion(fields, this.editingQuestionId)
-                : await adder.addQuestion(fields, this.folderId);
+                ? await editor.updateQuestion(form, this.editingQuestionId)
+                : await adder.addQuestion(form, this.folderId);
             if (!ok) return;
             this.showQuestion = false;
             await this.refresh();

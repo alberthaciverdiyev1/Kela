@@ -32,13 +32,14 @@ class QuestionController
     public function store(Request $request): JsonResponse
     {
         $data = $request->validate([
-            'text' => ['required', 'string'],
+            'text' => ['required', 'string', $this->nonEmptyRichText()],
             'option_a' => ['required', 'string'],
             'option_b' => ['required', 'string'],
             'option_c' => ['nullable', 'string'],
             'option_d' => ['nullable', 'string'],
             'option_e' => ['nullable', 'string'],
             'correct_option' => ['required', 'integer', 'min:0', 'max:4'],
+            'explanation' => ['nullable', 'string'],
             'folder_id' => ['nullable', 'integer'],
         ]);
 
@@ -63,13 +64,14 @@ class QuestionController
     public function update(Request $request, int $question): QuestionResource
     {
         $data = $request->validate([
-            'text' => ['required', 'string'],
+            'text' => ['required', 'string', $this->nonEmptyRichText()],
             'option_a' => ['required', 'string'],
             'option_b' => ['required', 'string'],
             'option_c' => ['nullable', 'string'],
             'option_d' => ['nullable', 'string'],
             'option_e' => ['nullable', 'string'],
             'correct_option' => ['required', 'integer', 'min:0', 'max:4'],
+            'explanation' => ['nullable', 'string'],
             'folder_id' => ['nullable', 'integer'],
         ]);
 
@@ -88,6 +90,19 @@ class QuestionController
         $this->questions->delete($question, (int) $request->user()->id);
 
         return response()->json(['message' => 'Sual silindi.']);
+    }
+
+    /**
+     * Rich text mətnin "həqiqətən boş" olub-olmadığını yoxlayan validasiya kuralı.
+     * Yalnız format teqlərindən (p, br və s.) ibarət mətn boş sayılır → 422.
+     */
+    private function nonEmptyRichText(): \Closure
+    {
+        return function (string $attribute, $value, $fail): void {
+            if (trim(strip_tags((string) $value)) === '') {
+                $fail('Sual mətni boş ola bilməz.');
+            }
+        };
     }
 
     private function authorizeAccess(?Question $question): void

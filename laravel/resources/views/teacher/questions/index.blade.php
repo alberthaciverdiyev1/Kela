@@ -92,44 +92,111 @@
         </div>
     </div>
 
-    {{-- Sual əlavə et / düzləndir dialog --}}
+    {{-- Sual əlavə et / düzləndir dialog (canlı önizləmə ilə) --}}
     <div x-show="showQuestion" x-transition.opacity class="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4">
-        <div class="max-h-[90vh] w-full max-w-2xl overflow-y-auto rounded-xl border border-base-300 bg-base-100 p-6 shadow-xl">
-            <h3 x-text="questionTitle" class="mb-4 text-lg font-semibold text-base-content">Yeni Sual</h3>
-            <div class="grid gap-4">
-                <x-teacher.field label="Sual" :required="true">
-                    <input x-ref="qText" type="text" placeholder="Sual mətni" class="input input-bordered w-full text-sm" />
-                </x-teacher.field>
+        <div class="max-h-[90vh] w-full max-w-3xl overflow-y-auto rounded-xl border border-base-300 bg-base-100 p-6 shadow-xl">
+            <div class="flex items-center justify-between gap-4 border-b border-base-300 pb-3">
+                <h3 x-text="questionTitle" class="text-lg font-semibold text-base-content">Yeni Sual</h3>
+                <button type="button" class="rounded-lg p-1 text-base-content/50 hover:bg-base-200 hover:text-base-content" @click="showQuestion = false" title="Bağla">
+                    <x-icon name="heroicon-o-x-mark" class="size-5" />
+                </button>
+            </div>
 
-                <div class="grid gap-4 sm:grid-cols-2">
-                    <x-teacher.field label="A" :required="true">
-                        <input x-ref="qOptionA" type="text" placeholder="Seçim A" class="input input-bordered w-full text-sm" />
+            <div class="mt-4 grid gap-6 lg:grid-cols-5">
+                {{-- Form (sol) --}}
+                <div class="space-y-4 lg:col-span-3">
+                    <x-teacher.field label="Sual" :required="true">
+                        <div class="overflow-hidden rounded-lg border border-base-300 bg-base-100 focus-within:border-primary">
+                            {{-- Rich text toolbar --}}
+                            <div class="flex flex-wrap items-center gap-0.5 border-b border-base-300 bg-base-200/40 px-1.5 py-1">
+                                <button type="button" @click="execRich('bold')" title="Qalın" class="rounded px-2 py-1 text-sm font-bold text-base-content/70 hover:bg-base-300 hover:text-base-content">B</button>
+                                <button type="button" @click="execRich('italic')" title="İtalik" class="rounded px-2 py-1 text-sm italic text-base-content/70 hover:bg-base-300 hover:text-base-content">I</button>
+                                <button type="button" @click="execRich('underline')" title="Altı xətt" class="rounded px-2 py-1 text-sm underline text-base-content/70 hover:bg-base-300 hover:text-base-content">U</button>
+                                <button type="button" @click="execRich('strikeThrough')" title="Üstündən xətt" class="rounded px-2 py-1 text-sm line-through text-base-content/70 hover:bg-base-300 hover:text-base-content">S</button>
+                                <span class="mx-1 h-4 w-px bg-base-300"></span>
+                                <button type="button" @click="execRich('insertUnorderedList')" title="Liste" class="rounded px-2 py-1 text-sm text-base-content/70 hover:bg-base-300 hover:text-base-content">• Liste</button>
+                                <button type="button" @click="execRich('insertOrderedList')" title="Sıralı liste" class="rounded px-2 py-1 text-sm text-base-content/70 hover:bg-base-300 hover:text-base-content">1. Liste</button>
+                            </div>
+                            <div
+                                x-ref="qFormText"
+                                contenteditable="true"
+                                data-placeholder="Sual mətnini yazın..."
+                                class="rich-editor-input min-h-[120px] p-3 text-sm leading-relaxed text-base-content focus:outline-none"
+                            ></div>
+                        </div>
+                        <p class="mt-1 text-xs text-base-content/40">Mətni formatlaya bilərsiniz — qalın, italik, altı xətt, listelər.</p>
                     </x-teacher.field>
-                    <x-teacher.field label="B" :required="true">
-                        <input x-ref="qOptionB" type="text" placeholder="Seçim B" class="input input-bordered w-full text-sm" />
-                    </x-teacher.field>
-                    <x-teacher.field label="C">
-                        <input x-ref="qOptionC" type="text" placeholder="Seçim C" class="input input-bordered w-full text-sm" />
-                    </x-teacher.field>
-                    <x-teacher.field label="D">
-                        <input x-ref="qOptionD" type="text" placeholder="Seçim D" class="input input-bordered w-full text-sm" />
-                    </x-teacher.field>
-                    <x-teacher.field label="E">
-                        <input x-ref="qOptionE" type="text" placeholder="Seçim E" class="input input-bordered w-full text-sm" />
-                    </x-teacher.field>
-                    <x-teacher.field label="Doğru cavab">
-                        <select x-ref="qCorrectOption" class="select select-bordered w-full text-sm">
-                            @foreach ([0 => 'A', 1 => 'B', 2 => 'C', 3 => 'D', 4 => 'E'] as $value => $letter)
-                                <option value="{{ $value }}">{{ $letter }}</option>
+
+                    <div>
+                        <div class="mb-1 flex items-center justify-between">
+                            <label class="label py-0 font-medium text-base-content/70">Seçimlər</label>
+                            <span class="text-xs text-base-content/40">Doğru cavabı işarələyin</span>
+                        </div>
+                        <div class="space-y-2">
+                            @foreach ([['A', 'option_a', 0], ['B', 'option_b', 1], ['C', 'option_c', 2], ['D', 'option_d', 3], ['E', 'option_e', 4]] as [$letter, $field, $index])
+                                <div class="flex items-center gap-2">
+                                    <input
+                                        type="radio"
+                                        name="q_correct"
+                                        value="{{ $index }}"
+                                        x-model="qForm.correct_option"
+                                        class="radio radio-primary radio-sm"
+                                        :disabled="qForm.{{ $field }}.trim() === ''"
+                                        title="Doğru cavab kimi işarələ"
+                                    />
+                                    <span class="w-4 shrink-0 font-bold text-base-content/60">{{ $letter }}.</span>
+                                    <input
+                                        type="text"
+                                        placeholder="Seçim {{ $letter }}"
+                                        x-model="qForm.{{ $field }}"
+                                        class="input input-bordered w-full text-sm"
+                                    />
+                                </div>
                             @endforeach
-                        </select>
+                        </div>
+                    </div>
+
+                    <x-teacher.field label="İzah (isteğe bağlı)" name="explanation">
+                        <textarea x-model="qForm.explanation" rows="2" placeholder="Cavabı şərh edin — tələbələrə kömək edər..." class="textarea textarea-bordered w-full text-sm"></textarea>
                     </x-teacher.field>
                 </div>
 
-                <div class="flex items-center justify-end gap-2 border-t border-base-300 pt-4">
-                    <button type="button" class="btn btn-sm btn-ghost" @click="showQuestion = false">Ləğv et</button>
-                    <button type="button" class="btn btn-sm btn-primary" @click="saveQuestion()">Saxla</button>
+                {{-- Canlı önizləmə (sağ) --}}
+                <div class="lg:col-span-2">
+                    <div class="rounded-xl border border-base-300 bg-base-200/40 p-4">
+                        <p class="mb-3 text-xs font-semibold uppercase tracking-wide text-base-content/40">Önizləmə</p>
+                        <div class="rounded-lg border border-base-300 bg-base-100 p-4 shadow-sm">
+                            <div class="mb-2 min-h-[1.5rem] text-sm font-semibold leading-snug text-base-content">
+                                <div class="rich-preview" x-html="qForm.text"></div>
+                                <p x-show="!qForm.text" class="text-base-content/40">Sual mətni...</p>
+                            </div>
+                            <div class="space-y-1">
+                                <template x-for="(opt, i) in previewOptions()" :key="i">
+                                    <div
+                                        class="flex items-center gap-2 rounded px-2 py-1 text-sm"
+                                        :class="opt.isCorrect ? 'bg-green-50 text-green-800 ring-1 ring-green-200' : 'text-base-content/80'"
+                                    >
+                                        <span
+                                            class="inline-flex size-5 shrink-0 items-center justify-center rounded-full text-[10px] font-bold"
+                                            :class="opt.isCorrect ? 'bg-green-600 text-white' : 'bg-base-200 text-base-content/60'"
+                                            x-text="opt.letter"
+                                        ></span>
+                                        <span x-text="opt.text"></span>
+                                    </div>
+                                </template>
+                                <p x-show="previewOptions().length === 0" class="py-1 text-xs text-base-content/40">Seçim əlavə edin...</p>
+                            </div>
+                            <div x-show="qForm.explanation" class="mt-3 rounded bg-amber-50 px-2 py-1.5 text-xs text-amber-800">
+                                <span class="font-semibold">İzah:</span> <span x-text="qForm.explanation"></span>
+                            </div>
+                        </div>
+                    </div>
                 </div>
+            </div>
+
+            <div class="mt-5 flex items-center justify-end gap-2 border-t border-base-300 pt-4">
+                <button type="button" class="btn btn-sm btn-ghost" @click="showQuestion = false">Ləğv et</button>
+                <button type="button" class="btn btn-sm btn-primary" @click="saveQuestion()">Saxla</button>
             </div>
         </div>
     </div>

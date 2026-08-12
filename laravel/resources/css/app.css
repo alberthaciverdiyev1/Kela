@@ -78,3 +78,20 @@
     --font-sans: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
         'Segoe UI Symbol', 'Noto Color Emoji';
 }
+
+/* Rich text editörü və önizləməsi (sual mətni) */
+.rich-editor-input:empty::before {
+    content: attr(data-placeholder);
+    color: var(--color-base-content);
+    opacity: 0.4;
+    pointer-events: none;
+}
+.rich-preview p { margin: 0 0 0.25rem; }
+.rich-preview ul,
+.rich-preview ol { padding-left: 1.25rem; margin: 0.25rem 0; }
+.rich-preview h1,
+.rich-preview h2,
+.rich-preview h3,
+.rich-preview h4,
+.rich-preview h5,
+.rich-preview h6 { font-weight: 600; margin: 0.25rem 0; }

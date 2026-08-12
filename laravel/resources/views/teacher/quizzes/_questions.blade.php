@@ -2,7 +2,7 @@
     <x-teacher.empty-state
         icon="clipboard-document-list"
         title="Quizdə hələ sual yoxdur"
-        description="Yuxarıdakı 'Sual Əlavə Et' düyməsi ilə yeni sual yaradın."
+        description="Sual yaratmaq üçün Sual Bankına gedin, sonra buradan 'Bankdan Seç' ilə əlavə edin."
     />
 @else
     <x-teacher.card :padding="false">
@@ -11,19 +11,10 @@
                 @php
                     $isFirst = $q['position'] <= 1;
                     $isLast = $q['position'] >= count($questions);
-                    $qJson = [
-                        'text' => $q['text'],
-                        'option_a' => $q['options']['A'] ?? '',
-                        'option_b' => $q['options']['B'] ?? '',
-                        'option_c' => $q['options']['C'] ?? '',
-                        'option_d' => $q['options']['D'] ?? '',
-                        'option_e' => $q['options']['E'] ?? '',
-                        'correct_option' => $q['correct_option'],
-                    ];
                 @endphp
                 <tr>
                     <td class="font-medium text-base-content/50">{{ $q['position'] }}</td>
-                    <td class="font-medium text-base-content">{{ $q['text'] }}</td>
+                    <td class="font-medium text-base-content rich-preview">{!! $q['text'] !!}</td>
                     <td>
                         <div class="flex flex-wrap gap-1">
                             @foreach ($q['options'] as $letter => $option)
@@ -60,15 +51,7 @@
                             >
                                 <x-icon name="heroicon-o-chevron-down" class="size-4" />
                             </button>
-                            <button
-                                data-question-action="edit"
-                                data-question-id="{{ $q['question_id'] }}"
-                                data-question='@json($qJson, JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_TAG)'
-                                title="Sualı düzləndir"
-                                class="rounded-lg p-1.5 text-base-content/50 hover:bg-amber-50 hover:text-amber-600"
-                            >
-                                <x-icon name="heroicon-o-pencil-square" class="size-4" />
-                            </button>
+                            {{-- Sualı düzləndirmək Sual Bankı modulundadır (teacher/questions) — burada yoxdur. --}}
                             <button
                                 data-question-action="remove"
                                 data-question-id="{{ $q['question_id'] }}"

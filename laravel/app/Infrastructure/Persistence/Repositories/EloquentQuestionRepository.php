@@ -20,6 +20,7 @@ class EloquentQuestionRepository implements QuestionRepository
             'option_d' => $data['option_d'] ?? null,
             'option_e' => $data['option_e'] ?? null,
             'correct_option' => (int) ($data['correct_option'] ?? 0),
+            'explanation' => $data['explanation'] ?? null,
         ]);
     }
 
@@ -34,6 +35,7 @@ class EloquentQuestionRepository implements QuestionRepository
             'option_d' => $data['option_d'] ?? $question->option_d,
             'option_e' => $data['option_e'] ?? $question->option_e,
             'correct_option' => (int) ($data['correct_option'] ?? $question->correct_option),
+            'explanation' => $data['explanation'] ?? $question->explanation,
         ]);
 
         return $question;

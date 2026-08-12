@@ -13,9 +13,9 @@
     id="quiz-editor"
     data-content-id="{{ $contentId }}"
     x-data="quizEditor({{ \Illuminate\Support\Js::from($editorConfig) }})"
-    @keydown.escape.window="showQuestion = false; showBank = false"
+    @keydown.escape.window="showBank = false"
 >
-    <x-teacher.heading subtitle="Quiz redaktoru — sual əlavə et, düzləndir, sırala">
+    <x-teacher.heading subtitle="Quiz redaktoru — bankdan sual seç, sırala, çıxar">
         {{ $quiz['title'] ?? 'Quiz Redaktoru' }}
         <x-slot:actions>
             <x-teacher.button href="{{ route('teacher.quizzes.index') }}" variant="ghost" icon="arrow-left">Geri</x-teacher.button>
@@ -62,59 +62,19 @@
                 <x-teacher.badge color="blue" x-text="questionCount">0</x-teacher.badge>
             </h3>
             <div class="flex flex-wrap items-center gap-2">
-                <button id="add-question-btn" type="button" class="btn btn-sm btn-primary" @click="openAdd()">
-                    <x-icon name="heroicon-o-plus-circle" class="size-4" /> Sual Əlavə Et
-                </button>
-                <button id="bank-btn" type="button" class="btn btn-sm btn-ghost border border-base-300" @click="openBank()">
+                {{-- Sual yaratma burada DEYİL — Sual Bankı modulundadır (teacher/questions).
+                     Burada yalnız bankdan seçib quizə bağlamaq var. --}}
+                <button id="bank-btn" type="button" class="btn btn-sm btn-primary" @click="openBank()">
                     <x-icon name="heroicon-o-banknotes" class="size-4" /> Bankdan Seç
                 </button>
+                <a href="{{ route('teacher.questions.index') }}" class="btn btn-sm btn-ghost border border-base-300">
+                    <x-icon name="heroicon-o-plus-circle" class="size-4" /> Sual Bankına Get
+                </a>
             </div>
         </div>
 
         <div id="questions-list" x-ref="questionsList" @click="onListClick($event)">
             @include('teacher.quizzes._questions', ['contentId' => $contentId, 'questions' => $questions])
-        </div>
-    </div>
-
-    {{-- Question dialog (add / edit) --}}
-    <div x-show="showQuestion" x-transition.opacity class="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4">
-        <div class="max-h-[90vh] w-full max-w-2xl overflow-y-auto rounded-xl border border-base-300 bg-base-100 p-6 shadow-xl">
-            <h3 x-text="questionTitle" class="mb-4 text-lg font-semibold text-base-content">Sual Əlavə Et</h3>
-            <div class="grid gap-4">
-                <x-teacher.field label="Sual" name="q_text" :required="true">
-                    <x-teacher.input name="q_text" x-model="qText" />
-                </x-teacher.field>
-
-                <div class="grid gap-4 sm:grid-cols-2">
-                    <x-teacher.field label="A" name="q_option_a" :required="true">
-                        <x-teacher.input name="q_option_a" x-model="qOptionA" />
-                    </x-teacher.field>
-                    <x-teacher.field label="B" name="q_option_b" :required="true">
-                        <x-teacher.input name="q_option_b" x-model="qOptionB" />
-                    </x-teacher.field>
-                    <x-teacher.field label="C" name="q_option_c">
-                        <x-teacher.input name="q_option_c" x-model="qOptionC" />
-                    </x-teacher.field>
-                    <x-teacher.field label="D" name="q_option_d">
-                        <x-teacher.input name="q_option_d" x-model="qOptionD" />
-                    </x-teacher.field>
-                    <x-teacher.field label="E" name="q_option_e">
-                        <x-teacher.input name="q_option_e" x-model="qOptionE" />
-                    </x-teacher.field>
-                    <x-teacher.field label="Doğru cavab" name="q_correct_option">
-                        <select name="q_correct_option" x-model="qCorrectOption" class="select select-bordered w-full text-sm">
-                            @foreach ([0 => 'A', 1 => 'B', 2 => 'C', 3 => 'D', 4 => 'E'] as $value => $letter)
-                                <option value="{{ $value }}">{{ $letter }}</option>
-                            @endforeach
-                        </select>
-                    </x-teacher.field>
-                </div>
-
-                <div class="flex items-center justify-end gap-2 border-t border-base-300 pt-4">
-                    <button type="button" class="btn btn-sm btn-ghost" @click="showQuestion = false">Ləğv et</button>
-                    <button type="button" class="btn btn-sm btn-primary" @click="saveQuestion()">Saxla</button>
-                </div>
-            </div>
         </div>
     </div>
 

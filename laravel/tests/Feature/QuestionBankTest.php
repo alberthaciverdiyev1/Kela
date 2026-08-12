@@ -64,7 +64,104 @@ class QuestionBankTest extends TestCase
             ->assertOk()
             ->assertSee('Sual Bankı')
             ->assertSee('Yeni Qovluq')
-            ->assertSee('Yeni Sual');
+            ->assertSee('Yeni Sual')
+            // Sual forması: rich text editörü + önizləmə + izah
+            ->assertSee('Önizləmə')
+            ->assertSee('İzah')
+            ->assertSee('contenteditable');
+    }
+
+    public function test_api_creates_question_with_explanation(): void
+    {
+        Sanctum::actingAs($this->teacher);
+
+        $response = $this->postJson('/api/v1/questions', [
+            'text' => 'Sürət vahidi?',
+            'option_a' => 'm/s',
+            'option_b' => 'km/saat',
+            'correct_option' => 0,
+            'explanation' => 'SI vahidi metr/saniyədir.',
+        ])->assertStatus(201)->json('data');
+
+        $this->assertEquals('SI vahidi metr/saniyədir.', $response['explanation']);
+    }
+
+    public function test_api_defaults_explanation_when_omitted(): void
+    {
+        Sanctum::actingAs($this->teacher);
+
+        $response = $this->postJson('/api/v1/questions', [
+            'text' => '2+2=?',
+            'option_a' => '3',
+            'option_b' => '4',
+            'correct_option' => 1,
+        ])->assertStatus(201)->json('data');
+
+        $this->assertNull($response['explanation']);
+    }
+
+    public function test_api_sanitizes_rich_text_question(): void
+    {
+        Sanctum::actingAs($this->teacher);
+
+        $response = $this->postJson('/api/v1/questions', [
+            'text' => '<script>alert("xss")</script><p><strong>Qalın</strong> sual <em>mətni</em></p>',
+            'option_a' => 'a',
+            'option_b' => 'b',
+            'correct_option' => 0,
+        ])->assertStatus(201)->json('data');
+
+        $this->assertStringNotContainsString('<script>', $response['text']);
+        $this->assertStringContainsString('<strong>Qalın</strong>', $response['text']);
+        $this->assertStringContainsString('<em>mətni</em>', $response['text']);
+    }
+
+    public function test_api_rejects_empty_rich_text_question(): void
+    {
+        Sanctum::actingAs($this->teacher);
+
+        // Yalnız boş/format teqləri olan mətn boş sayılır.
+        $this->postJson('/api/v1/questions', [
+            'text' => '<p><br></p>',
+            'option_a' => 'a',
+            'option_b' => 'b',
+            'correct_option' => 0,
+        ])->assertStatus(422);
+    }
+
+    public function test_api_updates_explanation(): void
+    {
+        Sanctum::actingAs($this->teacher);
+
+        $id = $this->makeQuestion($this->teacher->id);
+
+        $updated = $this->putJson("/api/v1/questions/{$id}", [
+            'text' => '<p>Dəyişdirilmiş sual</p>',
+            'option_a' => 'x',
+            'option_b' => 'y',
+            'correct_option' => 1,
+            'explanation' => 'Yeni izah',
+        ])->assertOk()->json('data');
+
+        $this->assertEquals('<p>Dəyişdirilmiş sual</p>', $updated['text']);
+        $this->assertEquals('Yeni izah', $updated['explanation']);
+    }
+
+    public function test_directory_dto_includes_explanation(): void
+    {
+        $this->questions()->create($this->teacher->id, [
+            'text' => 'Riyazi sual',
+            'option_a' => 'a',
+            'option_b' => 'b',
+            'correct_option' => 0,
+            'explanation' => 'Kök izah',
+        ]);
+
+        $dir = $this->folders()->directory($this->teacher->id);
+        $q = $dir['questions'][0];
+
+        $this->assertEquals('Riyazi sual', $q['text']);
+        $this->assertEquals('Kök izah', $q['explanation']);
     }
 
     public function test_folder_and_question_appear_in_directory(): void

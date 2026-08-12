@@ -23,9 +23,11 @@ class CitySeeder extends Seeder
         ];
 
         foreach ($cities as $names) {
-            City::firstOrCreate([
-                'name_translations' => $names,
-            ]);
+            // JSONB axtarış: massiv firstOrCreate-də where-ə verilə bilməz.
+            $city = City::where('name_translations->az', $names['az'])->first();
+            if (! $city) {
+                City::create(['name_translations' => $names]);
+            }
         }
     }
 }
