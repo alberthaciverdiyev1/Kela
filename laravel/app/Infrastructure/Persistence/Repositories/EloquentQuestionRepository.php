@@ -12,6 +12,7 @@ class EloquentQuestionRepository implements QuestionRepository
     {
         return Question::create([
             'teacher_id' => $teacherId,
+            'folder_id' => $data['folder_id'] ?? null,
             'text' => $data['text'],
             'option_a' => $data['option_a'] ?? null,
             'option_b' => $data['option_b'] ?? null,
@@ -25,6 +26,7 @@ class EloquentQuestionRepository implements QuestionRepository
     public function update(Question $question, array $data): Question
     {
         $question->update([
+            'folder_id' => $data['folder_id'] ?? $question->folder_id,
             'text' => $data['text'] ?? $question->text,
             'option_a' => $data['option_a'] ?? $question->option_a,
             'option_b' => $data['option_b'] ?? $question->option_b,
@@ -47,14 +49,23 @@ class EloquentQuestionRepository implements QuestionRepository
         return Question::find($id);
     }
 
-    public function listForTeacher(int $teacherId, ?string $search = null): Collection
+    public function listForTeacher(int $teacherId, ?string $search = null, int $folderId = 0): Collection
     {
         return Question::query()
             ->where('teacher_id', $teacherId)
+            ->when($folderId === 0, fn ($q) => $q->whereNull('folder_id'))
+            ->when($folderId > 0, fn ($q) => $q->where('folder_id', $folderId))
             ->when($search, fn ($q) => $q->where('text', 'ilike', "%{$search}%"))
             ->withCount('quizzes')
             ->orderBy('created_at', 'desc')
             ->get();
+    }
+
+    public function moveToFolder(Question $question, ?int $folderId): Question
+    {
+        $question->update(['folder_id' => $folderId]);
+
+        return $question;
     }
 
     public function usedInQuizzes(Question $question): int

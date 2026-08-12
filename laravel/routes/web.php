@@ -4,6 +4,7 @@ use App\Web\Controllers\AuthController;
 use App\Web\Controllers\DashboardController;
 use App\Web\Controllers\LessonMediaController;
 use App\Web\Controllers\Teacher\LessonController;
+use App\Web\Controllers\Teacher\QuestionController;
 use App\Web\Controllers\Teacher\QuizController;
 use App\Web\Controllers\Teacher\StudentController;
 use App\Web\Controllers\Teacher\WorkspaceController;
@@ -12,6 +13,8 @@ use Illuminate\Support\Facades\Route;
 // --- Auth ---
 Route::get('/auth/login', [AuthController::class, 'showLogin'])->name('auth.login');
 Route::post('/auth/login', [AuthController::class, 'login'])->name('auth.login.post');
+Route::get('/auth/register', [AuthController::class, 'showRegister'])->name('auth.register');
+Route::post('/auth/register', [AuthController::class, 'register'])->name('auth.register.post');
 Route::post('/auth/logout', [AuthController::class, 'logout'])->name('auth.logout')->middleware('auth');
 
 // Varsayılan giriş noktası teacher panelidir (server-rendered Blade).
@@ -30,6 +33,12 @@ Route::middleware(['auth', 'role:Admin,Teacher'])->group(function () {
         Route::get('/{student}/edit', [StudentController::class, 'edit'])->name('teacher.students.edit');
         Route::post('/{student}', [StudentController::class, 'update'])->name('teacher.students.update');
         Route::delete('/{student}', [StudentController::class, 'destroy'])->name('teacher.students.destroy');
+    });
+
+    // Sual Bankı (qovluqlu kataloq)
+    Route::prefix('teacher/questions')->group(function () {
+        Route::get('/', [QuestionController::class, 'index'])->name('teacher.questions.index');
+        Route::get('/table', [QuestionController::class, 'tableFragment'])->name('teacher.questions.table');
     });
 
     // İş Sahələri

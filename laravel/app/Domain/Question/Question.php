@@ -2,6 +2,7 @@
 
 namespace App\Domain\Question;
 
+use App\Domain\QuestionFolder\QuestionFolder;
 use App\Domain\User\User;
 use App\Domain\Quiz\Quiz;
 
@@ -16,6 +17,7 @@ class Question extends Model
 
     protected $fillable = [
         'teacher_id',
+        'folder_id',
         'text',
         'option_a',
         'option_b',
@@ -28,6 +30,12 @@ class Question extends Model
     public function teacher(): BelongsTo
     {
         return $this->belongsTo(User::class, 'teacher_id');
+    }
+
+    /** Sualın yerləşdiyi bank qovluğu (null → kök/sahəsiz). */
+    public function folder(): BelongsTo
+    {
+        return $this->belongsTo(QuestionFolder::class, 'folder_id');
     }
 
     public function quizzes(): BelongsToMany

@@ -44,6 +44,7 @@ class QuestionService
         $this->validate($data);
 
         return $this->questions->create($teacherId, [
+            'folder_id' => $data['folder_id'] ?? null,
             'text' => trim($data['text']),
             'option_a' => $data['option_a'] ?? null,
             'option_b' => $data['option_b'] ?? null,
@@ -60,6 +61,7 @@ class QuestionService
         $this->validate($data);
 
         return $this->questions->update($question, [
+            'folder_id' => $data['folder_id'] ?? $question->folder_id,
             'text' => trim($data['text']),
             'option_a' => $data['option_a'] ?? $question->option_a,
             'option_b' => $data['option_b'] ?? $question->option_b,
@@ -76,12 +78,21 @@ class QuestionService
         $this->questions->delete($question);
     }
 
-    /** Teacher-ın sualları: [id, text, options, correct_option, used_in_quizzes, created_at]. */
-    public function listForTeacher(int $teacherId, ?string $search = null): array
+    /** Sualı qovluğa daşıyır (null → kökə). */
+    public function moveToFolder(int $id, ?int $folderId, int $actingUserId): Question
     {
-        return $this->questions->listForTeacher($teacherId, $search)
+        $question = $this->assertOwned($id, $actingUserId);
+
+        return $this->questions->moveToFolder($question, $folderId);
+    }
+
+    /** Teacher-ın sualları: [id, text, options, correct_option, used_in_quizzes, created_at]. */
+    public function listForTeacher(int $teacherId, ?string $search = null, int $folderId = 0): array
+    {
+        return $this->questions->listForTeacher($teacherId, $search, $folderId)
             ->map(fn (Question $q) => [
                 'id' => $q->id,
+                'folder_id' => $q->folder_id,
                 'text' => $q->text,
                 'options' => $q->options(),
                 'correct_option' => $q->correct_option,

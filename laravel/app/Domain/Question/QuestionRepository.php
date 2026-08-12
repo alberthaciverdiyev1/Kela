@@ -17,7 +17,11 @@ interface QuestionRepository
 
     public function find(int $id): ?Question;
 
-    public function listForTeacher(int $teacherId, ?string $search = null): Collection;
+    /** Teacher-ın sualları. folderId null → yalnız kök (qovluqsuz), 0 → hamısı. */
+    public function listForTeacher(int $teacherId, ?string $search = null, int $folderId = 0): Collection;
+
+    /** Sualı qovluğa daşıyır (null → kökə). */
+    public function moveToFolder(Question $question, ?int $folderId): Question;
 
     /** Sualın istifadə edildiyi quiz sayı. */
     public function usedInQuizzes(Question $question): int;

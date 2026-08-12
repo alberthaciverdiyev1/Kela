@@ -4,6 +4,7 @@ use App\Api\Controllers\AuthController;
 use App\Api\Controllers\CityController;
 use App\Api\Controllers\LessonController;
 use App\Api\Controllers\QuestionController;
+use App\Api\Controllers\QuestionFolderController;
 use App\Api\Controllers\QuizController;
 use App\Api\Controllers\StudentController;
 use App\Api\Controllers\WorkspaceController;
@@ -48,6 +49,14 @@ Route::middleware(['auth:sanctum', 'role_api:Admin,Teacher'])->group(function ()
     Route::apiResource('quizzes', QuizController::class)->parameters(['quizzes' => 'contentId']);
     Route::apiResource('questions', QuestionController::class)->parameters(['questions' => 'question']);
     Route::apiResource('workspaces', WorkspaceController::class)->parameters(['workspaces' => 'workspace']);
+
+    // Sual bankı qovluqları (workspace node-larından müstəqil)
+    Route::get('/question-folders/directory', [QuestionFolderController::class, 'directory']);
+    Route::post('/question-folders', [QuestionFolderController::class, 'store']);
+    Route::post('/question-folders/{folderId}/rename', [QuestionFolderController::class, 'rename']);
+    Route::post('/question-folders/{folderId}/move', [QuestionFolderController::class, 'move']);
+    Route::delete('/question-folders/{folderId}', [QuestionFolderController::class, 'destroy']);
+    Route::post('/question-folders/move-question', [QuestionFolderController::class, 'moveQuestion']);
 
     // Quiz → sual əlaqələri
     Route::post('/quizzes/{contentId}/questions', [QuizController::class, 'addQuestion']);

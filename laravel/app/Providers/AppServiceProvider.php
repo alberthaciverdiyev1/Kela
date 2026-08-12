@@ -8,6 +8,7 @@ use App\Domain\Course\CourseRepository;
 use App\Domain\Lesson\LessonRepository;
 use App\Domain\Node\NodeRepository;
 use App\Domain\Question\QuestionRepository;
+use App\Domain\QuestionFolder\QuestionFolderRepository;
 use App\Domain\Quiz\QuizRepository;
 use App\Domain\Student\StudentRepository;
 use App\Domain\User\UserRepository;
@@ -16,6 +17,7 @@ use App\Infrastructure\Persistence\Repositories\EloquentCityRepository;
 use App\Infrastructure\Persistence\Repositories\EloquentContentRepository;
 use App\Infrastructure\Persistence\Repositories\EloquentLessonRepository;
 use App\Infrastructure\Persistence\Repositories\EloquentNodeRepository;
+use App\Infrastructure\Persistence\Repositories\EloquentQuestionFolderRepository;
 use App\Infrastructure\Persistence\Repositories\EloquentQuestionRepository;
 use App\Infrastructure\Persistence\Repositories\EloquentQuizRepository;
 use App\Infrastructure\Persistence\Repositories\EloquentStudentRepository;
@@ -42,6 +44,7 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(WorkspaceRepository::class, EloquentWorkspaceRepository::class);
         $this->app->bind(QuizRepository::class, EloquentQuizRepository::class);
         $this->app->bind(QuestionRepository::class, EloquentQuestionRepository::class);
+        $this->app->bind(QuestionFolderRepository::class, EloquentQuestionFolderRepository::class);
         // Course hələlik cədvəlsizdir; istifadə edilərsə ayrıca implementasiya tələb olunur.
         $this->app->bind(CourseRepository::class, fn () => throw new \LogicException(
             'Course cədvəli hələ mövcud deyil. EloquentCourseRepository əlavə olunmalıdır.'

@@ -29,6 +29,7 @@
         $nav = [];
         $nav[] = ['label' => 'Müəllim Paneli', 'url' => route('teacher.dashboard'), 'active' => $path === 'teacher/dashboard'];
         $nav[] = ['label' => 'Şagirdlər', 'url' => route('teacher.students.index'), 'active' => str_starts_with($path, 'teacher/students')];
+        $nav[] = ['label' => 'Sual Bankı', 'url' => route('teacher.questions.index'), 'active' => str_starts_with($path, 'teacher/questions')];
         $nav[] = ['label' => 'İş Sahələri', 'url' => route('teacher.workspaces.index'), 'active' => str_starts_with($path, 'teacher/workspaces')];
         $nav[] = ['label' => 'Dərslər', 'url' => route('teacher.lessons.index'), 'active' => str_starts_with($path, 'teacher/lessons')];
         $nav[] = ['label' => 'Quizlər', 'url' => route('teacher.quizzes.index'), 'active' => str_starts_with($path, 'teacher/quizzes')];
