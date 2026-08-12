@@ -3,6 +3,7 @@
 use App\Web\Controllers\AuthController;
 use App\Web\Controllers\DashboardController;
 use App\Web\Controllers\LessonMediaController;
+use App\Web\Controllers\Teacher\AttendanceController;
 use App\Web\Controllers\Teacher\LessonController;
 use App\Web\Controllers\Teacher\QuestionController;
 use App\Web\Controllers\Teacher\QuizController;
@@ -51,6 +52,9 @@ Route::middleware(['auth', 'role:Admin,Teacher'])->group(function () {
         Route::post('/{workspace}', [WorkspaceController::class, 'update'])->name('teacher.workspaces.update');
         Route::delete('/{workspace}', [WorkspaceController::class, 'destroy'])->name('teacher.workspaces.destroy');
     });
+
+    // Davam (yoklama)
+    Route::get('/teacher/attendance', [AttendanceController::class, 'index'])->name('teacher.attendance.index');
 
     // Dərslər
     Route::prefix('teacher/lessons')->group(function () {

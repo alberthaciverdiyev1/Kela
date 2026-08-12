@@ -1,5 +1,6 @@
 <?php
 
+use App\Api\Controllers\AttendanceController;
 use App\Api\Controllers\AuthController;
 use App\Api\Controllers\CityController;
 use App\Api\Controllers\LessonController;
@@ -97,5 +98,11 @@ Route::middleware(['auth:sanctum', 'role_api:Admin,Teacher'])->group(function ()
     Route::post('/workspace-folders/remove-content', [WorkspaceFolderController::class, 'removeContent']);
     Route::post('/workspaces/{workspace}/folders/{folderId}/remove', [WorkspaceFolderController::class, 'removeFolder']);
     Route::get('/workspaces/{workspace}/available-contents', [WorkspaceFolderController::class, 'availableContents']);
+
+    // İş sahəsi → davam (yoklama)
+    Route::get('/workspaces/{workspace}/attendance', [AttendanceController::class, 'show']);
+    Route::post('/workspaces/{workspace}/attendance', [AttendanceController::class, 'store']);
+    Route::get('/workspaces/{workspace}/attendance/month', [AttendanceController::class, 'month']);
+    Route::post('/workspaces/{workspace}/attendance/month', [AttendanceController::class, 'saveMonth']);
 
 });

@@ -19,6 +19,15 @@ class EloquentWorkspaceRepository implements WorkspaceRepository
             ->get();
     }
 
+    public function listForUser(int $actingUserId, bool $isAdmin): Collection
+    {
+        return Workspace::query()
+            ->when(! $isAdmin, fn (Builder $q): Builder => $q->where('teacher_id', $actingUserId))
+            ->withCount('students')
+            ->orderBy('name')
+            ->get();
+    }
+
     public function scopeForUser(Builder $query, int $actingUserId, bool $isAdmin): Builder
     {
         return $query

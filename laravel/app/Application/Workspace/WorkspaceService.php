@@ -47,6 +47,21 @@ class WorkspaceService
         return $this->workspaces->scopeForUser($query, $actingUserId, $isAdmin);
     }
 
+    /** Dropdown üçün istifadəçinin görə biləcəyi bütün workspacelər (admin → hamısı, müəllim → özü). */
+    public function listForUser(int $actingUserId): array
+    {
+        $isAdmin = User::find($actingUserId)?->isAdmin() ?? false;
+
+        return $this->workspaces->listForUser($actingUserId, $isAdmin)
+            ->map(fn (Workspace $w) => [
+                'id' => (int) $w->id,
+                'name' => $w->name,
+                'student_count' => (int) $w->students_count,
+            ])
+            ->values()
+            ->all();
+    }
+
     /** Admin cədvəli üçün axtarış + səhifələnmiş workspace siyahısı (array). */
     public function paginate(int $actingUserId, ?string $search = null, int $perPage = 15): LengthAwarePaginator
     {

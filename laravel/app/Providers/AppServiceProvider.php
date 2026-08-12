@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use App\Domain\Attendance\AttendanceRepository;
 use App\Domain\City\CityRepository;
 use App\Domain\Content\ContentRepository;
 use App\Domain\Lesson\LessonRepository;
@@ -14,6 +15,7 @@ use App\Domain\Student\StudentRepository;
 use App\Domain\User\UserRepository;
 use App\Domain\Workspace\WorkspaceRepository;
 use App\Domain\WorkspaceFolder\WorkspaceFolderRepository;
+use App\Infrastructure\Persistence\Repositories\EloquentAttendanceRepository;
 use App\Infrastructure\Persistence\Repositories\EloquentCityRepository;
 use App\Infrastructure\Persistence\Repositories\EloquentContentRepository;
 use App\Infrastructure\Persistence\Repositories\EloquentLessonFolderRepository;
@@ -46,6 +48,7 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(CityRepository::class, EloquentCityRepository::class);
         $this->app->bind(WorkspaceRepository::class, EloquentWorkspaceRepository::class);
         $this->app->bind(WorkspaceFolderRepository::class, EloquentWorkspaceFolderRepository::class);
+        $this->app->bind(AttendanceRepository::class, EloquentAttendanceRepository::class);
         $this->app->bind(QuizRepository::class, EloquentQuizRepository::class);
         $this->app->bind(QuestionRepository::class, EloquentQuestionRepository::class);
         $this->app->bind(QuestionFolderRepository::class, EloquentQuestionFolderRepository::class);

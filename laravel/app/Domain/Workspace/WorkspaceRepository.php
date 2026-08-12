@@ -14,6 +14,9 @@ interface WorkspaceRepository
     /** Teacher-in workspaceləri (tələbə sayı ilə). */
     public function listForTeacher(int $teacherId): Collection;
 
+    /** İstifadəçinin görə biləcəyi bütün workspacelər (admin → hamısı, müəllim → özü). */
+    public function listForUser(int $actingUserId, bool $isAdmin): Collection;
+
     /** Sorğunu verilən istifadəçinin görə biləcəyi workspacelərlə məhdudlaşdırır. */
     public function scopeForUser(Builder $query, int $actingUserId, bool $isAdmin): Builder;
 
