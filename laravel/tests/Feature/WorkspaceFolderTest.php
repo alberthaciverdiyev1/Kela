@@ -285,5 +285,15 @@ class WorkspaceFolderTest extends TestCase
         $this->assertStringContainsString('openContentAdd', $html);
         $this->assertStringContainsString('Kütüphanədə Quiz', $html);
         $this->assertStringContainsString('Kütüphanədə Dərs', $html);
+
+        // Toolbar-da artıq Yeni Quiz / Yeni Dərs butonu yoxdur
+        $this->assertStringNotContainsString('Yeni Quiz', $html);
+        $this->assertStringNotContainsString('Yeni Dərs', $html);
+
+        // Modal axtarış + tip filtri var
+        $this->assertStringContainsString('x-model="contentSearch"', $html);
+        $this->assertStringContainsString('x-model="contentTypeFilter"', $html);
+        $this->assertStringContainsString('option value="1"', $html);
+        $this->assertStringContainsString('option value="0"', $html);
     }
 }

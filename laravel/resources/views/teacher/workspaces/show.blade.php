@@ -31,18 +31,6 @@
         <button type="button" class="btn btn-sm btn-ghost border border-base-300" @click="openContentAdd()">
             <x-icon name="heroicon-o-plus-circle" class="size-4" /> Məzmun əlavə et
         </button>
-        <x-teacher.button
-            href="{{ route('teacher.quizzes.create', ['workspace_id' => $workspaceId, 'ws_folder_id' => $currentFolderId]) }}"
-            variant="secondary"
-            size="sm"
-            icon="clipboard-document-list"
-        >Yeni Quiz</x-teacher.button>
-        <x-teacher.button
-            href="{{ route('teacher.lessons.create', ['workspace_id' => $workspaceId, 'ws_folder_id' => $currentFolderId]) }}"
-            variant="secondary"
-            size="sm"
-            icon="academic-cap"
-        >Yeni Dərs</x-teacher.button>
     </div>
 
     {{-- Kataloq: breadcrumb + qovluq/content cədvəli --}}
@@ -272,7 +260,30 @@
             <h3 class="mb-1 text-lg font-semibold text-base-content">Mövcud məzmunu əlavə et</h3>
             <p class="mb-4 text-sm text-base-content/60">Əvvəlcədən yaratdığınız quiz və dərsləri bu workspace-ə qoşun.</p>
 
-            <x-teacher.field label="Hədəf qovluq" name="content_target_folder">
+            <div class="grid gap-3 sm:grid-cols-[1fr_auto]">
+                <div class="relative">
+                    <span class="pointer-events-none absolute inset-y-0 left-3 flex items-center">
+                        <x-icon name="heroicon-o-magnifying-glass" class="size-4 text-base-content/40" />
+                    </span>
+                    <input
+                        type="text"
+                        x-model="contentSearch"
+                        placeholder="Başlığa görə axtar..."
+                        class="input input-bordered w-full pl-9 text-sm"
+                    />
+                </div>
+                <select
+                    x-model="contentTypeFilter"
+                    class="select select-bordered text-sm"
+                    x-ref="contentTypeSelect"
+                >
+                    <option value="">Hamısı</option>
+                    <option value="1">Quiz</option>
+                    <option value="0">Dərs</option>
+                </select>
+            </div>
+
+            <x-teacher.field label="Hədəf qovluq" name="content_target_folder" class="mt-4">
                 <select x-ref="contentAddSelect" class="select select-bordered w-full text-sm">
                     <option value="">Bu workspace-in kökünə</option>
                     <template x-for="(f, i) in folderTree" :key="f.id">
@@ -287,8 +298,18 @@
                         Əlavə edilə bilən məzmun yoxdur — kökdə yalnız workspace-dən kənarda olan quiz/dərslər göstərilir.
                     </p>
                 </template>
+
+                <template x-if="filteredAvailableContents.length === 0 && availableContents.length > 0">
+                    <p class="rounded-lg border border-dashed border-base-300 p-4 text-center text-sm text-base-content/60">
+                        Axtarışa uyğun məzmun tapılmadı.
+                    </p>
+                </template>
+
                 <template x-for="(c, i) in availableContents" :key="c.content_id">
-                    <label class="flex cursor-pointer items-center gap-2 rounded-lg border border-base-300 px-3 py-2 text-sm hover:bg-base-200/50">
+                    <label
+                        x-show="isContentVisible(c)"
+                        class="flex cursor-pointer items-center gap-2 rounded-lg border border-base-300 px-3 py-2 text-sm hover:bg-base-200/50"
+                    >
                         <input
                             type="checkbox"
                             :value="c.content_id"
@@ -304,9 +325,12 @@
                 </template>
             </div>
 
-            <div class="mt-5 flex justify-end gap-2">
+            <div class="mt-5 flex items-center justify-between gap-2">
                 <button type="button" class="btn btn-sm btn-ghost" @click="showContentAdd = false">Ləğv et</button>
-                <button type="button" class="btn btn-sm btn-primary" @click="saveContentAdd()">Əlavə et</button>
+                <div class="flex items-center gap-2">
+                    <span class="text-xs text-base-content/60" x-text="filteredAvailableContents.length + ' seçilə bilən'"></span>
+                    <button type="button" class="btn btn-sm btn-primary" @click="saveContentAdd()">Əlavə et</button>
+                </div>
             </div>
         </div>
     </div>

@@ -37,6 +37,10 @@ export default function workspaceManager(config) {
         moveFolderId: null,
         moveContentId: null,
 
+        // ── Məzmun əlavə et: axtarış + tip filtri ──────────────────────────
+        contentSearch: '',
+        contentTypeFilter: '',
+
         // ── Qovluq əməliyyatları ───────────────────────────────────────────
 
         openFolderAdd() {
@@ -140,7 +144,26 @@ export default function workspaceManager(config) {
 
         // ── Mövcud məzmunu əlavə et ───────────────────────────────────────
 
+        /** Axtarış + tip filtri uyğun olan məzmun görünür. */
+        isContentVisible(c) {
+            if (this.contentTypeFilter !== '' && String(c.type) !== this.contentTypeFilter) {
+                return false;
+            }
+            const q = this.contentSearch.trim().toLowerCase();
+            if (q && !c.title.toLowerCase().includes(q)) {
+                return false;
+            }
+
+            return true;
+        },
+
+        get filteredAvailableContents() {
+            return this.availableContents.filter((c) => this.isContentVisible(c));
+        },
+
         openContentAdd() {
+            this.contentSearch = '';
+            this.contentTypeFilter = '';
             this.showContentAdd = true;
         },
 
