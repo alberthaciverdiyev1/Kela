@@ -68,6 +68,6 @@ class EloquentContentRepository implements ContentRepository
             ->whereIn('type', $types)
             ->whereNull('workspace_id')
             ->orderByDesc('created_at')
-            ->get(['id', 'title', 'type', 'is_published']);
+            ->get(['id', 'title', 'type', 'is_published', 'folder_id']);
     }
 }

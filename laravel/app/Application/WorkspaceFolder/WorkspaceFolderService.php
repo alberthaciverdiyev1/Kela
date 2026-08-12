@@ -4,6 +4,10 @@ namespace App\Application\WorkspaceFolder;
 
 use App\Domain\Content\Content;
 use App\Domain\Content\ContentRepository;
+use App\Domain\Lesson\LessonRepository;
+use App\Domain\LessonFolder\LessonFolderRepository;
+use App\Domain\Quiz\QuizRepository;
+use App\Domain\QuizFolder\QuizFolderRepository;
 use App\Domain\Workspace\Workspace;
 use App\Domain\Workspace\WorkspaceRepository;
 use App\Domain\WorkspaceFolder\WorkspaceFolder;
@@ -20,6 +24,10 @@ class WorkspaceFolderService
         private readonly WorkspaceFolderRepository $folders,
         private readonly WorkspaceRepository $workspaces,
         private readonly ContentRepository $contents,
+        private readonly QuizRepository $quizzes,
+        private readonly QuizFolderRepository $quizFolders,
+        private readonly LessonRepository $lessons,
+        private readonly LessonFolderRepository $lessonFolders,
     ) {
     }
 
@@ -79,9 +87,31 @@ class WorkspaceFolderService
                 'type' => (int) $c->type,
                 'type_label' => $c->typeLabel(),
                 'is_published' => (bool) $c->is_published,
+                'folder_id' => $c->folder_id ? (int) $c->folder_id : null,
+                'folder_path' => $this->bankFolderPathFor($c),
             ])
             ->values()
             ->all();
+    }
+
+    /** Content-in bank qovluğunun kökdən yarpağa ad zənciri (boş = kökdədir). */
+    protected function bankFolderPathFor(Content $content): array
+    {
+        // Bank qovluğu contents.folder_id DEYİL — quizzes/lessons.folder_id-dir.
+        $folderId = $content->isQuiz()
+            ? $this->quizzes->find((int) $content->id)?->folder_id
+            : $this->lessons->find((int) $content->id)?->folder_id;
+
+        if ($folderId === null) {
+            return [];
+        }
+
+        $folderRepo = $content->isQuiz() ? $this->quizFolders : $this->lessonFolders;
+
+        return array_map(
+            fn (array $f): string => $f['name'],
+            $folderRepo->breadcrumbs((int) $folderId),
+        );
     }
 
     public function createFolder(int $workspaceId, string $name, ?int $parentId, int $actingUserId): WorkspaceFolder

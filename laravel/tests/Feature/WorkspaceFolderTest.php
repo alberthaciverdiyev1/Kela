@@ -272,6 +272,35 @@ class WorkspaceFolderTest extends TestCase
         $this->assertCount(0, $available);
     }
 
+    public function test_api_available_contents_grouped_by_bank_folder(): void
+    {
+        Sanctum::actingAs($this->teacher);
+        $workspaceId = $this->makeWorkspace($this->teacher->id);
+
+        // Bank qovluqları: Riyaziyyat → Cəbr, bir də kökdə quiz
+        $quizFolderSvc = app(\App\Application\QuizFolder\QuizFolderService::class);
+        $math = $quizFolderSvc->createFolder($this->teacher->id, 'Riyaziyyat');
+        $algebra = $quizFolderSvc->createFolder($this->teacher->id, 'Cəbr', $math->id);
+
+        $this->quizzes()->create($this->teacher->id, [
+            'title' => 'Cəbr Quiz', 'folder_id' => $algebra->id,
+        ])->getKey();
+        $this->quizzes()->create($this->teacher->id, [
+            'title' => 'Kök Quiz', 'folder_id' => null,
+        ])->getKey();
+
+        $available = $this->getJson("/api/v1/workspaces/{$workspaceId}/available-contents")
+            ->assertOk()->json('data');
+
+        $byTitle = collect($available)->keyBy('title');
+
+        // Kökdəki quiz üçün boş path
+        $this->assertSame([], $byTitle['Kök Quiz']['folder_path']);
+
+        // Cəbr altındakı quiz üçün path kökdən yarpağa
+        $this->assertSame(['Riyaziyyat', 'Cəbr'], $byTitle['Cəbr Quiz']['folder_path']);
+    }
+
     public function test_workspace_show_page_offers_add_existing_content(): void
     {
         $workspaceId = $this->makeWorkspace($this->teacher->id);
@@ -295,5 +324,20 @@ class WorkspaceFolderTest extends TestCase
         $this->assertStringContainsString('x-model="contentTypeFilter"', $html);
         $this->assertStringContainsString('option value="1"', $html);
         $this->assertStringContainsString('option value="0"', $html);
+
+        // Modal ağac görünümü: qovluq başlıqları + məzmun sətirləri
+        $this->assertStringContainsString('x-for="(row, i) in visibleContentRows"', $html);
+        $this->assertStringContainsString('row.kind === \'folder\'', $html);
+        $this->assertStringContainsString('row.kind === \'content\'', $html);
+
+        // Sadələşdirilmiş dizayn: collapse interaksiyası tamamilə yoxdur
+        $this->assertStringNotContainsString('toggleContentFolder', $html);
+        $this->assertStringNotContainsString('row.collapsed', $html);
+        $this->assertStringNotContainsString('chevron-right', $html);
+
+        // Modal yeni dizayn elementləri
+        $this->assertStringContainsString('Haraya:', $html);
+        $this->assertStringContainsString('updateContentSelection($event)', $html);
+        $this->assertStringContainsString('selectedContentCount', $html);
     }
 }

@@ -256,19 +256,30 @@
 
     {{-- Məzmun əlavə et dialog --}}
     <div x-show="showContentAdd" x-transition.opacity class="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4">
-        <div class="w-full max-w-lg rounded-xl border border-base-300 bg-base-100 p-6 shadow-xl">
-            <h3 class="mb-1 text-lg font-semibold text-base-content">Mövcud məzmunu əlavə et</h3>
-            <p class="mb-4 text-sm text-base-content/60">Əvvəlcədən yaratdığınız quiz və dərsləri bu workspace-ə qoşun.</p>
+        <div class="flex w-full max-w-2xl flex-col overflow-hidden rounded-xl bg-base-100 shadow-2xl">
+            {{-- Başlıq --}}
+            <div class="flex items-center justify-between gap-4 px-6 py-4">
+                <h3 class="text-lg font-semibold text-base-content">Məzmun əlavə et</h3>
+                <button
+                    type="button"
+                    @click="showContentAdd = false"
+                    class="rounded-lg p-1.5 text-base-content/50 transition hover:bg-base-200 hover:text-base-content"
+                    aria-label="Bağla"
+                >
+                    <x-icon name="heroicon-o-x-mark" class="size-5" />
+                </button>
+            </div>
 
-            <div class="grid gap-3 sm:grid-cols-[1fr_auto]">
-                <div class="relative">
+            {{-- Axtarış + filtre + hədəf --}}
+            <div class="flex flex-wrap items-center gap-2 border-y border-base-200 bg-base-50 px-6 py-3">
+                <div class="relative min-w-0 flex-1">
                     <span class="pointer-events-none absolute inset-y-0 left-3 flex items-center">
                         <x-icon name="heroicon-o-magnifying-glass" class="size-4 text-base-content/40" />
                     </span>
                     <input
                         type="text"
                         x-model="contentSearch"
-                        placeholder="Başlığa görə axtar..."
+                        placeholder="Axtar..."
                         class="input input-bordered w-full pl-9 text-sm"
                     />
                 </div>
@@ -277,59 +288,88 @@
                     class="select select-bordered text-sm"
                     x-ref="contentTypeSelect"
                 >
-                    <option value="">Hamısı</option>
+                    <option value="">Bütün növlər</option>
                     <option value="1">Quiz</option>
                     <option value="0">Dərs</option>
                 </select>
+                <div class="flex items-center gap-2">
+                    <span class="text-xs font-medium text-base-content/60">Haraya:</span>
+                    <select x-ref="contentAddSelect" class="select select-bordered text-sm">
+                        <option value="">Kök</option>
+                        <template x-for="(f, i) in folderTree" :key="f.id">
+                            <option :value="f.id" x-text="'&nbsp;'.repeat(f.depth * 2) + f.name"></option>
+                        </template>
+                    </select>
+                </div>
             </div>
 
-            <x-teacher.field label="Hədəf qovluq" name="content_target_folder" class="mt-4">
-                <select x-ref="contentAddSelect" class="select select-bordered w-full text-sm">
-                    <option value="">Bu workspace-in kökünə</option>
-                    <template x-for="(f, i) in folderTree" :key="f.id">
-                        <option :value="f.id" x-text="'&nbsp;'.repeat(f.depth) + f.name"></option>
-                    </template>
-                </select>
-            </x-teacher.field>
-
-            <div class="mt-4 max-h-72 space-y-1.5 overflow-y-auto pr-1">
+            {{-- Liste: qovluqlar + içindəki məzmunlar (hamısı açıq) --}}
+            <div class="max-h-[340px] overflow-y-auto px-4 py-2">
                 <template x-if="availableContents.length === 0">
-                    <p class="rounded-lg border border-dashed border-base-300 p-4 text-center text-sm text-base-content/60">
-                        Əlavə edilə bilən məzmun yoxdur — kökdə yalnız workspace-dən kənarda olan quiz/dərslər göstərilir.
+                    <p class="py-10 text-center text-sm text-base-content/50">
+                        Əlavə edilə bilən məzmun yoxdur.
                     </p>
                 </template>
 
-                <template x-if="filteredAvailableContents.length === 0 && availableContents.length > 0">
-                    <p class="rounded-lg border border-dashed border-base-300 p-4 text-center text-sm text-base-content/60">
+                <template x-if="visibleContentCount === 0 && availableContents.length > 0">
+                    <p class="py-10 text-center text-sm text-base-content/50">
                         Axtarışa uyğun məzmun tapılmadı.
                     </p>
                 </template>
 
-                <template x-for="(c, i) in availableContents" :key="c.content_id">
-                    <label
-                        x-show="isContentVisible(c)"
-                        class="flex cursor-pointer items-center gap-2 rounded-lg border border-base-300 px-3 py-2 text-sm hover:bg-base-200/50"
-                    >
-                        <input
-                            type="checkbox"
-                            :value="c.content_id"
-                            class="checkbox checkbox-primary checkbox-sm shrink-0"
-                        />
-                        <span class="min-w-0 flex-1 truncate" x-text="c.title"></span>
-                        <span
-                            class="badge badge-sm font-medium"
-                            :class="c.type === 1 ? 'badge-info' : 'badge-success'"
-                            x-text="c.type_label"
-                        ></span>
-                    </label>
+                <template x-for="(row, i) in visibleContentRows" :key="row.key">
+                    <div class="space-y-0.5">
+                        {{-- Qovluq başlığı --}}
+                        <div
+                            x-show="row.kind === 'folder'"
+                            class="flex items-center gap-2 pt-3 pb-1 text-xs font-semibold uppercase tracking-wide text-base-content/50"
+                            :style="'padding-left: ' + (row.depth * 16 + 4) + 'px'"
+                        >
+                            <x-icon name="heroicon-o-folder" class="size-4 text-primary/70" />
+                            <span class="min-w-0 flex-1 truncate" x-text="row.name"></span>
+                            <span class="text-base-content/40" x-text="row.count"></span>
+                        </div>
+
+                        {{-- Məzmun sətri --}}
+                        <label
+                            x-show="row.kind === 'content'"
+                            class="flex cursor-pointer select-none items-center gap-3 rounded-lg px-3 py-2 text-sm transition hover:bg-base-200/60"
+                            :style="'padding-left: ' + (row.depth * 16 + 12) + 'px'"
+                        >
+                            <input
+                                type="checkbox"
+                                :value="row.c.content_id"
+                                class="checkbox checkbox-primary checkbox-sm shrink-0"
+                                @change="updateContentSelection($event)"
+                            />
+                            <span class="min-w-0 flex-1 truncate text-base-content" x-text="row.c.title"></span>
+                            <span
+                                class="badge badge-sm font-medium"
+                                :class="row.c.type === 1 ? 'badge-info' : 'badge-success'"
+                                x-text="row.c.type_label"
+                            ></span>
+                        </label>
+                    </div>
                 </template>
             </div>
 
-            <div class="mt-5 flex items-center justify-between gap-2">
-                <button type="button" class="btn btn-sm btn-ghost" @click="showContentAdd = false">Ləğv et</button>
+            {{-- Alt bilgi --}}
+            <div class="flex items-center justify-between gap-3 border-t border-base-200 bg-base-50 px-6 py-3">
+                <span
+                    class="text-sm font-medium"
+                    :class="selectedContentCount > 0 ? 'text-primary' : 'text-base-content/50'"
+                    x-text="selectedContentCount > 0 ? selectedContentCount + ' seçildi' : 'Seçilməyib'"
+                ></span>
                 <div class="flex items-center gap-2">
-                    <span class="text-xs text-base-content/60" x-text="filteredAvailableContents.length + ' seçilə bilən'"></span>
-                    <button type="button" class="btn btn-sm btn-primary" @click="saveContentAdd()">Əlavə et</button>
+                    <button type="button" class="btn btn-sm btn-ghost" @click="showContentAdd = false">Ləğv et</button>
+                    <button
+                        type="button"
+                        class="btn btn-sm btn-primary"
+                        @click="saveContentAdd()"
+                        x-bind:disabled="selectedContentCount === 0"
+                    >
+                        Əlavə et
+                    </button>
                 </div>
             </div>
         </div>

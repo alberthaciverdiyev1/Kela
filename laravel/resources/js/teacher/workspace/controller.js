@@ -40,6 +40,7 @@ export default function workspaceManager(config) {
         // ── Məzmun əlavə et: axtarış + tip filtri ──────────────────────────
         contentSearch: '',
         contentTypeFilter: '',
+        selectedContentIds: [],
 
         // ── Qovluq əməliyyatları ───────────────────────────────────────────
 
@@ -157,13 +158,113 @@ export default function workspaceManager(config) {
             return true;
         },
 
-        get filteredAvailableContents() {
-            return this.availableContents.filter((c) => this.isContentVisible(c));
+        /** availableContents → bank qovluq ağacı (folder_path üzrə). */
+        get contentTree() {
+            const root = { key: '', name: '', depth: -1, children: [], contents: [] };
+            const nodes = { '': root };
+
+            for (const c of this.availableContents) {
+                const path = c.folder_path || [];
+                let parent = root;
+                let acc = [];
+
+                for (const name of path) {
+                    acc.push(name);
+                    const key = acc.join(' › ');
+                    if (!nodes[key]) {
+                        nodes[key] = {
+                            key,
+                            name,
+                            depth: acc.length - 1,
+                            children: [],
+                            contents: [],
+                        };
+                        parent.children.push(nodes[key]);
+                    }
+                    parent = nodes[key];
+                }
+                parent.contents.push(c);
+            }
+
+            return root;
+        },
+
+        /**
+         * Ağacı düz satırlara çevirir (qovluq başlıqları + içindəki məzmunlar).
+         * Collapse yoxdur — bütün məzmunlar hər zaman görünür.
+         * Axtarış/filtre aktiv olduqda boş qovluqlar gizlənir.
+         */
+        get visibleContentRows() {
+            const filtering = this.contentSearch.trim() !== '' || this.contentTypeFilter !== '';
+            const rows = [];
+
+            // Hər qovluğun görünən (filtre uyğun) məzmun sayını bir dəfə hesabla
+            const visibleCounts = {};
+            const countVisible = (node) => {
+                let n = node.contents.filter((c) => this.isContentVisible(c)).length;
+                for (const child of node.children) {
+                    n += countVisible(child);
+                }
+                visibleCounts[node.key] = n;
+                return n;
+            };
+            countVisible(this.contentTree);
+
+            const walk = (node) => {
+                if (node.depth >= 0) {
+                    const vis = visibleCounts[node.key];
+                    if (vis === 0) {
+                        return; // məzmunu olmayan qovluğu heç göstərmə
+                    }
+                    rows.push({
+                        kind: 'folder',
+                        key: 'f:' + node.key,
+                        name: node.name,
+                        depth: node.depth,
+                        count: vis,
+                    });
+                }
+
+                for (const c of node.contents) {
+                    if (!this.isContentVisible(c)) {
+                        continue;
+                    }
+                    rows.push({ kind: 'content', key: 'c:' + c.content_id, c, depth: node.depth + 1 });
+                }
+                for (const child of node.children) {
+                    walk(child);
+                }
+            };
+            walk(this.contentTree);
+
+            return rows;
+        },
+
+        get visibleContentCount() {
+            return this.visibleContentRows.filter((r) => r.kind === 'content').length;
+        },
+
+        // ── Seçim — ────────────────────────────────────────────────────────
+
+        updateContentSelection(e) {
+            const id = Number(e.target.value);
+            if (e.target.checked) {
+                if (!this.selectedContentIds.includes(id)) {
+                    this.selectedContentIds.push(id);
+                }
+            } else {
+                this.selectedContentIds = this.selectedContentIds.filter((x) => x !== id);
+            }
+        },
+
+        get selectedContentCount() {
+            return this.selectedContentIds.length;
         },
 
         openContentAdd() {
             this.contentSearch = '';
             this.contentTypeFilter = '';
+            this.selectedContentIds = [];
             this.showContentAdd = true;
         },
 
@@ -171,17 +272,14 @@ export default function workspaceManager(config) {
             const targetFolder = this.$refs.contentAddSelect?.value
                 ? Number(this.$refs.contentAddSelect.value)
                 : null;
-            const checked = Array.from(
-                this.$root.querySelectorAll('input[type="checkbox"]:checked'),
-            ).map((el) => Number(el.value));
 
-            if (checked.length === 0) {
+            if (this.selectedContentIds.length === 0) {
                 window.alert('Ən azı bir məzmun seçin.');
                 return;
             }
 
             try {
-                for (const id of checked) {
+                for (const id of this.selectedContentIds) {
                     await KelaApi('POST', '/api/v1/workspace-folders/move-content', {
                         content_id: id,
                         workspace_id: this.workspaceId,
