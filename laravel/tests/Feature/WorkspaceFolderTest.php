@@ -230,4 +230,60 @@ class WorkspaceFolderTest extends TestCase
         $this->assertEquals(Content::TYPE_QUIZ, $json['contents'][0]['type']);
         $this->assertTrue(isset($json['contents'][0]['type_label']));
     }
+
+    public function test_api_adds_existing_content_to_workspace(): void
+    {
+        Sanctum::actingAs($this->teacher);
+        $workspaceId = $this->makeWorkspace($this->teacher->id);
+        $folder = $this->folders()->createFolder($workspaceId, 'Yeni Qovluq', null, $this->teacher->id);
+
+        // Workspace xaricində (kitabxanada) yaradılmış quiz və dərs
+        $quizId = $this->quizzes()->create($this->teacher->id, ['title' => 'Köhnə Quiz'])->getKey();
+        $lessonId = $this->lessons()->create($this->teacher->id, ['title' => 'Köhnə Dərs'])->getKey();
+
+        // available-contents endpoint hər ikisini göstərir
+        $available = $this->getJson("/api/v1/workspaces/{$workspaceId}/available-contents")
+            ->assertOk()->json('data');
+        $this->assertCount(2, $available);
+        $this->assertEqualsCanonicalizing(
+            ['Köhnə Quiz', 'Köhnə Dərs'],
+            array_column($available, 'title'),
+        );
+
+        // İkisini də workspace qovluğuna əlavə et
+        foreach ([$quizId, $lessonId] as $contentId) {
+            $this->postJson('/api/v1/workspace-folders/move-content', [
+                'content_id' => $contentId,
+                'workspace_id' => $workspaceId,
+                'folder_id' => $folder->id,
+            ])->assertOk();
+        }
+
+        // İndi qovluğun kataloqunda görünürlər
+        $dir = $this->folders()->directory($workspaceId, $folder->id, $this->teacher->id);
+        $this->assertCount(2, $dir['contents']);
+        $titles = array_column($dir['contents'], 'title');
+        $this->assertContains('Köhnə Quiz', $titles);
+        $this->assertContains('Köhnə Dərs', $titles);
+
+        // Artıq available siyahısında yoxdur
+        $available = $this->getJson("/api/v1/workspaces/{$workspaceId}/available-contents")
+            ->assertOk()->json('data');
+        $this->assertCount(0, $available);
+    }
+
+    public function test_workspace_show_page_offers_add_existing_content(): void
+    {
+        $workspaceId = $this->makeWorkspace($this->teacher->id);
+        $this->quizzes()->create($this->teacher->id, ['title' => 'Kütüphanədə Quiz'])->getKey();
+        $this->lessons()->create($this->teacher->id, ['title' => 'Kütüphanədə Dərs'])->getKey();
+
+        $this->actingAs($this->teacher);
+
+        $html = $this->get("/teacher/workspaces/{$workspaceId}")->assertOk()->getContent();
+        $this->assertStringContainsString('Məzmun əlavə et', $html);
+        $this->assertStringContainsString('openContentAdd', $html);
+        $this->assertStringContainsString('Kütüphanədə Quiz', $html);
+        $this->assertStringContainsString('Kütüphanədə Dərs', $html);
+    }
 }

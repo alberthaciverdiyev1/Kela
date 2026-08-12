@@ -68,6 +68,22 @@ class WorkspaceFolderService
         return $this->contents->find($contentId);
     }
 
+    /** Teacher-in heç bir workspace-ə bağlanmamış quiz/dərs məzmunları (əlavə et dialoqu üçün). */
+    public function availableContents(int $actingUserId): array
+    {
+        return $this->contents
+            ->availableForWorkspace($actingUserId, [Content::TYPE_QUIZ, Content::TYPE_LESSON])
+            ->map(fn (Content $c) => [
+                'content_id' => (int) $c->id,
+                'title' => $c->title,
+                'type' => (int) $c->type,
+                'type_label' => $c->typeLabel(),
+                'is_published' => (bool) $c->is_published,
+            ])
+            ->values()
+            ->all();
+    }
+
     public function createFolder(int $workspaceId, string $name, ?int $parentId, int $actingUserId): WorkspaceFolder
     {
         $this->assertWorkspaceOwner($workspaceId, $actingUserId);

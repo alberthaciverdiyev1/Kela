@@ -23,4 +23,7 @@ interface ContentRepository
 
     /** Workspace-in verilmiş qovluğundakı content-lər (Collection). */
     public function contentsForWorkspace(int $workspaceId, ?int $folderId): \Illuminate\Support\Collection;
+
+    /** Teacher-in heç bir workspace-ə bağlanmamış məzmunları (tip filtri ilə). */
+    public function availableForWorkspace(int $teacherId, array $types): \Illuminate\Support\Collection;
 }

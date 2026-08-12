@@ -71,6 +71,7 @@ class WorkspaceController
             'currentFolderId' => $currentFolderId,
             'directory' => $directory,
             'folderTree' => $this->workspaceFolders->folderTree($workspace, $actingId, $currentFolderId),
+            'availableContents' => $this->workspaceFolders->availableContents($actingId),
             'students' => $this->workspaces->studentList($actingId, $workspace),
             'availableStudents' => collect($this->workspaces->availableStudents($actingId, $workspace))
                 ->pluck('name', 'id')

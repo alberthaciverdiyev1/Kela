@@ -60,4 +60,14 @@ class EloquentContentRepository implements ContentRepository
 
         return $query->orderByDesc('created_at')->get();
     }
+
+    public function availableForWorkspace(int $teacherId, array $types): \Illuminate\Support\Collection
+    {
+        return Content::query()
+            ->where('teacher_id', $teacherId)
+            ->whereIn('type', $types)
+            ->whereNull('workspace_id')
+            ->orderByDesc('created_at')
+            ->get(['id', 'title', 'type', 'is_published']);
+    }
 }

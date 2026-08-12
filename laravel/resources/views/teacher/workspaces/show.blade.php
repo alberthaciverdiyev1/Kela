@@ -6,6 +6,7 @@
         'workspaceId' => (int) $workspaceId,
         'folderId' => $currentFolderId,
         'folderTree' => $folderTree,
+        'availableContents' => $availableContents,
     ];
 @endphp
 <div
@@ -26,6 +27,9 @@
     <div class="flex flex-wrap items-center gap-2">
         <button type="button" class="btn btn-sm btn-ghost border border-base-300" @click="openFolderAdd()">
             <x-icon name="heroicon-o-folder-plus" class="size-4" /> Yeni Qovluq
+        </button>
+        <button type="button" class="btn btn-sm btn-ghost border border-base-300" @click="openContentAdd()">
+            <x-icon name="heroicon-o-plus-circle" class="size-4" /> Məzmun əlavə et
         </button>
         <x-teacher.button
             href="{{ route('teacher.quizzes.create', ['workspace_id' => $workspaceId, 'ws_folder_id' => $currentFolderId]) }}"
@@ -258,6 +262,51 @@
             <div class="mt-4 flex justify-end gap-2">
                 <button type="button" class="btn btn-sm btn-ghost" @click="showContentMove = false">Ləğv et</button>
                 <button type="button" class="btn btn-sm btn-primary" @click="saveContentMove()">Daşı</button>
+            </div>
+        </div>
+    </div>
+
+    {{-- Məzmun əlavə et dialog --}}
+    <div x-show="showContentAdd" x-transition.opacity class="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4">
+        <div class="w-full max-w-lg rounded-xl border border-base-300 bg-base-100 p-6 shadow-xl">
+            <h3 class="mb-1 text-lg font-semibold text-base-content">Mövcud məzmunu əlavə et</h3>
+            <p class="mb-4 text-sm text-base-content/60">Əvvəlcədən yaratdığınız quiz və dərsləri bu workspace-ə qoşun.</p>
+
+            <x-teacher.field label="Hədəf qovluq" name="content_target_folder">
+                <select x-ref="contentAddSelect" class="select select-bordered w-full text-sm">
+                    <option value="">Bu workspace-in kökünə</option>
+                    <template x-for="(f, i) in folderTree" :key="f.id">
+                        <option :value="f.id" x-text="'&nbsp;'.repeat(f.depth) + f.name"></option>
+                    </template>
+                </select>
+            </x-teacher.field>
+
+            <div class="mt-4 max-h-72 space-y-1.5 overflow-y-auto pr-1">
+                <template x-if="availableContents.length === 0">
+                    <p class="rounded-lg border border-dashed border-base-300 p-4 text-center text-sm text-base-content/60">
+                        Əlavə edilə bilən məzmun yoxdur — kökdə yalnız workspace-dən kənarda olan quiz/dərslər göstərilir.
+                    </p>
+                </template>
+                <template x-for="(c, i) in availableContents" :key="c.content_id">
+                    <label class="flex cursor-pointer items-center gap-2 rounded-lg border border-base-300 px-3 py-2 text-sm hover:bg-base-200/50">
+                        <input
+                            type="checkbox"
+                            :value="c.content_id"
+                            class="checkbox checkbox-primary checkbox-sm shrink-0"
+                        />
+                        <span class="min-w-0 flex-1 truncate" x-text="c.title"></span>
+                        <span
+                            class="badge badge-sm font-medium"
+                            :class="c.type === 1 ? 'badge-info' : 'badge-success'"
+                            x-text="c.type_label"
+                        ></span>
+                    </label>
+                </template>
+            </div>
+
+            <div class="mt-5 flex justify-end gap-2">
+                <button type="button" class="btn btn-sm btn-ghost" @click="showContentAdd = false">Ləğv et</button>
+                <button type="button" class="btn btn-sm btn-primary" @click="saveContentAdd()">Əlavə et</button>
             </div>
         </div>
     </div>

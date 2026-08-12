@@ -23,12 +23,14 @@ export default function workspaceManager(config) {
         workspaceId: config.workspaceId,
         folderId: config.folderId ?? null,
         folderTree: config.folderTree || [],
+        availableContents: config.availableContents || [],
 
         // ── UI vəziyyəti ───────────────────────────────────────────────────
         showFolderAdd: false,
         showFolderRename: false,
         showFolderMove: false,
         showContentMove: false,
+        showContentAdd: false,
         showStudent: false,
 
         editingFolderId: null,
@@ -136,6 +138,39 @@ export default function workspaceManager(config) {
             }
         },
 
+        // ── Mövcud məzmunu əlavə et ───────────────────────────────────────
+
+        openContentAdd() {
+            this.showContentAdd = true;
+        },
+
+        async saveContentAdd() {
+            const targetFolder = this.$refs.contentAddSelect?.value
+                ? Number(this.$refs.contentAddSelect.value)
+                : null;
+            const checked = Array.from(
+                this.$root.querySelectorAll('input[type="checkbox"]:checked'),
+            ).map((el) => Number(el.value));
+
+            if (checked.length === 0) {
+                window.alert('Ən azı bir məzmun seçin.');
+                return;
+            }
+
+            try {
+                for (const id of checked) {
+                    await KelaApi('POST', '/api/v1/workspace-folders/move-content', {
+                        content_id: id,
+                        workspace_id: this.workspaceId,
+                        folder_id: targetFolder,
+                    });
+                }
+                window.location.reload();
+            } catch (err) {
+                window.alert(err.message);
+            }
+        },
+
         // ── Tələbə əməliyyatları ───────────────────────────────────────────
 
         async saveStudents() {
@@ -194,6 +229,7 @@ export default function workspaceManager(config) {
             this.showFolderRename = false;
             this.showFolderMove = false;
             this.showContentMove = false;
+            this.showContentAdd = false;
             this.showStudent = false;
         },
     };

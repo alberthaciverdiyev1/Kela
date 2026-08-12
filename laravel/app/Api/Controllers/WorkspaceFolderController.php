@@ -32,6 +32,16 @@ class WorkspaceFolderController
         ]);
     }
 
+    /** Teacher-in workspace-ə bağlanmamış quiz/dərsləri (əlavə et dialoqu üçün). */
+    public function availableContents(Request $request, int $workspace): JsonResponse
+    {
+        $this->authorizeWorkspace($this->workspaces->find($workspace), $request);
+
+        return response()->json([
+            'data' => $this->folders->availableContents((int) $request->user()->id),
+        ]);
+    }
+
     public function store(Request $request, int $workspace): JsonResponse
     {
         $this->authorizeWorkspace($this->workspaces->find($workspace), $request);
