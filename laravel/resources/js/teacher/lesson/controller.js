@@ -25,10 +25,21 @@ export default function lessonFolders(config) {
         showFolderRename: false,
         showFolderMove: false,
         showLessonMove: false,
+        // Kataloq görünümü: 'list' | 'grid' (localStorage-da saxlanılır).
+        viewMode: localStorage.getItem('workspace-view') || 'list',
 
         editingFolderId: null,
         moveFolderId: null,
         moveLessonId: null,
+
+        // ── Kataloq görünümü ───────────────────────────────────────────────
+
+        setViewMode(mode) {
+            this.viewMode = mode;
+            try {
+                localStorage.setItem('workspace-view', mode);
+            } catch (e) { /* localStorage əlçatan deyilsə sadəcə seans üçün qalır */ }
+        },
 
         // ── Qovluq əməliyyatları ───────────────────────────────────────────
 

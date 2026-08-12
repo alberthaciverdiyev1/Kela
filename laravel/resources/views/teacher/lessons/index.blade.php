@@ -20,10 +20,34 @@
     </x-teacher.heading>
 
     {{-- Toolbar --}}
-    <div class="flex flex-wrap items-center gap-2">
-        <button type="button" class="btn btn-sm btn-ghost border border-base-300" @click="openFolderAdd()">
-            <x-icon name="heroicon-o-folder-plus" class="size-4" /> Yeni Qovluq
-        </button>
+    <div class="flex flex-wrap items-center justify-between gap-3">
+        <div class="flex flex-wrap items-center gap-2">
+            <button type="button" class="btn btn-sm btn-ghost border border-base-300" @click="openFolderAdd()">
+                <x-icon name="heroicon-o-folder-plus" class="size-4" /> Yeni Qovluq
+            </button>
+        </div>
+
+        {{-- Görünüm keçidi: List / Grid --}}
+        <div class="inline-flex items-center rounded-lg border border-base-300 bg-base-100 p-0.5">
+            <button
+                type="button"
+                @click="setViewMode('list')"
+                class="inline-flex items-center gap-1.5 rounded-md px-3 py-1.5 text-sm font-medium transition"
+                :class="viewMode === 'list' ? 'bg-primary/10 text-primary' : 'text-base-content/60 hover:text-base-content'"
+                title="Liste görünümü"
+            >
+                <x-icon name="heroicon-o-list-bullet" class="size-4" /> List
+            </button>
+            <button
+                type="button"
+                @click="setViewMode('grid')"
+                class="inline-flex items-center gap-1.5 rounded-md px-3 py-1.5 text-sm font-medium transition"
+                :class="viewMode === 'grid' ? 'bg-primary/10 text-primary' : 'text-base-content/60 hover:text-base-content'"
+                title="Grid görünümü"
+            >
+                <x-icon name="heroicon-o-squares-2x2" class="size-4" /> Grid
+            </button>
+        </div>
     </div>
 
     {{-- Axtarış + kataloq --}}
@@ -58,6 +82,8 @@
         @if (count($folders['folders']) === 0 && $lessons->isEmpty())
             <x-teacher.empty-state icon="academic-cap" title="Burada hələ heç nə yoxdur" description="Yeni qovluq açın və ya dərs əlavə edin." />
         @else
+            {{-- List görünümü (tablo) --}}
+            <div x-show="viewMode === 'list'">
             <x-teacher.table :headers="['Ad', 'Tip / Say', 'Video', 'Yayım', 'Sıra', 'Yaradılıb', '']">
                 @foreach ($folders['folders'] as $folder)
                     <tr class="transition hover:bg-base-200/50">
@@ -162,6 +188,95 @@
                     </tr>
                 @endforeach
             </x-teacher.table>
+            </div>
+
+            {{-- Grid görünümü (dikey kartlar — 6 sütun, kompakt, böyük ikon) --}}
+            <div x-show="viewMode === 'grid'" class="grid grid-cols-6 gap-2 p-3">
+                @foreach ($folders['folders'] as $folder)
+                    <div class="group relative flex flex-col items-center rounded-lg border border-base-300 bg-base-100 p-2 text-center transition hover:border-primary/40 hover:shadow-sm">
+                        <a href="{{ route('teacher.lessons.index', ['folder_id' => $folder['id']]) }}" class="relative flex size-20 items-center justify-center rounded-xl bg-primary/10 text-primary transition group-hover:bg-primary/15">
+                            <x-icon name="heroicon-o-folder" class="size-[66px]" />
+                            @if ($folder['lesson_count'] > 0)
+                                <span class="absolute -right-2 -top-2 flex size-5 items-center justify-center rounded-full bg-primary text-[10px] font-bold leading-none text-primary-content">
+                                    {{ $folder['lesson_count'] }}
+                                </span>
+                            @endif
+                        </a>
+                        <a href="{{ route('teacher.lessons.index', ['folder_id' => $folder['id']]) }}" class="mt-1.5 block w-full truncate text-xs font-medium leading-tight text-base-content transition hover:text-primary" title="{{ $folder['name'] }}">
+                            {{ $folder['name'] }}
+                        </a>
+                        <div class="mt-1 flex items-center justify-center gap-0.5 opacity-0 transition-opacity duration-150 group-hover:opacity-100">
+                            <button
+                                data-folder-action="rename"
+                                data-folder-id="{{ $folder['id'] }}"
+                                data-folder-name="{{ $folder['name'] }}"
+                                title="Adını dəyiş"
+                                class="rounded-md p-0.5 text-base-content/50 hover:bg-base-200 hover:text-base-content"
+                            >
+                                <x-icon name="heroicon-o-pencil-square" class="size-3" />
+                            </button>
+                            <button
+                                data-folder-action="move"
+                                data-folder-id="{{ $folder['id'] }}"
+                                title="Daşı"
+                                class="rounded-md p-0.5 text-base-content/50 hover:bg-base-200 hover:text-base-content"
+                            >
+                                <x-icon name="heroicon-o-arrows-right-left" class="size-3" />
+                            </button>
+                            <button
+                                data-folder-action="delete"
+                                data-folder-id="{{ $folder['id'] }}"
+                                data-folder-name="{{ $folder['name'] }}"
+                                title="Sil"
+                                class="rounded-md p-0.5 text-error/70 hover:bg-error/10 hover:text-error"
+                            >
+                                <x-icon name="heroicon-o-trash" class="size-3" />
+                            </button>
+                        </div>
+                    </div>
+                @endforeach
+
+                @foreach ($lessons as $lesson)
+                    <div class="group relative flex flex-col items-center rounded-lg border border-base-300 bg-base-100 p-2 text-center transition hover:border-primary/40 hover:shadow-sm">
+                        <a href="{{ route('teacher.lessons.show', $lesson['content_id']) }}" class="relative flex size-20 items-center justify-center rounded-xl bg-success/10 text-success transition group-hover:bg-success/15">
+                            <x-icon name="heroicon-o-academic-cap" class="size-[66px]" />
+                            {{-- Tip rozeti (count kimi, sağ üst) --}}
+                            <span class="absolute -right-2 -top-2 flex size-5 items-center justify-center rounded-full bg-success text-[10px] font-bold leading-none text-success-content" title="{{ $lesson['has_video'] ? 'Video dərs' : 'Qeyd dərsi' }}">
+                                <x-icon name="heroicon-o-academic-cap" class="size-3" />
+                            </span>
+                            @if ($lesson['is_published'])
+                                <span class="absolute -bottom-2 -right-2 flex size-5 items-center justify-center rounded-full bg-success text-[10px] font-bold leading-none text-success-content" title="Yayımlandı">
+                                    <x-icon name="heroicon-o-check-circle" class="size-3" />
+                                </span>
+                            @else
+                                <span class="absolute -bottom-2 -right-2 flex size-5 items-center justify-center rounded-full bg-warning text-[10px] font-bold leading-none text-warning-content" title="Qaralama">
+                                    <x-icon name="heroicon-o-pencil-square" class="size-3" />
+                                </span>
+                            @endif
+                        </a>
+                        <a href="{{ route('teacher.lessons.show', $lesson['content_id']) }}" class="mt-1.5 block w-full truncate text-xs font-medium leading-tight text-base-content transition hover:text-primary" title="{{ $lesson['title'] }}">
+                            {{ $lesson['title'] }}
+                        </a>
+                        <div class="mt-1 flex items-center justify-center gap-0.5 opacity-0 transition-opacity duration-150 group-hover:opacity-100">
+                            <button
+                                data-lesson-action="move"
+                                data-lesson-id="{{ $lesson['content_id'] }}"
+                                data-lesson-title="{{ $lesson['title'] }}"
+                                title="Qovluğa daşı"
+                                class="rounded-md p-0.5 text-base-content/50 hover:bg-base-200 hover:text-base-content"
+                            >
+                                <x-icon name="heroicon-o-arrows-right-left" class="size-3" />
+                            </button>
+                            <a href="{{ route('teacher.lessons.show', $lesson['content_id']) }}" class="rounded-md p-0.5 text-base-content/50 hover:bg-base-200 hover:text-base-content" title="Aç">
+                                <x-icon name="heroicon-o-eye" class="size-3" />
+                            </a>
+                            <a href="{{ route('teacher.lessons.edit', $lesson['content_id']) }}" class="rounded-md p-0.5 text-base-content/50 hover:bg-base-200 hover:text-base-content" title="Redaktə">
+                                <x-icon name="heroicon-o-pencil-square" class="size-3" />
+                            </a>
+                        </div>
+                    </div>
+                @endforeach
+            </div>
             <x-teacher.pagination :paginator="$lessons" />
         @endif
     </x-teacher.card>

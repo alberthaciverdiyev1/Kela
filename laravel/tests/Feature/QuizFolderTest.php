@@ -68,6 +68,15 @@ class QuizFolderTest extends TestCase
         $this->assertStringContainsString('data-folder-action', $html);
         $this->assertStringContainsString('x-data="quizFolders', $html);
 
+        // List/Grid görünüm keçidi və grid kartları mövcuddur
+        $this->assertStringContainsString('setViewMode(\'list\')', $html);
+        $this->assertStringContainsString('setViewMode(\'grid\')', $html);
+        $this->assertStringContainsString('viewMode === \'list\'', $html);
+        $this->assertStringContainsString('viewMode === \'grid\'', $html);
+        $this->assertStringContainsString('Liste görünümü', $html);
+        $this->assertStringContainsString('Grid görünümü', $html);
+        $this->assertStringContainsString('grid-cols-6', $html);
+
         // Alt qovluq səhifəsi breadcrumb göstərir
         $html = $this->get('/teacher/quizzes?folder_id='.$child->id)->assertOk()->getContent();
         $this->assertStringContainsString('Riyaziyyat', $html);
