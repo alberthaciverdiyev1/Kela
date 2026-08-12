@@ -29,6 +29,11 @@
                 </div>
                 <button type="submit" class="btn btn-primary w-full">Daxil ol</button>
             </form>
+
+            <p class="mt-4 text-center text-sm text-base-content/60">
+                Hesabınız yoxdur?
+                <a href="{{ route('auth.register') }}" class="font-medium text-primary hover:underline">Müəllim qeydiyyatı</a>
+            </p>
         </div>
     </div>
 </div>
