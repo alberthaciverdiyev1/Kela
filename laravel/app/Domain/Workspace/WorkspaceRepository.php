@@ -39,4 +39,7 @@ interface WorkspaceRepository
 
     /** Workspace-dəki tələbələrin kolleksiyası (ad, email). */
     public function students(Workspace $workspace): Collection;
+
+    /** Şagirdin üzv olduğu workspacelər ($teacherId null → hamısı, əks halda həmin müəllimin). */
+    public function forStudent(?int $teacherId, int $studentId): Collection;
 }

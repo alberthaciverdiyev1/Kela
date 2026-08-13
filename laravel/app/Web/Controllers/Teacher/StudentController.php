@@ -4,6 +4,7 @@ namespace App\Web\Controllers\Teacher;
 
 use App\Application\City\CityService;
 use App\Application\Student\StudentService;
+use App\Application\Workspace\WorkspaceService;
 use App\Domain\User\Values\UserStatus;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -18,6 +19,7 @@ class StudentController
 {
     public function __construct(
         private readonly StudentService $students,
+        private readonly WorkspaceService $workspaces,
         private readonly CityService $cities,
     ) {
     }
@@ -72,6 +74,33 @@ class StudentController
         ]);
 
         return redirect()->route('teacher.students.index')->with('success', 'Şagird yaradıldı.');
+    }
+
+    /** Şagirdin ətraflı profili: şəxsi məlumat + üzv olduğu workspacelər. */
+    public function show(int $student): View
+    {
+        $data = $this->students->formData($student);
+        if ($data === []) {
+            abort(404);
+        }
+
+        $cities = $this->cities->options();
+        $statuses = $this->statuses();
+
+        return view('teacher.students.show', [
+            'student' => [
+                'id' => $student,
+                'first_name' => $data['first_name'] ?? '',
+                'last_name' => $data['last_name'] ?? null,
+                'full_name' => trim(($data['first_name'] ?? '').' '.($data['last_name'] ?? '')),
+                'email' => $data['email'] ?? '',
+                'status' => (int) ($data['status'] ?? UserStatus::ACTIVE),
+                'status_label' => $statuses[(int) ($data['status'] ?? UserStatus::ACTIVE)] ?? '—',
+                'city' => ! empty($data['city_id']) ? ($cities[(int) $data['city_id']] ?? '—') : '—',
+                'birth_date' => $data['birth_date'] ?? null,
+            ],
+            'workspaces' => $this->workspaces->listForStudent((int) auth()->id(), $student),
+        ]);
     }
 
     public function edit(int $student): View

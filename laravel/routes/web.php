@@ -33,6 +33,7 @@ Route::middleware(['auth', 'role:Admin,Teacher'])->group(function () {
         Route::get('/create', [StudentController::class, 'create'])->name('teacher.students.create');
         Route::post('/', [StudentController::class, 'store'])->name('teacher.students.store');
         Route::get('/table', [StudentController::class, 'tableFragment'])->name('teacher.students.table');
+        Route::get('/{student}', [StudentController::class, 'show'])->name('teacher.students.show');
         Route::get('/{student}/edit', [StudentController::class, 'edit'])->name('teacher.students.edit');
         Route::post('/{student}', [StudentController::class, 'update'])->name('teacher.students.update');
         Route::delete('/{student}', [StudentController::class, 'destroy'])->name('teacher.students.destroy');
@@ -78,6 +79,7 @@ Route::middleware(['auth', 'role:Admin,Teacher'])->group(function () {
         Route::get('/create', [QuizController::class, 'create'])->name('teacher.quizzes.create');
         Route::post('/', [QuizController::class, 'store'])->name('teacher.quizzes.store');
         Route::get('/{quiz}/questions', [QuizController::class, 'questionsFragment'])->name('teacher.quizzes.questions');
+        Route::get('/{quiz}', [QuizController::class, 'show'])->name('teacher.quizzes.show');
         Route::get('/{quiz}/edit', [QuizController::class, 'edit'])->name('teacher.quizzes.edit');
         Route::post('/{quiz}', [QuizController::class, 'update'])->name('teacher.quizzes.update');
         Route::delete('/{quiz}', [QuizController::class, 'destroy'])->name('teacher.quizzes.destroy');

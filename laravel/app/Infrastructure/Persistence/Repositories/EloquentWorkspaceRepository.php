@@ -94,4 +94,14 @@ class EloquentWorkspaceRepository implements WorkspaceRepository
             ->orderBy('first_name')
             ->get(['users.id', 'users.first_name', 'users.last_name', 'users.email']);
     }
+
+    public function forStudent(?int $teacherId, int $studentId): Collection
+    {
+        return Workspace::query()
+            ->when($teacherId !== null, fn (Builder $q): Builder => $q->where('teacher_id', $teacherId))
+            ->whereHas('students', fn (Builder $q) => $q->where('users.id', $studentId))
+            ->withCount('students')
+            ->orderBy('name')
+            ->get(['id', 'name']);
+    }
 }

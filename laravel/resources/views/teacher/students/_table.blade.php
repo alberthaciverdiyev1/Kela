@@ -15,7 +15,9 @@
                 ];
             @endphp
             <tr class="transition hover:bg-base-200/50">
-                <td class="font-medium text-base-content">{{ $student['full_name'] }}</td>
+                <td class="font-medium text-base-content">
+                    <a href="{{ route('teacher.students.show', $student['id']) }}" class="transition hover:text-primary">{{ $student['full_name'] }}</a>
+                </td>
                 <td class="text-base-content/70">{{ $student['email'] }}</td>
                 <td class="text-base-content/70">{{ $student['city'] ?? '—' }}</td>
                 <td class="text-base-content/70">{{ $student['birth_date'] ?? '—' }}</td>
@@ -26,6 +28,13 @@
                 </td>
                 <td class="text-right">
                     <div class="flex items-center justify-end gap-1">
+                        <a
+                            href="{{ route('teacher.students.show', $student['id']) }}"
+                            title="Profil"
+                            class="rounded-lg p-1.5 text-base-content/50 hover:bg-primary/10 hover:text-primary"
+                        >
+                            <x-icon name="heroicon-o-eye" class="size-4" />
+                        </a>
                         <button
                             data-student-edit
                             data-student-id="{{ $student['id'] }}"

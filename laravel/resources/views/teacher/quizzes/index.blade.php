@@ -134,7 +134,7 @@
                 @foreach ($quizzes as $quiz)
                     <tr class="transition hover:bg-base-200/50">
                         <td class="font-medium text-base-content">
-                            <a href="{{ route('teacher.quizzes.edit', $quiz['content_id']) }}" class="hover:text-primary">{{ $quiz['title'] }}</a>
+                            <a href="{{ route('teacher.quizzes.show', $quiz['content_id']) }}" class="hover:text-primary">{{ $quiz['title'] }}</a>
                             @if ($quiz['description'])
                                 <p class="text-xs text-base-content/50">{{ $quiz['description'] }}</p>
                             @endif
@@ -150,6 +150,9 @@
                         <td class="text-base-content/70">{{ $quiz['created_at'] }}</td>
                         <td class="text-right">
                             <div class="flex items-center justify-end gap-1">
+                                <a href="{{ route('teacher.quizzes.show', $quiz['content_id']) }}" title="Profil" class="rounded-lg p-1.5 text-base-content/50 hover:bg-primary/10 hover:text-primary">
+                                    <x-icon name="heroicon-o-eye" class="size-4" />
+                                </a>
                                 <button
                                     data-quiz-action="move"
                                     data-quiz-id="{{ $quiz['content_id'] }}"
@@ -225,13 +228,16 @@
 
                 @foreach ($quizzes as $quiz)
                     <div class="group relative flex flex-col items-center rounded-lg border border-base-300 bg-base-100 p-2 text-center transition hover:border-primary/40 hover:shadow-sm">
-                        <a href="{{ route('teacher.quizzes.edit', $quiz['content_id']) }}" class="relative flex size-20 items-center justify-center rounded-xl transition {{ $quiz['is_published'] ? 'bg-info/10 text-info group-hover:bg-info/15' : 'bg-warning/10 text-warning group-hover:bg-warning/15' }}">
+                        <a href="{{ route('teacher.quizzes.show', $quiz['content_id']) }}" class="relative flex size-20 items-center justify-center rounded-xl transition {{ $quiz['is_published'] ? 'bg-info/10 text-info group-hover:bg-info/15' : 'bg-warning/10 text-warning group-hover:bg-warning/15' }}">
                             <x-icon name="heroicon-o-clipboard-document-list" class="size-[66px]" />
                         </a>
-                        <a href="{{ route('teacher.quizzes.edit', $quiz['content_id']) }}" class="mt-1.5 block w-full truncate text-xs font-medium leading-tight text-base-content transition hover:text-primary" title="{{ $quiz['title'] }}">
+                        <a href="{{ route('teacher.quizzes.show', $quiz['content_id']) }}" class="mt-1.5 block w-full truncate text-xs font-medium leading-tight text-base-content transition hover:text-primary" title="{{ $quiz['title'] }}">
                             {{ $quiz['title'] }}
                         </a>
                         <div class="mt-1 flex items-center justify-center gap-0.5 opacity-0 transition-opacity duration-150 group-hover:opacity-100">
+                            <a href="{{ route('teacher.quizzes.show', $quiz['content_id']) }}" class="rounded-md p-0.5 text-base-content/50 hover:bg-primary/10 hover:text-primary" title="Profil">
+                                <x-icon name="heroicon-o-eye" class="size-3" />
+                            </a>
                             <button
                                 data-quiz-action="move"
                                 data-quiz-id="{{ $quiz['content_id'] }}"

@@ -62,6 +62,21 @@ class WorkspaceService
             ->all();
     }
 
+    /** Şagirdin üzv olduğu workspacelər (müəllim özününküləri görür, admin hamısını). */
+    public function listForStudent(int $actingUserId, int $studentId): array
+    {
+        $isAdmin = User::find($actingUserId)?->isAdmin() ?? false;
+
+        return $this->workspaces->forStudent($isAdmin ? null : $actingUserId, $studentId)
+            ->map(fn (Workspace $w) => [
+                'id' => (int) $w->id,
+                'name' => $w->name,
+                'student_count' => (int) $w->students_count,
+            ])
+            ->values()
+            ->all();
+    }
+
     /** Admin cədvəli üçün axtarış + səhifələnmiş workspace siyahısı (array). */
     public function paginate(int $actingUserId, ?string $search = null, int $perPage = 15): LengthAwarePaginator
     {

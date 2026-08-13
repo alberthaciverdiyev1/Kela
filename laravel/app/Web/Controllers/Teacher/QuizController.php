@@ -81,6 +81,27 @@ class QuizController
             ->with('success', 'Quiz yaradıldı — sual əlavə etmək üçün redaktoru açın.');
     }
 
+    /** Quiz-in ətraflı görünüşü: məlumat + suallar siyahısı. */
+    public function show(int $quiz): View
+    {
+        $model = $this->quizzes->find($quiz);
+        $this->assertAccess($model);
+        $formData = $this->quizzes->formData($quiz);
+
+        return view('teacher.quizzes.show', [
+            'contentId' => $quiz,
+            'quizData' => [
+                'title' => $formData['title'] ?? '',
+                'description' => $formData['description'] ?? null,
+                'is_published' => (bool) ($formData['is_published'] ?? false),
+                'workspace' => $model?->content?->workspace?->name,
+                'folder' => $model?->folder?->name,
+                'created_at' => $model?->content?->created_at?->format('d M Y H:i'),
+            ],
+            'questions' => $this->quizzes->questionList($quiz),
+        ]);
+    }
+
     public function edit(int $quiz): View
     {
         $this->assertAccess($this->quizzes->find($quiz));
