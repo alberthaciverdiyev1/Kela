@@ -185,7 +185,7 @@ class LessonController
         $data = $request->validate([
             'title' => ['required', 'string', 'max:255'],
             'description' => ['nullable', 'string'],
-            'video' => ['nullable', 'file', 'max:524288', 'mimetypes:video/mp4,video/webm,video/ogg,video/quicktime,video/x-m4v,video/x-matroska,video/x-msvideo,video/mpeg'],
+            'video' => ['nullable', 'file', 'min:1', 'max:524288', 'mimetypes:video/mp4,video/webm,video/ogg,video/quicktime,video/x-m4v,video/x-matroska,video/x-msvideo,video/mpeg'],
             'is_published' => ['nullable', 'boolean'],
             'order_index' => ['integer', 'min:0'],
             'folder_id' => ['nullable', 'integer'],
@@ -201,8 +201,9 @@ class LessonController
 
     protected function storeVideo(Request $request): ?string
     {
-        if ($request->hasFile('video')) {
-            return $request->file('video')->store(MediaProcessor::VIDEOS_DIR, 'local');
+        $file = $request->file('video');
+        if ($file !== null && $file->getSize() > 0) {
+            return $file->store(MediaProcessor::VIDEOS_DIR, 'local');
         }
 
         return null;

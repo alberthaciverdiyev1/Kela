@@ -115,13 +115,23 @@ class LessonService
         return $this->lessons->moveToFolder($lesson, $folderId);
     }
 
-    /** Dərs silinir; Lesson::deleting hadisəsi bağlı Content-i də silir. */
+    /** Dərs silinir; video faylları da diskdən təmizlənir, Content də silinir. */
     public function delete(int $contentId): void
     {
         $lesson = $this->lessons->find($contentId);
-        if ($lesson !== null) {
-            $this->lessons->delete($lesson);
+        if ($lesson === null) {
+            return;
         }
+
+        // Video + thumbnail fayllarını diskdən sil (yetim fayl qalmasın).
+        foreach (array_filter([$lesson->video_path, $lesson->thumbnail_path]) as $path) {
+            $full = $this->media->resolveFullPath($path);
+            if ($full !== null) {
+                @unlink($full);
+            }
+        }
+
+        $this->lessons->delete($lesson);
     }
 
     /** Cədvəl üçün istifadəçinin görə biləcəyi dərslərlə məhdud sorğu. */
