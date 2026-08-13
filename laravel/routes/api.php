@@ -5,6 +5,7 @@ use App\Api\Controllers\AuthController;
 use App\Api\Controllers\CityController;
 use App\Api\Controllers\LessonController;
 use App\Api\Controllers\LessonFolderController;
+use App\Api\Controllers\NoteController;
 use App\Api\Controllers\QuestionController;
 use App\Api\Controllers\QuestionFolderController;
 use App\Api\Controllers\QuizController;
@@ -44,6 +45,14 @@ Route::middleware('auth:sanctum')->group(function () {
     // (sahibi müəllim/admin hər zaman; şagird yalnız yayımlanan dərsi izləyə bilər).
     Route::get('/lessons/{contentId}/stream', [LessonMediaController::class, 'stream']);
     Route::get('/lessons/{contentId}/thumbnail', [LessonMediaController::class, 'thumbnail']);
+
+    // Şəxsi qeydlər (Google Keep üslubu) — istənilən doğrulanmış istifadəçi
+    Route::get('/notes/trashed', [NoteController::class, 'trashed']);
+    Route::get('/notes', [NoteController::class, 'index']);
+    Route::post('/notes', [NoteController::class, 'store']);
+    Route::put('/notes/{note}', [NoteController::class, 'update']);
+    Route::delete('/notes/{note}', [NoteController::class, 'destroy']);
+    Route::post('/notes/{note}/restore', [NoteController::class, 'restore']);
 });
 
 // --- Admin / Müəllim resursları ---

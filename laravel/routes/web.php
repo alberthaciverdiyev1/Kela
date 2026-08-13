@@ -4,7 +4,9 @@ use App\Web\Controllers\AuthController;
 use App\Web\Controllers\DashboardController;
 use App\Web\Controllers\LessonMediaController;
 use App\Web\Controllers\Teacher\AttendanceController;
+use App\Web\Controllers\Student\NoteController as StudentNoteController;
 use App\Web\Controllers\Teacher\LessonController;
+use App\Web\Controllers\Teacher\NoteController as TeacherNoteController;
 use App\Web\Controllers\Teacher\QuestionController;
 use App\Web\Controllers\Teacher\QuizController;
 use App\Web\Controllers\Teacher\StudentController;
@@ -56,6 +58,9 @@ Route::middleware(['auth', 'role:Admin,Teacher'])->group(function () {
     // Davam (yoklama)
     Route::get('/teacher/attendance', [AttendanceController::class, 'index'])->name('teacher.attendance.index');
 
+    // Qeydlər (Google Keep üslubu)
+    Route::get('/teacher/notes', [TeacherNoteController::class, 'index'])->name('teacher.notes.index');
+
     // Dərslər
     Route::prefix('teacher/lessons')->group(function () {
         Route::get('/', [LessonController::class, 'index'])->name('teacher.lessons.index');
@@ -82,6 +87,7 @@ Route::middleware(['auth', 'role:Admin,Teacher'])->group(function () {
 // --- Student / Parent / Blocked dashboards ---
 Route::prefix('student')->middleware(['auth', 'role:Student'])->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'student'])->name('student.dashboard');
+    Route::get('/notes', [StudentNoteController::class, 'index'])->name('student.notes.index');
 });
 Route::prefix('parent')->middleware(['auth', 'role:Parent'])->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'parent'])->name('parent.dashboard');

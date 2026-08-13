@@ -37,6 +37,7 @@
                         <a href="#" class="link link-hover">Yoklama</a>
                     @elseif(auth()->user()->isStudent())
                         <a href="{{ route('student.dashboard') }}" class="link link-hover">Dərslər</a>
+                        <a href="{{ route('student.notes.index') }}" class="link link-hover">Qeydlər</a>
                     @endif
                 </nav>
             @endauth
@@ -57,5 +58,7 @@
         @endif
         @yield('content')
     </main>
+
+    @stack('scripts')
 </body>
 </html>
