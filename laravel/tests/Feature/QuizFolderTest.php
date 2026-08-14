@@ -65,7 +65,8 @@ class QuizFolderTest extends TestCase
         // Kök səhifə qovluqları göstərir
         $html = $this->get('/teacher/quizzes')->assertOk()->getContent();
         $this->assertStringContainsString('Riyaziyyat', $html);
-        $this->assertStringContainsString('data-folder-action', $html);
+        $this->assertStringContainsString('data-kind="folder"', $html);
+        $this->assertStringContainsString('@contextmenu.prevent', $html);
         $this->assertStringContainsString('x-data="quizFolders', $html);
 
         // List/Grid görünüm keçidi və grid kartları mövcuddur
@@ -97,7 +98,7 @@ class QuizFolderTest extends TestCase
         $this->assertStringContainsString('Fizika', $html);
 
         // Foldera aid quiz görünür, digər folder quizi görünmür
-        $this->assertStringContainsString('data-quiz-action', $html);
+        $this->assertStringContainsString('data-kind="quiz"', $html);
     }
 
     public function test_api_creates_quiz_folder_and_moves_quiz(): void

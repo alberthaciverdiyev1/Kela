@@ -65,7 +65,8 @@ class LessonFolderTest extends TestCase
         // Kök səhifə qovluqları göstərir
         $html = $this->get('/teacher/lessons')->assertOk()->getContent();
         $this->assertStringContainsString('Riyaziyyat', $html);
-        $this->assertStringContainsString('data-folder-action', $html);
+        $this->assertStringContainsString('data-kind="folder"', $html);
+        $this->assertStringContainsString('@contextmenu.prevent', $html);
         $this->assertStringContainsString('x-data="lessonFolders', $html);
 
         // List/Grid görünüm keçidi və grid kartları mövcuddur
@@ -94,7 +95,7 @@ class LessonFolderTest extends TestCase
 
         $html = $this->get('/teacher/lessons?folder_id='.$folder->id)->assertOk()->getContent();
         $this->assertStringContainsString('Fizika', $html);
-        $this->assertStringContainsString('data-lesson-action', $html);
+        $this->assertStringContainsString('data-kind="lesson"', $html);
     }
 
     public function test_api_creates_lesson_folder_and_moves_lesson(): void

@@ -119,13 +119,13 @@ class WorkspaceFolderTest extends TestCase
         $this->assertStringContainsString('Riyaziyyat', $html);
         $this->assertStringContainsString('Workspace Quiz', $html);
         $this->assertStringContainsString('x-data="workspaceManager', $html);
-        $this->assertStringContainsString('data-folder-action', $html);
-        $this->assertStringContainsString('data-content-action', $html);
+        $this->assertStringContainsString('data-kind="folder"', $html);
+        $this->assertStringContainsString('data-kind="content"', $html);
 
-        // Workspace-dən çıxarma butonları mövcuddur
-        $this->assertStringContainsString('data-folder-action="remove"', $html);
-        $this->assertStringContainsString('data-content-action="remove"', $html);
-        $this->assertStringContainsString('Workspace-dən çıxar', $html);
+        // Sağ-tık kontekst menyusu sətirlərdə qurulur
+        $this->assertStringContainsString('@contextmenu.prevent', $html);
+        $this->assertStringContainsString('openRowContextMenu', $html);
+        $this->assertStringContainsString('ctxMenu.show', $html);
 
         // List/Grid görünüm keçidi mövcuddur
         $this->assertStringContainsString('setViewMode(\'list\')', $html);

@@ -31,7 +31,7 @@
     </div>
 
     {{-- Kataloq (JS fragment ilə yenilənir) --}}
-    <div id="question-bank" x-ref="directory" @click="onTableClick($event)">
+    <div id="question-bank" x-ref="directory" @contextmenu="onTableContextMenu($event)">
         @include('teacher.questions._table', [
             'folderId' => $folderId,
             'folders' => $folders,
@@ -217,6 +217,9 @@
             </div>
         </div>
     </div>
+
+    {{-- Sağ-tık kontekst menyusu --}}
+    @include('teacher.partials._context-menu')
 </div>
 @endsection
 

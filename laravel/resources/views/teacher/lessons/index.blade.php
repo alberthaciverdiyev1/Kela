@@ -51,7 +51,7 @@
     </div>
 
     {{-- Axtarış + kataloq --}}
-    <x-teacher.card :padding="false" @click="onTableClick($event)">
+    <x-teacher.card :padding="false">
         <form method="GET" action="{{ route('teacher.lessons.index') }}" class="flex items-center gap-3 border-b border-base-300 p-4">
             <input type="hidden" name="folder_id" value="{{ $folderId }}" />
             <div class="relative w-72">
@@ -84,9 +84,15 @@
         @else
             {{-- List görünümü (tablo) --}}
             <div x-show="viewMode === 'list'">
-            <x-teacher.table :headers="['Ad', 'Tip / Say', 'Video', 'Yayım', 'Sıra', 'Yaradılıb', '']">
+            <x-teacher.table :headers="['Ad', 'Tip / Say', 'Video', 'Yayım', 'Sıra', 'Yaradılıb']">
                 @foreach ($folders['folders'] as $folder)
-                    <tr class="transition hover:bg-base-200/50">
+                    <tr
+                        class="cursor-context-menu transition hover:bg-base-200/50"
+                        data-kind="folder"
+                        data-folder-id="{{ $folder['id'] }}"
+                        data-folder-name="{{ $folder['name'] }}"
+                        @contextmenu.prevent="openRowContextMenu($event, 'folder', $el)"
+                    >
                         <td class="font-medium">
                             <a href="{{ route('teacher.lessons.index', ['folder_id' => $folder['id']]) }}" class="inline-flex items-center gap-2 text-primary hover:underline">
                                 <x-icon name="heroicon-o-folder" class="size-4 opacity-60" />
@@ -100,41 +106,19 @@
                         <td>—</td>
                         <td>—</td>
                         <td>—</td>
-                        <td class="text-right">
-                            <div class="flex items-center justify-end gap-1">
-                                <button
-                                    data-folder-action="rename"
-                                    data-folder-id="{{ $folder['id'] }}"
-                                    data-folder-name="{{ $folder['name'] }}"
-                                    title="Adını dəyiş"
-                                    class="rounded-lg p-1.5 text-base-content/50 hover:bg-base-200 hover:text-base-content"
-                                >
-                                    <x-icon name="heroicon-o-pencil-square" class="size-4" />
-                                </button>
-                                <button
-                                    data-folder-action="move"
-                                    data-folder-id="{{ $folder['id'] }}"
-                                    title="Daşı"
-                                    class="rounded-lg p-1.5 text-base-content/50 hover:bg-base-200 hover:text-base-content"
-                                >
-                                    <x-icon name="heroicon-o-arrows-right-left" class="size-4" />
-                                </button>
-                                <button
-                                    data-folder-action="delete"
-                                    data-folder-id="{{ $folder['id'] }}"
-                                    data-folder-name="{{ $folder['name'] }}"
-                                    title="Sil"
-                                    class="rounded-lg p-1.5 text-error/70 hover:bg-error/10 hover:text-error"
-                                >
-                                    <x-icon name="heroicon-o-trash" class="size-4" />
-                                </button>
-                            </div>
-                        </td>
                     </tr>
                 @endforeach
 
                 @foreach ($lessons as $lesson)
-                    <tr class="transition hover:bg-base-200/50">
+                    <tr
+                        class="cursor-context-menu transition hover:bg-base-200/50"
+                        data-kind="lesson"
+                        data-lesson-id="{{ $lesson['content_id'] }}"
+                        data-lesson-title="{{ $lesson['title'] }}"
+                        data-open-url="{{ route('teacher.lessons.show', $lesson['content_id']) }}"
+                        data-edit-url="{{ route('teacher.lessons.edit', $lesson['content_id']) }}"
+                        @contextmenu.prevent="openRowContextMenu($event, 'lesson', $el)"
+                    >
                         <td class="font-medium text-base-content">
                             <a href="{{ route('teacher.lessons.show', $lesson['content_id']) }}" class="hover:text-primary">{{ $lesson['title'] }}</a>
                             @if ($lesson['description'])
@@ -160,31 +144,6 @@
                         </td>
                         <td class="text-base-content/70">{{ $lesson['order_index'] }}</td>
                         <td class="text-base-content/70">{{ $lesson['created_at'] }}</td>
-                        <td class="text-right">
-                            <div class="flex items-center justify-end gap-1">
-                                <button
-                                    data-lesson-action="move"
-                                    data-lesson-id="{{ $lesson['content_id'] }}"
-                                    data-lesson-title="{{ $lesson['title'] }}"
-                                    title="Qovluğa daşı"
-                                    class="rounded-lg p-1.5 text-base-content/50 hover:bg-base-200 hover:text-base-content"
-                                >
-                                    <x-icon name="heroicon-o-arrows-right-left" class="size-4" />
-                                </button>
-                                <x-teacher.button href="{{ route('teacher.lessons.show', $lesson['content_id']) }}" variant="ghost" size="sm" icon="eye">Aç</x-teacher.button>
-                                <x-teacher.button href="{{ route('teacher.lessons.edit', $lesson['content_id']) }}" variant="ghost" size="sm" icon="pencil-square">Redaktə</x-teacher.button>
-                                <form
-                                    method="POST"
-                                    action="{{ route('teacher.lessons.destroy', $lesson['content_id']) }}"
-                                    x-data="deleteForm({ url: '/api/v1/lessons/{{ $lesson['content_id'] }}', message: 'Bu dərsi silmək istəyirsiniz?' })"
-                                    @submit.prevent="submit"
-                                >
-                                    @csrf
-                                    @method('DELETE')
-                                    <x-teacher.button type="submit" variant="ghost" size="sm" icon="trash" x-bind:disabled="busy">Sil</x-teacher.button>
-                                </form>
-                            </div>
-                        </td>
                     </tr>
                 @endforeach
             </x-teacher.table>
@@ -193,7 +152,13 @@
             {{-- Grid görünümü (dikey kartlar — 6 sütun, kompakt, böyük ikon) --}}
             <div x-show="viewMode === 'grid'" class="grid grid-cols-6 gap-2 p-3">
                 @foreach ($folders['folders'] as $folder)
-                    <div class="group relative flex flex-col items-center rounded-lg border border-base-300 bg-base-100 p-2 text-center transition hover:border-primary/40 hover:shadow-sm">
+                    <div
+                        class="group relative flex cursor-context-menu flex-col items-center rounded-lg border border-base-300 bg-base-100 p-2 text-center transition hover:border-primary/40 hover:shadow-sm"
+                        data-kind="folder"
+                        data-folder-id="{{ $folder['id'] }}"
+                        data-folder-name="{{ $folder['name'] }}"
+                        @contextmenu.prevent="openRowContextMenu($event, 'folder', $el)"
+                    >
                         <a href="{{ route('teacher.lessons.index', ['folder_id' => $folder['id']]) }}" class="relative flex size-20 items-center justify-center rounded-xl bg-primary/10 text-primary transition group-hover:bg-primary/15">
                             <x-icon name="heroicon-o-folder" class="size-[66px]" />
                             @if ($folder['lesson_count'] > 0)
@@ -205,62 +170,25 @@
                         <a href="{{ route('teacher.lessons.index', ['folder_id' => $folder['id']]) }}" class="mt-1.5 block w-full truncate text-xs font-medium leading-tight text-base-content transition hover:text-primary" title="{{ $folder['name'] }}">
                             {{ $folder['name'] }}
                         </a>
-                        <div class="mt-1 flex items-center justify-center gap-0.5 opacity-0 transition-opacity duration-150 group-hover:opacity-100">
-                            <button
-                                data-folder-action="rename"
-                                data-folder-id="{{ $folder['id'] }}"
-                                data-folder-name="{{ $folder['name'] }}"
-                                title="Adını dəyiş"
-                                class="rounded-md p-0.5 text-base-content/50 hover:bg-base-200 hover:text-base-content"
-                            >
-                                <x-icon name="heroicon-o-pencil-square" class="size-3" />
-                            </button>
-                            <button
-                                data-folder-action="move"
-                                data-folder-id="{{ $folder['id'] }}"
-                                title="Daşı"
-                                class="rounded-md p-0.5 text-base-content/50 hover:bg-base-200 hover:text-base-content"
-                            >
-                                <x-icon name="heroicon-o-arrows-right-left" class="size-3" />
-                            </button>
-                            <button
-                                data-folder-action="delete"
-                                data-folder-id="{{ $folder['id'] }}"
-                                data-folder-name="{{ $folder['name'] }}"
-                                title="Sil"
-                                class="rounded-md p-0.5 text-error/70 hover:bg-error/10 hover:text-error"
-                            >
-                                <x-icon name="heroicon-o-trash" class="size-3" />
-                            </button>
-                        </div>
                     </div>
                 @endforeach
 
                 @foreach ($lessons as $lesson)
-                    <div class="group relative flex flex-col items-center rounded-lg border border-base-300 bg-base-100 p-2 text-center transition hover:border-primary/40 hover:shadow-sm">
+                    <div
+                        class="group relative flex cursor-context-menu flex-col items-center rounded-lg border border-base-300 bg-base-100 p-2 text-center transition hover:border-primary/40 hover:shadow-sm"
+                        data-kind="lesson"
+                        data-lesson-id="{{ $lesson['content_id'] }}"
+                        data-lesson-title="{{ $lesson['title'] }}"
+                        data-open-url="{{ route('teacher.lessons.show', $lesson['content_id']) }}"
+                        data-edit-url="{{ route('teacher.lessons.edit', $lesson['content_id']) }}"
+                        @contextmenu.prevent="openRowContextMenu($event, 'lesson', $el)"
+                    >
                         <a href="{{ route('teacher.lessons.show', $lesson['content_id']) }}" class="relative flex size-20 items-center justify-center rounded-xl transition {{ $lesson['is_published'] ? 'bg-success/10 text-success group-hover:bg-success/15' : 'bg-warning/10 text-warning group-hover:bg-warning/15' }}">
                             <x-icon name="heroicon-o-video-camera" class="size-[66px]" />
                         </a>
                         <a href="{{ route('teacher.lessons.show', $lesson['content_id']) }}" class="mt-1.5 block w-full truncate text-xs font-medium leading-tight text-base-content transition hover:text-primary" title="{{ $lesson['title'] }}">
                             {{ $lesson['title'] }}
                         </a>
-                        <div class="mt-1 flex items-center justify-center gap-0.5 opacity-0 transition-opacity duration-150 group-hover:opacity-100">
-                            <button
-                                data-lesson-action="move"
-                                data-lesson-id="{{ $lesson['content_id'] }}"
-                                data-lesson-title="{{ $lesson['title'] }}"
-                                title="Qovluğa daşı"
-                                class="rounded-md p-0.5 text-base-content/50 hover:bg-base-200 hover:text-base-content"
-                            >
-                                <x-icon name="heroicon-o-arrows-right-left" class="size-3" />
-                            </button>
-                            <a href="{{ route('teacher.lessons.show', $lesson['content_id']) }}" class="rounded-md p-0.5 text-base-content/50 hover:bg-base-200 hover:text-base-content" title="Aç">
-                                <x-icon name="heroicon-o-eye" class="size-3" />
-                            </a>
-                            <a href="{{ route('teacher.lessons.edit', $lesson['content_id']) }}" class="rounded-md p-0.5 text-base-content/50 hover:bg-base-200 hover:text-base-content" title="Redaktə">
-                                <x-icon name="heroicon-o-pencil-square" class="size-3" />
-                            </a>
-                        </div>
                     </div>
                 @endforeach
             </div>
@@ -335,6 +263,9 @@
             </div>
         </div>
     </div>
+
+    {{-- Sağ-tık kontekst menyusu --}}
+    @include('teacher.partials._context-menu')
 </div>
 @endsection
 

@@ -16,9 +16,13 @@
  *   DELETE /api/v1/workspaces/{w}/students/{sid}      → tələbə çıxar
  */
 import Alpine from 'alpinejs';
+import createContextMenu from '../context-menu';
 
 export default function workspaceManager(config) {
     return {
+        // ── Ortaq sağ-tık kontekst menyusu ────────────────────────────────
+        ...createContextMenu(),
+
         // ── Konfiqurasiya ──────────────────────────────────────────────────
         workspaceId: config.workspaceId,
         folderId: config.folderId ?? null,
@@ -81,12 +85,12 @@ export default function workspaceManager(config) {
             }
         },
 
-        openFolderRename(btn) {
-            this.editingFolderId = Number(btn.dataset.folderId);
+        openFolderRename(folderId, folderName = '') {
+            this.editingFolderId = Number(folderId);
             this.showFolderRename = true;
             this.$nextTick(() => {
                 if (this.$refs.folderRenameInput) {
-                    this.$refs.folderRenameInput.value = btn.dataset.folderName || '';
+                    this.$refs.folderRenameInput.value = folderName || '';
                     this.$refs.folderRenameInput.focus();
                 }
             });
@@ -106,8 +110,8 @@ export default function workspaceManager(config) {
             }
         },
 
-        openFolderMove(btn) {
-            this.moveFolderId = Number(btn.dataset.folderId);
+        openFolderMove(folderId) {
+            this.moveFolderId = Number(folderId);
             this.showFolderMove = true;
         },
 
@@ -123,9 +127,9 @@ export default function workspaceManager(config) {
             }
         },
 
-        async handleFolderDelete(btn) {
-            const id = btn.dataset.folderId;
-            const name = btn.dataset.folderName || 'Qovluq';
+        async handleFolderDelete(folderId, folderName = 'Qovluq') {
+            const id = Number(folderId);
+            const name = folderName || 'Qovluq';
             if (!window.confirm(`'${name}' qovluğu və içindəki bütün məzmunlar silinsin? (Bu əməliyyat geri qaytarıla bilməz.)`)) return;
             try {
                 await KelaApi('DELETE', `/api/v1/workspaces/${this.workspaceId}/folders/${id}`);
@@ -136,9 +140,9 @@ export default function workspaceManager(config) {
         },
 
         /** Qovluğu içindəki məzmunlarla birlikdə kütüphanəyə geri göndərir. */
-        async handleFolderRemove(btn) {
-            const id = btn.dataset.folderId;
-            const name = btn.dataset.folderName || 'Qovluq';
+        async handleFolderRemove(folderId, folderName = 'Qovluq') {
+            const id = Number(folderId);
+            const name = folderName || 'Qovluq';
             if (!window.confirm(`'${name}' qovluğu və içindəki məzmunlar workspace-dən çıxarılsın? (Kütüphanəyə qayıdacaq.)`)) return;
             try {
                 await KelaApi('POST', `/api/v1/workspaces/${this.workspaceId}/folders/${id}/remove`);
@@ -149,9 +153,9 @@ export default function workspaceManager(config) {
         },
 
         /** İçeriği workspace-dən kütüphanəyə geri göndərir. */
-        async handleContentRemove(btn) {
-            const id = btn.dataset.contentId;
-            const title = btn.dataset.contentTitle || 'Məzmun';
+        async handleContentRemove(contentId, contentTitle = 'Məzmun') {
+            const id = Number(contentId);
+            const title = contentTitle || 'Məzmun';
             if (!window.confirm(`'${title}' workspace-dən çıxarılsın? (Kütüphanəyə qayıdacaq.)`)) return;
             try {
                 await KelaApi('POST', '/api/v1/workspace-folders/remove-content', { content_id: id });
@@ -163,8 +167,8 @@ export default function workspaceManager(config) {
 
         // ── Məzmun əməliyyatları ───────────────────────────────────────────
 
-        openContentMove(btn) {
-            this.moveContentId = Number(btn.dataset.contentId);
+        openContentMove(contentId) {
+            this.moveContentId = Number(contentId);
             this.showContentMove = true;
         },
 
@@ -520,9 +524,9 @@ export default function workspaceManager(config) {
             }
         },
 
-        async detachStudent(btn) {
-            const id = btn.dataset.studentId;
-            const name = btn.dataset.studentName || 'Tələbə';
+        async detachStudent(studentId, studentName = 'Tələbə') {
+            const id = Number(studentId);
+            const name = studentName || 'Tələbə';
             if (!window.confirm(`'${name}' workspace-dən çıxarılsın?`)) return;
             try {
                 await KelaApi('DELETE', `/api/v1/workspaces/${this.workspaceId}/students/${id}`);
@@ -532,31 +536,50 @@ export default function workspaceManager(config) {
             }
         },
 
-        // ── Delegasiya ─────────────────────────────────────────────────────
+        // ── Sağ-tık kontekst menyusu ───────────────────────────────────────
 
         /**
-         * onTableClick(e) — Kataloq üzərində click hadisəsi.
-         * data-folder-action / data-content-action düymələrini müvafiq əməliyyata ötürür.
+         * openRowContextMenu(e, kind, el) — Kataloq sətirinə/kartına sağ-tık.
+         * data-* atributlarından oxuyub müvafiq aksiya menyusunu qurur.
          */
-        onTableClick(e) {
-            const fBtn = e.target.closest('[data-folder-action]');
-            if (fBtn) {
-                const action = fBtn.dataset.folderAction;
-                if (action === 'rename') this.openFolderRename(fBtn);
-                else if (action === 'move') this.openFolderMove(fBtn);
-                else if (action === 'delete') this.handleFolderDelete(fBtn);
-                else if (action === 'remove') this.handleFolderRemove(fBtn);
+        openRowContextMenu(e, kind, el) {
+            const d = el.dataset;
+
+            if (kind === 'folder') {
+                this.openCtxMenu(e, d.folderName, [
+                    { icon: 'pencil-square', iconClass: 'bg-base-200 text-base-content/70', label: 'Adını dəyiş', cls: 'text-base-content hover:bg-base-200', action: () => this.openFolderRename(d.folderId, d.folderName) },
+                    { icon: 'arrows-right-left', iconClass: 'bg-info/10 text-info', label: 'Daşı', cls: 'text-base-content hover:bg-info/10 hover:text-info', action: () => this.openFolderMove(d.folderId) },
+                    { icon: 'arrow-up-tray', iconClass: 'bg-warning/10 text-warning', label: 'Workspace-dən çıxar', cls: 'text-base-content hover:bg-warning/10 hover:text-warning', action: () => this.handleFolderRemove(d.folderId, d.folderName) },
+                    { divider: true },
+                    { icon: 'trash', iconClass: 'bg-error/10 text-error', label: 'Sil', danger: true, cls: 'text-error hover:bg-error/10 hover:text-error', action: () => this.handleFolderDelete(d.folderId, d.folderName) },
+                ]);
                 return;
             }
-            const cBtn = e.target.closest('[data-content-action]');
-            if (cBtn) {
-                const action = cBtn.dataset.contentAction;
-                if (action === 'move') this.openContentMove(cBtn);
-                else if (action === 'remove') this.handleContentRemove(cBtn);
+
+            if (kind === 'content') {
+                const items = [
+                    { icon: 'arrows-right-left', iconClass: 'bg-info/10 text-info', label: 'Qovluğa daşı', cls: 'text-base-content hover:bg-info/10 hover:text-info', action: () => this.openContentMove(d.contentId) },
+                    { icon: 'arrow-up-tray', iconClass: 'bg-warning/10 text-warning', label: 'Workspace-dən çıxar', cls: 'text-base-content hover:bg-warning/10 hover:text-warning', action: () => this.handleContentRemove(d.contentId, d.contentTitle) },
+                ];
+                if (d.editUrl) {
+                    items.push(
+                        { divider: true },
+                        { icon: d.contentType === '1' ? 'clipboard-document-list' : 'video-camera', iconClass: 'bg-primary/10 text-primary', label: 'Redaktə et', cls: 'text-base-content hover:bg-primary/10 hover:text-primary', href: d.editUrl },
+                    );
+                }
+                this.openCtxMenu(e, d.contentTitle, items);
+                return;
+            }
+
+            if (kind === 'student') {
+                this.openCtxMenu(e, d.studentName, [
+                    { icon: 'user-minus', iconClass: 'bg-error/10 text-error', label: 'Workspace-dən çıxar', danger: true, cls: 'text-error hover:bg-error/10 hover:text-error', action: () => this.detachStudent(d.studentId, d.studentName) },
+                ]);
             }
         },
 
         closeAll() {
+            this.closeCtxMenu();
             this.showFolderAdd = false;
             this.showFolderRename = false;
             this.showFolderMove = false;
@@ -575,6 +598,8 @@ Alpine.data('workspaceManager', workspaceManager);
  */
 function workspaceList() {
     return {
+        ...createContextMenu(),
+
         // Kataloq görünümü: 'list' | 'grid' (localStorage-da saxlanılır).
         viewMode: localStorage.getItem('workspace-view') || 'list',
 
@@ -583,6 +608,31 @@ function workspaceList() {
             try {
                 localStorage.setItem('workspace-view', mode);
             } catch (e) { /* localStorage əlçatan deyilsə sadəcə seans üçün qalır */ }
+        },
+
+        /** Workspace kartı/sətirinə sağ-tık menyusu. */
+        openWorkspaceContextMenu(e, el) {
+            const d = el.dataset;
+            this.openCtxMenu(e, d.workspaceName, [
+                { icon: 'squares-2x2', iconClass: 'bg-primary/10 text-primary', label: 'Aç', cls: 'text-base-content hover:bg-primary/10 hover:text-primary', href: d.openUrl },
+                { icon: 'pencil-square', iconClass: 'bg-base-200 text-base-content/70', label: 'Redaktə et', cls: 'text-base-content hover:bg-base-200', href: d.editUrl },
+                { divider: true },
+                { icon: 'trash', iconClass: 'bg-error/10 text-error', label: 'Sil', danger: true, cls: 'text-error hover:bg-error/10 hover:text-error', action: () => this.deleteWorkspace(d.workspaceId) },
+            ]);
+        },
+
+        async deleteWorkspace(workspaceId) {
+            if (!window.confirm('Bu workspace silinsin?')) return;
+            try {
+                await KelaApi('DELETE', `/api/v1/workspaces/${Number(workspaceId)}`);
+                window.location.reload();
+            } catch (err) {
+                window.alert(err.message);
+            }
+        },
+
+        closeAll() {
+            this.closeCtxMenu();
         },
     };
 }

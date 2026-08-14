@@ -13,6 +13,7 @@
  * dəyərlərini toplayıb modullara ötürür və { ok } gəlincə kataloqu təzələyir.
  */
 import Alpine from 'alpinejs';
+import createContextMenu from '../context-menu';
 import createBankList from './list';
 import createBankAdder from './add';
 import createBankEditor from './edit';
@@ -25,6 +26,9 @@ export default function questionBank(config) {
     const remover = createBankRemover();
 
     return {
+        // ── Ortaq sağ-tık kontekst menyusu ────────────────────────────────
+        ...createContextMenu(),
+
         // ── Konfiqurasiya ──────────────────────────────────────────────────
         folderId: config.folderId ?? null,
         folderTree: config.folderTree || [],
@@ -152,13 +156,11 @@ export default function questionBank(config) {
             await this.refresh();
         },
 
-        openFolderRename(btn) {
-            this.editingFolderId = Number(btn.dataset.folderId);
+        openFolderRename(folderId, folderName = '') {
+            this.editingFolderId = Number(folderId);
             this.showFolderRename = true;
             this.$nextTick(() => {
-                editor.openFolderRename(this.getFolderFields(), {
-                    name: btn.dataset.folderName || '',
-                });
+                editor.openFolderRename(this.getFolderFields(), { name: folderName || '' });
                 this.$refs.folderRenameInput?.focus();
             });
         },
@@ -170,8 +172,8 @@ export default function questionBank(config) {
             await this.refresh();
         },
 
-        openFolderMove(btn) {
-            this.moveTargetId = Number(btn.dataset.folderId);
+        openFolderMove(folderId) {
+            this.moveTargetId = Number(folderId);
             this.showFolderMove = true;
         },
 
@@ -183,8 +185,8 @@ export default function questionBank(config) {
             await this.refresh();
         },
 
-        async handleFolderDelete(btn) {
-            const ok = await remover.deleteFolder(btn.dataset.folderId, btn.dataset.folderName);
+        async handleFolderDelete(folderId, folderName = 'Qovluq') {
+            const ok = await remover.deleteFolder(folderId, folderName || 'Qovluq');
             if (ok) await this.refresh();
         },
 
@@ -201,9 +203,9 @@ export default function questionBank(config) {
             });
         },
 
-        openQuestionEdit(btn) {
-            const q = JSON.parse(btn.dataset.question || '{}');
-            this.editingQuestionId = Number(btn.dataset.questionId);
+        openQuestionEdit(questionId, questionData) {
+            const q = (typeof questionData === 'string' ? JSON.parse(questionData || '{}') : (questionData || {}));
+            this.editingQuestionId = Number(questionId);
             this.questionTitle = 'Sualı Düzləndir';
             this.showQuestion = true;
             editor.openQuestionEdit(this.getQuestionFields(), q);
@@ -223,8 +225,8 @@ export default function questionBank(config) {
             await this.refresh();
         },
 
-        openQuestionMove(btn) {
-            this.moveQuestionId = Number(btn.dataset.questionId);
+        openQuestionMove(questionId) {
+            this.moveQuestionId = Number(questionId);
             this.showQuestionMove = true;
         },
 
@@ -236,42 +238,61 @@ export default function questionBank(config) {
             await this.refresh();
         },
 
-        async handleQuestionDelete(btn) {
-            const ok = await remover.deleteQuestion(btn.dataset.questionId, btn.dataset.questionText);
+        async handleQuestionDelete(questionId, questionText) {
+            const ok = await remover.deleteQuestion(questionId, questionText);
             if (ok) await this.refresh();
         },
 
-        // ── Delegasiya ─────────────────────────────────────────────────────
+        // ── Sağ-tık kontekst menyusu ───────────────────────────────────────
 
         /**
-         * onTableClick(e) — Kataloq üzərində click hadisəsi.
-         *
-         * Niyə delegasiya: kataloq hər refresh-də yenidən render olunur —
-         * bir dəfə kökə @click bağlanır və data-folder-action /
-         * data-question-action düymələri müvafiq əməliyyata ötürülür.
+         * onTableContextMenu(e) — Kataloq üzərində sağ-tık (delegasiya).
+         * Kataloq hər refresh-də yenidən render olunduğundan, hadisə kökə
+         * bağlanır və [data-kind] sətrinə görə menyu açılır.
          */
-        onTableClick(e) {
-            const fBtn = e.target.closest('[data-folder-action]');
-            if (fBtn) {
-                const action = fBtn.dataset.folderAction;
-                if (action === 'rename') this.openFolderRename(fBtn);
-                else if (action === 'move') this.openFolderMove(fBtn);
-                else if (action === 'delete') this.handleFolderDelete(fBtn);
+        onTableContextMenu(e) {
+            const row = e.target.closest('[data-kind]');
+            if (row) {
+                e.preventDefault();
+                this.openRowContextMenu(e, row.dataset.kind, row);
+            }
+        },
+
+        /** Sətirə sağ-tık — data-* atributlarından menyu qurur. */
+        openRowContextMenu(e, kind, el) {
+            const d = el.dataset;
+
+            if (kind === 'folder') {
+                this.openCtxMenu(e, d.folderName, [
+                    { icon: 'pencil-square', iconClass: 'bg-base-200 text-base-content/70', label: 'Adını dəyiş', cls: 'text-base-content hover:bg-base-200', action: () => this.openFolderRename(d.folderId, d.folderName) },
+                    { icon: 'arrows-right-left', iconClass: 'bg-info/10 text-info', label: 'Daşı', cls: 'text-base-content hover:bg-info/10 hover:text-info', action: () => this.openFolderMove(d.folderId) },
+                    { divider: true },
+                    { icon: 'trash', iconClass: 'bg-error/10 text-error', label: 'Sil', danger: true, cls: 'text-error hover:bg-error/10 hover:text-error', action: () => this.handleFolderDelete(d.folderId, d.folderName) },
+                ]);
                 return;
             }
-            const qBtn = e.target.closest('[data-question-action]');
-            if (qBtn) {
-                const action = qBtn.dataset.questionAction;
-                if (action === 'edit') this.openQuestionEdit(qBtn);
-                else if (action === 'move') this.openQuestionMove(qBtn);
-                else if (action === 'delete') this.handleQuestionDelete(qBtn);
+
+            if (kind === 'question') {
+                this.openCtxMenu(e, this.questionPreviewTitle(d.questionText), [
+                    { icon: 'pencil-square', iconClass: 'bg-amber-500/10 text-amber-600', label: 'Sualı düzləndir', cls: 'text-base-content hover:bg-amber-50 hover:text-amber-600', action: () => this.openQuestionEdit(d.questionId, d.question) },
+                    { icon: 'arrows-right-left', iconClass: 'bg-info/10 text-info', label: 'Qovluğa daşı', cls: 'text-base-content hover:bg-info/10 hover:text-info', action: () => this.openQuestionMove(d.questionId) },
+                    { divider: true },
+                    { icon: 'trash', iconClass: 'bg-error/10 text-error', label: 'Sil', danger: true, cls: 'text-error hover:bg-error/10 hover:text-error', action: () => this.handleQuestionDelete(d.questionId, d.questionText) },
+                ]);
             }
+        },
+
+        /** Menyu başlığı üçün sual mətnindən qısa önizləmə. */
+        questionPreviewTitle(text) {
+            const clean = String(text || '').replace(/<[^>]*>/g, '').replace(/\s+/g, ' ').trim();
+            return clean.length > 40 ? clean.slice(0, 40) + '…' : (clean || 'Sual');
         },
 
         /**
          * closeAll() — Escape düyməsi basılanda bütün dialoqları bağlayır.
          */
         closeAll() {
+            this.closeCtxMenu();
             this.showFolderAdd = false;
             this.showFolderRename = false;
             this.showFolderMove = false;

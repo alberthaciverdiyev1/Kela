@@ -13,9 +13,13 @@
  *   POST   /api/v1/quiz-folders/move-quiz   → quizi qovluğa daşı
  */
 import Alpine from 'alpinejs';
+import createContextMenu from '../context-menu';
 
 export default function quizFolders(config) {
     return {
+        // ── Ortaq sağ-tık kontekst menyusu ────────────────────────────────
+        ...createContextMenu(),
+
         // ── Konfiqurasiya ──────────────────────────────────────────────────
         folderId: config.folderId ?? null,
         folderTree: config.folderTree || [],
@@ -67,12 +71,12 @@ export default function quizFolders(config) {
             }
         },
 
-        openFolderRename(btn) {
-            this.editingFolderId = Number(btn.dataset.folderId);
+        openFolderRename(folderId, folderName = '') {
+            this.editingFolderId = Number(folderId);
             this.showFolderRename = true;
             this.$nextTick(() => {
                 if (this.$refs.folderRenameInput) {
-                    this.$refs.folderRenameInput.value = btn.dataset.folderName || '';
+                    this.$refs.folderRenameInput.value = folderName || '';
                     this.$refs.folderRenameInput.focus();
                 }
             });
@@ -92,8 +96,8 @@ export default function quizFolders(config) {
             }
         },
 
-        openFolderMove(btn) {
-            this.moveFolderId = Number(btn.dataset.folderId);
+        openFolderMove(folderId) {
+            this.moveFolderId = Number(folderId);
             this.showFolderMove = true;
         },
 
@@ -109,9 +113,9 @@ export default function quizFolders(config) {
             }
         },
 
-        async handleFolderDelete(btn) {
-            const id = btn.dataset.folderId;
-            const name = btn.dataset.folderName || 'Qovluq';
+        async handleFolderDelete(folderId, folderName = 'Qovluq') {
+            const id = Number(folderId);
+            const name = folderName || 'Qovluq';
             if (!window.confirm(`'${name}' qovluğu silinsin? (İçindəki quizlər kökə daşınacaq.)`)) return;
             try {
                 await KelaApi('DELETE', `/api/v1/quiz-folders/${id}`);
@@ -123,9 +127,21 @@ export default function quizFolders(config) {
 
         // ── Quiz əməliyyatları ─────────────────────────────────────────────
 
-        openQuizMove(btn) {
-            this.moveQuizId = Number(btn.dataset.quizId);
+        openQuizMove(quizId) {
+            this.moveQuizId = Number(quizId);
             this.showQuizMove = true;
+        },
+
+        async deleteQuiz(quizId, quizTitle = 'Quiz') {
+            const id = Number(quizId);
+            const title = quizTitle || 'Quiz';
+            if (!window.confirm(`'${title}' quiz silinsin?`)) return;
+            try {
+                await KelaApi('DELETE', `/api/v1/quizzes/${id}`);
+                window.location.reload();
+            } catch (err) {
+                window.alert(err.message);
+            }
         },
 
         async saveQuizMove() {
@@ -141,29 +157,35 @@ export default function quizFolders(config) {
             }
         },
 
-        // ── Delegasiya ─────────────────────────────────────────────────────
+        // ── Sağ-tık kontekst menyusu ───────────────────────────────────────
 
-        /**
-         * onTableClick(e) — Kataloq üzərində click hadisəsi.
-         * data-folder-action / data-quiz-action düymələrini müvafiq əməliyyata ötürür.
-         */
-        onTableClick(e) {
-            const fBtn = e.target.closest('[data-folder-action]');
-            if (fBtn) {
-                const action = fBtn.dataset.folderAction;
-                if (action === 'rename') this.openFolderRename(fBtn);
-                else if (action === 'move') this.openFolderMove(fBtn);
-                else if (action === 'delete') this.handleFolderDelete(fBtn);
+        /** Sətirə/karta sağ-tık — data-* atributlarından menyu qurur. */
+        openRowContextMenu(e, kind, el) {
+            const d = el.dataset;
+
+            if (kind === 'folder') {
+                this.openCtxMenu(e, d.folderName, [
+                    { icon: 'pencil-square', iconClass: 'bg-base-200 text-base-content/70', label: 'Adını dəyiş', cls: 'text-base-content hover:bg-base-200', action: () => this.openFolderRename(d.folderId, d.folderName) },
+                    { icon: 'arrows-right-left', iconClass: 'bg-info/10 text-info', label: 'Daşı', cls: 'text-base-content hover:bg-info/10 hover:text-info', action: () => this.openFolderMove(d.folderId) },
+                    { divider: true },
+                    { icon: 'trash', iconClass: 'bg-error/10 text-error', label: 'Sil', danger: true, cls: 'text-error hover:bg-error/10 hover:text-error', action: () => this.handleFolderDelete(d.folderId, d.folderName) },
+                ]);
                 return;
             }
-            const qBtn = e.target.closest('[data-quiz-action]');
-            if (qBtn) {
-                const action = qBtn.dataset.quizAction;
-                if (action === 'move') this.openQuizMove(qBtn);
+
+            if (kind === 'quiz') {
+                this.openCtxMenu(e, d.quizTitle, [
+                    { icon: 'arrows-right-left', iconClass: 'bg-info/10 text-info', label: 'Qovluğa daşı', cls: 'text-base-content hover:bg-info/10 hover:text-info', action: () => this.openQuizMove(d.quizId) },
+                    { divider: true },
+                    { icon: 'eye', iconClass: 'bg-primary/10 text-primary', label: 'Profil', cls: 'text-base-content hover:bg-primary/10 hover:text-primary', href: d.openUrl },
+                    { icon: 'pencil-square', iconClass: 'bg-base-200 text-base-content/70', label: 'Redaktə et', cls: 'text-base-content hover:bg-base-200', href: d.editUrl },
+                    { icon: 'trash', iconClass: 'bg-error/10 text-error', label: 'Sil', danger: true, cls: 'text-error hover:bg-error/10 hover:text-error', action: () => this.deleteQuiz(d.quizId, d.quizTitle) },
+                ]);
             }
         },
 
         closeAll() {
+            this.closeCtxMenu();
             this.showFolderAdd = false;
             this.showFolderRename = false;
             this.showFolderMove = false;

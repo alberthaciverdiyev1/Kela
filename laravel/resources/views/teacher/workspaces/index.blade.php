@@ -1,7 +1,7 @@
 @extends('common.layouts.teacher')
 @section('title', 'İş Sahələri - Kela')
 @section('content')
-<div class="space-y-6" x-data="workspaceList()">
+<div class="space-y-6" x-data="workspaceList()" @keydown.escape.window="closeAll()">
     <x-teacher.heading subtitle="İş sahələrini idarə et">
         İş Sahələri
         <x-slot:actions>
@@ -52,9 +52,16 @@
         @else
             {{-- List görünümü (tablo) --}}
             <div x-show="viewMode === 'list'">
-                <x-teacher.table :headers="['Ad', 'Tələbə', 'Yaradılıb', '']">
+                <x-teacher.table :headers="['Ad', 'Tələbə', 'Yaradılıb']">
                     @foreach ($workspaces as $ws)
-                        <tr class="transition hover:bg-base-200/50">
+                        <tr
+                            class="cursor-context-menu transition hover:bg-base-200/50"
+                            data-workspace-id="{{ $ws['id'] }}"
+                            data-workspace-name="{{ $ws['name'] }}"
+                            data-open-url="{{ route('teacher.workspaces.show', $ws['id']) }}"
+                            data-edit-url="{{ route('teacher.workspaces.edit', $ws['id']) }}"
+                            @contextmenu.prevent="openWorkspaceContextMenu($event, $el)"
+                        >
                             <td class="font-medium text-base-content">
                                 <a href="{{ route('teacher.workspaces.show', $ws['id']) }}" class="hover:text-primary">{{ $ws['name'] }}</a>
                             </td>
@@ -62,22 +69,6 @@
                                 <x-teacher.badge color="blue">{{ $ws['student_count'] }} şagird</x-teacher.badge>
                             </td>
                             <td class="text-base-content/70">{{ $ws['created_at'] ?? '—' }}</td>
-                            <td class="text-right">
-                                <div class="flex items-center justify-end gap-1">
-                                    <x-teacher.button href="{{ route('teacher.workspaces.show', $ws['id']) }}" variant="ghost" size="sm" icon="eye">Aç</x-teacher.button>
-                                    <x-teacher.button href="{{ route('teacher.workspaces.edit', $ws['id']) }}" variant="ghost" size="sm" icon="pencil-square">Redaktə</x-teacher.button>
-                                    <form
-                                        method="POST"
-                                        action="{{ route('teacher.workspaces.destroy', $ws['id']) }}"
-                                        x-data="deleteForm({ url: '/api/v1/workspaces/{{ $ws['id'] }}', message: 'Bu workspace silinsin?' })"
-                                        @submit.prevent="submit"
-                                    >
-                                        @csrf
-                                        @method('DELETE')
-                                        <x-teacher.button type="submit" variant="ghost" size="sm" icon="trash" x-bind:disabled="busy">Sil</x-teacher.button>
-                                    </form>
-                                </div>
-                            </td>
                         </tr>
                     @endforeach
                 </x-teacher.table>
@@ -86,7 +77,14 @@
             {{-- Grid görünümü (dikey kartlar — 6 sütun, kompakt, böyük ikon) --}}
             <div x-show="viewMode === 'grid'" class="grid grid-cols-6 gap-2 p-3">
                 @foreach ($workspaces as $ws)
-                    <div class="group relative flex flex-col items-center rounded-lg border border-base-300 bg-base-100 p-2 text-center transition hover:border-primary/40 hover:shadow-sm">
+                    <div
+                        class="group relative flex cursor-context-menu flex-col items-center rounded-lg border border-base-300 bg-base-100 p-2 text-center transition hover:border-primary/40 hover:shadow-sm"
+                        data-workspace-id="{{ $ws['id'] }}"
+                        data-workspace-name="{{ $ws['name'] }}"
+                        data-open-url="{{ route('teacher.workspaces.show', $ws['id']) }}"
+                        data-edit-url="{{ route('teacher.workspaces.edit', $ws['id']) }}"
+                        @contextmenu.prevent="openWorkspaceContextMenu($event, $el)"
+                    >
                         <a href="{{ route('teacher.workspaces.show', $ws['id']) }}" class="relative flex size-20 items-center justify-center rounded-xl bg-primary/10 text-primary transition group-hover:bg-primary/15">
                             <x-icon name="heroicon-o-squares-2x2" class="size-[66px]" />
                             @if ($ws['student_count'] > 0)
@@ -98,29 +96,15 @@
                         <a href="{{ route('teacher.workspaces.show', $ws['id']) }}" class="mt-1.5 block w-full truncate text-xs font-medium leading-tight text-base-content transition hover:text-primary" title="{{ $ws['name'] }}">
                             {{ $ws['name'] }}
                         </a>
-                        <div class="mt-1 flex items-center justify-center gap-0.5 opacity-0 transition-opacity duration-150 group-hover:opacity-100">
-                            <a href="{{ route('teacher.workspaces.show', $ws['id']) }}" class="rounded-md p-0.5 text-base-content/50 hover:bg-base-200 hover:text-base-content" title="Aç">
-                                <x-icon name="heroicon-o-eye" class="size-3" />
-                            </a>
-                            <a href="{{ route('teacher.workspaces.edit', $ws['id']) }}" class="rounded-md p-0.5 text-base-content/50 hover:bg-base-200 hover:text-base-content" title="Redaktə">
-                                <x-icon name="heroicon-o-pencil-square" class="size-3" />
-                            </a>
-                            <button
-                                type="button"
-                                x-data="deleteForm({ url: '/api/v1/workspaces/{{ $ws['id'] }}', message: 'Bu workspace silinsin?' })"
-                                @click="submit"
-                                class="rounded-md p-0.5 text-error/70 hover:bg-error/10 hover:text-error"
-                                title="Sil"
-                            >
-                                <x-icon name="heroicon-o-trash" class="size-3" />
-                            </button>
-                        </div>
                     </div>
                 @endforeach
             </div>
             <x-teacher.pagination :paginator="$workspaces" />
         @endif
     </x-teacher.card>
+
+    {{-- Sağ-tık kontekst menyusu --}}
+    @include('teacher.partials._context-menu')
 </div>
 @endsection
 

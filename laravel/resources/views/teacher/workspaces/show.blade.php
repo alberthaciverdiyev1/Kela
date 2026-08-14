@@ -58,7 +58,7 @@
     </div>
 
     {{-- Kataloq: breadcrumb + qovluq/content cədvəli --}}
-    <x-teacher.card :padding="false" @click="onTableClick($event)">
+    <x-teacher.card :padding="false">
         {{-- Breadcrumb --}}
         <nav class="flex flex-wrap items-center gap-1 border-b border-base-300 px-4 py-2 text-sm">
             <a href="{{ route('teacher.workspaces.show', $workspaceId) }}" class="inline-flex items-center gap-1 rounded px-2 py-1 font-medium text-primary hover:bg-primary/10">
@@ -78,9 +78,15 @@
         @else
             {{-- List görünümü (tablo) --}}
             <div x-show="viewMode === 'list'">
-                <x-teacher.table :headers="['Ad', 'Tip', 'Yayım', 'Yaradılıb', '']">
+                <x-teacher.table :headers="['Ad', 'Tip', 'Yayım', 'Yaradılıb']">
                     @foreach ($directory['folders'] as $folder)
-                        <tr class="transition hover:bg-base-200/50">
+                        <tr
+                            class="cursor-context-menu transition hover:bg-base-200/50"
+                            data-kind="folder"
+                            data-folder-id="{{ $folder['id'] }}"
+                            data-folder-name="{{ $folder['name'] }}"
+                            @contextmenu.prevent="openRowContextMenu($event, 'folder', $el)"
+                        >
                             <td class="font-medium">
                                 <a href="{{ route('teacher.workspaces.show', ['workspace' => $workspaceId, 'folder_id' => $folder['id']]) }}" class="inline-flex items-center gap-2 text-primary hover:underline">
                                     <x-icon name="heroicon-o-folder" class="size-4 opacity-60" />
@@ -92,50 +98,19 @@
                             </td>
                             <td>—</td>
                             <td>—</td>
-                            <td class="text-right">
-                                <div class="flex items-center justify-end gap-1">
-                                    <button
-                                        data-folder-action="rename"
-                                        data-folder-id="{{ $folder['id'] }}"
-                                        data-folder-name="{{ $folder['name'] }}"
-                                        title="Adını dəyiş"
-                                        class="rounded-lg p-1.5 text-base-content/50 hover:bg-base-200 hover:text-base-content"
-                                    >
-                                        <x-icon name="heroicon-o-pencil-square" class="size-4" />
-                                    </button>
-                                    <button
-                                        data-folder-action="move"
-                                        data-folder-id="{{ $folder['id'] }}"
-                                        title="Daşı"
-                                        class="rounded-lg p-1.5 text-base-content/50 hover:bg-base-200 hover:text-base-content"
-                                    >
-                                        <x-icon name="heroicon-o-arrows-right-left" class="size-4" />
-                                    </button>
-                                    <button
-                                        data-folder-action="remove"
-                                        data-folder-id="{{ $folder['id'] }}"
-                                        data-folder-name="{{ $folder['name'] }}"
-                                        title="Workspace-dən çıxar"
-                                        class="rounded-lg p-1.5 text-base-content/50 hover:bg-warning/10 hover:text-warning"
-                                    >
-                                        <x-icon name="heroicon-o-arrow-up-tray" class="size-4" />
-                                    </button>
-                                    <button
-                                        data-folder-action="delete"
-                                        data-folder-id="{{ $folder['id'] }}"
-                                        data-folder-name="{{ $folder['name'] }}"
-                                        title="Sil"
-                                        class="rounded-lg p-1.5 text-error/70 hover:bg-error/10 hover:text-error"
-                                    >
-                                        <x-icon name="heroicon-o-trash" class="size-4" />
-                                    </button>
-                                </div>
-                            </td>
                         </tr>
                     @endforeach
 
                     @foreach ($directory['contents'] as $item)
-                        <tr class="transition hover:bg-base-200/50">
+                        <tr
+                            class="cursor-context-menu transition hover:bg-base-200/50"
+                            data-kind="content"
+                            data-content-id="{{ $item['content_id'] }}"
+                            data-content-title="{{ $item['title'] }}"
+                            data-content-type="{{ $item['type'] }}"
+                            data-edit-url="{{ $item['type'] === \App\Domain\Content\Content::TYPE_QUIZ ? route('teacher.quizzes.edit', $item['content_id']) : route('teacher.lessons.edit', $item['content_id']) }}"
+                            @contextmenu.prevent="openRowContextMenu($event, 'content', $el)"
+                        >
                             <td class="font-medium text-base-content">
                                 @if ($item['type'] === \App\Domain\Content\Content::TYPE_QUIZ)
                                     <a href="{{ route('teacher.quizzes.edit', $item['content_id']) }}" class="inline-flex items-center gap-2 hover:text-primary">
@@ -158,33 +133,6 @@
                                 </x-teacher.badge>
                             </td>
                             <td class="text-base-content/70">{{ $item['created_at'] }}</td>
-                            <td class="text-right">
-                                <div class="flex items-center justify-end gap-1">
-                                    <button
-                                        data-content-action="move"
-                                        data-content-id="{{ $item['content_id'] }}"
-                                        data-content-title="{{ $item['title'] }}"
-                                        title="Qovluğa daşı"
-                                        class="rounded-lg p-1.5 text-base-content/50 hover:bg-base-200 hover:text-base-content"
-                                    >
-                                        <x-icon name="heroicon-o-arrows-right-left" class="size-4" />
-                                    </button>
-                                    <button
-                                        data-content-action="remove"
-                                        data-content-id="{{ $item['content_id'] }}"
-                                        data-content-title="{{ $item['title'] }}"
-                                        title="Workspace-dən çıxar"
-                                        class="rounded-lg p-1.5 text-base-content/50 hover:bg-warning/10 hover:text-warning"
-                                    >
-                                        <x-icon name="heroicon-o-arrow-up-tray" class="size-4" />
-                                    </button>
-                                    @if ($item['type'] === \App\Domain\Content\Content::TYPE_QUIZ)
-                                        <x-teacher.button href="{{ route('teacher.quizzes.edit', $item['content_id']) }}" variant="ghost" size="sm" icon="pencil-square">Redaktə</x-teacher.button>
-                                    @else
-                                        <x-teacher.button href="{{ route('teacher.lessons.edit', $item['content_id']) }}" variant="ghost" size="sm" icon="pencil-square">Redaktə</x-teacher.button>
-                                    @endif
-                                </div>
-                            </td>
                         </tr>
                     @endforeach
                 </x-teacher.table>
@@ -193,7 +141,13 @@
             {{-- Grid görünümü (dikey kartlar — 6 sütun, kompakt, böyük ikon) --}}
             <div x-show="viewMode === 'grid'" class="grid grid-cols-6 gap-2 p-3">
                 @foreach ($directory['folders'] as $folder)
-                    <div class="group relative flex flex-col items-center rounded-lg border border-base-300 bg-base-100 p-2 text-center transition hover:border-primary/40 hover:shadow-sm">
+                    <div
+                        class="group relative flex cursor-context-menu flex-col items-center rounded-lg border border-base-300 bg-base-100 p-2 text-center transition hover:border-primary/40 hover:shadow-sm"
+                        data-kind="folder"
+                        data-folder-id="{{ $folder['id'] }}"
+                        data-folder-name="{{ $folder['name'] }}"
+                        @contextmenu.prevent="openRowContextMenu($event, 'folder', $el)"
+                    >
                         <a href="{{ route('teacher.workspaces.show', ['workspace' => $workspaceId, 'folder_id' => $folder['id']]) }}" class="relative flex size-20 items-center justify-center rounded-xl bg-primary/10 text-primary transition group-hover:bg-primary/15">
                             <x-icon name="heroicon-o-folder" class="size-[66px]" />
                             @if ($folder['content_count'] > 0)
@@ -205,48 +159,19 @@
                         <a href="{{ route('teacher.workspaces.show', ['workspace' => $workspaceId, 'folder_id' => $folder['id']]) }}" class="mt-1.5 block w-full truncate text-xs font-medium leading-tight text-base-content transition hover:text-primary" title="{{ $folder['name'] }}">
                             {{ $folder['name'] }}
                         </a>
-                        <div class="mt-1 flex items-center justify-center gap-0.5 opacity-0 transition-opacity duration-150 group-hover:opacity-100">
-                            <button
-                                data-folder-action="rename"
-                                data-folder-id="{{ $folder['id'] }}"
-                                data-folder-name="{{ $folder['name'] }}"
-                                title="Adını dəyiş"
-                                class="rounded-md p-0.5 text-base-content/50 hover:bg-base-200 hover:text-base-content"
-                            >
-                                <x-icon name="heroicon-o-pencil-square" class="size-3" />
-                            </button>
-                            <button
-                                data-folder-action="move"
-                                data-folder-id="{{ $folder['id'] }}"
-                                title="Daşı"
-                                class="rounded-md p-0.5 text-base-content/50 hover:bg-base-200 hover:text-base-content"
-                            >
-                                <x-icon name="heroicon-o-arrows-right-left" class="size-3" />
-                            </button>
-                            <button
-                                data-folder-action="remove"
-                                data-folder-id="{{ $folder['id'] }}"
-                                data-folder-name="{{ $folder['name'] }}"
-                                title="Workspace-dən çıxar"
-                                class="rounded-md p-0.5 text-base-content/50 hover:bg-warning/10 hover:text-warning"
-                            >
-                                <x-icon name="heroicon-o-arrow-up-tray" class="size-3" />
-                            </button>
-                            <button
-                                data-folder-action="delete"
-                                data-folder-id="{{ $folder['id'] }}"
-                                data-folder-name="{{ $folder['name'] }}"
-                                title="Sil"
-                                class="rounded-md p-0.5 text-error/70 hover:bg-error/10 hover:text-error"
-                            >
-                                <x-icon name="heroicon-o-trash" class="size-3" />
-                            </button>
-                        </div>
                     </div>
                 @endforeach
 
                 @foreach ($directory['contents'] as $item)
-                    <div class="group relative flex flex-col items-center rounded-lg border border-base-300 bg-base-100 p-2 text-center transition hover:border-primary/40 hover:shadow-sm">
+                    <div
+                        class="group relative flex cursor-context-menu flex-col items-center rounded-lg border border-base-300 bg-base-100 p-2 text-center transition hover:border-primary/40 hover:shadow-sm"
+                        data-kind="content"
+                        data-content-id="{{ $item['content_id'] }}"
+                        data-content-title="{{ $item['title'] }}"
+                        data-content-type="{{ $item['type'] }}"
+                        data-edit-url="{{ $item['type'] === \App\Domain\Content\Content::TYPE_QUIZ ? route('teacher.quizzes.edit', $item['content_id']) : route('teacher.lessons.edit', $item['content_id']) }}"
+                        @contextmenu.prevent="openRowContextMenu($event, 'content', $el)"
+                    >
                         @if ($item['type'] === \App\Domain\Content\Content::TYPE_QUIZ)
                             <a href="{{ route('teacher.quizzes.edit', $item['content_id']) }}" class="relative flex size-20 items-center justify-center rounded-xl transition {{ $item['is_published'] ? 'bg-info/10 text-info group-hover:bg-info/15' : 'bg-warning/10 text-warning group-hover:bg-warning/15' }}">
                                 <x-icon name="heroicon-o-clipboard-document-list" class="size-[66px]" />
@@ -265,35 +190,6 @@
                                 {{ $item['title'] }}
                             </a>
                         @endif
-                        <div class="mt-1 flex items-center justify-center gap-0.5 opacity-0 transition-opacity duration-150 group-hover:opacity-100">
-                            <button
-                                data-content-action="move"
-                                data-content-id="{{ $item['content_id'] }}"
-                                data-content-title="{{ $item['title'] }}"
-                                title="Qovluğa daşı"
-                                class="rounded-md p-0.5 text-base-content/50 hover:bg-base-200 hover:text-base-content"
-                            >
-                                <x-icon name="heroicon-o-arrows-right-left" class="size-3" />
-                            </button>
-                            <button
-                                data-content-action="remove"
-                                data-content-id="{{ $item['content_id'] }}"
-                                data-content-title="{{ $item['title'] }}"
-                                title="Workspace-dən çıxar"
-                                class="rounded-md p-0.5 text-base-content/50 hover:bg-warning/10 hover:text-warning"
-                            >
-                                <x-icon name="heroicon-o-arrow-up-tray" class="size-3" />
-                            </button>
-                            @if ($item['type'] === \App\Domain\Content\Content::TYPE_QUIZ)
-                                <a href="{{ route('teacher.quizzes.edit', $item['content_id']) }}" class="rounded-md p-0.5 text-base-content/50 hover:bg-base-200 hover:text-base-content" title="Redaktə">
-                                    <x-icon name="heroicon-o-pencil-square" class="size-3" />
-                                </a>
-                            @else
-                                <a href="{{ route('teacher.lessons.edit', $item['content_id']) }}" class="rounded-md p-0.5 text-base-content/50 hover:bg-base-200 hover:text-base-content" title="Redaktə">
-                                    <x-icon name="heroicon-o-pencil-square" class="size-3" />
-                                </a>
-                            @endif
-                        </div>
                     </div>
                 @endforeach
             </div>
@@ -316,22 +212,17 @@
             <x-teacher.empty-state icon="user-group" title="Tələbə yoxdur" description="Bu workspace-ə tələbə əlavə edin." />
         @else
             <x-teacher.card :padding="false">
-                <x-teacher.table :headers="['Ad', 'E-poçt', '']">
+                <x-teacher.table :headers="['Ad', 'E-poçt']">
                     @foreach ($students as $student)
-                        <tr>
+                        <tr
+                            class="cursor-context-menu transition hover:bg-base-200/50"
+                            data-kind="student"
+                            data-student-id="{{ $student['id'] }}"
+                            data-student-name="{{ $student['name'] }}"
+                            @contextmenu.prevent="openRowContextMenu($event, 'student', $el)"
+                        >
                             <td class="font-medium text-base-content">{{ $student['name'] }}</td>
                             <td class="text-base-content/70">{{ $student['email'] }}</td>
-                            <td class="text-right">
-                                <button
-                                    data-student-id="{{ $student['id'] }}"
-                                    data-student-name="{{ $student['name'] }}"
-                                    title="Çıxar"
-                                    @click="detachStudent($event.currentTarget)"
-                                    class="rounded-lg p-1.5 text-error/70 hover:bg-error/10 hover:text-error"
-                                >
-                                    <x-icon name="heroicon-o-user-minus" class="size-4" />
-                                </button>
-                            </td>
                         </tr>
                     @endforeach
                 </x-teacher.table>
@@ -559,6 +450,9 @@
             </div>
         </div>
     </div>
+
+    {{-- Sağ-tık kontekst menyusu --}}
+    @include('teacher.partials._context-menu')
 </div>
 @endsection
 
