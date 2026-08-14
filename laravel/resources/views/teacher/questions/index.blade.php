@@ -42,7 +42,7 @@
     </div>
 
     {{-- Yeni Qovluq dialog --}}
-    <div x-show="showFolderAdd" x-transition.opacity class="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4">
+    <div x-show="showFolderAdd" x-cloak x-transition.opacity class="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4">
         <div class="w-full max-w-md rounded-xl border border-base-300 bg-base-100 p-6 shadow-xl">
             <h3 class="mb-4 text-lg font-semibold text-base-content">Yeni Qovluq</h3>
             <input
@@ -59,7 +59,7 @@
     </div>
 
     {{-- Qovluq adını dəyiş dialog --}}
-    <div x-show="showFolderRename" x-transition.opacity class="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4">
+    <div x-show="showFolderRename" x-cloak x-transition.opacity class="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4">
         <div class="w-full max-w-md rounded-xl border border-base-300 bg-base-100 p-6 shadow-xl">
             <h3 class="mb-4 text-lg font-semibold text-base-content">Qovluq adını dəyiş</h3>
             <input
@@ -76,7 +76,7 @@
     </div>
 
     {{-- Qovluq daşı dialog --}}
-    <div x-show="showFolderMove" x-transition.opacity class="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4">
+    <div x-show="showFolderMove" x-cloak x-transition.opacity class="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4">
         <div class="w-full max-w-md rounded-xl border border-base-300 bg-base-100 p-6 shadow-xl">
             <h3 class="mb-4 text-lg font-semibold text-base-content">Qovluğu daşı</h3>
             <select x-ref="folderMoveSelect" class="select select-bordered w-full text-sm">
@@ -93,7 +93,7 @@
     </div>
 
     {{-- Sual əlavə et / düzləndir dialog (canlı önizləmə ilə) --}}
-    <div x-show="showQuestion" x-transition.opacity class="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4">
+    <div x-show="showQuestion" x-cloak x-transition.opacity class="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4">
         <div class="max-h-[90vh] w-full max-w-3xl overflow-y-auto rounded-xl border border-base-300 bg-base-100 p-6 shadow-xl">
             <div class="flex items-center justify-between gap-4 border-b border-base-300 pb-3">
                 <h3 x-text="questionTitle" class="text-lg font-semibold text-base-content">Yeni Sual</h3>
@@ -202,7 +202,7 @@
     </div>
 
     {{-- Sual daşı dialog --}}
-    <div x-show="showQuestionMove" x-transition.opacity class="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4">
+    <div x-show="showQuestionMove" x-cloak x-transition.opacity class="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4">
         <div class="w-full max-w-md rounded-xl border border-base-300 bg-base-100 p-6 shadow-xl">
             <h3 class="mb-4 text-lg font-semibold text-base-content">Sualı qovluğa daşı</h3>
             <select x-ref="questionMoveSelect" class="select select-bordered w-full text-sm">

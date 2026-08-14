@@ -93,7 +93,7 @@
     </div>
 
     {{-- Bank dialog --}}
-    <div x-show="showBank" x-transition.opacity class="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4">
+    <div x-show="showBank" x-cloak x-transition.opacity class="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4">
         <div class="w-full max-w-md rounded-xl border border-base-300 bg-base-100 p-6 shadow-xl">
             <h3 class="mb-4 text-lg font-semibold text-base-content">Bankdan Seç</h3>
             <p class="mb-3 text-sm text-base-content/60">Sual bankından mövcud sualı quizə əlavə edin.</p>

@@ -95,3 +95,9 @@
 .rich-preview h4,
 .rich-preview h5,
 .rich-preview h6 { font-weight: 600; margin: 0.25rem 0; }
+
+/* Alpine yüklənənə qədər x-show modalların görünməsinin (flash) qarşısını alır.
+   x-cloak atributu qoyulmuş elementlər Alpine işə düşənə qədər gizli saxlanılır. */
+[x-cloak] {
+    display: none !important;
+}

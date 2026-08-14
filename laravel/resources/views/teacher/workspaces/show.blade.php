@@ -231,7 +231,7 @@
     </div>
 
     {{-- Yeni Qovluq dialog --}}
-    <div x-show="showFolderAdd" x-transition.opacity class="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4">
+    <div x-show="showFolderAdd" x-cloak x-transition.opacity class="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4">
         <div class="w-full max-w-md rounded-xl border border-base-300 bg-base-100 p-6 shadow-xl">
             <h3 class="mb-4 text-lg font-semibold text-base-content">Yeni Qovluq</h3>
             <input
@@ -248,7 +248,7 @@
     </div>
 
     {{-- Qovluq adını dəyiş dialog --}}
-    <div x-show="showFolderRename" x-transition.opacity class="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4">
+    <div x-show="showFolderRename" x-cloak x-transition.opacity class="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4">
         <div class="w-full max-w-md rounded-xl border border-base-300 bg-base-100 p-6 shadow-xl">
             <h3 class="mb-4 text-lg font-semibold text-base-content">Qovluq adını dəyiş</h3>
             <input
@@ -265,7 +265,7 @@
     </div>
 
     {{-- Qovluq daşı dialog --}}
-    <div x-show="showFolderMove" x-transition.opacity class="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4">
+    <div x-show="showFolderMove" x-cloak x-transition.opacity class="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4">
         <div class="w-full max-w-md rounded-xl border border-base-300 bg-base-100 p-6 shadow-xl">
             <h3 class="mb-4 text-lg font-semibold text-base-content">Qovluğu daşı</h3>
             <select x-ref="folderMoveSelect" class="select select-bordered w-full text-sm">
@@ -282,7 +282,7 @@
     </div>
 
     {{-- Məzmun daşı dialog --}}
-    <div x-show="showContentMove" x-transition.opacity class="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4">
+    <div x-show="showContentMove" x-cloak x-transition.opacity class="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4">
         <div class="w-full max-w-md rounded-xl border border-base-300 bg-base-100 p-6 shadow-xl">
             <h3 class="mb-4 text-lg font-semibold text-base-content">Məzmunu qovluğa daşı</h3>
             <select x-ref="contentMoveSelect" class="select select-bordered w-full text-sm">
@@ -299,7 +299,7 @@
     </div>
 
     {{-- Məzmun əlavə et dialog --}}
-    <div x-show="showContentAdd" x-transition.opacity class="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4">
+    <div x-show="showContentAdd" x-cloak x-transition.opacity class="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4">
         <div class="flex w-full max-w-2xl flex-col overflow-hidden rounded-xl bg-base-100 shadow-2xl">
             {{-- Başlıq --}}
             <div class="flex items-center justify-between gap-4 px-6 py-4">
@@ -433,7 +433,7 @@
     </div>
 
     {{-- Tələbə dialog --}}
-    <div x-show="showStudent" x-transition.opacity class="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4">
+    <div x-show="showStudent" x-cloak x-transition.opacity class="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4">
         <div class="w-full max-w-md rounded-xl border border-base-300 bg-base-100 p-6 shadow-xl">
             <h3 class="mb-4 text-lg font-semibold text-base-content">Tələbə Əlavə Et</h3>
             <select x-ref="studentSelect" multiple class="select select-bordered h-40 w-full text-sm">

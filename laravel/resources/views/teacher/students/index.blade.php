@@ -41,7 +41,7 @@
     </x-teacher.card>
 
     {{-- Add / Edit dialog --}}
-    <div x-show="showForm" x-transition.opacity class="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4">
+    <div x-show="showForm" x-cloak x-transition.opacity class="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4">
         <div class="max-h-[90vh] w-full max-w-2xl overflow-y-auto rounded-xl border border-base-300 bg-base-100 p-6 shadow-xl">
             <h3 x-text="formTitle" class="mb-4 text-lg font-semibold text-base-content">Yeni Şagird</h3>
             <div class="grid gap-4 sm:grid-cols-2">
