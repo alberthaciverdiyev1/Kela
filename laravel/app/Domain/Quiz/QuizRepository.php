@@ -4,6 +4,7 @@ namespace App\Domain\Quiz;
 
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Collection;
 
 /**
  * Quiz məlumat girişi üçün kontrakt.
@@ -14,6 +15,9 @@ interface QuizRepository
 
     /** Cədvəl üçün axtarış + səhifələnmiş quiz siyahısı (0 = kök, >0 = qovluq). */
     public function paginateForUser(int $actingUserId, bool $isAdmin, ?string $search, int $folderId = 0, int $perPage = 15): LengthAwarePaginator;
+
+    /** İstifadəçinin görə biləcəyi bütün quizlər (qovluq məhdudiyyəti olmadan — seçim pəncərələri üçün). */
+    public function allForUser(int $actingUserId, bool $isAdmin): Collection;
 
     public function find(int $contentId): ?Quiz;
 

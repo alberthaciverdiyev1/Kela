@@ -3,6 +3,7 @@
 namespace App\Application\QuizFolder;
 
 use App\Application\Quiz\QuizService;
+use App\Domain\Quiz\Quiz;
 use App\Domain\QuizFolder\QuizFolder;
 use App\Domain\QuizFolder\QuizFolderRepository;
 
@@ -107,6 +108,31 @@ class QuizFolderService
         $walk(0, 0);
 
         return $result;
+    }
+
+    /**
+     * Quiz seçim pəncərələri üçün bütün quizlər + qovluq yolu.
+     * Hər quiz: folder_path (adlar, kökdən yarpağa) + folder_path_ids (qovluq id-ləri).
+     * Kökdəki quizlər üçün hər iki dizi boşdur.
+     */
+    public function quizPicker(int $actingUserId): array
+    {
+        return $this->quizzes
+            ->allForUser($actingUserId)
+            ->map(function (Quiz $quiz): array {
+                $path = $this->folders->breadcrumbs($quiz->folder_id);
+
+                return [
+                    'content_id' => (int) $quiz->content_id,
+                    'title' => $quiz->title,
+                    'questions_count' => (int) ($quiz->questions_count ?? 0),
+                    'folder_id' => $quiz->folder_id ? (int) $quiz->folder_id : null,
+                    'folder_path' => array_column($path, 'name'),
+                    'folder_path_ids' => array_column($path, 'id'),
+                ];
+            })
+            ->values()
+            ->all();
     }
 
     /** Quiz-i qovluğa daşıyır (null → kökə). */

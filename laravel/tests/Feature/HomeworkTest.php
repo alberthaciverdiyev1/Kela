@@ -312,4 +312,40 @@ class HomeworkTest extends TestCase
         $this->actingAs($this->admin);
         $this->get("/teacher/homeworks/{$homework->id}")->assertOk();
     }
+
+    public function test_quiz_picker_returns_nested_quizzes_with_folder_paths(): void
+    {
+        $this->actingAs($this->teacher);
+
+        $folders = app(\App\Application\QuizFolder\QuizFolderService::class);
+        $fenn = $folders->createFolder($this->teacher->id, 'Fənn Testləri');
+        $riyaziyyat = $folders->createFolder($this->teacher->id, 'Riyaziyyat', $fenn->id);
+
+        $quizId = $this->quizzes()->create($this->teacher->id, [
+            'title' => 'İç-içə Quiz',
+            'description' => null,
+        ])->getKey();
+        $folders->moveQuiz($this->teacher->id, $quizId, $riyaziyyat->id);
+
+        $json = $this->getJson('/api/v1/quiz-folders/picker')->assertOk()->json();
+
+        $row = collect($json['quizzes'])->firstWhere('content_id', $quizId);
+        $this->assertNotNull($row, 'Picker-də iç-içə quiz görünməlidir.');
+        $this->assertEquals(['Fənn Testləri', 'Riyaziyyat'], $row['folder_path']);
+        $this->assertEquals([$fenn->id, $riyaziyyat->id], $row['folder_path_ids']);
+    }
+
+    public function test_quiz_picker_is_scoped_to_own_teacher_quizzes(): void
+    {
+        $this->actingAs($this->otherTeacher);
+        $quizId = $this->quizzes()->create($this->otherTeacher->id, [
+            'title' => 'Başqasının quizi',
+            'description' => null,
+        ])->getKey();
+
+        $this->actingAs($this->teacher);
+        $json = $this->getJson('/api/v1/quiz-folders/picker')->assertOk()->json();
+
+        $this->assertEmpty(collect($json['quizzes'])->where('content_id', $quizId));
+    }
 }

@@ -145,12 +145,12 @@
             </div>
 
             <div class="space-y-3 border-b border-base-200 px-5 py-4">
-                <select x-model="selectedQuizId" @change="selectQuiz()" class="select select-bordered w-full text-sm">
-                    <option value="">Quiz seçin...</option>
-                    <template x-for="quiz in quizzes" :key="quiz.id">
-                        <option :value="quiz.id" x-text="quiz.title"></option>
-                    </template>
-                </select>
+                <input
+                    type="text"
+                    x-model="quizSearch"
+                    placeholder="Quiz və ya qovluq axtar..."
+                    class="input input-bordered w-full text-sm"
+                />
                 <div class="flex items-center gap-2 text-xs text-base-content/50" x-show="quizzesLoading">
                     <span class="loading loading-spinner loading-xs text-primary"></span> Quizlər yüklənir...
                 </div>
@@ -159,7 +159,33 @@
                 </div>
             </div>
 
-            <div class="max-h-[300px] overflow-y-auto px-2 py-2">
+            <div class="max-h-48 overflow-y-auto px-2 py-2">
+                {{-- Qovluq başlıqları + içlərindəki quizlər (ic-ice qruplaşmış) --}}
+                <template x-for="row in quizRows" :key="row.key">
+                    <div x-show="row.kind === 'folder'" class="flex items-center gap-2 pt-3 pb-1 text-xs font-semibold uppercase tracking-wide text-base-content/50"
+                        :style="'padding-left: ' + (row.depth * 16 + 4) + 'px'">
+                        <x-icon name="heroicon-o-folder" class="size-4 shrink-0 text-primary/70" />
+                        <span class="min-w-0 flex-1 truncate" x-text="row.name"></span>
+                        <span class="text-base-content/40" x-text="row.count"></span>
+                    </div>
+
+                    <div x-show="row.kind === 'quiz'"
+                        class="flex cursor-pointer select-none items-center gap-3 rounded-lg px-3 py-2 text-sm transition hover:bg-base-200/60"
+                        :class="Number(selectedQuizId) === row.q.id ? 'bg-primary/10' : ''"
+                        :style="'padding-left: ' + (row.depth * 16 + 8) + 'px'"
+                        @click="selectQuizRow(row.q)">
+                        <x-icon name="heroicon-o-clipboard-document-list" class="size-4 shrink-0 text-base-content/40" />
+                        <span class="min-w-0 flex-1 truncate text-base-content" x-text="row.q.title"></span>
+                        <span class="badge badge-sm font-medium" x-text="row.q.questions_count"></span>
+                        <x-icon name="heroicon-o-check-circle" class="size-4 shrink-0 text-primary" x-show="Number(selectedQuizId) === row.q.id" />
+                    </div>
+                </template>
+                <p class="py-6 text-center text-sm text-base-content/50" x-show="!quizzesLoading && quizzes.length > 0 && quizRowsCount === 0">
+                    Axtarışa uyğun quiz tapılmadı.
+                </p>
+            </div>
+
+            <div class="max-h-48 overflow-y-auto px-2 py-2">
                 <div class="flex items-center gap-2 px-3 text-xs text-base-content/50" x-show="quizQuestionsLoading">
                     <span class="loading loading-spinner loading-xs text-primary"></span> Suallar yüklənir...
                 </div>

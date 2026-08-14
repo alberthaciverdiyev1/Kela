@@ -73,6 +73,7 @@ Route::middleware(['auth:sanctum', 'role_api:Admin,Teacher'])->group(function ()
 
     // Quiz qovluqları
     Route::get('/quiz-folders/directory', [QuizFolderController::class, 'directory']);
+    Route::get('/quiz-folders/picker', [QuizFolderController::class, 'picker']);
     Route::post('/quiz-folders', [QuizFolderController::class, 'store']);
     Route::post('/quiz-folders/{folderId}/rename', [QuizFolderController::class, 'rename']);
     Route::post('/quiz-folders/{folderId}/move', [QuizFolderController::class, 'move']);

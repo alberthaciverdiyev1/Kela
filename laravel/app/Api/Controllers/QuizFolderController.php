@@ -31,6 +31,17 @@ class QuizFolderController
         ]);
     }
 
+    /**
+     * Quiz seçim pəncərələri üçün bütün quizlər + qovluq yolları (JSON).
+     * Kökdəki və iç-içə qovluqlardakı bütün quizlər qayıdır.
+     */
+    public function picker(Request $request): JsonResponse
+    {
+        return response()->json([
+            'quizzes' => $this->folders->quizPicker((int) $request->user()->id),
+        ]);
+    }
+
     public function store(Request $request): JsonResponse
     {
         $data = $request->validate([

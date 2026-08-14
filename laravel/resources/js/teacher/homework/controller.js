@@ -35,6 +35,7 @@ export default function homeworkEditor(config) {
         // Quiz seçimi pəncərəsi
         quizzes: [],
         quizzesLoading: false,
+        quizSearch: '',
         selectedQuizId: '',
         quizQuestions: [],
         quizQuestionsLoading: false,
@@ -64,11 +65,14 @@ export default function homeworkEditor(config) {
         async loadQuizzes() {
             this.quizzesLoading = true;
             try {
-                const res = await KelaApi('GET', '/api/v1/quizzes?per_page=100');
-                const items = res?.data ?? res ?? [];
-                this.quizzes = (Array.isArray(items) ? items : []).map((q) => ({
+                const res = await KelaApi('GET', '/api/v1/quiz-folders/picker');
+                this.quizzes = (res?.quizzes ?? []).map((q) => ({
                     id: Number(q.content_id),
                     title: q.title ?? 'Adsız quiz',
+                    questions_count: Number(q.questions_count ?? 0),
+                    folder_id: q.folder_id ? Number(q.folder_id) : null,
+                    folder_path: q.folder_path ?? [],
+                    folder_path_ids: q.folder_path_ids ?? [],
                 }));
             } catch (err) {
                 window.alert(err.message);
@@ -101,6 +105,79 @@ export default function homeworkEditor(config) {
             } finally {
                 this.quizQuestionsLoading = false;
             }
+        },
+
+        // ── Quiz qovluq ağacı (folder_path üzrə) ─────────────────────────
+        /** quizzes → qovluq ağacı (ic-ice qovluqlar altında qruplaşmış). */
+        get quizTree() {
+            const root = { key: '', name: '', depth: -1, children: [], contents: [] };
+            const nodes = { '': root };
+
+            for (const quiz of this.quizzes) {
+                const names = quiz.folder_path || [];
+                let parent = root;
+                let acc = [];
+                for (let i = 0; i < names.length; i++) {
+                    acc.push(names[i]);
+                    const key = acc.join(' › ');
+                    if (!nodes[key]) {
+                        nodes[key] = { key, name: names[i], depth: i, children: [], contents: [] };
+                        parent.children.push(nodes[key]);
+                    }
+                    parent = nodes[key];
+                }
+                parent.contents.push(quiz);
+            }
+
+            return root;
+        },
+
+        quizMatches(quiz) {
+            const s = this.quizSearch.trim().toLowerCase();
+            if (!s) return true;
+            const haystack = [quiz.title || '', ...(quiz.folder_path || [])].join(' / ').toLowerCase();
+            return haystack.includes(s);
+        },
+
+        /** Ağacı düz satırlara çevirir: qovluq başlıqları + içindəki quizlər. */
+        get quizRows() {
+            const filtering = this.quizSearch.trim() !== '';
+            const rows = [];
+
+            const visibleCounts = {};
+            const countVisible = (node) => {
+                let n = node.contents.filter((q) => this.quizMatches(q)).length;
+                for (const child of node.children) n += countVisible(child);
+                visibleCounts[node.key] = n;
+                return n;
+            };
+            countVisible(this.quizTree);
+
+            const walk = (node) => {
+                if (node.depth >= 0) {
+                    const vis = visibleCounts[node.key];
+                    if (vis === 0) return; // məzmunu olmayan qovluğu göstərmə
+                    rows.push({ kind: 'folder', key: 'f:' + node.key, name: node.name, depth: node.depth, count: vis });
+                }
+                for (const q of node.contents) {
+                    if (filtering && !this.quizMatches(q)) continue;
+                    rows.push({ kind: 'quiz', key: 'q:' + q.id, q, depth: node.depth + 1 });
+                }
+                for (const child of node.children) walk(child);
+            };
+            walk(this.quizTree);
+
+            return rows;
+        },
+
+        get quizRowsCount() {
+            return this.quizRows.filter((r) => r.kind === 'quiz').length;
+        },
+
+        /** Ağacdan quiz seçildi → sualları yüklə. */
+        selectQuizRow(quiz) {
+            this.selectedQuizId = String(quiz.id);
+            this.selectQuiz();
         },
 
         toggleCheck(questionId) {

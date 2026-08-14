@@ -6,6 +6,7 @@ use App\Domain\Quiz\Quiz;
 use App\Domain\Quiz\QuizRepository;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Collection;
 
 class EloquentQuizRepository implements QuizRepository
 {
@@ -37,6 +38,16 @@ class EloquentQuizRepository implements QuizRepository
     public function find(int $contentId): ?Quiz
     {
         return Quiz::with(['content', 'questions'])->find($contentId);
+    }
+
+    public function allForUser(int $actingUserId, bool $isAdmin): Collection
+    {
+        return Quiz::query()
+            ->when(! $isAdmin, fn (Builder $q): Builder => $q->where('quizzes.teacher_id', $actingUserId))
+            ->with('content')
+            ->withCount('questions')
+            ->orderBy('quizzes.title')
+            ->get();
     }
 
     public function scopeForUser(Builder $query, int $actingUserId, bool $isAdmin): Builder

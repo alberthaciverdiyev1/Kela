@@ -10,6 +10,7 @@ use App\Domain\Quiz\QuizRepository;
 use App\Domain\User\User;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Collection;
 
 /**
  * Quiz əməliyyatları: CRUD + quiz-sual əlaqəsi.
@@ -35,6 +36,14 @@ class QuizService
         $isAdmin = User::find($actingUserId)?->isAdmin() ?? false;
 
         return $this->quizzes->scopeForUser($query, $actingUserId, $isAdmin);
+    }
+
+    /** İstifadəçinin görə biləcəyi bütün quizlər (qovluq məhdudiyyəti olmadan — seçim pəncərələri üçün). */
+    public function allForUser(int $actingUserId): Collection
+    {
+        $isAdmin = User::find($actingUserId)?->isAdmin() ?? false;
+
+        return $this->quizzes->allForUser($actingUserId, $isAdmin);
     }
 
     /** Cədvəl üçün axtarış + səhifələnmiş quiz siyahısı (array DTO). */
