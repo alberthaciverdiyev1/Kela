@@ -108,11 +108,11 @@
                             data-content-id="{{ $item['content_id'] }}"
                             data-content-title="{{ $item['title'] }}"
                             data-content-type="{{ $item['type'] }}"
-                            data-edit-url="{{ $item['type'] === \App\Domain\Content\Values\ContentType::QUIZ ? route('teacher.quizzes.edit', $item['content_id']) : route('teacher.lessons.edit', $item['content_id']) }}"
+                            data-edit-url="{{ $item['type'] === \App\Domain\Content\Enums\ContentType::QUIZ->value ? route('teacher.quizzes.edit', $item['content_id']) : route('teacher.lessons.edit', $item['content_id']) }}"
                             @contextmenu.prevent="openRowContextMenu($event, 'content', $el)"
                         >
                             <td class="font-medium text-base-content">
-                                @if ($item['type'] === \App\Domain\Content\Values\ContentType::QUIZ)
+                                @if ($item['type'] === \App\Domain\Content\Enums\ContentType::QUIZ->value)
                                     <a href="{{ route('teacher.quizzes.edit', $item['content_id']) }}" class="inline-flex items-center gap-2 hover:text-primary">
                                         <x-icon name="heroicon-o-clipboard-document-list" class="size-4 opacity-60" />
                                         {{ $item['title'] }}
@@ -125,7 +125,7 @@
                                 @endif
                             </td>
                             <td>
-                                <x-teacher.badge :color="$item['type'] === \App\Domain\Content\Values\ContentType::QUIZ ? 'blue' : 'green'">{{ $item['type_label'] }}</x-teacher.badge>
+                                <x-teacher.badge :color="$item['type'] === \App\Domain\Content\Enums\ContentType::QUIZ->value ? 'blue' : 'green'">{{ $item['type_label'] }}</x-teacher.badge>
                             </td>
                             <td>
                                 <x-teacher.badge :color="$item['is_published'] ? 'green' : 'yellow'">
@@ -169,10 +169,10 @@
                         data-content-id="{{ $item['content_id'] }}"
                         data-content-title="{{ $item['title'] }}"
                         data-content-type="{{ $item['type'] }}"
-                        data-edit-url="{{ $item['type'] === \App\Domain\Content\Values\ContentType::QUIZ ? route('teacher.quizzes.edit', $item['content_id']) : route('teacher.lessons.edit', $item['content_id']) }}"
+                        data-edit-url="{{ $item['type'] === \App\Domain\Content\Enums\ContentType::QUIZ->value ? route('teacher.quizzes.edit', $item['content_id']) : route('teacher.lessons.edit', $item['content_id']) }}"
                         @contextmenu.prevent="openRowContextMenu($event, 'content', $el)"
                     >
-                        @if ($item['type'] === \App\Domain\Content\Values\ContentType::QUIZ)
+                        @if ($item['type'] === \App\Domain\Content\Enums\ContentType::QUIZ->value)
                             <a href="{{ route('teacher.quizzes.edit', $item['content_id']) }}" class="relative flex size-20 items-center justify-center rounded-xl transition {{ $item['is_published'] ? 'bg-info/10 text-info group-hover:bg-info/15' : 'bg-warning/10 text-warning group-hover:bg-warning/15' }}">
                                 <x-icon name="heroicon-o-clipboard-document-list" class="size-[66px]" />
                             </a>
@@ -181,7 +181,7 @@
                                 <x-icon name="heroicon-o-video-camera" class="size-[66px]" />
                             </a>
                         @endif
-                        @if ($item['type'] === \App\Domain\Content\Values\ContentType::QUIZ)
+                        @if ($item['type'] === \App\Domain\Content\Enums\ContentType::QUIZ->value)
                             <a href="{{ route('teacher.quizzes.edit', $item['content_id']) }}" class="mt-1.5 block w-full truncate text-xs font-medium leading-tight text-base-content transition hover:text-primary" title="{{ $item['title'] }}">
                                 {{ $item['title'] }}
                             </a>

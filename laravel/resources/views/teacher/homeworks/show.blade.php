@@ -28,7 +28,7 @@
             <div class="divide-y divide-base-200">
                 @foreach ($questions as $index => $q)
                     @php
-                        $isQuiz = $q['type'] === \App\Domain\Homework\Values\HomeworkQuestionType::QUIZ;
+                        $isQuiz = $q['type'] === \App\Domain\Homework\Enums\HomeworkQuestionType::QUIZ->value;
                     @endphp
                     <div class="flex items-start gap-4 px-5 py-4">
                         <span class="mt-0.5 flex size-7 shrink-0 items-center justify-center rounded-full bg-primary/10 text-sm font-bold text-primary">

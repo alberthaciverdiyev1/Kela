@@ -5,9 +5,9 @@ namespace Tests\Feature;
 use App\Application\Homework\HomeworkService;
 use App\Application\Question\QuestionService;
 use App\Application\Quiz\QuizService;
+use App\Domain\Homework\Enums\HomeworkQuestionType;
 use App\Domain\Homework\Homework;
 use App\Domain\Homework\HomeworkQuestion;
-use App\Domain\Homework\Values\HomeworkQuestionType;
 use App\Domain\User\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Laravel\Sanctum\Sanctum;
@@ -88,7 +88,7 @@ class HomeworkTest extends TestCase
             'title' => 'Cəbr Ev Tapşırığı',
             'description' => 'Həftəsonu üçün',
             'questions' => [
-                ['type' => HomeworkQuestionType::TASK, 'text' => 'x² = 25, x-i tap'],
+                ['type' => HomeworkQuestionType::TASK->value, 'text' => 'x² = 25, x-i tap'],
             ],
         ]);
 
@@ -109,7 +109,7 @@ class HomeworkTest extends TestCase
             'description' => 'Osmanlı tarixi',
             'is_published' => '1',
             'questions_json' => json_encode([
-                ['type' => HomeworkQuestionType::TASK, 'text' => 'Osmanlının quruluş ilini yazın'],
+                ['type' => HomeworkQuestionType::TASK->value, 'text' => 'Osmanlının quruluş ilini yazın'],
             ]),
         ])->assertRedirect();
 
@@ -120,7 +120,7 @@ class HomeworkTest extends TestCase
 
         $question = $homework->questions()->first();
         $this->assertNotNull($question);
-        $this->assertEquals(HomeworkQuestionType::TASK, (int) $question->type);
+        $this->assertEquals(HomeworkQuestionType::TASK->value, (int) $question->type);
         $this->assertEquals(1, (int) $question->position);
         $this->assertEquals('Osmanlının quruluş ilini yazın', $question->text);
 
@@ -140,7 +140,7 @@ class HomeworkTest extends TestCase
             'title' => 'Riyaziyyat ev tapşırığı',
             'questions_json' => json_encode([
                 [
-                    'type' => HomeworkQuestionType::QUIZ,
+                    'type' => HomeworkQuestionType::QUIZ->value,
                     'text' => '2+2 neçədir?',
                     'option_a' => '3',
                     'option_b' => '4',
@@ -149,14 +149,14 @@ class HomeworkTest extends TestCase
                     'source_question_id' => $data['q1_id'],
                     'source_quiz_id' => $data['quiz_id'],
                 ],
-                ['type' => HomeworkQuestionType::TASK, 'text' => 'İki rəqəmli bölmə yazın'],
+                ['type' => HomeworkQuestionType::TASK->value, 'text' => 'İki rəqəmli bölmə yazın'],
             ]),
         ])->assertRedirect();
 
         $homework = Homework::first();
         $this->assertNotNull($homework);
 
-        $quizQuestion = $homework->questions()->where('type', HomeworkQuestionType::QUIZ)->first();
+        $quizQuestion = $homework->questions()->where('type', HomeworkQuestionType::QUIZ->value)->first();
         $this->assertNotNull($quizQuestion);
         $this->assertEquals('2+2 neçədir?', $quizQuestion->text);
         $this->assertEquals('4', $quizQuestion->option_b);
@@ -164,7 +164,7 @@ class HomeworkTest extends TestCase
         $this->assertEquals($data['q1_id'], (int) $quizQuestion->source_question_id);
         $this->assertEquals($data['quiz_id'], (int) $quizQuestion->source_quiz_id);
 
-        $taskQuestion = $homework->questions()->where('type', HomeworkQuestionType::TASK)->first();
+        $taskQuestion = $homework->questions()->where('type', HomeworkQuestionType::TASK->value)->first();
         $this->assertNotNull($taskQuestion);
         $this->assertNull($taskQuestion->option_a);
 
@@ -181,8 +181,8 @@ class HomeworkTest extends TestCase
         $homework = $this->homeworks()->create($this->teacher->id, [
             'title' => 'Qarışıq tapşırıq',
             'questions' => [
-                ['type' => HomeworkQuestionType::QUIZ, 'text' => '2+2 neçədir?', 'option_a' => '3', 'option_b' => '4', 'correct_option' => 1, 'source_question_id' => $data['q1_id'], 'source_quiz_id' => $data['quiz_id']],
-                ['type' => HomeworkQuestionType::TASK, 'text' => 'İnsanlıq tarixini təsvir edin'],
+                ['type' => HomeworkQuestionType::QUIZ->value, 'text' => '2+2 neçədir?', 'option_a' => '3', 'option_b' => '4', 'correct_option' => 1, 'source_question_id' => $data['q1_id'], 'source_quiz_id' => $data['quiz_id']],
+                ['type' => HomeworkQuestionType::TASK->value, 'text' => 'İnsanlıq tarixini təsvir edin'],
             ],
         ]);
 
@@ -202,7 +202,7 @@ class HomeworkTest extends TestCase
         $homework = $this->homeworks()->create($this->teacher->id, [
             'title' => 'Redaktə olunacaq',
             'questions' => [
-                ['type' => HomeworkQuestionType::TASK, 'text' => 'Köhnə tapşırıq'],
+                ['type' => HomeworkQuestionType::TASK->value, 'text' => 'Köhnə tapşırıq'],
             ],
         ]);
 
@@ -222,7 +222,7 @@ class HomeworkTest extends TestCase
         $homework = $this->homeworks()->create($this->teacher->id, [
             'title' => 'Köhnə başlıq',
             'questions' => [
-                ['type' => HomeworkQuestionType::TASK, 'text' => 'Köhnə sual'],
+                ['type' => HomeworkQuestionType::TASK->value, 'text' => 'Köhnə sual'],
             ],
         ]);
 
@@ -230,8 +230,8 @@ class HomeworkTest extends TestCase
             'title' => 'Yeni başlıq',
             'is_published' => '1',
             'questions_json' => json_encode([
-                ['type' => HomeworkQuestionType::TASK, 'text' => 'Yeni sual 1'],
-                ['type' => HomeworkQuestionType::TASK, 'text' => 'Yeni sual 2'],
+                ['type' => HomeworkQuestionType::TASK->value, 'text' => 'Yeni sual 1'],
+                ['type' => HomeworkQuestionType::TASK->value, 'text' => 'Yeni sual 2'],
             ]),
         ])->assertRedirect();
 
@@ -249,7 +249,7 @@ class HomeworkTest extends TestCase
         $homework = $this->homeworks()->create($this->teacher->id, [
             'title' => 'Silinəcək',
             'questions' => [
-                ['type' => HomeworkQuestionType::TASK, 'text' => 'Sual'],
+                ['type' => HomeworkQuestionType::TASK->value, 'text' => 'Sual'],
             ],
         ]);
         $questionId = $homework->questions()->first()->id;
@@ -287,7 +287,7 @@ class HomeworkTest extends TestCase
         $homework = $this->homeworks()->create($this->teacher->id, [
             'title' => 'Şəxsi tapşırıq',
             'questions' => [
-                ['type' => HomeworkQuestionType::TASK, 'text' => 'Gizli sual'],
+                ['type' => HomeworkQuestionType::TASK->value, 'text' => 'Gizli sual'],
             ],
         ]);
 
@@ -305,7 +305,7 @@ class HomeworkTest extends TestCase
         $homework = $this->homeworks()->create($this->teacher->id, [
             'title' => 'Admin görə bilər',
             'questions' => [
-                ['type' => HomeworkQuestionType::TASK, 'text' => 'Sual'],
+                ['type' => HomeworkQuestionType::TASK->value, 'text' => 'Sual'],
             ],
         ]);
 

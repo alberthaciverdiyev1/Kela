@@ -2,10 +2,10 @@
 
 namespace App\Application\Homework;
 
+use App\Domain\Homework\Enums\HomeworkQuestionType;
 use App\Domain\Homework\Homework;
 use App\Domain\Homework\HomeworkQuestion;
 use App\Domain\Homework\HomeworkRepository;
-use App\Domain\Homework\Values\HomeworkQuestionType;
 use App\Domain\Quiz\QuizRepository;
 use App\Domain\User\User;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
@@ -178,9 +178,9 @@ class HomeworkService
 
         foreach ($questions as $item) {
             $item = (array) $item;
-            $type = (int) ($item['type'] ?? HomeworkQuestionType::TASK);
-            if (! in_array($type, HomeworkQuestionType::ALL, true)) {
-                $type = HomeworkQuestionType::TASK;
+            $type = (int) ($item['type'] ?? HomeworkQuestionType::TASK->value);
+            if (! HomeworkQuestionType::isValid($type)) {
+                $type = HomeworkQuestionType::TASK->value;
             }
 
             $text = trim(strip_tags((string) ($item['text'] ?? '')));

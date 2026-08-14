@@ -129,12 +129,10 @@
                                             class="flex h-10 w-full items-center justify-center transition"
                                             :class="cellClass(student.id, dt.iso)"
                                         >
-                                            <template x-if="getStatus(student.id, dt.iso) !== 0">
-                                                <x-icon x-show="getStatus(student.id, dt.iso) === 1" name="heroicon-o-check" class="size-4" />
-                                                <x-icon x-show="getStatus(student.id, dt.iso) === 2" name="heroicon-o-x-mark" class="size-4" />
-                                                <x-icon x-show="getStatus(student.id, dt.iso) === 3" name="heroicon-o-clock" class="size-4" />
-                                                <x-icon x-show="getStatus(student.id, dt.iso) === 4" name="heroicon-o-exclamation-triangle" class="size-4" />
-                                            </template>
+                                            <x-icon x-show="getStatus(student.id, dt.iso) === 1" name="heroicon-o-check" class="size-4 stroke-[2.5]" />
+                                            <x-icon x-show="getStatus(student.id, dt.iso) === 2" name="heroicon-o-x-mark" class="size-4 stroke-[2.5]" />
+                                            <x-icon x-show="getStatus(student.id, dt.iso) === 3" name="heroicon-o-clock" class="size-4 stroke-[2.5]" />
+                                            <x-icon x-show="getStatus(student.id, dt.iso) === 4" name="heroicon-o-exclamation-triangle" class="size-4 stroke-[2.5]" />
                                         </button>
                                     </td>
                                 </template>

@@ -5,7 +5,7 @@ namespace App\Web\Controllers\Teacher;
 use App\Application\City\CityService;
 use App\Application\Student\StudentService;
 use App\Application\Workspace\WorkspaceService;
-use App\Domain\User\Values\UserStatus;
+use App\Domain\User\Enums\UserStatus;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
@@ -166,9 +166,9 @@ class StudentController
     protected function statuses(): array
     {
         return [
-            UserStatus::ACTIVE => 'Aktiv',
-            UserStatus::INACTIVE => 'Deaktiv',
-            UserStatus::SUSPENDED => 'Dayandırılmış',
+            UserStatus::ACTIVE->value => 'Aktiv',
+            UserStatus::INACTIVE->value => 'Deaktiv',
+            UserStatus::SUSPENDED->value => 'Dayandırılmış',
         ];
     }
 }
