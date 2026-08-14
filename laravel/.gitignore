@@ -5,6 +5,11 @@
 /public/storage
 /storage/*.key
 /storage/pail
+/storage/logs/*.log
+/storage/framework/cache/data/*
+/storage/framework/sessions/*
+/storage/framework/views/*
+/storage/framework/testing/*
 /vendor
 .env
 .env.backup
@@ -22,3 +27,30 @@ yarn-error.log
 
 # IDE
 *.code-workspace
+
+# AI Models, Agents, Skills & Rules
+.agents/
+.agent/
+_agents/
+_agent/
+AGENTS.md
+GEMINI.md
+CLAUDE.md
+.cursorrules
+.github/copilot-instructions.md
+
+# AI Ignore Files
+.aiignore
+.cursorignore
+.claudeignore
+.geminiignore
+.antigravityignore
+
+# AI Assistant Local / Runtime Artifacts & Caches
+.gemini/
+.claude/
+.cursor/
+.ai_cache/
+.agent_history/
+.cortex/
+*.local.md

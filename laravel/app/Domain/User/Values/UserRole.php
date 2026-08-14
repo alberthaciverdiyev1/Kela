@@ -2,16 +2,17 @@
 
 namespace App\Domain\User\Values;
 
+use App\Domain\User\Enums\UserRole as UserRoleEnum;
+
 /**
- * İstifadəçi rolları (value object) — model deyil.
- * Web/Blade bu sinfi import edərək User modelinə toxunmaz.
+ * @deprecated Use App\Domain\User\Enums\UserRole instead.
  */
 final class UserRole
 {
-    public const ADMIN = 'Admin';
-    public const TEACHER = 'Teacher';
-    public const STUDENT = 'Student';
-    public const PARENT = 'Parent';
+    public const ADMIN = UserRoleEnum::ADMIN->value;
+    public const TEACHER = UserRoleEnum::TEACHER->value;
+    public const STUDENT = UserRoleEnum::STUDENT->value;
+    public const PARENT = UserRoleEnum::PARENT->value;
 
     public const ALL = [
         self::ADMIN,

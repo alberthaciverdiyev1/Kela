@@ -2,6 +2,7 @@
 
 namespace App\Application\Note;
 
+use App\Domain\Note\Enums\NoteColor;
 use App\Domain\Note\Note;
 use App\Domain\Note\NoteRepository;
 use App\Domain\User\User;
@@ -97,7 +98,7 @@ class NoteService
     /** Rəng açarı mövcud palitrada olmalıdır. */
     public function validColor(string $color): string
     {
-        if (! in_array($color, Note::COLORS, true)) {
+        if (! NoteColor::isValid($color)) {
             throw new \InvalidArgumentException('Keçərsiz qeyd rəngi.');
         }
 

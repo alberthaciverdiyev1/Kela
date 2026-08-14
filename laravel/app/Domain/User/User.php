@@ -8,8 +8,8 @@ use App\Domain\Student\StudentProfile;
 use App\Domain\Question\Question;
 use App\Domain\Lesson\Lesson;
 use App\Domain\Quiz\Quiz;
-use App\Domain\User\Values\UserRole;
-use App\Domain\User\Values\UserStatus;
+use App\Domain\User\Enums\UserRole;
+use App\Domain\User\Enums\UserStatus;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Database\Factories\UserFactory;
@@ -31,16 +31,21 @@ class User extends Authenticatable
 {
     use HasApiTokens, HasFactory, Notifiable, HasRoles, SoftDeletes;
 
-    public const ROLE_ADMIN = UserRole::ADMIN;
-    public const ROLE_TEACHER = UserRole::TEACHER;
-    public const ROLE_STUDENT = UserRole::STUDENT;
-    public const ROLE_PARENT = UserRole::PARENT;
+    public const ROLE_ADMIN = UserRole::ADMIN->value;
+    public const ROLE_TEACHER = UserRole::TEACHER->value;
+    public const ROLE_STUDENT = UserRole::STUDENT->value;
+    public const ROLE_PARENT = UserRole::PARENT->value;
 
-    public const STATUS_ACTIVE = UserStatus::ACTIVE;
-    public const STATUS_INACTIVE = UserStatus::INACTIVE;
-    public const STATUS_SUSPENDED = UserStatus::SUSPENDED;
+    public const STATUS_ACTIVE = UserStatus::ACTIVE->value;
+    public const STATUS_INACTIVE = UserStatus::INACTIVE->value;
+    public const STATUS_SUSPENDED = UserStatus::SUSPENDED->value;
 
-    public const ALL_ROLES = UserRole::ALL;
+    public const ALL_ROLES = [
+        self::ROLE_ADMIN,
+        self::ROLE_TEACHER,
+        self::ROLE_STUDENT,
+        self::ROLE_PARENT,
+    ];
 
     protected function casts(): array
     {

@@ -2,9 +2,9 @@
 
 namespace App\Domain\Attendance;
 
-use App\Domain\Workspace\Workspace;
+use App\Domain\Attendance\Enums\AttendanceStatus;
 use App\Domain\User\User;
-
+use App\Domain\Workspace\Workspace;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -13,13 +13,13 @@ class Attendance extends Model
 {
     use SoftDeletes;
 
-    public const int STATUS_UNKNOWN = 0;
-    public const int STATUS_PRESENT = 1;
-    public const int STATUS_ABSENT = 2;
-    public const int STATUS_LATE = 3;
-    public const int STATUS_EXCUSED = 4;
+    public const STATUS_UNKNOWN = AttendanceStatus::UNKNOWN->value;
+    public const STATUS_PRESENT = AttendanceStatus::PRESENT->value;
+    public const STATUS_ABSENT = AttendanceStatus::ABSENT->value;
+    public const STATUS_LATE = AttendanceStatus::LATE->value;
+    public const STATUS_EXCUSED = AttendanceStatus::EXCUSED->value;
 
-    public const array STATUS_LABELS = [
+    public const STATUS_LABELS = [
         self::STATUS_UNKNOWN => 'unknown',
         self::STATUS_PRESENT => 'present',
         self::STATUS_ABSENT => 'absent',
@@ -54,6 +54,6 @@ class Attendance extends Model
 
     public function getStatusLabelAttribute(): string
     {
-        return self::STATUS_LABELS[$this->status] ?? 'unknown';
+        return AttendanceStatus::labelFor((int) $this->status);
     }
 }

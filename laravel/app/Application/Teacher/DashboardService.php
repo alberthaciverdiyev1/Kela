@@ -2,8 +2,8 @@
 
 namespace App\Application\Teacher;
 
+use App\Domain\User\Enums\UserRole;
 use App\Domain\User\UserRepository;
-use App\Domain\User\Values\UserRole;
 
 /**
  * Admin panel özet veriləri.
@@ -17,8 +17,8 @@ class DashboardService
     public function counts(): array
     {
         return [
-            'teachers' => $this->users->roleCount(UserRole::TEACHER),
-            'students' => $this->users->roleCount(UserRole::STUDENT),
+            'teachers' => $this->users->roleCount(UserRole::TEACHER->value),
+            'students' => $this->users->roleCount(UserRole::STUDENT->value),
         ];
     }
 }

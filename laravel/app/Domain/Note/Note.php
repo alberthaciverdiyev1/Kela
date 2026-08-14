@@ -2,6 +2,7 @@
 
 namespace App\Domain\Note;
 
+use App\Domain\Note\Enums\NoteColor;
 use App\Domain\User\User;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;

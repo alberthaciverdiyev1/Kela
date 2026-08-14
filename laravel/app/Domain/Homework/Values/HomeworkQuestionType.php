@@ -2,30 +2,24 @@
 
 namespace App\Domain\Homework\Values;
 
+use App\Domain\Homework\Enums\HomeworkQuestionType as HomeworkQuestionTypeEnum;
+
 /**
- * Ev tapşırığı sual tipləri (value object) — model deyil.
- *
- *   TASK — əl ilə yazılmış, variantsız tapşırıq sualı.
- *   QUIZ — quizdən götürülmüş, variantlı (çoxseçimli) sual.
+ * @deprecated Use App\Domain\Homework\Enums\HomeworkQuestionType instead.
  */
 final class HomeworkQuestionType
 {
-    public const TASK = 0;
-    public const QUIZ = 1;
+    public const TASK = HomeworkQuestionTypeEnum::TASK->value;
+    public const QUIZ = HomeworkQuestionTypeEnum::QUIZ->value;
 
     public const ALL = [
         self::TASK,
         self::QUIZ,
     ];
 
-    /** Tipin istifadəçi tərəfindən görünən etiketi. */
     public static function label(int $type): string
     {
-        return match ($type) {
-            self::TASK => 'Tapşırıq',
-            self::QUIZ => 'Quiz sualı',
-            default => 'Naməlum',
-        };
+        return HomeworkQuestionTypeEnum::labelFor($type);
     }
 
     public static function isTask(int $type): bool

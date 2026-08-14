@@ -2,7 +2,7 @@
 
 namespace App\Domain\Homework;
 
-use App\Domain\Homework\Values\HomeworkQuestionType;
+use App\Domain\Homework\Enums\HomeworkQuestionType;
 use App\Domain\Question\Question;
 use App\Domain\Quiz\Quiz;
 use Illuminate\Database\Eloquent\Model;
@@ -54,11 +54,11 @@ class HomeworkQuestion extends Model
 
     public function isTask(): bool
     {
-        return HomeworkQuestionType::isTask((int) $this->type);
+        return (int) $this->type === HomeworkQuestionType::TASK->value;
     }
 
     public function isQuizSourced(): bool
     {
-        return HomeworkQuestionType::isQuiz((int) $this->type);
+        return (int) $this->type === HomeworkQuestionType::QUIZ->value;
     }
 }

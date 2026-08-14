@@ -3,6 +3,7 @@
 namespace App\Api\Controllers;
 
 use App\Application\Note\NoteService;
+use App\Domain\Note\Enums\NoteColor;
 use App\Domain\Note\Note;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -80,7 +81,7 @@ class NoteController
         return $request->validate([
             'title' => ['nullable', 'string', 'max:255'],
             'body' => ['nullable', 'string'],
-            'color' => ['nullable', 'string', 'in:'.implode(',', Note::COLORS)],
+            'color' => ['nullable', 'string', 'in:'.implode(',', NoteColor::values())],
             'is_pinned' => ['nullable', 'boolean'],
         ]);
     }

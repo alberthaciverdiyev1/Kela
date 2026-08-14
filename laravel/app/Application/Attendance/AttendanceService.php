@@ -4,6 +4,7 @@ namespace App\Application\Attendance;
 
 use App\Domain\Attendance\Attendance;
 use App\Domain\Attendance\AttendanceRepository;
+use App\Domain\Attendance\Enums\AttendanceStatus;
 use App\Domain\User\User;
 use App\Domain\Workspace\Workspace;
 use App\Domain\Workspace\WorkspaceRepository;
@@ -67,7 +68,7 @@ class AttendanceService
             }
 
             $status = (int) $status;
-            if (! array_key_exists($status, Attendance::STATUS_LABELS)) {
+            if (! AttendanceStatus::isValid($status)) {
                 throw new \InvalidArgumentException('Keçərsiz davam statusu.');
             }
 
@@ -125,7 +126,7 @@ class AttendanceService
                     continue;
                 }
                 $status = (int) $status;
-                if (! array_key_exists($status, Attendance::STATUS_LABELS)) {
+                if (! AttendanceStatus::isValid($status)) {
                     throw new \InvalidArgumentException('Keçərsiz davam statusu.');
                 }
 

@@ -2,13 +2,14 @@
 
 namespace App\Domain\User\Values;
 
+use App\Domain\User\Enums\UserStatus as UserStatusEnum;
+
 /**
- * İstifadəçi statusları (value object) — model deyil.
- * Web/Blade bu sinfi import edərək User modelinə toxunmaz.
+ * @deprecated Use App\Domain\User\Enums\UserStatus instead.
  */
 final class UserStatus
 {
-    public const ACTIVE = 1;
-    public const INACTIVE = 2;
-    public const SUSPENDED = 3;
+    public const ACTIVE = UserStatusEnum::ACTIVE->value;
+    public const INACTIVE = UserStatusEnum::INACTIVE->value;
+    public const SUSPENDED = UserStatusEnum::SUSPENDED->value;
 }

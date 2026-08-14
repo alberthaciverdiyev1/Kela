@@ -2,13 +2,12 @@
 
 namespace App\Domain\Content;
 
-use App\Domain\Content\Values\ContentType;
-use App\Domain\User\User;
+use App\Domain\Content\Enums\ContentType;
 use App\Domain\Lesson\Lesson;
 use App\Domain\Quiz\Quiz;
+use App\Domain\User\User;
 use App\Domain\Workspace\Workspace;
 use App\Domain\WorkspaceFolder\WorkspaceFolder;
-
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasOne;
@@ -18,13 +17,19 @@ class Content extends Model
 {
     use SoftDeletes;
 
-    public const TYPE_LESSON = ContentType::LESSON;
-    public const TYPE_QUIZ = ContentType::QUIZ;
-    public const TYPE_PDF = ContentType::PDF;
-    public const TYPE_VIDEO = ContentType::VIDEO;
-    public const TYPE_LINK = ContentType::LINK;
+    public const TYPE_LESSON = ContentType::LESSON->value;
+    public const TYPE_QUIZ = ContentType::QUIZ->value;
+    public const TYPE_PDF = ContentType::PDF->value;
+    public const TYPE_VIDEO = ContentType::VIDEO->value;
+    public const TYPE_LINK = ContentType::LINK->value;
 
-    public const ALL_TYPES = ContentType::ALL;
+    public const ALL_TYPES = [
+        self::TYPE_LESSON,
+        self::TYPE_QUIZ,
+        self::TYPE_PDF,
+        self::TYPE_VIDEO,
+        self::TYPE_LINK,
+    ];
 
     protected $fillable = [
         'teacher_id',
@@ -73,16 +78,16 @@ class Content extends Model
 
     public function isLesson(): bool
     {
-        return $this->type === self::TYPE_LESSON;
+        return (int) $this->type === self::TYPE_LESSON;
     }
 
     public function isQuiz(): bool
     {
-        return $this->type === self::TYPE_QUIZ;
+        return (int) $this->type === self::TYPE_QUIZ;
     }
 
     public function typeLabel(): string
     {
-        return ContentType::label($this->type);
+        return ContentType::labelFor((int) $this->type);
     }
 }

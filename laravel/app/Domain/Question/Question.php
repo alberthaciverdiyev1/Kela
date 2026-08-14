@@ -2,10 +2,10 @@
 
 namespace App\Domain\Question;
 
+use App\Domain\Question\Enums\QuestionOption;
 use App\Domain\QuestionFolder\QuestionFolder;
-use App\Domain\User\User;
 use App\Domain\Quiz\Quiz;
-
+use App\Domain\User\User;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -45,15 +45,18 @@ class Question extends Model
             ->withPivot('position');
     }
 
-    /** All option columns in order. */
+    /** All option columns in order (A-E). */
     public function options(): array
     {
-        return array_filter([
-            'A' => $this->option_a,
-            'B' => $this->option_b,
-            'C' => $this->option_c,
-            'D' => $this->option_d,
-            'E' => $this->option_e,
-        ], fn ($v) => $v !== null && $v !== '');
+        $options = [];
+        foreach (QuestionOption::cases() as $case) {
+            $key = 'option_' . strtolower($case->value);
+            $val = $this->{$key};
+            if ($val !== null && $val !== '') {
+                $options[$case->value] = $val;
+            }
+        }
+
+        return $options;
     }
 }
