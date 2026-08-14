@@ -18,6 +18,7 @@ export default defineConfig({
                 'resources/js/teacher/quiz/controller.js',
                 'resources/js/teacher/lesson/controller.js',
                 'resources/js/teacher/student/controller.js',
+                'resources/js/teacher/homework/controller.js',
             ],
             refresh: true,
             fonts: [

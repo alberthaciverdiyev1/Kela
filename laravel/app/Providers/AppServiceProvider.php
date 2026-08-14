@@ -4,6 +4,7 @@ namespace App\Providers;
 
 use App\Domain\Attendance\AttendanceRepository;
 use App\Domain\City\CityRepository;
+use App\Domain\Homework\HomeworkRepository;
 use App\Domain\Content\ContentRepository;
 use App\Domain\Lesson\LessonRepository;
 use App\Domain\LessonFolder\LessonFolderRepository;
@@ -18,6 +19,7 @@ use App\Domain\Workspace\WorkspaceRepository;
 use App\Domain\WorkspaceFolder\WorkspaceFolderRepository;
 use App\Infrastructure\Persistence\Repositories\EloquentAttendanceRepository;
 use App\Infrastructure\Persistence\Repositories\EloquentCityRepository;
+use App\Infrastructure\Persistence\Repositories\EloquentHomeworkRepository;
 use App\Infrastructure\Persistence\Repositories\EloquentContentRepository;
 use App\Infrastructure\Persistence\Repositories\EloquentLessonFolderRepository;
 use App\Infrastructure\Persistence\Repositories\EloquentLessonRepository;
@@ -56,6 +58,7 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(QuestionRepository::class, EloquentQuestionRepository::class);
         $this->app->bind(QuestionFolderRepository::class, EloquentQuestionFolderRepository::class);
         $this->app->bind(QuizFolderRepository::class, EloquentQuizFolderRepository::class);
+        $this->app->bind(HomeworkRepository::class, EloquentHomeworkRepository::class);
     }
 
     /**

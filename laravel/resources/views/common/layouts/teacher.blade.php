@@ -35,6 +35,7 @@
         $nav[] = ['label' => 'Qeydlər', 'url' => route('teacher.notes.index'), 'active' => str_starts_with($path, 'teacher/notes')];
         $nav[] = ['label' => 'Dərslər', 'url' => route('teacher.lessons.index'), 'active' => str_starts_with($path, 'teacher/lessons')];
         $nav[] = ['label' => 'Quizlər', 'url' => route('teacher.quizzes.index'), 'active' => str_starts_with($path, 'teacher/quizzes')];
+        $nav[] = ['label' => 'Ev Tapşırığı', 'url' => route('teacher.homeworks.index'), 'active' => str_starts_with($path, 'teacher/homeworks')];
         $roleLabel = match (true) {
             $user->isAdmin() => 'Admin',
             $user->isTeacher() => 'Müəllim',

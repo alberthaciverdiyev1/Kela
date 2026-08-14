@@ -5,6 +5,7 @@ use App\Web\Controllers\DashboardController;
 use App\Web\Controllers\LessonMediaController;
 use App\Web\Controllers\Teacher\AttendanceController;
 use App\Web\Controllers\Student\NoteController as StudentNoteController;
+use App\Web\Controllers\Teacher\HomeworkController;
 use App\Web\Controllers\Teacher\LessonController;
 use App\Web\Controllers\Teacher\NoteController as TeacherNoteController;
 use App\Web\Controllers\Teacher\QuestionController;
@@ -83,6 +84,18 @@ Route::middleware(['auth', 'role:Admin,Teacher'])->group(function () {
         Route::get('/{quiz}/edit', [QuizController::class, 'edit'])->name('teacher.quizzes.edit');
         Route::post('/{quiz}', [QuizController::class, 'update'])->name('teacher.quizzes.update');
         Route::delete('/{quiz}', [QuizController::class, 'destroy'])->name('teacher.quizzes.destroy');
+    });
+
+    // Ev Tapşırıqları
+    Route::prefix('teacher/homeworks')->group(function () {
+        Route::get('/', [HomeworkController::class, 'index'])->name('teacher.homeworks.index');
+        Route::get('/create', [HomeworkController::class, 'create'])->name('teacher.homeworks.create');
+        Route::post('/', [HomeworkController::class, 'store'])->name('teacher.homeworks.store');
+        Route::get('/quiz-questions/{quiz}', [HomeworkController::class, 'quizQuestions'])->name('teacher.homeworks.quiz-questions');
+        Route::get('/{homework}', [HomeworkController::class, 'show'])->name('teacher.homeworks.show');
+        Route::get('/{homework}/edit', [HomeworkController::class, 'edit'])->name('teacher.homeworks.edit');
+        Route::post('/{homework}', [HomeworkController::class, 'update'])->name('teacher.homeworks.update');
+        Route::delete('/{homework}', [HomeworkController::class, 'destroy'])->name('teacher.homeworks.destroy');
     });
 });
 
