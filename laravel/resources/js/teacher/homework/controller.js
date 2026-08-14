@@ -36,6 +36,7 @@ export default function homeworkEditor(config) {
         quizzes: [],
         quizzesLoading: false,
         quizSearch: '',
+        expandedFolders: {},
         selectedQuizId: '',
         quizQuestions: [],
         quizQuestionsLoading: false,
@@ -139,6 +140,20 @@ export default function homeworkEditor(config) {
             return haystack.includes(s);
         },
 
+        toggleFolder(key) {
+            if (this.expandedFolders[key]) {
+                delete this.expandedFolders[key];
+            } else {
+                this.expandedFolders[key] = true;
+            }
+        },
+
+        isFolderCollapsed(key) {
+            // Axtarış aktiv olanda qovluqlar avtomatik açıq qalır.
+            if (this.quizSearch.trim() !== '') return false;
+            return !this.expandedFolders[key];
+        },
+
         /** Ağacı düz satırlara çevirir: qovluq başlıqları + içindəki quizlər. */
         get quizRows() {
             const filtering = this.quizSearch.trim() !== '';
@@ -157,7 +172,16 @@ export default function homeworkEditor(config) {
                 if (node.depth >= 0) {
                     const vis = visibleCounts[node.key];
                     if (vis === 0) return; // məzmunu olmayan qovluğu göstərmə
-                    rows.push({ kind: 'folder', key: 'f:' + node.key, name: node.name, depth: node.depth, count: vis });
+                    const collapsed = this.isFolderCollapsed(node.key);
+                    rows.push({
+                        kind: 'folder',
+                        key: node.key,
+                        name: node.name,
+                        depth: node.depth,
+                        count: vis,
+                        collapsed,
+                    });
+                    if (collapsed) return; // qovluq qapalıdır — altındakılar göstərilmir
                 }
                 for (const q of node.contents) {
                     if (filtering && !this.quizMatches(q)) continue;
