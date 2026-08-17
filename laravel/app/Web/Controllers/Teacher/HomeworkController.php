@@ -19,15 +19,16 @@ class HomeworkController
 {
     public function __construct(
         private readonly HomeworkService $homeworks,
-    ) {
+    )
+    {
     }
 
     public function index(Request $request): View
     {
-        $search = (string) $request->string('search');
+        $search = (string)$request->string('search');
 
         return view('teacher.homeworks.index', [
-            'homeworks' => $this->homeworks->paginate((int) auth()->id(), $search ?: null, 15),
+            'homeworks' => $this->homeworks->paginate((int)auth()->id(), $search ?: null, 15),
             'search' => $search,
         ]);
     }
@@ -47,7 +48,7 @@ class HomeworkController
     {
         $data = $this->validated($request);
 
-        $homework = $this->homeworks->create((int) auth()->id(), $data);
+        $homework = $this->homeworks->create((int)auth()->id(), $data);
 
         return redirect()
             ->route('teacher.homeworks.show', $homework->id)
@@ -85,7 +86,7 @@ class HomeworkController
         $this->assertAccess($this->homeworks->find($homework));
 
         $data = $this->validated($request);
-        $this->homeworks->update($homework, $data, (int) auth()->id());
+        $this->homeworks->update($homework, $data, (int)auth()->id());
 
         return redirect()->route('teacher.homeworks.show', $homework)->with('success', 'Ev tapşırığı yeniləndi.');
     }
@@ -94,7 +95,7 @@ class HomeworkController
     {
         $this->assertAccess($this->homeworks->find($homework));
 
-        $this->homeworks->delete($homework, (int) auth()->id());
+        $this->homeworks->delete($homework, (int)auth()->id());
 
         return redirect()->route('teacher.homeworks.index')->with('success', 'Ev tapşırığı silindi.');
     }
@@ -103,7 +104,7 @@ class HomeworkController
     public function quizQuestions(Request $request, int $quizId): \Illuminate\Http\JsonResponse
     {
         try {
-            $questions = $this->homeworks->quizQuestions($quizId, (int) auth()->id());
+            $questions = $this->homeworks->quizQuestions($quizId, (int)auth()->id());
         } catch (\RuntimeException $e) {
             abort(403);
         }
@@ -123,7 +124,7 @@ class HomeworkController
         $data['is_published'] = $request->boolean('is_published');
 
         $data['questions'] = [];
-        if (! empty($data['questions_json'])) {
+        if (!empty($data['questions_json'])) {
             $decoded = json_decode($data['questions_json'], true);
             if (is_array($decoded)) {
                 $data['questions'] = $decoded;
@@ -142,7 +143,7 @@ class HomeworkController
         if ($user?->isAdmin()) {
             return;
         }
-        if ($user === null || $homework->teacher_id !== (int) $user->id) {
+        if ($user === null || $homework->teacher_id !== (int)$user->id) {
             abort(403);
         }
     }

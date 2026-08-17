@@ -8,8 +8,8 @@
 
 @php
     $variants = [
-        'primary' => 'btn-primary text-white hover:brightness-110 active:scale-95',
-        'secondary' => 'border border-base-300 bg-white text-base-content shadow-sm hover:bg-base-50 active:scale-95',
+        'primary' => 'border-0 bg-gradient-to-r from-primary to-secondary text-white shadow-md shadow-primary/20 hover:brightness-110 active:scale-95',
+        'secondary' => 'border border-base-300 bg-base-100 text-base-content shadow-sm hover:bg-base-200/50 hover:border-base-300 active:scale-95',
         'danger' => 'btn-error text-white hover:brightness-110 active:scale-95',
         'ghost' => 'btn-ghost active:scale-95 text-base-content/70 hover:bg-base-200/50 hover:text-base-content',
     ];

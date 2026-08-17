@@ -10,7 +10,7 @@
 <select
     id="{{ $name }}"
     name="{{ $name }}"
-    {{ $attributes->merge(['class' => 'select select-bordered w-full text-sm ' . ($hasError ? 'select-error' : '')]) }}
+    {{ $attributes->merge(['class' => 'select select-bordered w-full rounded-xl text-sm transition focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20 ' . ($hasError ? 'select-error' : '')]) }}
 >
     @if ($placeholder)
         <option value="">{{ $placeholder }}</option>
