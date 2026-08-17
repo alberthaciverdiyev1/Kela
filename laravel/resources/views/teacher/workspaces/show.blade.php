@@ -62,7 +62,7 @@
         {{-- Breadcrumb --}}
         <nav class="flex flex-wrap items-center gap-1 border-b border-base-300 px-4 py-2 text-sm">
             <a href="{{ route('teacher.workspaces.show', $workspaceId) }}" class="inline-flex items-center gap-1 rounded px-2 py-1 font-medium text-primary hover:bg-primary/10">
-                <x-icon name="heroicon-o-squares-2x2" class="size-4" />
+                <x-icon name="heroicon-o-building-office-2" class="size-4" />
                 {{ $workspaceName }}
             </a>
             @foreach ($directory['breadcrumbs'] as $crumb)

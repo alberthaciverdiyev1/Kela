@@ -8,7 +8,7 @@
 @if ($workspaceContext !== null)
     <div class="flex items-center justify-between gap-3 rounded-lg border border-primary/30 bg-primary/5 px-4 py-3">
         <div class="flex items-center gap-2 text-sm">
-            <x-icon name="heroicon-o-squares-2x2" class="size-4 text-primary" />
+            <x-icon name="heroicon-o-building-office-2" class="size-4 text-primary" />
             <span class="text-base-content/70">Bu məzmun:</span>
             <span class="font-semibold text-base-content">{{ $workspaceContext['workspace_name'] }}</span>
             @if ($workspaceContext['folder_name'])

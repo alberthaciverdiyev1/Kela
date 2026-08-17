@@ -92,7 +92,7 @@ class WorkspaceFolderTest extends TestCase
 
         $html = $this->get('/teacher/workspaces')->assertOk()->getContent();
         $this->assertStringContainsString('Sınaq Qrupu', $html);
-        $this->assertStringContainsString('x-data="workspaceList()"', $html);
+        $this->assertStringContainsString('x-data="workspaceList(', $html);
 
         // List/Grid görünüm keçidi və grid kartları mövcuddur
         $this->assertStringContainsString('setViewMode(\'list\')', $html);

@@ -8,7 +8,7 @@
     <template x-if="item.icon === 'eye'"><x-icon name="heroicon-o-eye" class="size-3.5" /></template>
     <template x-if="item.icon === 'clipboard-document-list'"><x-icon name="heroicon-o-clipboard-document-list" class="size-3.5" /></template>
     <template x-if="item.icon === 'video-camera'"><x-icon name="heroicon-o-video-camera" class="size-3.5" /></template>
-    <template x-if="item.icon === 'squares-2x2'"><x-icon name="heroicon-o-squares-2x2" class="size-3.5" /></template>
+    <template x-if="item.icon === 'building-office-2'"><x-icon name="heroicon-o-building-office-2" class="size-3.5" /></template>
     <template x-if="item.icon === 'question-mark-circle'"><x-icon name="heroicon-o-question-mark-circle" class="size-3.5" /></template>
     <template x-if="item.icon === 'user-minus'"><x-icon name="heroicon-o-user-minus" class="size-3.5" /></template>
 </span>

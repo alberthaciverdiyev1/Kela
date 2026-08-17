@@ -1,11 +1,11 @@
 @extends('common.layouts.teacher')
 @section('title', 'İş Sahələri - Kela')
 @section('content')
-<div class="space-y-6" x-data="workspaceList()" @keydown.escape.window="closeAll()">
+<div class="space-y-6" x-data="workspaceList({{ \Illuminate\Support\Js::from(['autoCreate' => (bool) request('create')]) }})" @keydown.escape.window="closeAll()">
     <x-teacher.heading subtitle="İş sahələrini idarə et">
         İş Sahələri
         <x-slot:actions>
-            <x-teacher.button href="{{ route('teacher.workspaces.create') }}" icon="plus">Yeni Workspace</x-teacher.button>
+            <x-teacher.button icon="plus" @click="openCreate()">Yeni Workspace</x-teacher.button>
         </x-slot:actions>
     </x-teacher.heading>
 
@@ -48,7 +48,7 @@
         </form>
 
         @if ($workspaces->isEmpty())
-            <x-teacher.empty-state icon="squares-2x2" title="Workspace tapılmadı" description="Axtarışı dəyişin və ya yeni workspace yaradın." />
+            <x-teacher.empty-state icon="building-office-2" title="Workspace tapılmadı" description="Axtarışı dəyişin və ya yeni workspace yaradın." />
         @else
             {{-- List görünümü (tablo) --}}
             <div x-show="viewMode === 'list'">
@@ -86,7 +86,7 @@
                         @contextmenu.prevent="openWorkspaceContextMenu($event, $el)"
                     >
                         <a href="{{ route('teacher.workspaces.show', $ws['id']) }}" class="relative flex size-20 items-center justify-center rounded-xl bg-primary/10 text-primary transition group-hover:bg-primary/15">
-                            <x-icon name="heroicon-o-squares-2x2" class="size-[66px]" />
+                            <x-icon name="heroicon-o-building-office-2" class="size-[66px]" />
                             @if ($ws['student_count'] > 0)
                                 <span class="absolute -top-2.5 -right-2.5 flex size-7 items-center justify-center rounded-full bg-primary text-xs font-bold leading-none text-primary-content shadow-sm ring-2 ring-base-100">
                                     {{ $ws['student_count'] }}
@@ -102,6 +102,27 @@
             <x-teacher.pagination :paginator="$workspaces" />
         @endif
     </x-teacher.card>
+
+    {{-- Yeni Workspace dialog --}}
+    <x-teacher.modal show="showCreate" title="Yeni Workspace" maxWidth="md">
+        <form method="POST" action="{{ route('teacher.workspaces.store') }}" id="create-workspace-form">
+            @csrf
+            <div class="flex items-start gap-4">
+                <span class="flex size-11 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-primary/15 to-secondary/15 text-primary">
+                    <x-icon name="heroicon-o-building-office-2" class="size-6" />
+                </span>
+                <div class="flex-1">
+                    <x-teacher.field label="Ad" name="name" :required="true" hint="Məs: Sinif 3A, Riyaziyyat qrupu...">
+                        <x-teacher.input name="name" placeholder="Workspace adı" required autofocus />
+                    </x-teacher.field>
+                </div>
+            </div>
+        </form>
+        <x-slot:footer>
+            <button type="button" class="btn btn-ghost" @click="showCreate = false">Ləğv et</button>
+            <x-teacher.button type="submit" form="create-workspace-form" icon="plus">Yarat</x-teacher.button>
+        </x-slot:footer>
+    </x-teacher.modal>
 
     {{-- Sağ-tık kontekst menyusu --}}
     @include('teacher.partials._context-menu')

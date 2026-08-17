@@ -49,7 +49,6 @@ Route::middleware(['auth', 'role:Admin,Teacher'])->group(function () {
     // İş Sahələri
     Route::prefix('teacher/workspaces')->group(function () {
         Route::get('/', [WorkspaceController::class, 'index'])->name('teacher.workspaces.index');
-        Route::get('/create', [WorkspaceController::class, 'create'])->name('teacher.workspaces.create');
         Route::post('/', [WorkspaceController::class, 'store'])->name('teacher.workspaces.store');
         Route::get('/{workspace}', [WorkspaceController::class, 'show'])->name('teacher.workspaces.show');
         Route::get('/{workspace}/edit', [WorkspaceController::class, 'edit'])->name('teacher.workspaces.edit');

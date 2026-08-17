@@ -596,12 +596,16 @@ Alpine.data('workspaceManager', workspaceManager);
 /**
  * Workspace indeks səhifəsi üçün sadə görünüm idarəçisi (List / Grid).
  */
-function workspaceList() {
+function workspaceList(config = {}) {
     return {
         ...createContextMenu(),
 
         // Kataloq görünümü: 'list' | 'grid' (localStorage-da saxlanılır).
         viewMode: localStorage.getItem('workspace-view') || 'list',
+
+        // ── Yeni workspace modalı ─────────────────────────────────────────
+        // autoCreate: dashboard "Yeni İş Sahəsi" → ?create=1 ilə gələndə açılır.
+        showCreate: Boolean(config.autoCreate),
 
         setViewMode(mode) {
             this.viewMode = mode;
@@ -610,11 +614,15 @@ function workspaceList() {
             } catch (e) { /* localStorage əlçatan deyilsə sadəcə seans üçün qalır */ }
         },
 
+        openCreate() {
+            this.showCreate = true;
+        },
+
         /** Workspace kartı/sətirinə sağ-tık menyusu. */
         openWorkspaceContextMenu(e, el) {
             const d = el.dataset;
             this.openCtxMenu(e, d.workspaceName, [
-                { icon: 'squares-2x2', iconClass: 'bg-primary/10 text-primary', label: 'Aç', cls: 'text-base-content hover:bg-primary/10 hover:text-primary', href: d.openUrl },
+                { icon: 'building-office-2', iconClass: 'bg-primary/10 text-primary', label: 'Aç', cls: 'text-base-content hover:bg-primary/10 hover:text-primary', href: d.openUrl },
                 { icon: 'pencil-square', iconClass: 'bg-base-200 text-base-content/70', label: 'Redaktə et', cls: 'text-base-content hover:bg-base-200', href: d.editUrl },
                 { divider: true },
                 { icon: 'trash', iconClass: 'bg-error/10 text-error', label: 'Sil', danger: true, cls: 'text-error hover:bg-error/10 hover:text-error', action: () => this.deleteWorkspace(d.workspaceId) },
@@ -633,6 +641,7 @@ function workspaceList() {
 
         closeAll() {
             this.closeCtxMenu();
+            this.showCreate = false;
         },
     };
 }

@@ -44,7 +44,7 @@
         <x-teacher.stat-card label="Quizlər" :value="$quizzes" icon="clipboard-document-list" accent="from-amber-500 to-orange-500" href="{{ route('teacher.quizzes.index') }}">
             Quizləri aç
         </x-teacher.stat-card>
-        <x-teacher.stat-card label="İş Sahələri" :value="$workspaces" icon="briefcase" accent="from-violet-500 to-purple-500" href="{{ route('teacher.workspaces.index') }}">
+        <x-teacher.stat-card label="İş Sahələri" :value="$workspaces" icon="building-office-2" accent="from-violet-500 to-purple-500" href="{{ route('teacher.workspaces.index') }}">
             İş sahələrini aç
         </x-teacher.stat-card>
     </div>
@@ -60,7 +60,7 @@
             <div class="grid gap-4 sm:grid-cols-2">
                 <x-teacher.action-card title="Yeni Dərs" description="Video və ya qeyd dərsi əlavə edin" icon="video-camera" accent="from-primary to-secondary" href="{{ route('teacher.lessons.create') }}" />
                 <x-teacher.action-card title="Yeni Quiz" description="Sual bankından quiz tərtib edin" icon="clipboard-document-list" accent="from-amber-500 to-orange-500" href="{{ route('teacher.quizzes.create') }}" />
-                <x-teacher.action-card title="Yeni İş Sahəsi" description="Şagirdləri bir iş sahəsində toplayın" icon="briefcase" accent="from-violet-500 to-purple-500" href="{{ route('teacher.workspaces.create') }}" />
+                <x-teacher.action-card title="Yeni İş Sahəsi" description="Şagirdləri bir iş sahəsində toplayın" icon="building-office-2" accent="from-violet-500 to-purple-500" href="{{ route('teacher.workspaces.index', ['create' => 1]) }}" />
                 <x-teacher.action-card title="Yeni Şagird" description="Sistemə yeni şagird əlavə edin" icon="user-plus" accent="from-emerald-500 to-teal-500" href="{{ route('teacher.students.create') }}" />
             </div>
         </div>

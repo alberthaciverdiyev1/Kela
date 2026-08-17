@@ -32,16 +32,6 @@ class WorkspaceController
         ]);
     }
 
-    public function create(): View
-    {
-        return view('teacher.workspaces.form', [
-            'heading' => 'Yeni Workspace',
-            'subtitle' => 'Yeni iş sahəsi yarat',
-            'creating' => true,
-            'workspace' => null,
-        ]);
-    }
-
     public function store(Request $request): RedirectResponse
     {
         $data = $request->validate([

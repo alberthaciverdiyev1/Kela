@@ -30,7 +30,7 @@
         $nav[] = ['label' => 'Müəllim Paneli', 'url' => route('teacher.dashboard'), 'active' => $path === 'teacher/dashboard', 'icon' => 'home'];
         $nav[] = ['label' => 'Şagirdlər', 'url' => route('teacher.students.index'), 'active' => str_starts_with($path, 'teacher/students'), 'icon' => 'users'];
         $nav[] = ['label' => 'Sual Bankı', 'url' => route('teacher.questions.index'), 'active' => str_starts_with($path, 'teacher/questions'), 'icon' => 'queue-list'];
-        $nav[] = ['label' => 'İş Sahələri', 'url' => route('teacher.workspaces.index'), 'active' => str_starts_with($path, 'teacher/workspaces'), 'icon' => 'briefcase'];
+        $nav[] = ['label' => 'İş Sahələri', 'url' => route('teacher.workspaces.index'), 'active' => str_starts_with($path, 'teacher/workspaces'), 'icon' => 'building-office-2'];
         $nav[] = ['label' => 'Davam', 'url' => route('teacher.attendance.index'), 'active' => str_starts_with($path, 'teacher/attendance'), 'icon' => 'calendar-days'];
         $nav[] = ['label' => 'Qeydlər', 'url' => route('teacher.notes.index'), 'active' => str_starts_with($path, 'teacher/notes'), 'icon' => 'pencil-square'];
         $nav[] = ['label' => 'Dərslər', 'url' => route('teacher.lessons.index'), 'active' => str_starts_with($path, 'teacher/lessons'), 'icon' => 'academic-cap'];
