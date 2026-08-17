@@ -3,7 +3,8 @@
  *
  * Üst kompakt "tez qeyd" qutusu, rəngli not kartları şəbəkəsi (masonry),
  * sabitləmə (pin), rəng palitrası, redaktə modulu və çöp qutusu.
- * Hər dəyişiklik /api/v1/notes endpointləri ilə avtomatik saxlanılır.
+ * Hər dəyişiklik /notes web controller endpointləri ilə avtomatik saxlanılır
+ * (frontend /api/v1-ə birbaşa toxunmur).
  */
 import Alpine from 'alpinejs';
 
@@ -61,7 +62,7 @@ export default function notesApp(config) {
         async loadNotes() {
             this.loading = true;
             try {
-                const res = await KelaApi('GET', '/api/v1/notes');
+                const res = await KelaApi('GET', '/notes');
                 this.notes = res?.data ?? [];
             } catch (err) {
                 window.alert(err.message);
@@ -72,7 +73,7 @@ export default function notesApp(config) {
 
         async loadTrash() {
             try {
-                const res = await KelaApi('GET', '/api/v1/notes/trashed');
+                const res = await KelaApi('GET', '/notes/trashed');
                 this.trashed = res?.data ?? [];
             } catch (err) {
                 window.alert(err.message);
@@ -98,7 +99,7 @@ export default function notesApp(config) {
             const body = this.composerBody.trim();
             if (title || body) {
                 try {
-                    const res = await KelaApi('POST', '/api/v1/notes', {
+                    const res = await KelaApi('POST', '/notes', {
                         title: title || null,
                         body: body || null,
                         color: this.composerColor,
@@ -146,7 +147,7 @@ export default function notesApp(config) {
             if (!force && !this.dirty) return;
             this.saveState = 'saving';
             try {
-                const res = await KelaApi('PUT', `/api/v1/notes/${this.editing.id}`, {
+                const res = await KelaApi('PUT', `/notes/${this.editing.id}`, {
                     title: this.editing.title || null,
                     body: this.editing.body || null,
                     color: this.editing.color,
@@ -172,7 +173,7 @@ export default function notesApp(config) {
                 this.scheduleSave();
             } else {
                 try {
-                    const res = await KelaApi('PUT', `/api/v1/notes/${note.id}`, { color });
+                    const res = await KelaApi('PUT', `/notes/${note.id}`, { color });
                     Object.assign(note, res.data);
                 } catch (err) {
                     window.alert(err.message);
@@ -187,7 +188,7 @@ export default function notesApp(config) {
                 this.scheduleSave();
             } else {
                 try {
-                    const res = await KelaApi('PUT', `/api/v1/notes/${note.id}`, { is_pinned: note.is_pinned });
+                    const res = await KelaApi('PUT', `/notes/${note.id}`, { is_pinned: note.is_pinned });
                     Object.assign(note, res.data);
                 } catch (err) {
                     window.alert(err.message);
@@ -198,7 +199,7 @@ export default function notesApp(config) {
         async deleteNote(note) {
             const wasEditing = this.editing === note;
             try {
-                await KelaApi('DELETE', `/api/v1/notes/${note.id}`);
+                await KelaApi('DELETE', `/notes/${note.id}`);
                 if (wasEditing) this.editing = null;
                 this.notes = this.notes.filter((n) => n.id !== note.id);
                 this.trashed = this.trashed.filter((n) => n.id !== note.id);
@@ -210,7 +211,7 @@ export default function notesApp(config) {
 
         async restoreNote(note) {
             try {
-                const res = await KelaApi('POST', `/api/v1/notes/${note.id}/restore`);
+                const res = await KelaApi('POST', `/notes/${note.id}/restore`);
                 this.trashed = this.trashed.filter((n) => n.id !== note.id);
                 this.notes.unshift(res.data);
             } catch (err) {

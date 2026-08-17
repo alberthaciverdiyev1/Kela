@@ -1,10 +1,10 @@
 /**
  * EDIT — Sual bankı düzləndirmə: qovluq adı/silah, sual düzləndir/daşı.
  *
- *   POST /api/v1/question-folders/{id}/rename    (name)
- *   POST /api/v1/question-folders/{id}/move      (parent_id)
- *   PUT  /api/v1/questions/{id}                  (text, options, correct_option)
- *   POST /api/v1/question-folders/move-question  (question_id, folder_id)
+ *   POST /teacher/questions/folders/{id}/rename    (name)
+ *   POST /teacher/questions/folders/{id}/move      (parent_id)
+ *   PUT  /teacher/questions/{id}                   (text, options, correct_option)
+ *   POST /teacher/questions/folders/move-question  (question_id, folder_id)
  */
 export default function createBankEditor() {
     return {
@@ -25,7 +25,7 @@ export default function createBankEditor() {
                 return false;
             }
             try {
-                await KelaApi('POST', `/api/v1/question-folders/${id}/rename`, { name });
+                await KelaApi('POST', `/teacher/questions/folders/${id}/rename`, { name });
                 return true;
             } catch (err) {
                 window.alert(err.message);
@@ -38,7 +38,7 @@ export default function createBankEditor() {
          */
         async moveFolder(id, newParentId) {
             try {
-                await KelaApi('POST', `/api/v1/question-folders/${id}/move`, { parent_id: newParentId ?? null });
+                await KelaApi('POST', `/teacher/questions/folders/${id}/move`, { parent_id: newParentId ?? null });
                 return true;
             } catch (err) {
                 window.alert(err.message);
@@ -98,7 +98,7 @@ export default function createBankEditor() {
                 return false;
             }
             try {
-                await KelaApi('PUT', `/api/v1/questions/${id}`, payload);
+                await KelaApi('PUT', `/teacher/questions/${id}`, payload);
                 return true;
             } catch (err) {
                 window.alert(err.message);
@@ -111,7 +111,7 @@ export default function createBankEditor() {
          */
         async moveQuestion(id, folderId) {
             try {
-                await KelaApi('POST', '/api/v1/question-folders/move-question', {
+                await KelaApi('POST', '/teacher/questions/folders/move-question', {
                     question_id: Number(id),
                     folder_id: folderId ?? null,
                 });

@@ -4,6 +4,7 @@ namespace App\Api\Controllers;
 
 use App\Application\Auth\AuthService;
 use App\Api\Resources\UserResource;
+use App\Http\Requests\LoginRequest;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Validation\ValidationException;
@@ -15,12 +16,9 @@ class AuthController
     }
 
     /** POST /auth/login → { token, token_type, user } */
-    public function login(Request $request): JsonResponse
+    public function login(LoginRequest $request): JsonResponse
     {
-        $credentials = $request->validate([
-            'email' => ['required', 'email'],
-            'password' => ['required', 'string'],
-        ]);
+        $credentials = $request->validated();
 
         if (! $this->auth->validateCredentials($credentials)) {
             throw ValidationException::withMessages([

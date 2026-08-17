@@ -1,9 +1,9 @@
 /**
  * DELETE — Şagirdi silmək əməliyyatı.
  *
- * Niyə ayrı fayl: "delete" ilə bağlı bütün kod (təsdiq dialoqu, API DELETE,
- * xəta idarəsi) burada saxlanılır ki, index.js-də delete funksiya kodu
- * olmasın.
+ * Niyə ayrı fayl: "delete" ilə bağlı bütün kod (təsdiq dialoqu, DELETE
+ * /teacher/students web controller-i, xəta idarəsi) burada saxlanılır ki,
+ * index.js-də delete funksiya kodu olmasın.
  */
 export default function createStudentRemover() {
     return {
@@ -17,7 +17,7 @@ export default function createStudentRemover() {
         async remove(id, name = 'Şagird') {
             if (!window.confirm(`'${name}' silinsin?`)) return false;
             try {
-                await KelaApi('DELETE', `/api/v1/students/${id}`);
+                await KelaApi('DELETE', `/teacher/students/${id}`);
                 return true;
             } catch (err) {
                 window.alert(err.message);

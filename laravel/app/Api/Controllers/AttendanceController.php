@@ -5,6 +5,8 @@ namespace App\Api\Controllers;
 use App\Application\Attendance\AttendanceService;
 use App\Application\Workspace\WorkspaceService;
 use App\Domain\Workspace\Workspace;
+use App\Http\Requests\SaveMonthAttendanceRequest;
+use App\Http\Requests\StoreAttendanceRequest;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
@@ -29,15 +31,11 @@ class AttendanceController
     }
 
     /** Davam qeydlərini kütləvi yazır. */
-    public function store(Request $request, int $workspace): JsonResponse
+    public function store(StoreAttendanceRequest $request, int $workspace): JsonResponse
     {
         $this->authorizeAccess($this->workspaces->find($workspace), $request);
 
-        $data = $request->validate([
-            'date' => ['required', 'string'],
-            'statuses' => ['required', 'array'],
-            'statuses.*' => ['integer', 'min:0', 'max:4'],
-        ]);
+        $data = $request->validated();
 
         $date = $this->validDateOrAbort($data['date']);
 
@@ -65,15 +63,11 @@ class AttendanceController
     }
 
     /** Aylıq davam qeydlərini kütləvi yazır. */
-    public function saveMonth(Request $request, int $workspace): JsonResponse
+    public function saveMonth(SaveMonthAttendanceRequest $request, int $workspace): JsonResponse
     {
         $this->authorizeAccess($this->workspaces->find($workspace), $request);
 
-        $data = $request->validate([
-            'month' => ['required', 'string'],
-            'days' => ['required', 'array'],
-            'days.*.*' => ['integer', 'min:0', 'max:4'],
-        ]);
+        $data = $request->validated();
 
         $month = $this->validMonthOrAbort($data['month']);
 

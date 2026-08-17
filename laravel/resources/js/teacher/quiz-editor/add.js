@@ -1,7 +1,7 @@
 /**
  * ADD — Quiz-ə bankdan sual əlavə et.
  *
- * POST /api/v1/quizzes/{id}/questions  (question_id)
+ * POST /teacher/quizzes/{id}/questions  (question_id)
  *
  * Sual yaratma Sual Bankı modulundadır (teacher/question) — burada yalnız
  * mövcud bank sualını quizə bağlamaq var.

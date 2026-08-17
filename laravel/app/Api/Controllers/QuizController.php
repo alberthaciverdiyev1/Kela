@@ -5,8 +5,11 @@ namespace App\Api\Controllers;
 use App\Application\Quiz\QuizService;
 use App\Application\QuizFolder\QuizFolderService;
 use App\Application\WorkspaceFolder\WorkspaceFolderService;
-use App\Domain\Quiz\Quiz;
 use App\Api\Resources\QuizResource;
+use App\Domain\Quiz\Quiz;
+use App\Http\Requests\AddQuizQuestionRequest;
+use App\Http\Requests\MoveQuizQuestionRequest;
+use App\Http\Requests\QuizRequest;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator;
@@ -30,16 +33,9 @@ class QuizController
         );
     }
 
-    public function store(Request $request): JsonResponse
+    public function store(QuizRequest $request): JsonResponse
     {
-        $data = $request->validate([
-            'title' => ['required', 'string', 'max:255'],
-            'description' => ['nullable', 'string'],
-            'is_published' => ['nullable', 'boolean'],
-            'folder_id' => ['nullable', 'integer'],
-            'workspace_id' => ['nullable', 'integer'],
-            'ws_folder_id' => ['nullable', 'integer'],
-        ]);
+        $data = $request->validated();
 
         $data['folder_id'] = $this->quizFolders->resolveFolderFor((int) $request->user()->id, $data['folder_id'] ?? null);
 
@@ -69,18 +65,11 @@ class QuizController
         ]);
     }
 
-    public function update(Request $request, int $contentId): QuizResource
+    public function update(QuizRequest $request, int $contentId): QuizResource
     {
         $this->authorizeAccess($this->quizzes->find($contentId));
 
-        $data = $request->validate([
-            'title' => ['required', 'string', 'max:255'],
-            'description' => ['nullable', 'string'],
-            'is_published' => ['nullable', 'boolean'],
-            'folder_id' => ['nullable', 'integer'],
-            'workspace_id' => ['nullable', 'integer'],
-            'ws_folder_id' => ['nullable', 'integer'],
-        ]);
+        $data = $request->validated();
 
         $data['folder_id'] = $this->quizFolders->resolveFolderFor((int) $request->user()->id, $data['folder_id'] ?? null);
 
@@ -105,13 +94,11 @@ class QuizController
         return response()->json(['message' => 'Quiz silindi.']);
     }
 
-    public function addQuestion(Request $request, int $contentId): JsonResponse
+    public function addQuestion(AddQuizQuestionRequest $request, int $contentId): JsonResponse
     {
         $this->authorizeAccess($this->quizzes->find($contentId));
 
-        $data = $request->validate([
-            'question_id' => ['required', 'integer'],
-        ]);
+        $data = $request->validated();
 
         $this->quizzes->addQuestion($contentId, (int) $data['question_id'], (int) $request->user()->id);
 
@@ -126,13 +113,11 @@ class QuizController
         return response()->json(['message' => 'Sual çıxarıldı.']);
     }
 
-    public function moveQuestion(Request $request, int $contentId, int $questionId): JsonResponse
+    public function moveQuestion(MoveQuizQuestionRequest $request, int $contentId, int $questionId): JsonResponse
     {
         $this->authorizeAccess($this->quizzes->find($contentId));
 
-        $data = $request->validate([
-            'direction' => ['required', 'in:up,down'],
-        ]);
+        $data = $request->validated();
 
         $this->quizzes->moveQuestion($contentId, $questionId, $data['direction'], (int) $request->user()->id);
 

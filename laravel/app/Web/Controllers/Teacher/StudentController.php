@@ -6,10 +6,10 @@ use App\Application\City\CityService;
 use App\Application\Student\StudentService;
 use App\Application\Workspace\WorkspaceService;
 use App\Domain\User\Enums\UserStatus;
+use App\Http\Requests\StudentRequest;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
-use Illuminate\Validation\Rule;
 
 /**
  * Şagird səhifələri — server-rendered Blade.
@@ -59,9 +59,9 @@ class StudentController
         return $this->form(null, 'Yeni Şagird', 'Yeni şagird əlavə et', true);
     }
 
-    public function store(Request $request): RedirectResponse
+    public function store(StudentRequest $request): RedirectResponse|\Illuminate\Http\JsonResponse
     {
-        $data = $this->validated($request, null);
+        $data = $request->validated();
 
         $this->students->create([
             'first_name' => trim($data['first_name']),
@@ -72,6 +72,10 @@ class StudentController
             'birth_date' => $data['birth_date'] ?: null,
             'status' => (int) $data['status'],
         ]);
+
+        if ($request->expectsJson()) {
+            return response()->json(['message' => 'Şagird yaradıldı.']);
+        }
 
         return redirect()->route('teacher.students.index')->with('success', 'Şagird yaradıldı.');
     }
@@ -114,9 +118,9 @@ class StudentController
         return $this->form($data, 'Şagirdi Redaktə Et', trim(($data['first_name'] ?? '').' '.($data['last_name'] ?? '')), false);
     }
 
-    public function update(Request $request, int $student): RedirectResponse
+    public function update(StudentRequest $request, int $student): RedirectResponse|\Illuminate\Http\JsonResponse
     {
-        $data = $this->validated($request, $student);
+        $data = $request->validated();
 
         $this->students->update($student, [
             'first_name' => trim($data['first_name']),
@@ -128,27 +132,22 @@ class StudentController
             'status' => (int) $data['status'],
         ]);
 
+        if ($request->expectsJson()) {
+            return response()->json(['message' => 'Şagird yeniləndi.']);
+        }
+
         return redirect()->route('teacher.students.index')->with('success', 'Şagird yeniləndi.');
     }
 
-    public function destroy(int $student): RedirectResponse
+    public function destroy(Request $request, int $student): RedirectResponse|\Illuminate\Http\JsonResponse
     {
         $this->students->delete($student);
 
-        return redirect()->route('teacher.students.index')->with('success', 'Şagird silindi.');
-    }
+        if ($request->expectsJson()) {
+            return response()->json(['message' => 'Şagird silindi.']);
+        }
 
-    protected function validated(Request $request, ?int $ignoreId): array
-    {
-        return $request->validate([
-            'first_name' => ['required', 'string', 'max:255'],
-            'last_name' => ['nullable', 'string', 'max:255'],
-            'email' => ['required', 'email', 'max:255', Rule::unique('users', 'email')->ignore($ignoreId)],
-            'password' => ['nullable', 'string', 'min:6', 'max:255'],
-            'city_id' => ['nullable', 'integer', 'exists:cities,id'],
-            'birth_date' => ['nullable', 'date', 'before_or_equal:today'],
-            'status' => ['required', 'integer', 'in:1,2,3'],
-        ]);
+        return redirect()->route('teacher.students.index')->with('success', 'Şagird silindi.');
     }
 
     protected function form(?array $student, string $heading, string $subtitle, bool $creating): View

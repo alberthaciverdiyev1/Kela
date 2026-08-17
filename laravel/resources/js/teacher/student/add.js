@@ -2,8 +2,8 @@
  * ADD — Yeni şagird yaratmaq əməliyyatı.
  *
  * Niyə ayrı fayl: "add" ilə bağlı bütün kod (form sıfırlama, payload qurma,
- * validasiya, POST /api/v1/students) burada saxlanılır ki, index.js-də
- * add funksiya kodu olmasın.
+ * validasiya, POST /teacher/students web controller-i) burada saxlanılır ki,
+ * index.js-də add funksiya kodu olmasın.
  *
  * Modul heç bir şəxsi reaktiv vəziyyət saxlamır. Form sahə elementlərini
  * parametr kimi alır (controller $refs-dən toplayıb verir) — beləcə modul
@@ -63,7 +63,7 @@ export default function createStudentAdder() {
                 return false;
             }
             try {
-                await KelaApi('POST', '/api/v1/students', payload);
+                await KelaApi('POST', '/teacher/students', payload);
                 return true;
             } catch (err) {
                 window.alert(err.message);

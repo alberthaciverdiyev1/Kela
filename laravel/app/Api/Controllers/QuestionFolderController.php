@@ -4,12 +4,16 @@ namespace App\Api\Controllers;
 
 use App\Application\QuestionFolder\QuestionFolderService;
 use App\Domain\QuestionFolder\QuestionFolder;
+use App\Http\Requests\MoveFolderRequest;
+use App\Http\Requests\MoveQuestionRequest;
+use App\Http\Requests\RenameFolderRequest;
+use App\Http\Requests\StoreFolderRequest;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
 /**
  * Sual bankı qovluqları üçün API.
- * Web səhifəsi (server-rendered) bu endpointləri JS vasitəsilə çağırır.
+ * Doğrulama qaydaları FormRequest siniflərindədir — web controller ilə ortaqdır.
  */
 class QuestionFolderController
 {
@@ -27,12 +31,9 @@ class QuestionFolderController
         ]);
     }
 
-    public function store(Request $request): JsonResponse
+    public function store(StoreFolderRequest $request): JsonResponse
     {
-        $data = $request->validate([
-            'name' => ['required', 'string', 'max:255'],
-            'parent_id' => ['nullable', 'integer'],
-        ]);
+        $data = $request->validated();
 
         $folder = $this->folders->createFolder(
             (int) $request->user()->id,
@@ -45,26 +46,22 @@ class QuestionFolderController
         ], 201);
     }
 
-    public function rename(Request $request, int $folderId): JsonResponse
+    public function rename(RenameFolderRequest $request, int $folderId): JsonResponse
     {
         $this->authorizeAccess($this->folders->find($folderId), $request);
 
-        $data = $request->validate([
-            'name' => ['required', 'string', 'max:255'],
-        ]);
+        $data = $request->validated();
 
         $this->folders->renameFolder((int) $request->user()->id, $folderId, $data['name']);
 
         return response()->json(['message' => 'Qovluq adı yeniləndi.']);
     }
 
-    public function move(Request $request, int $folderId): JsonResponse
+    public function move(MoveFolderRequest $request, int $folderId): JsonResponse
     {
         $this->authorizeAccess($this->folders->find($folderId), $request);
 
-        $data = $request->validate([
-            'parent_id' => ['nullable', 'integer'],
-        ]);
+        $data = $request->validated();
 
         $this->folders->moveFolder((int) $request->user()->id, $folderId, $data['parent_id'] ?? null);
 
@@ -80,12 +77,9 @@ class QuestionFolderController
     }
 
     /** Sualı qovluğa daşıyır (null → kökə). */
-    public function moveQuestion(Request $request): JsonResponse
+    public function moveQuestion(MoveQuestionRequest $request): JsonResponse
     {
-        $data = $request->validate([
-            'question_id' => ['required', 'integer'],
-            'folder_id' => ['nullable', 'integer'],
-        ]);
+        $data = $request->validated();
 
         $this->folders->moveQuestion(
             (int) $request->user()->id,

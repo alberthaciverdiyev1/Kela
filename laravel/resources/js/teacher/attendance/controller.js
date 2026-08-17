@@ -92,7 +92,7 @@ export default function attendanceMonth(config) {
             }
             this.loading = true;
             try {
-                const res = await KelaApi('GET', `/api/v1/workspaces/${this.workspaceId}/attendance/month?month=${encodeURIComponent(this.month)}`);
+                const res = await KelaApi('GET', `/teacher/attendance/month?workspace=${this.workspaceId}&month=${encodeURIComponent(this.month)}`);
                 const data = res?.data ?? {};
                 this.students = data.students || [];
                 this.days = data.days || {};
@@ -108,7 +108,8 @@ export default function attendanceMonth(config) {
             if (!this.workspaceId) return;
             this.saveState = 'saving';
             try {
-                await KelaApi('POST', `/api/v1/workspaces/${this.workspaceId}/attendance`, {
+                await KelaApi('POST', '/teacher/attendance', {
+                    workspace_id: this.workspaceId,
                     date: iso,
                     statuses: this.days[iso] || {},
                 });

@@ -6,12 +6,16 @@ use App\Application\Lesson\LessonService;
 use App\Application\LessonFolder\LessonFolderService;
 use App\Domain\Lesson\Lesson;
 use App\Domain\LessonFolder\LessonFolder;
+use App\Http\Requests\MoveFolderRequest;
+use App\Http\Requests\MoveLessonRequest;
+use App\Http\Requests\RenameFolderRequest;
+use App\Http\Requests\StoreFolderRequest;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
 /**
  * Dərs qovluqları üçün API.
- * Web səhifəsi (server-rendered) bu endpointləri JS vasitəsilə çağırır.
+ * Doğrulama qaydaları FormRequest siniflərindədir — web controller ilə ortaqdır.
  */
 class LessonFolderController
 {
@@ -31,12 +35,9 @@ class LessonFolderController
         ]);
     }
 
-    public function store(Request $request): JsonResponse
+    public function store(StoreFolderRequest $request): JsonResponse
     {
-        $data = $request->validate([
-            'name' => ['required', 'string', 'max:255'],
-            'parent_id' => ['nullable', 'integer'],
-        ]);
+        $data = $request->validated();
 
         $folder = $this->folders->createFolder(
             (int) $request->user()->id,
@@ -49,26 +50,22 @@ class LessonFolderController
         ], 201);
     }
 
-    public function rename(Request $request, int $folderId): JsonResponse
+    public function rename(RenameFolderRequest $request, int $folderId): JsonResponse
     {
         $this->authorizeAccess($this->folders->find($folderId), $request);
 
-        $data = $request->validate([
-            'name' => ['required', 'string', 'max:255'],
-        ]);
+        $data = $request->validated();
 
         $this->folders->renameFolder((int) $request->user()->id, $folderId, $data['name']);
 
         return response()->json(['message' => 'Qovluq adı yeniləndi.']);
     }
 
-    public function move(Request $request, int $folderId): JsonResponse
+    public function move(MoveFolderRequest $request, int $folderId): JsonResponse
     {
         $this->authorizeAccess($this->folders->find($folderId), $request);
 
-        $data = $request->validate([
-            'parent_id' => ['nullable', 'integer'],
-        ]);
+        $data = $request->validated();
 
         $this->folders->moveFolder((int) $request->user()->id, $folderId, $data['parent_id'] ?? null);
 
@@ -84,12 +81,9 @@ class LessonFolderController
     }
 
     /** Dərsi qovluğa daşıyır (null → kökə). */
-    public function moveLesson(Request $request): JsonResponse
+    public function moveLesson(MoveLessonRequest $request): JsonResponse
     {
-        $data = $request->validate([
-            'content_id' => ['required', 'integer'],
-            'folder_id' => ['nullable', 'integer'],
-        ]);
+        $data = $request->validated();
 
         $this->authorizeLessonAccess($this->lessons->find((int) $data['content_id']));
 

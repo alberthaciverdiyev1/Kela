@@ -32,7 +32,7 @@ export default function createStudentUpdater() {
                 return false;
             }
             try {
-                await KelaApi('PUT', `/api/v1/students/${id}`, payload);
+                await KelaApi('PUT', `/teacher/students/${id}`, payload);
                 return true;
             } catch (err) {
                 window.alert(err.message);

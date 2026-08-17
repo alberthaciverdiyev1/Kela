@@ -4,6 +4,7 @@ namespace App\Web\Controllers\Teacher;
 
 use App\Application\Homework\HomeworkService;
 use App\Domain\Homework\Homework;
+use App\Http\Requests\HomeworkRequest;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
@@ -44,7 +45,7 @@ class HomeworkController
         ]);
     }
 
-    public function store(Request $request): RedirectResponse
+    public function store(HomeworkRequest $request): RedirectResponse
     {
         $data = $this->validated($request);
 
@@ -81,7 +82,7 @@ class HomeworkController
         ]);
     }
 
-    public function update(Request $request, int $homework): RedirectResponse
+    public function update(HomeworkRequest $request, int $homework): RedirectResponse
     {
         $this->assertAccess($this->homeworks->find($homework));
 
@@ -112,14 +113,9 @@ class HomeworkController
         return response()->json(['questions' => $questions]);
     }
 
-    protected function validated(Request $request): array
+    protected function validated(HomeworkRequest $request): array
     {
-        $data = $request->validate([
-            'title' => ['required', 'string', 'max:200'],
-            'description' => ['nullable', 'string'],
-            'is_published' => ['nullable', 'boolean'],
-            'questions_json' => ['nullable', 'string'],
-        ]);
+        $data = $request->validated();
 
         $data['is_published'] = $request->boolean('is_published');
 

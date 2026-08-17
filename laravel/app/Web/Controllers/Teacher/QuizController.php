@@ -7,14 +7,23 @@ use App\Application\Quiz\QuizService;
 use App\Application\QuizFolder\QuizFolderService;
 use App\Application\WorkspaceFolder\WorkspaceFolderService;
 use App\Domain\Quiz\Quiz;
+use App\Domain\QuizFolder\QuizFolder;
+use App\Http\Requests\AddQuizQuestionRequest;
+use App\Http\Requests\MoveFolderRequest;
+use App\Http\Requests\MoveQuizQuestionRequest;
+use App\Http\Requests\MoveQuizRequest;
+use App\Http\Requests\QuizRequest;
+use App\Http\Requests\RenameFolderRequest;
+use App\Http\Requests\StoreFolderRequest;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
 
 /**
  * Quiz səhifələri — server-rendered Blade.
- * Sual əməliyyatları JS vasitəsilə /api/v1-ə gedir; buradakı fragment-lər
- * server-rendered olub yalnız lazım olan bölməni yeniləyir.
+ * Sual əməliyyatları JS vasitəsilə web controller üzərindən gedir; buradakı
+ * fragment-lər server-rendered olub yalnız lazım olan bölməni yeniləyir.
  */
 class QuizController
 {
@@ -59,9 +68,10 @@ class QuizController
         ]);
     }
 
-    public function store(Request $request): RedirectResponse
+    public function store(QuizRequest $request): RedirectResponse
     {
-        $data = $this->validated($request);
+        $data = $request->validated();
+        $data['is_published'] = $request->boolean('is_published');
         $data['folder_id'] = $this->quizFolders->resolveFolderFor((int) auth()->id(), $data['folder_id'] ?? null);
 
         $context = $this->workspaceFolders->resolveContextFor(
@@ -132,11 +142,12 @@ class QuizController
         ]);
     }
 
-    public function update(Request $request, int $quiz): RedirectResponse
+    public function update(QuizRequest $request, int $quiz): RedirectResponse
     {
         $this->assertAccess($this->quizzes->find($quiz));
 
-        $data = $this->validated($request);
+        $data = $request->validated();
+        $data['is_published'] = $request->boolean('is_published');
         $data['folder_id'] = $this->quizFolders->resolveFolderFor((int) auth()->id(), $data['folder_id'] ?? null);
 
         $context = $this->workspaceFolders->resolveContextFor(
@@ -154,29 +165,145 @@ class QuizController
         return redirect()->route('teacher.quizzes.edit', $quiz)->with('success', 'Quiz yeniləndi.');
     }
 
-    public function destroy(int $quiz): RedirectResponse
+    public function destroy(Request $request, int $quiz): RedirectResponse|JsonResponse
     {
         $this->assertAccess($this->quizzes->find($quiz));
 
         $this->quizzes->delete($quiz);
 
+        if ($request->expectsJson()) {
+            return response()->json(['message' => 'Quiz silindi.']);
+        }
+
         return redirect()->route('teacher.quizzes.index')->with('success', 'Quiz silindi.');
     }
 
-    protected function validated(Request $request): array
+    // ─────────────────────────────────────────────────────────────────────────
+    // JSON əməliyyatları — frontend JS bu endpointləri çağırır (web controller).
+    // ─────────────────────────────────────────────────────────────────────────
+
+    /** Quiz seçim pəncərələri üçün bütün quizlər + qovluq yolları (JSON). */
+    public function picker(): JsonResponse
     {
-        $data = $request->validate([
-            'title' => ['required', 'string', 'max:200'],
-            'description' => ['nullable', 'string'],
-            'is_published' => ['nullable', 'boolean'],
-            'folder_id' => ['nullable', 'integer'],
-            'workspace_id' => ['nullable', 'integer'],
-            'ws_folder_id' => ['nullable', 'integer'],
+        return response()->json([
+            'quizzes' => $this->quizFolders->quizPicker((int) auth()->id()),
         ]);
+    }
 
-        $data['is_published'] = $request->boolean('is_published');
+    /** Yeni quiz qovluğu yaradır. */
+    public function storeFolder(StoreFolderRequest $request): JsonResponse
+    {
+        $data = $request->validated();
 
-        return $data;
+        $folder = $this->quizFolders->createFolder(
+            (int) auth()->id(),
+            $data['name'],
+            $data['parent_id'] ?? null,
+        );
+
+        return response()->json([
+            'data' => ['id' => (int) $folder->id, 'name' => $folder->name],
+        ], 201);
+    }
+
+    /** Quiz qovluğunun adını dəyişir. */
+    public function renameFolder(RenameFolderRequest $request, int $folderId): JsonResponse
+    {
+        $this->assertFolderAccess($folderId);
+
+        $data = $request->validated();
+
+        $this->quizFolders->renameFolder((int) auth()->id(), $folderId, $data['name']);
+
+        return response()->json(['message' => 'Qovluq adı yeniləndi.']);
+    }
+
+    /** Quiz qovluğunu daşıyır (null → kök). */
+    public function moveFolder(MoveFolderRequest $request, int $folderId): JsonResponse
+    {
+        $this->assertFolderAccess($folderId);
+
+        $data = $request->validated();
+
+        $this->quizFolders->moveFolder((int) auth()->id(), $folderId, $data['parent_id'] ?? null);
+
+        return response()->json(['message' => 'Qovluq daşındı.']);
+    }
+
+    /** Quiz qovluğunu silir (quizlər kökə qayıdır). */
+    public function destroyFolder(int $folderId): JsonResponse
+    {
+        $this->assertFolderAccess($folderId);
+
+        $this->quizFolders->deleteFolder((int) auth()->id(), $folderId);
+
+        return response()->json(['message' => 'Qovluq silindi.']);
+    }
+
+    /** Quiz-i qovluğa daşıyır (null → kök). */
+    public function moveQuizToFolder(MoveQuizRequest $request): JsonResponse
+    {
+        $data = $request->validated();
+
+        $this->assertAccess($this->quizzes->find((int) $data['content_id']));
+
+        $this->quizFolders->moveQuiz(
+            (int) auth()->id(),
+            (int) $data['content_id'],
+            $data['folder_id'] ?? null,
+        );
+
+        return response()->json(['message' => 'Quiz daşındı.']);
+    }
+
+    /** Quiz-ə bankdan sual əlavə edir. */
+    public function addQuestion(AddQuizQuestionRequest $request, int $quiz): JsonResponse
+    {
+        $this->assertAccess($this->quizzes->find($quiz));
+
+        $data = $request->validated();
+
+        $this->quizzes->addQuestion($quiz, (int) $data['question_id'], (int) auth()->id());
+
+        return response()->json(['message' => 'Sual əlavə edildi.']);
+    }
+
+    /** Sualı quizdən çıxarır (bankda qalır). */
+    public function removeQuestion(int $quiz, int $questionId): JsonResponse
+    {
+        $this->assertAccess($this->quizzes->find($quiz));
+
+        $this->quizzes->removeQuestion($quiz, $questionId, (int) auth()->id());
+
+        return response()->json(['message' => 'Sual çıxarıldı.']);
+    }
+
+    /** Quizdəki sualın sırasını dəyişir (yuxarı/aşağı). */
+    public function moveQuestion(MoveQuizQuestionRequest $request, int $quiz, int $questionId): JsonResponse
+    {
+        $this->assertAccess($this->quizzes->find($quiz));
+
+        $data = $request->validated();
+
+        $this->quizzes->moveQuestion($quiz, $questionId, $data['direction'], (int) auth()->id());
+
+        return response()->json(['message' => 'Sıralama yeniləndi.']);
+    }
+
+    /** Quiz qovluğunun sahibliyini yoxla. */
+    protected function assertFolderAccess(int $folderId): void
+    {
+        $folder = $this->quizFolders->find($folderId);
+        if ($folder === null) {
+            abort(404);
+        }
+        $user = auth()->user();
+        if ($user?->isAdmin()) {
+            return;
+        }
+        if ($user === null || $folder->teacher_id !== (int) $user->id) {
+            abort(403);
+        }
     }
 
     /** Sual bankındakı mövcud suallar (quizə əlavə olunmayanlar): [id => text]. */

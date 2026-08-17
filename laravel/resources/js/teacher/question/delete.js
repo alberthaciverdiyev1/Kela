@@ -1,8 +1,8 @@
 /**
  * DELETE — Sual bankından sil: qovluq və ya sual.
  *
- *   DELETE /api/v1/question-folders/{id}   (qovluq + sualları kökə qaytarır)
- *   DELETE /api/v1/questions/{id}          (sualı silir)
+ *   DELETE /teacher/questions/folders/{id}   (qovluq + sualları kökə qaytarır)
+ *   DELETE /teacher/questions/{id}           (sualı silir)
  */
 export default function createBankRemover() {
     return {
@@ -12,7 +12,7 @@ export default function createBankRemover() {
         async deleteFolder(id, name = 'Qovluq') {
             if (!window.confirm(`'${name}' qovluğu silinsin? (İçindəki suallar kökə daşınacaq.)`)) return false;
             try {
-                await KelaApi('DELETE', `/api/v1/question-folders/${id}`);
+                await KelaApi('DELETE', `/teacher/questions/folders/${id}`);
                 return true;
             } catch (err) {
                 window.alert(err.message);
@@ -26,7 +26,7 @@ export default function createBankRemover() {
         async deleteQuestion(id, text = 'Sual') {
             if (!window.confirm(`'${text}' silinsin?`)) return false;
             try {
-                await KelaApi('DELETE', `/api/v1/questions/${id}`);
+                await KelaApi('DELETE', `/teacher/questions/${id}`);
                 return true;
             } catch (err) {
                 window.alert(err.message);

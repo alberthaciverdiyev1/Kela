@@ -5,8 +5,9 @@ namespace App\Api\Controllers;
 use App\Application\Lesson\LessonService;
 use App\Application\LessonFolder\LessonFolderService;
 use App\Application\WorkspaceFolder\WorkspaceFolderService;
-use App\Domain\Lesson\Lesson;
 use App\Api\Resources\LessonResource;
+use App\Domain\Lesson\Lesson;
+use App\Http\Requests\LessonRequest;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
@@ -31,18 +32,9 @@ class LessonController
         );
     }
 
-    public function store(Request $request): JsonResponse
+    public function store(LessonRequest $request): JsonResponse
     {
-        $data = $request->validate([
-            'title' => ['required', 'string', 'max:255'],
-            'description' => ['nullable', 'string'],
-            'video_path' => ['nullable', 'string'],
-            'is_published' => ['nullable', 'boolean'],
-            'order_index' => ['nullable', 'integer'],
-            'folder_id' => ['nullable', 'integer'],
-            'workspace_id' => ['nullable', 'integer'],
-            'ws_folder_id' => ['nullable', 'integer'],
-        ]);
+        $data = $request->validated();
 
         $data['folder_id'] = $this->lessonFolders->resolveFolderFor((int) $request->user()->id, $data['folder_id'] ?? null);
 
@@ -76,20 +68,11 @@ class LessonController
         ]);
     }
 
-    public function update(Request $request, int $contentId): LessonResource
+    public function update(LessonRequest $request, int $contentId): LessonResource
     {
         $this->authorizeAccess($this->lessons->find($contentId));
 
-        $data = $request->validate([
-            'title' => ['required', 'string', 'max:255'],
-            'description' => ['nullable', 'string'],
-            'video_path' => ['nullable', 'string'],
-            'is_published' => ['nullable', 'boolean'],
-            'order_index' => ['nullable', 'integer'],
-            'folder_id' => ['nullable', 'integer'],
-            'workspace_id' => ['nullable', 'integer'],
-            'ws_folder_id' => ['nullable', 'integer'],
-        ]);
+        $data = $request->validated();
 
         $data['folder_id'] = $this->lessonFolders->resolveFolderFor((int) $request->user()->id, $data['folder_id'] ?? null);
 

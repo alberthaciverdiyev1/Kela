@@ -3,15 +3,15 @@
  *
  * İstifadə:
  *   <form method="POST" action="...destroy"
- *         x-data="deleteForm({ url: '/api/v1/students/1', message: 'Silmək istəyirsiniz?' })"
+ *         x-data="deleteForm({ url: '/teacher/students/1', message: 'Silmək istəyirsiniz?' })"
  *         @submit.prevent="submit">
  *       @csrf
  *       @method('DELETE')
  *       <button type="submit">Sil</button>
  *   </form>
  *
- * JS aktiv olduqda confirm + API DELETE edir; JS yoxdursa form normal POST edir
- * (progressive enhancement — server-də DELETE routuna gedir).
+ * JS aktiv olduqda confirm + DELETE edir (web controller endpoint); JS yoxdursa
+ * form normal POST edir (progressive enhancement — server-də DELETE routuna gedir).
  */
 export default function deleteForm(config) {
     return {

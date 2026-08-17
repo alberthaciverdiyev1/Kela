@@ -1,7 +1,7 @@
 /**
  * DELETE — Sualı quizdən çıxar.
  *
- * DELETE /api/v1/quizzes/{id}/questions/{questionId}
+ * DELETE /teacher/quizzes/{id}/questions/{questionId}
  * (sual bankında qalır, yalnız quiz-dən çıxarılır).
  */
 export default function createQuestionRemover({ api }) {

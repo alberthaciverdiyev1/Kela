@@ -3,8 +3,8 @@
 namespace App\Api\Controllers;
 
 use App\Application\Note\NoteService;
-use App\Domain\Note\Enums\NoteColor;
 use App\Domain\Note\Note;
+use App\Http\Requests\NoteRequest;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
@@ -34,19 +34,19 @@ class NoteController
     }
 
     /** Yeni qeyd yaradır. */
-    public function store(Request $request): JsonResponse
+    public function store(NoteRequest $request): JsonResponse
     {
-        $data = $this->validatePayload($request);
+        $data = $request->validated();
         $note = $this->notes->store((int) $request->user()->id, $data);
 
         return response()->json(['data' => $note], 201);
     }
 
     /** Qeydi yeniləyir. */
-    public function update(Request $request, int $note): JsonResponse
+    public function update(NoteRequest $request, int $note): JsonResponse
     {
         $this->authorizeAccess($this->notes->find($note), $request);
-        $data = $this->validatePayload($request);
+        $data = $request->validated();
 
         return response()->json([
             'data' => $this->notes->update((int) $request->user()->id, $note, $data),
@@ -74,16 +74,6 @@ class NoteController
         }
 
         return response()->json(['data' => $note]);
-    }
-
-    private function validatePayload(Request $request): array
-    {
-        return $request->validate([
-            'title' => ['nullable', 'string', 'max:255'],
-            'body' => ['nullable', 'string'],
-            'color' => ['nullable', 'string', 'in:'.implode(',', NoteColor::values())],
-            'is_pinned' => ['nullable', 'boolean'],
-        ]);
     }
 
     private function authorizeAccess(?Note $note, Request $request): void

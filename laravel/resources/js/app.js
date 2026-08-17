@@ -17,8 +17,10 @@ axios.interceptors.request.use((config) => {
 });
 
 /**
- * JSON API köməkçisi (axios). Web səhifələri yalnız lazım olan hissəni
- * /api/v1/* endpointləri ilə yeniləyir (Sanctum sessiya auth).
+ * JSON köməkçisi (axios). Web səhifələri yalnız lazım olan hissəni
+ * web controller endpointləri (məs. /teacher/..., /notes) ilə yeniləyir.
+ * Frontend /api/v1/*-ə birbaşa toxunmur — bütün sorğular web controller
+ * içindəki funksiyalar vasitəsilə servislərə gedir.
  */
 window.KelaApi = async (method, url, body = null) => {
     try {

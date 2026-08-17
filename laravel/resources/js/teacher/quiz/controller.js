@@ -1,16 +1,16 @@
 /**
  * Controller — Quizlər səhifəsinin (qovluqlu kataloq) giriş nöqtəsi.
  *
- * Quiz qovluqları backend /api/v1/quiz-folders üzərindəndir; bu controller
+ * Quiz qovluqları web controller-i (QuizController) işləyir; bu controller
  * dialoqları idarə edir, KelaApi ilə sorğuları aparır və bitdikdən sonra
  * səhifəni təzələyir (quiz siyahısı paginated server-rendered-dir).
  *
- * Əməliyyatlar:
- *   POST   /api/v1/quiz-folders             → yeni qovluq (name, parent_id)
- *   POST   /api/v1/quiz-folders/{id}/rename → adı dəyiş
- *   POST   /api/v1/quiz-folders/{id}/move   → qovluğu daşı
- *   DELETE /api/v1/quiz-folders/{id}        → qovluğu sil (quizlər kökə)
- *   POST   /api/v1/quiz-folders/move-quiz   → quizi qovluğa daşı
+ * Əməliyyatlar (hamısı web controller — /api/v1 yoxdur):
+ *   POST   /teacher/quizzes/folders             → yeni qovluq (name, parent_id)
+ *   POST   /teacher/quizzes/folders/{id}/rename → adı dəyiş
+ *   POST   /teacher/quizzes/folders/{id}/move   → qovluğu daşı
+ *   DELETE /teacher/quizzes/folders/{id}        → qovluğu sil (quizlər kökə)
+ *   POST   /teacher/quizzes/folders/move-quiz   → quizi qovluğa daşı
  */
 import Alpine from 'alpinejs';
 import createContextMenu from '../context-menu';
@@ -61,7 +61,7 @@ export default function quizFolders(config) {
                 return;
             }
             try {
-                await KelaApi('POST', '/api/v1/quiz-folders', {
+                await KelaApi('POST', '/teacher/quizzes/folders', {
                     name,
                     parent_id: this.folderId,
                 });
@@ -89,7 +89,7 @@ export default function quizFolders(config) {
                 return;
             }
             try {
-                await KelaApi('POST', `/api/v1/quiz-folders/${this.editingFolderId}/rename`, { name });
+                await KelaApi('POST', `/teacher/quizzes/folders/${this.editingFolderId}/rename`, { name });
                 window.location.reload();
             } catch (err) {
                 window.alert(err.message);
@@ -104,7 +104,7 @@ export default function quizFolders(config) {
         async saveFolderMove() {
             const selected = this.$refs.folderMoveSelect?.value;
             try {
-                await KelaApi('POST', `/api/v1/quiz-folders/${this.moveFolderId}/move`, {
+                await KelaApi('POST', `/teacher/quizzes/folders/${this.moveFolderId}/move`, {
                     parent_id: selected ? Number(selected) : null,
                 });
                 window.location.reload();
@@ -118,7 +118,7 @@ export default function quizFolders(config) {
             const name = folderName || 'Qovluq';
             if (!window.confirm(`'${name}' qovluğu silinsin? (İçindəki quizlər kökə daşınacaq.)`)) return;
             try {
-                await KelaApi('DELETE', `/api/v1/quiz-folders/${id}`);
+                await KelaApi('DELETE', `/teacher/quizzes/folders/${id}`);
                 window.location.reload();
             } catch (err) {
                 window.alert(err.message);
@@ -137,7 +137,7 @@ export default function quizFolders(config) {
             const title = quizTitle || 'Quiz';
             if (!window.confirm(`'${title}' quiz silinsin?`)) return;
             try {
-                await KelaApi('DELETE', `/api/v1/quizzes/${id}`);
+                await KelaApi('DELETE', `/teacher/quizzes/${id}`);
                 window.location.reload();
             } catch (err) {
                 window.alert(err.message);
@@ -147,7 +147,7 @@ export default function quizFolders(config) {
         async saveQuizMove() {
             const selected = this.$refs.quizMoveSelect?.value;
             try {
-                await KelaApi('POST', '/api/v1/quiz-folders/move-quiz', {
+                await KelaApi('POST', '/teacher/quizzes/folders/move-quiz', {
                     content_id: this.moveQuizId,
                     folder_id: selected ? Number(selected) : null,
                 });

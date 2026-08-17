@@ -5,6 +5,8 @@ namespace App\Api\Controllers;
 use App\Application\Workspace\WorkspaceService;
 use App\Domain\Workspace\Workspace;
 use App\Api\Resources\WorkspaceResource;
+use App\Http\Requests\AttachStudentsRequest;
+use App\Http\Requests\WorkspaceRequest;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator;
@@ -24,11 +26,9 @@ class WorkspaceController
         );
     }
 
-    public function store(Request $request): JsonResponse
+    public function store(WorkspaceRequest $request): JsonResponse
     {
-        $data = $request->validate([
-            'name' => ['required', 'string', 'max:255'],
-        ]);
+        $data = $request->validated();
 
         $workspace = $this->workspaces->create((int) $request->user()->id, $data['name']);
 
@@ -46,13 +46,11 @@ class WorkspaceController
         ]);
     }
 
-    public function update(Request $request, int $workspace): WorkspaceResource
+    public function update(WorkspaceRequest $request, int $workspace): WorkspaceResource
     {
         $this->authorizeAccess($this->workspaces->find($workspace));
 
-        $data = $request->validate([
-            'name' => ['required', 'string', 'max:255'],
-        ]);
+        $data = $request->validated();
 
         $this->workspaces->rename((int) $request->user()->id, $workspace, $data['name']);
 
@@ -66,14 +64,11 @@ class WorkspaceController
         return response()->json(['message' => 'İş sahəsi silindi.']);
     }
 
-    public function attachStudents(Request $request, int $workspace): JsonResponse
+    public function attachStudents(AttachStudentsRequest $request, int $workspace): JsonResponse
     {
         $this->authorizeAccess($this->workspaces->find($workspace));
 
-        $data = $request->validate([
-            'student_ids' => ['required', 'array'],
-            'student_ids.*' => ['integer'],
-        ]);
+        $data = $request->validated();
 
         $this->workspaces->attachStudents((int) $request->user()->id, $workspace, $data['student_ids']);
 

@@ -1,7 +1,7 @@
 /**
  * EDIT — Quizdəki sualın sırasını dəyiş.
  *
- * POST /api/v1/quizzes/{id}/questions/{qid}/move (yuxarı/aşağı).
+ * POST /teacher/quizzes/{id}/questions/{qid}/move (yuxarı/aşağı).
  *
  * Sualın məzmununu düzləndirmək Sual Bankı modulundadır (teacher/question) —
  * burada yalnız quiz daxili sıralama var.

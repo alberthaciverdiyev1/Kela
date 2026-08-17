@@ -1,16 +1,16 @@
 /**
  * Controller — Dərslər səhifəsinin (qovluqlu kataloq) giriş nöqtəsi.
  *
- * Dərs qovluqları backend /api/v1/lesson-folders üzərindəndir; bu controller
+ * Dərs qovluqları web controller-i (LessonController) işləyir; bu controller
  * dialoqları idarə edir, KelaApi ilə sorğuları aparır və bitdikdən sonra
  * səhifəni təzələyir (dərs siyahısı paginated server-rendered-dir).
  *
- * Əməliyyatlar:
- *   POST   /api/v1/lesson-folders             → yeni qovluq (name, parent_id)
- *   POST   /api/v1/lesson-folders/{id}/rename → adı dəyiş
- *   POST   /api/v1/lesson-folders/{id}/move   → qovluğu daşı
- *   DELETE /api/v1/lesson-folders/{id}        → qovluğu sil (dərslər kökə)
- *   POST   /api/v1/lesson-folders/move-lesson → dərsi qovluğa daşı
+ * Əməliyyatlar (hamısı web controller — /api/v1 yoxdur):
+ *   POST   /teacher/lessons/folders             → yeni qovluq (name, parent_id)
+ *   POST   /teacher/lessons/folders/{id}/rename → adı dəyiş
+ *   POST   /teacher/lessons/folders/{id}/move   → qovluğu daşı
+ *   DELETE /teacher/lessons/folders/{id}        → qovluğu sil (dərslər kökə)
+ *   POST   /teacher/lessons/folders/move-lesson → dərsi qovluğa daşı
  */
 import Alpine from 'alpinejs';
 import createContextMenu from '../context-menu';
@@ -61,7 +61,7 @@ export default function lessonFolders(config) {
                 return;
             }
             try {
-                await KelaApi('POST', '/api/v1/lesson-folders', {
+                await KelaApi('POST', '/teacher/lessons/folders', {
                     name,
                     parent_id: this.folderId,
                 });
@@ -89,7 +89,7 @@ export default function lessonFolders(config) {
                 return;
             }
             try {
-                await KelaApi('POST', `/api/v1/lesson-folders/${this.editingFolderId}/rename`, { name });
+                await KelaApi('POST', `/teacher/lessons/folders/${this.editingFolderId}/rename`, { name });
                 window.location.reload();
             } catch (err) {
                 window.alert(err.message);
@@ -104,7 +104,7 @@ export default function lessonFolders(config) {
         async saveFolderMove() {
             const selected = this.$refs.folderMoveSelect?.value;
             try {
-                await KelaApi('POST', `/api/v1/lesson-folders/${this.moveFolderId}/move`, {
+                await KelaApi('POST', `/teacher/lessons/folders/${this.moveFolderId}/move`, {
                     parent_id: selected ? Number(selected) : null,
                 });
                 window.location.reload();
@@ -118,7 +118,7 @@ export default function lessonFolders(config) {
             const name = folderName || 'Qovluq';
             if (!window.confirm(`'${name}' qovluğu silinsin? (İçindəki dərslər kökə daşınacaq.)`)) return;
             try {
-                await KelaApi('DELETE', `/api/v1/lesson-folders/${id}`);
+                await KelaApi('DELETE', `/teacher/lessons/folders/${id}`);
                 window.location.reload();
             } catch (err) {
                 window.alert(err.message);
@@ -137,7 +137,7 @@ export default function lessonFolders(config) {
             const title = lessonTitle || 'Dərs';
             if (!window.confirm(`'${title}' dərsini silmək istəyirsiniz?`)) return;
             try {
-                await KelaApi('DELETE', `/api/v1/lessons/${id}`);
+                await KelaApi('DELETE', `/teacher/lessons/${id}`);
                 window.location.reload();
             } catch (err) {
                 window.alert(err.message);
@@ -147,7 +147,7 @@ export default function lessonFolders(config) {
         async saveLessonMove() {
             const selected = this.$refs.lessonMoveSelect?.value;
             try {
-                await KelaApi('POST', '/api/v1/lesson-folders/move-lesson', {
+                await KelaApi('POST', '/teacher/lessons/folders/move-lesson', {
                     content_id: this.moveLessonId,
                     folder_id: selected ? Number(selected) : null,
                 });

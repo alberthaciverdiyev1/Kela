@@ -20,7 +20,7 @@ export default function quizEditor(config) {
     return {
         quizId: config.quizId,
         fragmentUrl: config.fragmentUrl,
-        api: '/api/v1/quizzes/' + config.quizId,
+        api: '/teacher/quizzes/' + config.quizId,
         questionCount: config.questionCount,
 
         // dialoq vəziyyəti (yalnız bank seçimi)

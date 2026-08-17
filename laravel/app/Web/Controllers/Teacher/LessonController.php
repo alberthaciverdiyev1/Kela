@@ -6,7 +6,14 @@ use App\Application\Lesson\LessonService;
 use App\Application\LessonFolder\LessonFolderService;
 use App\Application\WorkspaceFolder\WorkspaceFolderService;
 use App\Domain\Lesson\Lesson;
+use App\Domain\LessonFolder\LessonFolder;
+use App\Http\Requests\LessonRequest;
+use App\Http\Requests\MoveFolderRequest;
+use App\Http\Requests\MoveLessonRequest;
+use App\Http\Requests\RenameFolderRequest;
+use App\Http\Requests\StoreFolderRequest;
 use App\Infrastructure\Media\MediaProcessor;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
@@ -57,9 +64,11 @@ class LessonController
         ]);
     }
 
-    public function store(Request $request): RedirectResponse
+    public function store(LessonRequest $request): RedirectResponse
     {
-        $data = $this->validated($request);
+        $data = $request->validated();
+        $data['is_published'] = $request->boolean('is_published');
+        $data['order_index'] = (int) ($data['order_index'] ?? 0);
         $data['folder_id'] = $this->lessonFolders->resolveFolderFor((int) auth()->id(), $data['folder_id'] ?? null);
 
         $context = $this->workspaceFolders->resolveContextFor(
@@ -138,7 +147,7 @@ class LessonController
         ]);
     }
 
-    public function update(Request $request, int $lesson): RedirectResponse
+    public function update(LessonRequest $request, int $lesson): RedirectResponse
     {
         $model = $this->lessons->find($lesson);
         if ($model === null) {
@@ -146,7 +155,9 @@ class LessonController
         }
         $this->assertAccess($model);
 
-        $data = $this->validated($request);
+        $data = $request->validated();
+        $data['is_published'] = $request->boolean('is_published');
+        $data['order_index'] = (int) ($data['order_index'] ?? 0);
         $data['folder_id'] = $this->lessonFolders->resolveFolderFor((int) auth()->id(), $data['folder_id'] ?? null);
 
         $context = $this->workspaceFolders->resolveContextFor(
@@ -167,7 +178,7 @@ class LessonController
         return redirect()->route('teacher.lessons.index')->with('success', 'Dərs yeniləndi.');
     }
 
-    public function destroy(int $lesson): RedirectResponse
+    public function destroy(Request $request, int $lesson): RedirectResponse|JsonResponse
     {
         $model = $this->lessons->find($lesson);
         if ($model === null) {
@@ -177,26 +188,101 @@ class LessonController
 
         $this->lessons->delete($lesson);
 
+        if ($request->expectsJson()) {
+            return response()->json(['message' => 'Dərs silindi.']);
+        }
+
         return redirect()->route('teacher.lessons.index')->with('success', 'Dərs silindi.');
     }
 
-    protected function validated(Request $request): array
+    // ─────────────────────────────────────────────────────────────────────────
+    // JSON əməliyyatları — frontend JS bu endpointləri çağırır (web controller).
+    // ─────────────────────────────────────────────────────────────────────────
+
+    /** Yeni dərs qovluğu yaradır. */
+    public function storeFolder(StoreFolderRequest $request): JsonResponse
     {
-        $data = $request->validate([
-            'title' => ['required', 'string', 'max:255'],
-            'description' => ['nullable', 'string'],
-            'video' => ['nullable', 'file', 'min:1', 'max:524288', 'mimetypes:video/mp4,video/webm,video/ogg,video/quicktime,video/x-m4v,video/x-matroska,video/x-msvideo,video/mpeg'],
-            'is_published' => ['nullable', 'boolean'],
-            'order_index' => ['integer', 'min:0'],
-            'folder_id' => ['nullable', 'integer'],
-            'workspace_id' => ['nullable', 'integer'],
-            'ws_folder_id' => ['nullable', 'integer'],
-        ]);
+        $data = $request->validated();
 
-        $data['is_published'] = $request->boolean('is_published');
-        $data['order_index'] = (int) $data['order_index'];
+        $folder = $this->lessonFolders->createFolder(
+            (int) auth()->id(),
+            $data['name'],
+            $data['parent_id'] ?? null,
+        );
 
-        return $data;
+        return response()->json([
+            'data' => ['id' => (int) $folder->id, 'name' => $folder->name],
+        ], 201);
+    }
+
+    /** Dərs qovluğunun adını dəyişir. */
+    public function renameFolder(RenameFolderRequest $request, int $folderId): JsonResponse
+    {
+        $this->assertFolderAccess($folderId);
+
+        $data = $request->validated();
+
+        $this->lessonFolders->renameFolder((int) auth()->id(), $folderId, $data['name']);
+
+        return response()->json(['message' => 'Qovluq adı yeniləndi.']);
+    }
+
+    /** Dərs qovluğunu daşıyır (null → kök). */
+    public function moveFolder(MoveFolderRequest $request, int $folderId): JsonResponse
+    {
+        $this->assertFolderAccess($folderId);
+
+        $data = $request->validated();
+
+        $this->lessonFolders->moveFolder((int) auth()->id(), $folderId, $data['parent_id'] ?? null);
+
+        return response()->json(['message' => 'Qovluq daşındı.']);
+    }
+
+    /** Dərs qovluğunu silir (dərslər kökə qayıdır). */
+    public function destroyFolder(int $folderId): JsonResponse
+    {
+        $this->assertFolderAccess($folderId);
+
+        $this->lessonFolders->deleteFolder((int) auth()->id(), $folderId);
+
+        return response()->json(['message' => 'Qovluq silindi.']);
+    }
+
+    /** Dərsi qovluğa daşıyır (null → kök). */
+    public function moveLessonToFolder(MoveLessonRequest $request): JsonResponse
+    {
+        $data = $request->validated();
+
+        $lesson = $this->lessons->find((int) $data['content_id']);
+        if ($lesson === null) {
+            abort(404);
+        }
+        $this->assertAccess($lesson);
+
+        $this->lessonFolders->moveLesson(
+            (int) auth()->id(),
+            (int) $data['content_id'],
+            $data['folder_id'] ?? null,
+        );
+
+        return response()->json(['message' => 'Dərs daşındı.']);
+    }
+
+    /** Dərs qovluğunun sahibliyini yoxla. */
+    protected function assertFolderAccess(int $folderId): void
+    {
+        $folder = $this->lessonFolders->find($folderId);
+        if ($folder === null) {
+            abort(404);
+        }
+        $user = auth()->user();
+        if ($user?->isAdmin()) {
+            return;
+        }
+        if ($user === null || $folder->teacher_id !== (int) $user->id) {
+            abort(403);
+        }
     }
 
     protected function storeVideo(Request $request): ?string

@@ -1,7 +1,7 @@
 /**
  * DELETE — Workspace-dən tələbə çıxar.
  *
- *   DELETE /api/v1/workspaces/{id}/students/{studentId}
+ *   DELETE /teacher/workspaces/{id}/students/{studentId}
  */
 export default function createWorkspaceRemover({ api }) {
     async function detachStudent(id, name) {

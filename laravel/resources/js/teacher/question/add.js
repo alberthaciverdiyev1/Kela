@@ -1,13 +1,15 @@
 /**
  * ADD — Sual bankına qovluq / sual əlavə et.
  *
- *   POST /api/v1/question-folders            (name, parent_id)
- *   POST /api/v1/questions                   (text, options, correct_option,
+ *   POST /teacher/questions/folders          (name, parent_id)
+ *   POST /teacher/questions                  (text, options, correct_option,
  *                                             explanation, folder_id)
  *
- * Qovluq formu $refs ilə DOM-dan oxunur (fields), sual formu isə reaktiv
- * qForm obyektidir — həm saxla üçün payload, həm də canlı önizləmə mənbəyi.
- * Sual mətni rich text HTML ola bilər (contenteditable editörü ilə yazılır).
+ * Hər iki sorğu web controller-i (QuestionController) işlədir — frontend
+ * /api/v1-ə birbaşa toxunmur. Qovluq formu $refs ilə DOM-dan oxunur (fields),
+ * sual formu isə reaktiv qForm obyektidir — həm saxla üçün payload, həm də
+ * canlı önizləmə mənbəyi. Sual mətni rich text HTML ola bilər
+ * (contenteditable editörü ilə yazılır).
  */
 export default function createBankAdder({ parentId }) {
     return {
@@ -38,7 +40,7 @@ export default function createBankAdder({ parentId }) {
                 return false;
             }
             try {
-                await KelaApi('POST', '/api/v1/question-folders', payload);
+                await KelaApi('POST', '/teacher/questions/folders', payload);
                 return true;
             } catch (err) {
                 window.alert(err.message);
@@ -100,7 +102,7 @@ export default function createBankAdder({ parentId }) {
                 return false;
             }
             try {
-                await KelaApi('POST', '/api/v1/questions', payload);
+                await KelaApi('POST', '/teacher/questions', payload);
                 return true;
             } catch (err) {
                 window.alert(err.message);

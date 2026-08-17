@@ -66,7 +66,7 @@ export default function homeworkEditor(config) {
         async loadQuizzes() {
             this.quizzesLoading = true;
             try {
-                const res = await KelaApi('GET', '/api/v1/quiz-folders/picker');
+                const res = await KelaApi('GET', '/teacher/quizzes/folders/picker');
                 this.quizzes = (res?.quizzes ?? []).map((q) => ({
                     id: Number(q.content_id),
                     title: q.title ?? 'Adsız quiz',

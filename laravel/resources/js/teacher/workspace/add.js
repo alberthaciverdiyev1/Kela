@@ -1,7 +1,7 @@
 /**
  * ADD — Workspace-ə tələbə əlavə et.
  *
- *   POST /api/v1/workspaces/{id}/students  (student_ids[])
+ *   POST /teacher/workspaces/{id}/students  (student_ids[])
  */
 export default function createWorkspaceAdder({ api }) {
     return {

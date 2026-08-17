@@ -7,12 +7,18 @@ use App\Application\WorkspaceFolder\WorkspaceFolderService;
 use App\Domain\Content\Content;
 use App\Domain\Workspace\Workspace;
 use App\Domain\WorkspaceFolder\WorkspaceFolder;
+use App\Http\Requests\AddFolderToWorkspaceRequest;
+use App\Http\Requests\MoveContentRequest;
+use App\Http\Requests\MoveFolderRequest;
+use App\Http\Requests\RemoveContentRequest;
+use App\Http\Requests\RenameFolderRequest;
+use App\Http\Requests\StoreFolderRequest;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
 /**
  * Workspace qovluqları üçün API.
- * Web səhifəsi (server-rendered) bu endpointləri JS vasitəsilə çağırır.
+ * Doğrulama qaydaları FormRequest siniflərindədir — web controller ilə ortaqdır.
  */
 class WorkspaceFolderController
 {
@@ -42,14 +48,11 @@ class WorkspaceFolderController
         ]);
     }
 
-    public function store(Request $request, int $workspace): JsonResponse
+    public function store(StoreFolderRequest $request, int $workspace): JsonResponse
     {
         $this->authorizeWorkspace($this->workspaces->find($workspace), $request);
 
-        $data = $request->validate([
-            'name' => ['required', 'string', 'max:255'],
-            'parent_id' => ['nullable', 'integer'],
-        ]);
+        $data = $request->validated();
 
         $folder = $this->folders->createFolder(
             $workspace,
@@ -63,28 +66,24 @@ class WorkspaceFolderController
         ], 201);
     }
 
-    public function rename(Request $request, int $workspace, int $folderId): JsonResponse
+    public function rename(RenameFolderRequest $request, int $workspace, int $folderId): JsonResponse
     {
         $this->authorizeWorkspace($this->workspaces->find($workspace), $request);
         $this->authorizeFolder($this->folders->find($folderId), $workspace);
 
-        $data = $request->validate([
-            'name' => ['required', 'string', 'max:255'],
-        ]);
+        $data = $request->validated();
 
         $this->folders->renameFolder($workspace, $folderId, $data['name'], (int) $request->user()->id);
 
         return response()->json(['message' => 'Qovluq adı yeniləndi.']);
     }
 
-    public function move(Request $request, int $workspace, int $folderId): JsonResponse
+    public function move(MoveFolderRequest $request, int $workspace, int $folderId): JsonResponse
     {
         $this->authorizeWorkspace($this->workspaces->find($workspace), $request);
         $this->authorizeFolder($this->folders->find($folderId), $workspace);
 
-        $data = $request->validate([
-            'parent_id' => ['nullable', 'integer'],
-        ]);
+        $data = $request->validated();
 
         $this->folders->moveFolder($workspace, $folderId, $data['parent_id'] ?? null, (int) $request->user()->id);
 
@@ -102,14 +101,9 @@ class WorkspaceFolderController
     }
 
     /** Bank qovluğunu (içindəki məzmunlarla birlikdə) workspace-ə əlavə edir. */
-    public function addFolder(Request $request): JsonResponse
+    public function addFolder(AddFolderToWorkspaceRequest $request): JsonResponse
     {
-        $data = $request->validate([
-            'folder_type' => ['required', 'string', 'in:quiz,lesson'],
-            'bank_folder_id' => ['required', 'integer'],
-            'workspace_id' => ['required', 'integer'],
-            'folder_id' => ['nullable', 'integer'],
-        ]);
+        $data = $request->validated();
 
         $this->authorizeWorkspace($this->workspaces->find((int) $data['workspace_id']), $request);
 
@@ -129,11 +123,9 @@ class WorkspaceFolderController
     }
 
     /** İçeriği workspace-dən kütüphanəyə geri göndərir. */
-    public function removeContent(Request $request): JsonResponse
+    public function removeContent(RemoveContentRequest $request): JsonResponse
     {
-        $data = $request->validate([
-            'content_id' => ['required', 'integer'],
-        ]);
+        $data = $request->validated();
 
         $content = $this->folders->findContent((int) $data['content_id']);
         $this->authorizeContentAccess($content);
@@ -158,13 +150,9 @@ class WorkspaceFolderController
     }
 
     /** Content-i workspace qovluğuna daşıyır (null → workspace kökü). */
-    public function moveContent(Request $request): JsonResponse
+    public function moveContent(MoveContentRequest $request): JsonResponse
     {
-        $data = $request->validate([
-            'content_id' => ['required', 'integer'],
-            'workspace_id' => ['nullable', 'integer'],
-            'folder_id' => ['nullable', 'integer'],
-        ]);
+        $data = $request->validated();
 
         $this->authorizeContentAccess($this->folders->findContent((int) $data['content_id']));
 

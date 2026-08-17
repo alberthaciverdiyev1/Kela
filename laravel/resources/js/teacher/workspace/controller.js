@@ -2,18 +2,18 @@
  * Controller — Workspace səhifəsinin (base folder kataloqu) giriş nöqtəsi.
  *
  * Workspace base folder kimidir: içində qovluqlar, quiz-lər və dərslər
- * təşkil olunur. Qovluq CRUD və content daşıma backend /api/v1 üzərindəndir;
- * bu controller dialoqları idarə edir, KelaApi ilə sorğuları aparır və
- * bitdikdən sonra səhifəni təzələyir.
+ * təşkil olunur. Qovluq CRUD və content daşıma web controller-i
+ * (WorkspaceController) işləyir; bu controller dialoqları idarə edir,
+ * KelaApi ilə sorğuları aparır və bitdikdən sonra səhifəni təzələyir.
  *
- * Əməliyyatlar:
- *   POST   /api/v1/workspaces/{w}/folders             → yeni qovluq (name, parent_id)
- *   POST   /api/v1/workspaces/{w}/folders/{id}/rename → adı dəyiş
- *   POST   /api/v1/workspaces/{w}/folders/{id}/move   → qovluğu daşı
- *   DELETE /api/v1/workspaces/{w}/folders/{id}        → qovluğu sil (content kökə)
- *   POST   /api/v1/workspace-folders/move-content     → content-i qovluğa/kökə daşı
- *   POST   /api/v1/workspaces/{w}/students            → tələbə əlavə et
- *   DELETE /api/v1/workspaces/{w}/students/{sid}      → tələbə çıxar
+ * Əməliyyatlar (hamısı web controller — /api/v1 yoxdur):
+ *   POST   /teacher/workspaces/{w}/folders             → yeni qovluq (name, parent_id)
+ *   POST   /teacher/workspaces/{w}/folders/{id}/rename → adı dəyiş
+ *   POST   /teacher/workspaces/{w}/folders/{id}/move   → qovluğu daşı
+ *   DELETE /teacher/workspaces/{w}/folders/{id}        → qovluğu sil (content kökə)
+ *   POST   /teacher/workspace-folders/move-content     → content-i qovluğa/kökə daşı
+ *   POST   /teacher/workspaces/{w}/students            → tələbə əlavə et
+ *   DELETE /teacher/workspaces/{w}/students/{sid}      → tələbə çıxar
  */
 import Alpine from 'alpinejs';
 import createContextMenu from '../context-menu';
@@ -75,7 +75,7 @@ export default function workspaceManager(config) {
                 return;
             }
             try {
-                await KelaApi('POST', `/api/v1/workspaces/${this.workspaceId}/folders`, {
+                await KelaApi('POST', `/teacher/workspaces/${this.workspaceId}/folders`, {
                     name,
                     parent_id: this.folderId,
                 });
@@ -103,7 +103,7 @@ export default function workspaceManager(config) {
                 return;
             }
             try {
-                await KelaApi('POST', `/api/v1/workspaces/${this.workspaceId}/folders/${this.editingFolderId}/rename`, { name });
+                await KelaApi('POST', `/teacher/workspaces/${this.workspaceId}/folders/${this.editingFolderId}/rename`, { name });
                 window.location.reload();
             } catch (err) {
                 window.alert(err.message);
@@ -118,7 +118,7 @@ export default function workspaceManager(config) {
         async saveFolderMove() {
             const selected = this.$refs.folderMoveSelect?.value;
             try {
-                await KelaApi('POST', `/api/v1/workspaces/${this.workspaceId}/folders/${this.moveFolderId}/move`, {
+                await KelaApi('POST', `/teacher/workspaces/${this.workspaceId}/folders/${this.moveFolderId}/move`, {
                     parent_id: selected ? Number(selected) : null,
                 });
                 window.location.reload();
@@ -132,7 +132,7 @@ export default function workspaceManager(config) {
             const name = folderName || 'Qovluq';
             if (!window.confirm(`'${name}' qovluğu və içindəki bütün məzmunlar silinsin? (Bu əməliyyat geri qaytarıla bilməz.)`)) return;
             try {
-                await KelaApi('DELETE', `/api/v1/workspaces/${this.workspaceId}/folders/${id}`);
+                await KelaApi('DELETE', `/teacher/workspaces/${this.workspaceId}/folders/${id}`);
                 window.location.reload();
             } catch (err) {
                 window.alert(err.message);
@@ -145,7 +145,7 @@ export default function workspaceManager(config) {
             const name = folderName || 'Qovluq';
             if (!window.confirm(`'${name}' qovluğu və içindəki məzmunlar workspace-dən çıxarılsın? (Kütüphanəyə qayıdacaq.)`)) return;
             try {
-                await KelaApi('POST', `/api/v1/workspaces/${this.workspaceId}/folders/${id}/remove`);
+                await KelaApi('POST', `/teacher/workspaces/${this.workspaceId}/folders/${id}/remove`);
                 window.location.reload();
             } catch (err) {
                 window.alert(err.message);
@@ -158,7 +158,7 @@ export default function workspaceManager(config) {
             const title = contentTitle || 'Məzmun';
             if (!window.confirm(`'${title}' workspace-dən çıxarılsın? (Kütüphanəyə qayıdacaq.)`)) return;
             try {
-                await KelaApi('POST', '/api/v1/workspace-folders/remove-content', { content_id: id });
+                await KelaApi('POST', '/teacher/workspace-folders/remove-content', { content_id: id });
                 window.location.reload();
             } catch (err) {
                 window.alert(err.message);
@@ -175,7 +175,7 @@ export default function workspaceManager(config) {
         async saveContentMove() {
             const selected = this.$refs.contentMoveSelect?.value;
             try {
-                await KelaApi('POST', '/api/v1/workspace-folders/move-content', {
+                await KelaApi('POST', '/teacher/workspace-folders/move-content', {
                     content_id: this.moveContentId,
                     workspace_id: this.workspaceId,
                     folder_id: selected ? Number(selected) : null,
@@ -484,7 +484,7 @@ export default function workspaceManager(config) {
                 // 1) Bütöv qovluqlar — strukturu ilə birlikdə (ən üst seçilmişlər,
                 //    alt ağac add-folder tərəfindən avtomatik gətirilir).
                 for (const f of this.topLevelSelectedFolders) {
-                    await KelaApi('POST', '/api/v1/workspace-folders/add-folder', {
+                    await KelaApi('POST', '/teacher/workspace-folders/add-folder', {
                         folder_type: f.type === 1 ? 'quiz' : 'lesson',
                         bank_folder_id: f.folder_id,
                         workspace_id: this.workspaceId,
@@ -493,7 +493,7 @@ export default function workspaceManager(config) {
                 }
                 // 2) Qovluqla örtülməyən ayrıca seçilmiş məzmunlar.
                 for (const id of this.effectiveIndividualContents) {
-                    await KelaApi('POST', '/api/v1/workspace-folders/move-content', {
+                    await KelaApi('POST', '/teacher/workspace-folders/move-content', {
                         content_id: id,
                         workspace_id: this.workspaceId,
                         folder_id: targetFolder,
@@ -517,7 +517,7 @@ export default function workspaceManager(config) {
                 return;
             }
             try {
-                await KelaApi('POST', `/api/v1/workspaces/${this.workspaceId}/students`, { student_ids: ids });
+                await KelaApi('POST', `/teacher/workspaces/${this.workspaceId}/students`, { student_ids: ids });
                 window.location.reload();
             } catch (err) {
                 window.alert(err.message);
@@ -529,7 +529,7 @@ export default function workspaceManager(config) {
             const name = studentName || 'Tələbə';
             if (!window.confirm(`'${name}' workspace-dən çıxarılsın?`)) return;
             try {
-                await KelaApi('DELETE', `/api/v1/workspaces/${this.workspaceId}/students/${id}`);
+                await KelaApi('DELETE', `/teacher/workspaces/${this.workspaceId}/students/${id}`);
                 window.location.reload();
             } catch (err) {
                 window.alert(err.message);
@@ -632,7 +632,7 @@ function workspaceList(config = {}) {
         async deleteWorkspace(workspaceId) {
             if (!window.confirm('Bu workspace silinsin?')) return;
             try {
-                await KelaApi('DELETE', `/api/v1/workspaces/${Number(workspaceId)}`);
+                await KelaApi('DELETE', `/teacher/workspaces/${Number(workspaceId)}`);
                 window.location.reload();
             } catch (err) {
                 window.alert(err.message);

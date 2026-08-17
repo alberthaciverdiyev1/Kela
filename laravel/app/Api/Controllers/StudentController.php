@@ -3,8 +3,9 @@
 namespace App\Api\Controllers;
 
 use App\Application\Student\StudentService;
-use App\Domain\User\User;
 use App\Api\Resources\StudentResource;
+use App\Domain\User\User;
+use App\Http\Requests\StudentRequest;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator;
@@ -24,17 +25,9 @@ class StudentController
         );
     }
 
-    public function store(Request $request): JsonResponse
+    public function store(StudentRequest $request): JsonResponse
     {
-        $data = $request->validate([
-            'first_name' => ['required', 'string', 'max:255'],
-            'last_name' => ['nullable', 'string', 'max:255'],
-            'email' => ['required', 'email', 'max:255', 'unique:users,email'],
-            'password' => ['required', 'string', 'min:6', 'max:255'],
-            'status' => ['nullable', 'integer', 'in:1,2,3'],
-            'city_id' => ['nullable', 'integer'],
-            'birth_date' => ['nullable', 'date'],
-        ]);
+        $data = $request->validated();
 
         $student = $this->students->create($data);
 
@@ -51,17 +44,9 @@ class StudentController
         return new StudentResource($student);
     }
 
-    public function update(Request $request, int $student): StudentResource
+    public function update(StudentRequest $request, int $student): StudentResource
     {
-        $data = $request->validate([
-            'first_name' => ['required', 'string', 'max:255'],
-            'last_name' => ['nullable', 'string', 'max:255'],
-            'email' => ['required', 'email', 'max:255', 'unique:users,email,'.$student],
-            'password' => ['nullable', 'string', 'min:6', 'max:255'],
-            'status' => ['nullable', 'integer', 'in:1,2,3'],
-            'city_id' => ['nullable', 'integer'],
-            'birth_date' => ['nullable', 'date'],
-        ]);
+        $data = $request->validated();
 
         $model = $this->students->update($student, $data);
 
