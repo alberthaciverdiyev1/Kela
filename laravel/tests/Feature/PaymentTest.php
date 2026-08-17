@@ -257,6 +257,47 @@ class PaymentTest extends TestCase
             ->assertSee($student->full_name);
     }
 
+    public function test_payments_page_shows_start_and_next_due_date(): void
+    {
+        $workspaceId = $this->makeWorkspace(50.00);
+        $student = $this->makeStudent('Zaman');
+        $startDate = now()->startOfMonth()->subMonth()->toDateString(); // keçmişdə qoşulub
+        $this->workspaces()->attachStudents($this->teacher->id, $workspaceId, [$student->id], null, $startDate);
+        $this->payments()->generateInvoice($this->teacher->id, $student->id, $workspaceId, now()->format('Y-m'));
+
+        $html = $this->actingAs($this->teacher)
+            ->get('/teacher/payments?workspace='.$workspaceId)
+            ->assertOk()
+            ->getContent();
+
+        // Başlama tarixi (pivot-dan) görünür.
+        $this->assertStringContainsString('Başlama: '.\Carbon\Carbon::parse($startDate)->format('d.m.Y'), $html);
+
+        // Növbəti ödəniş sütunu mövcuddur və cari ayın ödənilməmiş qaiməsinin
+        // due_date-ini (ay sonu) göstərir.
+        $this->assertStringContainsString('Növbəti ödəniş', $html);
+        $this->assertStringContainsString(now()->endOfMonth()->format('d.m.Y'), $html);
+    }
+
+    public function test_payments_page_next_due_rolls_to_next_month_when_paid(): void
+    {
+        $workspaceId = $this->makeWorkspace(50.00);
+        $student = $this->makeStudent('Ödəyən');
+        $startDate = now()->startOfMonth()->subMonth()->toDateString();
+        $this->workspaces()->attachStudents($this->teacher->id, $workspaceId, [$student->id], null, $startDate);
+        $track = $this->payments()->generateInvoice($this->teacher->id, $student->id, $workspaceId, now()->format('Y-m'));
+
+        // Cari ay tam ödəndi → növbəti ödəniş gələn ayın sonuna keçir.
+        $this->payments()->acceptPayment($this->teacher->id, $track->id, 50.00);
+
+        $html = $this->actingAs($this->teacher)
+            ->get('/teacher/payments?workspace='.$workspaceId)
+            ->assertOk()
+            ->getContent();
+
+        $this->assertStringContainsString(now()->addMonth()->endOfMonth()->format('d.m.Y'), $html);
+    }
+
     public function test_store_payment_http_flow(): void
     {
         $workspaceId = $this->makeWorkspace(50.00);
@@ -274,6 +315,27 @@ class PaymentTest extends TestCase
 
         $track->refresh();
         $this->assertEquals(PaymentStatus::PAID->value, $track->status);
+    }
+
+    public function test_payments_page_survives_deleted_student(): void
+    {
+        $workspaceId = $this->makeWorkspace(50.00);
+        $student = $this->makeStudent('Silinəcək');
+        $this->workspaces()->attachStudents($this->teacher->id, $workspaceId, [$student->id]);
+        $this->payments()->generateInvoice($this->teacher->id, $student->id, $workspaceId, now()->format('Y-m'));
+
+        // Şagirdi soft-delete et — ödəniş səhifəsi çökməməlidir, ad görünməlidir
+        // və sətir qırmızı (silinmiş şagird) işarəsi ilə göstərilməlidir.
+        $student->delete();
+
+        $html = $this->actingAs($this->teacher)
+            ->get('/teacher/payments?workspace='.$workspaceId)
+            ->assertOk()
+            ->getContent();
+
+        $this->assertStringContainsString('Silinəcək', $html);
+        $this->assertStringContainsString('Silinmiş şagird', $html);
+        $this->assertStringContainsString('bg-error/10', $html);
     }
 
     public function test_generate_invoice_http_flow(): void

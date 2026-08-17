@@ -29,4 +29,12 @@ interface StudentPaymentTrackRepository
      * @return int yenilənmiş track sayı
      */
     public function markOverdueForTeacher(int $teacherId): int;
+
+    /**
+     * Teacher-in ödənilməmiş/qismən ödənilmiş və hələ vaxtı çatmamış
+     * (due_date >= now) bütün qaimələri, due_date-ə görə artan sıra ilə.
+     *
+     * @return Collection<StudentPaymentTrack>
+     */
+    public function upcomingUnpaidForTeacher(int $teacherId): Collection;
 }

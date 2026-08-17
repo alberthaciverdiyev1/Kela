@@ -11,7 +11,11 @@ class EloquentStudentPaymentTrackRepository implements StudentPaymentTrackReposi
 {
     public function getTracksForTeacher(int $teacherId, ?int $workspaceId, string $month): Collection
     {
-        $query = StudentPaymentTrack::with(['student', 'workspace', 'transactions'])
+        $query = StudentPaymentTrack::with([
+            'student' => fn ($q) => $q->withTrashed(),
+            'workspace',
+            'transactions',
+        ])
             ->whereHas('workspace', function ($q) use ($teacherId) {
                 $q->where('teacher_id', $teacherId);
             })
@@ -63,5 +67,22 @@ class EloquentStudentPaymentTrackRepository implements StudentPaymentTrackReposi
                 StudentPaymentTrack::STATUS_PARTIAL,
             ])
             ->update(['status' => StudentPaymentTrack::STATUS_OVERDUE]);
+    }
+
+    /** Teacher-in ödənilməmiş/qismən ödənilmiş və hələ vaxtı çatmamış bütün qaimələri (due_date artan). */
+    public function upcomingUnpaidForTeacher(int $teacherId): Collection
+    {
+        return StudentPaymentTrack::query()
+            ->whereHas('workspace', function ($q) use ($teacherId) {
+                $q->where('teacher_id', $teacherId);
+            })
+            ->where('due_date', '>=', now())
+            ->whereIn('status', [
+                StudentPaymentTrack::STATUS_PENDING,
+                StudentPaymentTrack::STATUS_PARTIAL,
+                StudentPaymentTrack::STATUS_OVERDUE,
+            ])
+            ->orderBy('due_date')
+            ->get();
     }
 }

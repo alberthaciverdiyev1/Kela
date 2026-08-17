@@ -33,6 +33,25 @@ class PaymentService
     }
 
     /**
+     * Hər şagird+sinif üçün növbəti ödəniş tarixi (ən erkən ödənilməmiş qaimənin due_date-i).
+     * Açar: "studentId_workspaceId" → 'Y-m-d'.
+     *
+     * @return array<string, string>
+     */
+    public function upcomingUnpaidDueDates(int $teacherId): array
+    {
+        $result = [];
+        foreach ($this->payments->upcomingUnpaidForTeacher($teacherId) as $track) {
+            $key = $track->student_id.'_'.$track->workspace_id;
+            if (! isset($result[$key])) {
+                $result[$key] = $track->due_date?->toDateString();
+            }
+        }
+
+        return $result;
+    }
+
+    /**
      * Tələbə üçün qaimə (track) yaradır, əgər yoxdursa.
      * Teacher-in sahiblik yoxlaması edir; start_date varsa aylıq məbləği proporsional hesablayır.
      * Tələbə hələ sinifə qoşulmayıbsa (gələcək start_date) null qaytarır.

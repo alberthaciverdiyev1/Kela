@@ -42,23 +42,42 @@
     @elseif($tracks->isEmpty())
         <x-teacher.empty-state icon="document-text" title="Qaimə yoxdur" description="Bu sinif üzrə cari ay üçün heç bir ödəniş qaiməsi yoxdur. Yuxarıdakı 'Qaimə Yarat' düyməsi ilə əl ilə yarada bilərsiniz." />
     @else
-        <x-teacher.table :headers="['Şagird', 'Aylıq Ödəniş (Cəmi)', 'Ödənilən', 'Qalıq Borc', 'Status', 'Əməliyyat']">
+        <x-teacher.table :headers="['Şagird', 'Aylıq Ödəniş (Cəmi)', 'Ödənilən', 'Qalıq Borc', 'Status', 'Növbəti ödəniş', 'Əməliyyat']">
             @foreach($tracks as $track)
                 @php
                     $debt = max(0, $track->total_amount - $track->paid_amount);
                     $txns = $track->transactions;
+                    // Silinmiş (soft-delete) tələbələr üçün yaddaşda qalmış ad göstərilir.
+                    $studentIsTrashed = $track->student?->trashed() ?? false;
+                    $studentName = $track->student?->full_name ?? ('Şagird #'.$track->student_id);
+                    $studentEmail = $track->student?->email ?? '';
+                    $initials = $track->student
+                        ? mb_substr($track->student->first_name, 0, 1).mb_substr($track->student->last_name ?? '', 0, 1)
+                        : '—';
+                    $startDate = $track->start_date ? \Carbon\Carbon::parse($track->start_date)->format('d.m.Y') : null;
+                    $nextDue = $track->next_due_date ? \Carbon\Carbon::parse($track->next_due_date)->format('d.m.Y') : null;
                 @endphp
-                        <tr class="hover:bg-base-200/30 transition">
+                        <tr class="transition {{ $studentIsTrashed ? 'bg-error/10 hover:bg-error/15' : 'hover:bg-base-200/30' }}">
                             <td class="font-medium px-5 py-3">
                                 <div class="flex items-center gap-3">
                                     <div class="avatar placeholder">
                                         <div class="bg-primary/10 text-primary rounded-xl w-9 h-9 flex items-center justify-center font-bold">
-                                            <span class="text-xs">{{ mb_substr($track->student->first_name, 0, 1) . mb_substr($track->student->last_name, 0, 1) }}</span>
+                                            <span class="text-xs">{{ $initials }}</span>
                                         </div>
                                     </div>
                                     <div>
-                                        <div class="font-semibold text-base-content">{{ $track->student->full_name }}</div>
-                                        <div class="text-[11px] text-base-content/50">{{ $track->student->email }}</div>
+                                        <div class="flex items-center gap-2 font-semibold text-base-content">
+                                            {{ $studentName }}
+                                            @if($studentIsTrashed)
+                                                <x-teacher.badge color="red">Silinmiş şagird</x-teacher.badge>
+                                            @endif
+                                        </div>
+                                        <div class="text-[11px] text-base-content/50">
+                                            {{ $studentEmail }}
+                                            @if($startDate)
+                                                <span class="text-base-content/40">· Başlama: {{ $startDate }}</span>
+                                            @endif
+                                        </div>
                                     </div>
                                 </div>
                             </td>
@@ -92,6 +111,9 @@
                                     <x-teacher.badge color="red">Ödənilməyib</x-teacher.badge>
                                 @endif
                             </td>
+                            <td class="px-5 py-3 whitespace-nowrap text-sm font-medium text-base-content/80">
+                                {{ $nextDue }}
+                            </td>
                             <td class="px-5 py-3 text-right">
                                 <div class="dropdown dropdown-end">
                                     <label tabindex="0" class="btn btn-sm btn-ghost btn-circle">
@@ -100,13 +122,13 @@
                                     <ul tabindex="0" class="dropdown-content z-[1] menu p-2 shadow-lg bg-base-100 rounded-box w-48 border border-base-200">
                                         @if($debt > 0 && $track->total_amount > 0)
                                             <li>
-                                                <a @click="openModal({{ $track->id }}, '{{ addslashes($track->student->full_name) }}', {{ $debt }})" class="text-primary hover:bg-primary/10">
+                                                <a @click="openModal({{ $track->id }}, '{{ addslashes($studentName) }}', {{ $debt }})" class="text-primary hover:bg-primary/10">
                                                     <x-icon name="heroicon-o-currency-dollar" class="w-4 h-4" /> Ödəniş al
                                                 </a>
                                             </li>
                                         @endif
                                         <li>
-                                            <a @click="openEditModal({{ $track->id }}, '{{ addslashes($track->student->full_name) }}', {{ $track->total_amount }})" class="hover:bg-base-200">
+                                            <a @click="openEditModal({{ $track->id }}, '{{ addslashes($studentName) }}', {{ $track->total_amount }})" class="hover:bg-base-200">
                                                 <x-icon name="heroicon-o-pencil-square" class="w-4 h-4" /> Məbləği Təyin Et
                                             </a>
                                         </li>

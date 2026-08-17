@@ -39,6 +39,29 @@ class PaymentController extends Controller
         $tracks = $this->payments->getMonthlySheet($teacherId, $workspaceId, $month);
         $students = $selectedWorkspace ? $this->workspaces->studentList($teacherId, $workspaceId) : [];
 
+        // Hər şagird+sinif üçün növbəti ödəniş tarixləri (bir sorğuda).
+        $upcomingDue = $this->payments->upcomingUnpaidDueDates($teacherId);
+
+        // Başlama tarixi (pivot) üçün workspace-lərin şagirdlərini yüklə.
+        $tracks->loadMissing(['workspace.students' => fn ($q) => $q->withTrashed()]);
+
+        foreach ($tracks as $track) {
+            $pivot = $track->workspace?->students?->firstWhere('id', $track->student_id)?->pivot;
+
+            $startDate = $pivot?->start_date;
+            $track->setAttribute('start_date', $startDate);
+
+            // Növbəti ödəniş tarixi:
+            // 1) Ödənilməmiş gələcək qaimə varsa → onun due_date-i.
+            // 2) Şagird hələ qoşulmayıbsa (gələcək start_date) → ilk ayın sonu.
+            // 3) Əks halda → gələn ayın sonu (aylıq abunə proyeksiyası).
+            $nextDue = $upcomingDue[$track->student_id.'_'.$track->workspace_id] ?? null;
+            if ($nextDue === null && $startDate !== null && \Carbon\Carbon::parse($startDate)->startOfMonth()->gt(now())) {
+                $nextDue = \Carbon\Carbon::parse($startDate)->endOfMonth()->toDateString();
+            }
+            $track->setAttribute('next_due_date', $nextDue ?? now()->addMonth()->endOfMonth()->toDateString());
+        }
+
         // Tarixçə modalı üçün track_id → [tarix, məbləğ, qeyd] xəritəsi.
         $trackTxns = $tracks->mapWithKeys(fn ($t) => [
             (int) $t->id => $t->transactions->map(fn ($x) => [
