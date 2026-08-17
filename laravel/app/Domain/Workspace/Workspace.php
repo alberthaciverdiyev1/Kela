@@ -34,7 +34,7 @@ class Workspace extends Model
     public function students(): BelongsToMany
     {
         return $this->belongsToMany(User::class, 'workspace_students', 'workspace_id', 'student_id')
-            ->withPivot('agreed_price');
+            ->withPivot(['agreed_price', 'start_date']);
     }
 
     public function attendances(): HasMany

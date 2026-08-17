@@ -5,6 +5,13 @@
 <div class="space-y-6" x-data="paymentTracker()">
     <x-teacher.heading subtitle="Tələbələrin aylıq ödənişlərini və borclarını izləyin">
         Ödənişlər
+        @if($selectedWorkspaceId)
+            <x-slot:actions>
+                <button type="button" class="btn btn-primary btn-sm" @click="openGenerate()">
+                    <x-icon name="heroicon-o-plus" class="size-4" /> Qaimə Yarat
+                </button>
+            </x-slot:actions>
+        @endif
     </x-teacher.heading>
 
     {{-- Toolbar: Sinif + Ay filteri --}}
@@ -18,14 +25,14 @@
             @endforeach
         </select>
 
-        <input 
-            type="month" 
-            name="month" 
-            value="{{ $month }}" 
+        <input
+            type="month"
+            name="month"
+            value="{{ $month }}"
             class="input input-bordered text-sm"
             onchange="this.form.submit()"
         />
-        
+
         <x-teacher.button type="submit" variant="ghost">Yenilə</x-teacher.button>
     </form>
 
@@ -33,12 +40,13 @@
     @if(!$selectedWorkspaceId)
         <x-teacher.empty-state icon="banknotes" title="Sinif seçin" description="Ödəniş cədvəlini açmaq üçün yuxarıdan bir sinif seçin." />
     @elseif($tracks->isEmpty())
-        <x-teacher.empty-state icon="document-text" title="Qaimə yoxdur" description="Bu sinif üzrə cari ay üçün heç bir ödəniş qaiməsi yoxdur. Qaimələr hər ayın 1-i avtomatik yaradılır." />
+        <x-teacher.empty-state icon="document-text" title="Qaimə yoxdur" description="Bu sinif üzrə cari ay üçün heç bir ödəniş qaiməsi yoxdur. Yuxarıdakı 'Qaimə Yarat' düyməsi ilə əl ilə yarada bilərsiniz." />
     @else
         <x-teacher.table :headers="['Şagird', 'Aylıq Ödəniş (Cəmi)', 'Ödənilən', 'Qalıq Borc', 'Status', 'Əməliyyat']">
             @foreach($tracks as $track)
                 @php
                     $debt = max(0, $track->total_amount - $track->paid_amount);
+                    $txns = $track->transactions;
                 @endphp
                         <tr class="hover:bg-base-200/30 transition">
                             <td class="font-medium px-5 py-3">
@@ -70,10 +78,14 @@
                                 @endif
                             </td>
                             <td class="px-5 py-3">
-                                @if($track->status == \App\Domain\StudentPaymentTrack\StudentPaymentTrack::STATUS_PAID && $track->total_amount > 0)
+                                @if($track->total_amount > 0 && $track->status == \App\Domain\StudentPaymentTrack\StudentPaymentTrack::STATUS_PAID)
                                     <x-teacher.badge color="green">Ödənildi</x-teacher.badge>
-                                @elseif($track->status == 1)
+                                @elseif($track->status == \App\Domain\StudentPaymentTrack\StudentPaymentTrack::STATUS_PARTIAL)
                                     <x-teacher.badge color="blue">Qismən Ödəniş</x-teacher.badge>
+                                @elseif($track->status == \App\Domain\StudentPaymentTrack\StudentPaymentTrack::STATUS_OVERDUE && $track->total_amount > 0)
+                                    <x-teacher.badge color="red">Vaxtı keçib</x-teacher.badge>
+                                @elseif($track->status == \App\Domain\StudentPaymentTrack\StudentPaymentTrack::STATUS_CANCELLED)
+                                    <x-teacher.badge color="gray">Ləğv edilib</x-teacher.badge>
                                 @elseif($track->total_amount == 0)
                                     <x-teacher.badge color="yellow">Gözləyir</x-teacher.badge>
                                 @else
@@ -98,6 +110,13 @@
                                                 <x-icon name="heroicon-o-pencil-square" class="w-4 h-4" /> Məbləği Təyin Et
                                             </a>
                                         </li>
+                                        @if($txns->isNotEmpty())
+                                            <li>
+                                                <a @click="openTxnModal({{ $track->id }})" class="hover:bg-base-200">
+                                                    <x-icon name="heroicon-o-receipt-percent" class="w-4 h-4" /> Tarixçə ({{ $txns->count() }})
+                                                </a>
+                                            </li>
+                                        @endif
                                     </ul>
                                 </div>
                             </td>
@@ -105,6 +124,32 @@
             @endforeach
         </x-teacher.table>
     @endif
+
+    {{-- Qaimə Yarat Modalı --}}
+    <x-teacher.modal show="isGenerateOpen" title="Qaimə Yarat" maxWidth="md">
+        <form method="POST" action="{{ route('teacher.payments.generate') }}">
+            @csrf
+            <input type="hidden" name="workspace_id" value="{{ $selectedWorkspaceId }}">
+            <input type="hidden" name="month" value="{{ $month }}">
+            <div class="space-y-4">
+                <x-teacher.field label="Şagird" name="student_id" :required="true">
+                    <select name="student_id" class="select select-bordered w-full text-sm" required>
+                        <option value="">Şagird seç...</option>
+                        @foreach($students as $student)
+                            <option value="{{ $student['id'] }}">{{ $student['name'] }}</option>
+                        @endforeach
+                    </select>
+                </x-teacher.field>
+                <x-teacher.field label="Məbləğ (AZN, boş = sinif/sagird qiyməti)" name="amount">
+                    <x-teacher.input name="amount" type="number" step="0.01" min="0" placeholder="Boş buraxıla bilər" />
+                </x-teacher.field>
+            </div>
+            <div class="mt-6 flex justify-end gap-2">
+                <x-teacher.button type="button" variant="ghost" @click="isGenerateOpen = false">Ləğv et</x-teacher.button>
+                <x-teacher.button type="submit" icon="plus">Qaimə Yarat</x-teacher.button>
+            </div>
+        </form>
+    </x-teacher.modal>
 
     {{-- Ödəniş Qəbulu Modalı --}}
     <x-teacher.modal show="isModalOpen" title="Ödəniş qəbul et" maxWidth="sm">
@@ -123,7 +168,7 @@
                     <input type="text" name="note" class="input input-bordered w-full" placeholder="Nəğd, kartla və s." />
                 </div>
             </div>
-            
+
             <div class="mt-6 flex justify-end gap-2">
                 <x-teacher.button type="button" variant="ghost" @click="closeModal()">Ləğv et</x-teacher.button>
                 <x-teacher.button type="submit" variant="primary">Təsdiqlə</x-teacher.button>
@@ -143,12 +188,33 @@
                     <input type="number" step="0.01" name="total_amount" x-model="editModalTotalAmount" class="input input-bordered w-full" required min="0" />
                 </div>
             </div>
-            
+
             <div class="mt-6 flex justify-end gap-2">
                 <x-teacher.button type="button" variant="ghost" @click="closeEditModal()">Ləğv et</x-teacher.button>
                 <x-teacher.button type="submit" variant="primary">Saxla</x-teacher.button>
             </div>
         </form>
+    </x-teacher.modal>
+
+    {{-- Tarixçə Modalı --}}
+    <x-teacher.modal show="isTxnOpen" title="Ödəniş tarixçəsi" maxWidth="sm">
+        <div class="overflow-x-auto">
+            <table class="table w-full text-sm">
+                <thead>
+                    <tr class="border-b border-base-300 bg-base-200/60">
+                        <th class="px-3 py-2 text-left text-xs font-semibold uppercase tracking-wide text-base-content/60">Tarix</th>
+                        <th class="px-3 py-2 text-right text-xs font-semibold uppercase tracking-wide text-base-content/60">Məbləğ</th>
+                        <th class="px-3 py-2 text-left text-xs font-semibold uppercase tracking-wide text-base-content/60">Qeyd</th>
+                    </tr>
+                </thead>
+                <tbody x-ref="txnBody">
+                    {{-- JS tərəfindən doldurulur --}}
+                </tbody>
+            </table>
+        </div>
+        <div class="mt-6 flex justify-end">
+            <x-teacher.button type="button" variant="ghost" @click="isTxnOpen = false">Bağla</x-teacher.button>
+        </div>
     </x-teacher.modal>
 </div>
 
@@ -163,20 +229,29 @@
             modalStudentName: '',
             modalMaxDebt: 0,
             modalAmount: 0,
-            
+
             isEditModalOpen: false,
             editModalTrackId: null,
             editModalStudentName: '',
             editModalTotalAmount: 0,
-            
+
+            isGenerateOpen: false,
+            isTxnOpen: false,
+
+            txnByTrack: @json($trackTxns),
+
+            openGenerate() {
+                this.isGenerateOpen = true;
+            },
+
             openModal(trackId, studentName, debt) {
                 this.modalTrackId = trackId;
                 this.modalStudentName = studentName;
                 this.modalMaxDebt = debt;
-                this.modalAmount = debt; // Default as full remaining amount
+                this.modalAmount = debt;
                 this.isModalOpen = true;
             },
-            
+
             closeModal() {
                 this.isModalOpen = false;
                 this.modalTrackId = null;
@@ -192,7 +267,21 @@
             closeEditModal() {
                 this.isEditModalOpen = false;
                 this.editModalTrackId = null;
-            }
+            },
+
+            openTxnModal(trackId) {
+                const rows = this.txnByTrack[trackId] || [];
+                const body = this.$refs.txnBody;
+                body.innerHTML = rows.length
+                    ? rows.map(r => `
+                        <tr class="border-b border-base-200/60">
+                            <td class="px-3 py-2 text-base-content/70">${r.date}</td>
+                            <td class="px-3 py-2 text-right font-medium text-success">${r.amount} AZN</td>
+                            <td class="px-3 py-2 text-base-content/60">${r.note || '—'}</td>
+                        </tr>`).join('')
+                    : '<tr><td colspan="3" class="px-3 py-6 text-center text-base-content/50">Ödəniş yoxdur</td></tr>';
+                this.isTxnOpen = true;
+            },
         }));
     });
 </script>

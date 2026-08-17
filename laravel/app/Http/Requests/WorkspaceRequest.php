@@ -9,6 +9,7 @@ class WorkspaceRequest extends BaseRequest
     {
         return [
             'name' => ['required', 'string', 'max:200'],
+            'monthly_price' => ['nullable', 'numeric', 'min:0'],
         ];
     }
 }

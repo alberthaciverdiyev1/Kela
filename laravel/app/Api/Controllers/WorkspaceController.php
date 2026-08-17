@@ -30,7 +30,11 @@ class WorkspaceController
     {
         $data = $request->validated();
 
-        $workspace = $this->workspaces->create((int) $request->user()->id, $data['name']);
+        $workspace = $this->workspaces->create(
+            (int) $request->user()->id,
+            $data['name'],
+            isset($data['monthly_price']) ? (float) $data['monthly_price'] : null,
+        );
 
         return (new WorkspaceResource($workspace))->response()->setStatusCode(201);
     }
@@ -52,7 +56,12 @@ class WorkspaceController
 
         $data = $request->validated();
 
-        $this->workspaces->rename((int) $request->user()->id, $workspace, $data['name']);
+        $this->workspaces->rename(
+            (int) $request->user()->id,
+            $workspace,
+            $data['name'],
+            isset($data['monthly_price']) ? (float) $data['monthly_price'] : null,
+        );
 
         return new WorkspaceResource($this->workspaces->find($workspace));
     }

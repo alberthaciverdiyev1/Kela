@@ -76,7 +76,7 @@ class DetailsPagesTest extends TestCase
 
         $this->assertStringContainsString('Əli', $html);
         $this->assertStringContainsString($student->email, $html);
-        $this->assertStringContainsString('Üzv olduğu iş sahələri', $html);
+        $this->assertStringContainsString('Üzv olduğu siniflər', $html);
         $this->assertStringContainsString('Sınaq Qrupu', $html);
         $this->assertStringContainsString('Geri', $html);
         $this->assertStringContainsString('Redaktə', $html);
@@ -95,7 +95,7 @@ class DetailsPagesTest extends TestCase
         $this->actingAs($this->teacher);
 
         $html = $this->get("/teacher/students/{$student->id}")->assertOk()->getContent();
-        $this->assertStringContainsString('İş sahəsi yoxdur', $html);
+        $this->assertStringContainsString('Sinif yoxdur', $html);
     }
 
     public function test_student_table_links_to_details(): void

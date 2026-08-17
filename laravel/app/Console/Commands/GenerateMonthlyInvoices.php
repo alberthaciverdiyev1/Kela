@@ -2,43 +2,47 @@
 
 namespace App\Console\Commands;
 
+use App\Application\Payment\PaymentService;
+use App\Domain\Workspace\Workspace;
+use App\Domain\Workspace\WorkspaceRepository;
 use Illuminate\Console\Command;
 
 class GenerateMonthlyInvoices extends Command
 {
     protected $signature = 'payments:generate {--month= : Siyahı üçün müəyyən ay (YYYY-MM)}';
 
-    /**
-     * The console command description.
-     *
-     * @var string
-     */
     protected $description = 'Bütün aktiv siniflər üzrə şagirdlər üçün hər ayın əvvəlində avtomatik qaimə yaradır';
 
-    /**
-     * Execute the console command.
-     */
-    public function handle(\App\Application\Payment\PaymentService $paymentService, \App\Domain\Workspace\WorkspaceRepository $workspaceRepository)
+    public function handle(PaymentService $paymentService, WorkspaceRepository $workspaceRepository): int
     {
         $month = $this->option('month') ?: date('Y-m');
         $this->info("{$month} ayı üçün qaimələr yaradılır...");
 
-        // Bütün sinifləri tapırıq. 
-        // Lakin Kela arxitekturasında Repository və təmiz model yanaşması var, Workspace-ləri id-ləri ilə çəkirik.
-        $workspaces = \App\Domain\Workspace\Workspace::with('students')->get();
+        $workspaces = $workspaceRepository->allWithStudents();
         $count = 0;
 
         foreach ($workspaces as $workspace) {
             foreach ($workspace->students as $student) {
                 try {
-                    $paymentService->generateInvoice($student->id, $workspace->id, $month);
-                    $count++;
+                    $track = $paymentService->generateInvoice(
+                        (int) $workspace->teacher_id,
+                        (int) $student->id,
+                        (int) $workspace->id,
+                        $month,
+                    );
+
+                    // Yalnız yeni yaradılan qaimələri say (mövcud olanlar keçir).
+                    if ($track !== null && $track->wasRecentlyCreated) {
+                        $count++;
+                    }
                 } catch (\Exception $e) {
                     $this->error("Xəta (Tələbə: {$student->id}, Sinif: {$workspace->id}): " . $e->getMessage());
                 }
             }
         }
 
-        $this->info("Uğurla yekunlaşdı! Yaranan qaimə sayı: {$count}");
+        $this->info("Uğurla yekunlaşdı! Yeni yaranan qaimə sayı: {$count}");
+
+        return self::SUCCESS;
     }
 }

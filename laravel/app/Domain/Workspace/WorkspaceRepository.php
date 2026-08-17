@@ -23,11 +23,11 @@ interface WorkspaceRepository
     /** Axtarış + səhifələmə ilə istifadəçinin görə biləcəyi workspacelər (admin cədvəli üçün). */
     public function paginateForUser(int $actingUserId, bool $isAdmin, ?string $search = null, int $perPage = 15): LengthAwarePaginator;
 
-    public function create(int $teacherId, string $name): Workspace;
+    public function create(int $teacherId, string $name, ?float $monthlyPrice = null): Workspace;
 
     public function find(int $id): ?Workspace;
 
-    public function update(Workspace $workspace, string $name): Workspace;
+    public function update(Workspace $workspace, string $name, ?float $monthlyPrice = null): Workspace;
 
     public function delete(Workspace $workspace): bool;
 
@@ -42,4 +42,7 @@ interface WorkspaceRepository
 
     /** Şagirdin üzv olduğu workspacelər ($teacherId null → hamısı, əks halda həmin müəllimin). */
     public function forStudent(?int $teacherId, int $studentId): Collection;
+
+    /** Bütün workspacelər, tələbələri ilə (aylıq qaimə generasiyası üçün). */
+    public function allWithStudents(): Collection;
 }

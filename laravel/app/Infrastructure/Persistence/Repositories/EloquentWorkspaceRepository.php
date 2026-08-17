@@ -45,11 +45,12 @@ class EloquentWorkspaceRepository implements WorkspaceRepository
             ->paginate($perPage);
     }
 
-    public function create(int $teacherId, string $name): Workspace
+    public function create(int $teacherId, string $name, ?float $monthlyPrice = null): Workspace
     {
         return Workspace::create([
             'teacher_id' => $teacherId,
             'name' => $name,
+            'monthly_price' => $monthlyPrice,
         ]);
     }
 
@@ -58,9 +59,12 @@ class EloquentWorkspaceRepository implements WorkspaceRepository
         return Workspace::find($id);
     }
 
-    public function update(Workspace $workspace, string $name): Workspace
+    public function update(Workspace $workspace, string $name, ?float $monthlyPrice = null): Workspace
     {
-        $workspace->update(['name' => $name]);
+        $workspace->update([
+            'name' => $name,
+            'monthly_price' => $monthlyPrice,
+        ]);
 
         return $workspace;
     }
@@ -107,5 +111,10 @@ class EloquentWorkspaceRepository implements WorkspaceRepository
             ->withCount('students')
             ->orderBy('name')
             ->get(['id', 'name']);
+    }
+
+    public function allWithStudents(): Collection
+    {
+        return Workspace::with('students')->get();
     }
 }

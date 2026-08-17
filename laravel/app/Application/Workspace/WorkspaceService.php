@@ -102,21 +102,22 @@ class WorkspaceService
 
         return [
             'name' => $workspace->name,
+            'monthly_price' => $workspace->monthly_price !== null ? (float) $workspace->monthly_price : null,
             'created_at' => $workspace->created_at?->toDateString(),
         ];
     }
 
-    public function create(int $teacherId, string $name): Workspace
+    public function create(int $teacherId, string $name, ?float $monthlyPrice = null): Workspace
     {
         $name = trim($name);
         if ($name === '') {
             throw new \InvalidArgumentException('Workspace adı boş ola bilməz.');
         }
 
-        return $this->workspaces->create($teacherId, $name);
+        return $this->workspaces->create($teacherId, $name, $monthlyPrice);
     }
 
-    public function rename(int $teacherId, int $workspaceId, string $name): void
+    public function rename(int $teacherId, int $workspaceId, string $name, ?float $monthlyPrice = null): void
     {
         $workspace = $this->assertOwned($teacherId, $workspaceId);
         $name = trim($name);
@@ -124,7 +125,7 @@ class WorkspaceService
             throw new \InvalidArgumentException('Ad boş ola bilməz.');
         }
 
-        $this->workspaces->update($workspace, $name);
+        $this->workspaces->update($workspace, $name, $monthlyPrice);
     }
 
     public function delete(int $teacherId, int $workspaceId): void
@@ -138,7 +139,12 @@ class WorkspaceService
     public function attachStudents(int $teacherId, int $workspaceId, array $studentIds, ?float $agreedPrice = null, ?string $startDate = null): void
     {
         $workspace = $this->assertOwned($teacherId, $workspaceId);
-        
+
+        // Qeyd: tələbə əlavə etmək avtomatik borc (qaimə) YARATMIR.
+        // Qaimə yalnız müəllim "Qaimə Yarat" ilə və ya payments:generate əmri ilə yaranır.
+        // agreed_price / start_date burada pivot-a yazılır və sonradan qaimə
+        // yaradılarkən istifadə olunur (proporsional hesablama və xüsusi qiymət).
+
         $attributes = [];
         if ($agreedPrice !== null) {
             $attributes['agreed_price'] = $agreedPrice;
@@ -146,19 +152,8 @@ class WorkspaceService
         if ($startDate !== null) {
             $attributes['start_date'] = $startDate;
         }
-        
+
         $this->workspaces->attachStudents($workspace, $studentIds, $attributes);
-        
-        // Avtomatik olaraq cari ay üçün qaimə yaradaq
-        $paymentService = app(\App\Application\Payment\PaymentService::class);
-        $month = date('Y-m');
-        foreach ($studentIds as $studentId) {
-            try {
-                $paymentService->generateInvoice($studentId, $workspaceId, $month, $agreedPrice);
-            } catch (\Exception $e) {
-                // Səssizcə keçə bilərik, bəlkə onsuz da var idi və s.
-            }
-        }
     }
 
     public function detachStudent(int $teacherId, int $workspaceId, int $studentId): void

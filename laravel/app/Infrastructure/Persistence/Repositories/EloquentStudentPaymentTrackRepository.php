@@ -50,4 +50,18 @@ class EloquentStudentPaymentTrackRepository implements StudentPaymentTrackReposi
             'note' => $note,
         ]);
     }
+
+    public function markOverdueForTeacher(int $teacherId): int
+    {
+        return StudentPaymentTrack::query()
+            ->whereHas('workspace', function ($q) use ($teacherId) {
+                $q->where('teacher_id', $teacherId);
+            })
+            ->where('due_date', '<', now())
+            ->whereIn('status', [
+                StudentPaymentTrack::STATUS_PENDING,
+                StudentPaymentTrack::STATUS_PARTIAL,
+            ])
+            ->update(['status' => StudentPaymentTrack::STATUS_OVERDUE]);
+    }
 }

@@ -13,6 +13,7 @@ class StudentPaymentTrack extends Model
     use SoftDeletes;
 
     public const STATUS_PENDING = PaymentStatus::PENDING->value;
+    public const STATUS_PARTIAL = PaymentStatus::PARTIAL->value;
     public const STATUS_PAID = PaymentStatus::PAID->value;
     public const STATUS_OVERDUE = PaymentStatus::OVERDUE->value;
     public const STATUS_CANCELLED = PaymentStatus::CANCELLED->value;

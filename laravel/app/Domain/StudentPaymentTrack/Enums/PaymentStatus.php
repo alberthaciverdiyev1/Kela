@@ -4,21 +4,25 @@ namespace App\Domain\StudentPaymentTrack\Enums;
 
 /**
  * Şagird ödəniş statusları üçün PHP 8.3 Backed Enum.
+ * Dəyərlər migration kommenti ilə tutuşur:
+ * 0: Pending, 1: Partial, 2: Paid, 3: Overdue, 4: Cancelled.
  */
 enum PaymentStatus: int
 {
     case PENDING = 0;
-    case PAID = 1;
-    case OVERDUE = 2;
-    case CANCELLED = 3;
+    case PARTIAL = 1;
+    case PAID = 2;
+    case OVERDUE = 3;
+    case CANCELLED = 4;
 
     public function label(): string
     {
         return match ($this) {
-            self::PENDING => 'pending',
-            self::PAID => 'paid',
-            self::OVERDUE => 'overdue',
-            self::CANCELLED => 'cancelled',
+            self::PENDING => 'Gözləyir',
+            self::PARTIAL => 'Qismən ödənilib',
+            self::PAID => 'Ödənilib',
+            self::OVERDUE => 'Vaxtı keçib',
+            self::CANCELLED => 'Ləğv edilib',
         };
     }
 

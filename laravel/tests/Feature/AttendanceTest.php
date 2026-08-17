@@ -74,7 +74,7 @@ class AttendanceTest extends TestCase
         // Navbar linki və səhifə mövcuddur
         $this->assertStringContainsString('Davam', $html);
         $this->assertStringContainsString('x-data="attendanceMonth', $html);
-        $this->assertStringContainsString('Workspace seç', $html);
+        $this->assertStringContainsString('Sinif seç', $html);
         $this->assertStringContainsString('Sınaq Qrupu', $html);
         $this->assertStringContainsString('2026-08', $html);
 

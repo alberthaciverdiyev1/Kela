@@ -4,7 +4,11 @@ namespace App\Web\Controllers\Teacher;
 
 use App\Application\Payment\PaymentService;
 use App\Application\Workspace\WorkspaceService;
+use App\Http\Requests\AcceptPaymentRequest;
+use App\Http\Requests\GenerateInvoiceRequest;
+use App\Http\Requests\UpdateTrackRequest;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
 use Illuminate\Routing\Controller;
@@ -21,18 +25,28 @@ class PaymentController extends Controller
     {
         $workspaceId = (int) $request->integer('workspace') ?: null;
         $month = (string) $request->string('month');
-        
         if (empty($month)) {
             $month = now()->format('Y-m');
         }
 
         $teacherId = (int) auth()->id();
-        
+
+        // Müddəti ötmüş qaimələri OVERDUE edir.
+        $this->payments->markOverdueForTeacher($teacherId);
+
         $myWorkspaces = $this->workspaces->listForUser($teacherId);
-
         $selectedWorkspace = $workspaceId ? $this->workspaces->find($workspaceId) : null;
-
         $tracks = $this->payments->getMonthlySheet($teacherId, $workspaceId, $month);
+        $students = $selectedWorkspace ? $this->workspaces->studentList($teacherId, $workspaceId) : [];
+
+        // Tarixçə modalı üçün track_id → [tarix, məbləğ, qeyd] xəritəsi.
+        $trackTxns = $tracks->mapWithKeys(fn ($t) => [
+            (int) $t->id => $t->transactions->map(fn ($x) => [
+                'date' => $x->paid_at?->format('d.m.Y H:i') ?? $x->created_at?->format('d.m.Y H:i'),
+                'amount' => number_format((float) $x->amount, 2),
+                'note' => $x->note ?? '',
+            ])->all(),
+        ])->all();
 
         return view('teacher.payments.index', [
             'workspaces' => $myWorkspaces,
@@ -40,60 +54,66 @@ class PaymentController extends Controller
             'selectedWorkspace' => $selectedWorkspace,
             'month' => $month,
             'tracks' => $tracks,
+            'students' => $students,
+            'trackTxns' => $trackTxns,
         ]);
     }
-    
-    public function generate(Request $request): \Illuminate\Http\RedirectResponse
+
+    public function generate(GenerateInvoiceRequest $request): RedirectResponse
     {
-        $studentId = (int) $request->integer('student_id');
-        $workspaceId = (int) $request->integer('workspace_id');
-        $month = $request->string('month')->toString();
-        $amount = $request->filled('amount') ? (float) $request->input('amount') : null;
-        
+        $data = $request->validated();
+
         try {
-            $this->payments->generateInvoice($studentId, $workspaceId, $month, $amount);
+            $this->payments->generateInvoice(
+                (int) auth()->id(),
+                (int) $data['student_id'],
+                (int) $data['workspace_id'],
+                $data['month'],
+                isset($data['amount']) ? (float) $data['amount'] : null,
+            );
+
             return back()->with('success', 'Tələbə üçün qaimə yaradıldı.');
         } catch (\Exception $e) {
             return back()->with('error', $e->getMessage());
         }
     }
 
-    public function store(Request $request): JsonResponse|\Illuminate\Http\RedirectResponse
+    public function store(AcceptPaymentRequest $request): JsonResponse|RedirectResponse
     {
-        $request->validate([
-            'track_id' => 'required|integer',
-            'amount' => 'required|numeric|min:0.01',
-            'note' => 'nullable|string',
-        ]);
+        $data = $request->validated();
 
         try {
             $this->payments->acceptPayment(
-                (int) $request->input('track_id'),
-                (float) $request->input('amount'),
-                $request->input('note')
+                (int) auth()->id(),
+                (int) $data['track_id'],
+                (float) $data['amount'],
+                $data['note'] ?? null,
             );
-            
-            if ($request->wantsJson()) {
+
+            if ($request->expectsJson()) {
                 return response()->json(['message' => 'Ödəniş qəbul edildi.']);
             }
-            
+
             return back()->with('success', 'Ödəniş uğurla qəbul edildi.');
         } catch (\Exception $e) {
-            if ($request->wantsJson()) {
+            if ($request->expectsJson()) {
                 return response()->json(['error' => $e->getMessage()], 422);
             }
             return back()->with('error', $e->getMessage());
         }
     }
 
-    public function updateTrack(Request $request, int $trackId): \Illuminate\Http\RedirectResponse
+    public function updateTrack(UpdateTrackRequest $request, int $trackId): RedirectResponse
     {
-        $request->validate([
-            'total_amount' => 'required|numeric|min:0',
-        ]);
-        
+        $data = $request->validated();
+
         try {
-            $this->payments->updateTotalAmount($trackId, (float) $request->input('total_amount'));
+            $this->payments->updateTotalAmount(
+                (int) auth()->id(),
+                $trackId,
+                (float) $data['total_amount'],
+            );
+
             return back()->with('success', 'Məbləğ uğurla yeniləndi.');
         } catch (\Exception $e) {
             return back()->with('error', $e->getMessage());

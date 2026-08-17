@@ -47,7 +47,11 @@ class WorkspaceController
     {
         $data = $request->validated();
 
-        $workspace = $this->workspaces->create((int) auth()->id(), $data['name']);
+        $workspace = $this->workspaces->create(
+            (int) auth()->id(),
+            $data['name'],
+            isset($data['monthly_price']) ? (float) $data['monthly_price'] : null,
+        );
 
         return redirect()->route('teacher.workspaces.show', $workspace->id)
             ->with('success', 'Workspace yaradıldı.');
@@ -88,7 +92,11 @@ class WorkspaceController
             'heading' => 'Workspace-i Redaktə Et',
             'subtitle' => $model->name,
             'creating' => false,
-            'workspace' => ['id' => $workspace, 'name' => $model->name],
+            'workspace' => [
+                'id' => $workspace,
+                'name' => $model->name,
+                'monthly_price' => $model->monthly_price !== null ? (float) $model->monthly_price : null,
+            ],
         ]);
     }
 
@@ -99,7 +107,12 @@ class WorkspaceController
 
         $data = $request->validated();
 
-        $this->workspaces->rename((int) auth()->id(), $workspace, $data['name']);
+        $this->workspaces->rename(
+            (int) auth()->id(),
+            $workspace,
+            $data['name'],
+            isset($data['monthly_price']) ? (float) $data['monthly_price'] : null,
+        );
 
         return redirect()->route('teacher.workspaces.show', $workspace)
             ->with('success', 'Workspace yeniləndi.');

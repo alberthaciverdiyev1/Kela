@@ -19,6 +19,14 @@ interface StudentPaymentTrackRepository
     public function findByStudentWorkspaceMonth(int $studentId, int $workspaceId, string $month): ?StudentPaymentTrack;
     
     public function save(StudentPaymentTrack $track): bool;
-    
+
     public function createTransaction(int $trackId, float $amount, ?string $note = null): StudentPaymentTransaction;
+
+    /**
+     * Müddəti ötmüş (due_date < now) və hələ ödənilməmiş/qismən ödənilmiş
+     * track-ları OVERDUE olaraq işarələyir. Teacher-a aid olanları.
+     *
+     * @return int yenilənmiş track sayı
+     */
+    public function markOverdueForTeacher(int $teacherId): int;
 }
