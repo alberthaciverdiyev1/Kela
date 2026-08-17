@@ -46,14 +46,14 @@
         </div>
     </x-teacher.card>
 
-    {{-- Üzv olduğu workspacelər --}}
+    {{-- Üzv olduğu siniflər --}}
     <x-teacher.card :padding="false">
         <div class="flex items-center justify-between border-b border-base-300 p-4">
-            <h3 class="text-sm font-semibold text-base-content">Üzv olduğu iş sahələri</h3>
+            <h3 class="text-sm font-semibold text-base-content">Üzv olduğu siniflər</h3>
             <span class="badge badge-outline badge-sm">{{ count($workspaces) }}</span>
         </div>
         @if (count($workspaces) === 0)
-            <x-teacher.empty-state icon="briefcase" title="İş sahəsi yoxdur" description="Bu şagird hələ heç bir iş sahəsinə əlavə olunmayıb." />
+            <x-teacher.empty-state icon="briefcase" title="Sinif yoxdur" description="Bu şagird hələ heç bir sinifə əlavə olunmayıb." />
         @else
             <ul class="divide-y divide-base-200">
                 @foreach ($workspaces as $ws)

@@ -94,10 +94,10 @@ export default function notesApp(config) {
 
         openComposer() { this.composerOpen = true; },
 
-        async closeComposer() {
+        async closeComposer(cancel = false) {
             const title = this.composerTitle.trim();
             const body = this.composerBody.trim();
-            if (title || body) {
+            if (!cancel && (title || body)) {
                 try {
                     const res = await KelaApi('POST', '/notes', {
                         title: title || null,

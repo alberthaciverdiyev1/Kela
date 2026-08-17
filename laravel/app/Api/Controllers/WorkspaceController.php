@@ -69,8 +69,17 @@ class WorkspaceController
         $this->authorizeAccess($this->workspaces->find($workspace));
 
         $data = $request->validated();
+        
+        $agreedPrice = isset($data['agreed_price']) ? (float) $data['agreed_price'] : null;
+        $startDate = $data['start_date'] ?? null;
 
-        $this->workspaces->attachStudents((int) $request->user()->id, $workspace, $data['student_ids']);
+        $this->workspaces->attachStudents(
+            (int) $request->user()->id, 
+            $workspace, 
+            $data['student_ids'],
+            $agreedPrice,
+            $startDate
+        );
 
         return response()->json(['message' => 'Şagirdlər əlavə edildi.']);
     }

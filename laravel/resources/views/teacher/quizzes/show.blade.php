@@ -20,7 +20,7 @@
                 </x-teacher.badge>
             </div>
             <div>
-                <p class="text-xs font-medium uppercase tracking-wide text-base-content/50">İş sahəsi</p>
+                <p class="text-xs font-medium uppercase tracking-wide text-base-content/50">Sinif</p>
                 <p class="mt-1 text-sm font-medium text-base-content">{{ $quizData['workspace'] ?? '—' }}</p>
             </div>
             <div>

@@ -70,11 +70,15 @@ class EloquentWorkspaceRepository implements WorkspaceRepository
         return (bool) $workspace->delete();
     }
 
-    public function attachStudents(Workspace $workspace, array $studentIds): void
+    public function attachStudents(Workspace $workspace, array $studentIds, array $attributes = []): void
     {
         $studentIds = array_values(array_filter(array_map('intval', $studentIds)));
         if ($studentIds !== []) {
-            $workspace->students()->syncWithoutDetaching($studentIds);
+            $syncData = [];
+            foreach ($studentIds as $id) {
+                $syncData[$id] = $attributes;
+            }
+            $workspace->students()->syncWithoutDetaching($syncData);
         }
     }
 

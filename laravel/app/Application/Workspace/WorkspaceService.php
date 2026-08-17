@@ -135,10 +135,30 @@ class WorkspaceService
 
     // --- Tələbələr ---
 
-    public function attachStudents(int $teacherId, int $workspaceId, array $studentIds): void
+    public function attachStudents(int $teacherId, int $workspaceId, array $studentIds, ?float $agreedPrice = null, ?string $startDate = null): void
     {
         $workspace = $this->assertOwned($teacherId, $workspaceId);
-        $this->workspaces->attachStudents($workspace, $studentIds);
+        
+        $attributes = [];
+        if ($agreedPrice !== null) {
+            $attributes['agreed_price'] = $agreedPrice;
+        }
+        if ($startDate !== null) {
+            $attributes['start_date'] = $startDate;
+        }
+        
+        $this->workspaces->attachStudents($workspace, $studentIds, $attributes);
+        
+        // Avtomatik olaraq cari ay üçün qaimə yaradaq
+        $paymentService = app(\App\Application\Payment\PaymentService::class);
+        $month = date('Y-m');
+        foreach ($studentIds as $studentId) {
+            try {
+                $paymentService->generateInvoice($studentId, $workspaceId, $month, $agreedPrice);
+            } catch (\Exception $e) {
+                // Səssizcə keçə bilərik, bəlkə onsuz da var idi və s.
+            }
+        }
     }
 
     public function detachStudent(int $teacherId, int $workspaceId, int $studentId): void

@@ -19,15 +19,19 @@ class StudentPaymentTrack extends Model
 
     protected $fillable = [
         'student_id',
-        'amount',
-        'due_date',
+        'workspace_id',
+        'month',
+        'total_amount',
+        'paid_amount',
         'status',
+        'due_date',
     ];
 
     protected function casts(): array
     {
         return [
-            'amount' => 'decimal:2',
+            'total_amount' => 'decimal:2',
+            'paid_amount' => 'decimal:2',
             'due_date' => 'datetime',
         ];
     }
@@ -35,6 +39,16 @@ class StudentPaymentTrack extends Model
     public function student(): BelongsTo
     {
         return $this->belongsTo(User::class, 'student_id');
+    }
+
+    public function workspace(): BelongsTo
+    {
+        return $this->belongsTo(\App\Domain\Workspace\Workspace::class, 'workspace_id');
+    }
+
+    public function transactions(): \Illuminate\Database\Eloquent\Relations\HasMany
+    {
+        return $this->hasMany(StudentPaymentTransaction::class, 'payment_track_id');
     }
 
     public function getStatusLabelAttribute(): string

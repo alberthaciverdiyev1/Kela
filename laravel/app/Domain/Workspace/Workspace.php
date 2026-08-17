@@ -17,7 +17,14 @@ class Workspace extends Model
 {
     use SoftDeletes;
 
-    protected $fillable = ['name', 'teacher_id'];
+    protected $fillable = ['name', 'teacher_id', 'monthly_price'];
+
+    protected function casts(): array
+    {
+        return [
+            'monthly_price' => 'decimal:2',
+        ];
+    }
 
     public function teacher(): BelongsTo
     {
@@ -26,7 +33,8 @@ class Workspace extends Model
 
     public function students(): BelongsToMany
     {
-        return $this->belongsToMany(User::class, 'workspace_students', 'workspace_id', 'student_id');
+        return $this->belongsToMany(User::class, 'workspace_students', 'workspace_id', 'student_id')
+            ->withPivot('agreed_price');
     }
 
     public function attendances(): HasMany

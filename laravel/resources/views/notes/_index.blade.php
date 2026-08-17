@@ -59,9 +59,14 @@
                             ></button>
                         </template>
                     </div>
-                    <button type="button" class="btn btn-ghost btn-sm text-gray-700" @click="closeComposer()">
-                        <x-icon name="heroicon-o-x-mark" class="size-4" /> Bağla
-                    </button>
+                    <div class="flex items-center gap-2">
+                        <button type="button" class="btn btn-ghost btn-sm text-gray-700" @click="closeComposer(true)">
+                            Ləğv et
+                        </button>
+                        <button type="button" class="btn btn-primary btn-sm" @click="closeComposer()">
+                            <x-icon name="heroicon-o-check" class="size-4" /> Saxla
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -202,8 +207,8 @@
                         <button type="button" @click="deleteNote(editing)" class="rounded-full p-2 text-gray-600 transition hover:bg-black/10 hover:text-red-600" title="Çöpə at">
                             <x-icon name="heroicon-o-trash" class="size-4" />
                         </button>
-                        <button type="button" class="btn btn-ghost btn-sm text-gray-700" @click="closeEditor()">
-                            <x-icon name="heroicon-o-x-mark" class="size-4" /> Bağla
+                        <button type="button" class="btn btn-primary btn-sm" @click="closeEditor()">
+                            Hazırdır
                         </button>
                     </div>
                 </div>

@@ -9,7 +9,7 @@
     ];
 @endphp
 <div class="space-y-6" x-data="attendanceMonth({{ \Illuminate\Support\Js::from($attendanceConfig) }})">
-    <x-teacher.heading subtitle="Workspace seç, ayın günlərində şagirdlərin iştirakını qeyd et">
+    <x-teacher.heading subtitle="Sinif seç, ayın günlərində şagirdlərin iştirakını qeyd et">
         Davam
         <x-slot:actions>
             {{-- Avtomatik kayıt göstergesi --}}
@@ -22,7 +22,7 @@
         </x-slot:actions>
     </x-teacher.heading>
 
-    {{-- Toolbar: workspace + ay --}}
+    {{-- Toolbar: sinif + ay --}}
     <div class="flex flex-wrap items-center justify-between gap-3">
         <div class="flex flex-wrap items-center gap-2">
             <select
@@ -30,7 +30,7 @@
                 @change="loadMonth()"
                 class="select select-bordered select-sm text-sm"
             >
-                <option value="">Workspace seç...</option>
+                <option value="">Sinif seç...</option>
                 <template x-for="ws in workspaces" :key="ws.id">
                     <option :value="ws.id" x-text="ws.name + (ws.student_count > 0 ? ' (' + ws.student_count + ' şagird)' : '')"></option>
                 </template>
@@ -75,11 +75,11 @@
     {{-- Cədvəl --}}
     <x-teacher.card :padding="false">
         <template x-if="!workspaceId">
-            <x-teacher.empty-state icon="clipboard-document-list" title="Workspace seçin" description="Davam cədvəlini açmaq üçün yuxarıdan bir workspace seçin." />
+            <x-teacher.empty-state icon="clipboard-document-list" title="Sinif seçin" description="Davam cədvəlini açmaq üçün yuxarıdan bir sinif seçin." />
         </template>
 
         <template x-if="workspaceId && students.length === 0 && !loading">
-            <x-teacher.empty-state icon="user-group" title="Şagird yoxdur" description="Bu workspace-ə şagird əlavə olunmayıb." />
+            <x-teacher.empty-state icon="user-group" title="Şagird yoxdur" description="Bu sinifə şagird əlavə olunmayıb." />
         </template>
 
         <template x-if="workspaceId && students.length > 0">

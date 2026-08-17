@@ -55,7 +55,7 @@
             ],
             [
                 'type' => 'link',
-                'label' => 'İş Sahələri',
+                'label' => 'Siniflər',
                 'icon' => 'building-office-2',
                 'url' => route('teacher.workspaces.index'),
                 'active' => str_starts_with($path, 'teacher/workspaces')
@@ -66,6 +66,13 @@
                 'icon' => 'pencil-square',
                 'url' => route('teacher.notes.index'),
                 'active' => str_starts_with($path, 'teacher/notes')
+            ],
+            [
+                'type' => 'link',
+                'label' => 'Ödənişlər',
+                'icon' => 'banknotes',
+                'url' => route('teacher.payments.index'),
+                'active' => str_starts_with($path, 'teacher/payments')
             ]
         ];
         $roleLabel = match (true) {

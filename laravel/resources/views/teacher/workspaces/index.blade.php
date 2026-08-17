@@ -1,11 +1,11 @@
 @extends('common.layouts.teacher')
-@section('title', 'İş Sahələri - Kela')
+@section('title', 'Siniflər - Kela')
 @section('content')
 <div class="space-y-6" x-data="workspaceList({{ \Illuminate\Support\Js::from(['autoCreate' => (bool) request('create')]) }})" @keydown.escape.window="closeAll()">
     <x-teacher.heading subtitle="İş sahələrini idarə et">
-        İş Sahələri
+        Siniflər
         <x-slot:actions>
-            <x-teacher.button icon="plus" @click="openCreate()">Yeni Workspace</x-teacher.button>
+            <x-teacher.button icon="plus" @click="openCreate()">Yeni Sinif</x-teacher.button>
         </x-slot:actions>
     </x-teacher.heading>
 
@@ -48,7 +48,7 @@
         </form>
 
         @if ($workspaces->isEmpty())
-            <x-teacher.empty-state icon="building-office-2" title="Workspace tapılmadı" description="Axtarışı dəyişin və ya yeni workspace yaradın." />
+            <x-teacher.empty-state icon="building-office-2" title="Sinif tapılmadı" description="Axtarışı dəyişin və ya yeni sinif yaradın." />
         @else
             {{-- List görünümü (tablo) --}}
             <div x-show="viewMode === 'list'">
@@ -103,8 +103,8 @@
         @endif
     </x-teacher.card>
 
-    {{-- Yeni Workspace dialog --}}
-    <x-teacher.modal show="showCreate" title="Yeni Workspace" maxWidth="md">
+    {{-- Yeni Sinif dialog --}}
+    <x-teacher.modal show="showCreate" title="Yeni Sinif" maxWidth="md">
         <form method="POST" action="{{ route('teacher.workspaces.store') }}" id="create-workspace-form">
             @csrf
             <div class="flex items-start gap-4">
@@ -113,7 +113,7 @@
                 </span>
                 <div class="flex-1">
                     <x-teacher.field label="Ad" name="name" :required="true" hint="Məs: Sinif 3A, Riyaziyyat qrupu...">
-                        <x-teacher.input name="name" placeholder="Workspace adı" required autofocus />
+                        <x-teacher.input name="name" placeholder="Sinif adı" required autofocus />
                     </x-teacher.field>
                 </div>
             </div>

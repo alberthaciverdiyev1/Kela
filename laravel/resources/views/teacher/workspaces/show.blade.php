@@ -209,7 +209,7 @@
         </div>
 
         @if (count($students) === 0)
-            <x-teacher.empty-state icon="user-group" title="Tələbə yoxdur" description="Bu workspace-ə tələbə əlavə edin." />
+            <x-teacher.empty-state icon="user-group" title="Tələbə yoxdur" description="Bu sinifə tələbə əlavə edin." />
         @else
             <x-teacher.card :padding="false">
                 <x-teacher.table :headers="['Ad', 'E-poçt']">
@@ -286,7 +286,7 @@
         <div class="w-full max-w-md rounded-xl border border-base-300 bg-base-100 p-6 shadow-xl">
             <h3 class="mb-4 text-lg font-semibold text-base-content">Məzmunu qovluğa daşı</h3>
             <select x-ref="contentMoveSelect" class="select select-bordered w-full text-sm">
-                <option value="">Bu workspace-in kökünə</option>
+                <option value="">Bu sinifin kökünə</option>
                 <template x-for="(f, i) in folderTree" :key="f.id">
                     <option :value="f.id" x-text="'&nbsp;'.repeat(f.depth) + f.name"></option>
                 </template>
@@ -436,13 +436,33 @@
     <div x-show="showStudent" x-cloak x-transition.opacity class="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4">
         <div class="w-full max-w-md rounded-xl border border-base-300 bg-base-100 p-6 shadow-xl">
             <h3 class="mb-4 text-lg font-semibold text-base-content">Tələbə Əlavə Et</h3>
-            <select x-ref="studentSelect" multiple class="select select-bordered h-40 w-full text-sm">
-                @foreach ($availableStudents as $value => $label)
-                    <option value="{{ $value }}">{{ $label }}</option>
-                @endforeach
-            </select>
+            @if (count($availableStudents) > 0)
+                <div class="form-control mb-4">
+                    <label class="label"><span class="label-text">Tələbə seçin (Birdən çox seçə bilərsiniz)</span></label>
+                    <div x-ref="studentSelect" class="w-full rounded-xl border border-base-300 bg-base-100 p-2 text-sm overflow-y-auto" style="max-height: 200px;">
+                        @foreach ($availableStudents as $value => $label)
+                            <label class="flex cursor-pointer items-center gap-3 rounded-md p-2 hover:bg-base-200 transition">
+                                <input type="checkbox" value="{{ $value }}" class="checkbox checkbox-primary checkbox-sm">
+                                <span class="font-medium text-base-content">{{ $label }}</span>
+                            </label>
+                        @endforeach
+                    </div>
+                </div>
+            @endif
+
+            <div class="grid gap-4 sm:grid-cols-2">
+                <div class="form-control w-full">
+                    <label class="label"><span class="label-text">Başlanğıc tarixi</span></label>
+                    <input type="date" x-ref="studentStartDate" class="input input-bordered w-full text-sm">
+                </div>
+                <div class="form-control w-full">
+                    <label class="label"><span class="label-text">Qeydiyyat qiyməti (AZN)</span></label>
+                    <input type="number" step="0.01" x-ref="studentPrice" class="input input-bordered w-full text-sm" placeholder="Məs: 50">
+                </div>
+            </div>
+            
             @if (count($availableStudents) === 0)
-                <p class="mt-2 text-sm text-base-content/60">Əlavə edilə bilən tələbə yoxdur.</p>
+                <p class="mt-4 text-sm text-error font-medium">Əlavə edilə bilən tələbə yoxdur.</p>
             @endif
             <div class="mt-4 flex justify-end gap-2">
                 <button type="button" class="btn btn-sm btn-ghost" @click="showStudent = false">Ləğv et</button>

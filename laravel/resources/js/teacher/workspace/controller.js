@@ -508,16 +508,24 @@ export default function workspaceManager(config) {
         // ── Tələbə əməliyyatları ───────────────────────────────────────────
 
         async saveStudents() {
-            const select = this.$refs.studentSelect;
-            const ids = Array.from(select?.selectedOptions ?? [])
-                .map((o) => Number(o.value))
+            const container = this.$refs.studentSelect;
+            const checkboxes = container ? Array.from(container.querySelectorAll('input[type="checkbox"]:checked')) : [];
+            const ids = checkboxes
+                .map((cb) => Number(cb.value))
                 .filter((n) => Number.isFinite(n));
             if (ids.length === 0) {
                 window.alert('Ən azı bir tələbə seçin.');
                 return;
             }
+            
+            const payload = { student_ids: ids };
+            const price = this.$refs.studentPrice?.value;
+            const date = this.$refs.studentStartDate?.value;
+            if (price) payload.agreed_price = price;
+            if (date) payload.start_date = date;
+            
             try {
-                await KelaApi('POST', `/teacher/workspaces/${this.workspaceId}/students`, { student_ids: ids });
+                await KelaApi('POST', `/teacher/workspaces/${this.workspaceId}/students`, payload);
                 window.location.reload();
             } catch (err) {
                 window.alert(err.message);

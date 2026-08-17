@@ -44,8 +44,9 @@
                     @elseif(auth()->user()->isTeacher())
                         <a href="{{ route('teacher.dashboard') }}" class="rounded-xl px-3 py-2 text-base-content/65 transition hover:bg-base-300/50 hover:text-base-content">Panel</a>
                         <a href="{{ route('teacher.students.index') }}" class="rounded-xl px-3 py-2 text-base-content/65 transition hover:bg-base-300/50 hover:text-base-content">Şagirdlər</a>
-                        <a href="{{ route('teacher.workspaces.index') }}" class="rounded-xl px-3 py-2 text-base-content/65 transition hover:bg-base-300/50 hover:text-base-content">İş Sahələri</a>
+                        <a href="{{ route('teacher.workspaces.index') }}" class="rounded-xl px-3 py-2 text-base-content/65 transition hover:bg-base-300/50 hover:text-base-content">Siniflər</a>
                         <a href="{{ route('teacher.notes.index') }}" class="rounded-xl px-3 py-2 text-base-content/65 transition hover:bg-base-300/50 hover:text-base-content">Qeydlər</a>
+                        <a href="{{ route('teacher.payments.index') }}" class="rounded-xl px-3 py-2 text-base-content/65 transition hover:bg-base-300/50 hover:text-base-content">Ödənişlər</a>
                         <div class="relative" x-data="{ open: false }" @click.outside="open = false" @keydown.escape.window="open = false">
                             <button @click="open = !open" class="flex items-center gap-1.5 rounded-xl px-3 py-2 text-base-content/65 transition hover:bg-base-300/50 hover:text-base-content" :class="open ? 'bg-base-300/50 text-base-content' : ''">
                                 Tədris

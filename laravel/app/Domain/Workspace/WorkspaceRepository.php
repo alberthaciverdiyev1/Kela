@@ -31,7 +31,7 @@ interface WorkspaceRepository
 
     public function delete(Workspace $workspace): bool;
 
-    public function attachStudents(Workspace $workspace, array $studentIds): void;
+    public function attachStudents(Workspace $workspace, array $studentIds, array $attributes = []): void;
 
     public function detachStudent(Workspace $workspace, int $studentId): void;
 
