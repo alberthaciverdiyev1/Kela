@@ -8,13 +8,13 @@
 
 @php
     $variants = [
-        'primary' => 'btn-primary text-white',
-        'secondary' => 'border border-base-300 bg-white text-base-content shadow-sm hover:bg-base-200',
-        'danger' => 'btn-error',
-        'ghost' => 'btn-ghost',
+        'primary' => 'btn-primary text-white hover:brightness-110 active:scale-95',
+        'secondary' => 'border border-base-300 bg-white text-base-content shadow-sm hover:bg-base-50 active:scale-95',
+        'danger' => 'btn-error text-white hover:brightness-110 active:scale-95',
+        'ghost' => 'btn-ghost active:scale-95 text-base-content/70 hover:bg-base-200/50 hover:text-base-content',
     ];
     $sizes = ['xs' => 'btn-xs', 'sm' => 'btn-sm', 'md' => 'btn-md'];
-    $classes = 'btn inline-flex items-center gap-2 font-medium '.($variants[$variant] ?? 'btn-primary').' '.($sizes[$size] ?? '');
+    $classes = 'btn inline-flex items-center gap-2 font-medium transition-all duration-200 '.($variants[$variant] ?? $variants['primary']).' '.($sizes[$size] ?? '');
 @endphp
 
 @if ($href)

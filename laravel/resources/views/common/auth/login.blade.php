@@ -1,40 +1,51 @@
-@extends('common.layouts.app')
+@extends('common.layouts.guest')
 
-@section('title', 'Login - Kela')
+@section('title', 'Daxil ol - Kela')
 
 @section('content')
-<div class="mx-auto mt-16 max-w-sm">
-    <div class="card border border-base-300 bg-base-100 shadow-md">
-        <div class="card-body p-6">
-            <h1 class="text-xl font-bold mb-1">Kela</h1>
-            <p class="text-sm text-base-content/60 mb-6">Hesabınıza daxil olun</p>
-
-            @if($errors->any())
-                <div class="alert alert-error mb-4 text-sm">
-                    {{ $errors->first() }}
-                </div>
-            @endif
-
-            <form method="POST" action="{{ route('auth.login.post') }}">
-                @csrf
-                <div class="field mb-4">
-                    <label class="label" for="email">E-poçt</label>
-                    <input id="email" type="email" name="email" class="input w-full"
-                           value="{{ old('email') }}" required autofocus autocomplete="email">
-                </div>
-                <div class="field mb-6">
-                    <label class="label" for="password">Şifrə</label>
-                    <input id="password" type="password" name="password" class="input w-full"
-                           required autocomplete="current-password">
-                </div>
-                <button type="submit" class="btn btn-primary w-full">Daxil ol</button>
-            </form>
-
-            <p class="mt-4 text-center text-sm text-base-content/60">
-                Hesabınız yoxdur?
-                <a href="{{ route('auth.register') }}" class="font-medium text-primary hover:underline">Müəllim qeydiyyatı</a>
-            </p>
-        </div>
+    <div class="mb-10">
+        <h1 class="text-4xl font-bold tracking-tight text-base-content">Daxil ol</h1>
+        <p class="mt-3 text-base text-base-content/60">Hesabınıza daxil olun və idarəetməyə başlayın.</p>
     </div>
-</div>
+
+    @if($errors->any())
+        <div class="mb-6 rounded-xl bg-error/10 p-4 text-sm text-error">
+            <div class="flex items-center gap-2 font-medium">
+                <x-icon name="heroicon-o-exclamation-triangle" class="h-5 w-5 shrink-0" />
+                <span>Xəta baş verdi</span>
+            </div>
+            <p class="ml-7 mt-1 text-error/80">{{ $errors->first() }}</p>
+        </div>
+    @endif
+
+    <form method="POST" action="{{ route('auth.login.post') }}" class="space-y-6">
+        @csrf
+        <div>
+            <label class="mb-2 block text-sm font-medium text-base-content/70" for="email">E-poçt ünvanı</label>
+            <input id="email" type="email" name="email" 
+                   class="input input-bordered input-lg w-full focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary text-base"
+                   value="{{ old('email') }}" required autofocus autocomplete="email" placeholder="ad@numune.com">
+        </div>
+        
+        <div>
+            <div class="mb-2 flex items-center justify-between">
+                <label class="block text-sm font-medium text-base-content/70" for="password">Şifrə</label>
+                <a href="#" class="text-sm font-medium text-primary hover:underline">Şifrəni unutmusunuz?</a>
+            </div>
+            <input id="password" type="password" name="password" 
+                   class="input input-bordered input-lg w-full focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary text-base"
+                   required autocomplete="current-password" placeholder="••••••••">
+        </div>
+        
+        <button type="submit" class="btn btn-primary btn-lg mt-4 w-full">
+            Daxil ol
+        </button>
+    </form>
+
+    <p class="mt-8 text-center text-sm text-base-content/60">
+        Hesabınız yoxdur?
+        <a href="{{ route('auth.register') }}" class="font-medium text-primary hover:underline">
+            Müəllim kimi qeydiyyatdan keçin
+        </a>
+    </p>
 @endsection

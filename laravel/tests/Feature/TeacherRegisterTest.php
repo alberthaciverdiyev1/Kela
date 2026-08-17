@@ -25,7 +25,7 @@ class TeacherRegisterTest extends TestCase
     {
         $this->get('/auth/register')
             ->assertOk()
-            ->assertSee('Müəllim hesabı yaradın')
+            ->assertSee('Kela platformasına qoşulun')
             ->assertSee('Qeydiyyatdan ke')
             ->assertSee('first_name');
     }
@@ -80,7 +80,7 @@ class TeacherRegisterTest extends TestCase
     {
         $this->get('/auth/login')
             ->assertOk()
-            ->assertSee('Müəllim qeydiyyatı')
+            ->assertSee('Müəllim kimi qeydiyyatdan keçin')
             ->assertSee(route('auth.register'));
     }
 

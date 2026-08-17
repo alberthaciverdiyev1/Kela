@@ -133,95 +133,122 @@
 
     {{-- Quiz seçimi pəncərəsi --}}
     <div x-show="showQuizPicker" x-cloak x-transition.opacity class="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4">
-        <div class="w-full max-w-lg overflow-hidden rounded-xl border border-base-300 bg-base-100 shadow-xl">
-            <div class="flex items-center justify-between gap-4 border-b border-base-200 px-5 py-4">
+        <div class="flex w-full max-w-5xl flex-col overflow-hidden rounded-xl border border-base-300 bg-base-100 shadow-xl" style="max-height: 90vh;">
+            {{-- Header --}}
+            <div class="flex shrink-0 items-center justify-between gap-4 border-b border-base-200 px-5 py-4">
                 <div>
                     <h3 class="text-base font-semibold text-base-content">Quizdən sual əlavə et</h3>
-                    <p class="mt-0.5 text-xs text-base-content/50">Quizi seçin, sualları işarələyin və əlavə edin.</p>
+                    <p class="mt-0.5 text-xs text-base-content/50">Quizi seçin, sağdakı siyahıdan sualları işarələyin və əlavə edin.</p>
                 </div>
                 <button type="button" @click="showQuizPicker = false" class="rounded-lg p-1.5 text-base-content/50 hover:bg-base-200" aria-label="Bağla">
                     <x-icon name="heroicon-o-x-mark" class="size-5" />
                 </button>
             </div>
 
-            <div class="space-y-3 border-b border-base-200 px-5 py-4">
-                <input
-                    type="text"
-                    x-model="quizSearch"
-                    placeholder="Quiz və ya qovluq axtar..."
-                    class="input input-bordered w-full text-sm"
-                />
-                <div class="flex items-center gap-2 text-xs text-base-content/50" x-show="quizzesLoading">
-                    <span class="loading loading-spinner loading-xs text-primary"></span> Quizlər yüklənir...
-                </div>
-                <div class="flex items-center gap-2 text-xs text-base-content/50" x-show="!quizzesLoading && quizzes.length === 0">
-                    Quiz tapılmadı.
-                </div>
-            </div>
-
-            <div class="max-h-48 overflow-y-auto px-2 py-2">
-                {{-- Qovluq başlıqları + içlərindəki quizlər (ic-ice qruplaşmış) --}}
-                <template x-for="row in quizRows" :key="row.key">
-                    <div class="space-y-0.5">
-                        {{-- Qovluq başlığı (tıklanaraq açılır/bağlanır) --}}
-                        <div x-show="row.kind === 'folder'"
-                            @click="toggleFolder(row.key)"
-                            class="flex cursor-pointer select-none items-center gap-1.5 pt-3 pb-1 text-xs font-semibold uppercase tracking-wide text-base-content/50 transition hover:text-base-content/80"
-                            :style="'padding-left: ' + (row.depth * 16 + 4) + 'px'">
-                            <span x-show="!row.collapsed" class="shrink-0"><x-icon name="heroicon-o-chevron-down" class="size-3.5" /></span>
-                            <span x-show="row.collapsed" class="shrink-0"><x-icon name="heroicon-o-chevron-right" class="size-3.5" /></span>
-                            <x-icon name="heroicon-o-folder" class="size-4 shrink-0 text-primary/70" />
-                            <span class="min-w-0 flex-1 truncate" x-text="row.name"></span>
-                            <span class="text-base-content/40" x-text="row.count"></span>
+            {{-- Main Content Area: Side by Side --}}
+            <div class="flex min-h-0 flex-1">
+                {{-- Left: Folders & Quizzes --}}
+                <div class="flex w-1/2 shrink-0 flex-col border-r border-base-200 bg-base-100/50">
+                    <div class="shrink-0 space-y-3 border-b border-base-200 p-4">
+                        <input
+                            type="text"
+                            x-model="quizSearch"
+                            placeholder="Quiz və ya qovluq axtar..."
+                            class="input input-bordered w-full text-sm"
+                        />
+                        <div class="flex items-center gap-2 text-xs text-base-content/50" x-show="quizzesLoading">
+                            <span class="loading loading-spinner loading-xs text-primary"></span> Quizlər yüklənir...
                         </div>
-
-                        {{-- Quiz sətri --}}
-                        <div x-show="row.kind === 'quiz'"
-                            class="flex cursor-pointer select-none items-center gap-3 rounded-lg px-3 py-2 text-sm transition hover:bg-base-200/60"
-                            :class="Number(selectedQuizId) === row.q?.id ? 'bg-primary/10' : ''"
-                            :style="'padding-left: ' + (row.depth * 16 + 8) + 'px'"
-                            @click="selectQuizRow(row.q)">
-                            <x-icon name="heroicon-o-clipboard-document-list" class="size-4 shrink-0 text-base-content/40" />
-                            <span class="min-w-0 flex-1 truncate text-base-content" x-text="row.q?.title ?? ''"></span>
-                            <span class="badge badge-sm font-medium" x-text="row.q?.questions_count ?? ''"></span>
-                            <x-icon name="heroicon-o-check-circle" class="size-4 shrink-0 text-primary" x-show="Number(selectedQuizId) === row.q?.id" />
+                        <div class="flex items-center gap-2 text-xs text-base-content/50" x-show="!quizzesLoading && quizzes.length === 0">
+                            Quiz tapılmadı.
                         </div>
                     </div>
-                </template>
-                <p class="py-6 text-center text-sm text-base-content/50" x-show="!quizzesLoading && quizzes.length > 0 && quizRowsCount === 0">
-                    Axtarışa uyğun quiz tapılmadı.
-                </p>
-            </div>
+                    <div class="flex-1 overflow-y-auto px-2 py-3">
+                        {{-- Qovluq başlıqları + içlərindəki quizlər (ic-ice qruplaşmış) --}}
+                        <template x-for="row in quizRows" :key="row.key">
+                            <div class="space-y-0.5">
+                                {{-- Qovluq başlığı (tıklanaraq açılır/bağlanır) --}}
+                                <div x-show="row.kind === 'folder'"
+                                    @click="toggleFolder(row.key)"
+                                    class="flex cursor-pointer select-none items-center gap-1.5 pt-3 pb-1 text-xs font-semibold uppercase tracking-wide text-base-content/50 transition hover:text-base-content/80"
+                                    :style="'padding-left: ' + (row.depth * 16 + 4) + 'px'">
+                                    <span x-show="!row.collapsed" class="shrink-0"><x-icon name="heroicon-o-chevron-down" class="size-3.5" /></span>
+                                    <span x-show="row.collapsed" class="shrink-0"><x-icon name="heroicon-o-chevron-right" class="size-3.5" /></span>
+                                    <x-icon name="heroicon-o-folder" class="size-4 shrink-0 text-primary/70" />
+                                    <span class="min-w-0 flex-1 truncate" x-text="row.name"></span>
+                                    <span class="text-base-content/40" x-text="row.count"></span>
+                                </div>
 
-            <div class="max-h-48 overflow-y-auto px-2 py-2">
-                <div class="flex items-center gap-2 px-3 text-xs text-base-content/50" x-show="quizQuestionsLoading">
-                    <span class="loading loading-spinner loading-xs text-primary"></span> Suallar yüklənir...
+                                {{-- Quiz sətri --}}
+                                <div x-show="row.kind === 'quiz'"
+                                    class="flex cursor-pointer select-none items-center gap-3 rounded-lg px-3 py-2 text-sm transition hover:bg-base-200/80"
+                                    :class="Number(selectedQuizId) === row.q?.id ? 'bg-primary/10 ring-1 ring-inset ring-primary/20' : ''"
+                                    :style="'padding-left: ' + (row.depth * 16 + 8) + 'px'"
+                                    @click="selectQuizRow(row.q)">
+                                    <x-icon name="heroicon-o-clipboard-document-list" class="size-4 shrink-0" x-bind:class="Number(selectedQuizId) === row.q?.id ? 'text-primary' : 'text-base-content/40'" />
+                                    <span class="min-w-0 flex-1 truncate" :class="Number(selectedQuizId) === row.q?.id ? 'font-medium text-primary' : 'text-base-content'" x-text="row.q?.title ?? ''"></span>
+                                    <span class="badge badge-sm font-medium" :class="Number(selectedQuizId) === row.q?.id ? 'badge-primary' : ''" x-text="row.q?.questions_count ?? ''"></span>
+                                    <x-icon name="heroicon-o-chevron-right" class="size-4 shrink-0 text-primary opacity-0 transition-opacity" x-bind:class="Number(selectedQuizId) === row.q?.id ? 'opacity-100' : ''" />
+                                </div>
+                            </div>
+                        </template>
+                        <p class="py-6 text-center text-sm text-base-content/50" x-show="!quizzesLoading && quizzes.length > 0 && quizRowsCount === 0">
+                            Axtarışa uyğun quiz tapılmadı.
+                        </p>
+                    </div>
                 </div>
-                <template x-if="selectedQuizId && !quizQuestionsLoading && quizQuestions.length === 0">
-                    <p class="py-8 text-center text-sm text-base-content/50">Bu quizdə sual yoxdur.</p>
-                </template>
-                <template x-for="q in quizQuestions" :key="q.question_id">
-                    <label class="flex cursor-pointer items-start gap-3 rounded-lg px-3 py-2 transition hover:bg-base-200/60">
-                        <input type="checkbox" class="checkbox checkbox-primary checkbox-sm mt-0.5 shrink-0" :checked="!!checked[q.question_id]" @change="toggleCheck(q.question_id)" />
-                        <span class="min-w-0 flex-1">
-                            <span class="rich-preview block text-sm text-base-content" x-html="q.text"></span>
-                            <span class="mt-1 flex flex-wrap gap-1">
-                                <template x-for="(opt, oi) in itemOptions(q)" :key="oi">
-                                    <span class="rounded bg-base-200 px-1.5 py-0.5 text-xs text-base-content/70">
-                                        <span class="font-semibold" x-text="opt.letter + '.'"></span> <span x-text="opt.text"></span>
+
+                {{-- Right: Questions in Selected Quiz --}}
+                <div class="flex w-1/2 shrink-0 flex-col bg-base-100">
+                    <div class="shrink-0 border-b border-base-200 bg-base-200/30 px-5 py-4">
+                        <h4 class="text-sm font-medium text-base-content" x-text="selectedQuizId ? 'Quiz Sualları' : 'Sual seçmək üçün soldan quiz seçin'"></h4>
+                    </div>
+                    <div class="flex-1 overflow-y-auto px-4 py-3">
+                        <div class="flex items-center gap-2 px-1 text-xs text-base-content/50" x-show="quizQuestionsLoading">
+                            <span class="loading loading-spinner loading-xs text-primary"></span> Suallar yüklənir...
+                        </div>
+                        <template x-if="!selectedQuizId">
+                            <div class="flex h-full flex-col items-center justify-center text-center opacity-50">
+                                <x-icon name="heroicon-o-arrow-left-on-rectangle" class="mb-2 size-12 text-base-content/30" />
+                                <p class="text-sm">Əvvəlcə sol tərəfdən bir quiz seçin.</p>
+                            </div>
+                        </template>
+                        <template x-if="selectedQuizId && !quizQuestionsLoading && quizQuestions.length === 0">
+                            <div class="flex h-full flex-col items-center justify-center text-center opacity-50">
+                                <x-icon name="heroicon-o-inbox" class="mb-2 size-12 text-base-content/30" />
+                                <p class="text-sm">Bu quizdə heç bir sual yoxdur.</p>
+                            </div>
+                        </template>
+                        <div class="space-y-2">
+                            <template x-for="q in quizQuestions" :key="q.question_id">
+                                <label class="flex cursor-pointer items-start gap-3 rounded-lg border border-base-200 bg-base-100 p-3 shadow-sm transition hover:border-primary/30 hover:bg-primary/5"
+                                    :class="!!checked[q.question_id] ? 'border-primary bg-primary/5 ring-1 ring-primary' : ''">
+                                    <input type="checkbox" class="checkbox checkbox-primary checkbox-sm mt-0.5 shrink-0" :checked="!!checked[q.question_id]" @change="toggleCheck(q.question_id)" />
+                                    <span class="min-w-0 flex-1">
+                                        <span class="rich-preview block text-sm text-base-content" x-html="q.text"></span>
+                                        <span class="mt-2 flex flex-wrap gap-1.5">
+                                            <template x-for="(opt, oi) in itemOptions(q)" :key="oi">
+                                                <span class="rounded bg-base-200 px-1.5 py-0.5 text-xs text-base-content/70">
+                                                    <span class="font-semibold" x-text="opt.letter + '.'"></span> <span x-text="opt.text"></span>
+                                                </span>
+                                            </template>
+                                        </span>
                                     </span>
-                                </template>
-                            </span>
-                        </span>
-                    </label>
-                </template>
+                                </label>
+                            </template>
+                        </div>
+                    </div>
+                </div>
             </div>
 
-            <div class="flex items-center justify-between gap-3 border-t border-base-200 px-5 py-3">
-                <span class="text-sm font-medium text-base-content/60" x-text="checkedCount + ' seçildi'"></span>
+            {{-- Footer --}}
+            <div class="flex shrink-0 items-center justify-between gap-3 border-t border-base-200 bg-base-200/30 px-5 py-4">
+                <span class="text-sm font-medium text-base-content/60" x-text="checkedCount + ' sual seçildi'"></span>
                 <div class="flex items-center gap-2">
                     <button type="button" class="btn btn-sm btn-ghost" @click="showQuizPicker = false">Ləğv et</button>
-                    <button type="button" class="btn btn-sm btn-primary" @click="addSelectedFromQuiz()">Əlavə et</button>
+                    <button type="button" class="btn btn-sm btn-primary" @click="addSelectedFromQuiz()" :disabled="checkedCount === 0">
+                        <x-icon name="heroicon-o-plus" class="size-4" /> Əlavə et
+                    </button>
                 </div>
             </div>
         </div>

@@ -151,7 +151,7 @@
                         <a href="{{ route('teacher.workspaces.show', ['workspace' => $workspaceId, 'folder_id' => $folder['id']]) }}" class="relative flex size-20 items-center justify-center rounded-xl bg-primary/10 text-primary transition group-hover:bg-primary/15">
                             <x-icon name="heroicon-o-folder" class="size-[66px]" />
                             @if ($folder['content_count'] > 0)
-                                <span class="absolute -right-2 -top-2 flex size-5 items-center justify-center rounded-full bg-primary text-[10px] font-bold leading-none text-primary-content">
+                                <span class="absolute -top-2.5 -right-2.5 flex size-7 items-center justify-center rounded-full bg-primary text-xs font-bold leading-none text-primary-content shadow-sm ring-2 ring-base-100">
                                     {{ $folder['content_count'] }}
                                 </span>
                             @endif

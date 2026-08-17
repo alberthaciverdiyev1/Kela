@@ -22,9 +22,9 @@
     {{-- Toolbar --}}
     <div class="flex flex-wrap items-center justify-between gap-3">
         <div class="flex flex-wrap items-center gap-2">
-            <button type="button" class="btn btn-sm btn-ghost border border-base-300" @click="openFolderAdd()">
-                <x-icon name="heroicon-o-folder-plus" class="size-4" /> Yeni Qovluq
-            </button>
+            <x-teacher.button variant="secondary" size="sm" icon="folder-plus" @click="openFolderAdd()">
+                Yeni Qovluq
+            </x-teacher.button>
         </div>
 
         {{-- Görünüm keçidi: List / Grid --}}
@@ -162,7 +162,7 @@
                         <a href="{{ route('teacher.lessons.index', ['folder_id' => $folder['id']]) }}" class="relative flex size-20 items-center justify-center rounded-xl bg-primary/10 text-primary transition group-hover:bg-primary/15">
                             <x-icon name="heroicon-o-folder" class="size-[66px]" />
                             @if ($folder['lesson_count'] > 0)
-                                <span class="absolute -right-2 -top-2 flex size-5 items-center justify-center rounded-full bg-primary text-[10px] font-bold leading-none text-primary-content">
+                                <span class="absolute -top-2.5 -right-2.5 flex size-7 items-center justify-center rounded-full bg-primary text-xs font-bold leading-none text-primary-content shadow-sm ring-2 ring-base-100">
                                     {{ $folder['lesson_count'] }}
                                 </span>
                             @endif
@@ -197,72 +197,62 @@
     </x-teacher.card>
 
     {{-- Yeni Qovluq dialog --}}
-    <div x-show="showFolderAdd" x-cloak x-transition.opacity class="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4">
-        <div class="w-full max-w-md rounded-xl border border-base-300 bg-base-100 p-6 shadow-xl">
-            <h3 class="mb-4 text-lg font-semibold text-base-content">Yeni Qovluq</h3>
-            <input
-                x-ref="folderNameInput"
-                type="text"
-                placeholder="Qovluq adı"
-                class="input input-bordered w-full text-sm"
-            />
-            <div class="mt-4 flex justify-end gap-2">
-                <button type="button" class="btn btn-sm btn-ghost" @click="showFolderAdd = false">Ləğv et</button>
-                <button type="button" class="btn btn-sm btn-primary" @click="saveFolder()">Yarat</button>
-            </div>
-        </div>
-    </div>
+    <x-teacher.modal show="showFolderAdd" title="Yeni Qovluq" maxWidth="md">
+        <input
+            x-ref="folderNameInput"
+            type="text"
+            placeholder="Qovluq adı"
+            class="input input-bordered w-full text-sm"
+            @keydown.enter="saveFolder()"
+        />
+        <x-slot:footer>
+            <button type="button" class="btn btn-ghost" @click="showFolderAdd = false">Ləğv et</button>
+            <x-teacher.button @click="saveFolder()">Yarat</x-teacher.button>
+        </x-slot:footer>
+    </x-teacher.modal>
 
     {{-- Qovluq adını dəyiş dialog --}}
-    <div x-show="showFolderRename" x-cloak x-transition.opacity class="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4">
-        <div class="w-full max-w-md rounded-xl border border-base-300 bg-base-100 p-6 shadow-xl">
-            <h3 class="mb-4 text-lg font-semibold text-base-content">Qovluq adını dəyiş</h3>
-            <input
-                x-ref="folderRenameInput"
-                type="text"
-                placeholder="Yeni ad"
-                class="input input-bordered w-full text-sm"
-            />
-            <div class="mt-4 flex justify-end gap-2">
-                <button type="button" class="btn btn-sm btn-ghost" @click="showFolderRename = false">Ləğv et</button>
-                <button type="button" class="btn btn-sm btn-primary" @click="saveFolderRename()">Saxla</button>
-            </div>
-        </div>
-    </div>
+    <x-teacher.modal show="showFolderRename" title="Qovluq adını dəyiş" maxWidth="md">
+        <input
+            x-ref="folderRenameInput"
+            type="text"
+            placeholder="Yeni ad"
+            class="input input-bordered w-full text-sm"
+            @keydown.enter="saveFolderRename()"
+        />
+        <x-slot:footer>
+            <button type="button" class="btn btn-ghost" @click="showFolderRename = false">Ləğv et</button>
+            <x-teacher.button @click="saveFolderRename()">Saxla</x-teacher.button>
+        </x-slot:footer>
+    </x-teacher.modal>
 
     {{-- Qovluq daşı dialog --}}
-    <div x-show="showFolderMove" x-cloak x-transition.opacity class="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4">
-        <div class="w-full max-w-md rounded-xl border border-base-300 bg-base-100 p-6 shadow-xl">
-            <h3 class="mb-4 text-lg font-semibold text-base-content">Qovluğu daşı</h3>
-            <select x-ref="folderMoveSelect" class="select select-bordered w-full text-sm">
-                <option value="">Kökə</option>
-                <template x-for="(f, i) in folderTree" :key="f.id">
-                    <option :value="f.id" x-text="'&nbsp;'.repeat(f.depth) + f.name"></option>
-                </template>
-            </select>
-            <div class="mt-4 flex justify-end gap-2">
-                <button type="button" class="btn btn-sm btn-ghost" @click="showFolderMove = false">Ləğv et</button>
-                <button type="button" class="btn btn-sm btn-primary" @click="saveFolderMove()">Daşı</button>
-            </div>
-        </div>
-    </div>
+    <x-teacher.modal show="showFolderMove" title="Qovluğu daşı" maxWidth="md">
+        <select x-ref="folderMoveSelect" class="select select-bordered w-full text-sm">
+            <option value="">Kökə</option>
+            <template x-for="(f, i) in folderTree" :key="f.id">
+                <option :value="f.id" x-text="'&nbsp;'.repeat(f.depth) + f.name"></option>
+            </template>
+        </select>
+        <x-slot:footer>
+            <button type="button" class="btn btn-ghost" @click="showFolderMove = false">Ləğv et</button>
+            <x-teacher.button @click="saveFolderMove()">Daşı</x-teacher.button>
+        </x-slot:footer>
+    </x-teacher.modal>
 
     {{-- Dərs daşı dialog --}}
-    <div x-show="showLessonMove" x-cloak x-transition.opacity class="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4">
-        <div class="w-full max-w-md rounded-xl border border-base-300 bg-base-100 p-6 shadow-xl">
-            <h3 class="mb-4 text-lg font-semibold text-base-content">Dərsi qovluğa daşı</h3>
-            <select x-ref="lessonMoveSelect" class="select select-bordered w-full text-sm">
-                <option value="">Kökə</option>
-                <template x-for="(f, i) in folderTree" :key="f.id">
-                    <option :value="f.id" x-text="'&nbsp;'.repeat(f.depth) + f.name"></option>
-                </template>
-            </select>
-            <div class="mt-4 flex justify-end gap-2">
-                <button type="button" class="btn btn-sm btn-ghost" @click="showLessonMove = false">Ləğv et</button>
-                <button type="button" class="btn btn-sm btn-primary" @click="saveLessonMove()">Daşı</button>
-            </div>
-        </div>
-    </div>
+    <x-teacher.modal show="showLessonMove" title="Dərsi qovluğa daşı" maxWidth="md">
+        <select x-ref="lessonMoveSelect" class="select select-bordered w-full text-sm">
+            <option value="">Kökə</option>
+            <template x-for="(f, i) in folderTree" :key="f.id">
+                <option :value="f.id" x-text="'&nbsp;'.repeat(f.depth) + f.name"></option>
+            </template>
+        </select>
+        <x-slot:footer>
+            <button type="button" class="btn btn-ghost" @click="showLessonMove = false">Ləğv et</button>
+            <x-teacher.button @click="saveLessonMove()">Daşı</x-teacher.button>
+        </x-slot:footer>
+    </x-teacher.modal>
 
     {{-- Sağ-tık kontekst menyusu --}}
     @include('teacher.partials._context-menu')
