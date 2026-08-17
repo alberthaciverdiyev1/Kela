@@ -1,5 +1,12 @@
 @extends('common.layouts.teacher')
 @section('title', 'Şagirdlər - Kela')
+
+@push('head')
+    @if($generationRunning)
+        <meta http-equiv="refresh" content="3">
+    @endif
+@endpush
+
 @section('content')
 @php
     $studentConfig = [
@@ -16,6 +23,16 @@
     <x-teacher.heading subtitle="Şagirdləri idarə et">
         Şagirdlər
         <x-slot:actions>
+            @if($generationFailed)
+                <x-teacher.badge color="red">Generasiya uğursuz oldu</x-teacher.badge>
+            @elseif($generationRunning)
+                <x-teacher.badge color="yellow">Generasiya davam edir...</x-teacher.badge>
+            @elseif($exportCount > 0)
+                <x-teacher.button href="{{ route('teacher.students.export') }}" variant="secondary" icon="arrow-down-tray">
+                    Excel Yüklə ({{ $exportCount }})
+                </x-teacher.button>
+            @endif
+            <x-teacher.button variant="primary" icon="users" @click="showGenerate = true">Toplu Yarat</x-teacher.button>
             <x-teacher.button icon="plus" @click="openAdd()">Yeni Şagird</x-teacher.button>
         </x-slot:actions>
     </x-teacher.heading>
@@ -45,9 +62,6 @@
         </x-slot:title>
 
         <div class="grid gap-4 sm:grid-cols-2">
-            {{-- Qeyd: x-model yoxdur — form dəyərləri reaktiv saxlanılmır.
-                 Dəyərlər add/edit modulları tərəfindən $refs (DOM) vasitəsilə
-                 oxunub yazılır ki, index.js-də form dəyişəni olmasın. --}}
             <x-teacher.field label="Ad" name="first_name" :required="true">
                 <x-teacher.input name="first_name" x-ref="firstName" />
             </x-teacher.field>
@@ -90,11 +104,28 @@
                 </select>
             </x-teacher.field>
         </div>
-        
+
         <x-slot:footer>
             <button type="button" class="btn btn-ghost" @click="showForm = false">Ləğv et</button>
             <x-teacher.button @click="save()">Yadda Saxla</x-teacher.button>
         </x-slot:footer>
+    </x-teacher.modal>
+
+    <x-teacher.modal show="showGenerate" maxWidth="sm">
+        <x-slot:title>Toplu Şagird Yarat</x-slot:title>
+        <p class="mb-4 text-sm text-base-content/60">
+            Yalnız say daxil edin — adlar, e-poçtlar və şifrələr avtomatik generasiya olunur. Nəticə hazır olduqda Excel yükləmə düyməsi görünəcək.
+        </p>
+        <form method="POST" action="{{ route('teacher.students.generate') }}" class="space-y-4">
+            @csrf
+            <x-teacher.field label="Şagird sayı" name="count" :required="true">
+                <x-teacher.input name="count" type="number" min="1" max="100" value="{{ old('count', 5) }}" />
+            </x-teacher.field>
+            <div class="mt-6 flex justify-end gap-2">
+                <x-teacher.button type="button" variant="ghost" @click="showGenerate = false">Ləğv et</x-teacher.button>
+                <x-teacher.button type="submit" icon="users">Yarat</x-teacher.button>
+            </div>
+        </form>
     </x-teacher.modal>
 </div>
 @endsection

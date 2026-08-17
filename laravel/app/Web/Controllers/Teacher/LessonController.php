@@ -109,7 +109,7 @@ class LessonController
                 'is_published' => (bool) $model->is_published,
                 'duration_label' => $model->duration_label,
                 'order_index' => (int) $model->order_index,
-                'created_at' => $model->created_at?->format('d M Y H:i'),
+                'created_at' => fmt_date($model->created_at, 'd M Y H:i'),
             ],
             'hasVideo' => (bool) ($viewer['hasVideo'] ?? false),
             'streamUrl' => $viewer['streamUrl'] ?? '',

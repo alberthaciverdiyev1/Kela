@@ -65,7 +65,7 @@ class PaymentController extends Controller
         // Tarixçə modalı üçün track_id → [tarix, məbləğ, qeyd] xəritəsi.
         $trackTxns = $tracks->mapWithKeys(fn ($t) => [
             (int) $t->id => $t->transactions->map(fn ($x) => [
-                'date' => $x->paid_at?->format('d.m.Y H:i') ?? $x->created_at?->format('d.m.Y H:i'),
+                'date' => fmt_date($x->paid_at ?? $x->created_at, 'd.m.Y H:i'),
                 'amount' => number_format((float) $x->amount, 2),
                 'note' => $x->note ?? '',
             ])->all(),

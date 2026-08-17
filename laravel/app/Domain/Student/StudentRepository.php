@@ -27,4 +27,7 @@ interface StudentRepository
 
     /** Optional axtarışla tələbə siyahısı (workspace seçici üçün). */
     public function availableForWorkspace(?string $search = null): Collection;
+
+    /** Bütün istifadəçi e-poçtları — toplu generasiyada unikallıq üçün. */
+    public function allEmails(): Collection;
 }

@@ -106,7 +106,7 @@ class QuizController
                 'is_published' => (bool) ($formData['is_published'] ?? false),
                 'workspace' => $model?->content?->workspace?->name,
                 'folder' => $model?->folder?->name,
-                'created_at' => $model?->content?->created_at?->format('d M Y H:i'),
+                'created_at' => fmt_date($model?->content?->created_at, 'd M Y H:i'),
             ],
             'questions' => $this->quizzes->questionList($quiz),
         ]);

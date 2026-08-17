@@ -14,7 +14,7 @@
     <x-teacher.card :padding="false">
         <div class="flex items-center gap-4 p-6">
             <div class="flex size-16 items-center justify-center rounded-full bg-primary/10 text-xl font-bold text-primary">
-                {{ mb_substr($student['first_name'], 0, 1) }}{{ mb_substr($student['last_name'] ?? '', 0, 1) }}
+                {{ initials($student['first_name'], $student['last_name'] ?? '') }}
             </div>
             <div>
                 <h2 class="text-lg font-bold text-base-content">{{ $student['full_name'] }}</h2>
@@ -33,7 +33,7 @@
             </div>
             <div>
                 <p class="text-xs font-medium uppercase tracking-wide text-base-content/50">Soyad</p>
-                <p class="mt-1 text-sm font-medium text-base-content">{{ $student['last_name'] ?? '—' }}</p>
+                <p class="mt-1 text-sm font-medium text-base-content">{{ dash($student['last_name']) }}</p>
             </div>
             <div>
                 <p class="text-xs font-medium uppercase tracking-wide text-base-content/50">Şəhər</p>
@@ -41,7 +41,7 @@
             </div>
             <div>
                 <p class="text-xs font-medium uppercase tracking-wide text-base-content/50">Doğum tarixi</p>
-                <p class="mt-1 text-sm font-medium text-base-content">{{ $student['birth_date'] ? \Carbon\Carbon::parse($student['birth_date'])->format('d M Y') : '—' }}</p>
+                <p class="mt-1 text-sm font-medium text-base-content">{{ fmt_date($student['birth_date'], 'd M Y') }}</p>
             </div>
         </div>
     </x-teacher.card>

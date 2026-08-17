@@ -68,7 +68,7 @@
                             <td class="text-base-content/70">
                                 <x-teacher.badge color="blue">{{ $ws['student_count'] }} şagird</x-teacher.badge>
                             </td>
-                            <td class="text-base-content/70">{{ $ws['created_at'] ?? '—' }}</td>
+                            <td class="text-base-content/70">{{ dash($ws['created_at']) }}</td>
                         </tr>
                     @endforeach
                 </x-teacher.table>

@@ -7,7 +7,7 @@
 @endphp
 <div class="space-y-6">
     {{-- Başlıq --}}
-    <x-teacher.heading subtitle="{{ $question->created_at?->format('d.m.Y H:i') }}">
+    <x-teacher.heading subtitle="{{ fmt_date($question->created_at, 'd.m.Y H:i') }}">
         Sual Detayı
         <x-slot:actions>
             <x-teacher.button href="{{ route('teacher.questions.index', ['folder_id' => $question->folder_id ?? null]) }}" variant="ghost" icon="arrow-left">Geri</x-teacher.button>
@@ -106,7 +106,7 @@
                     </div>
                     <div class="flex items-center justify-between">
                         <dt class="text-base-content/60">Yaradılıb</dt>
-                        <dd class="text-base-content/80">{{ $question->created_at?->format('d.m.Y H:i') }}</dd>
+                        <dd class="text-base-content/80">{{ fmt_date($question->created_at, 'd.m.Y H:i') }}</dd>
                     </div>
                 </dl>
             </x-teacher.card>

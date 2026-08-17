@@ -13,6 +13,7 @@ export default function studentManager(config) {
 
     return {
         showForm: false,
+        showGenerate: false,
         formTitle: 'Yeni Şagird',
         editingId: null,
 

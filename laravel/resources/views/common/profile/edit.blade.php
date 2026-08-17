@@ -84,7 +84,7 @@
                                 @if($user->avatar_url)
                                     <img src="{{ $user->avatar_url }}" alt="{{ $user->full_name }}" class="h-full w-full object-cover" id="avatar-preview" />
                                 @else
-                                    <span id="avatar-initials">{{ strtoupper(mb_substr($user->first_name, 0, 1).mb_substr($user->last_name, 0, 1)) }}</span>
+                                    <span id="avatar-initials">{{ initials($user->first_name, $user->last_name) }}</span>
                                     <img src="" class="hidden h-full w-full object-cover" id="avatar-preview" />
                                 @endif
                             </div>

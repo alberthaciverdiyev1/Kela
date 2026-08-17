@@ -112,4 +112,9 @@ class EloquentStudentRepository implements StudentRepository
             ->orderBy('first_name')
             ->get(['users.id', 'users.first_name', 'users.last_name', 'users.email']);
     }
+
+    public function allEmails(): Collection
+    {
+        return User::query()->pluck('email');
+    }
 }

@@ -88,7 +88,7 @@
                                 <img src="{{ auth()->user()->avatar_url }}" alt="{{ auth()->user()->full_name }}" class="size-8 rounded-full object-cover ring-2 ring-primary/20" />
                             @else
                                 <span class="flex size-8 items-center justify-center rounded-full bg-primary text-xs font-bold text-white">
-                                    {{ strtoupper(mb_substr(auth()->user()->first_name, 0, 1).mb_substr(auth()->user()->last_name, 0, 1)) }}
+                                    {{ initials(auth()->user()->first_name, auth()->user()->last_name) }}
                                 </span>
                             @endif
                             <span class="hidden text-sm font-medium text-base-content/80 sm:block">{{ auth()->user()->full_name }}</span>
@@ -112,7 +112,7 @@
                                     <img src="{{ auth()->user()->avatar_url }}" alt="{{ auth()->user()->full_name }}" class="size-10 shrink-0 rounded-full object-cover ring-2 ring-primary/20" />
                                 @else
                                     <span class="flex size-10 shrink-0 items-center justify-center rounded-full bg-primary text-sm font-bold text-white">
-                                        {{ strtoupper(mb_substr(auth()->user()->first_name, 0, 1).mb_substr(auth()->user()->last_name, 0, 1)) }}
+                                        {{ initials(auth()->user()->first_name, auth()->user()->last_name) }}
                                     </span>
                                 @endif
                                 <div class="min-w-0">

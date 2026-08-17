@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>@yield('title', config('app.name', 'Kela')) | Teacher Panel</title>
+    @stack('head')
     <script>
         (function () {
             try {
@@ -78,7 +79,7 @@
         $user->isTeacher() => 'Müəllim',
         default => 'İstifadəçi',
     };
-    $initials = strtoupper(mb_substr($user->first_name, 0, 1).mb_substr($user->last_name, 0, 1));
+    $initials = initials($user->first_name, $user->last_name);
 @endphp
 
 <div class="flex min-h-screen flex-col">

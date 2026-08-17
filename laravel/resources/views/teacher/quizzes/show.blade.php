@@ -21,7 +21,7 @@
             </div>
             <div>
                 <p class="text-xs font-medium uppercase tracking-wide text-base-content/50">Sinif</p>
-                <p class="mt-1 text-sm font-medium text-base-content">{{ $quizData['workspace'] ?? '—' }}</p>
+                <p class="mt-1 text-sm font-medium text-base-content">{{ dash($quizData['workspace']) }}</p>
             </div>
             <div>
                 <p class="text-xs font-medium uppercase tracking-wide text-base-content/50">Qovluq</p>

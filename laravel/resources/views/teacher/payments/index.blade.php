@@ -54,11 +54,9 @@
                     $studentIsTrashed = $track->student?->trashed() ?? false;
                     $studentName = $track->student?->full_name ?? ('Şagird #'.$track->student_id);
                     $studentEmail = $track->student?->email ?? '';
-                    $initials = $track->student
-                        ? mb_substr($track->student->first_name, 0, 1).mb_substr($track->student->last_name ?? '', 0, 1)
-                        : '—';
-                    $startDate = $track->start_date ? \Carbon\Carbon::parse($track->start_date)->format('d.m.Y') : null;
-                    $nextDue = $track->next_due_date ? \Carbon\Carbon::parse($track->next_due_date)->format('d.m.Y') : null;
+                    $initials = $track->student ? initials($track->student->first_name, $track->student->last_name) : '—';
+                    $startDate = $track->start_date ? fmt_date($track->start_date) : null;
+                    $nextDue = $track->next_due_date ? fmt_date($track->next_due_date) : null;
                 @endphp
                         <tr class="transition {{ $studentIsTrashed ? 'bg-error/10 hover:bg-error/15' : 'hover:bg-base-200/30' }}">
                             <td class="font-medium px-5 py-3">
@@ -86,15 +84,15 @@
                             </td>
                             <td class="px-5 py-3 font-medium text-base-content/80">
                                 @if($track->total_amount > 0)
-                                    {{ number_format($track->total_amount, 2) }} AZN
+                                    {{ money($track->total_amount) }}
                                 @else
                                     <span class="text-error font-semibold text-xs bg-error/10 px-2 py-1 rounded-md">Təyin edilməyib</span>
                                 @endif
                             </td>
-                            <td class="px-5 py-3 font-medium text-success">{{ number_format($track->paid_amount, 2) }} AZN</td>
+                            <td class="px-5 py-3 font-medium text-success">{{ money($track->paid_amount) }}</td>
                             <td class="px-5 py-3 font-semibold {{ $debt > 0 ? 'text-error' : 'text-base-content/50' }}">
                                 @if($track->total_amount > 0)
-                                    {{ number_format($debt, 2) }} AZN
+                                    {{ money($debt) }}
                                 @else
                                     -
                                 @endif

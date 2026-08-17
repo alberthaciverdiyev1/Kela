@@ -25,7 +25,7 @@
                 @php
                     $track = $reminder->track;
                     $studentName = $track?->student?->full_name ?? ('Şagird #'.$track?->student_id);
-                    $workspaceName = $track?->workspace?->name ?? '—';
+                    $workspaceName = dash($track?->workspace?->name);
                 @endphp
                 <tr class="transition hover:bg-base-200/30">
                     <td class="px-5 py-3 font-medium text-base-content">{{ $studentName }}</td>
@@ -39,7 +39,7 @@
                     </td>
                     <td class="px-5 py-3 text-sm text-base-content/80">{{ $reminder->message }}</td>
                     <td class="px-5 py-3 whitespace-nowrap text-sm text-base-content/60">
-                        {{ $reminder->sent_at?->format('d.m.Y H:i') }}
+                        {{ fmt_date($reminder->sent_at, 'd.m.Y H:i') }}
                     </td>
                 </tr>
             @endforeach

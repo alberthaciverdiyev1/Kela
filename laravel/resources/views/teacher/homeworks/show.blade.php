@@ -18,7 +18,7 @@
             {{ $homework->is_published ? 'Yayımlandı' : 'Qaralama' }}
         </x-teacher.badge>
         <x-teacher.badge color="blue">{{ $total }} sual</x-teacher.badge>
-        <span class="text-sm text-base-content/50">Yaradılıb: {{ $homework->created_at?->format('d M Y H:i') }}</span>
+        <span class="text-sm text-base-content/50">Yaradılıb: {{ fmt_date($homework->created_at, 'd M Y H:i') }}</span>
     </div>
 
     @if ($total === 0)

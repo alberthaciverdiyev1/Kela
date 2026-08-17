@@ -7,6 +7,7 @@ use App\Domain\User\User;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Str;
 
 /**
  * Şagirdlərlə bağlı tətbiq səviyyəli əməliyyatlar (use cases).
@@ -22,6 +23,79 @@ class StudentService
     public function create(array $data): User
     {
         return $this->students->create($data);
+    }
+
+    /**
+     * Toplu şagird generasiyası.
+     *
+     * @param array $spec count, first_name (baza), last_name, email_prefix,
+     *                    password (ortaq — boşsa hər şagirdə avtomatik), status, city_id
+     * @return array{users: Collection<int, User>, rows: array<int, array{first_name: string, last_name: string, email: string, password: string}>}
+     */
+    public function generateMany(array $spec): array
+    {
+        $count = max(1, (int) ($spec['count'] ?? 1));
+
+        $baseFirstName = trim((string) ($spec['first_name'] ?? ''));
+        if ($baseFirstName === '') {
+            $baseFirstName = 'Şagird';
+        }
+        $baseLastName = trim((string) ($spec['last_name'] ?? ''));
+
+        $prefix = trim((string) ($spec['email_prefix'] ?? ''));
+        if ($prefix === '') {
+            $prefix = Str::slug($baseFirstName, '_') ?: 'sagird';
+        }
+
+        $sharedPassword = trim((string) ($spec['password'] ?? ''));
+        $status = (int) ($spec['status'] ?? User::STATUS_ACTIVE);
+        $cityId = ! empty($spec['city_id']) ? (int) $spec['city_id'] : null;
+
+        $usedEmails = $this->students->allEmails();
+        $users = collect();
+        $rows = [];
+
+        for ($i = 1; $i <= $count; $i++) {
+            $name = $count > 1 ? "{$baseFirstName} {$i}" : $baseFirstName;
+            $email = $this->uniqueEmail($prefix, $i, $usedEmails);
+            $plainPassword = $sharedPassword !== '' ? $sharedPassword : Str::random(10);
+
+            $user = $this->students->create([
+                'first_name' => $name,
+                'last_name' => $baseLastName !== '' ? $baseLastName : null,
+                'email' => $email,
+                'password' => $plainPassword,
+                'status' => $status,
+                'city_id' => $cityId,
+            ]);
+
+            $users->push($user);
+            $rows[] = [
+                'first_name' => $name,
+                'last_name' => $baseLastName,
+                'email' => $email,
+                'password' => $plainPassword,
+            ];
+        }
+
+        return ['users' => $users, 'rows' => $rows];
+    }
+
+    /** Verilən prefiksdən başlayaraq mövcud olmayan unikal e-poçt qaytarır. */
+    protected function uniqueEmail(string $prefix, int $start, \Illuminate\Support\Collection $used): string
+    {
+        $domain = config('app.student_email_domain', 'kela.az');
+        $i = $start;
+
+        while (true) {
+            $candidate = "{$prefix}{$i}@{$domain}";
+            if (! $used->contains($candidate)) {
+                $used->push($candidate);
+
+                return $candidate;
+            }
+            $i++;
+        }
     }
 
     public function update(int $id, array $data): User

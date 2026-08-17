@@ -2,6 +2,7 @@
 
 namespace App\Web\Controllers\Teacher;
 
+use App\Application\Student\StudentExport;
 use App\Application\Workspace\WorkspaceService;
 use App\Application\WorkspaceFolder\WorkspaceFolderService;
 use App\Domain\Content\Content;
@@ -9,12 +10,14 @@ use App\Domain\Workspace\Workspace;
 use App\Domain\WorkspaceFolder\WorkspaceFolder;
 use App\Http\Requests\AddFolderToWorkspaceRequest;
 use App\Http\Requests\AttachStudentsRequest;
+use App\Http\Requests\GenerateStudentsRequest;
 use App\Http\Requests\MoveContentRequest;
 use App\Http\Requests\MoveFolderRequest;
 use App\Http\Requests\RemoveContentRequest;
 use App\Http\Requests\RenameFolderRequest;
 use App\Http\Requests\StoreFolderRequest;
 use App\Http\Requests\WorkspaceRequest;
+use App\Jobs\GenerateStudentsJob;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -80,6 +83,9 @@ class WorkspaceController
                 ->pluck('name', 'id')
                 ->map(fn ($name) => (string) $name)
                 ->all(),
+            'exportCount' => StudentExport::count($actingId),
+            'generationRunning' => StudentExport::isRunning($actingId),
+            'generationFailed' => StudentExport::hasFailed($actingId),
         ]);
     }
 
@@ -284,6 +290,22 @@ class WorkspaceController
         );
 
         return response()->json(['message' => 'Şagirdlər əlavə edildi.']);
+    }
+
+    /** Workspace üçün toplu şagird generasiyası — queue job yaradıb sinifə əlavə edir (avtomatik qaimə ilə). */
+    public function generateStudents(GenerateStudentsRequest $request, int $workspace): RedirectResponse
+    {
+        $model = $this->workspaces->find($workspace);
+        $this->assertAccess($model);
+
+        $actingId = $this->actingId($model);
+        $count = (int) $request->validated('count');
+
+        StudentExport::clear($actingId);
+        GenerateStudentsJob::dispatch($actingId, $count, $workspace);
+
+        return redirect()->route('teacher.workspaces.show', $workspace)
+            ->with('success', "{$count} şagirdin generasiyası başladı və sinifə əlavə ediləcək. Hazır olduqda Excel yükləmə düyməsi görünəcək.");
     }
 
     /** Tələbəni workspace-dən çıxarır. */

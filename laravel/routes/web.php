@@ -34,6 +34,8 @@ Route::middleware(['auth', 'role:Admin,Teacher'])->group(function () {
         Route::get('/create', [StudentController::class, 'create'])->name('teacher.students.create');
         Route::post('/', [StudentController::class, 'store'])->name('teacher.students.store');
         Route::get('/table', [StudentController::class, 'tableFragment'])->name('teacher.students.table');
+        Route::post('/generate', [StudentController::class, 'generate'])->name('teacher.students.generate');
+        Route::get('/export', [StudentController::class, 'exportCsv'])->name('teacher.students.export');
         Route::get('/{student}', [StudentController::class, 'show'])->name('teacher.students.show');
         Route::get('/{student}/edit', [StudentController::class, 'edit'])->name('teacher.students.edit');
         Route::put('/{student}', [StudentController::class, 'update'])->name('teacher.students.update');
@@ -71,6 +73,7 @@ Route::middleware(['auth', 'role:Admin,Teacher'])->group(function () {
         Route::post('/{workspace}/folders/{folderId}/remove', [WorkspaceController::class, 'removeFolder'])->name('teacher.workspaces.folders.remove');
         Route::delete('/{workspace}/folders/{folderId}', [WorkspaceController::class, 'destroyFolder'])->name('teacher.workspaces.folders.destroy');
         Route::post('/{workspace}/students', [WorkspaceController::class, 'attachStudents'])->name('teacher.workspaces.attach-students');
+        Route::post('/{workspace}/students/generate', [WorkspaceController::class, 'generateStudents'])->name('teacher.workspaces.students.generate');
         Route::delete('/{workspace}/students/{studentId}', [WorkspaceController::class, 'detachStudent'])->name('teacher.workspaces.detach-student');
 
         Route::get('/{workspace}', [WorkspaceController::class, 'show'])->name('teacher.workspaces.show');

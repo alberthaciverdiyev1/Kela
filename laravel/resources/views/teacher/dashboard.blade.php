@@ -69,7 +69,7 @@
             <x-teacher.card accent="bg-primary">
                 <div class="flex items-center gap-4">
                     <span class="flex size-12 items-center justify-center rounded-xl bg-primary text-lg font-bold text-white">
-                        {{ strtoupper(mb_substr($user->first_name, 0, 1).mb_substr($user->last_name, 0, 1)) }}
+                        {{ initials($user->first_name, $user->last_name) }}
                     </span>
                     <div>
                         <p class="font-semibold text-base-content">{{ $user->full_name }}</p>

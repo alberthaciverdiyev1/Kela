@@ -1,4 +1,3 @@
-    {{-- Şagird cədvəli fragmenti — JS list.refresh() ilə yenidən çəkilir. --}}
 @if ($students->isEmpty())
     <x-teacher.empty-state icon="user-group" title="Şagird tapılmadı" description="Axtarışı dəyişin və ya yeni şagird əlavə edin." />
 @else
@@ -19,8 +18,8 @@
                     <a href="{{ route('teacher.students.show', $student['id']) }}" class="transition hover:text-primary">{{ $student['full_name'] }}</a>
                 </td>
                 <td class="text-base-content/70">{{ $student['email'] }}</td>
-                <td class="text-base-content/70">{{ $student['city'] ?? '—' }}</td>
-                <td class="text-base-content/70">{{ $student['birth_date'] ?? '—' }}</td>
+                <td class="text-base-content/70">{{ dash($student['city']) }}</td>
+                <td class="text-base-content/70">{{ dash($student['birth_date']) }}</td>
                 <td>
                     <x-teacher.badge :color="match ($student['status']) { 1 => 'green', 2 => 'yellow', 3 => 'red', default => 'gray' }">
                         {{ match ($student['status']) { 1 => 'Aktiv', 2 => 'Deaktiv', 3 => 'Dayandırılmış', default => $student['status'] } }}

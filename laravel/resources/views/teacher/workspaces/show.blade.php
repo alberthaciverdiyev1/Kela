@@ -1,5 +1,12 @@
 @extends('common.layouts.teacher')
 @section('title', $workspaceName.' - Kela')
+
+@push('head')
+    @if($generationRunning)
+        <meta http-equiv="refresh" content="3">
+    @endif
+@endpush
+
 @section('content')
 @php
     $workspaceConfig = [
@@ -203,9 +210,23 @@
                 Tələbələr
                 <x-teacher.badge color="blue">{{ count($students) }}</x-teacher.badge>
             </h3>
-            <button type="button" class="btn btn-sm btn-ghost border border-base-300" @click="showStudent = true">
-                <x-icon name="heroicon-o-user-plus" class="size-4" /> Tələbə Əlavə Et
-            </button>
+            <div class="flex items-center gap-2">
+                @if($generationFailed)
+                    <x-teacher.badge color="red">Generasiya uğursuz oldu</x-teacher.badge>
+                @elseif($generationRunning)
+                    <x-teacher.badge color="yellow">Generasiya davam edir...</x-teacher.badge>
+                @elseif($exportCount > 0)
+                    <a href="{{ route('teacher.students.export') }}" class="btn btn-sm btn-ghost border border-base-300 text-success">
+                        <x-icon name="heroicon-o-arrow-down-tray" class="size-4" /> Excel Yüklə ({{ $exportCount }})
+                    </a>
+                @endif
+                <button type="button" class="btn btn-sm btn-ghost border border-base-300" @click="showGenerateStudent = true">
+                    <x-icon name="heroicon-o-users" class="size-4" /> Toplu Yarat
+                </button>
+                <button type="button" class="btn btn-sm btn-ghost border border-base-300" @click="showStudent = true">
+                    <x-icon name="heroicon-o-user-plus" class="size-4" /> Tələbə Əlavə Et
+                </button>
+            </div>
         </div>
 
         @if (count($students) === 0)
@@ -468,6 +489,27 @@
                 <button type="button" class="btn btn-sm btn-ghost" @click="showStudent = false">Ləğv et</button>
                 <button type="button" class="btn btn-sm btn-primary" @click="saveStudents()">Əlavə Et</button>
             </div>
+        </div>
+    </div>
+
+    {{-- Toplu Şagird Yarat dialogu (yaradılır + sinifə əlavə olunur) --}}
+    <div x-show="showGenerateStudent" x-cloak x-transition.opacity class="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4">
+        <div class="w-full max-w-md rounded-xl border border-base-300 bg-base-100 p-6 shadow-xl">
+            <h3 class="mb-4 text-lg font-semibold text-base-content">Toplu Şagird Yarat + Sinifə Əlavə Et</h3>
+            <p class="mb-4 text-sm text-base-content/60">
+                Yalnız say daxil edin — şagirdlər avtomatik yaradılır, bu sinifə əlavə olunur və sinifin aylıq qiyməti ilə borclanır.
+            </p>
+            <form method="POST" action="{{ route('teacher.workspaces.students.generate', $workspaceId) }}" class="space-y-4">
+                @csrf
+                <div class="form-control w-full">
+                    <label class="label"><span class="label-text">Şagird sayı</span></label>
+                    <input type="number" name="count" min="1" max="100" class="input input-bordered w-full text-sm" value="{{ old('count', 5) }}" required>
+                </div>
+                <div class="mt-4 flex justify-end gap-2">
+                    <button type="button" class="btn btn-sm btn-ghost" @click="showGenerateStudent = false">Ləğv et</button>
+                    <button type="submit" class="btn btn-sm btn-primary">Yarat + Əlavə Et</button>
+                </div>
+            </form>
         </div>
     </div>
 

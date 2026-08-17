@@ -36,6 +36,7 @@ export default function workspaceManager(config) {
         showContentMove: false,
         showContentAdd: false,
         showStudent: false,
+        showGenerateStudent: false,
         // Kataloq görünümü: 'list' | 'grid' (localStorage-da saxlanılır).
         viewMode: localStorage.getItem('workspace-view') || 'list',
 
