@@ -1,7 +1,7 @@
 @extends('common.layouts.teacher')
 @section('title', $quizData['title'].' - Kela')
 @section('content')
-<div class="mx-auto max-w-3xl space-y-6">
+<div class="space-y-6">
     <x-teacher.heading subtitle="{{ $quizData['created_at'] ?? '' }}">
         {{ $quizData['title'] }}
         <x-slot:actions>

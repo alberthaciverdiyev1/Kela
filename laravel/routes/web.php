@@ -44,6 +44,7 @@ Route::middleware(['auth', 'role:Admin,Teacher'])->group(function () {
     Route::prefix('teacher/questions')->group(function () {
         Route::get('/', [QuestionController::class, 'index'])->name('teacher.questions.index');
         Route::get('/table', [QuestionController::class, 'tableFragment'])->name('teacher.questions.table');
+        Route::get('/{question}', [QuestionController::class, 'show'])->name('teacher.questions.show');
     });
 
     // İş Sahələri

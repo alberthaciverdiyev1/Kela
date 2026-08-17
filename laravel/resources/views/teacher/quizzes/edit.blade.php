@@ -9,7 +9,7 @@
     ];
 @endphp
 <div
-    class="mx-auto max-w-4xl space-y-6"
+    class="space-y-6"
     id="quiz-editor"
     data-content-id="{{ $contentId }}"
     x-data="quizEditor({{ \Illuminate\Support\Js::from($editorConfig) }})"

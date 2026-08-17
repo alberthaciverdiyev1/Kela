@@ -1,7 +1,7 @@
 @extends('common.layouts.teacher')
 @section('title', $heading)
 @section('content')
-<div class="mx-auto max-w-2xl space-y-6">
+<div class="space-y-6">
     <x-teacher.heading :subtitle="$subtitle">
         {{ $heading }}
         <x-slot:actions>

@@ -49,6 +49,21 @@ class DetailsPagesTest extends TestCase
         return $student;
     }
 
+    private function makeQuestion(string $text = '2+2 neçədir?'): \App\Domain\Question\Question
+    {
+        return \App\Domain\Question\Question::query()->create([
+            'teacher_id' => $this->teacher->id,
+            'text' => $text,
+            'option_a' => '3',
+            'option_b' => '4',
+            'option_c' => '5',
+            'option_d' => '6',
+            'option_e' => null,
+            'correct_option' => 1,
+            'explanation' => 'İki ilə ikinin cəmi dörddür.',
+        ]);
+    }
+
     public function test_student_details_page_renders_profile_and_workspaces(): void
     {
         $student = $this->makeStudent('Əli');
@@ -154,5 +169,46 @@ class DetailsPagesTest extends TestCase
 
         $html = $this->get('/teacher/quizzes')->assertOk()->getContent();
         $this->assertStringContainsString("/teacher/quizzes/{$quiz->content_id}", $html);
+    }
+
+    public function test_question_details_page_renders_text_options_and_correct_answer(): void
+    {
+        $question = $this->makeQuestion('Azərbaycanın paytaxtı hansıdır?');
+
+        $this->actingAs($this->teacher);
+
+        $html = $this->get("/teacher/questions/{$question->id}")->assertOk()->getContent();
+
+        $this->assertStringContainsString('Sual Detayı', $html);
+        $this->assertStringContainsString('Azərbaycanın paytaxtı hansıdır?', $html);
+        $this->assertStringContainsString('B', $html);
+        $this->assertStringContainsString('Doğru cavab', $html);
+        $this->assertStringContainsString('İki ilə ikinin cəmi dörddür.', $html);
+        $this->assertStringContainsString('Geri', $html);
+    }
+
+    public function test_question_details_page_404_for_unknown_question(): void
+    {
+        $this->actingAs($this->teacher);
+        $this->get('/teacher/questions/9999')->assertStatus(404);
+    }
+
+    public function test_question_details_page_blocks_cross_teacher_access(): void
+    {
+        $question = $this->makeQuestion('Məxfi sual');
+
+        $this->actingAs($this->otherTeacher);
+
+        $this->get("/teacher/questions/{$question->id}")->assertStatus(403);
+    }
+
+    public function test_question_table_links_to_details(): void
+    {
+        $question = $this->makeQuestion('Linkli sual');
+
+        $this->actingAs($this->teacher);
+
+        $html = $this->get('/teacher/questions')->assertOk()->getContent();
+        $this->assertStringContainsString("/teacher/questions/{$question->id}", $html);
     }
 }

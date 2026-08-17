@@ -4,7 +4,7 @@
 @php
     $total = count($questions);
 @endphp
-<div class="mx-auto max-w-3xl space-y-6">
+<div class="space-y-6">
     <x-teacher.heading :subtitle="$homework->description">
         {{ $homework->title }}
         <x-slot:actions>

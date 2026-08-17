@@ -1,7 +1,7 @@
 @extends('common.layouts.teacher')
 @section('title', $student['full_name'].' - Kela')
 @section('content')
-<div class="mx-auto max-w-3xl space-y-6">
+<div class="space-y-6">
     <x-teacher.heading subtitle="{{ $student['email'] }}">
         {{ $student['full_name'] }}
         <x-slot:actions>

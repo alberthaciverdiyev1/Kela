@@ -50,7 +50,7 @@
 
         {{-- Teacher panel üst navbar --}}
         <header class="sticky top-0 z-40 border-b border-base-300/80 bg-base-100/85 shadow-sm backdrop-blur-lg">
-            <div class="mx-auto grid h-16 max-w-screen-2xl grid-cols-[auto_1fr_auto] items-center gap-4 px-4 sm:px-6">
+            <div class="grid h-16 grid-cols-[auto_1fr_auto] items-center gap-4 px-4 sm:px-6 lg:px-10">
                 {{-- Logo / marka --}}
                 <a href="{{ route('teacher.dashboard') }}" class="flex shrink-0 items-center gap-2.5">
                     <span class="flex size-9 items-center justify-center rounded-xl bg-gradient-to-br from-primary to-secondary text-base font-bold text-white shadow-md shadow-primary/25">K</span>
@@ -90,24 +90,70 @@
                         <x-icon name="heroicon-o-sun" class="size-4" x-show="dark" />
                     </button>
 
-                    <span @class([
-                        'badge badge-sm font-medium',
-                        'badge-primary' => $user->isAdmin(),
-                        'badge-outline border-primary/40 text-primary' => $user->isTeacher(),
-                    ])>{{ $roleLabel }}</span>
-
-                    <span class="hidden items-center gap-2 md:flex">
-                        <span class="flex size-8 items-center justify-center rounded-full bg-gradient-to-br from-primary to-secondary text-xs font-bold text-white shadow-sm">{{ $initials }}</span>
-                        <span class="text-sm font-medium text-base-content/80">{{ $user->full_name }}</span>
-                    </span>
-
-                    <form method="POST" action="{{ route('auth.logout') }}">
-                        @csrf
-                        <button type="submit" class="btn btn-ghost btn-sm gap-1.5 text-base-content/70 hover:bg-error/10 hover:text-error">
-                            <x-icon name="heroicon-o-arrow-right-start-on-rectangle" class="size-4" />
-                            <span class="hidden sm:inline">Çıxış</span>
+                    {{-- Profil dropdown --}}
+                    <div class="relative" x-data="{ open: false }" @click.outside="open = false" @keydown.escape.window="open = false">
+                        <button
+                            type="button"
+                            @click="open = !open"
+                            class="flex items-center gap-2 rounded-xl px-2 py-1.5 transition hover:bg-base-300/50"
+                            aria-haspopup="menu"
+                            x-bind:aria-expanded="open ? 'true' : 'false'"
+                        >
+                            <span class="flex size-8 items-center justify-center rounded-full bg-gradient-to-br from-primary to-secondary text-xs font-bold text-white shadow-sm">{{ $initials }}</span>
+                            <span class="hidden text-sm font-medium text-base-content/80 sm:block">{{ $user->full_name }}</span>
+                            <x-icon name="heroicon-o-chevron-down" class="size-4 text-base-content/40 transition-transform duration-200" x-bind:class="open ? 'rotate-180' : ''" />
                         </button>
-                    </form>
+
+                        <div
+                            x-cloak
+                            x-show="open"
+                            x-transition:enter="transition ease-out duration-150"
+                            x-transition:enter-start="opacity-0 translate-y-1 scale-95"
+                            x-transition:enter-end="opacity-100 translate-y-0 scale-100"
+                            x-transition:leave="transition ease-in duration-100"
+                            x-transition:leave-start="opacity-100 translate-y-0 scale-100"
+                            x-transition:leave-end="opacity-0 translate-y-1 scale-95"
+                            class="absolute right-0 z-50 mt-2 w-60 overflow-hidden rounded-2xl border border-base-300/80 bg-base-100 shadow-xl shadow-base-300/30"
+                            role="menu"
+                        >
+                            {{-- Kullanıcı bilgileri --}}
+                            <div class="flex items-center gap-3 border-b border-base-200 bg-gradient-to-r from-primary/[0.06] to-secondary/[0.04] px-4 py-3.5">
+                                <span class="flex size-10 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-primary to-secondary text-sm font-bold text-white shadow-md shadow-primary/20">{{ $initials }}</span>
+                                <div class="min-w-0">
+                                    <p class="truncate text-sm font-semibold text-base-content">{{ $user->full_name }}</p>
+                                    <p class="truncate text-xs text-base-content/50">{{ $user->email }}</p>
+                                </div>
+                            </div>
+
+                            {{-- Rol --}}
+                            <div class="px-4 py-2.5">
+                                <span @class([
+                                    'badge badge-sm font-medium',
+                                    'badge-primary' => $user->isAdmin(),
+                                    'badge-outline border-primary/40 text-primary' => $user->isTeacher(),
+                                ])>{{ $roleLabel }}</span>
+                            </div>
+
+                            {{-- Menü --}}
+                            <div class="border-t border-base-200 p-1.5">
+                                <a href="{{ route('teacher.dashboard') }}" class="flex items-center gap-2.5 rounded-lg px-3 py-2 text-sm font-medium text-base-content/75 transition hover:bg-primary/10 hover:text-primary">
+                                    <x-icon name="heroicon-o-squares-2x2" class="size-4" />
+                                    Müəllim Paneli
+                                </a>
+                            </div>
+
+                            {{-- Logout --}}
+                            <div class="border-t border-base-200 p-1.5">
+                                <form method="POST" action="{{ route('auth.logout') }}">
+                                    @csrf
+                                    <button type="submit" class="flex w-full items-center gap-2.5 rounded-lg px-3 py-2 text-sm font-medium text-error transition hover:bg-error/10">
+                                        <x-icon name="heroicon-o-arrow-right-start-on-rectangle" class="size-4" />
+                                        Çıxış
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </header>

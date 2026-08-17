@@ -59,10 +59,10 @@
                     data-question-text="{{ Str::limit(strip_tags($q['text']), 50) }}"
                 >
                     <td class="max-w-md">
-                        <span class="inline-flex items-start gap-2 text-base-content">
-                            <x-icon name="heroicon-o-question-mark-circle" class="mt-0.5 size-4 shrink-0 opacity-60" />
+                        <a href="{{ route('teacher.questions.show', $q['id']) }}" class="group inline-flex items-start gap-2 text-base-content">
+                            <x-icon name="heroicon-o-question-mark-circle" class="mt-0.5 size-4 shrink-0 opacity-60 transition group-hover:text-primary" />
                             <span class="min-w-0">
-                                <span class="rich-preview block font-medium">{!! $q['text'] !!}</span>
+                                <span class="rich-preview block font-medium transition group-hover:text-primary">{!! $q['text'] !!}</span>
                                 @if ($q['explanation'])
                                     <span class="mt-0.5 flex items-center gap-1 text-xs text-base-content/50">
                                         <x-icon name="heroicon-o-light-bulb" class="size-3.5 shrink-0 text-amber-500" />
@@ -70,7 +70,7 @@
                                     </span>
                                 @endif
                             </span>
-                        </span>
+                        </a>
                     </td>
                     <td>
                         <div class="flex flex-wrap items-center gap-1">

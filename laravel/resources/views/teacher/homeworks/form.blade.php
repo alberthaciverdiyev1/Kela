@@ -5,7 +5,7 @@
     $homeworkConfig = ['questions' => $questions];
 @endphp
 <div
-    class="mx-auto max-w-3xl space-y-6"
+    class="space-y-6"
     x-data="homeworkEditor({{ \Illuminate\Support\Js::from($homeworkConfig) }})"
     @keydown.escape.window="showQuizPicker = false; showTaskModal = false"
 >

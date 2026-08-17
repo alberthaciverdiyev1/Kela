@@ -38,6 +38,20 @@ class QuestionController
         ]);
     }
 
+    /** Sual detay səhifəsi. */
+    public function show(int $question): View
+    {
+        $model = $this->questions->find($question);
+        $this->assertQuestionAccess($model);
+
+        return view('teacher.questions.show', [
+            'question' => $model,
+            'data' => $this->questions->formData($question),
+            'usedInQuizzes' => $this->questions->usedInQuizzes($question),
+            'folderTree' => $this->folders->folderTree((int) auth()->id()),
+        ]);
+    }
+
     /** JS-in kataloqu yeniləməsi üçün server-rendered fragment. */
     public function tableFragment(Request $request): View
     {
@@ -53,6 +67,21 @@ class QuestionController
             'breadcrumbs' => $dir['breadcrumbs'],
             'folderTree' => $this->folders->folderTree((int) auth()->id()),
         ]);
+    }
+
+    /** Sualın sahibliyini yoxla (admin hər zaman, başqası 403/404). */
+    protected function assertQuestionAccess(?\App\Domain\Question\Question $question): void
+    {
+        if ($question === null) {
+            abort(404);
+        }
+        $user = auth()->user();
+        if ($user?->isAdmin()) {
+            return;
+        }
+        if ($user === null || $question->teacher_id !== (int) $user->id) {
+            abort(403);
+        }
     }
 
     /** Qovluq verilərsə sahibliyi yoxla (admin hər zaman, başqası 403). */
