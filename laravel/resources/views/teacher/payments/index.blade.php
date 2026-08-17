@@ -5,13 +5,16 @@
 <div class="space-y-6" x-data="paymentTracker()">
     <x-teacher.heading subtitle="Tələbələrin aylıq ödənişlərini və borclarını izləyin">
         Ödənişlər
-        @if($selectedWorkspaceId)
-            <x-slot:actions>
+        <x-slot:actions>
+            <x-teacher.button href="{{ route('teacher.payments.reminders') }}" variant="outline" icon="bell">
+                Bildirişlər
+            </x-teacher.button>
+            @if($selectedWorkspaceId)
                 <button type="button" class="btn btn-primary btn-sm" @click="openGenerate()">
                     <x-icon name="heroicon-o-plus" class="size-4" /> Qaimə Yarat
                 </button>
-            </x-slot:actions>
-        @endif
+            @endif
+        </x-slot:actions>
     </x-teacher.heading>
 
     {{-- Toolbar: Sinif + Ay filteri --}}

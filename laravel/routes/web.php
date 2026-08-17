@@ -91,6 +91,7 @@ Route::middleware(['auth', 'role:Admin,Teacher'])->group(function () {
     Route::post('/teacher/attendance', [AttendanceController::class, 'store'])->name('teacher.attendance.store');
 
     Route::get('/teacher/payments', [\App\Web\Controllers\Teacher\PaymentController::class, 'index'])->name('teacher.payments.index');
+    Route::get('/teacher/payments/reminders', [\App\Web\Controllers\Teacher\PaymentReminderController::class, 'index'])->name('teacher.payments.reminders');
     Route::post('/teacher/payments/generate', [\App\Web\Controllers\Teacher\PaymentController::class, 'generate'])->name('teacher.payments.generate');
     Route::post('/teacher/payments', [\App\Web\Controllers\Teacher\PaymentController::class, 'store'])->name('teacher.payments.store');
     Route::patch('/teacher/payments/{track}', [\App\Web\Controllers\Teacher\PaymentController::class, 'updateTrack'])->name('teacher.payments.update');

@@ -140,11 +140,6 @@ class WorkspaceService
     {
         $workspace = $this->assertOwned($teacherId, $workspaceId);
 
-        // Qeyd: tələbə əlavə etmək avtomatik borc (qaimə) YARATMIR.
-        // Qaimə yalnız müəllim "Qaimə Yarat" ilə və ya payments:generate əmri ilə yaranır.
-        // agreed_price / start_date burada pivot-a yazılır və sonradan qaimə
-        // yaradılarkən istifadə olunur (proporsional hesablama və xüsusi qiymət).
-
         $attributes = [];
         if ($agreedPrice !== null) {
             $attributes['agreed_price'] = $agreedPrice;
@@ -154,6 +149,19 @@ class WorkspaceService
         }
 
         $this->workspaces->attachStudents($workspace, $studentIds, $attributes);
+
+        // Şagird sinifə əlavə olunan kimi cari ay üçün avtomatik qaimə yaranır ki,
+        // ödəniş siyahısında görünsün və modalda daxil edilən məbləğ qədər borclu olsun.
+        // Qiymət pivot-dakı agreed_price (boşdursa sinifin monthly_price) götürülür;
+        // start_date gələcəkdədirsə generateInvoice null qaytarır (hələ borc yoxdur).
+        $paymentService = app(\App\Application\Payment\PaymentService::class);
+        foreach ($studentIds as $studentId) {
+            try {
+                $paymentService->generateInvoice($teacherId, $studentId, $workspaceId, date('Y-m'));
+            } catch (\Exception $e) {
+                // Sahiblik və ya format xətası səssiz keçilir — əsas əməliyyat uğurludur.
+            }
+        }
     }
 
     public function detachStudent(int $teacherId, int $workspaceId, int $studentId): void

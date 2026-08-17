@@ -37,4 +37,12 @@ interface StudentPaymentTrackRepository
      * @return Collection<StudentPaymentTrack>
      */
     public function upcomingUnpaidForTeacher(int $teacherId): Collection;
+
+    /**
+     * Ödənilməmiş/qismən ödənilmiş və due_date-i $cutoff-dan gec olmayan bütün qaimələr
+     * (bildiriş cron-u üçün). Student və workspace eager-load olunur.
+     *
+     * @return Collection<StudentPaymentTrack>
+     */
+    public function unpaidDueBy(\DateTimeInterface $cutoff): Collection;
 }

@@ -85,4 +85,18 @@ class EloquentStudentPaymentTrackRepository implements StudentPaymentTrackReposi
             ->orderBy('due_date')
             ->get();
     }
+
+    /** Ödənilməmiş/qismən ödənilmiş və due_date-i $cutoff-dan gec olmayan bütün qaimələr. */
+    public function unpaidDueBy(\DateTimeInterface $cutoff): Collection
+    {
+        return StudentPaymentTrack::query()
+            ->with(['student' => fn ($q) => $q->withTrashed(), 'workspace'])
+            ->where('due_date', '<=', $cutoff)
+            ->whereIn('status', [
+                StudentPaymentTrack::STATUS_PENDING,
+                StudentPaymentTrack::STATUS_PARTIAL,
+                StudentPaymentTrack::STATUS_OVERDUE,
+            ])
+            ->get();
+    }
 }

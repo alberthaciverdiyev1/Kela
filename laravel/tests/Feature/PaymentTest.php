@@ -243,6 +243,31 @@ class PaymentTest extends TestCase
         $this->assertNull($track);
     }
 
+    public function test_new_student_added_to_workspace_appears_in_payment_list(): void
+    {
+        $workspaceId = $this->makeWorkspace(60.00);
+        $student = $this->makeStudent('Yeni');
+
+        // Şagirdi sinifə əlavə et → cari ay üçün avtomatik qaimə yaranmalıdır.
+        $this->workspaces()->attachStudents($this->teacher->id, $workspaceId, [$student->id]);
+
+        $track = \App\Domain\StudentPaymentTrack\StudentPaymentTrack::where('student_id', $student->id)
+            ->where('workspace_id', $workspaceId)
+            ->where('month', now()->format('Y-m'))
+            ->first();
+
+        $this->assertNotNull($track);
+        $this->assertEquals(60.00, (float) $track->total_amount);
+
+        // Ödəniş səhifəsində görünməlidir.
+        $html = $this->actingAs($this->teacher)
+            ->get('/teacher/payments?workspace='.$workspaceId)
+            ->assertOk()
+            ->getContent();
+
+        $this->assertStringContainsString($student->full_name, $html);
+    }
+
     public function test_payments_page_renders(): void
     {
         $workspaceId = $this->makeWorkspace(50.00);

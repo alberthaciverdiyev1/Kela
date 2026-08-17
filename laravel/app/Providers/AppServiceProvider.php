@@ -60,6 +60,7 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(QuizFolderRepository::class, EloquentQuizFolderRepository::class);
         $this->app->bind(HomeworkRepository::class, EloquentHomeworkRepository::class);
         $this->app->bind(\App\Domain\StudentPaymentTrack\StudentPaymentTrackRepository::class, \App\Infrastructure\Persistence\Repositories\EloquentStudentPaymentTrackRepository::class);
+        $this->app->bind(\App\Domain\PaymentReminder\PaymentReminderRepository::class, \App\Infrastructure\Persistence\Repositories\EloquentPaymentReminderRepository::class);
     }
 
     /**

@@ -10,6 +10,7 @@
     $variants = [
         'primary' => 'border-0 bg-primary text-white shadow-sm hover:bg-primary/90',
         'secondary' => 'border border-base-300 bg-base-100 text-base-content shadow-sm hover:bg-base-200/50 hover:border-base-300',
+        'outline' => 'border border-base-300 bg-transparent text-base-content/80 hover:border-base-300 hover:bg-base-200/50 hover:text-base-content',
         'danger' => 'btn-error text-white hover:brightness-110',
         'ghost' => 'btn-ghost text-base-content/70 hover:bg-base-200/50 hover:text-base-content',
     ];
