@@ -45,15 +45,15 @@
     @endphp
 
     <div class="flex min-h-screen flex-col">
-        {{-- Üst gradyan aksent xətti --}}
-        <div class="h-1 w-full bg-gradient-to-r from-primary via-secondary to-accent"></div>
+        {{-- Üst aksent xətti --}}
+        <div class="h-0.5 w-full bg-primary"></div>
 
         {{-- Teacher panel üst navbar --}}
         <header class="sticky top-0 z-40 border-b border-base-300/80 bg-base-100/85 shadow-sm backdrop-blur-lg">
             <div class="grid h-16 grid-cols-[auto_1fr_auto] items-center gap-4 px-4 sm:px-6 lg:px-10">
                 {{-- Logo / marka --}}
                 <a href="{{ route('teacher.dashboard') }}" class="flex shrink-0 items-center gap-2.5">
-                    <span class="flex size-9 items-center justify-center rounded-xl bg-gradient-to-br from-primary to-secondary text-base font-bold text-white shadow-md shadow-primary/25">K</span>
+                    <span class="flex size-9 items-center justify-center rounded-lg bg-primary text-base font-bold text-white">K</span>
                     <span class="text-xl font-bold tracking-tight text-base-content">Kela</span>
                 </a>
 
@@ -63,7 +63,7 @@
                         <a href="{{ $item['url'] }}"
                            @class([
                                'group inline-flex shrink-0 items-center gap-1.5 rounded-xl px-3 py-2 transition-all duration-200',
-                               'bg-gradient-to-br from-primary/10 to-secondary/10 text-primary shadow-sm' => $item['active'],
+                               'bg-primary/10 text-primary' => $item['active'],
                                'text-base-content/65 hover:bg-base-300/50 hover:text-base-content' => ! $item['active'],
                            ])>
                             <x-icon name="heroicon-o-{{ $item['icon'] }}" class="size-4 opacity-70" />
@@ -99,7 +99,7 @@
                             aria-haspopup="menu"
                             x-bind:aria-expanded="open ? 'true' : 'false'"
                         >
-                            <span class="flex size-8 items-center justify-center rounded-full bg-gradient-to-br from-primary to-secondary text-xs font-bold text-white shadow-sm">{{ $initials }}</span>
+                            <span class="flex size-8 items-center justify-center rounded-full bg-primary text-xs font-bold text-white">{{ $initials }}</span>
                             <span class="hidden text-sm font-medium text-base-content/80 sm:block">{{ $user->full_name }}</span>
                             <x-icon name="heroicon-o-chevron-down" class="size-4 text-base-content/40 transition-transform duration-200" x-bind:class="open ? 'rotate-180' : ''" />
                         </button>
@@ -117,8 +117,8 @@
                             role="menu"
                         >
                             {{-- Kullanıcı bilgileri --}}
-                            <div class="flex items-center gap-3 border-b border-base-200 bg-gradient-to-r from-primary/[0.06] to-secondary/[0.04] px-4 py-3.5">
-                                <span class="flex size-10 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-primary to-secondary text-sm font-bold text-white shadow-md shadow-primary/20">{{ $initials }}</span>
+                            <div class="flex items-center gap-3 border-b border-base-200 bg-base-200/40 px-4 py-3.5">
+                                <span class="flex size-10 shrink-0 items-center justify-center rounded-full bg-primary text-sm font-bold text-white">{{ $initials }}</span>
                                 <div class="min-w-0">
                                     <p class="truncate text-sm font-semibold text-base-content">{{ $user->full_name }}</p>
                                     <p class="truncate text-xs text-base-content/50">{{ $user->email }}</p>
@@ -164,9 +164,6 @@
                 'padding-left: '.config('theme.side_padding', 40).'px',
                 'padding-right: '.config('theme.side_padding', 40).'px',
             ]) class="relative">
-                {{-- Dekorativ gradyan fon (login ambiansı) --}}
-                <div aria-hidden="true" class="pointer-events-none absolute inset-x-0 top-0 h-72 bg-gradient-to-b from-primary/[0.07] via-secondary/[0.04] to-transparent"></div>
-
                 <div class="relative py-6">
                     <x-teacher.flash />
                     @yield('content')

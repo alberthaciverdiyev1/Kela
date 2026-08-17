@@ -5,8 +5,8 @@
 ])
 <div class="flex flex-col items-center justify-center gap-4 px-6 py-16 text-center">
     @if ($icon)
-        <div class="flex size-16 items-center justify-center rounded-2xl bg-gradient-to-br from-primary/15 to-secondary/15 ring-1 ring-primary/10">
-            <x-icon name="heroicon-o-{{ $icon }}" class="size-8 text-primary" />
+        <div class="flex size-14 items-center justify-center rounded-xl bg-primary/10 ring-1 ring-primary/10">
+            <x-icon name="heroicon-o-{{ $icon }}" class="size-7 text-primary" />
         </div>
     @endif
     <div>

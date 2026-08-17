@@ -20,11 +20,11 @@
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 <body class="font-sans antialiased bg-base-200">
-    <div class="h-1 w-full bg-gradient-to-r from-primary via-secondary to-accent"></div>
+    <div class="h-0.5 w-full bg-primary"></div>
     <header class="navbar sticky top-0 z-40 border-b border-base-300/80 bg-base-100/85 shadow-sm backdrop-blur-lg">
         <div class="flex items-center gap-4 px-4 sm:px-6">
             <a href="/" class="flex items-center gap-2.5">
-                <span class="flex size-9 items-center justify-center rounded-xl bg-gradient-to-br from-primary to-secondary text-base font-bold text-white shadow-md shadow-primary/25">K</span>
+                <span class="flex size-9 items-center justify-center rounded-lg bg-primary text-base font-bold text-white">K</span>
                 <span class="text-lg font-bold tracking-tight text-base-content">{{ config('app.name') }}</span>
             </a>
             @auth
@@ -55,7 +55,7 @@
                             aria-haspopup="menu"
                             x-bind:aria-expanded="open ? 'true' : 'false'"
                         >
-                            <span class="flex size-8 items-center justify-center rounded-full bg-gradient-to-br from-primary to-secondary text-xs font-bold text-white shadow-sm">
+                            <span class="flex size-8 items-center justify-center rounded-full bg-primary text-xs font-bold text-white">
                                 {{ strtoupper(mb_substr(auth()->user()->first_name, 0, 1).mb_substr(auth()->user()->last_name, 0, 1)) }}
                             </span>
                             <span class="hidden text-sm font-medium text-base-content/80 sm:block">{{ auth()->user()->full_name }}</span>
@@ -74,8 +74,8 @@
                             class="absolute right-0 z-50 mt-2 w-60 overflow-hidden rounded-2xl border border-base-300/80 bg-base-100 shadow-xl shadow-base-300/30"
                             role="menu"
                         >
-                            <div class="flex items-center gap-3 border-b border-base-200 bg-gradient-to-r from-primary/[0.06] to-secondary/[0.04] px-4 py-3.5">
-                                <span class="flex size-10 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-primary to-secondary text-sm font-bold text-white shadow-md shadow-primary/20">
+                            <div class="flex items-center gap-3 border-b border-base-200 bg-base-200/40 px-4 py-3.5">
+                                <span class="flex size-10 shrink-0 items-center justify-center rounded-full bg-primary text-sm font-bold text-white">
                                     {{ strtoupper(mb_substr(auth()->user()->first_name, 0, 1).mb_substr(auth()->user()->last_name, 0, 1)) }}
                                 </span>
                                 <div class="min-w-0">
@@ -104,7 +104,6 @@
             'padding-left: '.config('theme.side_padding', 40).'px',
             'padding-right: '.config('theme.side_padding', 40).'px',
         ]) class="relative">
-            <div aria-hidden="true" class="pointer-events-none absolute inset-x-0 top-0 h-64 bg-gradient-to-b from-primary/[0.07] via-secondary/[0.04] to-transparent"></div>
             <div class="relative py-6">
                 @if(session('status'))
                     <div class="alert alert-success mb-4">{{ session('status') }}</div>

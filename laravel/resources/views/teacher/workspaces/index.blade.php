@@ -108,7 +108,7 @@
         <form method="POST" action="{{ route('teacher.workspaces.store') }}" id="create-workspace-form">
             @csrf
             <div class="flex items-start gap-4">
-                <span class="flex size-11 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-primary/15 to-secondary/15 text-primary">
+                <span class="flex size-11 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary">
                     <x-icon name="heroicon-o-building-office-2" class="size-6" />
                 </span>
                 <div class="flex-1">
