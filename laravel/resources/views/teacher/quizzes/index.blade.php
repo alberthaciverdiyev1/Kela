@@ -66,14 +66,14 @@
         </form>
 
         {{-- Breadcrumb --}}
-        <nav class="flex flex-wrap items-center gap-1 border-b border-base-300 px-4 py-2 text-sm">
-            <a href="{{ route('teacher.quizzes.index') }}" class="inline-flex items-center gap-1 rounded px-2 py-1 font-medium text-primary hover:bg-primary/10">
+        <nav class="mb-4 flex flex-wrap items-center gap-2 border-b border-base-300 px-5 py-3.5 text-sm">
+            <a href="{{ route('teacher.quizzes.index') }}" class="inline-flex items-center gap-1.5 rounded-md px-2.5 py-1.5 font-medium text-primary transition-colors hover:bg-primary/10">
                 <x-icon name="heroicon-o-home" class="size-4" />
                 Kök
             </a>
             @foreach ($folders['breadcrumbs'] as $crumb)
-                <span class="text-base-content/30">/</span>
-                <a href="{{ route('teacher.quizzes.index', ['folder_id' => $crumb['id']]) }}" class="rounded px-2 py-1 font-medium text-base-content/70 hover:bg-base-200">
+                <x-icon name="heroicon-s-chevron-right" class="size-4 text-base-content/30" />
+                <a href="{{ route('teacher.quizzes.index', ['folder_id' => $crumb['id']]) }}" class="rounded-md px-2.5 py-1.5 font-medium text-base-content/70 transition-colors hover:bg-base-200 hover:text-base-content">
                     {{ $crumb['name'] }}
                 </a>
             @endforeach

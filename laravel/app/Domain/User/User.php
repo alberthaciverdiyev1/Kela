@@ -25,7 +25,7 @@ use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 use Spatie\Permission\Traits\HasRoles;
 
-#[Fillable(['first_name', 'last_name', 'email', 'password', 'status'])]
+#[Fillable(['first_name', 'last_name', 'email', 'password', 'status', 'avatar'])]
 #[Hidden(['password', 'remember_token'])]
 class User extends Authenticatable
 {
@@ -58,6 +58,14 @@ class User extends Authenticatable
     public function getFullNameAttribute(): string
     {
         return trim($this->first_name . ' ' . ($this->last_name ?? ''));
+    }
+
+    public function getAvatarUrlAttribute(): ?string
+    {
+        if ($this->avatar && \Illuminate\Support\Str::startsWith($this->avatar, ['http://', 'https://'])) {
+            return $this->avatar;
+        }
+        return $this->avatar ? asset('storage/' . $this->avatar) : null;
     }
 
     public function isAdmin(): bool

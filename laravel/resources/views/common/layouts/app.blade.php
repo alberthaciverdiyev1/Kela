@@ -31,16 +31,44 @@
                 <nav class="hidden items-center gap-1 text-sm font-medium md:flex">
                     @if(auth()->user()->isAdmin())
                         <a href="{{ route('teacher.dashboard') }}" class="rounded-xl px-3 py-2 text-base-content/65 transition hover:bg-base-300/50 hover:text-base-content">Panel</a>
-                        <a href="#" class="rounded-xl px-3 py-2 text-base-content/65 transition hover:bg-base-300/50 hover:text-base-content">Dərslər</a>
-                        <a href="#" class="rounded-xl px-3 py-2 text-base-content/65 transition hover:bg-base-300/50 hover:text-base-content">Sual Bankası</a>
+                        <div class="relative" x-data="{ open: false }" @click.outside="open = false" @keydown.escape.window="open = false">
+                            <button @click="open = !open" class="flex items-center gap-1.5 rounded-xl px-3 py-2 text-base-content/65 transition hover:bg-base-300/50 hover:text-base-content" :class="open ? 'bg-base-300/50 text-base-content' : ''">
+                                İdarəetmə
+                                <x-icon name="heroicon-o-chevron-down" class="size-3.5 opacity-60 transition-transform" x-bind:class="open ? 'rotate-180' : ''" />
+                            </button>
+                            <div x-cloak x-show="open" x-transition.opacity.duration.150ms class="absolute left-0 top-full mt-1.5 w-48 rounded-xl border border-base-200 bg-base-100 p-1.5 shadow-lg">
+                                <a href="#" class="block rounded-lg px-3 py-2 hover:bg-base-200/60">Dərslər</a>
+                                <a href="#" class="block rounded-lg px-3 py-2 hover:bg-base-200/60">Sual Bankası</a>
+                            </div>
+                        </div>
                     @elseif(auth()->user()->isTeacher())
                         <a href="{{ route('teacher.dashboard') }}" class="rounded-xl px-3 py-2 text-base-content/65 transition hover:bg-base-300/50 hover:text-base-content">Panel</a>
-                        <a href="{{ route('teacher.lessons.index') }}" class="rounded-xl px-3 py-2 text-base-content/65 transition hover:bg-base-300/50 hover:text-base-content">Dərslər</a>
-                        <a href="{{ route('teacher.quizzes.index') }}" class="rounded-xl px-3 py-2 text-base-content/65 transition hover:bg-base-300/50 hover:text-base-content">Quizlər</a>
+                        <a href="{{ route('teacher.students.index') }}" class="rounded-xl px-3 py-2 text-base-content/65 transition hover:bg-base-300/50 hover:text-base-content">Şagirdlər</a>
                         <a href="{{ route('teacher.workspaces.index') }}" class="rounded-xl px-3 py-2 text-base-content/65 transition hover:bg-base-300/50 hover:text-base-content">İş Sahələri</a>
+                        <a href="{{ route('teacher.notes.index') }}" class="rounded-xl px-3 py-2 text-base-content/65 transition hover:bg-base-300/50 hover:text-base-content">Qeydlər</a>
+                        <div class="relative" x-data="{ open: false }" @click.outside="open = false" @keydown.escape.window="open = false">
+                            <button @click="open = !open" class="flex items-center gap-1.5 rounded-xl px-3 py-2 text-base-content/65 transition hover:bg-base-300/50 hover:text-base-content" :class="open ? 'bg-base-300/50 text-base-content' : ''">
+                                Tədris
+                                <x-icon name="heroicon-o-chevron-down" class="size-3.5 opacity-60 transition-transform" x-bind:class="open ? 'rotate-180' : ''" />
+                            </button>
+                            <div x-cloak x-show="open" x-transition.opacity.duration.150ms class="absolute left-0 top-full mt-1.5 w-48 rounded-xl border border-base-200 bg-base-100 p-1.5 shadow-lg">
+                                <a href="{{ route('teacher.lessons.index') }}" class="block rounded-lg px-3 py-2 hover:bg-base-200/60">Dərslər</a>
+                                <a href="{{ route('teacher.quizzes.index') }}" class="block rounded-lg px-3 py-2 hover:bg-base-200/60">Quizlər</a>
+                                <a href="{{ route('teacher.questions.index') }}" class="block rounded-lg px-3 py-2 hover:bg-base-200/60">Sual Bankı</a>
+                                <a href="{{ route('teacher.attendance.index') }}" class="block rounded-lg px-3 py-2 hover:bg-base-200/60">Davam</a>
+                            </div>
+                        </div>
                     @elseif(auth()->user()->isStudent())
-                        <a href="{{ route('student.dashboard') }}" class="rounded-xl px-3 py-2 text-base-content/65 transition hover:bg-base-300/50 hover:text-base-content">Dərslər</a>
-                        <a href="{{ route('student.notes.index') }}" class="rounded-xl px-3 py-2 text-base-content/65 transition hover:bg-base-300/50 hover:text-base-content">Qeydlər</a>
+                        <a href="{{ route('student.dashboard') }}" class="rounded-xl px-3 py-2 text-base-content/65 transition hover:bg-base-300/50 hover:text-base-content">Panel</a>
+                        <div class="relative" x-data="{ open: false }" @click.outside="open = false" @keydown.escape.window="open = false">
+                            <button @click="open = !open" class="flex items-center gap-1.5 rounded-xl px-3 py-2 text-base-content/65 transition hover:bg-base-300/50 hover:text-base-content" :class="open ? 'bg-base-300/50 text-base-content' : ''">
+                                Tədris Materialları
+                                <x-icon name="heroicon-o-chevron-down" class="size-3.5 opacity-60 transition-transform" x-bind:class="open ? 'rotate-180' : ''" />
+                            </button>
+                            <div x-cloak x-show="open" x-transition.opacity.duration.150ms class="absolute left-0 top-full mt-1.5 w-48 rounded-xl border border-base-200 bg-base-100 p-1.5 shadow-lg">
+                                <a href="{{ route('student.notes.index') }}" class="block rounded-lg px-3 py-2 hover:bg-base-200/60">Qeydlər</a>
+                            </div>
+                        </div>
                     @endif
                 </nav>
             @endauth
@@ -55,9 +83,13 @@
                             aria-haspopup="menu"
                             x-bind:aria-expanded="open ? 'true' : 'false'"
                         >
-                            <span class="flex size-8 items-center justify-center rounded-full bg-primary text-xs font-bold text-white">
-                                {{ strtoupper(mb_substr(auth()->user()->first_name, 0, 1).mb_substr(auth()->user()->last_name, 0, 1)) }}
-                            </span>
+                            @if(auth()->user()->avatar_url)
+                                <img src="{{ auth()->user()->avatar_url }}" alt="{{ auth()->user()->full_name }}" class="size-8 rounded-full object-cover ring-2 ring-primary/20" />
+                            @else
+                                <span class="flex size-8 items-center justify-center rounded-full bg-primary text-xs font-bold text-white">
+                                    {{ strtoupper(mb_substr(auth()->user()->first_name, 0, 1).mb_substr(auth()->user()->last_name, 0, 1)) }}
+                                </span>
+                            @endif
                             <span class="hidden text-sm font-medium text-base-content/80 sm:block">{{ auth()->user()->full_name }}</span>
                             <x-icon name="heroicon-o-chevron-down" class="size-4 text-base-content/40 transition-transform duration-200" x-bind:class="open ? 'rotate-180' : ''" />
                         </button>
@@ -75,9 +107,13 @@
                             role="menu"
                         >
                             <div class="flex items-center gap-3 border-b border-base-200 bg-base-200/40 px-4 py-3.5">
-                                <span class="flex size-10 shrink-0 items-center justify-center rounded-full bg-primary text-sm font-bold text-white">
-                                    {{ strtoupper(mb_substr(auth()->user()->first_name, 0, 1).mb_substr(auth()->user()->last_name, 0, 1)) }}
-                                </span>
+                                @if(auth()->user()->avatar_url)
+                                    <img src="{{ auth()->user()->avatar_url }}" alt="{{ auth()->user()->full_name }}" class="size-10 shrink-0 rounded-full object-cover ring-2 ring-primary/20" />
+                                @else
+                                    <span class="flex size-10 shrink-0 items-center justify-center rounded-full bg-primary text-sm font-bold text-white">
+                                        {{ strtoupper(mb_substr(auth()->user()->first_name, 0, 1).mb_substr(auth()->user()->last_name, 0, 1)) }}
+                                    </span>
+                                @endif
                                 <div class="min-w-0">
                                     <p class="truncate text-sm font-semibold text-base-content">{{ auth()->user()->full_name }}</p>
                                     <p class="truncate text-xs text-base-content/50">{{ auth()->user()->email }}</p>
@@ -85,7 +121,13 @@
                             </div>
 
                             <div class="border-t border-base-200 p-1.5">
-                                <form method="POST" action="{{ route('auth.logout') }}">
+                                <div class="py-1">
+                                    <a href="{{ route('profile.edit') }}" class="flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium text-base-content transition hover:bg-base-200">
+                                        <x-icon name="heroicon-o-user" class="size-4 opacity-70" />
+                                        Profil
+                                    </a>
+                                </div>
+                                <form method="POST" action="{{ route('auth.logout') }}" class="border-t border-base-200 mt-1.5 pt-1.5">
                                     @csrf
                                     <button type="submit" class="flex w-full items-center gap-2.5 rounded-lg px-3 py-2 text-sm font-medium text-error transition hover:bg-error/10">
                                         <x-icon name="heroicon-o-arrow-right-start-on-rectangle" class="size-4" />

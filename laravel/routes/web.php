@@ -161,6 +161,12 @@ Route::middleware('auth')->prefix('notes')->group(function () {
     Route::post('/{note}/restore', [TeacherNoteController::class, 'restoreJson'])->name('notes.restore');
 });
 
+// --- Profil (Bütün rollar üçün) ---
+Route::middleware('auth')->group(function () {
+    Route::get('/profile', [App\Web\Controllers\ProfileController::class, 'edit'])->name('profile.edit');
+    Route::put('/profile', [App\Web\Controllers\ProfileController::class, 'update'])->name('profile.update');
+});
+
 // --- Student / Parent / Blocked dashboards ---
 Route::prefix('student')->middleware(['auth', 'role:Student'])->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'student'])->name('student.dashboard');

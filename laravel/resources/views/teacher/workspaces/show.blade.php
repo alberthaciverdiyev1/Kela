@@ -14,10 +14,10 @@
     x-data="workspaceManager({{ \Illuminate\Support\Js::from($workspaceConfig) }})"
     @keydown.escape.window="closeAll()"
 >
-    {{-- Header --}}
     <x-teacher.heading :subtitle="count($students).' tələbə'">
         {{ $workspaceName }}
         <x-slot:actions>
+            <x-teacher.button href="{{ route('teacher.attendance.index', ['workspace' => $workspaceId]) }}" variant="outline" icon="calendar-days">Davam (yoxlama)</x-teacher.button>
             <x-teacher.button href="{{ route('teacher.workspaces.index') }}" variant="ghost" icon="arrow-left">Geri</x-teacher.button>
             <x-teacher.button href="{{ route('teacher.workspaces.edit', $workspaceId) }}" variant="ghost" icon="pencil-square">Redaktə</x-teacher.button>
         </x-slot:actions>
@@ -60,14 +60,14 @@
     {{-- Kataloq: breadcrumb + qovluq/content cədvəli --}}
     <x-teacher.card :padding="false">
         {{-- Breadcrumb --}}
-        <nav class="flex flex-wrap items-center gap-1 border-b border-base-300 px-4 py-2 text-sm">
-            <a href="{{ route('teacher.workspaces.show', $workspaceId) }}" class="inline-flex items-center gap-1 rounded px-2 py-1 font-medium text-primary hover:bg-primary/10">
+        <nav class="mb-4 flex flex-wrap items-center gap-2 border-b border-base-300 px-5 py-3.5 text-sm">
+            <a href="{{ route('teacher.workspaces.show', $workspaceId) }}" class="inline-flex items-center gap-1.5 rounded-md px-2.5 py-1.5 font-medium text-primary transition-colors hover:bg-primary/10">
                 <x-icon name="heroicon-o-building-office-2" class="size-4" />
                 {{ $workspaceName }}
             </a>
             @foreach ($directory['breadcrumbs'] as $crumb)
-                <span class="text-base-content/30">/</span>
-                <a href="{{ route('teacher.workspaces.show', ['workspace' => $workspaceId, 'folder_id' => $crumb['id']]) }}" class="rounded px-2 py-1 font-medium text-base-content/70 hover:bg-base-200">
+                <x-icon name="heroicon-s-chevron-right" class="size-4 text-base-content/30" />
+                <a href="{{ route('teacher.workspaces.show', ['workspace' => $workspaceId, 'folder_id' => $crumb['id']]) }}" class="rounded-md px-2.5 py-1.5 font-medium text-base-content/70 transition-colors hover:bg-base-200 hover:text-base-content">
                     {{ $crumb['name'] }}
                 </a>
             @endforeach

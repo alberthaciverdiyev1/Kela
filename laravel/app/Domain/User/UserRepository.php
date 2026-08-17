@@ -15,4 +15,7 @@ interface UserRepository
 
     /** Yeni müəllim hesabı yaradır (aktiv status + Teacher rolu). */
     public function createTeacher(array $data): User;
+
+    /** Mövcud istifadəçinin məlumatlarını yeniləyir. */
+    public function update(User $user, array $data): User;
 }

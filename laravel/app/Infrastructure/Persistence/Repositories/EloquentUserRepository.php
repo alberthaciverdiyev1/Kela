@@ -31,4 +31,18 @@ class EloquentUserRepository implements UserRepository
 
         return $user;
     }
+
+    /** Mövcud istifadəçinin məlumatlarını yeniləyir. */
+    public function update(User $user, array $data): User
+    {
+        if (isset($data['first_name'])) $user->first_name = $data['first_name'];
+        if (array_key_exists('last_name', $data)) $user->last_name = $data['last_name'];
+        if (isset($data['email'])) $user->email = $data['email'];
+        if (isset($data['password'])) $user->password = $data['password'];
+        if (array_key_exists('avatar', $data)) $user->avatar = $data['avatar'];
+
+        $user->save();
+
+        return $user;
+    }
 }
