@@ -132,7 +132,7 @@ class StudentController
                 'id' => $student,
                 'first_name' => $data['first_name'] ?? '',
                 'last_name' => $data['last_name'] ?? null,
-                'full_name' => trim(($data['first_name'] ?? '').' '.($data['last_name'] ?? '')),
+                'full_name' => full_name($data['first_name'] ?? '', $data['last_name'] ?? ''),
                 'email' => $data['email'] ?? '',
                 'status' => (int) ($data['status'] ?? UserStatus::ACTIVE),
                 'status_label' => dash($statuses[(int) ($data['status'] ?? UserStatus::ACTIVE)]),
@@ -151,7 +151,7 @@ class StudentController
         }
         $data['id'] = $student;
 
-        return $this->form($data, 'Şagirdi Redaktə Et', trim(($data['first_name'] ?? '').' '.($data['last_name'] ?? '')), false);
+        return $this->form($data, 'Şagirdi Redaktə Et', full_name($data['first_name'] ?? '', $data['last_name'] ?? ''), false);
     }
 
     public function update(StudentRequest $request, int $student): RedirectResponse|\Illuminate\Http\JsonResponse

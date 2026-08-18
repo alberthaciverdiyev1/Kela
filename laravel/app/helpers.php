@@ -1,6 +1,8 @@
 <?php
 
+use App\Domain\StudentPaymentTrack\StudentPaymentTrack;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Str;
 
 if (! function_exists('dash')) {
     /**
@@ -61,5 +63,115 @@ if (! function_exists('initials')) {
         $out = mb_substr((string) $first, 0, 1).mb_substr((string) $last, 0, 1);
 
         return $out !== '' ? mb_strtoupper($out) : '—';
+    }
+}
+
+if (! function_exists('full_name')) {
+    /**
+     * Ad + soyadı bir sətirə yığır:
+     *   full_name('Ali', 'Məmmədov')  →  "Ali Məmmədov"
+     */
+    function full_name(?string $first, ?string $last = null): string
+    {
+        return trim((string) $first.' '.(string) $last);
+    }
+}
+
+if (! function_exists('student_status')) {
+    /**
+     * Şagird statusu → [etiket, badge rəngi]:
+     *   student_status(1)  →  ['Aktiv', 'green']
+     */
+    function student_status(int $status): array
+    {
+        return match ($status) {
+            1 => ['Aktiv', 'green'],
+            2 => ['Deaktiv', 'yellow'],
+            3 => ['Dayandırılmış', 'red'],
+            default => [(string) $status, 'gray'],
+        };
+    }
+}
+
+if (! function_exists('published_color')) {
+    /**
+     * Yayım statusuna uyğun badge rəngi:
+     *   published_color(true)  →  'green'
+     */
+    function published_color(bool $published): string
+    {
+        return $published ? 'green' : 'yellow';
+    }
+}
+
+if (! function_exists('option_letter')) {
+    /**
+     * Sual variantının indeksini hərfə çevirir:
+     *   option_letter(0)  →  'A',  option_letter(1)  →  'B'
+     */
+    function option_letter(int $index): string
+    {
+        return chr(65 + $index);
+    }
+}
+
+if (! function_exists('student_name')) {
+    /**
+     * Şagird adı; silinmiş şagirddə model null olsa belə 'Şagird #ID' göstərir:
+     *   student_name($track->student, $track->student_id)  →  "Ali Məmmədov" / "Şagird #42"
+     */
+    function student_name(mixed $student, int|string|null $studentId = null): string
+    {
+        return $student?->full_name ?? ('Şagird #'.$studentId);
+    }
+}
+
+if (! function_exists('debt')) {
+    /**
+     * Qalıq borc (mənfi olmaz):
+     *   debt(50.00, 20.00)  →  30.0
+     */
+    function debt(float|int|string|null $total, float|int|string|null $paid): float
+    {
+        return max(0, (float) ($total ?? 0) - (float) ($paid ?? 0));
+    }
+}
+
+if (! function_exists('payment_status')) {
+    /**
+     * Ödəniş qaiməsi → [etiket, badge rəngi].
+     * View-dəki if/elseif zəncirinin əvəzi:
+     *   [$label, $color] = payment_status($track);
+     */
+    function payment_status(object $track): array
+    {
+        if ($track->total_amount > 0 && $track->status == StudentPaymentTrack::STATUS_PAID) {
+            return ['Ödənildi', 'green'];
+        }
+        if ($track->status == StudentPaymentTrack::STATUS_PARTIAL) {
+            return ['Qismən Ödəniş', 'blue'];
+        }
+        if ($track->status == StudentPaymentTrack::STATUS_OVERDUE && $track->total_amount > 0) {
+            return ['Vaxtı keçib', 'red'];
+        }
+        if ($track->status == StudentPaymentTrack::STATUS_CANCELLED) {
+            return ['Ləğv edilib', 'gray'];
+        }
+        if ($track->total_amount == 0) {
+            return ['Gözləyir', 'yellow'];
+        }
+
+        return ['Ödənilməyib', 'red'];
+    }
+}
+
+if (! function_exists('limit')) {
+    /**
+     * Mətnin ilk $length simvolunu qaytarır (HTML-dən təmizləyib):
+     *   limit('<p>Uzun mətn</p>', 8)  →  "Uzun mə..."
+     */
+    function limit(string $text, int $length = 50): string
+    {
+        return Str::limit(strip_tags($text), $length);
     }
 }
