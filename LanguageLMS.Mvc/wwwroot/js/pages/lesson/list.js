@@ -9,33 +9,16 @@ async function loadList(page) {
     const data = await AdminUI.get(`/lesson/list?page=${currentPage}&subject_id=${subjectId}&search=${encodeURIComponent(search)}`);
 
     lastPage = data.lastPage;
-    const tbody = document.getElementById('rows');
-    tbody.innerHTML = '';
 
-    if (!data.data.length) {
-        tbody.innerHTML = '<tr><td colspan="6" class="px-4 py-10 text-center text-slate-400">Nəticə yoxdur</td></tr>';
-    } else {
-        data.data.forEach(l => {
-            const active = l.isActive
-                ? '<span class="rounded-full bg-emerald-100 px-2 py-0.5 text-xs text-emerald-700">Aktiv</span>'
-                : '<span class="rounded-full bg-slate-100 px-2 py-0.5 text-xs text-slate-500">Deaktiv</span>';
-            const tr = document.createElement('tr');
-            tr.className = 'hover:bg-slate-50';
-            tr.innerHTML = `
-                <td class="px-4 py-3 text-slate-400">${l.id}</td>
-                <td class="px-4 py-3 font-medium text-slate-800">${l.title}</td>
-                <td class="px-4 py-3 text-slate-500">${window.SUBJECTS[l.subjectId] ?? '-'}</td>
-                <td class="px-4 py-3 text-slate-500">${l.sortOrder}</td>
-                <td class="px-4 py-3">${active}</td>
-                <td class="px-4 py-3">
-                    <div class="flex items-center justify-end gap-2">
-                        <button type="button" class="px-2 py-1 text-primary hover:bg-primary/10 rounded-lg" onclick="openEdit(${l.id})">Redaktə</button>
-                        <button type="button" class="px-2 py-1 text-red-600 hover:bg-red-50 rounded-lg" onclick="removeItem(${l.id})">Sil</button>
-                    </div>
-                </td>`;
-            tbody.appendChild(tr);
-        });
-    }
+    AdminUI.table('rows', data.data.map(l => [
+        { html: l.id, cls: 'text-slate-400' },
+        { html: l.title, cls: 'font-medium text-slate-800' },
+        { html: window.SUBJECTS[l.subjectId] ?? '-', cls: 'text-slate-500' },
+        { html: l.sortOrder, cls: 'text-slate-500' },
+        { html: l.isActive ? '<span class="rounded-full bg-emerald-100 px-2 py-0.5 text-xs text-emerald-700">Aktiv</span>' : '<span class="rounded-full bg-slate-100 px-2 py-0.5 text-xs text-slate-500">Deaktiv</span>' },
+        { html: AdminUI.actions(l.id), cls: 'text-right' }
+    ]), 6);
+
     AdminUI.pagination('pagination', currentPage, lastPage, loadList);
     AdminUI.loader(false);
 }

@@ -77,6 +77,38 @@ window.AdminUI = (function () {
         }
     }
 
+    // cədvəl sətri üçün standart "Redaktə / Sil" düymələri
+    function actions(id) {
+        return `<div class="flex items-center justify-end gap-2">
+            <button type="button" class="px-2 py-1 text-primary hover:bg-primary/10 rounded-lg" onclick="openEdit(${id})">Redaktə</button>
+            <button type="button" class="px-2 py-1 text-red-600 hover:bg-red-50 rounded-lg" onclick="removeItem(${id})">Sil</button>
+        </div>`;
+    }
+
+    // rows: hər sətir = [{ html, cls }], boş olduqda colspan-lı "Nəticə yoxdur"
+    function table(tbodyId, rows, colspan) {
+        const tbody = document.getElementById(tbodyId);
+        if (!tbody) return;
+        tbody.innerHTML = '';
+
+        if (!rows.length) {
+            tbody.innerHTML = `<tr><td colspan="${colspan}" class="px-4 py-10 text-center text-slate-400">Nəticə yoxdur</td></tr>`;
+            return;
+        }
+
+        rows.forEach(cells => {
+            const tr = document.createElement('tr');
+            tr.className = 'hover:bg-slate-50';
+            cells.forEach(cell => {
+                const td = document.createElement('td');
+                td.className = 'px-4 py-3 ' + (cell.cls || '');
+                td.innerHTML = cell.html;
+                tr.appendChild(td);
+            });
+            tbody.appendChild(tr);
+        });
+    }
+
     function loader(show) {
         const el = document.getElementById('listLoader');
         if (!el) return;
@@ -86,5 +118,5 @@ window.AdminUI = (function () {
 
     function reloadAfter(delay) { setTimeout(() => location.reload(), delay || 700); }
 
-    return { notify, error, confirmDelete, get, post, postForm, putForm, del, loader, pagination, token, reloadAfter };
+    return { notify, error, confirmDelete, get, post, postForm, putForm, del, table, actions, loader, pagination, token, reloadAfter };
 })();
