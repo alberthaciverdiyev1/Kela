@@ -70,6 +70,8 @@ LanguageLMS.Mvc/     (Program.cs, Controllers, Models, Views)
 - ✅ Adım 10 — **`LanguageLMS.Core`** ayrıldı; Api & Mvc ince host oldu; paylaşımlı storage.
 - ✅ Adım 11 — **MVC Banner CRUD** (index/create/edit/update/delete/details), `IBannerService` direkt inject.
 - ✅ Adım 12 — Migration uygulandı, uçtan uca doğrulandı (API CRUD + MVC CRUD, gerçek DB).
+- ✅ Adım 13 — **Profession** modülü (2 seviyeli hiyerarşi, benzersiz ad, çocuklu kayıt silinemez) + testler.
+- ✅ Adım 14 — Banner uçları sadeleştirildi: `admin` prefix kaldırıldı, tek `list`; endpointler: list/show/add/update/delete.
 
 ## 5. Durum / Notlar
 
@@ -83,7 +85,7 @@ LanguageLMS.Mvc/     (Program.cs, Controllers, Models, Views)
 ## 6. Yol Haritası
 
 - [x] Banner
-- [ ] Profession
+- [x] Profession
 - [ ] Auth / Student (OTP, token, `student.active`, roller)
 - [ ] Setting
 - [ ] Group / MainCategory / Topic / TopicContent
@@ -97,4 +99,4 @@ LanguageLMS.Mvc/     (Program.cs, Controllers, Models, Views)
 - [ ] Admin (dashboard, sort order)
 
 ---
-_En son güncelleme: Adım 12 — Core ayrımı + MVC Banner CRUD tamamlandı, DB'ye uygulandı._
+_En son güncelleme: Adım 14 — Profession modülü + Endpoint sadeleştirme._

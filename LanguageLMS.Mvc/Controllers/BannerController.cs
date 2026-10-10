@@ -73,7 +73,7 @@ public sealed class BannerController(
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Delete(long id, CancellationToken ct)
     {
-        await service.SoftDeleteAsync(id, ct);
+        await service.DeleteAsync(id, ct);
         TempData["Success"] = "Deleted";
         return RedirectToAction(nameof(Index));
     }

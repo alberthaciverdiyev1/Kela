@@ -2,6 +2,7 @@ using FluentValidation;
 using LanguageLMS.Core.Common.Storage;
 using LanguageLMS.Core.Data;
 using LanguageLMS.Core.Modules.Banner.Services;
+using LanguageLMS.Core.Modules.Profession.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
@@ -25,6 +26,7 @@ public static class DependencyInjection
         services.AddSingleton<IFileStorage, LocalFileStorage>();
 
         services.AddScoped<IBannerService, BannerService>();
+        services.AddScoped<IProfessionService, ProfessionService>();
 
         return services;
     }

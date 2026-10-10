@@ -9,6 +9,8 @@ public sealed class AppDbContext(DbContextOptions<AppDbContext> options) : DbCon
 {
     public DbSet<Banner> Banners => Set<Banner>();
 
+    public DbSet<Modules.Profession.Entities.Profession> Professions => Set<Modules.Profession.Entities.Profession>();
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
