@@ -1,4 +1,4 @@
-using System.Text;
+using ClosedXML.Excel;
 using LanguageLMS.Core.Data;
 using LanguageLMS.Core.Modules.Quiz.Requests;
 using LanguageLMS.Core.Modules.Quiz.Responses;
@@ -106,17 +106,36 @@ public sealed class GroupQuizStatService(AppDbContext db) : IGroupQuizStatServic
         return new GroupQuizStatResponse(groupId, quizIds.Count, totalQuestions, stats);
     }
 
-    public async Task<byte[]> ExportCsvAsync(long groupId, GroupQuizStatRequest request, CancellationToken ct = default)
+    public async Task<byte[]> ExportXlsxAsync(long groupId, GroupQuizStatRequest request, CancellationToken ct = default)
     {
         var stat = await GetAsync(groupId, request, ct);
 
-        var sb = new StringBuilder();
-        sb.AppendLine("StudentId,FullName,Email,QuizCount,Attempted,NotAttempted,TotalQuestions,Completed,Correct,Wrong,ScorePercent");
-        foreach (var row in stat.Students)
+        using var workbook = new XLWorkbook();
+        var ws = workbook.Worksheets.Add("QuizStat");
+        var headers = new[] { "StudentId", "FullName", "Email", "QuizCount", "Attempted", "NotAttempted", "TotalQuestions", "Completed", "Correct", "Wrong", "ScorePercent" };
+        for (var c = 0; c < headers.Length; c++) ws.Cell(1, c + 1).Value = headers[c];
+        ws.Row(1).Style.Font.Bold = true;
+
+        var row = 2;
+        foreach (var r in stat.Students)
         {
-            sb.AppendLine($"{row.StudentId},\"{row.FullName}\",\"{row.Email}\",{row.QuizCount},{row.AttemptedQuizCount},{row.NotAttemptedQuizCount},{row.TotalQuestions},{row.CompletedQuestions},{row.Correct},{row.Wrong},{row.ScorePercent}");
+            ws.Cell(row, 1).Value = r.StudentId;
+            ws.Cell(row, 2).Value = r.FullName;
+            ws.Cell(row, 3).Value = r.Email;
+            ws.Cell(row, 4).Value = r.QuizCount;
+            ws.Cell(row, 5).Value = r.AttemptedQuizCount;
+            ws.Cell(row, 6).Value = r.NotAttemptedQuizCount;
+            ws.Cell(row, 7).Value = r.TotalQuestions;
+            ws.Cell(row, 8).Value = r.CompletedQuestions;
+            ws.Cell(row, 9).Value = r.Correct;
+            ws.Cell(row, 10).Value = r.Wrong;
+            ws.Cell(row, 11).Value = r.ScorePercent;
+            row++;
         }
 
-        return Encoding.UTF8.GetBytes(sb.ToString());
+        ws.Columns().AdjustToContents();
+        using var stream = new MemoryStream();
+        workbook.SaveAs(stream);
+        return stream.ToArray();
     }
 }

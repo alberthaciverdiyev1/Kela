@@ -114,8 +114,8 @@ public sealed class GroupController(IGroupService service, IGroupQuizStatService
     [HttpGet("{id:long}/quiz-stat/export")]
     public async Task<IActionResult> QuizStatExport(long id, [FromQuery] GroupQuizStatRequest request, CancellationToken ct)
     {
-        var bytes = await statService.ExportCsvAsync(id, request, ct);
-        return File(bytes, "text/csv", $"group-{id}-quiz-stat.csv");
+        var bytes = await statService.ExportXlsxAsync(id, request, ct);
+        return File(bytes, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", $"group-{id}-quiz-stat.xlsx");
     }
 
     [HttpGet("{id:long}/subject-logs")]

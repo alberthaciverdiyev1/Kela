@@ -53,7 +53,23 @@ public sealed class StudentsController(IStudentManagementService service) : ApiC
     [HttpGet("export")]
     public async Task<IActionResult> Export([FromQuery] StudentListRequest request, CancellationToken ct)
     {
-        var bytes = await service.ExportCsvAsync(request, ct);
-        return File(bytes, "text/csv", $"students-{DateTime.UtcNow:yyyyMMddHHmmss}.csv");
+        var bytes = await service.ExportXlsxAsync(request, ct);
+        return File(bytes, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", $"students-{DateTime.UtcNow:yyyyMMddHHmmss}.xlsx");
+    }
+
+    [HttpPost("generate")]
+    public async Task<ActionResult<ApiResponse<GenerateStudentsResponse>>> Generate(
+        [FromBody] GenerateStudentsRequest request, CancellationToken ct)
+        => Success(await service.GenerateAsync(request, ct), "Students generated");
+
+    [HttpGet("{id:long}/devices")]
+    public async Task<ActionResult<ApiResponse<IReadOnlyList<StudentDeviceResponse>>>> Devices(long id, CancellationToken ct)
+        => Success(await service.ListDevicesAsync(id, ct));
+
+    [HttpDelete("{id:long}/devices")]
+    public async Task<ActionResult<ApiResponse<string>>> UnbindDevice(long id, CancellationToken ct)
+    {
+        await service.UnbindDeviceAsync(id, ct);
+        return SuccessMessage("Device unbound");
     }
 }

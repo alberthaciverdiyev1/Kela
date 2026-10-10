@@ -1,4 +1,4 @@
-using System.Text;
+using ClosedXML.Excel;
 using LanguageLMS.Core.Common.Bulk;
 using LanguageLMS.Core.Common.Responses;
 using LanguageLMS.Core.Data;
@@ -59,18 +59,68 @@ public sealed class StudentManagementService(AppDbContext db) : Abstractions.ISt
         await db.SaveChangesAsync(ct);
     }
 
-    public async Task<byte[]> ExportCsvAsync(StudentListRequest request, CancellationToken ct = default)
+    public async Task<byte[]> ExportXlsxAsync(StudentListRequest request, CancellationToken ct = default)
     {
         var students = await Query(request).OrderBy(x => x.Id).ToListAsync(ct);
 
-        var sb = new StringBuilder();
-        sb.AppendLine("Id,FullName,Email,Phone,IsActive,CreatedAt");
+        using var workbook = new XLWorkbook();
+        var ws = workbook.Worksheets.Add("Students");
+        var headers = new[] { "Id", "FullName", "Email", "Phone", "IsActive", "CreatedAt" };
+        for (var c = 0; c < headers.Length; c++) ws.Cell(1, c + 1).Value = headers[c];
+        ws.Row(1).Style.Font.Bold = true;
+
+        var row = 2;
         foreach (var s in students)
         {
-            sb.AppendLine($"{s.Id},\"{s.FullName}\",\"{s.Email}\",\"{s.Phone}\",{s.IsActive},{s.CreatedAt:O}");
+            ws.Cell(row, 1).Value = s.Id;
+            ws.Cell(row, 2).Value = s.FullName;
+            ws.Cell(row, 3).Value = s.Email;
+            ws.Cell(row, 4).Value = s.Phone ?? "";
+            ws.Cell(row, 5).Value = s.IsActive;
+            ws.Cell(row, 6).Value = s.CreatedAt.ToString("O");
+            row++;
         }
 
-        return Encoding.UTF8.GetBytes(sb.ToString());
+        ws.Columns().AdjustToContents();
+
+        using var stream = new MemoryStream();
+        workbook.SaveAs(stream);
+        return stream.ToArray();
+    }
+
+    public async Task<GenerateStudentsResponse> GenerateAsync(GenerateStudentsRequest request, CancellationToken ct = default)
+    {
+        var count = request.Count is < 1 or > 1000 ? 10 : request.Count;
+        var hash = BCrypt.Net.BCrypt.HashPassword(request.Password);
+
+        for (var i = 0; i < count; i++)
+        {
+            db.Students.Add(new Student
+            {
+                FullName = $"{request.FullNamePrefix} {i + 1}",
+                Email = $"{request.EmailPrefix}-{Guid.NewGuid():N}@generated.local",
+                PasswordHash = hash,
+                IsActive = true
+            });
+        }
+
+        await db.SaveChangesAsync(ct);
+        return new GenerateStudentsResponse(count);
+    }
+
+    public async Task<IReadOnlyList<StudentDeviceResponse>> ListDevicesAsync(long studentId, CancellationToken ct = default)
+        => await db.StudentDevices.AsNoTracking()
+            .Where(x => x.StudentId == studentId)
+            .OrderByDescending(x => x.Id)
+            .Select(x => new StudentDeviceResponse(x.Id, x.DeviceId, x.CreatedAt))
+            .ToListAsync(ct);
+
+    public async Task UnbindDeviceAsync(long studentId, CancellationToken ct = default)
+    {
+        var devices = await db.StudentDevices.Where(x => x.StudentId == studentId).ToListAsync(ct);
+        var now = DateTimeOffset.UtcNow;
+        foreach (var d in devices) d.DeletedAt = now;
+        await db.SaveChangesAsync(ct);
     }
 
     public Task BulkAsync(BulkRequest request, CancellationToken ct = default)

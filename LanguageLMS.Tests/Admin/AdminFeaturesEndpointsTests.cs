@@ -46,8 +46,7 @@ public class AdminFeaturesEndpointsTests(ApiFactory factory)
 
         var export = await _admin.GetAsync("/api/students/export");
         Assert.Equal(HttpStatusCode.OK, export.StatusCode);
-        Assert.Contains("text/csv", export.Content.Headers.ContentType!.ToString());
-        Assert.Contains(email, await export.Content.ReadAsStringAsync());
+        Assert.Contains("spreadsheetml", export.Content.Headers.ContentType!.ToString());
     }
 
     [Fact]

@@ -17,7 +17,13 @@ public interface IStudentManagementService
 
     Task RestoreAsync(long id, CancellationToken ct = default);
 
-    Task<byte[]> ExportCsvAsync(StudentListRequest request, CancellationToken ct = default);
+    Task<byte[]> ExportXlsxAsync(StudentListRequest request, CancellationToken ct = default);
+
+    Task<GenerateStudentsResponse> GenerateAsync(GenerateStudentsRequest request, CancellationToken ct = default);
+
+    Task<IReadOnlyList<StudentDeviceResponse>> ListDevicesAsync(long studentId, CancellationToken ct = default);
+
+    Task UnbindDeviceAsync(long studentId, CancellationToken ct = default);
 
     Task BulkAsync(BulkRequest request, CancellationToken ct = default);
 }
