@@ -47,6 +47,12 @@ public sealed class AppDbContext(DbContextOptions<AppDbContext> options) : DbCon
 
     public DbSet<Modules.Group.Entities.GroupQuiz> GroupQuizzes => Set<Modules.Group.Entities.GroupQuiz>();
 
+    public DbSet<Modules.Notification.Entities.Notification> Notifications => Set<Modules.Notification.Entities.Notification>();
+
+    public DbSet<Modules.Notification.Entities.NotificationStudent> NotificationStudents => Set<Modules.Notification.Entities.NotificationStudent>();
+
+    public DbSet<Modules.Notification.Entities.NotificationToken> NotificationTokens => Set<Modules.Notification.Entities.NotificationToken>();
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);

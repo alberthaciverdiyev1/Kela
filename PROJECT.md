@@ -88,6 +88,7 @@ LanguageLMS.Mvc/     (Program.cs, Controllers, Models, Views)
 - ✅ Adım 28 — **Quiz**: `Quiz` (lesson_id, title, duration, type, is_active, is_repeat, sort_order) + `QuizQuestion` pivot. CRUD + sual bağlama/listeleme/çıxarma + questionCount. + testler.
 - ✅ Adım 29 — **Şagird imtahanı**: `StudentQuiz` (attempt) + `StudentQuizQuestion` (cavablar). `POST /api/student-quiz/{start,complete}`, `GET .../results[/{id}]`. Bal hesabı, doğru cavab sızması yoxdur, üzvlük yoxlaması. + testler.
 - ✅ Adım 30 — **Group general quizzes**: `GroupQuiz` pivot (general quizlər üçün `Quiz.LessonId` opsiyonel). `POST/GET/DELETE /api/group/{id}/quizzes` + şagird `GET /api/student/quizzes`. + testler.
+- ✅ Adım 31 — **Notification**: `Notification` (+`notification_students` pivot) + `NotificationToken` (cihaz). Müəllim: `/api/notification` (list/create/delete). Şagird: `GET /api/student/notifications`, `POST/DELETE .../token`. Push: `IPushSender` (hazırda `NoOp`, FCM açarları gözləyir). + testler.
 
 ## 5. Durum / Notlar
 
@@ -112,9 +113,8 @@ LanguageLMS.Mvc/     (Program.cs, Controllers, Models, Views)
 - [ ] StudentQuiz / QuizRepeat
 - [ ] Progress
 - [ ] Statistics
-- [ ] Notification
 - [ ] PrivacyPolicy
 - [ ] Admin (dashboard, sort order)
 
 ---
-_En son güncelleme: Adım 30 — Group general quizzes._
+_En son güncelleme: Adım 31 — Notification (bildiriş + token, push abstraction)._

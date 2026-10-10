@@ -12,6 +12,8 @@ using LanguageLMS.Core.Modules.StudentApp.Services;
 using LanguageLMS.Core.Modules.Progress.Services;
 using LanguageLMS.Core.Modules.Question.Services;
 using LanguageLMS.Core.Modules.Quiz.Services;
+using LanguageLMS.Core.Modules.Notification.Services;
+using LanguageLMS.Core.Common.Push;
 using LanguageLMS.Core.Modules.User.Services;
 using LanguageLMS.Core.Modules.Group.Services;
 using Microsoft.AspNetCore.Builder;
@@ -62,6 +64,10 @@ public static class DependencyInjection
         services.AddScoped<IQuestionService, QuestionService>();
         services.AddScoped<IQuizService, QuizService>();
         services.AddScoped<IStudentQuizService, StudentQuizService>();
+        services.AddScoped<INotificationService, NotificationService>();
+
+        services.Configure<FcmOptions>(configuration.GetSection(FcmOptions.SectionName));
+        services.AddSingleton<IPushSender, NoOpPushSender>();
         services.AddScoped<IUserService, UserService>();
         services.AddScoped<IUserAuthService, UserAuthService>();
         services.AddScoped<IGroupService, GroupService>();
