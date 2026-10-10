@@ -48,8 +48,10 @@ namespace LanguageLMS.Core.Data.Migrations
                         .HasColumnName("email");
 
                     b.Property<DateTimeOffset>("ExpiresAt")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("timestamp with time zone")
-                        .HasColumnName("expires_at");
+                        .HasColumnName("expires_at")
+                        .HasDefaultValueSql("now() + interval '10 minutes'");
 
                     b.Property<DateTimeOffset?>("UsedAt")
                         .HasColumnType("timestamp with time zone")
@@ -132,6 +134,51 @@ namespace LanguageLMS.Core.Data.Migrations
                         .IsUnique();
 
                     b.ToTable("students", (string)null);
+                });
+
+            modelBuilder.Entity("LanguageLMS.Core.Modules.Auth.Entities.StudentDevice", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint")
+                        .HasColumnName("id");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
+
+                    b.Property<DateTimeOffset>("CreatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_at");
+
+                    b.Property<DateTimeOffset?>("DeletedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("deleted_at");
+
+                    b.Property<string>("DeviceId")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("character varying(255)")
+                        .HasColumnName("device_id");
+
+                    b.Property<long>("StudentId")
+                        .HasColumnType("bigint")
+                        .HasColumnName("student_id");
+
+                    b.Property<long>("TenantId")
+                        .HasColumnType("bigint")
+                        .HasColumnName("tenant_id");
+
+                    b.Property<DateTimeOffset?>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("updated_at");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("DeviceId")
+                        .IsUnique();
+
+                    b.HasIndex("StudentId");
+
+                    b.ToTable("student_devices", (string)null);
                 });
 
             modelBuilder.Entity("LanguageLMS.Core.Modules.Banner.Entities.Banner", b =>
@@ -1454,6 +1501,15 @@ namespace LanguageLMS.Core.Data.Migrations
                         .IsUnique();
 
                     b.ToTable("users", (string)null);
+                });
+
+            modelBuilder.Entity("LanguageLMS.Core.Modules.Auth.Entities.StudentDevice", b =>
+                {
+                    b.HasOne("LanguageLMS.Core.Modules.Auth.Entities.Student", null)
+                        .WithMany()
+                        .HasForeignKey("StudentId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("LanguageLMS.Core.Modules.Group.Entities.Group", b =>

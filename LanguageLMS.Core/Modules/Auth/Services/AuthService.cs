@@ -1,3 +1,4 @@
+using LanguageLMS.Core.Common.Exceptions;
 using LanguageLMS.Core.Common.Storage;
 using LanguageLMS.Core.Data;
 using LanguageLMS.Core.Modules.Auth.Entities;
@@ -11,6 +12,7 @@ public sealed class AuthService(
     AppDbContext db,
     ITokenService tokens,
     IOtpService otp,
+    IStudentDeviceService devices,
     IFileStorage storage) : IAuthService
 {
     public async Task<AuthResponse> RegisterAsync(RegisterRequest request, CancellationToken ct = default)
@@ -56,6 +58,12 @@ public sealed class AuthService(
         if (!student.IsActive)
         {
             throw new UnauthorizedAccessException("User is not active");
+        }
+
+        if (!string.IsNullOrWhiteSpace(request.DeviceId) &&
+            !await devices.HasAccessAsync(student.Id, request.DeviceId, ct))
+        {
+            throw new ForbiddenException("This account is active on a different device");
         }
 
         return new AuthResponse(tokens.CreateToken(student.Id, student.Email, student.FullName, AuthRoles.Student, student.TenantId), ToResponse(student));
