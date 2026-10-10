@@ -1,11 +1,9 @@
 using LanguageLMS.Core.Modules.LessonContent.Entities;
-using Microsoft.AspNetCore.Mvc;
 
 namespace LanguageLMS.Core.Modules.LessonContent.Requests;
 
 public class LessonContentUploadUrlRequest
 {
-    [FromBody]
     public long LessonId { get; set; }
 
     public LessonContentType Type { get; set; }
