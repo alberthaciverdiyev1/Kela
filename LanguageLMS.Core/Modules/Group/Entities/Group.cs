@@ -17,4 +17,6 @@ public class Group : BaseEntity
     public User? Teacher { get; set; }
 
     public ICollection<StudentGroup> Memberships { get; set; } = new List<StudentGroup>();
+
+    public ICollection<GroupSubject> SubjectLinks { get; set; } = new List<GroupSubject>();
 }

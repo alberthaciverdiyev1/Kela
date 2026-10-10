@@ -179,6 +179,46 @@ namespace LanguageLMS.Core.Data.Migrations
                     b.ToTable("groups", (string)null);
                 });
 
+            modelBuilder.Entity("LanguageLMS.Core.Modules.Group.Entities.GroupSubject", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint")
+                        .HasColumnName("id");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
+
+                    b.Property<DateTimeOffset>("CreatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_at");
+
+                    b.Property<DateTimeOffset?>("DeletedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("deleted_at");
+
+                    b.Property<long>("GroupId")
+                        .HasColumnType("bigint")
+                        .HasColumnName("group_id");
+
+                    b.Property<long>("SubjectId")
+                        .HasColumnType("bigint")
+                        .HasColumnName("subject_id");
+
+                    b.Property<DateTimeOffset?>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("updated_at");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("DeletedAt");
+
+                    b.HasIndex("SubjectId");
+
+                    b.HasIndex("GroupId", "SubjectId");
+
+                    b.ToTable("group_subjects", (string)null);
+                });
+
             modelBuilder.Entity("LanguageLMS.Core.Modules.Group.Entities.StudentGroup", b =>
                 {
                     b.Property<long>("Id")
@@ -405,6 +445,25 @@ namespace LanguageLMS.Core.Data.Migrations
                     b.Navigation("Teacher");
                 });
 
+            modelBuilder.Entity("LanguageLMS.Core.Modules.Group.Entities.GroupSubject", b =>
+                {
+                    b.HasOne("LanguageLMS.Core.Modules.Group.Entities.Group", "Group")
+                        .WithMany("SubjectLinks")
+                        .HasForeignKey("GroupId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("LanguageLMS.Core.Modules.Subject.Entities.Subject", "Subject")
+                        .WithMany()
+                        .HasForeignKey("SubjectId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Group");
+
+                    b.Navigation("Subject");
+                });
+
             modelBuilder.Entity("LanguageLMS.Core.Modules.Group.Entities.StudentGroup", b =>
                 {
                     b.HasOne("LanguageLMS.Core.Modules.Group.Entities.Group", "Group")
@@ -427,6 +486,8 @@ namespace LanguageLMS.Core.Data.Migrations
             modelBuilder.Entity("LanguageLMS.Core.Modules.Group.Entities.Group", b =>
                 {
                     b.Navigation("Memberships");
+
+                    b.Navigation("SubjectLinks");
                 });
 #pragma warning restore 612, 618
         }

@@ -96,6 +96,47 @@ public class GroupEndpointsTests(ApiFactory factory)
         Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
     }
 
+    private async Task<long> CreateSubjectAsync()
+    {
+        var response = await _client.PostAsync("/api/subject", new MultipartFormDataContent
+        {
+            { new StringContent(Unique("Subject")), "name" }
+        });
+        Assert.Equal(HttpStatusCode.Created, response.StatusCode);
+        return (await ReadJsonAsync(response)).GetProperty("data").GetProperty("id").GetInt64();
+    }
+
+    [Fact]
+    public async Task Assign_list_and_remove_subjects()
+    {
+        var groupId = await CreateGroupAsync(Unique("Group-subjects"));
+        var subjectId = await CreateSubjectAsync();
+
+        var assign = await _client.PostAsJsonAsync($"/api/group/{groupId}/subjects", new { subjectIds = new[] { subjectId } });
+        Assert.Equal(HttpStatusCode.OK, assign.StatusCode);
+        Assert.Contains((await ReadJsonAsync(assign)).GetProperty("data").EnumerateArray(),
+            x => x.GetProperty("id").GetInt64() == subjectId);
+
+        var list = await ReadJsonAsync(await _client.GetAsync($"/api/group/{groupId}/subjects"));
+        Assert.Contains(list.GetProperty("data").EnumerateArray(),
+            x => x.GetProperty("id").GetInt64() == subjectId);
+
+        var remove = await _client.DeleteAsync($"/api/group/{groupId}/subjects/{subjectId}");
+        Assert.Equal(HttpStatusCode.OK, remove.StatusCode);
+
+        var after = await ReadJsonAsync(await _client.GetAsync($"/api/group/{groupId}/subjects"));
+        Assert.DoesNotContain(after.GetProperty("data").EnumerateArray(),
+            x => x.GetProperty("id").GetInt64() == subjectId);
+    }
+
+    [Fact]
+    public async Task Assign_unknown_subject_returns_bad_request()
+    {
+        var groupId = await CreateGroupAsync(Unique("Group-badsubject"));
+        var response = await _client.PostAsJsonAsync($"/api/group/{groupId}/subjects", new { subjectIds = new[] { 999999L } });
+        Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+    }
+
     [Fact]
     public async Task Unknown_id_returns_not_found()
         => Assert.Equal(HttpStatusCode.NotFound, (await _client.GetAsync("/api/group/999999")).StatusCode);

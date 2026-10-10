@@ -21,6 +21,8 @@ public sealed class AppDbContext(DbContextOptions<AppDbContext> options) : DbCon
 
     public DbSet<Modules.Group.Entities.StudentGroup> StudentGroups => Set<Modules.Group.Entities.StudentGroup>();
 
+    public DbSet<Modules.Group.Entities.GroupSubject> GroupSubjects => Set<Modules.Group.Entities.GroupSubject>();
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);

@@ -3,12 +3,15 @@ using LanguageLMS.Core.Common.Storage;
 using LanguageLMS.Core.Data;
 using LanguageLMS.Core.Modules.Group.Requests;
 using LanguageLMS.Core.Modules.Group.Responses;
+using LanguageLMS.Core.Modules.Subject.Responses;
 using Microsoft.EntityFrameworkCore;
 
 namespace LanguageLMS.Core.Modules.Group.Services;
 
 using Group = LanguageLMS.Core.Modules.Group.Entities.Group;
+using GroupSubject = LanguageLMS.Core.Modules.Group.Entities.GroupSubject;
 using StudentGroup = LanguageLMS.Core.Modules.Group.Entities.StudentGroup;
+using Subject = LanguageLMS.Core.Modules.Subject.Entities.Subject;
 
 public sealed class GroupService(AppDbContext db, IFileStorage storage) : IGroupService
 {
@@ -171,6 +174,58 @@ public sealed class GroupService(AppDbContext db, IFileStorage storage) : IGroup
             ?? throw new KeyNotFoundException($"Membership not found for student {studentId} in group {groupId}");
 
         membership.DeletedAt = DateTimeOffset.UtcNow;
+        await db.SaveChangesAsync(ct);
+    }
+
+    public async Task<IReadOnlyList<SubjectResponse>> ListSubjectsAsync(long groupId, CancellationToken ct = default)
+    {
+        await EnsureGroupExistsAsync(groupId, ct);
+
+        return await db.GroupSubjects
+            .AsNoTracking()
+            .Where(x => x.GroupId == groupId)
+            .OrderBy(x => x.Id)
+            .Select(x => new SubjectResponse(x.Subject!.Id, x.Subject!.Name, x.Subject!.UserId))
+            .ToListAsync(ct);
+    }
+
+    public async Task<IReadOnlyList<SubjectResponse>> AssignSubjectsAsync(
+        long groupId, AssignSubjectsRequest request, CancellationToken ct = default)
+    {
+        await EnsureGroupExistsAsync(groupId, ct);
+
+        foreach (var subjectId in request.SubjectIds.Distinct())
+        {
+            if (!await db.Subjects.AnyAsync(x => x.Id == subjectId, ct))
+            {
+                throw new ArgumentException($"Subject not found: {subjectId}");
+            }
+
+            var existing = await db.GroupSubjects
+                .IgnoreQueryFilters()
+                .FirstOrDefaultAsync(x => x.GroupId == groupId && x.SubjectId == subjectId, ct);
+
+            if (existing is null)
+            {
+                db.GroupSubjects.Add(new GroupSubject { GroupId = groupId, SubjectId = subjectId });
+            }
+            else
+            {
+                existing.DeletedAt = null;
+            }
+        }
+
+        await db.SaveChangesAsync(ct);
+        return await ListSubjectsAsync(groupId, ct);
+    }
+
+    public async Task RemoveSubjectAsync(long groupId, long subjectId, CancellationToken ct = default)
+    {
+        var link = await db.GroupSubjects
+            .FirstOrDefaultAsync(x => x.GroupId == groupId && x.SubjectId == subjectId, ct)
+            ?? throw new KeyNotFoundException($"Subject {subjectId} is not assigned to group {groupId}");
+
+        link.DeletedAt = DateTimeOffset.UtcNow;
         await db.SaveChangesAsync(ct);
     }
 
