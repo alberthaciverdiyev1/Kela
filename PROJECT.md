@@ -92,6 +92,7 @@ LanguageLMS.Mvc/     (Program.cs, Controllers, Models, Views)
 - ✅ Adım 32 — **Roles**: JWT `role` claim (`student`/`teacher`/`admin`) + policy'ler (`Student` / `Teacher`=teacher+admin / `Admin`). İçerik uçları → **Teacher**, istifadəçi idarəsi → **Admin**, şagird uçları → **Student**. Boşluqlar bağlandı (əvvəl hamısı açıq idi). + testler.
 - ✅ Adım 33 — **PrivacyPolicy**: `privacy_policies` (type + HTML content). `GET /api/privacy-policy[/{type}]` (public), `PUT /api/privacy-policy` (Teacher, upsert). + testler.
 - ✅ Adım 34 — **Group quiz statistikası** (`GroupQuizStatService`): `GET /api/group/{id}/quiz-stat?quiz_type=lesson|general` → qrupun quizləri üzrə hər şagirdin nəticəsi (attempted, correct, wrong, score %). Reference `GroupQuizStatController` məntiqi. + testler.
+- ✅ Adım 64 — **Admin: Setting + PrivacyPolicy**: Setting (tək forma: logo, əlaqə nömrələri, sosial, min versiyalar — `PUT /setting`); PrivacyPolicy (siyahı + modal, HTML məzmun — `PUT /privacy-policy`). `SettingResponse`-a min versiyalar əlavə olundu.
 - ✅ Adım 63 — **Admin: User (İstifadəçilər)** səhifəsi: axtarış + tip (admin/müəllim) filtri + list; CRUD (ad, soyad, email, telefon, tip, şifrə — update-də boş buraxıla bilər). `pages/user/{list,create,update}.js`.
 - ✅ Adım 62 — **Admin: Notification (Bildirişlər)** səhifəsi: list; **göndər** (başlıq, mətn, şəkil, **Hamıya** switch, seçilmiş şagirdlərə multi-select) + sil. `pages/notification/{list,create}.js`.
 - ✅ Adım 61 — **Admin: Students (Şagirdlər)** səhifəsi: axtarış + status filtri + list; status toggle (aktiv/deaktiv), **cihaz idarəsi** (kilidi aç), sil; **şagird generasiya** modalı; **Excel export**. RESTful + `pages/students/{list,generate,devices}.js`.
@@ -149,7 +150,7 @@ LanguageLMS.Mvc/     (Program.cs, Controllers, Models, Views)
 - [ ] Admin (dashboard, sort order)
 
 ---
-_En son güncelleme: Adım 63 — Admin User səhifəsi — Admin Notification səhifəsi — Admin Students səhifəsi — Admin Quiz səhifəsi — Admin Question səhifəsi + fayl preview/X — Group idarəetməsi (tab-lar) — Admin Group səhifəsi — Admin LessonContent səhifəsi — Admin Lesson səhifəsi — Admin Subject səhifəsi (list + CRUD modal + JS).
+_En son güncelleme: Adım 64 — Admin Setting + PrivacyPolicy — Admin User səhifəsi — Admin Notification səhifəsi — Admin Students səhifəsi — Admin Quiz səhifəsi — Admin Question səhifəsi + fayl preview/X — Group idarəetməsi (tab-lar) — Admin Group səhifəsi — Admin LessonContent səhifəsi — Admin Lesson səhifəsi — Admin Subject səhifəsi (list + CRUD modal + JS).
 
 ## İnkişaf (dev)
 - `./dev.sh` — API + MVC + Tailwind-i **watch** rejimində işə salır (Ctrl+C ilə dayandırır).

@@ -9,7 +9,9 @@ public record SettingResponse(
     string? ContactNumber3,
     string? ContactNumber4,
     string? InstagramUrl,
-    string? FacebookUrl);
+    string? FacebookUrl,
+    string? AndroidMinVersion,
+    string? IosMinVersion);
 
 public record AppVersionPlatform(string? MinVersion, string? StoreUrl);
 

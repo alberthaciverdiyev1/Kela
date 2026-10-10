@@ -72,8 +72,10 @@ public sealed class SettingService(AppDbContext db, IFileStorage storage, IConfi
             s.ContactNumber3,
             s.ContactNumber4,
             s.InstagramUrl,
-            s.FacebookUrl);
+            s.FacebookUrl,
+            s.AndroidMinVersion,
+            s.IosMinVersion);
 
     private SettingResponse Empty() =>
-        new(0, storage.GetUrl(null), null, null, null, null, null, null, null);
+        new(0, storage.GetUrl(null), null, null, null, null, null, null, null, null, null);
 }
