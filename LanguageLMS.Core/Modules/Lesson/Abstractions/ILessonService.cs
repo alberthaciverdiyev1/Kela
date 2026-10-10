@@ -1,5 +1,6 @@
 using LanguageLMS.Core.Common.Bulk;
 using LanguageLMS.Core.Common.Responses;
+using LanguageLMS.Core.Common.Sorting;
 using LanguageLMS.Core.Modules.Lesson.Requests;
 using LanguageLMS.Core.Modules.Lesson.Responses;
 
@@ -18,4 +19,10 @@ public interface ILessonService
     Task DeleteAsync(long id, CancellationToken ct = default);
 
     Task BulkAsync(BulkRequest request, CancellationToken ct = default);
+
+    Task ReorderAsync(SortRequest request, CancellationToken ct = default);
+
+    Task<LessonSettingsResponse> GetSettingsAsync(long id, CancellationToken ct = default);
+
+    Task<LessonSettingsResponse> SetSettingsAsync(long id, SetLessonSettingsRequest request, CancellationToken ct = default);
 }

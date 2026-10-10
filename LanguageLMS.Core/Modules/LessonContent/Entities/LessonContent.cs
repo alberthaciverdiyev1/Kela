@@ -1,4 +1,5 @@
 using LanguageLMS.Core.Common.Entities;
+using LanguageLMS.Core.Common.Sorting;
 
 namespace LanguageLMS.Core.Modules.LessonContent.Entities;
 
@@ -6,7 +7,7 @@ using Video = LanguageLMS.Core.Modules.Media.Entities.Video;
 using MediaFile = LanguageLMS.Core.Modules.Media.Entities.MediaFile;
 using VoiceRecord = LanguageLMS.Core.Modules.Media.Entities.VoiceRecord;
 
-public class LessonContent : BaseEntity
+public class LessonContent : BaseEntity, ISortable
 {
     public long LessonId { get; set; }
 

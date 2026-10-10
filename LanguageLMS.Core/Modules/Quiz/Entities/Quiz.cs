@@ -1,8 +1,9 @@
 using LanguageLMS.Core.Common.Entities;
+using LanguageLMS.Core.Common.Sorting;
 
 namespace LanguageLMS.Core.Modules.Quiz.Entities;
 
-public class Quiz : BaseEntity
+public class Quiz : BaseEntity, ISortable
 {
     public long? LessonId { get; set; }
 

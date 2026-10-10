@@ -1,5 +1,6 @@
 using LanguageLMS.Core.Common.Bulk;
 using LanguageLMS.Core.Common.Responses;
+using LanguageLMS.Core.Common.Sorting;
 using LanguageLMS.Core.Modules.Question.Responses;
 using LanguageLMS.Core.Modules.Quiz.Requests;
 using LanguageLMS.Core.Modules.Quiz.Responses;
@@ -25,4 +26,6 @@ public interface IQuizService
     Task RemoveQuestionAsync(long quizId, long questionId, CancellationToken ct = default);
 
     Task BulkAsync(BulkRequest request, CancellationToken ct = default);
+
+    Task ReorderAsync(SortRequest request, CancellationToken ct = default);
 }

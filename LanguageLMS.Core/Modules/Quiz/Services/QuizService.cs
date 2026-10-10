@@ -1,5 +1,6 @@
 using LanguageLMS.Core.Common.Responses;
 using LanguageLMS.Core.Common.Bulk;
+using LanguageLMS.Core.Common.Sorting;
 using LanguageLMS.Core.Data;
 using LanguageLMS.Core.Common.Storage;
 using LanguageLMS.Core.Modules.Question.Responses;
@@ -203,4 +204,7 @@ public sealed class QuizService(AppDbContext db, IFileStorage storage) : IQuizSe
 
     public Task BulkAsync(BulkRequest request, CancellationToken ct = default)
         => BulkHelper.ApplyAsync<Quiz>(db, request, ct);
+
+    public Task ReorderAsync(SortRequest request, CancellationToken ct = default)
+        => SortHelper.ReorderAsync<Quiz>(db, request, ct);
 }

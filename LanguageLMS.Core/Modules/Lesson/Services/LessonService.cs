@@ -1,6 +1,8 @@
+using System.Text.Json;
 using LanguageLMS.Core.Common.Responses;
 using LanguageLMS.Core.Common.Storage;
 using LanguageLMS.Core.Common.Bulk;
+using LanguageLMS.Core.Common.Sorting;
 using LanguageLMS.Core.Data;
 using LanguageLMS.Core.Modules.Lesson.Entities;
 using LanguageLMS.Core.Modules.Lesson.Requests;
@@ -148,4 +150,25 @@ public sealed class LessonService(AppDbContext db, IFileStorage storage) : ILess
 
     public Task BulkAsync(BulkRequest request, CancellationToken ct = default)
         => BulkHelper.ApplyAsync<Lesson>(db, request, ct);
+
+    public Task ReorderAsync(SortRequest request, CancellationToken ct = default)
+        => SortHelper.ReorderAsync<Lesson>(db, request, ct);
+
+    public async Task<LessonSettingsResponse> GetSettingsAsync(long id, CancellationToken ct = default)
+    {
+        var lesson = await db.Lessons.AsNoTracking().FirstOrDefaultAsync(x => x.Id == id, ct)
+            ?? throw new KeyNotFoundException($"Lesson not found: {id}");
+
+        return LessonSettings.Parse(lesson.Settings);
+    }
+
+    public async Task<LessonSettingsResponse> SetSettingsAsync(long id, SetLessonSettingsRequest request, CancellationToken ct = default)
+    {
+        var lesson = await db.Lessons.IgnoreQueryFilters().FirstOrDefaultAsync(x => x.Id == id, ct)
+            ?? throw new KeyNotFoundException($"Lesson not found: {id}");
+
+        lesson.Settings = LessonSettings.Serialize(request);
+        await db.SaveChangesAsync(ct);
+        return LessonSettings.Parse(lesson.Settings);
+    }
 }

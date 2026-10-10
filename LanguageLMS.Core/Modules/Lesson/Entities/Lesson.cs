@@ -1,10 +1,11 @@
 using LanguageLMS.Core.Common.Entities;
+using LanguageLMS.Core.Common.Sorting;
 
 namespace LanguageLMS.Core.Modules.Lesson.Entities;
 
 using Subject = LanguageLMS.Core.Modules.Subject.Entities.Subject;
 
-public class Lesson : BaseEntity
+public class Lesson : BaseEntity, ISortable
 {
     public long SubjectId { get; set; }
 

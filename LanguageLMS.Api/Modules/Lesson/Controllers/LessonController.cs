@@ -1,5 +1,6 @@
 using LanguageLMS.Api.Common.Authorization;
 using LanguageLMS.Core.Common.Bulk;
+using LanguageLMS.Core.Common.Sorting;
 using LanguageLMS.Api.Common.Controllers;
 using LanguageLMS.Api.Common.Responses;
 using LanguageLMS.Core.Common.Responses;
@@ -49,4 +50,20 @@ public sealed class LessonController(ILessonService service) : ApiControllerBase
         await service.BulkAsync(request, ct);
         return SuccessMessage("Bulk action applied");
     }
+
+    [HttpPost("sort")]
+    public async Task<ActionResult<ApiResponse<string>>> Sort([FromBody] SortRequest request, CancellationToken ct)
+    {
+        await service.ReorderAsync(request, ct);
+        return SuccessMessage("Order updated");
+    }
+
+    [HttpGet("{id:long}/settings")]
+    public async Task<ActionResult<ApiResponse<LessonSettingsResponse>>> GetSettings(long id, CancellationToken ct)
+        => Success(await service.GetSettingsAsync(id, ct));
+
+    [HttpPut("{id:long}/settings")]
+    public async Task<ActionResult<ApiResponse<LessonSettingsResponse>>> SetSettings(
+        long id, [FromBody] SetLessonSettingsRequest request, CancellationToken ct)
+        => Success(await service.SetSettingsAsync(id, request, ct), "Settings updated");
 }
