@@ -4,53 +4,154 @@
 }
 <script>window.SUBJECTS = { @Html.Raw(string.Join(",", subjects.Data.Select(s => $"{s.Id}:\"{System.Text.Json.JsonEncodedText.Encode(s.Name)}\""))) }; </script>
 
-<div class="mb-5 flex items-center justify-between">
-    <h2 class="text-xl font-semibold text-slate-800">Dərslər</h2>
-    <partial name="Ui/_Button" model="@(new ButtonModel { Text = "+ Yeni dərs", OnClick = "openCreate()" })" />
-</div>
-
-<div class="mb-4 flex flex-wrap items-end gap-3">
-    <div class="w-56">
-        <partial name="Ui/_Select" model="@(new SelectModel {
-            Name = "filter_subject", Id = "filter_subject", Label = "Fənn",
-            Options = subjects.Data.Select(s => new SelectOption { Value = s.Id.ToString(), Text = s.Name }).ToList()
-        })" />
+<section class="space-y-5">
+    <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+        <h2 class="text-[32px] font-extrabold leading-tight tracking-tight text-slate-950">Dərslər</h2>
+        <button type="button" onclick="openCreate()" class="admin-button-primary">
+            <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.9"><path stroke-linecap="round" stroke-linejoin="round" d="M12 5v14M5 12h14" /></svg>
+            Yeni dərs
+        </button>
     </div>
-    <div class="w-64">
-        <partial name="Ui/_Input" model="@(new InputModel { Name = "search", Id = "search", Placeholder = "Başlıqda axtar..." })" />
+
+    <div class="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+        <article class="admin-card flex h-[92px] items-center justify-between px-5">
+            <div class="flex items-center gap-4">
+                <span class="grid h-14 w-14 place-items-center rounded-2xl bg-primary-light text-primary">
+                    <svg class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.9"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6.253v13m0-13C10.8 5.5 9 5 7 5S3.2 5.5 2 6.253v13C3.2 18.5 5 18 7 18s3.8.5 5 1.253m0-13C13.2 5.5 15 5 17 5s3.8.5 5 1.253v13C20.8 18.5 19 18 17 18s-3.8.5-5 1.253" /></svg>
+                </span>
+                <div>
+                    <p class="text-sm font-semibold text-slate-500">Cəmi Dərs</p>
+                    <p id="stat_total" class="mt-1 text-3xl font-extrabold text-slate-950">—</p>
+                </div>
+            </div>
+            <div class="hidden h-10 items-end gap-1 text-primary/55 sm:flex">
+                <span class="h-3 w-2 rounded-full bg-current"></span><span class="h-4 w-2 rounded-full bg-current"></span><span class="h-6 w-2 rounded-full bg-current"></span><span class="h-8 w-2 rounded-full bg-current"></span><span class="h-10 w-2 rounded-full bg-current"></span>
+            </div>
+        </article>
+        <article class="admin-card flex h-[92px] items-center px-5">
+            <div class="flex items-center gap-4">
+                <span class="grid h-14 w-14 place-items-center rounded-2xl bg-sky-100 text-sky-600">
+                    <svg class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.9"><path stroke-linecap="round" stroke-linejoin="round" d="M17 20v-2a4 4 0 0 0-4-4H7a4 4 0 0 0-4 4v2M10 10a4 4 0 1 0 0-8 4 4 0 0 0 0 8Zm11 10v-2a4 4 0 0 0-3-3.87" /></svg>
+                </span>
+                <div>
+                    <p class="text-sm font-semibold text-slate-500">Aktiv Dərslər</p>
+                    <p id="stat_active" class="mt-1 text-3xl font-extrabold text-slate-950">—</p>
+                </div>
+            </div>
+        </article>
+        <article class="admin-card flex h-[92px] items-center justify-between px-5">
+            <div class="flex items-center gap-4">
+                <span class="grid h-14 w-14 place-items-center rounded-2xl bg-warning-bg text-warning">
+                    <svg class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.9"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6l4 2M21 12A9 9 0 1 1 3 12a9 9 0 0 1 18 0Z" /></svg>
+                </span>
+                <div>
+                    <p class="text-sm font-semibold text-slate-500">Arxivdə</p>
+                    <p id="stat_archive" class="mt-1 text-3xl font-extrabold text-slate-950">—</p>
+                </div>
+            </div>
+            <div class="hidden h-10 items-end gap-1 text-warning/35 sm:flex">
+                <span class="h-2 w-2 rounded-full bg-current"></span><span class="h-3 w-2 rounded-full bg-current"></span><span class="h-5 w-2 rounded-full bg-current"></span><span class="h-7 w-2 rounded-full bg-current"></span><span class="h-9 w-2 rounded-full bg-current"></span>
+            </div>
+        </article>
+        <article class="admin-card flex h-[92px] items-center justify-between px-5">
+            <div class="flex items-center gap-4">
+                <span class="grid h-14 w-14 place-items-center rounded-2xl bg-violet-100 text-violet-600">
+                    <svg class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.9"><path stroke-linecap="round" stroke-linejoin="round" d="M7 3h7l5 5v13H7V3Z" /><path stroke-linecap="round" stroke-linejoin="round" d="M14 3v6h5M10 14h6M10 18h4" /></svg>
+                </span>
+                <div>
+                    <p class="text-sm font-semibold text-slate-500">Cəmi Material</p>
+                    <p id="stat_material" class="mt-1 text-3xl font-extrabold text-slate-950">—</p>
+                </div>
+            </div>
+            <div class="hidden h-10 items-end gap-1 text-violet-400/45 sm:flex">
+                <span class="h-3 w-2 rounded-full bg-current"></span><span class="h-4 w-2 rounded-full bg-current"></span><span class="h-5 w-2 rounded-full bg-current"></span><span class="h-7 w-2 rounded-full bg-current"></span><span class="h-9 w-2 rounded-full bg-current"></span>
+            </div>
+        </article>
     </div>
-    <partial name="Ui/_Button" model="@(new ButtonModel { Text = "Axtar", Variant = "secondary", OnClick = "loadList(1)" })" />
-</div>
 
-<div class="relative overflow-hidden rounded-xl border border-slate-200 bg-white">
-    <div id="listLoader" class="absolute inset-0 z-10 hidden items-center justify-center bg-white/70">
-        <div class="h-9 w-9 animate-spin rounded-full border-4 border-slate-200 border-t-primary"></div>
-    </div>
-    <table class="w-full text-sm">
-        <thead class="bg-slate-50 text-left text-slate-500">
-            <tr>
-                <th class="px-4 py-3">#</th>
-                <th class="px-4 py-3">Ad</th>
-                <th class="px-4 py-3">Fənn</th>
-                <th class="px-4 py-3">Sıra</th>
-                <th class="px-4 py-3">Aktiv</th>
-                <th class="px-4 py-3 text-right">Əməliyyatlar</th>
-            </tr>
-        </thead>
-        <tbody id="rows" class="divide-y divide-slate-100"></tbody>
-    </table>
-</div>
+    <div class="admin-card overflow-hidden">
+        <div class="relative p-4 sm:p-5">
+            <div id="listLoader" class="absolute inset-0 z-10 hidden items-center justify-center bg-white/70 backdrop-blur-[1px]">
+                <div class="h-9 w-9 animate-spin rounded-full border-4 border-slate-200 border-t-primary"></div>
+            </div>
 
-<div id="pagination" class="mt-4 flex flex-wrap gap-2"></div>
+            <div class="grid gap-4 xl:grid-cols-[minmax(280px,1fr)_240px_220px_190px_auto]">
+                <label class="relative">
+                    <span class="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-slate-500">
+                        <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="m21 21-4.35-4.35M11 18a7 7 0 1 1 0-14 7 7 0 0 1 0 14Z" /></svg>
+                    </span>
+                    <input id="search" name="search" type="search" class="admin-field pl-12" placeholder="Dərs adı, fənn və ya müəllim üzrə axtar..." />
+                </label>
+                <label>
+                    <span class="mb-1 block text-sm font-semibold text-slate-600">Fənn</span>
+                    <select id="filter_subject" name="filter_subject" class="admin-field">
+                        <option value="">Hamısı</option>
+                        @foreach (var subject in subjects.Data)
+                        {
+                            <option value="@subject.Id">@subject.Name</option>
+                        }
+                    </select>
+                </label>
+                <label>
+                    <span class="mb-1 block text-sm font-semibold text-slate-600">Status</span>
+                    <select id="filter_status" name="filter_status" class="admin-field">
+                        <option value="">Hamısı</option>
+                        <option value="true">Aktiv</option>
+                        <option value="false">Arxivdə</option>
+                    </select>
+                </label>
+                <label>
+                    <span class="mb-1 block text-sm font-semibold text-slate-600">Sırala</span>
+                    <select id="filter_sort" name="filter_sort" class="admin-field">
+                        <option value="new">Ən yeni</option>
+                        <option value="order">Sıra</option>
+                    </select>
+                </label>
+                <div class="flex items-end gap-2">
+                    <button type="button" onclick="loadList(1)" class="admin-button-primary h-[46px] px-5">Axtar</button>
+                    <button type="button" class="grid h-[46px] w-[46px] place-items-center rounded-xl bg-primary-light text-primary">
+                        <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.9"><path stroke-linecap="round" stroke-linejoin="round" d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01" /></svg>
+                    </button>
+                    <button type="button" class="grid h-[46px] w-[46px] place-items-center rounded-xl bg-surface-secondary text-slate-600">
+                        <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.9"><path stroke-linecap="round" stroke-linejoin="round" d="M4 4h6v6H4V4Zm10 0h6v6h-6V4ZM4 14h6v6H4v-6Zm10 0h6v6h-6v-6Z" /></svg>
+                    </button>
+                </div>
+            </div>
 
-<!-- Modal -->
-<div id="modal" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/40 p-4">
-    <div class="w-full max-w-lg rounded-xl bg-white shadow-xl">
-        <div class="flex items-center justify-between border-b border-slate-200 p-4">
-            <h3 id="modalTitle" class="text-lg font-semibold text-slate-800">Yeni dərs</h3>
-            <button type="button" onclick="closeModal()" class="rounded-lg p-1.5 text-slate-400 hover:bg-slate-100">✕</button>
+            <div class="mt-5 overflow-x-auto">
+                <table class="w-full min-w-[1120px] text-sm">
+                    <thead class="bg-surface-secondary text-left text-[13px] font-bold text-slate-600">
+                        <tr>
+                            <th class="w-12 rounded-l-xl px-4 py-3"><input type="checkbox" class="h-5 w-5 rounded-md border-slate-300 text-primary focus:ring-primary" /></th>
+                            <th class="w-16 px-3 py-3">#</th>
+                            <th class="px-3 py-3">Ad</th>
+                            <th class="w-36 px-3 py-3">Fənn</th>
+                            <th class="w-40 px-3 py-3">Qrup/Target</th>
+                            <th class="w-24 px-3 py-3">Sıra</th>
+                            <th class="w-32 px-3 py-3">Status</th>
+                            <th class="w-44 px-3 py-3">Son yenilənmə</th>
+                            <th class="w-52 rounded-r-xl px-3 py-3 text-right">Əməliyyatlar</th>
+                        </tr>
+                    </thead>
+                    <tbody id="rows" class="divide-y divide-border"></tbody>
+                </table>
+            </div>
+
+            <div class="mt-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                <p id="tableInfo" class="text-sm font-medium text-slate-500">Nəticələr yüklənir...</p>
+                <div id="pagination" class="flex flex-wrap justify-end gap-2"></div>
+            </div>
         </div>
-        <div id="formError" class="mx-6 mt-4 hidden rounded-lg bg-red-50 px-3 py-2 text-sm text-red-600"></div>
+    </div>
+</section>
+
+<div id="modal" class="fixed inset-0 z-50 hidden items-center justify-center bg-slate-950/40 p-4">
+    <div class="w-full max-w-lg rounded-2xl bg-white shadow-2xl">
+        <div class="flex items-center justify-between border-b border-border p-5">
+            <h3 id="modalTitle" class="text-lg font-bold text-slate-900">Yeni dərs</h3>
+            <button type="button" onclick="closeModal()" class="rounded-xl p-2 text-slate-400 hover:bg-slate-100">✕</button>
+        </div>
+        <div id="formError" class="mx-6 mt-4 hidden rounded-xl bg-danger-bg px-3 py-2 text-sm font-semibold text-danger"></div>
         <form id="entityForm" class="space-y-4 p-6">
             <input type="hidden" id="entityId" />
             <partial name="Ui/_Select" model="@(new SelectModel {

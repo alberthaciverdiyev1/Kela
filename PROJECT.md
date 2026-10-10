@@ -92,6 +92,7 @@ LanguageLMS.Mvc/     (Program.cs, Controllers, Models, Views)
 - ✅ Adım 32 — **Roles**: JWT `role` claim (`student`/`teacher`/`admin`) + policy'ler (`Student` / `Teacher`=teacher+admin / `Admin`). İçerik uçları → **Teacher**, istifadəçi idarəsi → **Admin**, şagird uçları → **Student**. Boşluqlar bağlandı (əvvəl hamısı açıq idi). + testler.
 - ✅ Adım 33 — **PrivacyPolicy**: `privacy_policies` (type + HTML content). `GET /api/privacy-policy[/{type}]` (public), `PUT /api/privacy-policy` (Teacher, upsert). + testler.
 - ✅ Adım 34 — **Group quiz statistikası** (`GroupQuizStatService`): `GET /api/group/{id}/quiz-stat?quiz_type=lesson|general` → qrupun quizləri üzrə hər şagirdin nəticəsi (attempted, correct, wrong, score %). Reference `GroupQuizStatController` məntiqi. + testler.
+- ✅ Adım 66 — **Admin: Permission + Tenant** səhifələri: Permission (icazə siyahısı + yarat + **rol icazələri** modalı); Tenant (siyahı + yarat). Sidebar-a linklər.
 - ✅ Adım 65 — **Admin login (cookie auth)**: `/login` səhifəsi (`IUserAuthService`), cookie claims (id/name/email/role), **fallback policy** → bütün səhifələr auth tələb edir, layout-da **Çıxış** düyməsi. **Default admin seeder** (`Admin:Email/Password`, admin yoxdursa yaradılır). MVC-yə Jwt config əlavə olundu.
 - ✅ Adım 64 — **Admin: Setting + PrivacyPolicy**: Setting (tək forma: logo, əlaqə nömrələri, sosial, min versiyalar — `PUT /setting`); PrivacyPolicy (siyahı + modal, HTML məzmun — `PUT /privacy-policy`). `SettingResponse`-a min versiyalar əlavə olundu.
 - ✅ Adım 63 — **Admin: User (İstifadəçilər)** səhifəsi: axtarış + tip (admin/müəllim) filtri + list; CRUD (ad, soyad, email, telefon, tip, şifrə — update-də boş buraxıla bilər). `pages/user/{list,create,update}.js`.
@@ -151,7 +152,7 @@ LanguageLMS.Mvc/     (Program.cs, Controllers, Models, Views)
 - [ ] Admin (dashboard, sort order)
 
 ---
-_En son güncelleme: Adım 65 — Admin login (cookie auth) + bootstrap admin — Admin Setting + PrivacyPolicy — Admin User səhifəsi — Admin Notification səhifəsi — Admin Students səhifəsi — Admin Quiz səhifəsi — Admin Question səhifəsi + fayl preview/X — Group idarəetməsi (tab-lar) — Admin Group səhifəsi — Admin LessonContent səhifəsi — Admin Lesson səhifəsi — Admin Subject səhifəsi (list + CRUD modal + JS).
+_En son güncelleme: Adım 66 — Admin Permission + Tenant — Admin login (cookie auth) + bootstrap admin — Admin Setting + PrivacyPolicy — Admin User səhifəsi — Admin Notification səhifəsi — Admin Students səhifəsi — Admin Quiz səhifəsi — Admin Question səhifəsi + fayl preview/X — Group idarəetməsi (tab-lar) — Admin Group səhifəsi — Admin LessonContent səhifəsi — Admin Lesson səhifəsi — Admin Subject səhifəsi (list + CRUD modal + JS).
 
 ## İnkişaf (dev)
 - `./dev.sh` — API + MVC + Tailwind-i **watch** rejimində işə salır (Ctrl+C ilə dayandırır).

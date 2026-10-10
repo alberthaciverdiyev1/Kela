@@ -5,7 +5,7 @@
 <div>
     @if (!string.IsNullOrEmpty(Model.Label))
     {
-        <label class="mb-1 block text-sm font-medium text-slate-700">@Model.Label</label>
+        <label class="mb-1 block text-sm font-semibold text-slate-700">@Model.Label</label>
     }
     <div class="relative mb-2 inline-block">
         <img id="@(id)_preview" alt="" class="hidden h-24 w-24 rounded-lg border border-slate-200 object-cover" />
@@ -14,7 +14,7 @@
     </div>
     <input type="hidden" id="@(id)_remove" value="false" />
     <label for="@id"
-           class="flex cursor-pointer items-center justify-center gap-2 rounded-xl border-2 border-dashed border-slate-300 bg-slate-50 px-4 py-3 text-sm transition-colors hover:border-primary hover:bg-primary/5">
+           class="flex cursor-pointer items-center justify-center gap-2 rounded-xl border-2 border-dashed border-border bg-surface-secondary px-4 py-3 text-sm transition-colors hover:border-primary hover:bg-primary-light">
         <svg class="h-5 w-5 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.6">
             <path stroke-linecap="round" stroke-linejoin="round" d="M7 16a4 4 0 01-.88-7.9A5 5 0 1115.9 6H16a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v8" />
         </svg>

@@ -81,8 +81,8 @@ window.AdminUI = (function () {
             const btn = document.createElement('button');
             btn.type = 'button';
             btn.textContent = i;
-            btn.className = 'rounded-lg px-3 py-1.5 text-sm ' +
-                (i === currentPage ? 'bg-primary text-white' : 'border border-slate-200 bg-white text-slate-600 hover:bg-slate-50');
+            btn.className = 'rounded-xl px-3 py-1.5 text-sm font-semibold ' +
+                (i === currentPage ? 'bg-primary text-white' : 'border border-border bg-white text-slate-600 hover:bg-surface-secondary');
             btn.addEventListener('click', () => onSelect(i));
             box.appendChild(btn);
         }
@@ -92,7 +92,7 @@ window.AdminUI = (function () {
     function actions(id) {
         return `<div class="flex items-center justify-end gap-2">
             <button type="button" class="px-2 py-1 text-primary hover:bg-primary/10 rounded-lg" onclick="openEdit(${id})">Redaktə</button>
-            <button type="button" class="px-2 py-1 text-red-600 hover:bg-red-50 rounded-lg" onclick="removeItem(${id})">Sil</button>
+            <button type="button" class="px-2 py-1 text-danger hover:bg-danger-bg rounded-lg" onclick="removeItem(${id})">Sil</button>
         </div>`;
     }
 
@@ -109,10 +109,10 @@ window.AdminUI = (function () {
 
         rows.forEach(cells => {
             const tr = document.createElement('tr');
-            tr.className = 'hover:bg-slate-50';
+            tr.className = 'h-[62px] hover:bg-primary-light/35';
             cells.forEach(cell => {
                 const td = document.createElement('td');
-                td.className = 'px-4 py-3 ' + (cell.cls || '');
+                td.className = 'px-3 py-3 align-middle ' + (cell.cls || '');
                 td.innerHTML = cell.html;
                 tr.appendChild(td);
             });
