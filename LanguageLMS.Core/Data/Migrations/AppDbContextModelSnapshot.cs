@@ -137,6 +137,47 @@ namespace LanguageLMS.Core.Data.Migrations
                     b.ToTable("banners", (string)null);
                 });
 
+            modelBuilder.Entity("LanguageLMS.Core.Modules.MainCategory.Entities.MainCategory", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint")
+                        .HasColumnName("id");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
+
+                    b.Property<DateTimeOffset>("CreatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_at");
+
+                    b.Property<DateTimeOffset?>("DeletedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("deleted_at");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(190)
+                        .HasColumnType("character varying(190)")
+                        .HasColumnName("name");
+
+                    b.Property<DateTimeOffset?>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("updated_at");
+
+                    b.Property<long?>("UserId")
+                        .HasColumnType("bigint")
+                        .HasColumnName("user_id");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("DeletedAt");
+
+                    b.HasIndex("Name")
+                        .IsUnique();
+
+                    b.ToTable("main_categories", (string)null);
+                });
+
             modelBuilder.Entity("LanguageLMS.Core.Modules.Profession.Entities.Profession", b =>
                 {
                     b.Property<long>("Id")

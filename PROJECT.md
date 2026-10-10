@@ -74,6 +74,7 @@ LanguageLMS.Mvc/     (Program.cs, Controllers, Models, Views)
 - ✅ Adım 14 — Banner uçları sadeleştirildi: `admin` prefix kaldırıldı, tek `list`; endpointler: list/show/add/update/delete.
 - ✅ Adım 15 — **Setting** modülü (tek satırlık ayar + `/api/app-version`) + testler.
 - ✅ Adım 16 — **Auth** modülü: JWT ile register/login/me/logout (OTP ve roller **yok** — sonra eklenecek) + testler.
+- ✅ Adım 17 — **MainCategory (fenn)** modülü (unique ad, sahip `user_id`) + testler. (İçerik zənciri: fenn→qrup/ixtisas)
 
 ## 5. Durum / Notlar
 
@@ -90,7 +91,7 @@ LanguageLMS.Mvc/     (Program.cs, Controllers, Models, Views)
 - [x] Profession
 - [~] Auth / Student — JWT register/login yapıldı; **OTP, roller, student.active bekliyor**
 - [x] Setting
-- [ ] Group / MainCategory / Topic / TopicContent
+- [~] Group / MainCategory / Topic / TopicContent — **MainCategory (fenn) tamam**; Group, assignment, Topic, TopicContent sırada
 - [ ] Video / VoiceRecord / File (BunnyCDN)
 - [ ] Question / Quiz / QuizQuestion
 - [ ] StudentQuiz / QuizRepeat
@@ -101,4 +102,4 @@ LanguageLMS.Mvc/     (Program.cs, Controllers, Models, Views)
 - [ ] Admin (dashboard, sort order)
 
 ---
-_En son güncelleme: Adım 16 — Setting + Auth (JWT) modülleri._
+_En son güncelleme: Adım 17 — MainCategory (fenn) modülü._
