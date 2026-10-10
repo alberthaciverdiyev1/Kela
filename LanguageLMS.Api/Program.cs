@@ -1,5 +1,6 @@
 using System.Text;
 using LanguageLMS.Api.Common.Middleware;
+using LanguageLMS.Api.Common.Routing;
 using LanguageLMS.Api.Common.Responses;
 using LanguageLMS.Api.Common.Validation;
 using LanguageLMS.Core;
@@ -7,6 +8,7 @@ using LanguageLMS.Core.Modules.Auth;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ApplicationModels;
 using Microsoft.AspNetCore.WebUtilities;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -15,6 +17,7 @@ builder.Services.AddControllers(options =>
 {
     options.Filters.Add<ValidationFilter>();
     options.SuppressImplicitRequiredAttributeForNonNullableReferenceTypes = true;
+    options.Conventions.Add(new RouteTokenTransformerConvention(new KebabCaseParameterTransformer()));
 });
 
 builder.Services.Configure<ApiBehaviorOptions>(options =>

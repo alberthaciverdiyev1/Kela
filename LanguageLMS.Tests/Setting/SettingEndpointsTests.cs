@@ -29,7 +29,7 @@ public class SettingEndpointsTests(ApiFactory factory)
     [Fact]
     public async Task App_version_is_public()
     {
-        var response = await _client.GetAsync("/api/app-version");
+        var response = await _client.GetAsync("/api/setting/app-version");
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
         Assert.True((await ReadJsonAsync(response)).GetProperty("data").TryGetProperty("android", out _));
     }

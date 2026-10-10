@@ -8,19 +8,20 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace LanguageLMS.Api.Modules.Setting.Controllers;
 
+[Route("api/[controller]")]
 public sealed class SettingController(ISettingService service) : ApiControllerBase
 {
-    [HttpGet("api/setting")]
+    [HttpGet]
     public async Task<ActionResult<ApiResponse<SettingResponse>>> Get(CancellationToken ct)
         => Success(await service.GetAsync(ct));
 
-    [HttpPut("api/setting")]
+    [HttpPut]
     public async Task<ActionResult<ApiResponse<SettingResponse>>> Update(
         [FromForm] SettingUpsertRequest request, CancellationToken ct)
         => Success(await service.UpdateAsync(request, ct), "Updated");
 
     [AllowAnonymous]
-    [HttpGet("api/app-version")]
+    [HttpGet("app-version")]
     public async Task<ActionResult<ApiResponse<AppVersionResponse>>> AppVersion(CancellationToken ct)
         => Success(await service.GetAppVersionAsync(ct));
 }

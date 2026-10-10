@@ -17,6 +17,8 @@ public sealed class AppDbContext(DbContextOptions<AppDbContext> options) : DbCon
 
     public DbSet<Modules.MainCategory.Entities.MainCategory> MainCategories => Set<Modules.MainCategory.Entities.MainCategory>();
 
+    public DbSet<Modules.User.Entities.User> Users => Set<Modules.User.Entities.User>();
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);

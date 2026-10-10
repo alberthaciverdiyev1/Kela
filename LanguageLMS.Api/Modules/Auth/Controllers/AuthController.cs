@@ -9,20 +9,21 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace LanguageLMS.Api.Modules.Auth.Controllers;
 
+[Route("api/[controller]")]
 public sealed class AuthController(IAuthService service) : ApiControllerBase
 {
-    [HttpPost("api/auth/register")]
+    [HttpPost("register")]
     public async Task<ActionResult<ApiResponse<AuthResponse>>> Register(
         [FromBody] RegisterRequest request, CancellationToken ct)
         => Success(await service.RegisterAsync(request, ct), "Registered", StatusCodes.Status201Created);
 
-    [HttpPost("api/auth/login")]
+    [HttpPost("login")]
     public async Task<ActionResult<ApiResponse<AuthResponse>>> Login(
         [FromBody] LoginRequest request, CancellationToken ct)
         => Success(await service.LoginAsync(request, ct), "Login successful");
 
     [Authorize]
-    [HttpGet("api/auth/me")]
+    [HttpGet("me")]
     public async Task<ActionResult<ApiResponse<StudentResponse>>> Me(CancellationToken ct)
     {
         var id = long.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
@@ -30,6 +31,6 @@ public sealed class AuthController(IAuthService service) : ApiControllerBase
     }
 
     [Authorize]
-    [HttpPost("api/auth/logout")]
+    [HttpPost("logout")]
     public ActionResult<ApiResponse<string>> Logout() => SuccessMessage("Logged out");
 }
