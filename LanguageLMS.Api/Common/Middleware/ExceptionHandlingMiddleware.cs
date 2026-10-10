@@ -1,5 +1,6 @@
 using System.Net;
 using LanguageLMS.Api.Common.Responses;
+using LanguageLMS.Core.Common.Exceptions;
 
 namespace LanguageLMS.Api.Common.Middleware;
 
@@ -20,6 +21,10 @@ public sealed class ExceptionHandlingMiddleware(
         catch (UnauthorizedAccessException ex)
         {
             await WriteAsync(context, HttpStatusCode.Unauthorized, ex.Message);
+        }
+        catch (ForbiddenException ex)
+        {
+            await WriteAsync(context, HttpStatusCode.Forbidden, ex.Message);
         }
         catch (ArgumentException ex)
         {
