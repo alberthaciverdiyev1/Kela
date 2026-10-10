@@ -10,11 +10,12 @@ namespace LanguageLMS.Core.Modules.Auth.Services;
 public sealed class AuthService(
     AppDbContext db,
     ITokenService tokens,
+    IOtpService otp,
     IFileStorage storage) : IAuthService
 {
     public async Task<AuthResponse> RegisterAsync(RegisterRequest request, CancellationToken ct = default)
     {
-        var email = request.Email.Trim().ToLowerInvariant();
+        var email = Normalize(request.Email);
 
         if (await db.Students.AnyAsync(x => x.Email == email, ct))
         {
@@ -44,7 +45,7 @@ public sealed class AuthService(
 
     public async Task<AuthResponse> LoginAsync(LoginRequest request, CancellationToken ct = default)
     {
-        var email = request.Email.Trim().ToLowerInvariant();
+        var email = Normalize(request.Email);
         var student = await db.Students.FirstOrDefaultAsync(x => x.Email == email, ct);
 
         if (student is null || !BCrypt.Net.BCrypt.Verify(request.Password, student.PasswordHash))
@@ -61,12 +62,98 @@ public sealed class AuthService(
     }
 
     public async Task<StudentResponse> GetProfileAsync(long studentId, CancellationToken ct = default)
-    {
-        var student = await db.Students.AsNoTracking().FirstOrDefaultAsync(x => x.Id == studentId, ct)
-            ?? throw new KeyNotFoundException($"Student not found: {studentId}");
+        => ToResponse(await GetStudentAsync(studentId, ct));
 
+    public Task SendOtpAsync(SendOtpRequest request, CancellationToken ct = default)
+        => otp.SendAsync(request.Email, ct);
+
+    public Task<bool> CheckOtpAsync(CheckOtpRequest request, CancellationToken ct = default)
+        => otp.VerifyAsync(request.Email, request.Otp, consume: false, ct);
+
+    public async Task ResetPasswordAsync(ResetPasswordRequest request, CancellationToken ct = default)
+    {
+        if (!await otp.VerifyAsync(request.Email, request.Otp, consume: true, ct))
+        {
+            throw new ArgumentException("Invalid or expired OTP");
+        }
+
+        var email = Normalize(request.Email);
+        var student = await db.Students.FirstOrDefaultAsync(x => x.Email == email, ct)
+            ?? throw new KeyNotFoundException("Student not found");
+
+        student.PasswordHash = BCrypt.Net.BCrypt.HashPassword(request.NewPassword);
+        await db.SaveChangesAsync(ct);
+    }
+
+    public async Task ChangePasswordAsync(long studentId, ChangePasswordRequest request, CancellationToken ct = default)
+    {
+        var student = await GetStudentAsync(studentId, ct);
+
+        if (!BCrypt.Net.BCrypt.Verify(request.CurrentPassword, student.PasswordHash))
+        {
+            throw new ArgumentException("Current password is incorrect");
+        }
+
+        student.PasswordHash = BCrypt.Net.BCrypt.HashPassword(request.NewPassword);
+        await db.SaveChangesAsync(ct);
+    }
+
+    public async Task<StudentResponse> ChangeEmailAsync(long studentId, ChangeEmailRequest request, CancellationToken ct = default)
+    {
+        if (!await otp.VerifyAsync(request.Email, request.Otp, consume: true, ct))
+        {
+            throw new ArgumentException("Invalid or expired OTP");
+        }
+
+        var student = await GetStudentAsync(studentId, ct);
+        var email = Normalize(request.Email);
+
+        if (await db.Students.AnyAsync(x => x.Email == email && x.Id != studentId, ct))
+        {
+            throw new ArgumentException("Email already in use");
+        }
+
+        student.Email = email;
+        await db.SaveChangesAsync(ct);
         return ToResponse(student);
     }
+
+    public async Task<StudentResponse> ChangePhoneAsync(long studentId, ChangePhoneRequest request, CancellationToken ct = default)
+    {
+        var student = await GetStudentAsync(studentId, ct);
+        student.Phone = request.Phone;
+        await db.SaveChangesAsync(ct);
+        return ToResponse(student);
+    }
+
+    public async Task<StudentResponse> ChangeFullNameAsync(long studentId, ChangeFullNameRequest request, CancellationToken ct = default)
+    {
+        var student = await GetStudentAsync(studentId, ct);
+        student.FullName = request.FullName;
+        await db.SaveChangesAsync(ct);
+        return ToResponse(student);
+    }
+
+    public async Task<StudentResponse> SetNotificationStatusAsync(long studentId, NotificationStatusRequest request, CancellationToken ct = default)
+    {
+        var student = await GetStudentAsync(studentId, ct);
+        student.NotificationStatus = request.Enabled;
+        await db.SaveChangesAsync(ct);
+        return ToResponse(student);
+    }
+
+    public async Task DeleteAccountAsync(long studentId, CancellationToken ct = default)
+    {
+        var student = await GetStudentAsync(studentId, ct);
+        student.DeletedAt = DateTimeOffset.UtcNow;
+        await db.SaveChangesAsync(ct);
+    }
+
+    private async Task<Student> GetStudentAsync(long id, CancellationToken ct)
+        => await db.Students.IgnoreQueryFilters().FirstOrDefaultAsync(x => x.Id == id, ct)
+           ?? throw new KeyNotFoundException($"Student not found: {id}");
+
+    private static string Normalize(string email) => email.Trim().ToLowerInvariant();
 
     private StudentResponse ToResponse(Student student) =>
         new(student.Id, student.FullName, student.Email, student.Phone, storage.GetUrl(student.Image));

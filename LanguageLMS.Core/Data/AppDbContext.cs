@@ -72,6 +72,8 @@ public sealed class AppDbContext : DbContext
 
     public DbSet<Modules.Tenant.Entities.Tenant> Tenants => Set<Modules.Tenant.Entities.Tenant>();
 
+    public DbSet<Modules.Auth.Entities.OtpCode> OtpCodes => Set<Modules.Auth.Entities.OtpCode>();
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);

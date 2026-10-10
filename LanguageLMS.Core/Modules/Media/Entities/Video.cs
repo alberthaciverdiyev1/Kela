@@ -8,7 +8,6 @@ public class Video : BaseEntity
 
     public string Path { get; set; } = string.Empty;
 
-    /// <summary>"video" (normal) veya "live" (canlı).</summary>
     public string Type { get; set; } = "video";
 
     public int? DurationSeconds { get; set; }

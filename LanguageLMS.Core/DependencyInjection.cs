@@ -16,6 +16,7 @@ using LanguageLMS.Core.Modules.Notification.Services;
 using LanguageLMS.Core.Modules.PrivacyPolicy.Services;
 using LanguageLMS.Core.Modules.Tenant.Services;
 using LanguageLMS.Core.Common.MultiTenancy;
+using LanguageLMS.Core.Common.Email;
 using LanguageLMS.Core.Common.Push;
 using LanguageLMS.Core.Modules.User.Services;
 using LanguageLMS.Core.Modules.Group.Services;
@@ -58,6 +59,9 @@ public static class DependencyInjection
         services.Configure<JwtOptions>(configuration.GetSection(JwtOptions.SectionName));
         services.AddScoped<ITokenService, JwtTokenService>();
         services.AddScoped<IAuthService, AuthService>();
+        services.AddScoped<IOtpService, OtpService>();
+        services.Configure<SmtpOptions>(configuration.GetSection(SmtpOptions.SectionName));
+        services.AddScoped<IEmailSender, SmtpEmailSender>();
         services.AddScoped<ISubjectService, SubjectService>();
         services.AddScoped<ILessonService, LessonService>();
         services.AddScoped<ILessonContentService, LessonContentService>();
