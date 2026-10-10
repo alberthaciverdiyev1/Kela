@@ -24,6 +24,7 @@ public sealed class QuestionConfiguration : IEntityTypeConfiguration<Question>
         builder.Property(x => x.VariantE).HasColumnName("variant_e").HasMaxLength(1000);
         builder.Property(x => x.CorrectAnswer).HasColumnName("correct_answer").HasMaxLength(2).IsRequired();
         builder.Property(x => x.VariantType).HasColumnName("variant_type").HasMaxLength(20).IsRequired();
+        builder.Property(x => x.TitleType).HasColumnName("title_type").HasMaxLength(20).IsRequired();
         builder.Property(x => x.UserId).HasColumnName("user_id");
 
         builder.HasOne<Subject>().WithMany().HasForeignKey(x => x.SubjectId).OnDelete(DeleteBehavior.Cascade);

@@ -92,6 +92,7 @@ LanguageLMS.Mvc/     (Program.cs, Controllers, Models, Views)
 - ✅ Adım 32 — **Roles**: JWT `role` claim (`student`/`teacher`/`admin`) + policy'ler (`Student` / `Teacher`=teacher+admin / `Admin`). İçerik uçları → **Teacher**, istifadəçi idarəsi → **Admin**, şagird uçları → **Student**. Boşluqlar bağlandı (əvvəl hamısı açıq idi). + testler.
 - ✅ Adım 33 — **PrivacyPolicy**: `privacy_policies` (type + HTML content). `GET /api/privacy-policy[/{type}]` (public), `PUT /api/privacy-policy` (Teacher, upsert). + testler.
 - ✅ Adım 34 — **Group quiz statistikası** (`GroupQuizStatService`): `GET /api/group/{id}/quiz-stat?quiz_type=lesson|general` → qrupun quizləri üzrə hər şagirdin nəticəsi (attempted, correct, wrong, score %). Reference `GroupQuizStatController` məntiqi. + testler.
+- ✅ Adım 39 — **Sual şəkilləri**: `Question.title_type`/`variant_type` (text|image), şəkil yükləmə (`title_image`, `variant_x_image`), cavabda `titleUrl`/`variantXUrl`. + test.
 - ✅ Adım 38 — **Device lock** (`student_devices`): ilk girişdə cihaz bağlanır; fərqli `device_id` ilə giriş → 403. `LoginRequest.DeviceId`. + testler.
 - ✅ Adım 37 — **Məzmun açarları + üzvülük vaxt pəncərəsi**: Lesson `settings` JSON (topic_explain/live_video/pdf/voice_record/topic_quiz/general_quiz bayraqları), `GET /api/student/lessons/{id}/content-count`, və şagirdin **tarixli üzvülük pəncərələri** ilə dərs/material filtri. + testler.
 - ✅ Adım 36 — **Şagird hesab idarəsi + OTP (e-poçt)**: `send-otp`/`check-otp`/`reset-password`, `change-password`/`change-email`/`change-phone`/`change-full-name`/`notification-status`/`delete-account`. `OtpCode` + `SmtpEmailSender` (SMTP konfiqurasiyası gəlincə işləyir). `check-otp` kodu istehlak etmir. + testler.
@@ -124,4 +125,4 @@ LanguageLMS.Mvc/     (Program.cs, Controllers, Models, Views)
 - [ ] Admin (dashboard, sort order)
 
 ---
-_En son güncelleme: Adım 38 — Device lock (student_devices)._
+_En son güncelleme: Adım 39 — Sual şəkilləri (text|image) + switch-account._

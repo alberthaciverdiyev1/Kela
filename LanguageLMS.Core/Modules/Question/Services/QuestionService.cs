@@ -1,15 +1,19 @@
 using LanguageLMS.Core.Common.Responses;
+using LanguageLMS.Core.Common.Storage;
 using LanguageLMS.Core.Data;
 using LanguageLMS.Core.Modules.Question.Requests;
 using LanguageLMS.Core.Modules.Question.Responses;
+using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 
 namespace LanguageLMS.Core.Modules.Question.Services;
 
 using Question = LanguageLMS.Core.Modules.Question.Entities.Question;
 
-public sealed class QuestionService(AppDbContext db) : IQuestionService
+public sealed class QuestionService(AppDbContext db, IFileStorage storage) : IQuestionService
 {
+    private const string ImageFolder = "question";
+
     public async Task<PagedResponse<QuestionResponse>> ListAsync(QuestionListRequest request, CancellationToken ct = default)
     {
         var page = request.Page < 1 ? 1 : request.Page;
@@ -30,7 +34,7 @@ public sealed class QuestionService(AppDbContext db) : IQuestionService
         if (!string.IsNullOrWhiteSpace(request.Search))
         {
             var search = request.Search.Trim();
-            query = query.Where(x => EF.Functions.ILike(x.Title, $"%{search}%"));
+            query = query.Where(x => EF.Functions.ILike(x.Title!, $"%{search}%"));
         }
 
         var total = await query.CountAsync(ct);
@@ -69,8 +73,11 @@ public sealed class QuestionService(AppDbContext db) : IQuestionService
             VariantD = request.VariantD,
             VariantE = request.VariantE,
             CorrectAnswer = request.CorrectAnswer.ToUpperInvariant(),
+            TitleType = request.TitleType,
             VariantType = request.VariantType
         };
+
+        await ApplyImagesAsync(question, request, ct);
 
         db.Questions.Add(question);
         await db.SaveChangesAsync(ct);
@@ -94,9 +101,12 @@ public sealed class QuestionService(AppDbContext db) : IQuestionService
         question.VariantD = request.VariantD;
         question.VariantE = request.VariantE;
         question.CorrectAnswer = request.CorrectAnswer.ToUpperInvariant();
+        question.TitleType = request.TitleType;
         question.VariantType = request.VariantType;
-        await db.SaveChangesAsync(ct);
 
+        await ApplyImagesAsync(question, request, ct);
+
+        await db.SaveChangesAsync(ct);
         return ToResponse(question);
     }
 
@@ -109,6 +119,27 @@ public sealed class QuestionService(AppDbContext db) : IQuestionService
         await db.SaveChangesAsync(ct);
     }
 
+    private async Task ApplyImagesAsync(Question question, QuestionUpsertRequest request, CancellationToken ct)
+    {
+        if (request.TitleImage is not null)
+        {
+            question.Title = await storage.UploadAsync(request.TitleImage, ImageFolder, ct);
+            question.TitleType = "image";
+        }
+
+        if (request.VariantAImage is not null) question.VariantA = await UploadVariantAsync(question, request.VariantAImage, ct);
+        if (request.VariantBImage is not null) question.VariantB = await UploadVariantAsync(question, request.VariantBImage, ct);
+        if (request.VariantCImage is not null) question.VariantC = await UploadVariantAsync(question, request.VariantCImage, ct);
+        if (request.VariantDImage is not null) question.VariantD = await UploadVariantAsync(question, request.VariantDImage, ct);
+        if (request.VariantEImage is not null) question.VariantE = await UploadVariantAsync(question, request.VariantEImage, ct);
+    }
+
+    private async Task<string> UploadVariantAsync(Question question, IFormFile file, CancellationToken ct)
+    {
+        question.VariantType = "image";
+        return await storage.UploadAsync(file, ImageFolder, ct);
+    }
+
     private async Task EnsureSubjectExistsAsync(long subjectId, CancellationToken ct)
     {
         if (!await db.Subjects.AnyAsync(x => x.Id == subjectId, ct))
@@ -117,6 +148,26 @@ public sealed class QuestionService(AppDbContext db) : IQuestionService
         }
     }
 
-    private static QuestionResponse ToResponse(Question q) =>
-        new(q.Id, q.SubjectId, q.Title, q.VariantA, q.VariantB, q.VariantC, q.VariantD, q.VariantE, q.CorrectAnswer, q.VariantType);
+    private QuestionResponse ToResponse(Question q) =>
+        new(
+            q.Id,
+            q.SubjectId,
+            q.Title,
+            q.TitleType,
+            ResolveUrl(q.TitleType, q.Title),
+            q.VariantA,
+            ResolveUrl(q.VariantType, q.VariantA),
+            q.VariantB,
+            ResolveUrl(q.VariantType, q.VariantB),
+            q.VariantC,
+            ResolveUrl(q.VariantType, q.VariantC),
+            q.VariantD,
+            ResolveUrl(q.VariantType, q.VariantD),
+            q.VariantE,
+            ResolveUrl(q.VariantType, q.VariantE),
+            q.CorrectAnswer,
+            q.VariantType);
+
+    private string? ResolveUrl(string type, string? value)
+        => type == "image" && !string.IsNullOrWhiteSpace(value) ? storage.GetUrl(value) : null;
 }

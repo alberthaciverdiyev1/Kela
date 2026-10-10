@@ -17,6 +17,10 @@ public class Question : BaseEntity
     /// <summary>Doğru variant: "A".."E".</summary>
     public string CorrectAnswer { get; set; } = "A";
 
+    /// <summary>title mətn yoxsa şəkil: text | image</summary>
+    public string TitleType { get; set; } = "text";
+
+    /// <summary>variantlar mətn yoxsa şəkil: text | image</summary>
     public string VariantType { get; set; } = "text";
 
     public long? UserId { get; set; }

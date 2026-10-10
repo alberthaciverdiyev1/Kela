@@ -15,6 +15,9 @@ public sealed class QuestionUpsertRequestValidator : AbstractValidator<QuestionU
             .NotEmpty().WithMessage("Title is required")
             .MaximumLength(1000);
 
+        RuleFor(x => x.TitleType).Must(t => t is "text" or "image").WithMessage("Title type must be text or image");
+        RuleFor(x => x.VariantType).Must(t => t is "text" or "image").WithMessage("Variant type must be text or image");
+
         RuleFor(x => x.VariantA).NotEmpty().WithMessage("Variant A is required");
         RuleFor(x => x.VariantB).NotEmpty().WithMessage("Variant B is required");
         RuleFor(x => x.VariantC).NotEmpty().WithMessage("Variant C is required");

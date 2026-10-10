@@ -68,4 +68,28 @@ public class QuestionEndpointsTests(ApiFactory factory)
         var response = await _client.PostAsync("/api/question", Form(999999, Unique("Q")));
         Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
     }
+
+    [Fact]
+    public async Task Question_supports_image_title()
+    {
+        var subjectId = await CreateSubjectAsync();
+        var form = new MultipartFormDataContent
+        {
+            { new StringContent(subjectId.ToString()), "subject_id" },
+            { new StringContent("image question"), "title" },
+            { new StringContent("a"), "variant_a" }, { new StringContent("b"), "variant_b" },
+            { new StringContent("c"), "variant_c" }, { new StringContent("d"), "variant_d" },
+            { new StringContent("A"), "correct_answer" },
+            { new StringContent("image"), "title_type" }
+        };
+        var file = new ByteArrayContent(new byte[10]);
+        file.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue("image/png");
+        form.Add(file, "title_image", "title.png");
+
+        var response = await _client.PostAsync("/api/question", form);
+        Assert.Equal(HttpStatusCode.Created, response.StatusCode);
+        var data = (await ReadJsonAsync(response)).GetProperty("data");
+        Assert.Equal("image", data.GetProperty("titleType").GetString());
+        Assert.False(string.IsNullOrWhiteSpace(data.GetProperty("titleUrl").GetString()));
+    }
 }

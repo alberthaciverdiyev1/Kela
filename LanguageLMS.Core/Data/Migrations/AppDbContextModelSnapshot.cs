@@ -998,6 +998,12 @@ namespace LanguageLMS.Core.Data.Migrations
                         .HasColumnType("character varying(1000)")
                         .HasColumnName("title");
 
+                    b.Property<string>("TitleType")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("character varying(20)")
+                        .HasColumnName("title_type");
+
                     b.Property<DateTimeOffset?>("UpdatedAt")
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("updated_at");
