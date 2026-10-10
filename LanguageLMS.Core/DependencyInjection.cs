@@ -9,6 +9,7 @@ using LanguageLMS.Core.Modules.Subject.Services;
 using LanguageLMS.Core.Modules.Lesson.Services;
 using LanguageLMS.Core.Modules.LessonContent.Services;
 using LanguageLMS.Core.Modules.StudentApp.Services;
+using LanguageLMS.Core.Modules.Progress.Services;
 using LanguageLMS.Core.Modules.User.Services;
 using LanguageLMS.Core.Modules.Group.Services;
 using Microsoft.AspNetCore.Builder;
@@ -53,7 +54,9 @@ public static class DependencyInjection
         services.AddScoped<ISubjectService, SubjectService>();
         services.AddScoped<ILessonService, LessonService>();
         services.AddScoped<ILessonContentService, LessonContentService>();
+        services.AddScoped<IStudentAccessService, StudentAccessService>();
         services.AddScoped<IStudentAppService, StudentAppService>();
+        services.AddScoped<IProgressService, ProgressService>();
         services.AddScoped<IUserService, UserService>();
         services.AddScoped<IUserAuthService, UserAuthService>();
         services.AddScoped<IGroupService, GroupService>();

@@ -3,7 +3,6 @@ using LanguageLMS.Core.Common.Storage;
 using LanguageLMS.Core.Data;
 using LanguageLMS.Core.Modules.Group.Responses;
 using LanguageLMS.Core.Modules.Lesson.Responses;
-using LanguageLMS.Core.Modules.LessonContent.Entities;
 using LanguageLMS.Core.Modules.LessonContent.Responses;
 using LanguageLMS.Core.Modules.Subject.Responses;
 using Microsoft.EntityFrameworkCore;
@@ -12,7 +11,10 @@ namespace LanguageLMS.Core.Modules.StudentApp.Services;
 
 using LessonContent = LanguageLMS.Core.Modules.LessonContent.Entities.LessonContent;
 
-public sealed class StudentAppService(AppDbContext db, IFileStorage storage) : IStudentAppService
+public sealed class StudentAppService(
+    AppDbContext db,
+    IFileStorage storage,
+    IStudentAccessService access) : IStudentAppService
 {
     public async Task<IReadOnlyList<GroupResponse>> ListGroupsAsync(long studentId, CancellationToken ct = default)
     {
@@ -31,12 +33,11 @@ public sealed class StudentAppService(AppDbContext db, IFileStorage storage) : I
     public async Task<IReadOnlyList<SubjectResponse>> ListSubjectsAsync(
         long studentId, long groupId, CancellationToken ct = default)
     {
-        if (!await db.StudentGroups.AnyAsync(sg => sg.GroupId == groupId && sg.StudentId == studentId, ct))
+        if (!await access.IsGroupMemberAsync(studentId, groupId, ct))
         {
             throw new ForbiddenException("You do not have access to this group");
         }
 
-        // Qrupdakı fənlərin sırası dəyişdirilmir
         return await db.GroupSubjects
             .AsNoTracking()
             .Where(gs => gs.GroupId == groupId)
@@ -48,7 +49,7 @@ public sealed class StudentAppService(AppDbContext db, IFileStorage storage) : I
     public async Task<IReadOnlyList<LessonResponse>> ListLessonsAsync(
         long studentId, long subjectId, CancellationToken ct = default)
     {
-        if (!await HasSubjectAccessAsync(studentId, subjectId, ct))
+        if (!await access.HasSubjectAccessAsync(studentId, subjectId, ct))
         {
             throw new ForbiddenException("You do not have access to this subject");
         }
@@ -71,7 +72,7 @@ public sealed class StudentAppService(AppDbContext db, IFileStorage storage) : I
         var lesson = await db.Lessons.AsNoTracking().FirstOrDefaultAsync(x => x.Id == lessonId, ct)
             ?? throw new KeyNotFoundException($"Lesson not found: {lessonId}");
 
-        if (!await HasSubjectAccessAsync(studentId, lesson.SubjectId, ct))
+        if (!await access.HasSubjectAccessAsync(studentId, lesson.SubjectId, ct))
         {
             throw new ForbiddenException("You do not have access to this lesson");
         }
@@ -89,34 +90,14 @@ public sealed class StudentAppService(AppDbContext db, IFileStorage storage) : I
         return contents.Select(ToResponse).ToList();
     }
 
-    private async Task<bool> HasSubjectAccessAsync(long studentId, long subjectId, CancellationToken ct)
-    {
-        var subjectIds = await db.GroupSubjects
-            .Where(gs => db.StudentGroups.Any(sg => sg.GroupId == gs.GroupId && sg.StudentId == studentId))
-            .Select(gs => gs.SubjectId)
-            .Distinct()
-            .ToListAsync(ct);
-
-        return subjectIds.Contains(subjectId);
-    }
-
     private LessonContentResponse ToResponse(LessonContent content)
     {
         if (content.Video is not null)
-        {
             return Row(content, "video", storage.GetUrl(content.Video.Path), content.Video.DurationSeconds);
-        }
-
         if (content.MediaFile is not null)
-        {
             return Row(content, "file", storage.GetUrl(content.MediaFile.Path), null);
-        }
-
         if (content.VoiceRecord is not null)
-        {
             return Row(content, "voice", storage.GetUrl(content.VoiceRecord.Path), content.VoiceRecord.DurationSeconds);
-        }
-
         return Row(content, null, null, null);
     }
 

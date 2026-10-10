@@ -534,6 +534,57 @@ namespace LanguageLMS.Core.Data.Migrations
                     b.ToTable("voice_records", (string)null);
                 });
 
+            modelBuilder.Entity("LanguageLMS.Core.Modules.Progress.Entities.LessonProgress", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint")
+                        .HasColumnName("id");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
+
+                    b.Property<DateTimeOffset?>("CompletedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("completed_at");
+
+                    b.Property<DateTimeOffset>("CreatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_at");
+
+                    b.Property<DateTimeOffset?>("DeletedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("deleted_at");
+
+                    b.Property<long>("LessonContentId")
+                        .HasColumnType("bigint")
+                        .HasColumnName("lesson_content_id");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasMaxLength(30)
+                        .HasColumnType("character varying(30)")
+                        .HasColumnName("status");
+
+                    b.Property<long>("StudentId")
+                        .HasColumnType("bigint")
+                        .HasColumnName("student_id");
+
+                    b.Property<DateTimeOffset?>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("updated_at");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("DeletedAt");
+
+                    b.HasIndex("LessonContentId");
+
+                    b.HasIndex("StudentId", "LessonContentId")
+                        .IsUnique();
+
+                    b.ToTable("lesson_progress", (string)null);
+                });
+
             modelBuilder.Entity("LanguageLMS.Core.Modules.Setting.Entities.Setting", b =>
                 {
                     b.Property<long>("Id")
@@ -789,6 +840,21 @@ namespace LanguageLMS.Core.Data.Migrations
                     b.Navigation("Video");
 
                     b.Navigation("VoiceRecord");
+                });
+
+            modelBuilder.Entity("LanguageLMS.Core.Modules.Progress.Entities.LessonProgress", b =>
+                {
+                    b.HasOne("LanguageLMS.Core.Modules.LessonContent.Entities.LessonContent", null)
+                        .WithMany()
+                        .HasForeignKey("LessonContentId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("LanguageLMS.Core.Modules.Auth.Entities.Student", null)
+                        .WithMany()
+                        .HasForeignKey("StudentId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("LanguageLMS.Core.Modules.Group.Entities.Group", b =>
