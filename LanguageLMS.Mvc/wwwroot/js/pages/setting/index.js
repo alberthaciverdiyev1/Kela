@@ -17,4 +17,10 @@
         if (res.ok) { AdminUI.notify('Yadda saxlanıldı'); if (res.data.logo) AdminUI.fileSet('logo', res.data.logo); }
         else AdminUI.error();
     });
+
+    document.getElementById('clearCacheBtn')?.addEventListener('click', async () => {
+        const res = await AdminUI.post('/setting/clear-cache', {});
+        if (res.ok) AdminUI.notify('Keş təmizləndi');
+        else AdminUI.error();
+    });
 })();

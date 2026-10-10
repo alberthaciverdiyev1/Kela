@@ -106,6 +106,204 @@
     background: var(--primary-hover);
   }
 
+  .admin-button-secondary {
+    display: inline-flex;
+    min-height: 44px;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    border-radius: 10px;
+    border: 1px solid var(--border);
+    background: var(--surface);
+    padding: 10px 18px;
+    font-size: 14px;
+    font-weight: 700;
+    color: #334155;
+    transition: background-color 140ms ease, border-color 140ms ease;
+  }
+
+  .admin-button-secondary:hover {
+    background: var(--surface-secondary);
+    border-color: #d3dbe4;
+  }
+
+  .admin-button-danger {
+    display: inline-flex;
+    min-height: 44px;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    border-radius: 10px;
+    background: var(--danger);
+    padding: 10px 18px;
+    font-size: 14px;
+    font-weight: 700;
+    color: #ffffff;
+    transition: filter 140ms ease;
+  }
+
+  .admin-button-danger:hover {
+    filter: brightness(0.95);
+  }
+
+  .admin-button-ghost {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    border-radius: 10px;
+    padding: 8px 12px;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--primary);
+    transition: background-color 140ms ease;
+  }
+
+  .admin-button-ghost:hover {
+    background: var(--primary-light);
+  }
+
+  /* ---------- Page shell ---------- */
+  .admin-page {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+  }
+
+  .admin-page-title {
+    font-size: 26px;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    color: #0f172a;
+  }
+
+  .admin-page-subtitle {
+    margin-top: 4px;
+    font-size: 14px;
+    color: var(--text-secondary);
+  }
+
+  /* ---------- Toolbar ---------- */
+  .admin-toolbar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    gap: 12px;
+    border-bottom: 1px solid var(--border);
+    padding: 16px 20px;
+  }
+
+  .admin-toolbar .grow {
+    flex: 1 1 240px;
+  }
+
+  /* ---------- Data table ---------- */
+  .admin-table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    font-size: 14px;
+  }
+
+  .admin-table thead th {
+    position: sticky;
+    top: 0;
+    z-index: 1;
+    background: var(--surface-secondary);
+    padding: 12px 16px;
+    text-align: left;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: #64748b;
+    white-space: nowrap;
+  }
+
+  .admin-table tbody td {
+    border-top: 1px solid var(--border);
+    padding: 14px 16px;
+    vertical-align: middle;
+    color: #1e293b;
+  }
+
+  .admin-table tbody tr {
+    transition: background-color 120ms ease;
+  }
+
+  .admin-table tbody tr:hover {
+    background: rgba(248, 250, 252, 0.7);
+  }
+
+  .admin-table-footer {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    border-top: 1px solid var(--border);
+    padding: 14px 20px;
+  }
+
+  /* ---------- Badges ---------- */
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    border-radius: 999px;
+    padding: 4px 10px;
+    font-size: 12px;
+    font-weight: 700;
+    line-height: 1;
+    white-space: nowrap;
+  }
+
+  .badge-primary { background: var(--primary-light); color: var(--primary); }
+  .badge-success { background: var(--success-bg); color: var(--success); }
+  .badge-warning { background: var(--warning-bg); color: #b45309; }
+  .badge-danger { background: var(--danger-bg); color: var(--danger); }
+  .badge-neutral { background: #f1f5f9; color: #64748b; }
+
+  /* ---------- Empty state ---------- */
+  .admin-empty {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    padding: 56px 16px;
+    text-align: center;
+    color: #94a3b8;
+  }
+
+  /* ---------- Loader ---------- */
+  .admin-loader {
+    position: absolute;
+    inset: 0;
+    z-index: 10;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    background: rgba(255, 255, 255, 0.7);
+    backdrop-filter: blur(1px);
+  }
+
+  .admin-loader.is-active {
+    display: flex;
+  }
+
+  .spinner {
+    width: 36px;
+    height: 36px;
+    border-radius: 999px;
+    border: 4px solid var(--border);
+    border-top-color: var(--primary);
+    animation: admin-spin 0.8s linear infinite;
+  }
+
+  @keyframes admin-spin {
+    to { transform: rotate(360deg); }
+  }
+
   .admin-icon-button {
     display: inline-flex;
     height: 38px;

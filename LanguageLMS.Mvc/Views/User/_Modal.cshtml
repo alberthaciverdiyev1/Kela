@@ -1,0 +1,35 @@
+@{
+    var typeOptions = new List<SelectOption>
+    {
+        new() { Value = "teacher", Text = "Müəllim" },
+        new() { Value = "admin", Text = "Admin" }
+    };
+}
+<div id="modal" class="fixed inset-0 z-50 hidden items-center justify-center bg-slate-950/40 p-4">
+    <div class="max-h-[90vh] w-full max-w-lg overflow-y-auto rounded-2xl bg-white shadow-2xl">
+        <div class="flex items-center justify-between border-b border-border p-5">
+            <h3 id="modalTitle" class="text-lg font-bold text-slate-900">Yeni istifadəçi</h3>
+            <button type="button" onclick="closeModal()" class="rounded-xl p-2 text-slate-400 hover:bg-slate-100">✕</button>
+        </div>
+        <div id="formError" class="mx-6 mt-4 hidden rounded-xl bg-danger-bg px-3 py-2 text-sm font-semibold text-danger"></div>
+        <form id="entityForm" class="space-y-4 p-6">
+            <input type="hidden" id="entityId" />
+            <div class="grid grid-cols-2 gap-4">
+                <partial name="Ui/_Input" model="@(new InputModel { Name = "name", Id = "name", Label = "Ad" })" />
+                <partial name="Ui/_Input" model="@(new InputModel { Name = "surname", Id = "surname", Label = "Soyad" })" />
+            </div>
+            <partial name="Ui/_Input" model="@(new InputModel { Name = "email", Id = "email", Label = "Email", Type = "email", Required = true })" />
+            <partial name="Ui/_Input" model="@(new InputModel { Name = "phoneNumber", Id = "phoneNumber", Label = "Telefon" })" />
+            <partial name="Ui/_Select" model="@(new SelectModel { Name = "type", Id = "type", Label = "Tip", Options = typeOptions })" />
+            <div>
+                <label class="mb-1 block text-sm font-medium text-slate-700">Şifrə</label>
+                <input id="password" type="password" class="block w-full rounded-lg border border-slate-300 bg-slate-50 p-2.5 text-sm" />
+                <p id="passwordHint" class="mt-1 hidden text-xs text-slate-400">Boş buraxsan şifrə dəyişməz.</p>
+            </div>
+            <div class="flex justify-end gap-3 pt-2">
+                <partial name="Ui/_Button" model="@(new ButtonModel { Text = "İmtina", Variant = "secondary", OnClick = "closeModal()" })" />
+                <partial name="Ui/_Button" model="@(new ButtonModel { Text = "Yadda saxla", Type = "submit" })" />
+            </div>
+        </form>
+    </div>
+</div>

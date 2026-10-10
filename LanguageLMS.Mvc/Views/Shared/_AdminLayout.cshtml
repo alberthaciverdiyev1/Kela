@@ -56,8 +56,10 @@
                 </div>
             </header>
 
-            <main class="flex-1 p-5 sm:p-7">
-                @RenderBody()
+            <main class="flex-1 overflow-x-hidden p-5 sm:p-7">
+                <div class="mx-auto w-full max-w-[1440px]">
+                    @RenderBody()
+                </div>
             </main>
         </div>
     </div>

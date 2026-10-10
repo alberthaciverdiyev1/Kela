@@ -1,4 +1,5 @@
 using FluentValidation;
+using LanguageLMS.Core.Common.Bulk;
 using LanguageLMS.Core.Modules.Subject.Abstractions;
 using LanguageLMS.Core.Modules.Subject.Requests;
 using Microsoft.AspNetCore.Mvc;
@@ -51,6 +52,14 @@ public sealed class SubjectController(
     public async Task<IActionResult> Delete(long id, CancellationToken ct)
     {
         await service.DeleteAsync(id, ct);
+        return Json(new { ok = true });
+    }
+
+    [HttpPost("bulk")]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> Bulk([FromBody] BulkRequest request, CancellationToken ct)
+    {
+        await service.BulkAsync(request, ct);
         return Json(new { ok = true });
     }
 

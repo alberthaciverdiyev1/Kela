@@ -23,7 +23,7 @@ async function loadList(page) {
         { html: s.fullName, cls: 'font-medium text-slate-800' },
         { html: s.email, cls: 'text-slate-500' },
         { html: s.phone ?? '-', cls: 'text-slate-500' },
-        { html: s.isActive ? '<span class="rounded-full bg-emerald-100 px-2 py-0.5 text-xs text-emerald-700">Aktiv</span>' : '<span class="rounded-full bg-slate-100 px-2 py-0.5 text-xs text-slate-500">Deaktiv</span>' },
+        { html: s.isActive ? AdminUI.badge('Aktiv', 'success') : AdminUI.badge('Deaktiv', 'neutral') },
         { html: studentActions(s), cls: 'text-right' }
     ]), 6);
 

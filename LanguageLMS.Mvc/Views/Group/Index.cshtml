@@ -1,102 +1,53 @@
 @{
     ViewData["Title"] = "Qruplar";
     var teachers = (PagedResponse<UserResponse>)ViewData["Teachers"]!;
-    var teacherOptions = new List<SelectOption> { new() { Value = "", Text = "— Müəllim seçilməyib —" } };
-    teacherOptions.AddRange(teachers.Data.Select(u => new SelectOption { Value = u.Id.ToString(), Text = $"{u.Name} {u.Surname}".Trim() }));
 }
 <script>window.TEACHERS = { @Html.Raw(string.Join(",", teachers.Data.Select(u => $"{u.Id}:\"{System.Text.Json.JsonEncodedText.Encode(($"{u.Name} {u.Surname}".Trim()))}\""))) }; </script>
+<section class="admin-page">
+    <partial name="Ui/_PageHeader" model="@(new PageHeaderModel {
+        Title = "Qruplar",
+        Subtitle = "Şagird qruplarını, müəllim və üzvlərini idarə edin.",
+        CreateText = "Yeni qrup" })" />
 
-<div class="mb-5 flex items-center justify-between">
-    <h2 class="text-xl font-semibold text-slate-800">Qruplar</h2>
-    <partial name="Ui/_Button" model="@(new ButtonModel { Text = "+ Yeni qrup", OnClick = "openCreate()" })" />
-</div>
-
-<div class="mb-4 flex items-end gap-2">
-    <div class="w-64">
-        <partial name="Ui/_Input" model="@(new InputModel { Name = "search", Id = "search", Placeholder = "Ad üzrə axtar..." })" />
-    </div>
-    <partial name="Ui/_Button" model="@(new ButtonModel { Text = "Axtar", Variant = "secondary", OnClick = "loadList(1)" })" />
-</div>
-
-<div class="relative overflow-hidden rounded-xl border border-slate-200 bg-white">
-    <div id="listLoader" class="absolute inset-0 z-10 hidden items-center justify-center bg-white/70">
-        <div class="h-9 w-9 animate-spin rounded-full border-4 border-slate-200 border-t-primary"></div>
-    </div>
-    <table class="w-full text-sm">
-        <thead class="bg-slate-50 text-left text-slate-500">
-            <tr>
-                <th class="px-4 py-3">#</th>
-                <th class="px-4 py-3">Ad</th>
-                <th class="px-4 py-3">Müəllim</th>
-                <th class="px-4 py-3">Şagird</th>
-                <th class="px-4 py-3 text-right">Əməliyyatlar</th>
-            </tr>
-        </thead>
-        <tbody id="rows" class="divide-y divide-slate-100"></tbody>
-    </table>
-</div>
-
-<div id="pagination" class="mt-4 flex flex-wrap gap-2"></div>
-
-<!-- Modal -->
-<div id="modal" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/40 p-4">
-    <div class="w-full max-w-lg rounded-xl bg-white shadow-xl">
-        <div class="flex items-center justify-between border-b border-slate-200 p-4">
-            <h3 id="modalTitle" class="text-lg font-semibold text-slate-800">Yeni qrup</h3>
-            <button type="button" onclick="closeModal()" class="rounded-lg p-1.5 text-slate-400 hover:bg-slate-100">✕</button>
-        </div>
-        <div id="formError" class="mx-6 mt-4 hidden rounded-lg bg-red-50 px-3 py-2 text-sm text-red-600"></div>
-        <form id="entityForm" class="space-y-4 p-6">
-            <input type="hidden" id="entityId" />
-            <partial name="Ui/_Input" model="@(new InputModel { Name = "name", Id = "name", Label = "Ad", Required = true })" />
-            <partial name="Ui/_Input" model="@(new InputModel { Name = "description", Id = "description", Label = "Təsvir" })" />
-            <partial name="Ui/_Select" model="@(new SelectModel { Name = "user_id", Id = "user_id", Label = "Müəllim", Options = teacherOptions })" />
-            <partial name="Ui/_FileUpload" model="@(new FileUploadModel { Name = "image", Id = "image", Label = "Şəkil", Accept = ".jpg,.jpeg,.png", Hint = "jpg/png, max 5MB" })" />
-            <div class="flex justify-end gap-3 pt-2">
-                <partial name="Ui/_Button" model="@(new ButtonModel { Text = "İmtina", Variant = "secondary", OnClick = "closeModal()" })" />
-                <partial name="Ui/_Button" model="@(new ButtonModel { Text = "Yadda saxla", Type = "submit" })" />
+    <div class="admin-card">
+        <div class="admin-toolbar">
+            <div class="grow">
+                <label class="relative block">
+                    <span class="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400">
+                        <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="m21 21-4.35-4.35M11 18a7 7 0 1 1 0-14 7 7 0 0 1 0 14Z" /></svg>
+                    </span>
+                    <input id="search" name="search" type="search" class="admin-field pl-11" placeholder="Qrup adı üzrə axtar..." />
+                </label>
             </div>
-        </form>
-    </div>
-</div>
-
-
-<!-- Manage modal -->
-<div id="manageModal" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/40 p-4">
-    <div class="w-full max-w-2xl rounded-xl bg-white shadow-xl">
-        <div class="flex items-center justify-between border-b border-slate-200 p-4">
-            <h3 id="manageTitle" class="text-lg font-semibold text-slate-800">İdarə</h3>
-            <button type="button" onclick="closeManage()" class="rounded-lg p-1.5 text-slate-400 hover:bg-slate-100">✕</button>
+            <button type="button" onclick="loadList(1)" class="admin-button-primary h-[46px] px-6">Axtar</button>
         </div>
-        <div class="flex gap-1 border-b border-slate-200 px-4 pt-3">
-            <button type="button" data-tab="students" class="manage-tabbtn rounded-t-lg px-4 py-2 text-sm" onclick="switchTab('students')">Şagirdlər</button>
-            <button type="button" data-tab="subjects" class="manage-tabbtn rounded-t-lg px-4 py-2 text-sm" onclick="switchTab('subjects')">Fənnlər</button>
-            <button type="button" data-tab="quizzes" class="manage-tabbtn rounded-t-lg px-4 py-2 text-sm" onclick="switchTab('quizzes')">İmtahanlar</button>
-        </div>
-        <div class="max-h-[60vh] overflow-y-auto p-4">
-            <div id="tab-students" class="manage-tab space-y-3">
-                <div class="flex gap-2">
-                    <select id="studentsSelect" class="flex-1 rounded-lg border border-slate-300 bg-slate-50 p-2.5 text-sm"></select>
-                    <button type="button" onclick="assignMember('students')" class="rounded-lg bg-primary px-4 py-2 text-sm text-white hover:bg-primary-600">Əlavə et</button>
-                </div>
-                <div id="studentsList" class="space-y-2"></div>
-            </div>
-            <div id="tab-subjects" class="manage-tab hidden space-y-3">
-                <div class="flex gap-2">
-                    <select id="subjectsSelect" class="flex-1 rounded-lg border border-slate-300 bg-slate-50 p-2.5 text-sm"></select>
-                    <button type="button" onclick="assignMember('subjects')" class="rounded-lg bg-primary px-4 py-2 text-sm text-white hover:bg-primary-600">Əlavə et</button>
-                </div>
-                <div id="subjectsList" class="space-y-2"></div>
-            </div>
-            <div id="tab-quizzes" class="manage-tab hidden space-y-3">
-                <div class="flex gap-2">
-                    <select id="quizzesSelect" class="flex-1 rounded-lg border border-slate-300 bg-slate-50 p-2.5 text-sm"></select>
-                    <button type="button" onclick="assignMember('quizzes')" class="rounded-lg bg-primary px-4 py-2 text-sm text-white hover:bg-primary-600">Əlavə et</button>
-                </div>
-                <div id="quizzesList" class="space-y-2"></div>
+
+        <div class="relative">
+            <div id="listLoader" class="admin-loader"><div class="spinner"></div></div>
+            <div class="overflow-x-auto">
+                <table class="admin-table">
+                    <thead>
+                        <tr>
+                            <th class="w-16">#</th>
+                            <th>Ad</th>
+                            <th>Müəllim</th>
+                            <th class="w-28">Şagird</th>
+                            <th class="text-right">Əməliyyatlar</th>
+                        </tr>
+                    </thead>
+                    <tbody id="rows"></tbody>
+                </table>
             </div>
         </div>
+
+        <div class="admin-table-footer">
+            <span></span>
+            <div id="pagination" class="flex flex-wrap justify-end gap-2"></div>
+        </div>
     </div>
-</div>
+</section>
+
+<partial name="_Modal" />
+<partial name="_ManageModal" />
 
 <form id="antiforgery">@Html.AntiForgeryToken()</form>

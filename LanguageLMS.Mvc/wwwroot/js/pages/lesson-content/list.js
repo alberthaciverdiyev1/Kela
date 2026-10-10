@@ -16,7 +16,7 @@ async function loadList(page) {
         { html: TYPE_TEXT[c.type] ?? '-', cls: 'text-slate-500' },
         { html: c.url ? `<a href="${c.url}" target="_blank" class="text-primary hover:underline">aç</a>` : '-' },
         { html: c.sortOrder, cls: 'text-slate-500' },
-        { html: c.isActive ? '<span class="rounded-full bg-emerald-100 px-2 py-0.5 text-xs text-emerald-700">Aktiv</span>' : '<span class="rounded-full bg-slate-100 px-2 py-0.5 text-xs text-slate-500">Deaktiv</span>' },
+        { html: c.isActive ? AdminUI.badge('Aktiv', 'success') : AdminUI.badge('Deaktiv', 'neutral') },
         { html: AdminUI.actions(c.id), cls: 'text-right' }
     ]), 7);
 

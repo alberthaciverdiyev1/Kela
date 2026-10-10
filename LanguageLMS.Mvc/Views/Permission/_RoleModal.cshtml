@@ -1,0 +1,25 @@
+<div id="roleModal" class="fixed inset-0 z-50 hidden items-center justify-center bg-slate-950/40 p-4">
+    <div class="w-full max-w-md rounded-2xl bg-white shadow-2xl">
+        <div class="flex items-center justify-between border-b border-border p-5">
+            <h3 class="text-lg font-bold text-slate-900">Rol icazələri</h3>
+            <button type="button" onclick="closeRole()" class="rounded-xl p-2 text-slate-400 hover:bg-slate-100">✕</button>
+        </div>
+        <form id="roleForm" class="space-y-4 p-6">
+            <div>
+                <label class="mb-1 block text-sm font-medium text-slate-700">Rol</label>
+                <select id="role" class="block w-full rounded-lg border border-slate-300 bg-slate-50 p-2.5 text-sm">
+                    <option value="teacher">Müəllim</option>
+                    <option value="student">Şagird</option>
+                </select>
+            </div>
+            <div>
+                <label class="mb-1 block text-sm font-medium text-slate-700">İcazələr (Ctrl ilə çoxseçim)</label>
+                <select id="rolePermissions" multiple size="8" class="block w-full rounded-lg border border-slate-300 bg-slate-50 p-2 text-sm"></select>
+            </div>
+            <div class="flex justify-end gap-3 pt-2">
+                <partial name="Ui/_Button" model="@(new ButtonModel { Text = "İmtina", Variant = "secondary", OnClick = "closeRole()" })" />
+                <partial name="Ui/_Button" model="@(new ButtonModel { Text = "Yadda saxla", Type = "submit" })" />
+            </div>
+        </form>
+    </div>
+</div>

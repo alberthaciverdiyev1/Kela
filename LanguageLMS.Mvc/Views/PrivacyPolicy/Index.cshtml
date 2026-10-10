@@ -1,48 +1,31 @@
 @{
     ViewData["Title"] = "Gizlilik";
 }
+<section class="admin-page">
+    <partial name="Ui/_PageHeader" model="@(new PageHeaderModel {
+        Title = "Gizlilik & Şərtlər",
+        Subtitle = "Tətbiqdə göstərilən hüquqi sənədləri redaktə edin.",
+        CreateText = "Yeni sənəd" })" />
 
-<div class="mb-5 flex items-center justify-between">
-    <h2 class="text-xl font-semibold text-slate-800">Gizlilik & Şərtlər</h2>
-    <partial name="Ui/_Button" model="@(new ButtonModel { Text = "+ Yeni sənəd", OnClick = "openCreate()" })" />
-</div>
-
-<div class="relative overflow-hidden rounded-xl border border-slate-200 bg-white">
-    <div id="listLoader" class="absolute inset-0 z-10 hidden items-center justify-center bg-white/70">
-        <div class="h-9 w-9 animate-spin rounded-full border-4 border-slate-200 border-t-primary"></div>
-    </div>
-    <table class="w-full text-sm">
-        <thead class="bg-slate-50 text-left text-slate-500">
-            <tr>
-                <th class="px-4 py-3">Növ</th>
-                <th class="px-4 py-3">Məzmun</th>
-                <th class="px-4 py-3 text-right">Əməliyyatlar</th>
-            </tr>
-        </thead>
-        <tbody id="rows" class="divide-y divide-slate-100"></tbody>
-    </table>
-</div>
-
-<!-- Modal -->
-<div id="modal" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/40 p-4">
-    <div class="max-h-[90vh] w-full max-w-3xl overflow-y-auto rounded-xl bg-white shadow-xl">
-        <div class="flex items-center justify-between border-b border-slate-200 p-4">
-            <h3 id="modalTitle" class="text-lg font-semibold text-slate-800">Yeni sənəd</h3>
-            <button type="button" onclick="closeModal()" class="rounded-lg p-1.5 text-slate-400 hover:bg-slate-100">✕</button>
+    <div class="admin-card">
+        <div class="relative">
+            <div id="listLoader" class="admin-loader"><div class="spinner"></div></div>
+            <div class="overflow-x-auto">
+                <table class="admin-table">
+                    <thead>
+                        <tr>
+                            <th class="w-40">Növ</th>
+                            <th>Məzmun</th>
+                            <th class="text-right">Əməliyyatlar</th>
+                        </tr>
+                    </thead>
+                    <tbody id="rows"></tbody>
+                </table>
+            </div>
         </div>
-        <div id="formError" class="mx-6 mt-4 hidden rounded-lg bg-red-50 px-3 py-2 text-sm text-red-600"></div>
-        <form id="entityForm" class="space-y-4 p-6">
-            <partial name="Ui/_Input" model="@(new InputModel { Name = "type", Id = "type", Label = "Növ (privacy / terms / about)", Required = true })" />
-            <div>
-                <label class="mb-1 block text-sm font-medium text-slate-700">Məzmun (HTML)</label>
-                <textarea id="content" rows="12" class="block w-full rounded-lg border border-slate-300 bg-slate-50 p-2.5 font-mono text-sm"></textarea>
-            </div>
-            <div class="flex justify-end gap-3 pt-2">
-                <partial name="Ui/_Button" model="@(new ButtonModel { Text = "İmtina", Variant = "secondary", OnClick = "closeModal()" })" />
-                <partial name="Ui/_Button" model="@(new ButtonModel { Text = "Yadda saxla", Type = "submit" })" />
-            </div>
-        </form>
     </div>
-</div>
+</section>
+
+<partial name="_Modal" />
 
 <form id="antiforgery">@Html.AntiForgeryToken()</form>

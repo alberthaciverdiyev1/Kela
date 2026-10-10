@@ -1,100 +1,57 @@
 @{
     ViewData["Title"] = "Suallar";
     var subjects = (PagedResponse<SubjectResponse>)ViewData["Subjects"]!;
-    var subjectOptions = subjects.Data.Select(s => new SelectOption { Value = s.Id.ToString(), Text = s.Name }).ToList();
-    var textImage = new List<SelectOption> { new() { Value = "text", Text = "Mətn" }, new() { Value = "image", Text = "Şəkil" } };
-    var answers = new[] { "A", "B", "C", "D", "E" }.Select(a => new SelectOption { Value = a, Text = a }).ToList();
+    var subjectFilter = new List<SelectOption> { new() { Value = "", Text = "Hamısı" } };
+    subjectFilter.AddRange(subjects.Data.Select(s => new SelectOption { Value = s.Id.ToString(), Text = s.Name }));
 }
 <script>window.SUBJECTS = { @Html.Raw(string.Join(",", subjects.Data.Select(s => $"{s.Id}:\"{System.Text.Json.JsonEncodedText.Encode(s.Name)}\""))) }; </script>
+<section class="admin-page">
+    <partial name="Ui/_PageHeader" model="@(new PageHeaderModel {
+        Title = "Suallar",
+        Subtitle = "Fənlər üzrə test suallarını idarə edin.",
+        CreateText = "Yeni sual" })" />
 
-<div class="mb-5 flex items-center justify-between">
-    <h2 class="text-xl font-semibold text-slate-800">Suallar</h2>
-    <partial name="Ui/_Button" model="@(new ButtonModel { Text = "+ Yeni sual", OnClick = "openCreate()" })" />
-</div>
-
-<div class="mb-4 flex flex-wrap items-end gap-3">
-    <div class="w-56">
-        <partial name="Ui/_Select" model="@(new SelectModel { Name = "filter_subject", Id = "filter_subject", Label = "Fənn", Options = subjectOptions })" />
-    </div>
-    <div class="w-64">
-        <partial name="Ui/_Input" model="@(new InputModel { Name = "search", Id = "search", Placeholder = "Sualda axtar..." })" />
-    </div>
-    <partial name="Ui/_Button" model="@(new ButtonModel { Text = "Axtar", Variant = "secondary", OnClick = "loadList(1)" })" />
-</div>
-
-<div class="relative overflow-hidden rounded-xl border border-slate-200 bg-white">
-    <div id="listLoader" class="absolute inset-0 z-10 hidden items-center justify-center bg-white/70">
-        <div class="h-9 w-9 animate-spin rounded-full border-4 border-slate-200 border-t-primary"></div>
-    </div>
-    <table class="w-full text-sm">
-        <thead class="bg-slate-50 text-left text-slate-500">
-            <tr>
-                <th class="px-4 py-3">#</th>
-                <th class="px-4 py-3">Fənn</th>
-                <th class="px-4 py-3">Sual</th>
-                <th class="px-4 py-3">Düzgün</th>
-                <th class="px-4 py-3 text-right">Əməliyyatlar</th>
-            </tr>
-        </thead>
-        <tbody id="rows" class="divide-y divide-slate-100"></tbody>
-    </table>
-</div>
-
-<div id="pagination" class="mt-4 flex flex-wrap gap-2"></div>
-
-<!-- Modal -->
-<div id="modal" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/40 p-4">
-    <div class="max-h-[90vh] w-full max-w-3xl overflow-y-auto rounded-xl bg-white shadow-xl">
-        <div class="flex items-center justify-between border-b border-slate-200 p-4">
-            <h3 id="modalTitle" class="text-lg font-semibold text-slate-800">Yeni sual</h3>
-            <button type="button" onclick="closeModal()" class="rounded-lg p-1.5 text-slate-400 hover:bg-slate-100">✕</button>
+    <div class="admin-card">
+        <div class="admin-toolbar">
+            <div class="w-56">
+                <partial name="Ui/_Select" model="@(new SelectModel { Name = "filter_subject", Id = "filter_subject", Label = "Fənn", Options = subjectFilter })" />
+            </div>
+            <div class="grow">
+                <label class="relative block">
+                    <span class="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400">
+                        <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="m21 21-4.35-4.35M11 18a7 7 0 1 1 0-14 7 7 0 0 1 0 14Z" /></svg>
+                    </span>
+                    <input id="search" name="search" type="search" class="admin-field pl-11" placeholder="Sual mətnində axtar..." />
+                </label>
+            </div>
+            <button type="button" onclick="loadList(1)" class="admin-button-primary h-[46px] px-6">Axtar</button>
         </div>
-        <div id="formError" class="mx-6 mt-4 hidden rounded-lg bg-red-50 px-3 py-2 text-sm text-red-600"></div>
-        <form id="entityForm" class="space-y-4 p-6">
-            <input type="hidden" id="entityId" />
-            <input type="hidden" id="rawTitle" />
-            @foreach (var v in new[] { "A", "B", "C", "D", "E" })
-            {
-                <input type="hidden" id="raw@(v)" />
-            }
 
-            <partial name="Ui/_Select" model="@(new SelectModel { Name = "subject_id", Id = "subject_id", Label = "Fənn", Required = true, Options = subjectOptions })" />
+        <div class="relative">
+            <div id="listLoader" class="admin-loader"><div class="spinner"></div></div>
+            <div class="overflow-x-auto">
+                <table class="admin-table">
+                    <thead>
+                        <tr>
+                            <th class="w-16">#</th>
+                            <th class="w-44">Fənn</th>
+                            <th>Sual</th>
+                            <th class="w-28">Düzgün</th>
+                            <th class="text-right">Əməliyyatlar</th>
+                        </tr>
+                    </thead>
+                    <tbody id="rows"></tbody>
+                </table>
+            </div>
+        </div>
 
-            <div class="grid grid-cols-2 gap-4">
-                <partial name="Ui/_Select" model="@(new SelectModel { Name = "title_type", Id = "title_type", Label = "Başlıq növü", Options = textImage })" />
-                <partial name="Ui/_Select" model="@(new SelectModel { Name = "variant_type", Id = "variant_type", Label = "Variant növü", Options = textImage })" />
-            </div>
-
-            <div id="titleTextBlock">
-                <partial name="Ui/_Input" model="@(new InputModel { Name = "title", Id = "title", Label = "Sual mətni", Required = true })" />
-            </div>
-            <div id="titleImageBlock" class="hidden">
-                <partial name="Ui/_FileUpload" model="@(new FileUploadModel { Name = "title_image", Id = "title_image", Label = "Sual şəkli", Accept = "image/*" })" />
-            </div>
-
-            <div id="variantsTextBlock" class="space-y-3">
-                @foreach (var v in new[] { "A", "B", "C", "D", "E" })
-                {
-                    <partial name="Ui/_Input" model="@(new InputModel { Name = $"variant_{v.ToLower()}", Id = $"variant_{v.ToLower()}", Label = $"Variant {v}" })" />
-                }
-            </div>
-            <div id="variantsImageBlock" class="hidden space-y-3">
-                @foreach (var v in new[] { "A", "B", "C", "D", "E" })
-                {
-                    <partial name="Ui/_FileUpload" model="@(new FileUploadModel { Name = $"variant_{v.ToLower()}_image", Id = $"variant_{v.ToLower()}_image", Label = $"Variant {v} şəkli", Accept = "image/*" })" />
-                }
-            </div>
-
-            <div class="grid grid-cols-2 gap-4">
-                <partial name="Ui/_Select" model="@(new SelectModel { Name = "correct_answer", Id = "correct_answer", Label = "Düzgün cavab", Options = answers })" />
-            </div>
-
-            <div class="flex justify-end gap-3 pt-2">
-                <partial name="Ui/_Button" model="@(new ButtonModel { Text = "İmtina", Variant = "secondary", OnClick = "closeModal()" })" />
-                <partial name="Ui/_Button" model="@(new ButtonModel { Text = "Yadda saxla", Type = "submit" })" />
-            </div>
-        </form>
+        <div class="admin-table-footer">
+            <span></span>
+            <div id="pagination" class="flex flex-wrap justify-end gap-2"></div>
+        </div>
     </div>
-</div>
+</section>
+
+<partial name="_Modal" />
 
 <form id="antiforgery">@Html.AntiForgeryToken()</form>

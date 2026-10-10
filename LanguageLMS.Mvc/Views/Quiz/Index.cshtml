@@ -1,89 +1,53 @@
 @{
     ViewData["Title"] = "İmtahanlar";
     var lessons = (PagedResponse<LessonResponse>)ViewData["Lessons"]!;
-    var lessonOptions = lessons.Data.Select(l => new SelectOption { Value = l.Id.ToString(), Text = l.Title }).ToList();
-    var typeOptions = new List<SelectOption> { new() { Value = "lesson", Text = "Dərs imtahanı" }, new() { Value = "general", Text = "Ümumi" } };
+    var lessonFilter = new List<SelectOption> { new() { Value = "", Text = "Hamısı" } };
+    lessonFilter.AddRange(lessons.Data.Select(l => new SelectOption { Value = l.Id.ToString(), Text = l.Title }));
 }
 <script>window.LESSONS = { @Html.Raw(string.Join(",", lessons.Data.Select(l => $"{l.Id}:\"{System.Text.Json.JsonEncodedText.Encode(l.Title)}\""))) }; </script>
+<section class="admin-page">
+    <partial name="Ui/_PageHeader" model="@(new PageHeaderModel {
+        Title = "İmtahanlar",
+        Subtitle = "Dərs və ümumi imtahanları, sual seçimini idarə edin.",
+        CreateText = "Yeni imtahan" })" />
 
-<div class="mb-5 flex items-center justify-between">
-    <h2 class="text-xl font-semibold text-slate-800">İmtahanlar</h2>
-    <partial name="Ui/_Button" model="@(new ButtonModel { Text = "+ Yeni imtahan", OnClick = "openCreate()" })" />
-</div>
-
-<div class="mb-4 flex flex-wrap items-end gap-3">
-    <div class="w-64">
-        <partial name="Ui/_Select" model="@(new SelectModel { Name = "filter_lesson", Id = "filter_lesson", Label = "Dərs", Options = lessonOptions })" />
-    </div>
-    <partial name="Ui/_Button" model="@(new ButtonModel { Text = "Göstər", Variant = "secondary", OnClick = "loadList(1)" })" />
-</div>
-
-<div class="relative overflow-hidden rounded-xl border border-slate-200 bg-white">
-    <div id="listLoader" class="absolute inset-0 z-10 hidden items-center justify-center bg-white/70">
-        <div class="h-9 w-9 animate-spin rounded-full border-4 border-slate-200 border-t-primary"></div>
-    </div>
-    <table class="w-full text-sm">
-        <thead class="bg-slate-50 text-left text-slate-500">
-            <tr>
-                <th class="px-4 py-3">#</th>
-                <th class="px-4 py-3">Dərs</th>
-                <th class="px-4 py-3">Başlıq</th>
-                <th class="px-4 py-3">Növ</th>
-                <th class="px-4 py-3">Müddət</th>
-                <th class="px-4 py-3">Suallar</th>
-                <th class="px-4 py-3">Aktiv</th>
-                <th class="px-4 py-3 text-right">Əməliyyatlar</th>
-            </tr>
-        </thead>
-        <tbody id="rows" class="divide-y divide-slate-100"></tbody>
-    </table>
-</div>
-
-<div id="pagination" class="mt-4 flex flex-wrap gap-2"></div>
-
-<!-- Modal (create/edit) -->
-<div id="modal" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/40 p-4">
-    <div class="w-full max-w-lg rounded-xl bg-white shadow-xl">
-        <div class="flex items-center justify-between border-b border-slate-200 p-4">
-            <h3 id="modalTitle" class="text-lg font-semibold text-slate-800">Yeni imtahan</h3>
-            <button type="button" onclick="closeModal()" class="rounded-lg p-1.5 text-slate-400 hover:bg-slate-100">✕</button>
+    <div class="admin-card">
+        <div class="admin-toolbar">
+            <div class="w-72">
+                <partial name="Ui/_Select" model="@(new SelectModel { Name = "filter_lesson", Id = "filter_lesson", Label = "Dərs", Options = lessonFilter })" />
+            </div>
+            <button type="button" onclick="loadList(1)" class="admin-button-primary h-[46px] px-6">Göstər</button>
         </div>
-        <div id="formError" class="mx-6 mt-4 hidden rounded-lg bg-red-50 px-3 py-2 text-sm text-red-600"></div>
-        <form id="entityForm" class="space-y-4 p-6">
-            <input type="hidden" id="entityId" />
-            <partial name="Ui/_Select" model="@(new SelectModel { Name = "lesson_id", Id = "lesson_id", Label = "Dərs", Required = true, Options = lessonOptions })" />
-            <partial name="Ui/_Input" model="@(new InputModel { Name = "title", Id = "title", Label = "Başlıq", Required = true })" />
-            <div class="grid grid-cols-2 gap-4">
-                <partial name="Ui/_Input" model="@(new InputModel { Name = "duration_minutes", Id = "duration_minutes", Label = "Müddət (dəq)", Type = "number", Value = "0" })" />
-                <partial name="Ui/_Select" model="@(new SelectModel { Name = "type", Id = "type", Label = "Növ", Options = typeOptions })" />
-            </div>
-            <div class="flex flex-wrap gap-6">
-                <partial name="Ui/_Switch" model="@(new SwitchModel { Name = "is_active", Id = "is_active", Label = "Aktiv", Checked = true })" />
-                <partial name="Ui/_Switch" model="@(new SwitchModel { Name = "is_repeat", Id = "is_repeat", Label = "Təkrar icazəsi", Checked = false })" />
-            </div>
-            <div class="flex justify-end gap-3 pt-2">
-                <partial name="Ui/_Button" model="@(new ButtonModel { Text = "İmtina", Variant = "secondary", OnClick = "closeModal()" })" />
-                <partial name="Ui/_Button" model="@(new ButtonModel { Text = "Yadda saxla", Type = "submit" })" />
-            </div>
-        </form>
-    </div>
-</div>
 
-<!-- Questions modal -->
-<div id="questionsModal" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/40 p-4">
-    <div class="w-full max-w-2xl rounded-xl bg-white shadow-xl">
-        <div class="flex items-center justify-between border-b border-slate-200 p-4">
-            <h3 id="questionsTitle" class="text-lg font-semibold text-slate-800">Suallar</h3>
-            <button type="button" onclick="closeQuestions()" class="rounded-lg p-1.5 text-slate-400 hover:bg-slate-100">✕</button>
-        </div>
-        <div class="max-h-[60vh] overflow-y-auto p-4">
-            <div class="mb-4 flex gap-2">
-                <select id="questionsSelect" class="flex-1 rounded-lg border border-slate-300 bg-slate-50 p-2.5 text-sm"></select>
-                <button type="button" onclick="assignQuestion()" class="rounded-lg bg-primary px-4 py-2 text-sm text-white hover:bg-primary-600">Əlavə et</button>
+        <div class="relative">
+            <div id="listLoader" class="admin-loader"><div class="spinner"></div></div>
+            <div class="overflow-x-auto">
+                <table class="admin-table">
+                    <thead>
+                        <tr>
+                            <th class="w-16">#</th>
+                            <th>Dərs</th>
+                            <th>Başlıq</th>
+                            <th class="w-24">Növ</th>
+                            <th class="w-24">Müddət</th>
+                            <th class="w-24">Suallar</th>
+                            <th class="w-24">Aktiv</th>
+                            <th class="text-right">Əməliyyatlar</th>
+                        </tr>
+                    </thead>
+                    <tbody id="rows"></tbody>
+                </table>
             </div>
-            <div id="questionsList" class="space-y-2"></div>
+        </div>
+
+        <div class="admin-table-footer">
+            <span></span>
+            <div id="pagination" class="flex flex-wrap justify-end gap-2"></div>
         </div>
     </div>
-</div>
+</section>
+
+<partial name="_Modal" />
+<partial name="_QuestionsModal" />
 
 <form id="antiforgery">@Html.AntiForgeryToken()</form>

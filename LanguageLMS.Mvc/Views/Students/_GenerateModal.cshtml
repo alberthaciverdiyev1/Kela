@@ -1,0 +1,17 @@
+<div id="generateModal" class="fixed inset-0 z-50 hidden items-center justify-center bg-slate-950/40 p-4">
+    <div class="w-full max-w-md rounded-2xl bg-white shadow-2xl">
+        <div class="flex items-center justify-between border-b border-border p-5">
+            <h3 class="text-lg font-bold text-slate-900">Şagird generasiya et</h3>
+            <button type="button" onclick="closeGenerate()" class="rounded-xl p-2 text-slate-400 hover:bg-slate-100">✕</button>
+        </div>
+        <form id="generateForm" class="space-y-4 p-6">
+            <partial name="Ui/_Input" model="@(new InputModel { Name = "count", Id = "gen_count", Label = "Say", Type = "number", Value = "10" })" />
+            <partial name="Ui/_Input" model="@(new InputModel { Name = "fullNamePrefix", Id = "gen_prefix", Label = "Ad prefiksi", Value = "Student" })" />
+            <partial name="Ui/_Input" model="@(new InputModel { Name = "password", Id = "gen_password", Label = "Şifrə", Value = "student123" })" />
+            <div class="flex justify-end gap-3 pt-2">
+                <partial name="Ui/_Button" model="@(new ButtonModel { Text = "İmtina", Variant = "secondary", OnClick = "closeGenerate()" })" />
+                <partial name="Ui/_Button" model="@(new ButtonModel { Text = "Yarat", Type = "submit" })" />
+            </div>
+        </form>
+    </div>
+</div>

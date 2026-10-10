@@ -1,72 +1,40 @@
 @{
     ViewData["Title"] = "İcazələr";
 }
-
-<div class="mb-5 flex items-center justify-between">
-    <h2 class="text-xl font-semibold text-slate-800">İcazələr</h2>
-    <div class="flex gap-2">
-        <partial name="Ui/_Button" model="@(new ButtonModel { Text = "Rol icazələri", Variant = "secondary", OnClick = "openRole()" })" />
-        <partial name="Ui/_Button" model="@(new ButtonModel { Text = "+ Yeni icazə", OnClick = "openCreate()" })" />
-    </div>
-</div>
-
-<div class="relative overflow-hidden rounded-xl border border-slate-200 bg-white">
-    <div id="listLoader" class="absolute inset-0 z-10 hidden items-center justify-center bg-white/70">
-        <div class="h-9 w-9 animate-spin rounded-full border-4 border-slate-200 border-t-primary"></div>
-    </div>
-    <table class="w-full text-sm">
-        <thead class="bg-slate-50 text-left text-slate-500">
-            <tr>
-                <th class="px-4 py-3">İcazə</th>
-                <th class="px-4 py-3">Rollar</th>
-            </tr>
-        </thead>
-        <tbody id="rows" class="divide-y divide-slate-100"></tbody>
-    </table>
-</div>
-
-<!-- Create modal -->
-<div id="modal" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/40 p-4">
-    <div class="w-full max-w-md rounded-xl bg-white shadow-xl">
-        <div class="flex items-center justify-between border-b border-slate-200 p-4">
-            <h3 class="text-lg font-semibold text-slate-800">Yeni icazə</h3>
-            <button type="button" onclick="closeModal()" class="rounded-lg p-1.5 text-slate-400 hover:bg-slate-100">✕</button>
+<section class="admin-page">
+    <div class="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+        <div>
+            <h2 class="admin-page-title">İcazələr</h2>
+            <p class="admin-page-subtitle">Rollara verilən icazələri idarə edin.</p>
         </div>
-        <form id="createForm" class="space-y-4 p-6">
-            <partial name="Ui/_Input" model="@(new InputModel { Name = "name", Id = "name", Label = "İcazə adı (məs. subject.manage)", Required = true })" />
-            <div class="flex justify-end gap-3 pt-2">
-                <partial name="Ui/_Button" model="@(new ButtonModel { Text = "İmtina", Variant = "secondary", OnClick = "closeModal()" })" />
-                <partial name="Ui/_Button" model="@(new ButtonModel { Text = "Yarat", Type = "submit" })" />
-            </div>
-        </form>
-    </div>
-</div>
-
-<!-- Role modal -->
-<div id="roleModal" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/40 p-4">
-    <div class="w-full max-w-md rounded-xl bg-white shadow-xl">
-        <div class="flex items-center justify-between border-b border-slate-200 p-4">
-            <h3 class="text-lg font-semibold text-slate-800">Rol icazələri</h3>
-            <button type="button" onclick="closeRole()" class="rounded-lg p-1.5 text-slate-400 hover:bg-slate-100">✕</button>
+        <div class="flex shrink-0 items-center gap-2">
+            <button type="button" onclick="openRole()" class="admin-button-secondary">Rol icazələri</button>
+            <button type="button" onclick="openCreate()" class="admin-button-primary">
+                <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 5v14M5 12h14" /></svg>
+                Yeni icazə
+            </button>
         </div>
-        <form id="roleForm" class="space-y-4 p-6">
-            <div>
-                <label class="mb-1 block text-sm font-medium text-slate-700">Rol</label>
-                <select id="role" class="block w-full rounded-lg border border-slate-300 bg-slate-50 p-2.5 text-sm">
-                    <option value="teacher">Müəllim</option>
-                    <option value="student">Şagird</option>
-                </select>
-            </div>
-            <div>
-                <label class="mb-1 block text-sm font-medium text-slate-700">İcazələr (Ctrl ilə çoxseçim)</label>
-                <select id="rolePermissions" multiple size="8" class="block w-full rounded-lg border border-slate-300 bg-slate-50 p-2 text-sm"></select>
-            </div>
-            <div class="flex justify-end gap-3 pt-2">
-                <partial name="Ui/_Button" model="@(new ButtonModel { Text = "İmtina", Variant = "secondary", OnClick = "closeRole()" })" />
-                <partial name="Ui/_Button" model="@(new ButtonModel { Text = "Yadda saxla", Type = "submit" })" />
-            </div>
-        </form>
     </div>
-</div>
+
+    <div class="admin-card">
+        <div class="relative">
+            <div id="listLoader" class="admin-loader"><div class="spinner"></div></div>
+            <div class="overflow-x-auto">
+                <table class="admin-table">
+                    <thead>
+                        <tr>
+                            <th>İcazə</th>
+                            <th>Rollar</th>
+                        </tr>
+                    </thead>
+                    <tbody id="rows"></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</section>
+
+<partial name="_Modal" />
+<partial name="_RoleModal" />
 
 <form id="antiforgery">@Html.AntiForgeryToken()</form>

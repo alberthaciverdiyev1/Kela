@@ -1,0 +1,31 @@
+@{
+    var lessons = (PagedResponse<LessonResponse>)ViewData["Lessons"]!;
+    var lessonOptions = lessons.Data.Select(l => new SelectOption { Value = l.Id.ToString(), Text = l.Title }).ToList();
+    var typeOptions = new List<SelectOption> { new() { Value = "lesson", Text = "Dərs imtahanı" }, new() { Value = "general", Text = "Ümumi" } };
+}
+<div id="modal" class="fixed inset-0 z-50 hidden items-center justify-center bg-slate-950/40 p-4">
+    <div class="w-full max-w-lg rounded-2xl bg-white shadow-2xl">
+        <div class="flex items-center justify-between border-b border-border p-5">
+            <h3 id="modalTitle" class="text-lg font-bold text-slate-900">Yeni imtahan</h3>
+            <button type="button" onclick="closeModal()" class="rounded-xl p-2 text-slate-400 hover:bg-slate-100">✕</button>
+        </div>
+        <div id="formError" class="mx-6 mt-4 hidden rounded-xl bg-danger-bg px-3 py-2 text-sm font-semibold text-danger"></div>
+        <form id="entityForm" class="space-y-4 p-6">
+            <input type="hidden" id="entityId" />
+            <partial name="Ui/_Select" model="@(new SelectModel { Name = "lesson_id", Id = "lesson_id", Label = "Dərs", Required = true, Options = lessonOptions })" />
+            <partial name="Ui/_Input" model="@(new InputModel { Name = "title", Id = "title", Label = "Başlıq", Required = true })" />
+            <div class="grid grid-cols-2 gap-4">
+                <partial name="Ui/_Input" model="@(new InputModel { Name = "duration_minutes", Id = "duration_minutes", Label = "Müddət (dəq)", Type = "number", Value = "0" })" />
+                <partial name="Ui/_Select" model="@(new SelectModel { Name = "type", Id = "type", Label = "Növ", Options = typeOptions })" />
+            </div>
+            <div class="flex flex-wrap gap-6">
+                <partial name="Ui/_Switch" model="@(new SwitchModel { Name = "is_active", Id = "is_active", Label = "Aktiv", Checked = true })" />
+                <partial name="Ui/_Switch" model="@(new SwitchModel { Name = "is_repeat", Id = "is_repeat", Label = "Təkrar icazəsi", Checked = false })" />
+            </div>
+            <div class="flex justify-end gap-3 pt-2">
+                <partial name="Ui/_Button" model="@(new ButtonModel { Text = "İmtina", Variant = "secondary", OnClick = "closeModal()" })" />
+                <partial name="Ui/_Button" model="@(new ButtonModel { Text = "Yadda saxla", Type = "submit" })" />
+            </div>
+        </form>
+    </div>
+</div>

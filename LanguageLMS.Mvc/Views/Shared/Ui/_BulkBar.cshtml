@@ -1,0 +1,26 @@
+@model BulkBarModel
+<div id="bulkBar" class="mb-3 hidden items-center gap-2 rounded-xl border border-border bg-surface px-3 py-2">
+    <span id="bulkCount" class="text-sm font-bold text-slate-600"></span>
+    <div class="ml-auto flex items-center gap-2">
+        @if (Model.CanDelete)
+        {
+            <button type="button" class="rounded-lg bg-danger px-3 py-1.5 text-sm font-semibold text-white hover:brightness-95"
+                    onclick="AdminUI.bulkDo('@Model.Url', 'delete', () => loadList(currentPage))">Sil</button>
+        }
+        @if (Model.CanRestore)
+        {
+            <button type="button" class="rounded-lg border border-border px-3 py-1.5 text-sm font-semibold text-slate-600 hover:bg-surface-secondary"
+                    onclick="AdminUI.bulkDo('@Model.Url', 'restore', () => loadList(currentPage))">Bərpa et</button>
+        }
+        @if (Model.CanActivate)
+        {
+            <button type="button" class="rounded-lg border border-border px-3 py-1.5 text-sm font-semibold text-slate-600 hover:bg-surface-secondary"
+                    onclick="AdminUI.bulkDo('@Model.Url', 'activate', () => loadList(currentPage))">Aktiv</button>
+        }
+        @if (Model.CanDeactivate)
+        {
+            <button type="button" class="rounded-lg border border-border px-3 py-1.5 text-sm font-semibold text-slate-600 hover:bg-surface-secondary"
+                    onclick="AdminUI.bulkDo('@Model.Url', 'deactivate', () => loadList(currentPage))">Deaktiv</button>
+        }
+    </div>
+</div>

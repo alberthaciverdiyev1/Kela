@@ -14,7 +14,7 @@ async function loadList(page) {
         { html: `${u.name ?? ''} ${u.surname ?? ''}`.trim() || '-', cls: 'font-medium text-slate-800' },
         { html: u.email, cls: 'text-slate-500' },
         { html: u.phoneNumber ?? '-', cls: 'text-slate-500' },
-        { html: u.type === 'admin' ? '<span class="rounded-full bg-primary/10 px-2 py-0.5 text-xs text-primary">Admin</span>' : '<span class="rounded-full bg-slate-100 px-2 py-0.5 text-xs text-slate-600">Müəllim</span>' },
+        { html: u.type === 'admin' ? AdminUI.badge('Admin', 'primary') : AdminUI.badge('Müəllim', 'neutral') },
         { html: AdminUI.actions(u.id), cls: 'text-right' }
     ]), 6);
 

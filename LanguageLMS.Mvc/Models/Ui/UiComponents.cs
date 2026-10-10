@@ -53,3 +53,29 @@ public class FileUploadModel
     public string? Accept { get; set; }
     public string? Hint { get; set; }
 }
+
+public class BulkBarModel
+{
+    public string Url { get; set; } = string.Empty;
+    public bool CanDelete { get; set; } = true;
+    public bool CanRestore { get; set; } = true;
+    public bool CanActivate { get; set; }
+    public bool CanDeactivate { get; set; }
+}
+
+public class PageHeaderModel
+{
+    public string Title { get; set; } = string.Empty;
+    public string? Subtitle { get; set; }
+    public string? CreateText { get; set; }
+    public string CreateOnClick { get; set; } = "openCreate()";
+    public bool Sortable { get; set; }
+}
+
+public class StatCardModel
+{
+    public string Id { get; set; } = string.Empty;
+    public string Label { get; set; } = string.Empty;
+    public string Icon { get; set; } = string.Empty;
+    public string Accent { get; set; } = "bg-primary-light text-primary";
+}

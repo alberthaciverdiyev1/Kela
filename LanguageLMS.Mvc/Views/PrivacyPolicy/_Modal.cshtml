@@ -1,0 +1,20 @@
+<div id="modal" class="fixed inset-0 z-50 hidden items-center justify-center bg-slate-950/40 p-4">
+    <div class="max-h-[90vh] w-full max-w-3xl overflow-y-auto rounded-2xl bg-white shadow-2xl">
+        <div class="flex items-center justify-between border-b border-border p-5">
+            <h3 id="modalTitle" class="text-lg font-bold text-slate-900">Yeni sənəd</h3>
+            <button type="button" onclick="closeModal()" class="rounded-xl p-2 text-slate-400 hover:bg-slate-100">✕</button>
+        </div>
+        <div id="formError" class="mx-6 mt-4 hidden rounded-xl bg-danger-bg px-3 py-2 text-sm font-semibold text-danger"></div>
+        <form id="entityForm" class="space-y-4 p-6">
+            <partial name="Ui/_Input" model="@(new InputModel { Name = "type", Id = "type", Label = "Növ (privacy / terms / about)", Required = true })" />
+            <div>
+                <label class="mb-1 block text-sm font-medium text-slate-700">Məzmun (HTML)</label>
+                <textarea id="content" rows="12" class="block w-full rounded-lg border border-slate-300 bg-slate-50 p-2.5 font-mono text-sm"></textarea>
+            </div>
+            <div class="flex justify-end gap-3 pt-2">
+                <partial name="Ui/_Button" model="@(new ButtonModel { Text = "İmtina", Variant = "secondary", OnClick = "closeModal()" })" />
+                <partial name="Ui/_Button" model="@(new ButtonModel { Text = "Yadda saxla", Type = "submit" })" />
+            </div>
+        </form>
+    </div>
+</div>

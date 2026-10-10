@@ -11,7 +11,7 @@ async function loadList(page) {
         { html: n.id, cls: 'text-slate-400' },
         { html: n.title, cls: 'font-medium text-slate-800' },
         { html: n.body ?? '-', cls: 'text-slate-500' },
-        { html: n.all ? '<span class="rounded-full bg-primary/10 px-2 py-0.5 text-xs text-primary">Hamıya</span>' : '<span class="rounded-full bg-slate-100 px-2 py-0.5 text-xs text-slate-500">Seçilmiş</span>' },
+        { html: n.all ? AdminUI.badge('Hamıya', 'primary') : AdminUI.badge('Seçilmiş', 'neutral') },
         { html: n.image ? `<img src="${n.image}" class="h-8 w-12 rounded border border-slate-200 object-cover" />` : '-', cls: 'text-slate-500' },
         { html: new Date(n.createdAt).toLocaleString('az'), cls: 'text-slate-400 text-xs' },
         { html: `<div class="flex justify-end"><button type="button" class="px-2 py-1 text-red-600 hover:bg-red-50 rounded-lg" onclick="removeItem(${n.id})">Sil</button></div>`, cls: 'text-right' }

@@ -1,15 +1,13 @@
-@using LanguageLMS.Mvc.Models.Ui
 @model ButtonModel
 @{
-    const string baseClass = "inline-flex min-h-11 items-center justify-center gap-2 rounded-[10px] px-4 py-2 text-sm font-bold focus:outline-none focus:ring-4";
     var variants = new Dictionary<string, string>
     {
-        ["primary"] = "text-white bg-primary hover:bg-primary-600 focus:ring-primary/20",
-        ["secondary"] = "text-slate-700 bg-white border border-border hover:bg-surface-secondary focus:ring-slate-200",
-        ["danger"] = "text-white bg-danger hover:bg-red-600 focus:ring-danger/20",
-        ["ghost"] = "text-primary hover:bg-primary/10",
+        ["primary"] = "admin-button-primary",
+        ["secondary"] = "inline-flex min-h-[44px] items-center justify-center gap-2 rounded-[10px] border border-border bg-surface px-4 text-sm font-bold text-slate-600 transition hover:bg-surface-secondary",
+        ["danger"] = "inline-flex min-h-[44px] items-center justify-center gap-2 rounded-[10px] bg-danger px-4 text-sm font-bold text-white transition hover:brightness-95",
+        ["ghost"] = "px-2 py-1 text-primary rounded-lg hover:bg-primary-light",
     };
-    var cls = $"{baseClass} {variants.GetValueOrDefault(Model.Variant, variants["primary"])}";
+    var cls = variants.GetValueOrDefault(Model.Variant, variants["primary"]);
 }
 @if (!string.IsNullOrEmpty(Model.Href))
 {
