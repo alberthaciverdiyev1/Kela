@@ -7,6 +7,7 @@ public record LessonContentResponse(
     string? Description,
     string? Type,
     string? Url,
+    string? PlaybackUrl,
     int SortOrder,
     bool IsActive,
     int? DurationSeconds);

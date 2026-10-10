@@ -61,4 +61,19 @@ public sealed class BunnyCdnStorage(HttpClient http, IOptions<BunnyCdnOptions> o
 
         return $"{pullZone.TrimEnd('/')}/{path.TrimStart('/')}";
     }
+
+    public string? CreatePresignedPutUrl(string path, string contentType, TimeSpan expiry) => null;
+
+    public async Task<bool> ExistsAsync(string path, CancellationToken ct = default)
+    {
+        try
+        {
+            using var response = await http.SendAsync(new HttpRequestMessage(HttpMethod.Head, GetUrl(path)), ct);
+            return response.IsSuccessStatusCode;
+        }
+        catch
+        {
+            return false;
+        }
+    }
 }

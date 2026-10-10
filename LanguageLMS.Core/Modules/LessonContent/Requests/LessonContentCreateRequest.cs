@@ -23,4 +23,7 @@ public class LessonContentCreateRequest
     public bool IsActive { get; set; } = true;
 
     public IFormFile? File { get; set; }
+
+    /// <summary>Birbaşa R2-yə (presigned) yüklənmiş faylın yolu. File verilməzsə istifadə olunur.</summary>
+    public string? Path { get; set; }
 }

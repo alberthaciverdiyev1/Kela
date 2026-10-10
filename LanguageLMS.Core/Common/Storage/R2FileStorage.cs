@@ -1,3 +1,4 @@
+using System.Net;
 using Amazon.S3;
 using Amazon.S3.Model;
 using Microsoft.AspNetCore.Http;
@@ -66,6 +67,29 @@ public sealed class R2FileStorage : IFileStorage, IDisposable
         if (path.StartsWith("http://") || path.StartsWith("https://")) return path;
 
         return $"{_options.PublicBaseUrl.TrimEnd('/')}/{path.TrimStart('/')}";
+    }
+
+    public string? CreatePresignedPutUrl(string path, string contentType, TimeSpan expiry)
+        => _client.GetPreSignedURL(new GetPreSignedUrlRequest
+        {
+            BucketName = _options.BucketName,
+            Key = path,
+            Verb = HttpVerb.PUT,
+            Expires = DateTime.UtcNow.Add(expiry),
+            ContentType = contentType
+        });
+
+    public async Task<bool> ExistsAsync(string path, CancellationToken ct = default)
+    {
+        try
+        {
+            await _client.GetObjectMetadataAsync(_options.BucketName, path, ct);
+            return true;
+        }
+        catch (AmazonS3Exception ex) when (ex.StatusCode == HttpStatusCode.NotFound)
+        {
+            return false;
+        }
     }
 
     public void Dispose() => _client.Dispose();

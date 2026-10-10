@@ -49,4 +49,9 @@ public sealed class LocalFileStorage : IFileStorage
 
         return $"{StoragePaths.RequestPath}/{path.TrimStart('/')}";
     }
+
+    public string? CreatePresignedPutUrl(string path, string contentType, TimeSpan expiry) => null;
+
+    public Task<bool> ExistsAsync(string path, CancellationToken ct = default)
+        => Task.FromResult(File.Exists(Path.Combine(_root, path)));
 }

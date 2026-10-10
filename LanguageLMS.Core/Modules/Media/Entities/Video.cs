@@ -11,4 +11,7 @@ public class Video : BaseEntity
     public string Type { get; set; } = "video";
 
     public int? DurationSeconds { get; set; }
+
+    /// <summary>HLS (m3u8) playback URL — konvertordan sonra doldurulur.</summary>
+    public string? PlaybackUrl { get; set; }
 }

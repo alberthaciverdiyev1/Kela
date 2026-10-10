@@ -638,6 +638,11 @@ namespace LanguageLMS.Core.Data.Migrations
                         .HasColumnType("character varying(500)")
                         .HasColumnName("path");
 
+                    b.Property<string>("PlaybackUrl")
+                        .HasMaxLength(500)
+                        .HasColumnType("character varying(500)")
+                        .HasColumnName("playback_url");
+
                     b.Property<long>("TenantId")
                         .HasColumnType("bigint")
                         .HasColumnName("tenant_id");

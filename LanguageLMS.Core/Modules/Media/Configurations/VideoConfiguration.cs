@@ -16,6 +16,7 @@ public sealed class VideoConfiguration : IEntityTypeConfiguration<Video>
         builder.Property(x => x.Path).HasColumnName("path").HasMaxLength(500).IsRequired();
         builder.Property(x => x.Type).HasColumnName("type").HasMaxLength(20).IsRequired();
         builder.Property(x => x.DurationSeconds).HasColumnName("duration_seconds");
+        builder.Property(x => x.PlaybackUrl).HasColumnName("playback_url").HasMaxLength(500);
         builder.Property(x => x.CreatedAt).HasColumnName("created_at");
         builder.Property(x => x.UpdatedAt).HasColumnName("updated_at");
         builder.Property(x => x.DeletedAt).HasColumnName("deleted_at");

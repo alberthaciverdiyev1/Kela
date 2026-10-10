@@ -25,6 +25,11 @@ public sealed class LessonContentController(ILessonContentService service) : Api
     public async Task<ActionResult<ApiResponse<LessonContentResponse>>> Show(long id, CancellationToken ct)
         => Success(await service.GetAsync(id, ct));
 
+    [HttpPost("upload-url")]
+    public async Task<ActionResult<ApiResponse<UploadUrlResponse>>> UploadUrl(
+        [FromBody] LessonContentUploadUrlRequest request, CancellationToken ct)
+        => Success(await service.CreateUploadUrlAsync(request, ct), "Upload URL created");
+
     [HttpPost]
     public async Task<ActionResult<ApiResponse<LessonContentResponse>>> Add(
         [FromForm] LessonContentCreateRequest request, CancellationToken ct)
