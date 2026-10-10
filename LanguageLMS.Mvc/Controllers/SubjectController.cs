@@ -5,18 +5,24 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace LanguageLMS.Mvc.Controllers;
 
+[Route("[controller]")]
 public sealed class SubjectController(
     ISubjectService service,
     IValidator<SubjectUpsertRequest> validator) : Controller
 {
-    public async Task<IActionResult> Index(SubjectListRequest request, CancellationToken ct)
+    [HttpGet]
+    public IActionResult Index()
     {
         ViewData["Title"] = "Fənlər";
-        ViewData["Scripts"] = new[] { "~/pages/subject/list.js", "~/pages/subject/form.js" };
-        return View(await service.ListAsync(request, ct));
+        ViewData["Scripts"] = new[] { "~/js/pages/subject/list.js", "~/js/pages/subject/create.js", "~/js/pages/subject/update.js" };
+        return View();
     }
 
-    [HttpGet]
+    [HttpGet("list")]
+    public async Task<IActionResult> List([FromQuery] SubjectListRequest request, CancellationToken ct)
+        => Json(await service.ListAsync(request, ct));
+
+    [HttpGet("{id:long}")]
     public async Task<IActionResult> Get(long id, CancellationToken ct)
         => Json(await service.GetAsync(id, ct));
 
@@ -30,7 +36,7 @@ public sealed class SubjectController(
         return Json(await service.CreateAsync(request, ct));
     }
 
-    [HttpPost]
+    [HttpPut("{id:long}")]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Update(long id, [FromForm] SubjectUpsertRequest request, CancellationToken ct)
     {
@@ -40,7 +46,7 @@ public sealed class SubjectController(
         return Json(await service.UpdateAsync(id, request, ct));
     }
 
-    [HttpPost]
+    [HttpDelete("{id:long}")]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Delete(long id, CancellationToken ct)
     {

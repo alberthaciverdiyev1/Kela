@@ -1,80 +1,17 @@
-@{
-    var controller = (string?)ViewContext.RouteData.Values["controller"] ?? "";
-    string Active(string c) => controller.Equals(c, StringComparison.OrdinalIgnoreCase)
-        ? "bg-primary text-white"
-        : "text-slate-300 hover:bg-navy-700 hover:text-white";
-}
 <!DOCTYPE html>
 <html lang="az">
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"] - LanguageLMS Admin</title>
-    <link rel="stylesheet" href="~/library/sweetalert2.min.css" />
+    <link rel="stylesheet" href="~/css/sweetalert2.min.css" />
     <link rel="stylesheet" href="~/css/app.css" asp-append-version="true" />
 </head>
 <body class="min-h-screen bg-slate-100 text-slate-800">
     <div class="flex min-h-screen">
 
         <!-- Sidebar -->
-        <aside id="sidebar"
-               class="fixed inset-y-0 left-0 z-30 w-64 -translate-x-full bg-navy transition-transform lg:translate-x-0 lg:static lg:shrink-0">
-            <div class="flex h-16 items-center gap-2 px-5 text-white">
-                <div class="grid h-8 w-8 place-items-center rounded-lg bg-primary font-bold">L</div>
-                <span class="text-lg font-semibold">LanguageLMS</span>
-            </div>
-
-            <nav class="space-y-1 px-3 py-3 text-sm">
-                <a asp-controller="Dashboard" asp-action="Index"
-                   class="flex items-center gap-3 rounded-lg px-3 py-2.5 @Active("Dashboard")">
-                    <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M3 12l9-9 9 9M5 10v10h14V10" /></svg>
-                    Dashboard
-                </a>
-                <a asp-controller="Subject" asp-action="Index" class="flex items-center gap-3 rounded-lg px-3 py-2.5 @Active("Subject")">
-                    <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h10" /></svg>
-                    Fənlər
-                </a>
-                <a asp-controller="Lesson" asp-action="Index" class="flex items-center gap-3 rounded-lg px-3 py-2.5 @Active("Lesson")">
-                    <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6.253v13m0-13C10.8 5.5 9 5 7 5S3.2 5.5 2 6.253v13C3.2 18.5 5 18 7 18s3.8.5 5 1.253" /></svg>
-                    Dərslər
-                </a>
-                <a asp-controller="Group" asp-action="Index" class="flex items-center gap-3 rounded-lg px-3 py-2.5 @Active("Group")">
-                    <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M17 20v-2a4 4 0 00-4-4H7a4 4 0 00-4 4v2M10 10a4 4 0 100-8 4 4 0 000 8z" /></svg>
-                    Qruplar
-                </a>
-                <a asp-controller="Question" asp-action="Index" class="flex items-center gap-3 rounded-lg px-3 py-2.5 @Active("Question")">
-                    <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M8.23 9a4 4 0 118 0c0 2-2 2.5-2 4M12 17h.01" /></svg>
-                    Suallar
-                </a>
-                <a asp-controller="Quiz" asp-action="Index" class="flex items-center gap-3 rounded-lg px-3 py-2.5 @Active("Quiz")">
-                    <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m5 2a8 8 0 11-16 0 8 8 0 0116 0z" /></svg>
-                    İmtahanlar
-                </a>
-                <a asp-controller="Students" asp-action="Index" class="flex items-center gap-3 rounded-lg px-3 py-2.5 @Active("Students")">
-                    <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" /></svg>
-                    Şagirdlər
-                </a>
-                <a asp-controller="Notification" asp-action="Index" class="flex items-center gap-3 rounded-lg px-3 py-2.5 @Active("Notification")">
-                    <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M15 17h5l-1.4-1.4A2 2 0 0118 14.2V11a6 6 0 10-12 0v3.2a2 2 0 01-.6 1.4L4 17h5m6 0a3 3 0 11-6 0" /></svg>
-                    Bildirişlər
-                </a>
-
-                <div class="my-2 border-t border-white/10"></div>
-
-                <a asp-controller="User" asp-action="Index" class="flex items-center gap-3 rounded-lg px-3 py-2.5 @Active("User")">
-                    <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197" /></svg>
-                    İstifadəçilər
-                </a>
-                <a asp-controller="Setting" asp-action="Index" class="flex items-center gap-3 rounded-lg px-3 py-2.5 @Active("Setting")">
-                    <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M10.3 4.3a2 2 0 013.4 0l.3.5a2 2 0 002.2 1l.5-.1a2 2 0 012 3.4l-.4.4a2 2 0 000 2.9l.4.4a2 2 0 01-2 3.4l-.5-.1a2 2 0 00-2.2 1l-.3.5a2 2 0 01-3.4 0l-.3-.5a2 2 0 00-2.2-1l-.5.1a2 2 0 01-2-3.4l.4-.4a2 2 0 000-2.9l-.4-.4a2 2 0 012-3.4l.5.1a2 2 0 002.2-1z" /></svg>
-                    Parametrlər
-                </a>
-                <a asp-controller="PrivacyPolicy" asp-action="Index" class="flex items-center gap-3 rounded-lg px-3 py-2.5 @Active("PrivacyPolicy")">
-                    <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m5.6 2A11 11 0 0112 21 11 11 0 012.4 12 11 11 0 0112 3a11 11 0 019.6 9z" /></svg>
-                    Gizlilik
-                </a>
-            </nav>
-        </aside>
+        <partial name="Ui/_Sidebar" />
 
         <!-- Overlay (mobile) -->
         <div id="overlay" class="fixed inset-0 z-20 hidden bg-black/40 lg:hidden"></div>
@@ -100,9 +37,9 @@
         </div>
     </div>
 
-    <script src="~/library/sweetalert2.min.js"></script>
-    <script src="~/library/flowbite.min.js"></script>
-    <script src="~/helpers/admin.js" asp-append-version="true"></script>
+    <script src="~/js/library/sweetalert2.min.js"></script>
+    <script src="~/js/library/flowbite.min.js"></script>
+    <script src="~/js/helpers/admin.js" asp-append-version="true"></script>
     @if (ViewData["Scripts"] is string[] pageScripts)
     {
         foreach (var script in pageScripts)

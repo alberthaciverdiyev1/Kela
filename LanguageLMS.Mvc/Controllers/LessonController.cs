@@ -7,21 +7,26 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace LanguageLMS.Mvc.Controllers;
 
+[Route("[controller]")]
 public sealed class LessonController(
     ILessonService service,
     ISubjectService subjects,
     IValidator<LessonUpsertRequest> validator) : Controller
 {
-    public async Task<IActionResult> Index(LessonListRequest request, CancellationToken ct)
+    [HttpGet]
+    public async Task<IActionResult> Index(CancellationToken ct)
     {
         ViewData["Title"] = "Dərslər";
-        ViewData["Scripts"] = new[] { "~/pages/lesson/list.js", "~/pages/lesson/form.js" };
-        var lessons = await service.ListAsync(request, ct);
-        var subjectList = await subjects.ListAsync(new SubjectListRequest { PerPage = 200 }, ct);
-        return View((lessons, subjectList));
+        ViewData["Scripts"] = new[] { "~/js/pages/lesson/list.js", "~/js/pages/lesson/create.js", "~/js/pages/lesson/update.js" };
+        ViewData["Subjects"] = await subjects.ListAsync(new SubjectListRequest { PerPage = 200 }, ct);
+        return View();
     }
 
-    [HttpGet]
+    [HttpGet("list")]
+    public async Task<IActionResult> List([FromQuery] LessonListRequest request, CancellationToken ct)
+        => Json(await service.ListAsync(request, ct));
+
+    [HttpGet("{id:long}")]
     public async Task<IActionResult> Get(long id, CancellationToken ct)
         => Json(await service.GetAsync(id, ct));
 
@@ -35,7 +40,7 @@ public sealed class LessonController(
         return Json(await service.CreateAsync(request, ct));
     }
 
-    [HttpPost]
+    [HttpPut("{id:long}")]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Update(long id, [FromForm] LessonUpsertRequest request, CancellationToken ct)
     {
@@ -45,7 +50,7 @@ public sealed class LessonController(
         return Json(await service.UpdateAsync(id, request, ct));
     }
 
-    [HttpPost]
+    [HttpDelete("{id:long}")]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Delete(long id, CancellationToken ct)
     {

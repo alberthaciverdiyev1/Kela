@@ -1,24 +1,14 @@
 using System.Diagnostics;
-using Microsoft.AspNetCore.Mvc;
 using LanguageLMS.Mvc.Models;
+using Microsoft.AspNetCore.Mvc;
 
 namespace LanguageLMS.Mvc.Controllers;
 
+[Route("[controller]")]
 public class HomeController : Controller
 {
-    public IActionResult Index()
-    {
-        return View();
-    }
-
-    public IActionResult Privacy()
-    {
-        return View();
-    }
-
+    [HttpGet("[action]")]
     [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
     public IActionResult Error()
-    {
-        return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
-    }
+        => View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
 }

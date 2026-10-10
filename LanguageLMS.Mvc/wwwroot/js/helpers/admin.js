@@ -48,7 +48,21 @@ window.AdminUI = (function () {
         return postForm(url, fd);
     }
 
+    async function putForm(url, formData) {
+        const res = await fetch(url, { method: 'PUT', body: formData, headers: { 'RequestVerificationToken': token() } });
+        let body = null;
+        try { body = await res.json(); } catch (e) { /* boş */ }
+        return { ok: res.ok, status: res.status, data: body };
+    }
+
+    async function del(url) {
+        const res = await fetch(url, { method: 'DELETE', headers: { 'RequestVerificationToken': token() } });
+        let body = null;
+        try { body = await res.json(); } catch (e) { /* boş */ }
+        return { ok: res.ok, status: res.status, data: body };
+    }
+
     function reloadAfter(delay) { setTimeout(() => location.reload(), delay || 700); }
 
-    return { notify, error, confirmDelete, get, post, postForm, token, reloadAfter };
+    return { notify, error, confirmDelete, get, post, postForm, putForm, del, token, reloadAfter };
 })();

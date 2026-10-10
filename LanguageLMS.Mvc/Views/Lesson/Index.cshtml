@@ -1,28 +1,26 @@
-@model (PagedResponse<LessonResponse> Lessons, PagedResponse<SubjectResponse> Subjects)
 @{
     ViewData["Title"] = "Dərslər";
-    var subjectName = Model.Subjects.Data.ToDictionary(s => s.Id, s => s.Name);
-    var currentSubject = Context.Request.Query["subject_id"].ToString();
-    string LessonName(long id) => subjectName.TryGetValue(id, out var n) ? n : "-";
+    var subjects = (PagedResponse<SubjectResponse>)ViewData["Subjects"]!;
 }
+<script>window.SUBJECTS = { @Html.Raw(string.Join(",", subjects.Data.Select(s => $"{s.Id}:\"{System.Text.Json.JsonEncodedText.Encode(s.Name)}\""))) }; </script>
 
 <div class="mb-5 flex items-center justify-between">
     <h2 class="text-xl font-semibold text-slate-800">Dərslər</h2>
     <partial name="Ui/_Button" model="@(new ButtonModel { Text = "+ Yeni dərs", OnClick = "openCreate()" })" />
 </div>
 
-<form method="get" class="mb-4 flex flex-wrap items-end gap-3">
+<div class="mb-4 flex flex-wrap items-end gap-3">
     <div class="w-56">
         <partial name="Ui/_Select" model="@(new SelectModel {
-            Name = "subject_id", Label = "Fənn", Value = currentSubject,
-            Options = Model.Subjects.Data.Select(s => new SelectOption { Value = s.Id.ToString(), Text = s.Name }).ToList()
+            Name = "filter_subject", Id = "filter_subject", Label = "Fənn",
+            Options = subjects.Data.Select(s => new SelectOption { Value = s.Id.ToString(), Text = s.Name }).ToList()
         })" />
     </div>
     <div class="w-64">
-        <partial name="Ui/_Input" model="@(new InputModel { Name = "search", Value = Context.Request.Query["search"], Placeholder = "Başlıqda axtar..." })" />
+        <partial name="Ui/_Input" model="@(new InputModel { Name = "search", Id = "search", Placeholder = "Başlıqda axtar..." })" />
     </div>
-    <partial name="Ui/_Button" model="@(new ButtonModel { Text = "Axtar", Type = "submit", Variant = "secondary" })" />
-</form>
+    <partial name="Ui/_Button" model="@(new ButtonModel { Text = "Axtar", Variant = "secondary", OnClick = "loadList(1)" })" />
+</div>
 
 <div class="overflow-hidden rounded-xl border border-slate-200 bg-white">
     <table class="w-full text-sm">
@@ -36,50 +34,11 @@
                 <th class="px-4 py-3 text-right">Əməliyyatlar</th>
             </tr>
         </thead>
-        <tbody class="divide-y divide-slate-100">
-        @foreach (var l in Model.Lessons.Data)
-        {
-            <tr class="hover:bg-slate-50">
-                <td class="px-4 py-3 text-slate-400">@l.Id</td>
-                <td class="px-4 py-3 font-medium text-slate-800">@l.Title</td>
-                <td class="px-4 py-3 text-slate-500">@LessonName(l.SubjectId)</td>
-                <td class="px-4 py-3 text-slate-500">@l.SortOrder</td>
-                <td class="px-4 py-3">
-                    @if (l.IsActive)
-                    {
-                        <span class="rounded-full bg-emerald-100 px-2 py-0.5 text-xs text-emerald-700">Aktiv</span>
-                    }
-                    else
-                    {
-                        <span class="rounded-full bg-slate-100 px-2 py-0.5 text-xs text-slate-500">Deaktiv</span>
-                    }
-                </td>
-                <td class="px-4 py-3">
-                    <div class="flex items-center justify-end gap-2">
-                        <partial name="Ui/_Button" model="@(new ButtonModel { Text = "Redaktə", Variant = "ghost", OnClick = $"openEdit({l.Id})" })" />
-                        <partial name="Ui/_Button" model="@(new ButtonModel { Text = "Sil", Variant = "ghost", OnClick = $"removeItem({l.Id})" })" />
-                    </div>
-                </td>
-            </tr>
-        }
-        @if (Model.Lessons.Data.Count == 0)
-        {
-            <tr><td colspan="6" class="px-4 py-10 text-center text-slate-400">Nəticə yoxdur</td></tr>
-        }
-        </tbody>
+        <tbody id="rows" class="divide-y divide-slate-100"></tbody>
     </table>
 </div>
 
-@if (Model.Lessons.LastPage > 1)
-{
-    <div class="mt-4 flex flex-wrap gap-2">
-        @for (var i = 1; i <= Model.Lessons.LastPage; i++)
-        {
-            <a asp-action="Index" asp-route-page="@i" asp-route-subject_id="@currentSubject" asp-route-search="@Context.Request.Query["search"]"
-               class="rounded-lg px-3 py-1.5 text-sm @(i == Model.Lessons.CurrentPage ? "bg-primary text-white" : "border border-slate-200 bg-white text-slate-600 hover:bg-slate-50")">@i</a>
-        }
-    </div>
-}
+<div id="pagination" class="mt-4 flex flex-wrap gap-2"></div>
 
 <!-- Modal -->
 <div id="modal" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/40 p-4">
@@ -89,24 +48,22 @@
             <button type="button" onclick="closeModal()" class="rounded-lg p-1.5 text-slate-400 hover:bg-slate-100">✕</button>
         </div>
         <div id="formError" class="mx-6 mt-4 hidden rounded-lg bg-red-50 px-3 py-2 text-sm text-red-600"></div>
-        <form id="lessonForm" class="space-y-4 p-6">
-            <input type="hidden" id="lessonId" />
+        <form id="entityForm" class="space-y-4 p-6">
+            <input type="hidden" id="entityId" />
             <partial name="Ui/_Select" model="@(new SelectModel {
                 Name = "subject_id", Id = "subject_id", Label = "Fənn", Required = true,
-                Options = Model.Subjects.Data.Select(s => new SelectOption { Value = s.Id.ToString(), Text = s.Name }).ToList()
+                Options = subjects.Data.Select(s => new SelectOption { Value = s.Id.ToString(), Text = s.Name }).ToList()
             })" />
             <partial name="Ui/_Input" model="@(new InputModel { Name = "title", Id = "title", Label = "Başlıq", Required = true })" />
             <div class="grid grid-cols-2 gap-4">
                 <partial name="Ui/_Input" model="@(new InputModel { Name = "sort_order", Id = "sort_order", Label = "Sıra", Type = "number", Value = "0" })" />
                 <div>
                     <label class="mb-1 block text-sm font-medium text-slate-700">Şəkil</label>
-                    <input type="file" id="image" accept=".jpg,.jpeg,.png"
-                           class="block w-full rounded-lg border border-slate-300 bg-slate-50 p-2 text-sm" />
+                    <input type="file" id="image" accept=".jpg,.jpeg,.png" class="block w-full rounded-lg border border-slate-300 bg-slate-50 p-2 text-sm" />
                 </div>
             </div>
             <label class="flex items-center gap-2 text-sm text-slate-700">
-                <input type="checkbox" id="is_active" checked class="rounded border-slate-300 text-primary focus:ring-primary" />
-                Aktiv
+                <input type="checkbox" id="is_active" checked class="rounded border-slate-300 text-primary focus:ring-primary" /> Aktiv
             </label>
             <div class="flex justify-end gap-3 pt-2">
                 <partial name="Ui/_Button" model="@(new ButtonModel { Text = "İmtina", Variant = "secondary", OnClick = "closeModal()" })" />

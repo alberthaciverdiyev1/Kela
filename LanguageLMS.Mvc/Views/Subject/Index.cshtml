@@ -1,4 +1,3 @@
-@model PagedResponse<SubjectResponse>
 @{
     ViewData["Title"] = "Fənlər";
 }
@@ -8,12 +7,12 @@
     <partial name="Ui/_Button" model="@(new ButtonModel { Text = "+ Yeni fənn", OnClick = "openCreate()" })" />
 </div>
 
-<form method="get" class="mb-4 flex items-end gap-2">
+<div class="mb-4 flex items-end gap-2">
     <div class="w-64">
-        <partial name="Ui/_Input" model="@(new InputModel { Name = "search", Value = Context.Request.Query["search"], Placeholder = "Ad üzrə axtar..." })" />
+        <partial name="Ui/_Input" model="@(new InputModel { Name = "search", Id = "search", Placeholder = "Ad üzrə axtar..." })" />
     </div>
-    <partial name="Ui/_Button" model="@(new ButtonModel { Text = "Axtar", Type = "submit", Variant = "secondary" })" />
-</form>
+    <partial name="Ui/_Button" model="@(new ButtonModel { Text = "Axtar", Variant = "secondary", OnClick = "loadList(1)" })" />
+</div>
 
 <div class="overflow-hidden rounded-xl border border-slate-200 bg-white">
     <table class="w-full text-sm">
@@ -24,38 +23,11 @@
                 <th class="px-4 py-3 text-right">Əməliyyatlar</th>
             </tr>
         </thead>
-        <tbody class="divide-y divide-slate-100">
-        @foreach (var s in Model.Data)
-        {
-            <tr class="hover:bg-slate-50">
-                <td class="px-4 py-3 text-slate-400">@s.Id</td>
-                <td class="px-4 py-3 font-medium text-slate-800">@s.Name</td>
-                <td class="px-4 py-3">
-                    <div class="flex items-center justify-end gap-2">
-                        <partial name="Ui/_Button" model="@(new ButtonModel { Text = "Redaktə", Variant = "ghost", OnClick = $"openEdit({s.Id})" })" />
-                        <partial name="Ui/_Button" model="@(new ButtonModel { Text = "Sil", Variant = "ghost", OnClick = $"removeItem({s.Id})" })" />
-                    </div>
-                </td>
-            </tr>
-        }
-        @if (Model.Data.Count == 0)
-        {
-            <tr><td colspan="3" class="px-4 py-10 text-center text-slate-400">Nəticə yoxdur</td></tr>
-        }
-        </tbody>
+        <tbody id="rows" class="divide-y divide-slate-100"></tbody>
     </table>
 </div>
 
-@if (Model.LastPage > 1)
-{
-    <div class="mt-4 flex flex-wrap gap-2">
-        @for (var i = 1; i <= Model.LastPage; i++)
-        {
-            <a asp-action="Index" asp-route-page="@i" asp-route-search="@Context.Request.Query["search"]"
-               class="rounded-lg px-3 py-1.5 text-sm @(i == Model.CurrentPage ? "bg-primary text-white" : "border border-slate-200 bg-white text-slate-600 hover:bg-slate-50")">@i</a>
-        }
-    </div>
-}
+<div id="pagination" class="mt-4 flex flex-wrap gap-2"></div>
 
 <!-- Modal -->
 <div id="modal" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/40 p-4">
@@ -65,8 +37,8 @@
             <button type="button" onclick="closeModal()" class="rounded-lg p-1.5 text-slate-400 hover:bg-slate-100">✕</button>
         </div>
         <div id="formError" class="mx-6 mt-4 hidden rounded-lg bg-red-50 px-3 py-2 text-sm text-red-600"></div>
-        <form id="subjectForm" class="space-y-4 p-6">
-            <input type="hidden" id="subjectId" />
+        <form id="entityForm" class="space-y-4 p-6">
+            <input type="hidden" id="entityId" />
             <partial name="Ui/_Input" model="@(new InputModel { Name = "name", Id = "name", Label = "Ad", Required = true })" />
             <div class="flex justify-end gap-3">
                 <partial name="Ui/_Button" model="@(new ButtonModel { Text = "İmtina", Variant = "secondary", OnClick = "closeModal()" })" />
