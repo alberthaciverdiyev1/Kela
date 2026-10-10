@@ -15,6 +15,7 @@ public sealed class LessonController(
     public async Task<IActionResult> Index(LessonListRequest request, CancellationToken ct)
     {
         ViewData["Title"] = "Dərslər";
+        ViewData["Scripts"] = new[] { "~/pages/lesson/list.js", "~/pages/lesson/form.js" };
         var lessons = await service.ListAsync(request, ct);
         var subjectList = await subjects.ListAsync(new SubjectListRequest { PerPage = 200 }, ct);
         return View((lessons, subjectList));

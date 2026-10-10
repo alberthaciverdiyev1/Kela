@@ -103,6 +103,13 @@
     <script src="~/library/sweetalert2.min.js"></script>
     <script src="~/library/flowbite.min.js"></script>
     <script src="~/helpers/admin.js" asp-append-version="true"></script>
+    @if (ViewData["Scripts"] is string[] pageScripts)
+    {
+        foreach (var script in pageScripts)
+        {
+            <script src="@script" asp-append-version="true"></script>
+        }
+    }
     @await RenderSectionAsync("Scripts", required: false)
     <script>
         // Sidebar toggle (mobil)

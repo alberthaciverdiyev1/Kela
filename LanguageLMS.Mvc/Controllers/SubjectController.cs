@@ -12,6 +12,7 @@ public sealed class SubjectController(
     public async Task<IActionResult> Index(SubjectListRequest request, CancellationToken ct)
     {
         ViewData["Title"] = "Fənlər";
+        ViewData["Scripts"] = new[] { "~/pages/subject/list.js", "~/pages/subject/form.js" };
         return View(await service.ListAsync(request, ct));
     }
 
