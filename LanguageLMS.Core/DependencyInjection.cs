@@ -65,6 +65,7 @@ public static class DependencyInjection
         services.AddScoped<IQuestionService, QuestionService>();
         services.AddScoped<IQuizService, QuizService>();
         services.AddScoped<IStudentQuizService, StudentQuizService>();
+        services.AddScoped<IGroupQuizStatService, GroupQuizStatService>();
         services.AddScoped<INotificationService, NotificationService>();
         services.AddScoped<IPrivacyPolicyService, PrivacyPolicyService>();
 

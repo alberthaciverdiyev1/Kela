@@ -4,7 +4,9 @@ using LanguageLMS.Core.Common.Responses;
 using LanguageLMS.Core.Modules.Group.Requests;
 using LanguageLMS.Core.Modules.Group.Responses;
 using LanguageLMS.Core.Modules.Group.Services;
+using LanguageLMS.Core.Modules.Quiz.Requests;
 using LanguageLMS.Core.Modules.Quiz.Responses;
+using LanguageLMS.Core.Modules.Quiz.Services;
 using LanguageLMS.Core.Modules.Subject.Responses;
 using LanguageLMS.Core.Modules.Auth;
 using Microsoft.AspNetCore.Authorization;
@@ -14,7 +16,7 @@ namespace LanguageLMS.Api.Modules.Group.Controllers;
 
 [Authorize(Policy = AuthPolicies.Teacher)]
 [Route("api/[controller]")]
-public sealed class GroupController(IGroupService service) : ApiControllerBase
+public sealed class GroupController(IGroupService service, IGroupQuizStatService statService) : ApiControllerBase
 {
     [HttpGet]
     public async Task<ActionResult<ApiResponse<PagedResponse<GroupResponse>>>> List(
@@ -81,6 +83,11 @@ public sealed class GroupController(IGroupService service) : ApiControllerBase
     [HttpGet("{id:long}/quizzes")]
     public async Task<ActionResult<ApiResponse<IReadOnlyList<QuizResponse>>>> ListQuizzes(long id, CancellationToken ct)
         => Success(await service.ListQuizzesAsync(id, ct));
+
+    [HttpGet("{id:long}/quiz-stat")]
+    public async Task<ActionResult<ApiResponse<GroupQuizStatResponse>>> QuizStat(
+        long id, [FromQuery] GroupQuizStatRequest request, CancellationToken ct)
+        => Success(await statService.GetAsync(id, request, ct));
 
     [HttpPost("{id:long}/quizzes")]
     public async Task<ActionResult<ApiResponse<IReadOnlyList<QuizResponse>>>> AssignQuizzes(
