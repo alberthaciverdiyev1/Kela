@@ -36,22 +36,8 @@ async function loadList(page) {
             tbody.appendChild(tr);
         });
     }
-    renderPagination();
+    AdminUI.pagination('pagination', currentPage, lastPage, loadList);
     AdminUI.loader(false);
-}
-
-function renderPagination() {
-    const box = document.getElementById('pagination');
-    box.innerHTML = '';
-    for (let i = 1; i <= lastPage; i++) {
-        const a = document.createElement('button');
-        a.type = 'button';
-        a.textContent = i;
-        a.className = 'rounded-lg px-3 py-1.5 text-sm ' +
-            (i === currentPage ? 'bg-primary text-white' : 'border border-slate-200 bg-white text-slate-600 hover:bg-slate-50');
-        a.onclick = () => loadList(i);
-        box.appendChild(a);
-    }
 }
 
 async function removeItem(id) {

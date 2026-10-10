@@ -62,6 +62,21 @@ window.AdminUI = (function () {
         return { ok: res.ok, status: res.status, data: body };
     }
 
+    function pagination(containerId, currentPage, lastPage, onSelect) {
+        const box = document.getElementById(containerId);
+        if (!box) return;
+        box.innerHTML = '';
+        for (let i = 1; i <= lastPage; i++) {
+            const btn = document.createElement('button');
+            btn.type = 'button';
+            btn.textContent = i;
+            btn.className = 'rounded-lg px-3 py-1.5 text-sm ' +
+                (i === currentPage ? 'bg-primary text-white' : 'border border-slate-200 bg-white text-slate-600 hover:bg-slate-50');
+            btn.addEventListener('click', () => onSelect(i));
+            box.appendChild(btn);
+        }
+    }
+
     function loader(show) {
         const el = document.getElementById('listLoader');
         if (!el) return;
@@ -71,5 +86,5 @@ window.AdminUI = (function () {
 
     function reloadAfter(delay) { setTimeout(() => location.reload(), delay || 700); }
 
-    return { notify, error, confirmDelete, get, post, postForm, putForm, del, loader, token, reloadAfter };
+    return { notify, error, confirmDelete, get, post, postForm, putForm, del, loader, pagination, token, reloadAfter };
 })();
