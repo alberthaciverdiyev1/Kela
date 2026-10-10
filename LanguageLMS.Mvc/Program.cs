@@ -1,5 +1,8 @@
 using LanguageLMS.Core;
+using LanguageLMS.Core.Data;
 using LanguageLMS.Mvc.Infrastructure;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc.ApplicationModels;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -10,7 +13,24 @@ builder.Services.AddControllersWithViews(options =>
 });
 builder.Services.AddCore(builder.Configuration);
 
+builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+    .AddCookie(options =>
+    {
+        options.LoginPath = "/login";
+        options.AccessDeniedPath = "/login";
+        options.ExpireTimeSpan = TimeSpan.FromHours(8);
+        options.SlidingExpiration = true;
+    });
+
+// Fallback: [AllowAnonymous] olmayan bütün səhifələr autentifikasiya tələb edir
+builder.Services.AddAuthorization(options =>
+{
+    options.FallbackPolicy = new AuthorizationPolicyBuilder().RequireAuthenticatedUser().Build();
+});
+
 var app = builder.Build();
+
+await app.Services.SeedDefaultAdminAsync(app.Configuration);
 
 if (!app.Environment.IsDevelopment())
 {
@@ -23,6 +43,7 @@ app.UseStaticFiles();
 app.UseCoreStorage();
 
 app.UseRouting();
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapStaticAssets();

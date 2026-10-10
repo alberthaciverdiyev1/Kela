@@ -90,6 +90,8 @@ builder.Services.AddAuthorization(options =>
 
 var app = builder.Build();
 
+await app.Services.SeedDefaultAdminAsync(app.Configuration);
+
 app.UseMiddleware<ExceptionHandlingMiddleware>();
 
 if (app.Configuration.GetValue<bool>("Database:MigrateOnStartup"))

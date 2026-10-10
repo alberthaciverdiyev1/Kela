@@ -1,0 +1,26 @@
+@{
+    Layout = "_AuthLayout";
+    ViewData["Title"] = "Giriş";
+}
+<div class="w-full max-w-sm rounded-2xl bg-white p-8 shadow-lg">
+    <div class="mb-6 flex items-center gap-2">
+        <div class="grid h-9 w-9 place-items-center rounded-lg bg-primary font-bold text-white">L</div>
+        <span class="text-lg font-semibold text-slate-800">LanguageLMS</span>
+    </div>
+
+    @if (ViewData["Error"] is string err)
+    {
+        <div class="mb-4 rounded-lg bg-red-50 px-3 py-2 text-sm text-red-600">@err</div>
+    }
+
+    <form method="post" action="/login" class="space-y-4">
+        @Html.AntiForgeryToken()
+        <partial name="Ui/_Input" model="@(new InputModel { Name = "Email", Id = "email", Label = "Email", Type = "email", Required = true })" />
+        <div>
+            <label for="password" class="mb-1 block text-sm font-medium text-slate-700">Şifrə</label>
+            <input id="password" name="Password" type="password" required
+                   class="block w-full rounded-lg border border-slate-300 bg-slate-50 p-2.5 text-sm text-slate-900 focus:border-primary focus:ring-primary" />
+        </div>
+        <button type="submit" class="w-full rounded-lg bg-primary px-4 py-2.5 text-sm font-medium text-white hover:bg-primary-600">Daxil ol</button>
+    </form>
+</div>

@@ -26,8 +26,12 @@
                     <h1 class="text-lg font-semibold text-slate-800">@ViewData["Title"]</h1>
                 </div>
                 <div class="flex items-center gap-3 text-sm text-slate-500">
-                    <span class="hidden sm:inline">Admin</span>
-                    <div class="grid h-9 w-9 place-items-center rounded-full bg-primary text-white">A</div>
+                    <span class="hidden sm:inline">@User.Identity?.Name</span>
+                    <div class="grid h-9 w-9 place-items-center rounded-full bg-primary text-white">@(User.Identity?.Name?.Substring(0, 1).ToUpper() ?? "A")</div>
+                    <form method="post" action="/login/logout">
+                        @Html.AntiForgeryToken()
+                        <button type="submit" class="rounded-lg border border-slate-300 px-3 py-1.5 text-sm text-slate-600 hover:bg-slate-50">Çıxış</button>
+                    </form>
                 </div>
             </header>
 
