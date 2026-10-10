@@ -53,6 +53,8 @@ public sealed class AppDbContext(DbContextOptions<AppDbContext> options) : DbCon
 
     public DbSet<Modules.Notification.Entities.NotificationToken> NotificationTokens => Set<Modules.Notification.Entities.NotificationToken>();
 
+    public DbSet<Modules.PrivacyPolicy.Entities.PrivacyPolicy> PrivacyPolicies => Set<Modules.PrivacyPolicy.Entities.PrivacyPolicy>();
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);

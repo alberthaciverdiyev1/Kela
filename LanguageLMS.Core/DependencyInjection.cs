@@ -13,6 +13,7 @@ using LanguageLMS.Core.Modules.Progress.Services;
 using LanguageLMS.Core.Modules.Question.Services;
 using LanguageLMS.Core.Modules.Quiz.Services;
 using LanguageLMS.Core.Modules.Notification.Services;
+using LanguageLMS.Core.Modules.PrivacyPolicy.Services;
 using LanguageLMS.Core.Common.Push;
 using LanguageLMS.Core.Modules.User.Services;
 using LanguageLMS.Core.Modules.Group.Services;
@@ -65,6 +66,7 @@ public static class DependencyInjection
         services.AddScoped<IQuizService, QuizService>();
         services.AddScoped<IStudentQuizService, StudentQuizService>();
         services.AddScoped<INotificationService, NotificationService>();
+        services.AddScoped<IPrivacyPolicyService, PrivacyPolicyService>();
 
         services.Configure<FcmOptions>(configuration.GetSection(FcmOptions.SectionName));
         services.AddSingleton<IPushSender, NoOpPushSender>();

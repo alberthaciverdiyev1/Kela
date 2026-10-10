@@ -726,6 +726,34 @@ namespace LanguageLMS.Core.Data.Migrations
                     b.ToTable("notification_tokens", (string)null);
                 });
 
+            modelBuilder.Entity("LanguageLMS.Core.Modules.PrivacyPolicy.Entities.PrivacyPolicy", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint")
+                        .HasColumnName("id");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
+
+                    b.Property<string>("Content")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("content");
+
+                    b.Property<string>("Type")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)")
+                        .HasColumnName("type");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Type")
+                        .IsUnique();
+
+                    b.ToTable("privacy_policies", (string)null);
+                });
+
             modelBuilder.Entity("LanguageLMS.Core.Modules.Progress.Entities.LessonProgress", b =>
                 {
                     b.Property<long>("Id")
