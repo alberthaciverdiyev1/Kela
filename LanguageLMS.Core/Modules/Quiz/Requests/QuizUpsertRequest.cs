@@ -5,7 +5,7 @@ namespace LanguageLMS.Core.Modules.Quiz.Requests;
 public class QuizUpsertRequest
 {
     [FromForm(Name = "lesson_id")]
-    public long LessonId { get; set; }
+    public long? LessonId { get; set; }
 
     public string Title { get; set; } = string.Empty;
 

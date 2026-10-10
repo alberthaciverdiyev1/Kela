@@ -60,7 +60,7 @@ public sealed class QuizService(AppDbContext db) : IQuizService
 
     public async Task<QuizResponse> CreateAsync(QuizUpsertRequest request, CancellationToken ct = default)
     {
-        await EnsureLessonExistsAsync(request.LessonId, ct);
+        if (request.LessonId.HasValue) await EnsureLessonExistsAsync(request.LessonId.Value, ct);
 
         var quiz = new Quiz
         {
@@ -86,7 +86,7 @@ public sealed class QuizService(AppDbContext db) : IQuizService
             .FirstOrDefaultAsync(x => x.Id == id, ct)
             ?? throw new KeyNotFoundException($"Quiz not found: {id}");
 
-        await EnsureLessonExistsAsync(request.LessonId, ct);
+        if (request.LessonId.HasValue) await EnsureLessonExistsAsync(request.LessonId.Value, ct);
 
         quiz.LessonId = request.LessonId;
         quiz.Title = request.Title;

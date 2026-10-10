@@ -45,6 +45,8 @@ public sealed class AppDbContext(DbContextOptions<AppDbContext> options) : DbCon
 
     public DbSet<Modules.Group.Entities.GroupSubject> GroupSubjects => Set<Modules.Group.Entities.GroupSubject>();
 
+    public DbSet<Modules.Group.Entities.GroupQuiz> GroupQuizzes => Set<Modules.Group.Entities.GroupQuiz>();
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);

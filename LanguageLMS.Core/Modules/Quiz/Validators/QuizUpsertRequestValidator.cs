@@ -7,7 +7,10 @@ public sealed class QuizUpsertRequestValidator : AbstractValidator<QuizUpsertReq
 {
     public QuizUpsertRequestValidator()
     {
-        RuleFor(x => x.LessonId).GreaterThan(0).WithMessage("Lesson is required");
+        RuleFor(x => x.LessonId)
+            .NotNull().GreaterThan(0)
+            .WithMessage("Lesson is required")
+            .When(x => x.Type == "lesson");
 
         RuleFor(x => x.Title)
             .NotEmpty().WithMessage("Title is required")

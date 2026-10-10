@@ -179,6 +179,47 @@ namespace LanguageLMS.Core.Data.Migrations
                     b.ToTable("groups", (string)null);
                 });
 
+            modelBuilder.Entity("LanguageLMS.Core.Modules.Group.Entities.GroupQuiz", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint")
+                        .HasColumnName("id");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
+
+                    b.Property<DateTimeOffset>("CreatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_at");
+
+                    b.Property<DateTimeOffset?>("DeletedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("deleted_at");
+
+                    b.Property<long>("GroupId")
+                        .HasColumnType("bigint")
+                        .HasColumnName("group_id");
+
+                    b.Property<long>("QuizId")
+                        .HasColumnType("bigint")
+                        .HasColumnName("quiz_id");
+
+                    b.Property<DateTimeOffset?>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("updated_at");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("DeletedAt");
+
+                    b.HasIndex("QuizId");
+
+                    b.HasIndex("GroupId", "QuizId")
+                        .IsUnique();
+
+                    b.ToTable("group_quizzes", (string)null);
+                });
+
             modelBuilder.Entity("LanguageLMS.Core.Modules.Group.Entities.GroupSubject", b =>
                 {
                     b.Property<long>("Id")
@@ -697,7 +738,7 @@ namespace LanguageLMS.Core.Data.Migrations
                         .HasColumnType("boolean")
                         .HasColumnName("is_repeat");
 
-                    b.Property<long>("LessonId")
+                    b.Property<long?>("LessonId")
                         .HasColumnType("bigint")
                         .HasColumnName("lesson_id");
 
@@ -1066,6 +1107,25 @@ namespace LanguageLMS.Core.Data.Migrations
                     b.Navigation("Teacher");
                 });
 
+            modelBuilder.Entity("LanguageLMS.Core.Modules.Group.Entities.GroupQuiz", b =>
+                {
+                    b.HasOne("LanguageLMS.Core.Modules.Group.Entities.Group", "Group")
+                        .WithMany("Quizzes")
+                        .HasForeignKey("GroupId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("LanguageLMS.Core.Modules.Quiz.Entities.Quiz", "Quiz")
+                        .WithMany()
+                        .HasForeignKey("QuizId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Group");
+
+                    b.Navigation("Quiz");
+                });
+
             modelBuilder.Entity("LanguageLMS.Core.Modules.Group.Entities.GroupSubject", b =>
                 {
                     b.HasOne("LanguageLMS.Core.Modules.Group.Entities.Group", "Group")
@@ -1174,8 +1234,7 @@ namespace LanguageLMS.Core.Data.Migrations
                     b.HasOne("LanguageLMS.Core.Modules.Lesson.Entities.Lesson", null)
                         .WithMany()
                         .HasForeignKey("LessonId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.SetNull);
                 });
 
             modelBuilder.Entity("LanguageLMS.Core.Modules.Quiz.Entities.QuizQuestion", b =>
@@ -1230,6 +1289,8 @@ namespace LanguageLMS.Core.Data.Migrations
             modelBuilder.Entity("LanguageLMS.Core.Modules.Group.Entities.Group", b =>
                 {
                     b.Navigation("Memberships");
+
+                    b.Navigation("Quizzes");
 
                     b.Navigation("SubjectLinks");
                 });

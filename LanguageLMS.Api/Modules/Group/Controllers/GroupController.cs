@@ -4,6 +4,7 @@ using LanguageLMS.Core.Common.Responses;
 using LanguageLMS.Core.Modules.Group.Requests;
 using LanguageLMS.Core.Modules.Group.Responses;
 using LanguageLMS.Core.Modules.Group.Services;
+using LanguageLMS.Core.Modules.Quiz.Responses;
 using LanguageLMS.Core.Modules.Subject.Responses;
 using Microsoft.AspNetCore.Mvc;
 
@@ -72,5 +73,21 @@ public sealed class GroupController(IGroupService service) : ApiControllerBase
     {
         await service.RemoveSubjectAsync(id, subjectId, ct);
         return SuccessMessage("Subject removed");
+    }
+
+    [HttpGet("{id:long}/quizzes")]
+    public async Task<ActionResult<ApiResponse<IReadOnlyList<QuizResponse>>>> ListQuizzes(long id, CancellationToken ct)
+        => Success(await service.ListQuizzesAsync(id, ct));
+
+    [HttpPost("{id:long}/quizzes")]
+    public async Task<ActionResult<ApiResponse<IReadOnlyList<QuizResponse>>>> AssignQuizzes(
+        long id, [FromBody] AssignQuizzesRequest request, CancellationToken ct)
+        => Success(await service.AssignQuizzesAsync(id, request, ct), "Quizzes assigned");
+
+    [HttpDelete("{id:long}/quizzes/{quizId:long}")]
+    public async Task<ActionResult<ApiResponse<string>>> RemoveQuiz(long id, long quizId, CancellationToken ct)
+    {
+        await service.RemoveQuizAsync(id, quizId, ct);
+        return SuccessMessage("Quiz removed");
     }
 }

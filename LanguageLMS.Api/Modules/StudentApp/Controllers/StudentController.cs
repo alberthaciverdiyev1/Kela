@@ -5,6 +5,7 @@ using LanguageLMS.Core.Modules.Auth;
 using LanguageLMS.Core.Modules.Group.Responses;
 using LanguageLMS.Core.Modules.Lesson.Responses;
 using LanguageLMS.Core.Modules.LessonContent.Responses;
+using LanguageLMS.Core.Modules.Quiz.Responses;
 using LanguageLMS.Core.Modules.StudentApp.Services;
 using LanguageLMS.Core.Modules.Subject.Responses;
 using Microsoft.AspNetCore.Authorization;
@@ -33,4 +34,8 @@ public sealed class StudentController(IStudentAppService service) : ApiControlle
     [HttpGet("lessons/{lessonId:long}/contents")]
     public async Task<ActionResult<ApiResponse<IReadOnlyList<LessonContentResponse>>>> Contents(long lessonId, CancellationToken ct)
         => Success(await service.ListContentsAsync(StudentId, lessonId, ct));
+
+    [HttpGet("quizzes")]
+    public async Task<ActionResult<ApiResponse<IReadOnlyList<QuizResponse>>>> Quizzes(CancellationToken ct)
+        => Success(await service.ListQuizzesAsync(StudentId, ct));
 }

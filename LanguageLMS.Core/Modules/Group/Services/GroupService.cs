@@ -3,12 +3,14 @@ using LanguageLMS.Core.Common.Storage;
 using LanguageLMS.Core.Data;
 using LanguageLMS.Core.Modules.Group.Requests;
 using LanguageLMS.Core.Modules.Group.Responses;
+using LanguageLMS.Core.Modules.Quiz.Responses;
 using LanguageLMS.Core.Modules.Subject.Responses;
 using Microsoft.EntityFrameworkCore;
 
 namespace LanguageLMS.Core.Modules.Group.Services;
 
 using Group = LanguageLMS.Core.Modules.Group.Entities.Group;
+using GroupQuiz = LanguageLMS.Core.Modules.Group.Entities.GroupQuiz;
 using GroupSubject = LanguageLMS.Core.Modules.Group.Entities.GroupSubject;
 using StudentGroup = LanguageLMS.Core.Modules.Group.Entities.StudentGroup;
 using Subject = LanguageLMS.Core.Modules.Subject.Entities.Subject;
@@ -224,6 +226,60 @@ public sealed class GroupService(AppDbContext db, IFileStorage storage) : IGroup
         var link = await db.GroupSubjects
             .FirstOrDefaultAsync(x => x.GroupId == groupId && x.SubjectId == subjectId, ct)
             ?? throw new KeyNotFoundException($"Subject {subjectId} is not assigned to group {groupId}");
+
+        link.DeletedAt = DateTimeOffset.UtcNow;
+        await db.SaveChangesAsync(ct);
+    }
+
+    public async Task<IReadOnlyList<QuizResponse>> ListQuizzesAsync(long groupId, CancellationToken ct = default)
+    {
+        await EnsureGroupExistsAsync(groupId, ct);
+
+        return await (from gq in db.GroupQuizzes.AsNoTracking()
+                      join q in db.Quizzes.AsNoTracking() on gq.QuizId equals q.Id
+                      where gq.GroupId == groupId
+                      orderby gq.Id
+                      select new QuizResponse(
+                          q.Id, q.LessonId, q.Title, q.DurationMinutes, q.Type, q.IsActive, q.IsRepeat, q.SortOrder,
+                          db.QuizQuestions.Count(qq => qq.QuizId == q.Id)))
+            .ToListAsync(ct);
+    }
+
+    public async Task<IReadOnlyList<QuizResponse>> AssignQuizzesAsync(
+        long groupId, AssignQuizzesRequest request, CancellationToken ct = default)
+    {
+        await EnsureGroupExistsAsync(groupId, ct);
+
+        foreach (var quizId in request.QuizIds.Distinct())
+        {
+            if (!await db.Quizzes.AnyAsync(x => x.Id == quizId, ct))
+            {
+                throw new ArgumentException($"Quiz not found: {quizId}");
+            }
+
+            var existing = await db.GroupQuizzes
+                .IgnoreQueryFilters()
+                .FirstOrDefaultAsync(x => x.GroupId == groupId && x.QuizId == quizId, ct);
+
+            if (existing is null)
+            {
+                db.GroupQuizzes.Add(new GroupQuiz { GroupId = groupId, QuizId = quizId });
+            }
+            else
+            {
+                existing.DeletedAt = null;
+            }
+        }
+
+        await db.SaveChangesAsync(ct);
+        return await ListQuizzesAsync(groupId, ct);
+    }
+
+    public async Task RemoveQuizAsync(long groupId, long quizId, CancellationToken ct = default)
+    {
+        var link = await db.GroupQuizzes
+            .FirstOrDefaultAsync(x => x.GroupId == groupId && x.QuizId == quizId, ct)
+            ?? throw new KeyNotFoundException($"Quiz {quizId} is not assigned to group {groupId}");
 
         link.DeletedAt = DateTimeOffset.UtcNow;
         await db.SaveChangesAsync(ct);

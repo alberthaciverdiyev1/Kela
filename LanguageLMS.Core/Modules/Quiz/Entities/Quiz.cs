@@ -4,7 +4,7 @@ namespace LanguageLMS.Core.Modules.Quiz.Entities;
 
 public class Quiz : BaseEntity
 {
-    public long LessonId { get; set; }
+    public long? LessonId { get; set; }
 
     public string Title { get; set; } = string.Empty;
 

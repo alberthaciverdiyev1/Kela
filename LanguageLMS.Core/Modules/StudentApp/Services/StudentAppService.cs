@@ -4,6 +4,7 @@ using LanguageLMS.Core.Data;
 using LanguageLMS.Core.Modules.Group.Responses;
 using LanguageLMS.Core.Modules.Lesson.Responses;
 using LanguageLMS.Core.Modules.LessonContent.Responses;
+using LanguageLMS.Core.Modules.Quiz.Responses;
 using LanguageLMS.Core.Modules.Subject.Responses;
 using Microsoft.EntityFrameworkCore;
 
@@ -88,6 +89,18 @@ public sealed class StudentAppService(
             .ToListAsync(ct);
 
         return contents.Select(ToResponse).ToList();
+    }
+
+    public async Task<IReadOnlyList<QuizResponse>> ListQuizzesAsync(long studentId, CancellationToken ct = default)
+    {
+        return await (from gq in db.GroupQuizzes.AsNoTracking()
+                      join q in db.Quizzes.AsNoTracking() on gq.QuizId equals q.Id
+                      where db.StudentGroups.Any(sg => sg.GroupId == gq.GroupId && sg.StudentId == studentId)
+                      orderby gq.Id
+                      select new QuizResponse(
+                          q.Id, q.LessonId, q.Title, q.DurationMinutes, q.Type, q.IsActive, q.IsRepeat, q.SortOrder,
+                          db.QuizQuestions.Count(qq => qq.QuizId == q.Id)))
+            .ToListAsync(ct);
     }
 
     private LessonContentResponse ToResponse(LessonContent content)

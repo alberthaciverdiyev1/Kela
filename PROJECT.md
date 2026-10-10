@@ -87,6 +87,7 @@ LanguageLMS.Mvc/     (Program.cs, Controllers, Models, Views)
 - ✅ Adım 27 — **Question bank** (fenn üzrə suallar): `Question` (title, variant A-E, correct_answer, variant_type), CRUD + testler. (Quiz bölməsi sırada.)
 - ✅ Adım 28 — **Quiz**: `Quiz` (lesson_id, title, duration, type, is_active, is_repeat, sort_order) + `QuizQuestion` pivot. CRUD + sual bağlama/listeleme/çıxarma + questionCount. + testler.
 - ✅ Adım 29 — **Şagird imtahanı**: `StudentQuiz` (attempt) + `StudentQuizQuestion` (cavablar). `POST /api/student-quiz/{start,complete}`, `GET .../results[/{id}]`. Bal hesabı, doğru cavab sızması yoxdur, üzvlük yoxlaması. + testler.
+- ✅ Adım 30 — **Group general quizzes**: `GroupQuiz` pivot (general quizlər üçün `Quiz.LessonId` opsiyonel). `POST/GET/DELETE /api/group/{id}/quizzes` + şagird `GET /api/student/quizzes`. + testler.
 
 ## 5. Durum / Notlar
 
@@ -116,4 +117,4 @@ LanguageLMS.Mvc/     (Program.cs, Controllers, Models, Views)
 - [ ] Admin (dashboard, sort order)
 
 ---
-_En son güncelleme: Adım 29 — Şagird imtahanı (StudentQuiz)._
+_En son güncelleme: Adım 30 — Group general quizzes._

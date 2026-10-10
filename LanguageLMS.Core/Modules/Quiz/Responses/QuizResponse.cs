@@ -2,7 +2,7 @@ namespace LanguageLMS.Core.Modules.Quiz.Responses;
 
 public record QuizResponse(
     long Id,
-    long LessonId,
+    long? LessonId,
     string Title,
     int DurationMinutes,
     string Type,
