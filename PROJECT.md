@@ -85,6 +85,7 @@ LanguageLMS.Mvc/     (Program.cs, Controllers, Models, Views)
 - ✅ Adım 25 — **Şagird app axını** (`StudentAppService`): `groups → subjects → lessons → contents` (aktiv filtrləri + üzvlük yoxlaması, 403). `ForbiddenException` + middleware + testler.
 - ✅ Adım 26 — **Progress / Statistics**: `LessonProgress` (içerik tamamlama), `POST /api/progress` (mark), `GET /api/progress` (dərs üzrə faiz), `GET /api/statistics` (ümumi + fenn üzrə). Paylaşılan `StudentAccessService`. + testler.
 - ✅ Adım 27 — **Question bank** (fenn üzrə suallar): `Question` (title, variant A-E, correct_answer, variant_type), CRUD + testler. (Quiz bölməsi sırada.)
+- ✅ Adım 28 — **Quiz**: `Quiz` (lesson_id, title, duration, type, is_active, is_repeat, sort_order) + `QuizQuestion` pivot. CRUD + sual bağlama/listeleme/çıxarma + questionCount. + testler.
 
 ## 5. Durum / Notlar
 
@@ -105,7 +106,7 @@ LanguageLMS.Mvc/     (Program.cs, Controllers, Models, Views)
 - [x] Setting
 - [x] İçerik zənciri — Subject · Group · group_subjects · Lesson · LessonContent · medya (BunnyCDN). **Profession iptal.**
 - [ ] Video / VoiceRecord / File (BunnyCDN)
-- [~] Question / Quiz — **Question bank tamam**; Quiz + tələbə imtahanı sırada
+- [~] Question / Quiz — **Question bank + Quiz tamam**; tələbə imtahanı (attempt) sırada
 - [ ] StudentQuiz / QuizRepeat
 - [ ] Progress
 - [ ] Statistics
@@ -114,4 +115,4 @@ LanguageLMS.Mvc/     (Program.cs, Controllers, Models, Views)
 - [ ] Admin (dashboard, sort order)
 
 ---
-_En son güncelleme: Adım 27 — Question bank (quiz bölməsinin 1-ci hissəsi)._
+_En son güncelleme: Adım 28 — Quiz + sual bağlama._

@@ -29,6 +29,10 @@ public sealed class AppDbContext(DbContextOptions<AppDbContext> options) : DbCon
 
     public DbSet<Modules.Question.Entities.Question> Questions => Set<Modules.Question.Entities.Question>();
 
+    public DbSet<Modules.Quiz.Entities.Quiz> Quizzes => Set<Modules.Quiz.Entities.Quiz>();
+
+    public DbSet<Modules.Quiz.Entities.QuizQuestion> QuizQuestions => Set<Modules.Quiz.Entities.QuizQuestion>();
+
     public DbSet<Modules.User.Entities.User> Users => Set<Modules.User.Entities.User>();
 
     public DbSet<Modules.Group.Entities.Group> Groups => Set<Modules.Group.Entities.Group>();
