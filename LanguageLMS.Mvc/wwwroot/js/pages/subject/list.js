@@ -4,6 +4,7 @@ let lastPage = 1;
 async function loadList(page) {
     currentPage = page || 1;
     const search = document.getElementById('search').value;
+    AdminUI.loader(true);
     const data = await AdminUI.get(`/subject/list?page=${currentPage}&search=${encodeURIComponent(search)}`);
 
     lastPage = data.lastPage;
@@ -30,6 +31,7 @@ async function loadList(page) {
     }
 
     renderPagination();
+    AdminUI.loader(false);
 }
 
 function renderPagination() {

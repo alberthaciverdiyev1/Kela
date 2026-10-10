@@ -14,7 +14,10 @@
     <partial name="Ui/_Button" model="@(new ButtonModel { Text = "Axtar", Variant = "secondary", OnClick = "loadList(1)" })" />
 </div>
 
-<div class="overflow-hidden rounded-xl border border-slate-200 bg-white">
+<div class="relative overflow-hidden rounded-xl border border-slate-200 bg-white">
+    <div id="listLoader" class="absolute inset-0 z-10 hidden items-center justify-center bg-white/70">
+        <div class="h-9 w-9 animate-spin rounded-full border-4 border-slate-200 border-t-primary"></div>
+    </div>
     <table class="w-full text-sm">
         <thead class="bg-slate-50 text-left text-slate-500">
             <tr>

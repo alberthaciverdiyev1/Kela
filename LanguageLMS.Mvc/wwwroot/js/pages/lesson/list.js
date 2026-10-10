@@ -5,6 +5,7 @@ async function loadList(page) {
     currentPage = page || 1;
     const subjectId = document.getElementById('filter_subject').value;
     const search = document.getElementById('search').value;
+    AdminUI.loader(true);
     const data = await AdminUI.get(`/lesson/list?page=${currentPage}&subject_id=${subjectId}&search=${encodeURIComponent(search)}`);
 
     lastPage = data.lastPage;
@@ -36,6 +37,7 @@ async function loadList(page) {
         });
     }
     renderPagination();
+    AdminUI.loader(false);
 }
 
 function renderPagination() {

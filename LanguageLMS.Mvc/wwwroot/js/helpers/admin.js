@@ -62,7 +62,14 @@ window.AdminUI = (function () {
         return { ok: res.ok, status: res.status, data: body };
     }
 
+    function loader(show) {
+        const el = document.getElementById('listLoader');
+        if (!el) return;
+        el.classList.toggle('hidden', !show);
+        el.classList.toggle('flex', show);
+    }
+
     function reloadAfter(delay) { setTimeout(() => location.reload(), delay || 700); }
 
-    return { notify, error, confirmDelete, get, post, postForm, putForm, del, token, reloadAfter };
+    return { notify, error, confirmDelete, get, post, postForm, putForm, del, loader, token, reloadAfter };
 })();
