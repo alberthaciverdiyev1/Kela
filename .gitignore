@@ -2,60 +2,24 @@
 bin/
 obj/
 *.user
-*.suo
-*.userosscache
-*.sln.docstates
 .vs/
-.idea/
 
-# Build results
-[Dd]ebug/
-[Rr]elease/
-x64/
-x86/
-build/
-bld/
-[Bb]in/
-[Oo]bj/
-[Ll]og/
-[Ll]ogs/
-
-# NuGet
-*.nupkg
-*.snupkg
-.nuget/
-
-# Node
+# Node / Tailwind
 node_modules/
-laravel/node_modules/
-
-# SvelteKit (Frontend)
-.svelte-kit/
-Frontend/.svelte-kit/
-
-# Generated / backup artifacts
-*.bak
-*.orig
-
-# Test results
-[Tt]est[Rr]esult*/
-*.trx
-
-# Environment
-.env
-.env.*
-appsettings.json
-appsettings.*.json
-appsettings.*.local.json
 
 # OS
 .DS_Store
-Thumbs.db
 
-# Rider
-.idea/
+# Yüklenen dosyalar (paylaşımlı)
+uploads/
 
-# AI assistant config (internal only — not shared with the team)
+# AI asistan dosyaları
 CLAUDE.md
 .claudeignore
-.editorconfig
+.claude/
+
+# IDE
+.idea/
+
+# Yerel ayarlar (sırlar)
+appsettings.Development.json

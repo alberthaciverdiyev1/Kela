@@ -1,0 +1,19 @@
+@model ErrorViewModel
+@{
+    ViewData["Title"] = "Hata";
+}
+
+<h1 class="text-2xl font-bold text-red-600">Error.</h1>
+<h2 class="text-lg text-red-500">An error occurred while processing your request.</h2>
+
+@if (Model.ShowRequestId)
+{
+    <p class="mt-4">
+        <strong>Request ID:</strong> <code class="rounded bg-slate-100 px-1.5 py-0.5">@Model.RequestId</code>
+    </p>
+}
+
+<h3 class="mt-6 text-lg font-semibold">Development Mode</h3>
+<p class="text-slate-600">
+    Switching to the <strong>Development</strong> environment shows more detailed information about the error.
+</p>

@@ -1,0 +1,14 @@
+{
+  "name": "languagelms.mvc",
+  "version": "1.0.0",
+  "description": "LanguageLMS MVC arayüzü - Tailwind CSS",
+  "private": true,
+  "scripts": {
+    "css:build": "tailwindcss -i ./Styles/input.css -o ./wwwroot/css/app.css --minify",
+    "css:watch": "tailwindcss -i ./Styles/input.css -o ./wwwroot/css/app.css --watch"
+  },
+  "devDependencies": {
+    "@tailwindcss/cli": "^4.3.3",
+    "tailwindcss": "^4.3.3"
+  }
+}

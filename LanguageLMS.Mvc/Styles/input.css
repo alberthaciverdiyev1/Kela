@@ -1,0 +1,12 @@
+@import "tailwindcss";
+
+/* Content kaynakları (ASP.NET Razor dosyaları) */
+@source "../Views";
+@source "../Areas";
+@source "../Pages";
+
+/* Proje tema/özelleştirmeleri buraya eklenebilir:
+@theme {
+  --color-brand: oklch(0.7 0.15 250);
+}
+*/

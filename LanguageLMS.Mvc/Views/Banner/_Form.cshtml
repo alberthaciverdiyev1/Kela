@@ -1,0 +1,28 @@
+@model BannerFormViewModel
+
+<div asp-validation-summary="ModelOnly" class="mb-4 text-sm text-red-600"></div>
+
+<div class="space-y-5">
+    <div>
+        <label asp-for="Title" class="block text-sm font-medium text-slate-700">Title</label>
+        <input asp-for="Title" class="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-indigo-500 focus:outline-none" />
+        <span asp-validation-for="Title" class="mt-1 block text-xs text-red-600"></span>
+    </div>
+
+    @if (!string.IsNullOrEmpty(Model.CurrentImageUrl))
+    {
+        <div>
+            <span class="block text-sm font-medium text-slate-700">Current image</span>
+            <img src="@Model.CurrentImageUrl" class="mt-1 h-20 w-32 rounded border border-slate-200 object-cover" />
+            <label class="mt-2 flex items-center gap-2 text-sm text-slate-600">
+                <input asp-for="RemoveImage" type="checkbox" class="rounded border-slate-300" /> Remove image
+            </label>
+        </div>
+    }
+
+    <div>
+        <label asp-for="Image" class="block text-sm font-medium text-slate-700">Image (jpg/png, max 5MB)</label>
+        <input asp-for="Image" type="file" accept=".jpg,.jpeg,.png" class="mt-1 block w-full text-sm text-slate-600" />
+        <span asp-validation-for="Image" class="mt-1 block text-xs text-red-600"></span>
+    </div>
+</div>

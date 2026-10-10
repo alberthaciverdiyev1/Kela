@@ -1,0 +1,46 @@
+using FluentValidation;
+using LanguageLMS.Core.Common.Storage;
+using LanguageLMS.Core.Data;
+using LanguageLMS.Core.Modules.Banner.Services;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.FileProviders;
+
+namespace LanguageLMS.Core;
+
+public static class DependencyInjection
+{
+    public static IServiceCollection AddCore(this IServiceCollection services, IConfiguration configuration)
+    {
+        services.AddMemoryCache();
+
+        services.AddValidatorsFromAssembly(typeof(DependencyInjection).Assembly);
+
+        services.AddDbContext<AppDbContext>(options =>
+            options.UseNpgsql(configuration.GetConnectionString("Postgres")));
+
+        services.AddSingleton<IFileStorage, LocalFileStorage>();
+
+        services.AddScoped<IBannerService, BannerService>();
+
+        return services;
+    }
+
+    public static void UseCoreStorage(this IApplicationBuilder app)
+    {
+        var env = app.ApplicationServices.GetRequiredService<IWebHostEnvironment>();
+        var config = app.ApplicationServices.GetRequiredService<IConfiguration>();
+        var root = StoragePaths.ResolveRoot(env, config);
+
+        Directory.CreateDirectory(root);
+
+        app.UseStaticFiles(new StaticFileOptions
+        {
+            FileProvider = new PhysicalFileProvider(root),
+            RequestPath = StoragePaths.RequestPath
+        });
+    }
+}
