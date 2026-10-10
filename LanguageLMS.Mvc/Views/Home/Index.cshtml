@@ -1,236 +1,390 @@
 @{
     ViewData["Title"] = "Dashboard";
+    var stats = new[]
+    {
+        new { Label = "Total Students", Value = "428", Meta = "12% vs last month", Icon = "users" },
+        new { Label = "Active Workspaces", Value = "32", Meta = "6% vs last month", Icon = "folder" },
+        new { Label = "Upcoming Lessons", Value = "14", Meta = "27% vs last week", Icon = "calendar" },
+        new { Label = "Pending Payments", Value = "₼8,420", Meta = "18% needs follow-up", Icon = "card" }
+    };
+    var workspaces = new[]
+    {
+        new { Name = "IELTS Academic B2", Type = "Language Preparation", Students = 48, Materials = 120, Progress = 75, Icon = "cap" },
+        new { Name = "General English A1", Type = "General English", Students = 36, Materials = 86, Progress = 62, Icon = "chat" },
+        new { Name = "Mathematics Prep", Type = "Academic Subjects", Students = 28, Materials = 64, Progress = 45, Icon = "calc" },
+        new { Name = "University Entrance Group", Type = "Exam Preparation", Students = 52, Materials = 98, Progress = 68, Icon = "school" }
+    };
 }
 
-<section class="space-y-6">
-    <div class="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
-        <div>
-            <p class="text-sm font-medium text-muted">10 Ekim 2026, Cumartesi</p>
-            <h2 class="mt-2 text-2xl font-semibold text-ink sm:text-3xl">Good morning, Nigar</h2>
-            <p class="mt-2 max-w-2xl text-sm leading-6 text-muted">Here's what's happening in your academy today.</p>
+<section class="grid gap-5 xl:grid-cols-[minmax(0,1fr)_360px]">
+    <div class="min-w-0 space-y-5">
+        <header class="flex flex-col gap-4 rounded-[18px] border border-line bg-white/70 p-4 shadow-[0_16px_44px_rgba(24,53,43,0.035)] md:flex-row md:items-center md:justify-between">
+            <div class="flex items-center gap-4">
+                <button type="button" id="sidebarToggle" class="flex h-11 w-11 items-center justify-center rounded-xl border border-line bg-white text-ink xl:hidden">
+                    <span class="sr-only">Menüyü aç</span>
+                    <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 6h16M4 12h16M4 18h16" /></svg>
+                </button>
+                <div>
+                    <p class="text-sm font-semibold text-muted">Dashboard</p>
+                    <h1 class="mt-2 text-2xl font-bold text-ink">Good morning, Alex</h1>
+                    <p class="mt-1 text-sm text-muted">Here is what needs attention across your academy today.</p>
+                </div>
+            </div>
+            <div class="flex items-center gap-3">
+                <label class="relative hidden w-[340px] max-w-full lg:block">
+                    <span class="absolute left-3 top-1/2 -translate-y-1/2 text-muted">
+                        <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m21 21-4.35-4.35M11 18a7 7 0 1 1 0-14 7 7 0 0 1 0 14Z" /></svg>
+                    </span>
+                    <input class="ui-input min-h-10 rounded-2xl pl-10" type="search" placeholder="Search students, courses, or content..." />
+                </label>
+                <button type="button" class="relative flex h-11 w-11 items-center justify-center rounded-xl border border-line bg-white text-ink">
+                    <span class="sr-only">Messages</span>
+                    <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a4 4 0 0 1-4 4H8l-5 3V7a4 4 0 0 1 4-4h10a4 4 0 0 1 4 4v8Z" /></svg>
+                    <span class="absolute right-2 top-2 h-2 w-2 rounded-full bg-red-500"></span>
+                </button>
+                <button type="button" class="flex h-11 w-11 items-center justify-center rounded-xl border border-line bg-white text-ink">
+                    <span class="sr-only">Notifications</span>
+                    <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8a6 6 0 1 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9M13.73 21a2 2 0 0 1-3.46 0" /></svg>
+                </button>
+            </div>
+        </header>
+
+        <div class="grid gap-3 md:grid-cols-2 2xl:grid-cols-4">
+            @foreach (var stat in stats)
+            {
+                <article class="ui-card p-4">
+                    <div class="flex items-start gap-3">
+                        <span class="ui-icon-tile">
+                            @if (stat.Icon == "users")
+                            {
+                                <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2M9 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8ZM22 21v-2a4 4 0 0 0-3-3.87" /></svg>
+                            }
+                            else if (stat.Icon == "folder")
+                            {
+                                <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 7h6l2 2h10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7Z" /></svg>
+                            }
+                            else if (stat.Icon == "calendar")
+                            {
+                                <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 2v4M16 2v4M3 10h18M5 4h14a2 2 0 0 1 2 2v13a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2Z" /></svg>
+                            }
+                            else
+                            {
+                                <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 10h18M7 15h.01M11 15h2M5 6h14a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2Z" /></svg>
+                            }
+                        </span>
+                        <div>
+                            <p class="text-xs font-semibold text-muted">@stat.Label</p>
+                            <p class="mt-1 text-2xl font-bold text-ink">@stat.Value</p>
+                            <p class="mt-2 text-xs font-medium text-muted"><span class="text-brand-600">↑</span> @stat.Meta</p>
+                        </div>
+                    </div>
+                </article>
+            }
         </div>
-        <div class="flex flex-wrap gap-3">
-            <button type="button" class="ui-button-secondary">
-                <svg class="h-4 w-4 text-muted" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14" /></svg>
-                Yeni öğrenci
-            </button>
-            <button type="button" class="ui-button-primary">
-                <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20M4 4.5A2.5 2.5 0 0 1 6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15Z" /></svg>
-                Ders oluştur
-            </button>
-            <button type="button" class="ui-button-secondary">Quiz oluştur</button>
-        </div>
-    </div>
 
-    <div class="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
-        <article class="ui-card p-5">
-            <div class="flex items-start justify-between gap-4">
-                <div>
-                    <p class="text-sm font-medium text-muted">Toplam Öğrenci</p>
-                    <p class="mt-3 text-3xl font-semibold text-ink">428</p>
-                </div>
-                <span class="flex h-11 w-11 items-center justify-center rounded-xl bg-brand-50 text-brand-600">
-                    <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2M9 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8ZM22 21v-2a4 4 0 0 0-3-3.87" /></svg>
-                </span>
+        <section class="space-y-3">
+            <div class="flex items-center justify-between">
+                <h2 class="text-lg font-bold text-ink">My Workspaces</h2>
+                <button type="button" class="inline-flex items-center gap-2 text-sm font-semibold text-brand-600">
+                    View All Workspaces
+                    <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 5l7 7-7 7" /></svg>
+                </button>
             </div>
-            <p class="mt-4 text-sm text-muted"><span class="font-semibold text-emerald-600">+18</span> yeni kayıt bu ay</p>
-        </article>
-
-        <article class="ui-card p-5">
-            <div class="flex items-start justify-between gap-4">
-                <div>
-                    <p class="text-sm font-medium text-muted">Aktif Sınıflar</p>
-                    <p class="mt-3 text-3xl font-semibold text-ink">32</p>
-                </div>
-                <span class="flex h-11 w-11 items-center justify-center rounded-xl bg-brand-50 text-brand-600">
-                    <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 6h16M4 12h16M4 18h7" /></svg>
-                </span>
-            </div>
-            <p class="mt-4 text-sm text-muted">7 sınıf bugün ders işliyor</p>
-        </article>
-
-        <article class="ui-card p-5">
-            <div class="flex items-start justify-between gap-4">
-                <div>
-                    <p class="text-sm font-medium text-muted">Bekleyen Ödemeler</p>
-                    <p class="mt-3 text-3xl font-semibold text-ink">₼8,420</p>
-                </div>
-                <span class="flex h-11 w-11 items-center justify-center rounded-xl bg-amber-50 text-amber-600">
-                    <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 10h18M7 15h.01M11 15h2M5 6h14a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2Z" /></svg>
-                </span>
-            </div>
-            <p class="mt-4 text-sm text-muted">24 öğrenci takip bekliyor</p>
-        </article>
-
-        <article class="ui-card p-5">
-            <div class="flex items-start justify-between gap-4">
-                <div>
-                    <p class="text-sm font-medium text-muted">Yaklaşan Dersler</p>
-                    <p class="mt-3 text-3xl font-semibold text-ink">14</p>
-                </div>
-                <span class="flex h-11 w-11 items-center justify-center rounded-xl bg-brand-50 text-brand-600">
-                    <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 2v4M16 2v4M3 10h18M5 4h14a2 2 0 0 1 2 2v13a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2Z" /></svg>
-                </span>
-            </div>
-            <p class="mt-4 text-sm text-muted">Sonraki ders 09:30'da</p>
-        </article>
-    </div>
-
-    <div class="grid gap-6 xl:grid-cols-[minmax(0,1.45fr)_minmax(360px,0.75fr)]">
-        <article class="ui-card p-5 sm:p-6">
-            <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-                <div>
-                    <h3 class="text-base font-semibold text-ink">Öğrenci Aktivitesi</h3>
-                    <p class="mt-1 text-sm text-muted">Haftalık içerik tamamlama ve quiz katılımı</p>
-                </div>
-                <span class="ui-badge bg-brand-50 text-brand-600">Bu hafta</span>
-            </div>
-            <div class="mt-8 h-72">
-                <div class="flex h-full items-end gap-3 sm:gap-4">
-                    @{
-                        var bars = new[] { 42, 58, 51, 74, 68, 83, 76 };
-                        var days = new[] { "Pzt", "Sal", "Çar", "Per", "Cum", "Cmt", "Paz" };
-                    }
-                    @for (var i = 0; i < bars.Length; i++)
-                    {
-                        <div class="flex h-full flex-1 flex-col justify-end gap-3">
-                            <div class="relative flex flex-1 items-end rounded-t-xl bg-slate-50">
-                                <div class="w-full rounded-t-xl bg-brand-600/85" style="height:@bars[i]%;"></div>
+            <div class="grid gap-3 lg:grid-cols-2">
+                @foreach (var workspace in workspaces)
+                {
+                    <article class="ui-card p-5">
+                        <div class="flex items-start justify-between gap-4">
+                            <div class="flex gap-4">
+                                <span class="ui-icon-tile h-12 w-12">
+                                    @if (workspace.Icon == "cap")
+                                    {
+                                        <svg class="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m22 10-10-5-10 5 10 5 10-5Z" /><path d="M6 12v5c3 2 9 2 12 0v-5" /></svg>
+                                    }
+                                    else if (workspace.Icon == "chat")
+                                    {
+                                        <svg class="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a4 4 0 0 1-4 4H8l-5 3V7a4 4 0 0 1 4-4h10a4 4 0 0 1 4 4v8Z" /></svg>
+                                    }
+                                    else if (workspace.Icon == "calc")
+                                    {
+                                        <svg class="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="2" width="14" height="20" rx="2" /><path d="M9 6h6M9 10h.01M12 10h.01M15 10h.01M9 14h.01M12 14h.01M15 14h.01M9 18h.01M12 18h.01M15 18h.01" /></svg>
+                                    }
+                                    else
+                                    {
+                                        <svg class="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 21h18M5 21V9l7-4 7 4v12M9 21v-6h6v6" /></svg>
+                                    }
+                                </span>
+                                <div>
+                                    <h3 class="font-bold text-ink">@workspace.Name</h3>
+                                    <p class="mt-1 text-xs font-medium text-muted">@workspace.Type</p>
+                                </div>
                             </div>
-                            <span class="text-center text-xs font-medium text-muted">@days[i]</span>
+                            <button type="button" class="text-muted">
+                                <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5h.01M12 12h.01M12 19h.01" /></svg>
+                            </button>
                         </div>
-                    }
-                </div>
+                        <div class="mt-5 flex flex-wrap gap-5 text-sm text-muted">
+                            <span class="inline-flex items-center gap-2">
+                                <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H7a4 4 0 0 0-4 4v2M10 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8Z" /></svg>
+                                @workspace.Students students
+                            </span>
+                            <span class="inline-flex items-center gap-2">
+                                <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20M4 4.5A2.5 2.5 0 0 1 6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15Z" /></svg>
+                                @workspace.Materials materials
+                            </span>
+                        </div>
+                        <div class="mt-5 flex items-center gap-3">
+                            <div class="h-2 flex-1 overflow-hidden rounded-full bg-[#e2efea]">
+                                <div class="h-full rounded-full bg-brand-600" style="width:@workspace.Progress%;"></div>
+                            </div>
+                            <span class="text-xs font-semibold text-muted">@workspace.Progress%</span>
+                        </div>
+                        <a href="#" class="mt-4 inline-flex items-center gap-2 text-sm font-bold text-brand-600">
+                            Manage Workspace
+                            <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 5l7 7-7 7" /></svg>
+                        </a>
+                    </article>
+                }
             </div>
-        </article>
+        </section>
 
-        <article class="ui-card p-5 sm:p-6">
-            <div class="flex items-center justify-between gap-4">
-                <div>
-                    <h3 class="text-base font-semibold text-ink">Yaklaşan Dersler</h3>
-                    <p class="mt-1 text-sm text-muted">Bugünün planı</p>
+        <div class="grid gap-3 lg:grid-cols-2">
+            <article class="ui-card p-5">
+                <div class="flex items-center justify-between">
+                    <h2 class="font-bold text-ink">Recent Students</h2>
+                    <button type="button" class="text-sm font-semibold text-brand-600">View All</button>
                 </div>
-                <button type="button" class="text-sm font-semibold text-brand-600 hover:text-brand-700">Tümü</button>
-            </div>
-            <div class="mt-5 space-y-4">
-                <div class="rounded-2xl border border-line p-4">
-                    <div class="flex items-start justify-between gap-4">
-                        <div>
-                            <p class="font-semibold text-ink">IELTS Writing Task 2</p>
-                            <p class="mt-1 text-sm text-muted">IELTS Academic B2</p>
+                <div class="mt-4 divide-y divide-line">
+                    <div class="flex items-center gap-3 py-3">
+                        <span class="h-10 w-10 rounded-full bg-[url('/wwwroot/images/noPhoto.png')] bg-cover bg-center ring-1 ring-line"></span>
+                        <div class="min-w-0 flex-1">
+                            <p class="truncate text-sm font-bold text-ink">Emma Carter</p>
+                            <p class="text-xs text-muted">IELTS Academic B2</p>
                         </div>
-                        <span class="ui-badge bg-brand-50 text-brand-600">09:30</span>
+                        <span class="ui-badge bg-brand-50 text-brand-700">Active</span>
                     </div>
-                    <p class="mt-4 text-sm text-muted">18 katılımcı · Room 204</p>
-                </div>
-                <div class="rounded-2xl border border-line p-4">
-                    <div class="flex items-start justify-between gap-4">
-                        <div>
-                            <p class="font-semibold text-ink">Speaking Club</p>
-                            <p class="mt-1 text-sm text-muted">General English A1</p>
+                    <div class="flex items-center gap-3 py-3">
+                        <span class="flex h-10 w-10 items-center justify-center rounded-full bg-brand-50 text-sm font-bold text-brand-600">JH</span>
+                        <div class="min-w-0 flex-1">
+                            <p class="truncate text-sm font-bold text-ink">James Wilson</p>
+                            <p class="text-xs text-muted">General English A1</p>
                         </div>
-                        <span class="ui-badge bg-brand-50 text-brand-600">13:00</span>
+                        <span class="ui-badge bg-brand-50 text-brand-700">Active</span>
                     </div>
-                    <p class="mt-4 text-sm text-muted">12 katılımcı · Online</p>
-                </div>
-                <div class="rounded-2xl border border-line p-4">
-                    <div class="flex items-start justify-between gap-4">
-                        <div>
-                            <p class="font-semibold text-ink">Grammar Review</p>
-                            <p class="mt-1 text-sm text-muted">University Entrance Group</p>
+                    <div class="flex items-center gap-3 py-3">
+                        <span class="flex h-10 w-10 items-center justify-center rounded-full bg-amber-50 text-sm font-bold text-amber-700">SK</span>
+                        <div class="min-w-0 flex-1">
+                            <p class="truncate text-sm font-bold text-ink">Sophia Kim</p>
+                            <p class="text-xs text-muted">University Entrance</p>
                         </div>
-                        <span class="ui-badge bg-brand-50 text-brand-600">16:45</span>
+                        <span class="ui-badge bg-amber-50 text-amber-700">On Leave</span>
                     </div>
-                    <p class="mt-4 text-sm text-muted">21 katılımcı · Room 102</p>
+                    <div class="flex items-center gap-3 py-3">
+                        <span class="flex h-10 w-10 items-center justify-center rounded-full bg-brand-50 text-sm font-bold text-brand-600">DL</span>
+                        <div class="min-w-0 flex-1">
+                            <p class="truncate text-sm font-bold text-ink">Daniel Lee</p>
+                            <p class="text-xs text-muted">Mathematics Prep</p>
+                        </div>
+                        <span class="ui-badge bg-brand-50 text-brand-700">Active</span>
+                    </div>
                 </div>
-            </div>
-        </article>
+            </article>
+
+            <article class="ui-card p-5">
+                <div class="flex items-center justify-between">
+                    <h2 class="font-bold text-ink">Recent Activity</h2>
+                    <button type="button" class="text-sm font-semibold text-brand-600">View All</button>
+                </div>
+                <div class="mt-4 space-y-3">
+                    <div class="flex gap-3">
+                        <span class="ui-icon-tile h-9 w-9 rounded-full"><svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14" /></svg></span>
+                        <div class="min-w-0 flex-1">
+                            <p class="text-sm font-bold text-ink">New student enrollment</p>
+                            <p class="text-xs text-muted">Emma Carter joined IELTS Academic B2</p>
+                        </div>
+                        <span class="text-xs text-muted">2h</span>
+                    </div>
+                    <div class="flex gap-3">
+                        <span class="ui-icon-tile h-9 w-9 rounded-full"><svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m9 12 2 2 4-4" /></svg></span>
+                        <div class="min-w-0 flex-1">
+                            <p class="text-sm font-bold text-ink">Lesson completed</p>
+                            <p class="text-xs text-muted">General English A1 - Unit 4</p>
+                        </div>
+                        <span class="text-xs text-muted">3h</span>
+                    </div>
+                    <div class="flex gap-3">
+                        <span class="flex h-9 w-9 items-center justify-center rounded-full bg-amber-50 text-amber-700"><svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 12h6M9 16h6M7 3h10l4 4v14H3V3h4Z" /></svg></span>
+                        <div class="min-w-0 flex-1">
+                            <p class="text-sm font-bold text-ink">Quiz submitted</p>
+                            <p class="text-xs text-muted">Mathematics Prep - Quiz 2</p>
+                        </div>
+                        <span class="text-xs text-muted">5h</span>
+                    </div>
+                    <div class="flex gap-3">
+                        <span class="ui-icon-tile h-9 w-9 rounded-full"><svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 10h18M7 15h.01M11 15h2" /></svg></span>
+                        <div class="min-w-0 flex-1">
+                            <p class="text-sm font-bold text-ink">Payment received</p>
+                            <p class="text-xs text-muted">₼240 from Daniel Lee</p>
+                        </div>
+                        <span class="text-xs text-muted">6h</span>
+                    </div>
+                </div>
+            </article>
+        </div>
     </div>
 
-    <div class="grid gap-6 xl:grid-cols-[minmax(0,0.95fr)_minmax(360px,1.05fr)]">
-        <article class="ui-card p-5 sm:p-6">
-            <h3 class="text-base font-semibold text-ink">Son Aktiviteler</h3>
-            <div class="mt-5 space-y-5">
-                <div class="flex gap-4">
-                    <span class="mt-1 h-2.5 w-2.5 rounded-full bg-brand-600"></span>
+    <aside class="space-y-3">
+        <article class="ui-card p-5">
+            <div class="flex items-center justify-between">
+                <h2 class="font-bold text-ink">Teacher Profile Summary</h2>
+                <button type="button" class="text-muted">
+                    <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5h.01M12 12h.01M12 19h.01" /></svg>
+                </button>
+            </div>
+            <div class="mt-4 flex items-center gap-4">
+                <span class="relative flex h-16 w-16 items-center justify-center rounded-full bg-brand-50 text-lg font-bold text-brand-600">
+                    AM
+                    <span class="absolute bottom-1 right-1 h-3 w-3 rounded-full border-2 border-white bg-brand-600"></span>
+                </span>
+                <div>
+                    <p class="font-bold text-ink">Alex Morgan</p>
+                    <p class="mt-1 text-sm text-muted">Academic Manager</p>
+                    <p class="mt-2 text-sm font-semibold text-ink">★ 1,240 Points</p>
+                </div>
+            </div>
+            <div class="mt-5 grid grid-cols-3 gap-2 rounded-2xl bg-brand-50/70 p-3 text-center">
+                <div>
+                    <p class="font-bold text-ink">12</p>
+                    <p class="text-[11px] text-muted">Courses</p>
+                </div>
+                <div>
+                    <p class="font-bold text-ink">428</p>
+                    <p class="text-[11px] text-muted">Students</p>
+                </div>
+                <div>
+                    <p class="font-bold text-ink">5</p>
+                    <p class="text-[11px] text-muted">Awards</p>
+                </div>
+            </div>
+        </article>
+
+        <article class="ui-card p-5">
+            <div class="flex items-center justify-between">
+                <h2 class="font-bold text-ink">Today's Schedule</h2>
+                <span class="rounded-lg border border-line px-2 py-1 text-xs font-semibold text-muted">May 29</span>
+            </div>
+            <div class="mt-4 space-y-3">
+                <div class="grid grid-cols-[46px_1fr_auto] items-center gap-3">
+                    <span class="text-sm font-semibold text-ink">09:00</span>
                     <div>
-                        <p class="text-sm font-semibold text-ink">Leyla Mammadova IELTS Academic B2 sınıfına eklendi</p>
-                        <p class="mt-1 text-sm text-muted">12 dakika önce</p>
+                        <p class="text-sm font-bold text-ink">IELTS Academic B2</p>
+                        <p class="text-xs text-muted">Group A · Online</p>
+                    </div>
+                    <span class="text-xs text-muted">12</span>
+                </div>
+                <div class="grid grid-cols-[46px_1fr_auto] items-center gap-3">
+                    <span class="text-sm font-semibold text-ink">11:00</span>
+                    <div>
+                        <p class="text-sm font-bold text-ink">General English A1</p>
+                        <p class="text-xs text-muted">Group B · Room 2</p>
+                    </div>
+                    <span class="text-xs text-muted">8</span>
+                </div>
+                <div class="grid grid-cols-[46px_1fr_auto] items-center gap-3">
+                    <span class="text-sm font-semibold text-ink">14:00</span>
+                    <div>
+                        <p class="text-sm font-bold text-ink">Mathematics Prep</p>
+                        <p class="text-xs text-muted">Group A · Online</p>
+                    </div>
+                    <span class="text-xs text-muted">10</span>
+                </div>
+                <div class="grid grid-cols-[46px_1fr_auto] items-center gap-3">
+                    <span class="text-sm font-semibold text-ink">16:00</span>
+                    <div>
+                        <p class="text-sm font-bold text-ink">University Entrance</p>
+                        <p class="text-xs text-muted">Group C · Room 1</p>
+                    </div>
+                    <span class="text-xs text-muted">15</span>
+                </div>
+            </div>
+        </article>
+
+        <article class="ui-card p-5">
+            <div class="flex items-center justify-between">
+                <h2 class="font-bold text-ink">Upcoming Lessons</h2>
+                <button type="button" class="text-sm font-semibold text-brand-600">View All</button>
+            </div>
+            <div class="mt-4 space-y-4">
+                <div class="flex items-center gap-3">
+                    <span class="text-xs font-bold text-ink">May 30</span>
+                    <span class="ui-icon-tile h-9 w-9 rounded-xl"><svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 2v4M16 2v4M3 10h18" /></svg></span>
+                    <div class="min-w-0 flex-1">
+                        <p class="truncate text-sm font-bold text-ink">IELTS Writing Workshop</p>
+                        <p class="text-xs text-muted">Group A · 12 students</p>
                     </div>
                 </div>
-                <div class="flex gap-4">
-                    <span class="mt-1 h-2.5 w-2.5 rounded-full bg-emerald-500"></span>
-                    <div>
-                        <p class="text-sm font-semibold text-ink">Grammar Quiz #8 tamamlandı</p>
-                        <p class="mt-1 text-sm text-muted">Ortalama skor 84%</p>
+                <div class="flex items-center gap-3">
+                    <span class="text-xs font-bold text-ink">May 30</span>
+                    <span class="ui-icon-tile h-9 w-9 rounded-xl"><svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m9 12 2 2 4-4" /></svg></span>
+                    <div class="min-w-0 flex-1">
+                        <p class="truncate text-sm font-bold text-ink">Speaking Practice</p>
+                        <p class="text-xs text-muted">General English A1 · 8 students</p>
                     </div>
                 </div>
-                <div class="flex gap-4">
-                    <span class="mt-1 h-2.5 w-2.5 rounded-full bg-amber-500"></span>
-                    <div>
-                        <p class="text-sm font-semibold text-ink">₼320 ödeme tahsil edildi</p>
-                        <p class="mt-1 text-sm text-muted">General English A1 · 1 saat önce</p>
-                    </div>
-                </div>
-                <div class="flex gap-4">
-                    <span class="mt-1 h-2.5 w-2.5 rounded-full bg-slate-400"></span>
-                    <div>
-                        <p class="text-sm font-semibold text-ink">14 ödev teslimi incelenmeyi bekliyor</p>
-                        <p class="mt-1 text-sm text-muted">Writing Practice folder</p>
+                <div class="flex items-center gap-3">
+                    <span class="text-xs font-bold text-ink">May 31</span>
+                    <span class="ui-icon-tile h-9 w-9 rounded-xl"><svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 12h6M9 16h6M7 3h10l4 4v14H3V3h4Z" /></svg></span>
+                    <div class="min-w-0 flex-1">
+                        <p class="truncate text-sm font-bold text-ink">Mock Exam Review</p>
+                        <p class="text-xs text-muted">University Entrance · 15 students</p>
                     </div>
                 </div>
             </div>
         </article>
 
-        <article class="ui-card p-5 sm:p-6">
-            <div class="flex items-center justify-between gap-4">
-                <div>
-                    <h3 class="text-base font-semibold text-ink">Ödeme Özeti</h3>
-                    <p class="mt-1 text-sm text-muted">Ekim dönemi tahsilat durumu</p>
-                </div>
-                <button type="button" class="ui-button-secondary min-h-10 px-3">Rapor</button>
+        <article class="ui-card p-5">
+            <div class="flex items-center justify-between">
+                <h2 class="font-bold text-ink">Payment Reminders</h2>
+                <button type="button" class="text-sm font-semibold text-brand-600">View All</button>
             </div>
-            <div class="mt-6 grid gap-4 sm:grid-cols-3">
-                <div class="rounded-2xl bg-slate-50 p-4">
-                    <p class="text-sm font-medium text-muted">Tahsil edilen</p>
-                    <p class="mt-2 text-2xl font-semibold text-ink">₼28,640</p>
-                    <span class="mt-3 ui-badge bg-emerald-50 text-emerald-700">Paid</span>
-                </div>
-                <div class="rounded-2xl bg-slate-50 p-4">
-                    <p class="text-sm font-medium text-muted">Bekleyen</p>
-                    <p class="mt-2 text-2xl font-semibold text-ink">₼8,420</p>
-                    <span class="mt-3 ui-badge bg-amber-50 text-amber-700">Pending</span>
-                </div>
-                <div class="rounded-2xl bg-slate-50 p-4">
-                    <p class="text-sm font-medium text-muted">Geciken</p>
-                    <p class="mt-2 text-2xl font-semibold text-ink">₼1,180</p>
-                    <span class="mt-3 ui-badge bg-red-50 text-red-700">Overdue</span>
-                </div>
-            </div>
-            <div class="mt-6 overflow-hidden rounded-2xl border border-line">
-                <div class="grid grid-cols-[1.3fr_0.8fr_0.7fr] bg-slate-50 px-4 py-3 text-xs font-semibold uppercase text-muted">
-                    <span>Öğrenci</span>
-                    <span>Plan</span>
-                    <span>Durum</span>
-                </div>
-                <div class="divide-y divide-line">
-                    <div class="grid grid-cols-[1.3fr_0.8fr_0.7fr] items-center px-4 py-3 text-sm">
-                        <span class="font-medium text-ink">Ayan Karimova</span>
-                        <span class="text-muted">Monthly</span>
-                        <span class="ui-badge w-fit bg-emerald-50 text-emerald-700">Paid</span>
+            <div class="mt-4 space-y-3">
+                <div class="flex items-center gap-3">
+                    <span class="flex h-10 w-10 items-center justify-center rounded-xl bg-red-50 text-red-600"><svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 2v4M16 2v4M3 10h18" /></svg></span>
+                    <div class="min-w-0 flex-1">
+                        <p class="text-sm font-bold text-ink">3 students</p>
+                        <p class="text-xs text-muted">Payments overdue</p>
                     </div>
-                    <div class="grid grid-cols-[1.3fr_0.8fr_0.7fr] items-center px-4 py-3 text-sm">
-                        <span class="font-medium text-ink">Murad Hasanli</span>
-                        <span class="text-muted">Per Lesson</span>
-                        <span class="ui-badge w-fit bg-amber-50 text-amber-700">Pending</span>
+                    <span class="text-sm font-bold text-red-600">₼1,250</span>
+                </div>
+                <div class="flex items-center gap-3">
+                    <span class="ui-icon-tile h-10 w-10 rounded-xl"><svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 2v4M16 2v4M3 10h18" /></svg></span>
+                    <div class="min-w-0 flex-1">
+                        <p class="text-sm font-bold text-ink">5 students</p>
+                        <p class="text-xs text-muted">Payments due this week</p>
                     </div>
-                    <div class="grid grid-cols-[1.3fr_0.8fr_0.7fr] items-center px-4 py-3 text-sm">
-                        <span class="font-medium text-ink">Farida Ali</span>
-                        <span class="text-muted">Monthly</span>
-                        <span class="ui-badge w-fit bg-red-50 text-red-700">Overdue</span>
-                    </div>
+                    <span class="text-sm font-bold text-brand-600">₼2,180</span>
                 </div>
             </div>
         </article>
-    </div>
+
+        <article class="ui-card p-5">
+            <div class="flex items-center justify-between">
+                <h2 class="font-bold text-ink">Weekly Activity</h2>
+                <span class="rounded-lg border border-line px-2 py-1 text-xs font-semibold text-muted">Last 7 days</span>
+            </div>
+            <div class="mt-5 flex h-24 items-end gap-3">
+                @{
+                    var weekly = new[] { 44, 58, 38, 70, 92, 42, 62 };
+                    var labels = new[] { "Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun" };
+                }
+                @for (var i = 0; i < weekly.Length; i++)
+                {
+                    <div class="flex h-full flex-1 flex-col justify-end gap-2">
+                        <div class="rounded-t-lg bg-brand-600/55" style="height:@weekly[i]%;"></div>
+                        <span class="text-center text-[10px] font-medium text-muted">@labels[i]</span>
+                    </div>
+                }
+            </div>
+        </article>
+    </aside>
 </section>

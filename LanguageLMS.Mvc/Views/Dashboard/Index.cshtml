@@ -1,0 +1,98 @@
+@model LanguageLMS.Core.Modules.Dashboard.Responses.DashboardResponse
+@{
+    ViewData["Title"] = "Dashboard";
+}
+
+@{
+    var cards = new (string Label, string Value, string Color)[]
+    {
+        ("Şagirdlər", Model.Students.Total.ToString(), "text-primary"),
+        ("Aktiv şagirdlər", Model.Students.Active.ToString(), "text-emerald-600"),
+        ("Yeni (7 gün)", Model.Students.New7d.ToString(), "text-sky"),
+        ("Qruplar", Model.Students.Groups.ToString(), "text-navy"),
+    };
+    var content = new (string Label, int Value)[]
+    {
+        ("Fənlər", Model.Content.Subjects),
+        ("Dərslər", Model.Content.Lessons),
+        ("Materiallar", Model.Content.Contents),
+        ("Videolar", Model.Content.Videos),
+        ("Fayllar", Model.Content.Files),
+        ("Səs yazıları", Model.Content.Voices),
+        ("İmtahanlar", Model.Content.Quizzes),
+        ("Suallar", Model.Content.Questions),
+    };
+}
+
+<div class="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
+    @foreach (var card in cards)
+    {
+        <div class="rounded-xl border border-slate-200 bg-white p-5">
+            <div class="text-sm text-slate-500">@card.Label</div>
+            <div class="mt-1 text-3xl font-bold @card.Color">@card.Value</div>
+        </div>
+    }
+</div>
+
+<div class="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-2">
+    <div class="rounded-xl border border-slate-200 bg-white p-5">
+        <div class="text-sm text-slate-500">İmtahan cəhdləri (30 gün)</div>
+        <div class="mt-1 text-2xl font-bold text-primary">@Model.Activity.QuizAttempts30d</div>
+    </div>
+    <div class="rounded-xl border border-slate-200 bg-white p-5">
+        <div class="text-sm text-slate-500">İmtahan verən şagirdlər (30 gün)</div>
+        <div class="mt-1 text-2xl font-bold text-primary">@Model.Activity.StudentsAttempted30d</div>
+    </div>
+</div>
+
+<div class="mt-6 grid grid-cols-1 gap-4 lg:grid-cols-3">
+    <!-- Content -->
+    <div class="rounded-xl border border-slate-200 bg-white p-5 lg:col-span-2">
+        <h2 class="mb-4 font-semibold text-slate-800">Məzmun</h2>
+        <div class="grid grid-cols-2 gap-3 sm:grid-cols-4">
+            @foreach (var c in content)
+            {
+                <div class="rounded-lg bg-slate-50 p-3">
+                    <div class="text-xs text-slate-500">@c.Label</div>
+                    <div class="text-xl font-semibold text-slate-800">@c.Value</div>
+                </div>
+            }
+        </div>
+    </div>
+
+    <!-- Top subjects -->
+    <div class="rounded-xl border border-slate-200 bg-white p-5">
+        <h2 class="mb-4 font-semibold text-slate-800">Top fənlər</h2>
+        <ul class="space-y-3 text-sm">
+            @foreach (var s in Model.TopSubjects)
+            {
+                <li class="flex items-center justify-between">
+                    <span class="text-slate-700">@s.Name</span>
+                    <span class="rounded-full bg-primary/10 px-2 py-0.5 text-xs font-medium text-primary">@s.LessonCount</span>
+                </li>
+            }
+            @if (Model.TopSubjects.Count == 0)
+            {
+                <li class="text-slate-400">Məlumat yoxdur</li>
+            }
+        </ul>
+    </div>
+</div>
+
+<!-- Recent students -->
+<div class="mt-6 rounded-xl border border-slate-200 bg-white p-5">
+    <h2 class="mb-4 font-semibold text-slate-800">Son şagirdlər</h2>
+    <ul class="divide-y divide-slate-100 text-sm">
+        @foreach (var st in Model.RecentStudents)
+        {
+            <li class="flex items-center justify-between py-2.5">
+                <span class="text-slate-700">@st.FullName</span>
+                <span class="text-slate-400">@st.CreatedAt.ToString("dd.MM.yyyy")</span>
+            </li>
+        }
+        @if (Model.RecentStudents.Count == 0)
+        {
+            <li class="py-2.5 text-slate-400">Məlumat yoxdur</li>
+        }
+    </ul>
+</div>

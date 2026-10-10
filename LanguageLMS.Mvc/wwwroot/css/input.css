@@ -1,0 +1,16 @@
+@import "tailwindcss";
+
+/* Content kaynakları (ASP.NET Razor dosyaları) */
+@source "../../Views";
+@source "../../Areas";
+@source "../../Pages";
+
+/* Admin dizaynından yalnız RƏNGLƏR götürüldü */
+@theme {
+  --color-primary: #004AAD;
+  --color-primary-600: #003e91;
+  --color-primary-700: #003274;
+  --color-navy: #353859;
+  --color-navy-700: #2a2c47;
+  --color-sky: #5B9BD5;
+}
