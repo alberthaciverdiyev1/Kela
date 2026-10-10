@@ -62,18 +62,11 @@
                 Options = lessons.Data.Select(l => new SelectOption { Value = l.Id.ToString(), Text = l.Title }).ToList()
             })" />
             <partial name="Ui/_Input" model="@(new InputModel { Name = "title", Id = "title", Label = "Başlıq", Required = true })" />
-            <div class="grid grid-cols-2 gap-4">
-                <partial name="Ui/_Select" model="@(new SelectModel { Name = "type", Id = "type", Label = "Növ", Options = typeOptions })" />
-                <partial name="Ui/_Input" model="@(new InputModel { Name = "sort_order", Id = "sort_order", Label = "Sıra", Type = "number", Value = "0" })" />
-            </div>
+            <partial name="Ui/_Select" model="@(new SelectModel { Name = "type", Id = "type", Label = "Növ", Options = typeOptions })" />
             <div id="fileBlock">
-                <label class="mb-1 block text-sm font-medium text-slate-700">Fayl</label>
-                <input type="file" id="file" class="block w-full rounded-lg border border-slate-300 bg-slate-50 p-2 text-sm" />
-                <p class="mt-1 text-xs text-slate-400">Video böyükdürsə birbaşa R2-yə (presigned) yüklənir.</p>
+                <partial name="Ui/_FileUpload" model="@(new FileUploadModel { Name = "file", Id = "file", Label = "Fayl", Hint = "Video böyükdürsə birbaşa R2-yə yüklənir" })" />
             </div>
-            <label class="flex items-center gap-2 text-sm text-slate-700">
-                <input type="checkbox" id="is_active" checked class="rounded border-slate-300 text-primary focus:ring-primary" /> Aktiv
-            </label>
+            <partial name="Ui/_Switch" model="@(new SwitchModel { Name = "is_active", Id = "is_active", Label = "Aktiv", Checked = true })" />
             <div class="flex justify-end gap-3 pt-2">
                 <partial name="Ui/_Button" model="@(new ButtonModel { Text = "İmtina", Variant = "secondary", OnClick = "closeModal()" })" />
                 <partial name="Ui/_Button" model="@(new ButtonModel { Text = "Yadda saxla", Type = "submit" })" />

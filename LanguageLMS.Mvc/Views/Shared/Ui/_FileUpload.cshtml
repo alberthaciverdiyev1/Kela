@@ -1,0 +1,20 @@
+@model FileUploadModel
+@{
+    var id = Model.Id ?? Model.Name;
+}
+<div>
+    @if (!string.IsNullOrEmpty(Model.Label))
+    {
+        <label class="mb-1 block text-sm font-medium text-slate-700">@Model.Label</label>
+    }
+    <label for="@id"
+           class="flex cursor-pointer flex-col items-center justify-center rounded-xl border-2 border-dashed border-slate-300 bg-slate-50 px-4 py-6 text-center transition-colors hover:border-primary hover:bg-primary/5">
+        <svg class="mb-2 h-8 w-8 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.6">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M7 16a4 4 0 01-.88-7.9A5 5 0 1115.9 6H16a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v8" />
+        </svg>
+        <span class="text-sm text-slate-600"><span class="font-medium text-primary">Fayl seçin</span> və ya buraya atın</span>
+        <span id="@(id)Name" class="mt-1 text-xs text-slate-400">@Model.Hint</span>
+        <input id="@id" name="@Model.Name" type="file" accept="@Model.Accept" class="hidden"
+               onchange="document.getElementById('@(id)Name').textContent = this.files.length ? this.files[0].name : '@(Model.Hint)'" />
+    </label>
+</div>

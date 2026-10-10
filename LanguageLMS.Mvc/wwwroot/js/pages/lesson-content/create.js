@@ -21,7 +21,6 @@
         document.getElementById('lesson_id').value = '';
         document.getElementById('title').value = '';
         document.getElementById('type').value = 'video';
-        document.getElementById('sort_order').value = 0;
         document.getElementById('is_active').checked = true;
         document.getElementById('file').value = '';
         document.getElementById('fileBlock').classList.remove('hidden');
@@ -40,7 +39,6 @@
         const lessonId = document.getElementById('lesson_id').value;
         const type = document.getElementById('type').value;
         const title = document.getElementById('title').value;
-        const sortOrder = document.getElementById('sort_order').value || '0';
         const isActive = document.getElementById('is_active').checked ? 'true' : 'false';
         const contentType = file.type || 'application/octet-stream';
 
@@ -50,7 +48,7 @@
             if (urlRes.ok && urlRes.data?.uploadUrl) {
                 await fetch(urlRes.data.uploadUrl, { method: 'PUT', body: file, headers: { 'Content-Type': contentType } });
                 const res = await AdminUI.post('/lesson-content',
-                    { lesson_id: lessonId, title, type, path: urlRes.data.path, sort_order: sortOrder, is_active: isActive });
+                    { lesson_id: lessonId, title, type, path: urlRes.data.path, is_active: isActive });
                 if (res.ok) { done(); return; }
                 showError(res.data?.errors ? Object.values(res.data.errors).flat().join(' • ') : 'Xəta baş verdi');
                 return;
@@ -61,8 +59,7 @@
             fd.append('lesson_id', lessonId);
             fd.append('title', title);
             fd.append('type', type);
-            fd.append('sort_order', sortOrder);
-            fd.append('is_active', isActive);
+                fd.append('is_active', isActive);
             fd.append('File', file);
             const res = await AdminUI.postForm('/lesson-content', fd);
             if (res.ok) { done(); return; }

@@ -8,7 +8,6 @@
         document.getElementById('entityId').value = data.id;
         document.getElementById('subject_id').value = data.subjectId;
         document.getElementById('title').value = data.title;
-        document.getElementById('sort_order').value = data.sortOrder;
         document.getElementById('is_active').checked = data.isActive;
         document.getElementById('image').value = '';
         window.showModal();

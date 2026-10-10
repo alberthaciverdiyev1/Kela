@@ -9,7 +9,6 @@
         document.getElementById('lesson_id').value = data.lessonId;
         document.getElementById('title').value = data.title;
         document.getElementById('type').value = data.type ?? 'video';
-        document.getElementById('sort_order').value = data.sortOrder;
         document.getElementById('is_active').checked = data.isActive;
         document.getElementById('fileBlock').classList.add('hidden');
         document.getElementById('lesson_id').disabled = true;
@@ -24,7 +23,6 @@
 
         const fd = new FormData();
         fd.append('title', document.getElementById('title').value);
-        fd.append('sort_order', document.getElementById('sort_order').value || '0');
         fd.append('is_active', document.getElementById('is_active').checked ? 'true' : 'false');
 
         const res = await AdminUI.putForm(`/lesson-content/${id}`, fd);

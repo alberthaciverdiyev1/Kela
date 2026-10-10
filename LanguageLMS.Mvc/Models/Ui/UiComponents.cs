@@ -36,3 +36,20 @@ public class SelectModel
     public bool Required { get; set; }
     public string? Id { get; set; }
 }
+
+public class SwitchModel
+{
+    public string Name { get; set; } = string.Empty;
+    public string? Label { get; set; }
+    public bool Checked { get; set; } = true;
+    public string? Id { get; set; }
+}
+
+public class FileUploadModel
+{
+    public string Name { get; set; } = "file";
+    public string? Id { get; set; }
+    public string? Label { get; set; }
+    public string? Accept { get; set; }
+    public string? Hint { get; set; }
+}

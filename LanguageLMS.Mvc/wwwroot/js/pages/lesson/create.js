@@ -17,7 +17,6 @@
         document.getElementById('entityId').value = '';
         document.getElementById('subject_id').value = '';
         document.getElementById('title').value = '';
-        document.getElementById('sort_order').value = 0;
         document.getElementById('is_active').checked = true;
         document.getElementById('image').value = '';
         window.showModal();
@@ -27,7 +26,6 @@
         const fd = new FormData();
         fd.append('subject_id', document.getElementById('subject_id').value);
         fd.append('title', document.getElementById('title').value);
-        fd.append('sort_order', document.getElementById('sort_order').value || '0');
         fd.append('is_active', document.getElementById('is_active').checked ? 'true' : 'false');
         const file = document.getElementById('image').files[0];
         if (file) fd.append('Image', file);

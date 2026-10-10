@@ -92,6 +92,7 @@ LanguageLMS.Mvc/     (Program.cs, Controllers, Models, Views)
 - ✅ Adım 32 — **Roles**: JWT `role` claim (`student`/`teacher`/`admin`) + policy'ler (`Student` / `Teacher`=teacher+admin / `Admin`). İçerik uçları → **Teacher**, istifadəçi idarəsi → **Admin**, şagird uçları → **Student**. Boşluqlar bağlandı (əvvəl hamısı açıq idi). + testler.
 - ✅ Adım 33 — **PrivacyPolicy**: `privacy_policies` (type + HTML content). `GET /api/privacy-policy[/{type}]` (public), `PUT /api/privacy-policy` (Teacher, upsert). + testler.
 - ✅ Adım 34 — **Group quiz statistikası** (`GroupQuizStatService`): `GET /api/group/{id}/quiz-stat?quiz_type=lesson|general` → qrupun quizləri üzrə hər şagirdin nəticəsi (attempted, correct, wrong, score %). Reference `GroupQuizStatController` məntiqi. + testler.
+- ✅ Adım 56 — **UI: `_Switch` (aktiv toggle) + `_FileUpload` (dashed dropzone)** komponentləri; Lesson/LessonContent formalarından **sıra (sort_order) inputu çıxarıldı**; aktiv → switch, fayl → yeni dizayn.
 - ✅ Adım 55 — **Admin: LessonContent (Materiallar)** səhifəsi: dərs filtri + list; **create** fayl ilə (**presigned R2**, dəstəklənmirsə serverə fallback) və ya **path ilə**; **update** metadata; **DELETE**. `LessonContentController` (RESTful) + `pages/lesson-content/{list,create,update}.js`. Sidebar-a da əlavə olundu.
 - ✅ Adım 54 — **Admin konvensiyaları**: **kebab-case URL** (`[Route("[controller]")]`+transformer), **RESTful** (list JSON, id path-də, DELETE), **list JS ilə** (client-render), form JS `create.js`/`update.js`, `ViewData["Scripts"]`, **sidebar ayrıca partial**, wwwroot → `js/{library,helpers,pages}` + `css`. Subject & Lesson yenidən yazıldı.
 - ✅ Adım 53 — **Admin: Lesson (Dərslər) səhifəsi**: `LessonController` (`ILessonService` + `ISubjectService` filtr üçün) → list (subject_id filtri + axtarış) + JSON CRUD; view UI komponentləri + `AdminUI` (notify/confirm) ilə.
@@ -141,7 +142,7 @@ LanguageLMS.Mvc/     (Program.cs, Controllers, Models, Views)
 - [ ] Admin (dashboard, sort order)
 
 ---
-_En son güncelleme: Adım 55 — Admin LessonContent səhifəsi — Admin Lesson səhifəsi — Admin Subject səhifəsi (list + CRUD modal + JS).
+_En son güncelleme: Adım 56 — Admin LessonContent səhifəsi — Admin Lesson səhifəsi — Admin Subject səhifəsi (list + CRUD modal + JS).
 
 ## İnkişaf (dev)
 - `./dev.sh` — API + MVC + Tailwind-i **watch** rejimində işə salır (Ctrl+C ilə dayandırır).
