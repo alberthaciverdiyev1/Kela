@@ -1,3 +1,4 @@
+using System.Text.Json;
 using LanguageLMS.Core.Common.Exceptions;
 using LanguageLMS.Core.Common.Storage;
 using LanguageLMS.Core.Data;
@@ -58,12 +59,13 @@ public sealed class StudentAppService(
         var lessons = await db.Lessons
             .AsNoTracking()
             .Where(x => x.SubjectId == subjectId && x.IsActive)
-            .OrderBy(x => x.SortOrder)
-            .ThenBy(x => x.Id)
+            .OrderBy(x => x.SortOrder).ThenBy(x => x.Id)
             .ToListAsync(ct);
 
+        lessons = await ApplyWindowsAsync(studentId, subjectId, lessons, l => l.CreatedAt, ct);
+
         return lessons
-            .Select(l => new LessonResponse(l.Id, l.SubjectId, l.Title, storage.GetUrl(l.Image), l.SortOrder, l.IsActive))
+            .Select(l => new LessonResponse(l.Id, l.SubjectId, l.Title, storage.GetUrl(l.Image), l.SortOrder, l.IsActive, l.Settings))
             .ToList();
     }
 
@@ -81,14 +83,26 @@ public sealed class StudentAppService(
         var contents = await db.LessonContents
             .AsNoTracking()
             .Where(x => x.LessonId == lessonId && x.IsActive)
-            .Include(x => x.Video)
-            .Include(x => x.MediaFile)
-            .Include(x => x.VoiceRecord)
-            .OrderBy(x => x.SortOrder)
-            .ThenBy(x => x.Id)
+            .Include(x => x.Video).Include(x => x.MediaFile).Include(x => x.VoiceRecord)
+            .OrderBy(x => x.SortOrder).ThenBy(x => x.Id)
             .ToListAsync(ct);
 
+        contents = await ApplyWindowsAsync(studentId, lesson.SubjectId, contents, c => c.CreatedAt, ct);
+
         return contents.Select(ToResponse).ToList();
+    }
+
+    public async Task<ContentCountResponse> GetContentCountAsync(long studentId, long lessonId, CancellationToken ct = default)
+    {
+        var lesson = await db.Lessons.AsNoTracking().FirstOrDefaultAsync(x => x.Id == lessonId, ct)
+            ?? throw new KeyNotFoundException($"Lesson not found: {lessonId}");
+
+        if (!await access.HasSubjectAccessAsync(studentId, lesson.SubjectId, ct))
+        {
+            throw new ForbiddenException("You do not have access to this lesson");
+        }
+
+        return ParseCounts(lesson.Settings);
     }
 
     public async Task<IReadOnlyList<QuizResponse>> ListQuizzesAsync(long studentId, CancellationToken ct = default)
@@ -102,6 +116,47 @@ public sealed class StudentAppService(
                           db.QuizQuestions.Count(qq => qq.QuizId == q.Id)))
             .ToListAsync(ct);
     }
+
+    /// <summary>Şagirdin tarixli üzvülük pəncərələri varsa, yalnız həmin aralıqlarda yaradılan qeydlər qalır.</summary>
+    private async Task<List<T>> ApplyWindowsAsync<T>(
+        long studentId, long subjectId, List<T> items, Func<T, DateTimeOffset> createdAt, CancellationToken ct)
+    {
+        var windows = await access.MembershipWindowsAsync(studentId, subjectId, ct);
+        if (windows.Count == 0) return items;
+
+        return items.Where(item =>
+        {
+            var date = DateOnly.FromDateTime(createdAt(item).UtcDateTime);
+            return windows.Any(w => date >= w.Start && (w.End is null || date <= w.End));
+        }).ToList();
+    }
+
+    private static ContentCountResponse ParseCounts(string settings)
+    {
+        var video = 1;
+        var file = 1;
+        var voice = 1;
+        var quiz = 1;
+
+        try
+        {
+            using var doc = JsonDocument.Parse(settings);
+            var root = doc.RootElement;
+            video = ReadFlag(root, "video");
+            file = ReadFlag(root, "file");
+            voice = ReadFlag(root, "voice");
+            quiz = ReadFlag(root, "quiz");
+        }
+        catch (JsonException)
+        {
+            // standart dəyərlər
+        }
+
+        return new ContentCountResponse(video, file, voice, quiz);
+    }
+
+    private static int ReadFlag(JsonElement root, string name)
+        => root.TryGetProperty(name, out var value) && value.ValueKind == JsonValueKind.Number ? value.GetInt32() : 1;
 
     private LessonContentResponse ToResponse(LessonContent content)
     {

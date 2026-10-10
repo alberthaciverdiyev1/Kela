@@ -39,6 +39,10 @@ public sealed class StudentController(IStudentAppService service, INotificationS
     public async Task<ActionResult<ApiResponse<IReadOnlyList<LessonContentResponse>>>> Contents(long lessonId, CancellationToken ct)
         => Success(await service.ListContentsAsync(StudentId, lessonId, ct));
 
+    [HttpGet("lessons/{lessonId:long}/content-count")]
+    public async Task<ActionResult<ApiResponse<ContentCountResponse>>> ContentCount(long lessonId, CancellationToken ct)
+        => Success(await service.GetContentCountAsync(StudentId, lessonId, ct));
+
     [HttpGet("quizzes")]
     public async Task<ActionResult<ApiResponse<IReadOnlyList<QuizResponse>>>> Quizzes(CancellationToken ct)
         => Success(await service.ListQuizzesAsync(StudentId, ct));

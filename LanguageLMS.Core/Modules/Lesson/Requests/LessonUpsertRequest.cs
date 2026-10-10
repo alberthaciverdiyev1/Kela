@@ -19,4 +19,7 @@ public class LessonUpsertRequest
 
     [FromForm(Name = "is_active")]
     public bool IsActive { get; set; } = true;
+
+    [FromForm(Name = "settings")]
+    public string? Settings { get; set; }
 }

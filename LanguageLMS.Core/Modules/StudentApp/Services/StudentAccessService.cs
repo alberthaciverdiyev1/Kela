@@ -17,4 +17,16 @@ public sealed class StudentAccessService(AppDbContext db) : IStudentAccessServic
 
     public async Task<bool> HasSubjectAccessAsync(long studentId, long subjectId, CancellationToken ct = default)
         => (await AccessibleSubjectIdsAsync(studentId, ct)).Contains(subjectId);
+
+    public async Task<List<MembershipWindow>> MembershipWindowsAsync(long studentId, long subjectId, CancellationToken ct = default)
+    {
+        var rows = await db.StudentGroups
+            .Where(sg => sg.StudentId == studentId
+                && sg.StartDate != null
+                && db.GroupSubjects.Any(gs => gs.GroupId == sg.GroupId && gs.SubjectId == subjectId))
+            .Select(sg => new { sg.StartDate, sg.EndDate })
+            .ToListAsync(ct);
+
+        return rows.Select(r => new MembershipWindow(r.StartDate!.Value, r.EndDate)).ToList();
+    }
 }

@@ -19,4 +19,12 @@ public class Lesson : BaseEntity
     public int SortOrder { get; set; }
 
     public bool IsActive { get; set; } = true;
+
+    /// <summary>JSON açarlar: {video,file,voice,quiz} (1/0) — hansı material növləri aktivdir.</summary>
+    public string Settings { get; set; } = LessonDefaults.Settings;
+}
+
+public static class LessonDefaults
+{
+    public const string Settings = "{\"video\":1,\"file\":1,\"voice\":1,\"quiz\":1}";
 }

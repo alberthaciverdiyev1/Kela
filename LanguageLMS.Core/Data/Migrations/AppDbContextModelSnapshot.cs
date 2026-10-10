@@ -400,6 +400,11 @@ namespace LanguageLMS.Core.Data.Migrations
                         .HasDefaultValue(true)
                         .HasColumnName("is_active");
 
+                    b.Property<string>("Settings")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("settings");
+
                     b.Property<int>("SortOrder")
                         .HasColumnType("integer")
                         .HasColumnName("sort_order");

@@ -6,4 +6,5 @@ public record LessonResponse(
     string Title,
     string? Image,
     int SortOrder,
-    bool IsActive);
+    bool IsActive,
+    string Settings);

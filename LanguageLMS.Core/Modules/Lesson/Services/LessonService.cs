@@ -1,6 +1,7 @@
 using LanguageLMS.Core.Common.Responses;
 using LanguageLMS.Core.Common.Storage;
 using LanguageLMS.Core.Data;
+using LanguageLMS.Core.Modules.Lesson.Entities;
 using LanguageLMS.Core.Modules.Lesson.Requests;
 using LanguageLMS.Core.Modules.Lesson.Responses;
 using Microsoft.EntityFrameworkCore;
@@ -78,7 +79,8 @@ public sealed class LessonService(AppDbContext db, IFileStorage storage) : ILess
             Title = request.Title,
             Image = image,
             SortOrder = request.SortOrder,
-            IsActive = request.IsActive
+            IsActive = request.IsActive,
+            Settings = string.IsNullOrWhiteSpace(request.Settings) ? LessonDefaults.Settings : request.Settings
         };
 
         db.Lessons.Add(lesson);
@@ -110,6 +112,7 @@ public sealed class LessonService(AppDbContext db, IFileStorage storage) : ILess
         lesson.Title = request.Title;
         lesson.SortOrder = request.SortOrder;
         lesson.IsActive = request.IsActive;
+        if (!string.IsNullOrWhiteSpace(request.Settings)) lesson.Settings = request.Settings;
         await db.SaveChangesAsync(ct);
 
         return ToResponse(lesson);
@@ -139,5 +142,6 @@ public sealed class LessonService(AppDbContext db, IFileStorage storage) : ILess
             lesson.Title,
             storage.GetUrl(lesson.Image),
             lesson.SortOrder,
-            lesson.IsActive);
+            lesson.IsActive,
+            lesson.Settings);
 }
