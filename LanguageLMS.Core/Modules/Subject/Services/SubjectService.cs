@@ -1,21 +1,21 @@
 using LanguageLMS.Core.Common.Responses;
 using LanguageLMS.Core.Data;
-using LanguageLMS.Core.Modules.MainCategory.Requests;
-using LanguageLMS.Core.Modules.MainCategory.Responses;
+using LanguageLMS.Core.Modules.Subject.Requests;
+using LanguageLMS.Core.Modules.Subject.Responses;
 using Microsoft.EntityFrameworkCore;
 
-namespace LanguageLMS.Core.Modules.MainCategory.Services;
+namespace LanguageLMS.Core.Modules.Subject.Services;
 
-using MainCategory = LanguageLMS.Core.Modules.MainCategory.Entities.MainCategory;
+using Subject = LanguageLMS.Core.Modules.Subject.Entities.Subject;
 
-public sealed class MainCategoryService(AppDbContext db) : IMainCategoryService
+public sealed class SubjectService(AppDbContext db) : ISubjectService
 {
-    public async Task<PagedResponse<MainCategoryResponse>> ListAsync(MainCategoryListRequest request, CancellationToken ct = default)
+    public async Task<PagedResponse<SubjectResponse>> ListAsync(SubjectListRequest request, CancellationToken ct = default)
     {
         var page = request.Page < 1 ? 1 : request.Page;
         var perPage = request.PerPage is < 1 or > 200 ? 20 : request.PerPage;
 
-        var query = db.MainCategories.AsNoTracking();
+        var query = db.Subjects.AsNoTracking();
 
         if (request.IsDeleted == 1)
         {
@@ -38,42 +38,42 @@ public sealed class MainCategoryService(AppDbContext db) : IMainCategoryService
         var data = items.Select(ToResponse).ToList();
         var lastPage = (int)Math.Ceiling(total / (double)perPage);
 
-        return new PagedResponse<MainCategoryResponse>(data, page, lastPage, perPage, total);
+        return new PagedResponse<SubjectResponse>(data, page, lastPage, perPage, total);
     }
 
-    public async Task<MainCategoryResponse> GetAsync(long id, CancellationToken ct = default)
+    public async Task<SubjectResponse> GetAsync(long id, CancellationToken ct = default)
     {
-        var category = await db.MainCategories
+        var category = await db.Subjects
             .IgnoreQueryFilters()
             .AsNoTracking()
             .FirstOrDefaultAsync(x => x.Id == id, ct)
-            ?? throw new KeyNotFoundException($"Main category not found: {id}");
+            ?? throw new KeyNotFoundException($"Subject not found: {id}");
 
         return ToResponse(category);
     }
 
-    public async Task<MainCategoryResponse> CreateAsync(MainCategoryUpsertRequest request, CancellationToken ct = default)
+    public async Task<SubjectResponse> CreateAsync(SubjectUpsertRequest request, CancellationToken ct = default)
     {
         await EnsureNameAvailableAsync(request.Name, null, ct);
 
-        var category = new MainCategory
+        var category = new Subject
         {
             Name = request.Name,
             UserId = request.UserId
         };
 
-        db.MainCategories.Add(category);
+        db.Subjects.Add(category);
         await db.SaveChangesAsync(ct);
 
         return ToResponse(category);
     }
 
-    public async Task<MainCategoryResponse> UpdateAsync(long id, MainCategoryUpsertRequest request, CancellationToken ct = default)
+    public async Task<SubjectResponse> UpdateAsync(long id, SubjectUpsertRequest request, CancellationToken ct = default)
     {
-        var category = await db.MainCategories
+        var category = await db.Subjects
             .IgnoreQueryFilters()
             .FirstOrDefaultAsync(x => x.Id == id, ct)
-            ?? throw new KeyNotFoundException($"Main category not found: {id}");
+            ?? throw new KeyNotFoundException($"Subject not found: {id}");
 
         await EnsureNameAvailableAsync(request.Name, id, ct);
 
@@ -86,8 +86,8 @@ public sealed class MainCategoryService(AppDbContext db) : IMainCategoryService
 
     public async Task DeleteAsync(long id, CancellationToken ct = default)
     {
-        var category = await db.MainCategories.FirstOrDefaultAsync(x => x.Id == id, ct)
-            ?? throw new KeyNotFoundException($"Main category not found: {id}");
+        var category = await db.Subjects.FirstOrDefaultAsync(x => x.Id == id, ct)
+            ?? throw new KeyNotFoundException($"Subject not found: {id}");
 
         category.DeletedAt = DateTimeOffset.UtcNow;
         await db.SaveChangesAsync(ct);
@@ -95,7 +95,7 @@ public sealed class MainCategoryService(AppDbContext db) : IMainCategoryService
 
     private async Task EnsureNameAvailableAsync(string name, long? excludeId, CancellationToken ct)
     {
-        var exists = await db.MainCategories.IgnoreQueryFilters()
+        var exists = await db.Subjects.IgnoreQueryFilters()
             .AnyAsync(x => x.Name == name && (excludeId == null || x.Id != excludeId), ct);
 
         if (exists)
@@ -104,6 +104,6 @@ public sealed class MainCategoryService(AppDbContext db) : IMainCategoryService
         }
     }
 
-    private static MainCategoryResponse ToResponse(MainCategory category) =>
+    private static SubjectResponse ToResponse(Subject category) =>
         new(category.Id, category.Name, category.UserId);
 }

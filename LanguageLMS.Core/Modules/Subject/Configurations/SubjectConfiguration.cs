@@ -1,15 +1,15 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace LanguageLMS.Core.Modules.MainCategory.Configurations;
+namespace LanguageLMS.Core.Modules.Subject.Configurations;
 
-using MainCategory = LanguageLMS.Core.Modules.MainCategory.Entities.MainCategory;
+using Subject = LanguageLMS.Core.Modules.Subject.Entities.Subject;
 
-public sealed class MainCategoryConfiguration : IEntityTypeConfiguration<MainCategory>
+public sealed class SubjectConfiguration : IEntityTypeConfiguration<Subject>
 {
-    public void Configure(EntityTypeBuilder<MainCategory> builder)
+    public void Configure(EntityTypeBuilder<Subject> builder)
     {
-        builder.ToTable("main_categories");
+        builder.ToTable("subjects");
 
         builder.HasKey(x => x.Id);
         builder.Property(x => x.Id).HasColumnName("id");

@@ -1,8 +1,8 @@
 using Microsoft.AspNetCore.Mvc;
 
-namespace LanguageLMS.Core.Modules.MainCategory.Requests;
+namespace LanguageLMS.Core.Modules.Subject.Requests;
 
-public class MainCategoryListRequest
+public class SubjectListRequest
 {
     public string? Search { get; set; }
 

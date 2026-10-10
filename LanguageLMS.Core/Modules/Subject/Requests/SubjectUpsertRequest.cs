@@ -1,8 +1,8 @@
 using Microsoft.AspNetCore.Mvc;
 
-namespace LanguageLMS.Core.Modules.MainCategory.Requests;
+namespace LanguageLMS.Core.Modules.Subject.Requests;
 
-public class MainCategoryUpsertRequest
+public class SubjectUpsertRequest
 {
     public string Name { get; set; } = string.Empty;
 

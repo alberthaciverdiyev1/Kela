@@ -16,9 +16,5 @@ public class Student : BaseEntity
 
     public bool IsActive { get; set; } = true;
 
-    public long? ProfessionId { get; set; }
-
-    public long? ParentProfessionId { get; set; }
-
     public bool NotificationStatus { get; set; }
 }

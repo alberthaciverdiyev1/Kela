@@ -2,11 +2,10 @@ using FluentValidation;
 using LanguageLMS.Core.Common.Storage;
 using LanguageLMS.Core.Data;
 using LanguageLMS.Core.Modules.Banner.Services;
-using LanguageLMS.Core.Modules.Profession.Services;
 using LanguageLMS.Core.Modules.Setting.Services;
 using LanguageLMS.Core.Modules.Auth;
 using LanguageLMS.Core.Modules.Auth.Services;
-using LanguageLMS.Core.Modules.MainCategory.Services;
+using LanguageLMS.Core.Modules.Subject.Services;
 using LanguageLMS.Core.Modules.User.Services;
 using LanguageLMS.Core.Modules.Group.Services;
 using Microsoft.AspNetCore.Builder;
@@ -32,13 +31,12 @@ public static class DependencyInjection
         services.AddSingleton<IFileStorage, LocalFileStorage>();
 
         services.AddScoped<IBannerService, BannerService>();
-        services.AddScoped<IProfessionService, ProfessionService>();
         services.AddScoped<ISettingService, SettingService>();
 
         services.Configure<JwtOptions>(configuration.GetSection(JwtOptions.SectionName));
         services.AddScoped<ITokenService, JwtTokenService>();
         services.AddScoped<IAuthService, AuthService>();
-        services.AddScoped<IMainCategoryService, MainCategoryService>();
+        services.AddScoped<ISubjectService, SubjectService>();
         services.AddScoped<IUserService, UserService>();
         services.AddScoped<IGroupService, GroupService>();
 

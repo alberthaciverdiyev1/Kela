@@ -77,6 +77,7 @@ LanguageLMS.Mvc/     (Program.cs, Controllers, Models, Views)
 - ✅ Adım 17 — **MainCategory (fenn)** modülü (unique ad, sahip `user_id`) + testler. (İçerik zənciri: fenn→qrup/ixtisas)
 - ✅ Adım 18 — Routing konvansiyonu (class-level `api/[controller]` + kebab-case) + **User (teacher/admin)** modülü + testler.
 - ✅ Adım 19 — **Group (qrup)** modülü: sahip (`user_id`→User FK), görsel, **student_groups** üzvülüyü (start/end date), öğrenci atama/listeleme/çıkarma + testler.
+- ✅ Adım 20 — **Profession (ixtisas) silindi** (ücretsiz plan yok). `MainCategory` → **`Subject`** (fenn) olarak adlandırıldı; tablo `main_categories` → `subjects` (rename migration). Student'tan profession alanları çıkarıldı. Anlamlı isimlendirme kuralı benimsendi (ileride `Topic`→`Lesson`, `TopicContent`→`LessonContent`).
 
 ## 5. Durum / Notlar
 
@@ -93,7 +94,7 @@ LanguageLMS.Mvc/     (Program.cs, Controllers, Models, Views)
 - [x] Profession
 - [~] Auth / Student — JWT register/login yapıldı; **OTP, roller, student.active bekliyor**
 - [x] Setting
-- [~] Group / MainCategory / Topic / TopicContent — **MainCategory (fenn) + Group (qrup) tamam**; assignment (fenn→qrup/ixtisas), Topic, TopicContent sırada
+- [~] İçerik zənciri — **Subject (fenn) + Group (qrup) tamam**; sırada: Subject→Group bağı, Lesson (dərs), LessonContent (material). **Profession iptal.**
 - [ ] Video / VoiceRecord / File (BunnyCDN)
 - [ ] Question / Quiz / QuizQuestion
 - [ ] StudentQuiz / QuizRepeat
@@ -104,4 +105,4 @@ LanguageLMS.Mvc/     (Program.cs, Controllers, Models, Views)
 - [ ] Admin (dashboard, sort order)
 
 ---
-_En son güncelleme: Adım 19 — Group (qrup) modülü + routing konvansiyonu + User modülü._
+_En son güncelleme: Adım 20 — Profession silindi, MainCategory → Subject olarak yeniden adlandırıldı._

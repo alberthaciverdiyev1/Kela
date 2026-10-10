@@ -1,8 +1,8 @@
 using LanguageLMS.Core.Common.Entities;
 
-namespace LanguageLMS.Core.Modules.MainCategory.Entities;
+namespace LanguageLMS.Core.Modules.Subject.Entities;
 
-public class MainCategory : BaseEntity
+public class Subject : BaseEntity
 {
     public string Name { get; set; } = string.Empty;
 

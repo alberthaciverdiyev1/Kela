@@ -9,13 +9,11 @@ public sealed class AppDbContext(DbContextOptions<AppDbContext> options) : DbCon
 {
     public DbSet<Banner> Banners => Set<Banner>();
 
-    public DbSet<Modules.Profession.Entities.Profession> Professions => Set<Modules.Profession.Entities.Profession>();
-
     public DbSet<Modules.Setting.Entities.Setting> Settings => Set<Modules.Setting.Entities.Setting>();
 
     public DbSet<Modules.Auth.Entities.Student> Students => Set<Modules.Auth.Entities.Student>();
 
-    public DbSet<Modules.MainCategory.Entities.MainCategory> MainCategories => Set<Modules.MainCategory.Entities.MainCategory>();
+    public DbSet<Modules.Subject.Entities.Subject> Subjects => Set<Modules.Subject.Entities.Subject>();
 
     public DbSet<Modules.User.Entities.User> Users => Set<Modules.User.Entities.User>();
 
