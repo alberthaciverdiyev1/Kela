@@ -75,7 +75,7 @@ public class MembershipWindowTests(ApiFactory factory)
         student.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
         var counts = await Json(await student.GetAsync($"/api/student/lessons/{lessonId}/content-count"));
-        Assert.Equal(1, counts.GetProperty("data").GetProperty("video").GetInt32());
-        Assert.Equal(1, counts.GetProperty("data").GetProperty("quiz").GetInt32());
+        Assert.Equal(1, counts.GetProperty("data").GetProperty("topicExplain").GetInt32());
+        Assert.Equal(1, counts.GetProperty("data").GetProperty("generalQuiz").GetInt32());
     }
 }

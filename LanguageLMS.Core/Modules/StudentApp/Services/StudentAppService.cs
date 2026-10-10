@@ -133,26 +133,22 @@ public sealed class StudentAppService(
 
     private static ContentCountResponse ParseCounts(string settings)
     {
-        var video = 1;
-        var file = 1;
-        var voice = 1;
-        var quiz = 1;
-
         try
         {
             using var doc = JsonDocument.Parse(settings);
             var root = doc.RootElement;
-            video = ReadFlag(root, "video");
-            file = ReadFlag(root, "file");
-            voice = ReadFlag(root, "voice");
-            quiz = ReadFlag(root, "quiz");
+            return new ContentCountResponse(
+                ReadFlag(root, "topic_explain"),
+                ReadFlag(root, "live_video"),
+                ReadFlag(root, "pdf"),
+                ReadFlag(root, "voice_record"),
+                ReadFlag(root, "topic_quiz"),
+                ReadFlag(root, "general_quiz"));
         }
         catch (JsonException)
         {
-            // standart dəyərlər
+            return new ContentCountResponse(1, 1, 1, 1, 1, 1);
         }
-
-        return new ContentCountResponse(video, file, voice, quiz);
     }
 
     private static int ReadFlag(JsonElement root, string name)

@@ -6,7 +6,7 @@ using LanguageLMS.Core.Modules.Subject.Responses;
 
 namespace LanguageLMS.Core.Modules.StudentApp.Services;
 
-public record ContentCountResponse(int Video, int File, int Voice, int Quiz);
+public record ContentCountResponse(int TopicExplain, int LiveVideo, int Pdf, int VoiceRecord, int TopicQuiz, int GeneralQuiz);
 
 public interface IStudentAppService
 {

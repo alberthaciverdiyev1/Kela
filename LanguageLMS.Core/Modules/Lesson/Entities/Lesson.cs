@@ -26,5 +26,5 @@ public class Lesson : BaseEntity
 
 public static class LessonDefaults
 {
-    public const string Settings = "{\"video\":1,\"file\":1,\"voice\":1,\"quiz\":1}";
+    public const string Settings = "{\"topic_explain\":1,\"live_video\":1,\"pdf\":1,\"voice_record\":1,\"topic_quiz\":1,\"general_quiz\":1}";
 }
