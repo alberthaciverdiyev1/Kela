@@ -12,6 +12,7 @@
     "tailwindcss": "^4.3.3"
   },
   "dependencies": {
-    "flowbite": "^4.0.2"
+    "flowbite": "^4.0.2",
+    "sweetalert2": "^11.26.25"
   }
 }

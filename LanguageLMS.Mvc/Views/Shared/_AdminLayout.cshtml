@@ -10,6 +10,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"] - LanguageLMS Admin</title>
+    <link rel="stylesheet" href="~/css/sweetalert2.min.css" />
     <link rel="stylesheet" href="~/css/app.css" asp-append-version="true" />
 </head>
 <body class="min-h-screen bg-slate-100 text-slate-800">
@@ -99,7 +100,9 @@
         </div>
     </div>
 
+    <script src="~/js/sweetalert2.min.js"></script>
     <script src="~/js/flowbite.min.js"></script>
+    <script src="~/js/admin.js" asp-append-version="true"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
     @await RenderSectionAsync("Scripts", required: false)
     <script>

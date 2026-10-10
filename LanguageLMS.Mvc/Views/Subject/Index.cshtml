@@ -83,7 +83,6 @@
     const modal = document.getElementById('modal');
     const form = document.getElementById('subjectForm');
     const errBox = document.getElementById('formError');
-    const token = document.querySelector('#antiforgery input[name="__RequestVerificationToken"]').value;
 
     function showModal() { modal.classList.remove('hidden'); modal.classList.add('flex'); }
     function closeModal() { modal.classList.add('hidden'); modal.classList.remove('flex'); errBox.classList.add('hidden'); }
@@ -96,7 +95,7 @@
     }
 
     async function openEdit(id) {
-        const data = await (await fetch(`/Subject/Get?id=${id}`)).json();
+        const data = await AdminUI.get(`/Subject/Get?id=${id}`);
         document.getElementById('modalTitle').textContent = 'Fənn redaktəsi';
         document.getElementById('subjectId').value = data.id;
         document.getElementById('name').value = data.name;
@@ -106,22 +105,24 @@
     form.addEventListener('submit', async (e) => {
         e.preventDefault();
         const id = document.getElementById('subjectId').value;
-        const fd = new FormData();
-        fd.append('name', document.getElementById('name').value);
+        const url = id ? `/Subject/Update?id=${id}` : '/Subject/Create';
+        const res = await AdminUI.post(url, { name: document.getElementById('name').value });
 
-        const res = await fetch(id ? `/Subject/Update?id=${id}` : '/Subject/Create',
-            { method: 'POST', body: fd, headers: { 'RequestVerificationToken': token } });
+        if (res.ok) {
+            AdminUI.notify(id ? 'Redaktə olundu' : 'Əlavə olundu');
+            AdminUI.reloadAfter();
+            return;
+        }
 
-        if (res.ok) { location.reload(); return; }
-        const body = await res.json();
-        errBox.textContent = body.errors ? Object.values(body.errors).flat().join(' • ') : 'Xəta baş verdi';
+        errBox.textContent = res.data?.errors ? Object.values(res.data.errors).flat().join(' • ') : 'Xəta baş verdi';
         errBox.classList.remove('hidden');
     });
 
     async function removeItem(id) {
-        if (!confirm('Silinsin?')) return;
-        await fetch(`/Subject/Delete?id=${id}`, { method: 'POST', headers: { 'RequestVerificationToken': token } });
-        location.reload();
+        if (!await AdminUI.confirmDelete('Bu fənn silinəcək.')) return;
+        const res = await AdminUI.post(`/Subject/Delete?id=${id}`, {});
+        if (res.ok) { AdminUI.notify('Silindi'); AdminUI.reloadAfter(); }
+        else AdminUI.error();
     }
 </script>
 }
