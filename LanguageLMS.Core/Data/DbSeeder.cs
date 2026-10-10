@@ -1,3 +1,4 @@
+using LanguageLMS.Core.Modules.Permission.Entities;
 using LanguageLMS.Core.Modules.User.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -30,5 +31,27 @@ public static class DbSeeder
 
         await db.SaveChangesAsync(ct);
         logger.LogWarning("Default admin yaradıldı: {Email}", email);
+    }
+
+    public static readonly string[] DefaultPermissions =
+    [
+        "banner.manage", "subject.manage", "lesson.manage", "group.manage",
+        "question.manage", "quiz.manage", "user.manage", "notification.manage", "setting.manage"
+    ];
+
+    /// <summary>İcazə cədvəli boşdursa, standart icazələri yaradır.</summary>
+    public static async Task SeedDefaultPermissionsAsync(this IServiceProvider services, CancellationToken ct = default)
+    {
+        using var scope = services.CreateScope();
+        var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+
+        if (await db.Permissions.IgnoreQueryFilters().AnyAsync(ct)) return;
+
+        foreach (var name in DefaultPermissions)
+        {
+            db.Permissions.Add(new Permission { Name = name });
+        }
+
+        await db.SaveChangesAsync(ct);
     }
 }
