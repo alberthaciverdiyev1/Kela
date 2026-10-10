@@ -14,6 +14,7 @@ public sealed class StudentQuizConfiguration : IEntityTypeConfiguration<StudentQ
         builder.Property(x => x.Id).HasColumnName("id");
         builder.Property(x => x.StudentId).HasColumnName("student_id");
         builder.Property(x => x.QuizId).HasColumnName("quiz_id");
+        builder.Property(x => x.AttemptTime).HasColumnName("attempt_time");
         builder.Property(x => x.TotalQuestionCount).HasColumnName("total_question_count");
         builder.Property(x => x.CompletedQuestionCount).HasColumnName("completed_question_count");
         builder.Property(x => x.IsCompleted).HasColumnName("is_completed");

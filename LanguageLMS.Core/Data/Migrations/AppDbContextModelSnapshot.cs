@@ -1182,6 +1182,10 @@ namespace LanguageLMS.Core.Data.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
 
+                    b.Property<int>("AttemptTime")
+                        .HasColumnType("integer")
+                        .HasColumnName("attempt_time");
+
                     b.Property<int>("CompletedQuestionCount")
                         .HasColumnType("integer")
                         .HasColumnName("completed_question_count");

@@ -11,6 +11,7 @@ public record QuizQuestionForStudent(
 
 public record StartQuizResponse(
     long AttemptId,
+    int AttemptTime,
     long QuizId,
     string Title,
     int DurationMinutes,
@@ -33,6 +34,7 @@ public record QuizResultItem(
 
 public record QuizResultSummary(
     long AttemptId,
+    int AttemptTime,
     long QuizId,
     string QuizTitle,
     int TotalQuestions,

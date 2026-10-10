@@ -27,12 +27,24 @@ public sealed class StudentQuizService(
             throw new ForbiddenException("You do not have access to this quiz");
         }
 
+        var completedAttempts = await db.StudentQuizzes.CountAsync(
+            a => a.StudentId == studentId && a.QuizId == quiz.Id && a.IsCompleted, ct);
+
+        if (!quiz.IsRepeat && completedAttempts > 0)
+        {
+            throw new ArgumentException("This quiz cannot be repeated");
+        }
+
+        var totalAttempts = await db.StudentQuizzes.CountAsync(
+            a => a.StudentId == studentId && a.QuizId == quiz.Id, ct);
+
         var questions = await QuestionsForQuiz(quiz.Id).ToListAsync(ct);
 
         var attempt = new StudentQuiz
         {
             StudentId = studentId,
             QuizId = quiz.Id,
+            AttemptTime = totalAttempts + 1,
             TotalQuestionCount = questions.Count,
             CompletedQuestionCount = 0,
             IsCompleted = false,
@@ -44,6 +56,7 @@ public sealed class StudentQuizService(
 
         return new StartQuizResponse(
             attempt.Id,
+            attempt.AttemptTime,
             quiz.Id,
             quiz.Title,
             quiz.DurationMinutes,
@@ -137,6 +150,7 @@ public sealed class StudentQuizService(
             var correct = correctCounts.GetValueOrDefault(a.Id);
             return new QuizResultSummary(
                 a.Id,
+                a.AttemptTime,
                 a.QuizId,
                 quizTitles.GetValueOrDefault(a.QuizId, string.Empty),
                 a.TotalQuestionCount,
