@@ -8,6 +8,7 @@ using LanguageLMS.Core.Modules.Auth;
 using LanguageLMS.Core.Modules.Auth.Services;
 using LanguageLMS.Core.Modules.MainCategory.Services;
 using LanguageLMS.Core.Modules.User.Services;
+using LanguageLMS.Core.Modules.Group.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
@@ -39,6 +40,7 @@ public static class DependencyInjection
         services.AddScoped<IAuthService, AuthService>();
         services.AddScoped<IMainCategoryService, MainCategoryService>();
         services.AddScoped<IUserService, UserService>();
+        services.AddScoped<IGroupService, GroupService>();
 
         return services;
     }

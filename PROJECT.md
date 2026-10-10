@@ -75,6 +75,8 @@ LanguageLMS.Mvc/     (Program.cs, Controllers, Models, Views)
 - ✅ Adım 15 — **Setting** modülü (tek satırlık ayar + `/api/app-version`) + testler.
 - ✅ Adım 16 — **Auth** modülü: JWT ile register/login/me/logout (OTP ve roller **yok** — sonra eklenecek) + testler.
 - ✅ Adım 17 — **MainCategory (fenn)** modülü (unique ad, sahip `user_id`) + testler. (İçerik zənciri: fenn→qrup/ixtisas)
+- ✅ Adım 18 — Routing konvansiyonu (class-level `api/[controller]` + kebab-case) + **User (teacher/admin)** modülü + testler.
+- ✅ Adım 19 — **Group (qrup)** modülü: sahip (`user_id`→User FK), görsel, **student_groups** üzvülüyü (start/end date), öğrenci atama/listeleme/çıkarma + testler.
 
 ## 5. Durum / Notlar
 
@@ -91,7 +93,7 @@ LanguageLMS.Mvc/     (Program.cs, Controllers, Models, Views)
 - [x] Profession
 - [~] Auth / Student — JWT register/login yapıldı; **OTP, roller, student.active bekliyor**
 - [x] Setting
-- [~] Group / MainCategory / Topic / TopicContent — **MainCategory (fenn) tamam**; Group, assignment, Topic, TopicContent sırada
+- [~] Group / MainCategory / Topic / TopicContent — **MainCategory (fenn) + Group (qrup) tamam**; assignment (fenn→qrup/ixtisas), Topic, TopicContent sırada
 - [ ] Video / VoiceRecord / File (BunnyCDN)
 - [ ] Question / Quiz / QuizQuestion
 - [ ] StudentQuiz / QuizRepeat
@@ -102,4 +104,4 @@ LanguageLMS.Mvc/     (Program.cs, Controllers, Models, Views)
 - [ ] Admin (dashboard, sort order)
 
 ---
-_En son güncelleme: Adım 17 — MainCategory (fenn) modülü._
+_En son güncelleme: Adım 19 — Group (qrup) modülü + routing konvansiyonu + User modülü._
