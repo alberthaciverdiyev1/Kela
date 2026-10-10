@@ -1,6 +1,7 @@
 using System.Security.Claims;
 using LanguageLMS.Api.Common.Controllers;
 using LanguageLMS.Api.Common.Responses;
+using LanguageLMS.Core.Modules.Auth;
 using LanguageLMS.Core.Modules.Auth.Requests;
 using LanguageLMS.Core.Modules.Auth.Responses;
 using LanguageLMS.Core.Modules.Auth.Services;
@@ -22,7 +23,7 @@ public sealed class AuthController(IAuthService service) : ApiControllerBase
         [FromBody] LoginRequest request, CancellationToken ct)
         => Success(await service.LoginAsync(request, ct), "Login successful");
 
-    [Authorize]
+    [Authorize(Policy = AuthPolicies.Student)]
     [HttpGet("me")]
     public async Task<ActionResult<ApiResponse<StudentResponse>>> Me(CancellationToken ct)
     {
@@ -30,7 +31,7 @@ public sealed class AuthController(IAuthService service) : ApiControllerBase
         return Success(await service.GetProfileAsync(id, ct));
     }
 
-    [Authorize]
+    [Authorize(Policy = AuthPolicies.Student)]
     [HttpPost("logout")]
     public ActionResult<ApiResponse<string>> Logout() => SuccessMessage("Logged out");
 }

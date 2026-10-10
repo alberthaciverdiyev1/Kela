@@ -39,7 +39,7 @@ public sealed class AuthService(
         db.Students.Add(student);
         await db.SaveChangesAsync(ct);
 
-        return new AuthResponse(tokens.CreateToken(student), ToResponse(student));
+        return new AuthResponse(tokens.CreateToken(student.Id, student.Email, student.FullName, AuthActors.Student), ToResponse(student));
     }
 
     public async Task<AuthResponse> LoginAsync(LoginRequest request, CancellationToken ct = default)
@@ -57,7 +57,7 @@ public sealed class AuthService(
             throw new UnauthorizedAccessException("User is not active");
         }
 
-        return new AuthResponse(tokens.CreateToken(student), ToResponse(student));
+        return new AuthResponse(tokens.CreateToken(student.Id, student.Email, student.FullName, AuthActors.Student), ToResponse(student));
     }
 
     public async Task<StudentResponse> GetProfileAsync(long studentId, CancellationToken ct = default)

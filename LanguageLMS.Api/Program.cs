@@ -54,7 +54,11 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             ClockSkew = TimeSpan.Zero
         };
     });
-builder.Services.AddAuthorization();
+builder.Services.AddAuthorization(options =>
+{
+    options.AddPolicy(AuthPolicies.Student, p => p.RequireClaim("actor", AuthActors.Student));
+    options.AddPolicy(AuthPolicies.User, p => p.RequireClaim("actor", AuthActors.User));
+});
 
 var app = builder.Build();
 

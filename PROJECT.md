@@ -81,6 +81,7 @@ LanguageLMS.Mvc/     (Program.cs, Controllers, Models, Views)
 - ✅ Adım 21 — **Subject ↔ Group bağı** (`group_subjects` pivot): qrupa fenn bağlama/listeleme/çıkarma (`/api/group/{id}/subjects`) + testler. (Course yok; tenant sonra eklenecek.)
 - ✅ Adım 22 — **Lesson (dərs)** modülü: `subject_id` (FK), title, image, sort_order, is_active; filtreli listeleme + CRUD + testler.
 - ✅ Adım 23 — **BunnyCDN entegrasyonu** (`BunnyCdnStorage`, `Storage:Provider = Local|BunnyCdn`) + **medya modeli** (`Video`, `MediaFile`, `VoiceRecord`) + **LessonContent** (lesson_id + media refs, tip: video/file/voice) + CRUD + testler.
+- ✅ Adım 24 — **User (müəllim/admin) auth**: JWT `actor` claim + authorization policy'leri (`Student` / `User`). `/api/user-auth/{login,me,logout}`. Student və User token'ları bir-birinin uçlarına gire bilmir (403). + testler.
 
 ## 5. Durum / Notlar
 
@@ -95,7 +96,7 @@ LanguageLMS.Mvc/     (Program.cs, Controllers, Models, Views)
 
 - [x] Banner
 - [x] Profession
-- [~] Auth / Student — JWT register/login yapıldı; **OTP, roller, student.active bekliyor**
+- [~] Auth — Student (register/login) + **User (login)** hazır; OTP, roller, student.active gözləyir
 - [x] Setting
 - [x] İçerik zənciri — Subject · Group · group_subjects · Lesson · LessonContent · medya (BunnyCDN). **Profession iptal.**
 - [ ] Video / VoiceRecord / File (BunnyCDN)
@@ -108,4 +109,4 @@ LanguageLMS.Mvc/     (Program.cs, Controllers, Models, Views)
 - [ ] Admin (dashboard, sort order)
 
 ---
-_En son güncelleme: Adım 23 — BunnyCDN + medya modeli + LessonContent._
+_En son güncelleme: Adım 24 — User (müəllim/admin) auth + policy'ler._

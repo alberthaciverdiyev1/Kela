@@ -1,7 +1,6 @@
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
-using LanguageLMS.Core.Modules.Auth.Entities;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 
@@ -11,14 +10,15 @@ public sealed class JwtTokenService(IOptions<JwtOptions> options) : ITokenServic
 {
     private readonly JwtOptions _options = options.Value;
 
-    public string CreateToken(Student student)
+    public string CreateToken(long id, string email, string fullName, string actor)
     {
         var claims = new List<Claim>
         {
-            new(JwtRegisteredClaimNames.Sub, student.Id.ToString()),
-            new(ClaimTypes.NameIdentifier, student.Id.ToString()),
-            new(JwtRegisteredClaimNames.Email, student.Email),
-            new("full_name", student.FullName)
+            new(JwtRegisteredClaimNames.Sub, id.ToString()),
+            new(ClaimTypes.NameIdentifier, id.ToString()),
+            new(JwtRegisteredClaimNames.Email, email),
+            new("full_name", fullName),
+            new("actor", actor)
         };
 
         var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_options.Key));
