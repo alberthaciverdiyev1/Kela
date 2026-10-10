@@ -76,6 +76,10 @@ namespace LanguageLMS.Core.Data.Migrations
                         .HasColumnType("character varying(50)")
                         .HasColumnName("phone");
 
+                    b.Property<long>("TenantId")
+                        .HasColumnType("bigint")
+                        .HasColumnName("tenant_id");
+
                     b.Property<DateTimeOffset?>("UpdatedAt")
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("updated_at");
@@ -111,6 +115,10 @@ namespace LanguageLMS.Core.Data.Migrations
                         .HasMaxLength(500)
                         .HasColumnType("character varying(500)")
                         .HasColumnName("image");
+
+                    b.Property<long>("TenantId")
+                        .HasColumnType("bigint")
+                        .HasColumnName("tenant_id");
 
                     b.Property<string>("Title")
                         .IsRequired()
@@ -162,6 +170,10 @@ namespace LanguageLMS.Core.Data.Migrations
                         .HasColumnType("character varying(190)")
                         .HasColumnName("name");
 
+                    b.Property<long>("TenantId")
+                        .HasColumnType("bigint")
+                        .HasColumnName("tenant_id");
+
                     b.Property<DateTimeOffset?>("UpdatedAt")
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("updated_at");
@@ -204,6 +216,10 @@ namespace LanguageLMS.Core.Data.Migrations
                         .HasColumnType("bigint")
                         .HasColumnName("quiz_id");
 
+                    b.Property<long>("TenantId")
+                        .HasColumnType("bigint")
+                        .HasColumnName("tenant_id");
+
                     b.Property<DateTimeOffset?>("UpdatedAt")
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("updated_at");
@@ -244,6 +260,10 @@ namespace LanguageLMS.Core.Data.Migrations
                     b.Property<long>("SubjectId")
                         .HasColumnType("bigint")
                         .HasColumnName("subject_id");
+
+                    b.Property<long>("TenantId")
+                        .HasColumnType("bigint")
+                        .HasColumnName("tenant_id");
 
                     b.Property<DateTimeOffset?>("UpdatedAt")
                         .HasColumnType("timestamp with time zone")
@@ -292,6 +312,10 @@ namespace LanguageLMS.Core.Data.Migrations
                     b.Property<long>("StudentId")
                         .HasColumnType("bigint")
                         .HasColumnName("student_id");
+
+                    b.Property<long>("TenantId")
+                        .HasColumnType("bigint")
+                        .HasColumnName("tenant_id");
 
                     b.Property<DateTimeOffset?>("UpdatedAt")
                         .HasColumnType("timestamp with time zone")
@@ -343,6 +367,10 @@ namespace LanguageLMS.Core.Data.Migrations
                     b.Property<long>("SubjectId")
                         .HasColumnType("bigint")
                         .HasColumnName("subject_id");
+
+                    b.Property<long>("TenantId")
+                        .HasColumnType("bigint")
+                        .HasColumnName("tenant_id");
 
                     b.Property<string>("Title")
                         .IsRequired()
@@ -406,6 +434,10 @@ namespace LanguageLMS.Core.Data.Migrations
                     b.Property<int>("SortOrder")
                         .HasColumnType("integer")
                         .HasColumnName("sort_order");
+
+                    b.Property<long>("TenantId")
+                        .HasColumnType("bigint")
+                        .HasColumnName("tenant_id");
 
                     b.Property<string>("Title")
                         .IsRequired()
@@ -472,6 +504,10 @@ namespace LanguageLMS.Core.Data.Migrations
                         .HasColumnType("bigint")
                         .HasColumnName("size_bytes");
 
+                    b.Property<long>("TenantId")
+                        .HasColumnType("bigint")
+                        .HasColumnName("tenant_id");
+
                     b.Property<DateTimeOffset?>("UpdatedAt")
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("updated_at");
@@ -509,6 +545,10 @@ namespace LanguageLMS.Core.Data.Migrations
                         .HasMaxLength(500)
                         .HasColumnType("character varying(500)")
                         .HasColumnName("path");
+
+                    b.Property<long>("TenantId")
+                        .HasColumnType("bigint")
+                        .HasColumnName("tenant_id");
 
                     b.Property<string>("Title")
                         .HasMaxLength(190)
@@ -558,6 +598,10 @@ namespace LanguageLMS.Core.Data.Migrations
                         .HasMaxLength(500)
                         .HasColumnType("character varying(500)")
                         .HasColumnName("path");
+
+                    b.Property<long>("TenantId")
+                        .HasColumnType("bigint")
+                        .HasColumnName("tenant_id");
 
                     b.Property<string>("Title")
                         .HasMaxLength(190)
@@ -611,6 +655,10 @@ namespace LanguageLMS.Core.Data.Migrations
                         .HasColumnType("character varying(500)")
                         .HasColumnName("image");
 
+                    b.Property<long>("TenantId")
+                        .HasColumnType("bigint")
+                        .HasColumnName("tenant_id");
+
                     b.Property<string>("Title")
                         .IsRequired()
                         .HasMaxLength(190)
@@ -656,6 +704,10 @@ namespace LanguageLMS.Core.Data.Migrations
                     b.Property<long>("StudentId")
                         .HasColumnType("bigint")
                         .HasColumnName("student_id");
+
+                    b.Property<long>("TenantId")
+                        .HasColumnType("bigint")
+                        .HasColumnName("tenant_id");
 
                     b.Property<DateTimeOffset?>("UpdatedAt")
                         .HasColumnType("timestamp with time zone")
@@ -706,6 +758,10 @@ namespace LanguageLMS.Core.Data.Migrations
                         .HasColumnType("bigint")
                         .HasColumnName("student_id");
 
+                    b.Property<long>("TenantId")
+                        .HasColumnType("bigint")
+                        .HasColumnName("tenant_id");
+
                     b.Property<string>("Token")
                         .IsRequired()
                         .HasMaxLength(500)
@@ -739,6 +795,10 @@ namespace LanguageLMS.Core.Data.Migrations
                         .IsRequired()
                         .HasColumnType("text")
                         .HasColumnName("content");
+
+                    b.Property<long>("TenantId")
+                        .HasColumnType("bigint")
+                        .HasColumnName("tenant_id");
 
                     b.Property<string>("Type")
                         .IsRequired()
@@ -789,6 +849,10 @@ namespace LanguageLMS.Core.Data.Migrations
                         .HasColumnType("bigint")
                         .HasColumnName("student_id");
 
+                    b.Property<long>("TenantId")
+                        .HasColumnType("bigint")
+                        .HasColumnName("tenant_id");
+
                     b.Property<DateTimeOffset?>("UpdatedAt")
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("updated_at");
@@ -831,6 +895,10 @@ namespace LanguageLMS.Core.Data.Migrations
                     b.Property<long>("SubjectId")
                         .HasColumnType("bigint")
                         .HasColumnName("subject_id");
+
+                    b.Property<long>("TenantId")
+                        .HasColumnType("bigint")
+                        .HasColumnName("tenant_id");
 
                     b.Property<string>("Title")
                         .IsRequired()
@@ -925,6 +993,10 @@ namespace LanguageLMS.Core.Data.Migrations
                         .HasColumnType("integer")
                         .HasColumnName("sort_order");
 
+                    b.Property<long>("TenantId")
+                        .HasColumnType("bigint")
+                        .HasColumnName("tenant_id");
+
                     b.Property<string>("Title")
                         .IsRequired()
                         .HasMaxLength(190)
@@ -983,6 +1055,10 @@ namespace LanguageLMS.Core.Data.Migrations
                         .HasColumnType("integer")
                         .HasColumnName("sort_order");
 
+                    b.Property<long>("TenantId")
+                        .HasColumnType("bigint")
+                        .HasColumnName("tenant_id");
+
                     b.Property<DateTimeOffset?>("UpdatedAt")
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("updated_at");
@@ -1040,6 +1116,10 @@ namespace LanguageLMS.Core.Data.Migrations
                         .HasColumnType("bigint")
                         .HasColumnName("student_id");
 
+                    b.Property<long>("TenantId")
+                        .HasColumnType("bigint")
+                        .HasColumnName("tenant_id");
+
                     b.Property<int>("TotalQuestionCount")
                         .HasColumnType("integer")
                         .HasColumnName("total_question_count");
@@ -1092,6 +1172,10 @@ namespace LanguageLMS.Core.Data.Migrations
                     b.Property<long>("StudentQuizId")
                         .HasColumnType("bigint")
                         .HasColumnName("student_quiz_id");
+
+                    b.Property<long>("TenantId")
+                        .HasColumnType("bigint")
+                        .HasColumnName("tenant_id");
 
                     b.Property<DateTimeOffset?>("UpdatedAt")
                         .HasColumnType("timestamp with time zone")
@@ -1162,6 +1246,10 @@ namespace LanguageLMS.Core.Data.Migrations
                         .HasColumnType("character varying(500)")
                         .HasColumnName("logo");
 
+                    b.Property<long>("TenantId")
+                        .HasColumnType("bigint")
+                        .HasColumnName("tenant_id");
+
                     b.Property<string>("WhatsappNumber")
                         .HasMaxLength(50)
                         .HasColumnType("character varying(50)")
@@ -1195,6 +1283,10 @@ namespace LanguageLMS.Core.Data.Migrations
                         .HasColumnType("character varying(190)")
                         .HasColumnName("name");
 
+                    b.Property<long>("TenantId")
+                        .HasColumnType("bigint")
+                        .HasColumnName("tenant_id");
+
                     b.Property<DateTimeOffset?>("UpdatedAt")
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("updated_at");
@@ -1211,6 +1303,45 @@ namespace LanguageLMS.Core.Data.Migrations
                         .IsUnique();
 
                     b.ToTable("subjects", (string)null);
+                });
+
+            modelBuilder.Entity("LanguageLMS.Core.Modules.Tenant.Entities.Tenant", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint")
+                        .HasColumnName("id");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
+
+                    b.Property<DateTimeOffset>("CreatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_at");
+
+                    b.Property<bool>("IsActive")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("boolean")
+                        .HasDefaultValue(true)
+                        .HasColumnName("is_active");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(190)
+                        .HasColumnType("character varying(190)")
+                        .HasColumnName("name");
+
+                    b.Property<string>("Slug")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)")
+                        .HasColumnName("slug");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Slug")
+                        .IsUnique();
+
+                    b.ToTable("tenants", (string)null);
                 });
 
             modelBuilder.Entity("LanguageLMS.Core.Modules.User.Entities.User", b =>
@@ -1255,6 +1386,10 @@ namespace LanguageLMS.Core.Data.Migrations
                         .HasMaxLength(190)
                         .HasColumnType("character varying(190)")
                         .HasColumnName("surname");
+
+                    b.Property<long>("TenantId")
+                        .HasColumnType("bigint")
+                        .HasColumnName("tenant_id");
 
                     b.Property<string>("Type")
                         .IsRequired()

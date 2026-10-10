@@ -4,6 +4,8 @@ public class PrivacyPolicy
 {
     public long Id { get; set; }
 
+    public long TenantId { get; set; }
+
     /// <summary>privacy | terms | about ...</summary>
     public string Type { get; set; } = "privacy";
 

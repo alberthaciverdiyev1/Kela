@@ -1,12 +1,27 @@
 using System.Linq.Expressions;
 using LanguageLMS.Core.Common.Entities;
+using LanguageLMS.Core.Common.MultiTenancy;
 using LanguageLMS.Core.Modules.Banner.Entities;
 using Microsoft.EntityFrameworkCore;
 
 namespace LanguageLMS.Core.Data;
 
-public sealed class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(options)
+public sealed class AppDbContext : DbContext
 {
+    private static readonly Type[] TenantScopedPlainEntities =
+    [
+        typeof(Modules.Setting.Entities.Setting),
+        typeof(Modules.PrivacyPolicy.Entities.PrivacyPolicy)
+    ];
+
+    public AppDbContext(DbContextOptions<AppDbContext> options, ITenantProvider tenantProvider)
+        : base(options)
+    {
+        CurrentTenantId = tenantProvider.TenantId;
+    }
+
+    public long? CurrentTenantId { get; }
+
     public DbSet<Banner> Banners => Set<Banner>();
 
     public DbSet<Modules.Setting.Entities.Setting> Settings => Set<Modules.Setting.Entities.Setting>();
@@ -55,6 +70,8 @@ public sealed class AppDbContext(DbContextOptions<AppDbContext> options) : DbCon
 
     public DbSet<Modules.PrivacyPolicy.Entities.PrivacyPolicy> PrivacyPolicies => Set<Modules.PrivacyPolicy.Entities.PrivacyPolicy>();
 
+    public DbSet<Modules.Tenant.Entities.Tenant> Tenants => Set<Modules.Tenant.Entities.Tenant>();
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
@@ -63,44 +80,77 @@ public sealed class AppDbContext(DbContextOptions<AppDbContext> options) : DbCon
 
         foreach (var entityType in modelBuilder.Model.GetEntityTypes())
         {
-            if (!typeof(BaseEntity).IsAssignableFrom(entityType.ClrType)) continue;
+            var isBase = typeof(BaseEntity).IsAssignableFrom(entityType.ClrType);
+            var isTenantScopedPlain = TenantScopedPlainEntities.Contains(entityType.ClrType);
 
-            var parameter = Expression.Parameter(entityType.ClrType, "e");
-            var deletedAt = Expression.Property(parameter, nameof(BaseEntity.DeletedAt));
-            var filter = Expression.Lambda(
-                Expression.Equal(deletedAt, Expression.Constant(null, typeof(DateTimeOffset?))),
-                parameter);
+            if (!isBase && !isTenantScopedPlain) continue;
 
-            modelBuilder.Entity(entityType.ClrType).HasQueryFilter(filter);
+            entityType.FindProperty("TenantId")?.SetColumnName("tenant_id");
+            modelBuilder.Entity(entityType.ClrType).HasQueryFilter(BuildFilter(entityType.ClrType, isBase));
         }
+    }
+
+    /// <summary>Soft-delete (+ tenant) global filter: deleted_at IS NULL ve tenant_id = current tenant (tenant bilinirse).</summary>
+    private LambdaExpression BuildFilter(Type clrType, bool withSoftDelete)
+    {
+        var parameter = Expression.Parameter(clrType, "e");
+
+        var tenantValue = Expression.Property(Expression.Constant(this), nameof(CurrentTenantId));
+        var tenantIsNull = Expression.Equal(tenantValue, Expression.Constant(null, typeof(long?)));
+        var tenantEquals = Expression.Equal(
+            Expression.Convert(Expression.Property(parameter, "TenantId"), typeof(long?)),
+            tenantValue);
+        Expression body = Expression.OrElse(tenantIsNull, tenantEquals);
+
+        if (withSoftDelete)
+        {
+            var softDelete = Expression.Equal(
+                Expression.Property(parameter, nameof(BaseEntity.DeletedAt)),
+                Expression.Constant(null, typeof(DateTimeOffset?)));
+            body = Expression.AndAlso(softDelete, body);
+        }
+
+        return Expression.Lambda(body, parameter);
     }
 
     public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
     {
-        ApplyTimestamps();
+        ApplyAudit();
         return base.SaveChangesAsync(cancellationToken);
     }
 
     public override int SaveChanges()
     {
-        ApplyTimestamps();
+        ApplyAudit();
         return base.SaveChanges();
     }
 
-    private void ApplyTimestamps()
+    private void ApplyAudit()
     {
         var now = DateTimeOffset.UtcNow;
 
-        foreach (var entry in ChangeTracker.Entries<BaseEntity>())
+        foreach (var entry in ChangeTracker.Entries())
         {
-            switch (entry.State)
+            var hasTenant = entry.Metadata.FindProperty("TenantId") is not null;
+            var isBaseEntity = entry.Entity is BaseEntity;
+
+            if (!hasTenant && !isBaseEntity) continue;
+
+            if (entry.State == EntityState.Added)
             {
-                case EntityState.Added:
-                    entry.Entity.CreatedAt = now;
-                    break;
-                case EntityState.Modified:
-                    entry.Entity.UpdatedAt = now;
-                    break;
+                if (hasTenant && CurrentTenantId.HasValue)
+                {
+                    entry.Property("TenantId").CurrentValue = CurrentTenantId.Value;
+                }
+
+                if (isBaseEntity)
+                {
+                    ((BaseEntity)entry.Entity).CreatedAt = now;
+                }
+            }
+            else if (entry.State == EntityState.Modified && isBaseEntity)
+            {
+                ((BaseEntity)entry.Entity).UpdatedAt = now;
             }
         }
     }

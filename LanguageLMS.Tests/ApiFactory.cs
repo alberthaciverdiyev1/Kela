@@ -41,7 +41,12 @@ public sealed class ApiFactory : WebApplicationFactory<Program>, IAsyncLifetime
 
         var client = CreateClient();
         var login = await client.PostAsJsonAsync("/api/user-auth/login", new { email = "admin@test.local", password = "admin123" });
-        var doc = await JsonDocument.ParseAsync(await login.Content.ReadAsStreamAsync());
+        var body = await login.Content.ReadAsStringAsync();
+        if (!login.IsSuccessStatusCode)
+        {
+            throw new InvalidOperationException($"Admin login failed: {(int)login.StatusCode} {body}");
+        }
+        var doc = JsonDocument.Parse(body);
         AdminToken = doc.RootElement.GetProperty("data").GetProperty("token").GetString()!;
     }
 

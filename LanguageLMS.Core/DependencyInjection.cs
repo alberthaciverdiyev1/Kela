@@ -14,6 +14,8 @@ using LanguageLMS.Core.Modules.Question.Services;
 using LanguageLMS.Core.Modules.Quiz.Services;
 using LanguageLMS.Core.Modules.Notification.Services;
 using LanguageLMS.Core.Modules.PrivacyPolicy.Services;
+using LanguageLMS.Core.Modules.Tenant.Services;
+using LanguageLMS.Core.Common.MultiTenancy;
 using LanguageLMS.Core.Common.Push;
 using LanguageLMS.Core.Modules.User.Services;
 using LanguageLMS.Core.Modules.Group.Services;
@@ -68,6 +70,10 @@ public static class DependencyInjection
         services.AddScoped<IGroupQuizStatService, GroupQuizStatService>();
         services.AddScoped<INotificationService, NotificationService>();
         services.AddScoped<IPrivacyPolicyService, PrivacyPolicyService>();
+        services.AddScoped<ITenantService, TenantService>();
+
+        services.AddHttpContextAccessor();
+        services.AddScoped<ITenantProvider, HttpTenantProvider>();
 
         services.Configure<FcmOptions>(configuration.GetSection(FcmOptions.SectionName));
         services.AddSingleton<IPushSender, NoOpPushSender>();
