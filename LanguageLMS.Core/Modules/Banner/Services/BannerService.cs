@@ -1,5 +1,6 @@
 using LanguageLMS.Core.Common.Responses;
 using LanguageLMS.Core.Common.Storage;
+using LanguageLMS.Core.Common.Bulk;
 using LanguageLMS.Core.Data;
 using LanguageLMS.Core.Modules.Banner.Requests;
 using LanguageLMS.Core.Modules.Banner.Responses;
@@ -114,4 +115,7 @@ public sealed class BannerService(AppDbContext db, IFileStorage storage) : IBann
             banner.Title,
             storage.GetUrl(banner.Image),
             banner.CreatedAt > now.Subtract(NewThreshold));
+
+    public Task BulkAsync(BulkRequest request, CancellationToken ct = default)
+        => BulkHelper.ApplyAsync<Banner>(db, request, ct);
 }

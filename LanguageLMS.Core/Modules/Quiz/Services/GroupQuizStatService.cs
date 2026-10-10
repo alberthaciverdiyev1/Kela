@@ -1,3 +1,4 @@
+using System.Text;
 using LanguageLMS.Core.Data;
 using LanguageLMS.Core.Modules.Quiz.Requests;
 using LanguageLMS.Core.Modules.Quiz.Responses;
@@ -103,5 +104,19 @@ public sealed class GroupQuizStatService(AppDbContext db) : IGroupQuizStatServic
         }).ToList();
 
         return new GroupQuizStatResponse(groupId, quizIds.Count, totalQuestions, stats);
+    }
+
+    public async Task<byte[]> ExportCsvAsync(long groupId, GroupQuizStatRequest request, CancellationToken ct = default)
+    {
+        var stat = await GetAsync(groupId, request, ct);
+
+        var sb = new StringBuilder();
+        sb.AppendLine("StudentId,FullName,Email,QuizCount,Attempted,NotAttempted,TotalQuestions,Completed,Correct,Wrong,ScorePercent");
+        foreach (var row in stat.Students)
+        {
+            sb.AppendLine($"{row.StudentId},\"{row.FullName}\",\"{row.Email}\",{row.QuizCount},{row.AttemptedQuizCount},{row.NotAttemptedQuizCount},{row.TotalQuestions},{row.CompletedQuestions},{row.Correct},{row.Wrong},{row.ScorePercent}");
+        }
+
+        return Encoding.UTF8.GetBytes(sb.ToString());
     }
 }

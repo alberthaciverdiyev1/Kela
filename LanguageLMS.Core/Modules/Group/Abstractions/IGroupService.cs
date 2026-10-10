@@ -1,3 +1,4 @@
+using LanguageLMS.Core.Common.Bulk;
 using LanguageLMS.Core.Common.Responses;
 using LanguageLMS.Core.Modules.Group.Requests;
 using LanguageLMS.Core.Modules.Group.Responses;
@@ -35,4 +36,6 @@ public interface IGroupService
     Task<IReadOnlyList<QuizResponse>> AssignQuizzesAsync(long groupId, AssignQuizzesRequest request, CancellationToken ct = default);
 
     Task RemoveQuizAsync(long groupId, long quizId, CancellationToken ct = default);
+
+    Task BulkAsync(BulkRequest request, CancellationToken ct = default);
 }

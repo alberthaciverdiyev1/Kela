@@ -1,4 +1,5 @@
 using LanguageLMS.Api.Common.Authorization;
+using LanguageLMS.Core.Common.Bulk;
 using LanguageLMS.Api.Common.Controllers;
 using LanguageLMS.Api.Common.Responses;
 using LanguageLMS.Core.Common.Responses;
@@ -101,5 +102,19 @@ public sealed class GroupController(IGroupService service, IGroupQuizStatService
     {
         await service.RemoveQuizAsync(id, quizId, ct);
         return SuccessMessage("Quiz removed");
+    }
+
+    [HttpPost("bulk")]
+    public async Task<ActionResult<ApiResponse<string>>> Bulk([FromBody] BulkRequest request, CancellationToken ct)
+    {
+        await service.BulkAsync(request, ct);
+        return SuccessMessage("Bulk action applied");
+    }
+
+    [HttpGet("{id:long}/quiz-stat/export")]
+    public async Task<IActionResult> QuizStatExport(long id, [FromQuery] GroupQuizStatRequest request, CancellationToken ct)
+    {
+        var bytes = await statService.ExportCsvAsync(id, request, ct);
+        return File(bytes, "text/csv", $"group-{id}-quiz-stat.csv");
     }
 }

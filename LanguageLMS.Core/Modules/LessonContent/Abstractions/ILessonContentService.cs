@@ -1,3 +1,4 @@
+using LanguageLMS.Core.Common.Bulk;
 using LanguageLMS.Core.Common.Responses;
 using LanguageLMS.Core.Modules.LessonContent.Requests;
 using LanguageLMS.Core.Modules.LessonContent.Responses;
@@ -18,4 +19,6 @@ public interface ILessonContentService
     Task<LessonContentResponse> UpdateAsync(long id, LessonContentUpdateRequest request, CancellationToken ct = default);
 
     Task DeleteAsync(long id, CancellationToken ct = default);
+
+    Task BulkAsync(BulkRequest request, CancellationToken ct = default);
 }

@@ -1,4 +1,5 @@
 using LanguageLMS.Api.Common.Authorization;
+using LanguageLMS.Core.Common.Bulk;
 using LanguageLMS.Api.Common.Controllers;
 using LanguageLMS.Api.Common.Responses;
 using LanguageLMS.Core.Common.Responses;
@@ -40,5 +41,12 @@ public sealed class SubjectController(ISubjectService service) : ApiControllerBa
     {
         await service.DeleteAsync(id, ct);
         return SuccessMessage("Deleted");
+    }
+
+    [HttpPost("bulk")]
+    public async Task<ActionResult<ApiResponse<string>>> Bulk([FromBody] BulkRequest request, CancellationToken ct)
+    {
+        await service.BulkAsync(request, ct);
+        return SuccessMessage("Bulk action applied");
     }
 }

@@ -1,3 +1,4 @@
+using LanguageLMS.Core.Common.Bulk;
 using LanguageLMS.Core.Common.Responses;
 using LanguageLMS.Core.Modules.Question.Requests;
 using LanguageLMS.Core.Modules.Question.Responses;
@@ -15,4 +16,6 @@ public interface IQuestionService
     Task<QuestionResponse> UpdateAsync(long id, QuestionUpsertRequest request, CancellationToken ct = default);
 
     Task DeleteAsync(long id, CancellationToken ct = default);
+
+    Task BulkAsync(BulkRequest request, CancellationToken ct = default);
 }

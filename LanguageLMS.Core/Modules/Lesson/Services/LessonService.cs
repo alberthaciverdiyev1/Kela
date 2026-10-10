@@ -1,5 +1,6 @@
 using LanguageLMS.Core.Common.Responses;
 using LanguageLMS.Core.Common.Storage;
+using LanguageLMS.Core.Common.Bulk;
 using LanguageLMS.Core.Data;
 using LanguageLMS.Core.Modules.Lesson.Entities;
 using LanguageLMS.Core.Modules.Lesson.Requests;
@@ -144,4 +145,7 @@ public sealed class LessonService(AppDbContext db, IFileStorage storage) : ILess
             lesson.SortOrder,
             lesson.IsActive,
             lesson.Settings);
+
+    public Task BulkAsync(BulkRequest request, CancellationToken ct = default)
+        => BulkHelper.ApplyAsync<Lesson>(db, request, ct);
 }

@@ -15,3 +15,5 @@ global using LanguageLMS.Core.Modules.StudentApp.Abstractions;
 global using LanguageLMS.Core.Modules.Subject.Abstractions;
 global using LanguageLMS.Core.Modules.Tenant.Abstractions;
 global using LanguageLMS.Core.Modules.User.Abstractions;
+global using LanguageLMS.Core.Modules.Dashboard.Abstractions;
+global using LanguageLMS.Core.Modules.Students.Abstractions;

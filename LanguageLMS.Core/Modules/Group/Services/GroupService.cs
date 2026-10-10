@@ -1,5 +1,6 @@
 using LanguageLMS.Core.Common.Responses;
 using LanguageLMS.Core.Common.Storage;
+using LanguageLMS.Core.Common.Bulk;
 using LanguageLMS.Core.Data;
 using LanguageLMS.Core.Modules.Group.Requests;
 using LanguageLMS.Core.Modules.Group.Responses;
@@ -313,4 +314,7 @@ public sealed class GroupService(AppDbContext db, IFileStorage storage) : IGroup
             storage.GetUrl(group.Image),
             group.UserId,
             group.Memberships.Count);
+
+    public Task BulkAsync(BulkRequest request, CancellationToken ct = default)
+        => BulkHelper.ApplyAsync<Group>(db, request, ct);
 }

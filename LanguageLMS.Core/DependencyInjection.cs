@@ -16,6 +16,8 @@ using LanguageLMS.Core.Modules.Notification.Services;
 using LanguageLMS.Core.Modules.PrivacyPolicy.Services;
 using LanguageLMS.Core.Modules.Tenant.Services;
 using LanguageLMS.Core.Modules.Permission.Services;
+using LanguageLMS.Core.Modules.Dashboard.Services;
+using LanguageLMS.Core.Modules.Students.Services;
 using LanguageLMS.Core.Common.MultiTenancy;
 using LanguageLMS.Core.Common.Email;
 using LanguageLMS.Core.Common.Push;
@@ -83,6 +85,8 @@ public static class DependencyInjection
         services.AddScoped<IPrivacyPolicyService, PrivacyPolicyService>();
         services.AddScoped<ITenantService, TenantService>();
         services.AddScoped<IPermissionService, PermissionService>();
+        services.AddScoped<IDashboardService, DashboardService>();
+        services.AddScoped<IStudentManagementService, StudentManagementService>();
 
         services.AddHttpContextAccessor();
         services.AddScoped<ITenantProvider, HttpTenantProvider>();

@@ -1,4 +1,5 @@
 using LanguageLMS.Api.Common.Authorization;
+using LanguageLMS.Core.Common.Bulk;
 using LanguageLMS.Api.Common.Controllers;
 using LanguageLMS.Api.Common.Responses;
 using LanguageLMS.Core.Common.Responses;
@@ -57,5 +58,12 @@ public sealed class QuizController(IQuizService service) : ApiControllerBase
     {
         await service.RemoveQuestionAsync(id, questionId, ct);
         return SuccessMessage("Question removed");
+    }
+
+    [HttpPost("bulk")]
+    public async Task<ActionResult<ApiResponse<string>>> Bulk([FromBody] BulkRequest request, CancellationToken ct)
+    {
+        await service.BulkAsync(request, ct);
+        return SuccessMessage("Bulk action applied");
     }
 }

@@ -1,4 +1,5 @@
 using LanguageLMS.Core.Common.Responses;
+using LanguageLMS.Core.Common.Bulk;
 using LanguageLMS.Core.Data;
 using LanguageLMS.Core.Modules.Subject.Requests;
 using LanguageLMS.Core.Modules.Subject.Responses;
@@ -106,4 +107,7 @@ public sealed class SubjectService(AppDbContext db) : ISubjectService
 
     private static SubjectResponse ToResponse(Subject category) =>
         new(category.Id, category.Name, category.UserId);
+
+    public Task BulkAsync(BulkRequest request, CancellationToken ct = default)
+        => BulkHelper.ApplyAsync<Subject>(db, request, ct);
 }

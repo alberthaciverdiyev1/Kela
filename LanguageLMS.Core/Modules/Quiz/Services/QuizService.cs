@@ -1,4 +1,5 @@
 using LanguageLMS.Core.Common.Responses;
+using LanguageLMS.Core.Common.Bulk;
 using LanguageLMS.Core.Data;
 using LanguageLMS.Core.Common.Storage;
 using LanguageLMS.Core.Modules.Question.Responses;
@@ -199,4 +200,7 @@ public sealed class QuizService(AppDbContext db, IFileStorage storage) : IQuizSe
 
     private static QuizResponse ToResponse(Quiz quiz) =>
         new(quiz.Id, quiz.LessonId, quiz.Title, quiz.DurationMinutes, quiz.Type, quiz.IsActive, quiz.IsRepeat, quiz.SortOrder, quiz.Questions.Count);
+
+    public Task BulkAsync(BulkRequest request, CancellationToken ct = default)
+        => BulkHelper.ApplyAsync<Quiz>(db, request, ct);
 }

@@ -1,5 +1,6 @@
 using LanguageLMS.Core.Common.Responses;
 using LanguageLMS.Core.Common.Storage;
+using LanguageLMS.Core.Common.Bulk;
 using LanguageLMS.Core.Data;
 using LanguageLMS.Core.Modules.Question.Requests;
 using LanguageLMS.Core.Modules.Question.Responses;
@@ -170,4 +171,7 @@ public sealed class QuestionService(AppDbContext db, IFileStorage storage) : IQu
 
     private string? ResolveUrl(string type, string? value)
         => type == "image" && !string.IsNullOrWhiteSpace(value) ? storage.GetUrl(value) : null;
+
+    public Task BulkAsync(BulkRequest request, CancellationToken ct = default)
+        => BulkHelper.ApplyAsync<Question>(db, request, ct);
 }

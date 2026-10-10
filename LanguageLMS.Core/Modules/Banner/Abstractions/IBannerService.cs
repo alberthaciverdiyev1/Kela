@@ -1,3 +1,4 @@
+using LanguageLMS.Core.Common.Bulk;
 using LanguageLMS.Core.Common.Responses;
 using LanguageLMS.Core.Modules.Banner.Requests;
 using LanguageLMS.Core.Modules.Banner.Responses;
@@ -15,4 +16,6 @@ public interface IBannerService
     Task<BannerResponse> UpdateAsync(long id, BannerUpsertRequest request, CancellationToken ct = default);
 
     Task DeleteAsync(long id, CancellationToken ct = default);
+
+    Task BulkAsync(BulkRequest request, CancellationToken ct = default);
 }

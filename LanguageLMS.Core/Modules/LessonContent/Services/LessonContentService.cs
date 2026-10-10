@@ -1,5 +1,6 @@
 using LanguageLMS.Core.Common.Responses;
 using LanguageLMS.Core.Common.Storage;
+using LanguageLMS.Core.Common.Bulk;
 using LanguageLMS.Core.Data;
 using LanguageLMS.Core.Modules.LessonContent.Requests;
 using LanguageLMS.Core.Modules.LessonContent.Responses;
@@ -188,4 +189,7 @@ public sealed class LessonContentService(AppDbContext db, IFileStorage storage) 
 
     private static LessonContentResponse Row(LessonContent c, string? type, string? url, string? playbackUrl, int? duration) =>
         new(c.Id, c.LessonId, c.Title, c.Description, type, url, playbackUrl, c.SortOrder, c.IsActive, duration);
+
+    public Task BulkAsync(BulkRequest request, CancellationToken ct = default)
+        => BulkHelper.ApplyAsync<LessonContent>(db, request, ct);
 }

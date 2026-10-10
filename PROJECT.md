@@ -92,6 +92,7 @@ LanguageLMS.Mvc/     (Program.cs, Controllers, Models, Views)
 - ✅ Adım 32 — **Roles**: JWT `role` claim (`student`/`teacher`/`admin`) + policy'ler (`Student` / `Teacher`=teacher+admin / `Admin`). İçerik uçları → **Teacher**, istifadəçi idarəsi → **Admin**, şagird uçları → **Student**. Boşluqlar bağlandı (əvvəl hamısı açıq idi). + testler.
 - ✅ Adım 33 — **PrivacyPolicy**: `privacy_policies` (type + HTML content). `GET /api/privacy-policy[/{type}]` (public), `PUT /api/privacy-policy` (Teacher, upsert). + testler.
 - ✅ Adım 34 — **Group quiz statistikası** (`GroupQuizStatService`): `GET /api/group/{id}/quiz-stat?quiz_type=lesson|general` → qrupun quizləri üzrə hər şagirdin nəticəsi (attempted, correct, wrong, score %). Reference `GroupQuizStatController` məntiqi. + testler.
+- ✅ Adım 45 — **Admin funksionallığı (API)**: `GET /api/dashboard` (statistika), **şagird idarəsi** (`/api/students` list/show/status/delete/restore + bulk), **bulk əməliyyatlar** (`POST /api/{banner,subject,lesson,lesson-content,group,question,quiz}/bulk` → delete/restore/activate/deactivate), **CSV export** (students + group quiz-stat). + testlər.
 - ✅ Adım 44 — **Presigned (birbaşa) upload**: `IFileStorage.CreatePresignedPutUrl` + `ExistsAsync`; `POST /api/lesson-content/upload-url` → `{ uploadUrl, path }`; client birbaşa R2-yə PUT edir; sonra `path` ilə content yaradılır. `Video.playback_url` (HLS/m3u8 üçün). + testlər.
 - ✅ Adım 43 — **Cloudflare R2 storage** (`R2FileStorage`, `AWSSDK.S3`, S3-uyğun): `Storage:Provider = R2`; `R2` konfiqurasiyası (AccountId/AccessKey/Bucket/PublicBaseUrl). Bunny Stream **yoxdur**; videolar R2-yə. (m3u8/HLS konvertor sonra.)
 - ✅ Adım 42 — **Refaktor**: servis interfeysləri `Modules/*/Abstractions/`-ə köçürüldü (Services-də yalnız tətbiqlər); Core+Api-də `GlobalUsings.cs`. + switch-account.
@@ -130,4 +131,4 @@ LanguageLMS.Mvc/     (Program.cs, Controllers, Models, Views)
 - [ ] Admin (dashboard, sort order)
 
 ---
-_En son güncelleme: Adım 44 — Presigned (birbaşa R2) video upload + playback_url._
+_En son güncelleme: Adım 45 — Dashboard + Student idarəsi + Bulk + Export._
