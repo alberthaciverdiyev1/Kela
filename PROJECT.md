@@ -80,6 +80,7 @@ LanguageLMS.Mvc/     (Program.cs, Controllers, Models, Views)
 - ✅ Adım 20 — **Profession (ixtisas) silindi** (ücretsiz plan yok). `MainCategory` → **`Subject`** (fenn) olarak adlandırıldı; tablo `main_categories` → `subjects` (rename migration). Student'tan profession alanları çıkarıldı. Anlamlı isimlendirme kuralı benimsendi (ileride `Topic`→`Lesson`, `TopicContent`→`LessonContent`).
 - ✅ Adım 21 — **Subject ↔ Group bağı** (`group_subjects` pivot): qrupa fenn bağlama/listeleme/çıkarma (`/api/group/{id}/subjects`) + testler. (Course yok; tenant sonra eklenecek.)
 - ✅ Adım 22 — **Lesson (dərs)** modülü: `subject_id` (FK), title, image, sort_order, is_active; filtreli listeleme + CRUD + testler.
+- ✅ Adım 23 — **BunnyCDN entegrasyonu** (`BunnyCdnStorage`, `Storage:Provider = Local|BunnyCdn`) + **medya modeli** (`Video`, `MediaFile`, `VoiceRecord`) + **LessonContent** (lesson_id + media refs, tip: video/file/voice) + CRUD + testler.
 
 ## 5. Durum / Notlar
 
@@ -96,7 +97,7 @@ LanguageLMS.Mvc/     (Program.cs, Controllers, Models, Views)
 - [x] Profession
 - [~] Auth / Student — JWT register/login yapıldı; **OTP, roller, student.active bekliyor**
 - [x] Setting
-- [~] İçerik zənciri — **Subject + Group + group_subjects + Lesson tamam**; sırada: LessonContent (material). **Profession iptal.**
+- [x] İçerik zənciri — Subject · Group · group_subjects · Lesson · LessonContent · medya (BunnyCDN). **Profession iptal.**
 - [ ] Video / VoiceRecord / File (BunnyCDN)
 - [ ] Question / Quiz / QuizQuestion
 - [ ] StudentQuiz / QuizRepeat
@@ -107,4 +108,4 @@ LanguageLMS.Mvc/     (Program.cs, Controllers, Models, Views)
 - [ ] Admin (dashboard, sort order)
 
 ---
-_En son güncelleme: Adım 22 — Lesson (dərs) modülü._
+_En son güncelleme: Adım 23 — BunnyCDN + medya modeli + LessonContent._

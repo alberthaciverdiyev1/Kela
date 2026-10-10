@@ -1,0 +1,15 @@
+using LanguageLMS.Core.Common.Entities;
+
+namespace LanguageLMS.Core.Modules.Media.Entities;
+
+public class Video : BaseEntity
+{
+    public string? Title { get; set; }
+
+    public string Path { get; set; } = string.Empty;
+
+    /// <summary>"video" (normal) veya "live" (canlı).</summary>
+    public string Type { get; set; } = "video";
+
+    public int? DurationSeconds { get; set; }
+}

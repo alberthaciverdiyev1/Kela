@@ -7,6 +7,7 @@ using LanguageLMS.Core.Modules.Auth;
 using LanguageLMS.Core.Modules.Auth.Services;
 using LanguageLMS.Core.Modules.Subject.Services;
 using LanguageLMS.Core.Modules.Lesson.Services;
+using LanguageLMS.Core.Modules.LessonContent.Services;
 using LanguageLMS.Core.Modules.User.Services;
 using LanguageLMS.Core.Modules.Group.Services;
 using Microsoft.AspNetCore.Builder;
@@ -29,7 +30,18 @@ public static class DependencyInjection
         services.AddDbContext<AppDbContext>(options =>
             options.UseNpgsql(configuration.GetConnectionString("Postgres")));
 
-        services.AddSingleton<IFileStorage, LocalFileStorage>();
+        services.Configure<BunnyCdnOptions>(configuration.GetSection(BunnyCdnOptions.SectionName));
+
+        // Depolama sağlayıcısı: Storage:Provider = "Local" | "BunnyCdn"
+        var storageProvider = configuration["Storage:Provider"] ?? "Local";
+        if (string.Equals(storageProvider, "BunnyCdn", StringComparison.OrdinalIgnoreCase))
+        {
+            services.AddHttpClient<IFileStorage, BunnyCdnStorage>();
+        }
+        else
+        {
+            services.AddSingleton<IFileStorage, LocalFileStorage>();
+        }
 
         services.AddScoped<IBannerService, BannerService>();
         services.AddScoped<ISettingService, SettingService>();
@@ -39,6 +51,7 @@ public static class DependencyInjection
         services.AddScoped<IAuthService, AuthService>();
         services.AddScoped<ISubjectService, SubjectService>();
         services.AddScoped<ILessonService, LessonService>();
+        services.AddScoped<ILessonContentService, LessonContentService>();
         services.AddScoped<IUserService, UserService>();
         services.AddScoped<IGroupService, GroupService>();
 

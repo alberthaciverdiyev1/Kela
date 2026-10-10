@@ -326,6 +326,214 @@ namespace LanguageLMS.Core.Data.Migrations
                     b.ToTable("lessons", (string)null);
                 });
 
+            modelBuilder.Entity("LanguageLMS.Core.Modules.LessonContent.Entities.LessonContent", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint")
+                        .HasColumnName("id");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
+
+                    b.Property<DateTimeOffset>("CreatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_at");
+
+                    b.Property<DateTimeOffset?>("DeletedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("deleted_at");
+
+                    b.Property<string>("Description")
+                        .HasMaxLength(500)
+                        .HasColumnType("character varying(500)")
+                        .HasColumnName("description");
+
+                    b.Property<bool>("IsActive")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("boolean")
+                        .HasDefaultValue(true)
+                        .HasColumnName("is_active");
+
+                    b.Property<long>("LessonId")
+                        .HasColumnType("bigint")
+                        .HasColumnName("lesson_id");
+
+                    b.Property<long?>("MediaFileId")
+                        .HasColumnType("bigint")
+                        .HasColumnName("media_file_id");
+
+                    b.Property<int>("SortOrder")
+                        .HasColumnType("integer")
+                        .HasColumnName("sort_order");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasMaxLength(190)
+                        .HasColumnType("character varying(190)")
+                        .HasColumnName("title");
+
+                    b.Property<DateTimeOffset?>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("updated_at");
+
+                    b.Property<long?>("VideoId")
+                        .HasColumnType("bigint")
+                        .HasColumnName("video_id");
+
+                    b.Property<long?>("VoiceRecordId")
+                        .HasColumnType("bigint")
+                        .HasColumnName("voice_record_id");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("DeletedAt");
+
+                    b.HasIndex("LessonId");
+
+                    b.HasIndex("MediaFileId");
+
+                    b.HasIndex("VideoId");
+
+                    b.HasIndex("VoiceRecordId");
+
+                    b.ToTable("lesson_contents", (string)null);
+                });
+
+            modelBuilder.Entity("LanguageLMS.Core.Modules.Media.Entities.MediaFile", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint")
+                        .HasColumnName("id");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
+
+                    b.Property<DateTimeOffset>("CreatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_at");
+
+                    b.Property<DateTimeOffset?>("DeletedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("deleted_at");
+
+                    b.Property<string>("Name")
+                        .HasMaxLength(255)
+                        .HasColumnType("character varying(255)")
+                        .HasColumnName("name");
+
+                    b.Property<string>("Path")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("character varying(500)")
+                        .HasColumnName("path");
+
+                    b.Property<long?>("SizeBytes")
+                        .HasColumnType("bigint")
+                        .HasColumnName("size_bytes");
+
+                    b.Property<DateTimeOffset?>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("updated_at");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("DeletedAt");
+
+                    b.ToTable("media_files", (string)null);
+                });
+
+            modelBuilder.Entity("LanguageLMS.Core.Modules.Media.Entities.Video", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint")
+                        .HasColumnName("id");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
+
+                    b.Property<DateTimeOffset>("CreatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_at");
+
+                    b.Property<DateTimeOffset?>("DeletedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("deleted_at");
+
+                    b.Property<int?>("DurationSeconds")
+                        .HasColumnType("integer")
+                        .HasColumnName("duration_seconds");
+
+                    b.Property<string>("Path")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("character varying(500)")
+                        .HasColumnName("path");
+
+                    b.Property<string>("Title")
+                        .HasMaxLength(190)
+                        .HasColumnType("character varying(190)")
+                        .HasColumnName("title");
+
+                    b.Property<string>("Type")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("character varying(20)")
+                        .HasColumnName("type");
+
+                    b.Property<DateTimeOffset?>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("updated_at");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("DeletedAt");
+
+                    b.ToTable("videos", (string)null);
+                });
+
+            modelBuilder.Entity("LanguageLMS.Core.Modules.Media.Entities.VoiceRecord", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint")
+                        .HasColumnName("id");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
+
+                    b.Property<DateTimeOffset>("CreatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_at");
+
+                    b.Property<DateTimeOffset?>("DeletedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("deleted_at");
+
+                    b.Property<int?>("DurationSeconds")
+                        .HasColumnType("integer")
+                        .HasColumnName("duration_seconds");
+
+                    b.Property<string>("Path")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("character varying(500)")
+                        .HasColumnName("path");
+
+                    b.Property<string>("Title")
+                        .HasMaxLength(190)
+                        .HasColumnType("character varying(190)")
+                        .HasColumnName("title");
+
+                    b.Property<DateTimeOffset?>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("updated_at");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("DeletedAt");
+
+                    b.ToTable("voice_records", (string)null);
+                });
+
             modelBuilder.Entity("LanguageLMS.Core.Modules.Setting.Entities.Setting", b =>
                 {
                     b.Property<long>("Id")
@@ -551,6 +759,36 @@ namespace LanguageLMS.Core.Data.Migrations
                         .IsRequired();
 
                     b.Navigation("Subject");
+                });
+
+            modelBuilder.Entity("LanguageLMS.Core.Modules.LessonContent.Entities.LessonContent", b =>
+                {
+                    b.HasOne("LanguageLMS.Core.Modules.Lesson.Entities.Lesson", null)
+                        .WithMany()
+                        .HasForeignKey("LessonId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("LanguageLMS.Core.Modules.Media.Entities.MediaFile", "MediaFile")
+                        .WithMany()
+                        .HasForeignKey("MediaFileId")
+                        .OnDelete(DeleteBehavior.SetNull);
+
+                    b.HasOne("LanguageLMS.Core.Modules.Media.Entities.Video", "Video")
+                        .WithMany()
+                        .HasForeignKey("VideoId")
+                        .OnDelete(DeleteBehavior.SetNull);
+
+                    b.HasOne("LanguageLMS.Core.Modules.Media.Entities.VoiceRecord", "VoiceRecord")
+                        .WithMany()
+                        .HasForeignKey("VoiceRecordId")
+                        .OnDelete(DeleteBehavior.SetNull);
+
+                    b.Navigation("MediaFile");
+
+                    b.Navigation("Video");
+
+                    b.Navigation("VoiceRecord");
                 });
 
             modelBuilder.Entity("LanguageLMS.Core.Modules.Group.Entities.Group", b =>

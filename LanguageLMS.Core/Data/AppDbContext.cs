@@ -17,6 +17,14 @@ public sealed class AppDbContext(DbContextOptions<AppDbContext> options) : DbCon
 
     public DbSet<Modules.Lesson.Entities.Lesson> Lessons => Set<Modules.Lesson.Entities.Lesson>();
 
+    public DbSet<Modules.Media.Entities.Video> Videos => Set<Modules.Media.Entities.Video>();
+
+    public DbSet<Modules.Media.Entities.MediaFile> MediaFiles => Set<Modules.Media.Entities.MediaFile>();
+
+    public DbSet<Modules.Media.Entities.VoiceRecord> VoiceRecords => Set<Modules.Media.Entities.VoiceRecord>();
+
+    public DbSet<Modules.LessonContent.Entities.LessonContent> LessonContents => Set<Modules.LessonContent.Entities.LessonContent>();
+
     public DbSet<Modules.User.Entities.User> Users => Set<Modules.User.Entities.User>();
 
     public DbSet<Modules.Group.Entities.Group> Groups => Set<Modules.Group.Entities.Group>();
