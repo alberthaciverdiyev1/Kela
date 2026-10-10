@@ -27,6 +27,8 @@ public sealed class AppDbContext(DbContextOptions<AppDbContext> options) : DbCon
 
     public DbSet<Modules.Progress.Entities.LessonProgress> LessonProgress => Set<Modules.Progress.Entities.LessonProgress>();
 
+    public DbSet<Modules.Question.Entities.Question> Questions => Set<Modules.Question.Entities.Question>();
+
     public DbSet<Modules.User.Entities.User> Users => Set<Modules.User.Entities.User>();
 
     public DbSet<Modules.Group.Entities.Group> Groups => Set<Modules.Group.Entities.Group>();
