@@ -136,3 +136,7 @@ LanguageLMS.Mvc/     (Program.cs, Controllers, Models, Views)
 
 ---
 _En son güncelleme: Adım 49 — CORS + rate limiting + strict tenant + auto-migrate._
+
+## İnkişaf (dev)
+- `./dev.sh` — API + MVC + Tailwind-i **watch** rejimində işə salır (Ctrl+C ilə dayandırır).
+  Env: `API_URL` (default http://localhost:5080), `MVC_URL` (default http://localhost:5081).

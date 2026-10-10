@@ -1,14 +1,236 @@
 @{
-    ViewData["Title"] = "Home";
+    ViewData["Title"] = "Dashboard";
 }
 
-<div class="text-center py-12">
-    <h1 class="text-4xl font-bold tracking-tight text-slate-900">LanguageLMS</h1>
-    <p class="mt-4 text-slate-600">
-        ASP.NET Core MVC interface built with Tailwind CSS.
-    </p>
-    <a href="https://learn.microsoft.com/aspnet/core"
-       class="mt-6 inline-block rounded-lg bg-indigo-600 px-5 py-2.5 text-sm font-medium text-white hover:bg-indigo-700">
-        ASP.NET Core Documentation
-    </a>
-</div>
+<section class="space-y-6">
+    <div class="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
+        <div>
+            <p class="text-sm font-medium text-muted">10 Ekim 2026, Cumartesi</p>
+            <h2 class="mt-2 text-2xl font-semibold text-ink sm:text-3xl">Good morning, Nigar</h2>
+            <p class="mt-2 max-w-2xl text-sm leading-6 text-muted">Here's what's happening in your academy today.</p>
+        </div>
+        <div class="flex flex-wrap gap-3">
+            <button type="button" class="ui-button-secondary">
+                <svg class="h-4 w-4 text-muted" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14" /></svg>
+                Yeni öğrenci
+            </button>
+            <button type="button" class="ui-button-primary">
+                <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20M4 4.5A2.5 2.5 0 0 1 6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15Z" /></svg>
+                Ders oluştur
+            </button>
+            <button type="button" class="ui-button-secondary">Quiz oluştur</button>
+        </div>
+    </div>
+
+    <div class="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+        <article class="ui-card p-5">
+            <div class="flex items-start justify-between gap-4">
+                <div>
+                    <p class="text-sm font-medium text-muted">Toplam Öğrenci</p>
+                    <p class="mt-3 text-3xl font-semibold text-ink">428</p>
+                </div>
+                <span class="flex h-11 w-11 items-center justify-center rounded-xl bg-brand-50 text-brand-600">
+                    <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2M9 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8ZM22 21v-2a4 4 0 0 0-3-3.87" /></svg>
+                </span>
+            </div>
+            <p class="mt-4 text-sm text-muted"><span class="font-semibold text-emerald-600">+18</span> yeni kayıt bu ay</p>
+        </article>
+
+        <article class="ui-card p-5">
+            <div class="flex items-start justify-between gap-4">
+                <div>
+                    <p class="text-sm font-medium text-muted">Aktif Sınıflar</p>
+                    <p class="mt-3 text-3xl font-semibold text-ink">32</p>
+                </div>
+                <span class="flex h-11 w-11 items-center justify-center rounded-xl bg-brand-50 text-brand-600">
+                    <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 6h16M4 12h16M4 18h7" /></svg>
+                </span>
+            </div>
+            <p class="mt-4 text-sm text-muted">7 sınıf bugün ders işliyor</p>
+        </article>
+
+        <article class="ui-card p-5">
+            <div class="flex items-start justify-between gap-4">
+                <div>
+                    <p class="text-sm font-medium text-muted">Bekleyen Ödemeler</p>
+                    <p class="mt-3 text-3xl font-semibold text-ink">₼8,420</p>
+                </div>
+                <span class="flex h-11 w-11 items-center justify-center rounded-xl bg-amber-50 text-amber-600">
+                    <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 10h18M7 15h.01M11 15h2M5 6h14a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2Z" /></svg>
+                </span>
+            </div>
+            <p class="mt-4 text-sm text-muted">24 öğrenci takip bekliyor</p>
+        </article>
+
+        <article class="ui-card p-5">
+            <div class="flex items-start justify-between gap-4">
+                <div>
+                    <p class="text-sm font-medium text-muted">Yaklaşan Dersler</p>
+                    <p class="mt-3 text-3xl font-semibold text-ink">14</p>
+                </div>
+                <span class="flex h-11 w-11 items-center justify-center rounded-xl bg-brand-50 text-brand-600">
+                    <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 2v4M16 2v4M3 10h18M5 4h14a2 2 0 0 1 2 2v13a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2Z" /></svg>
+                </span>
+            </div>
+            <p class="mt-4 text-sm text-muted">Sonraki ders 09:30'da</p>
+        </article>
+    </div>
+
+    <div class="grid gap-6 xl:grid-cols-[minmax(0,1.45fr)_minmax(360px,0.75fr)]">
+        <article class="ui-card p-5 sm:p-6">
+            <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                <div>
+                    <h3 class="text-base font-semibold text-ink">Öğrenci Aktivitesi</h3>
+                    <p class="mt-1 text-sm text-muted">Haftalık içerik tamamlama ve quiz katılımı</p>
+                </div>
+                <span class="ui-badge bg-brand-50 text-brand-600">Bu hafta</span>
+            </div>
+            <div class="mt-8 h-72">
+                <div class="flex h-full items-end gap-3 sm:gap-4">
+                    @{
+                        var bars = new[] { 42, 58, 51, 74, 68, 83, 76 };
+                        var days = new[] { "Pzt", "Sal", "Çar", "Per", "Cum", "Cmt", "Paz" };
+                    }
+                    @for (var i = 0; i < bars.Length; i++)
+                    {
+                        <div class="flex h-full flex-1 flex-col justify-end gap-3">
+                            <div class="relative flex flex-1 items-end rounded-t-xl bg-slate-50">
+                                <div class="w-full rounded-t-xl bg-brand-600/85" style="height:@bars[i]%;"></div>
+                            </div>
+                            <span class="text-center text-xs font-medium text-muted">@days[i]</span>
+                        </div>
+                    }
+                </div>
+            </div>
+        </article>
+
+        <article class="ui-card p-5 sm:p-6">
+            <div class="flex items-center justify-between gap-4">
+                <div>
+                    <h3 class="text-base font-semibold text-ink">Yaklaşan Dersler</h3>
+                    <p class="mt-1 text-sm text-muted">Bugünün planı</p>
+                </div>
+                <button type="button" class="text-sm font-semibold text-brand-600 hover:text-brand-700">Tümü</button>
+            </div>
+            <div class="mt-5 space-y-4">
+                <div class="rounded-2xl border border-line p-4">
+                    <div class="flex items-start justify-between gap-4">
+                        <div>
+                            <p class="font-semibold text-ink">IELTS Writing Task 2</p>
+                            <p class="mt-1 text-sm text-muted">IELTS Academic B2</p>
+                        </div>
+                        <span class="ui-badge bg-brand-50 text-brand-600">09:30</span>
+                    </div>
+                    <p class="mt-4 text-sm text-muted">18 katılımcı · Room 204</p>
+                </div>
+                <div class="rounded-2xl border border-line p-4">
+                    <div class="flex items-start justify-between gap-4">
+                        <div>
+                            <p class="font-semibold text-ink">Speaking Club</p>
+                            <p class="mt-1 text-sm text-muted">General English A1</p>
+                        </div>
+                        <span class="ui-badge bg-brand-50 text-brand-600">13:00</span>
+                    </div>
+                    <p class="mt-4 text-sm text-muted">12 katılımcı · Online</p>
+                </div>
+                <div class="rounded-2xl border border-line p-4">
+                    <div class="flex items-start justify-between gap-4">
+                        <div>
+                            <p class="font-semibold text-ink">Grammar Review</p>
+                            <p class="mt-1 text-sm text-muted">University Entrance Group</p>
+                        </div>
+                        <span class="ui-badge bg-brand-50 text-brand-600">16:45</span>
+                    </div>
+                    <p class="mt-4 text-sm text-muted">21 katılımcı · Room 102</p>
+                </div>
+            </div>
+        </article>
+    </div>
+
+    <div class="grid gap-6 xl:grid-cols-[minmax(0,0.95fr)_minmax(360px,1.05fr)]">
+        <article class="ui-card p-5 sm:p-6">
+            <h3 class="text-base font-semibold text-ink">Son Aktiviteler</h3>
+            <div class="mt-5 space-y-5">
+                <div class="flex gap-4">
+                    <span class="mt-1 h-2.5 w-2.5 rounded-full bg-brand-600"></span>
+                    <div>
+                        <p class="text-sm font-semibold text-ink">Leyla Mammadova IELTS Academic B2 sınıfına eklendi</p>
+                        <p class="mt-1 text-sm text-muted">12 dakika önce</p>
+                    </div>
+                </div>
+                <div class="flex gap-4">
+                    <span class="mt-1 h-2.5 w-2.5 rounded-full bg-emerald-500"></span>
+                    <div>
+                        <p class="text-sm font-semibold text-ink">Grammar Quiz #8 tamamlandı</p>
+                        <p class="mt-1 text-sm text-muted">Ortalama skor 84%</p>
+                    </div>
+                </div>
+                <div class="flex gap-4">
+                    <span class="mt-1 h-2.5 w-2.5 rounded-full bg-amber-500"></span>
+                    <div>
+                        <p class="text-sm font-semibold text-ink">₼320 ödeme tahsil edildi</p>
+                        <p class="mt-1 text-sm text-muted">General English A1 · 1 saat önce</p>
+                    </div>
+                </div>
+                <div class="flex gap-4">
+                    <span class="mt-1 h-2.5 w-2.5 rounded-full bg-slate-400"></span>
+                    <div>
+                        <p class="text-sm font-semibold text-ink">14 ödev teslimi incelenmeyi bekliyor</p>
+                        <p class="mt-1 text-sm text-muted">Writing Practice folder</p>
+                    </div>
+                </div>
+            </div>
+        </article>
+
+        <article class="ui-card p-5 sm:p-6">
+            <div class="flex items-center justify-between gap-4">
+                <div>
+                    <h3 class="text-base font-semibold text-ink">Ödeme Özeti</h3>
+                    <p class="mt-1 text-sm text-muted">Ekim dönemi tahsilat durumu</p>
+                </div>
+                <button type="button" class="ui-button-secondary min-h-10 px-3">Rapor</button>
+            </div>
+            <div class="mt-6 grid gap-4 sm:grid-cols-3">
+                <div class="rounded-2xl bg-slate-50 p-4">
+                    <p class="text-sm font-medium text-muted">Tahsil edilen</p>
+                    <p class="mt-2 text-2xl font-semibold text-ink">₼28,640</p>
+                    <span class="mt-3 ui-badge bg-emerald-50 text-emerald-700">Paid</span>
+                </div>
+                <div class="rounded-2xl bg-slate-50 p-4">
+                    <p class="text-sm font-medium text-muted">Bekleyen</p>
+                    <p class="mt-2 text-2xl font-semibold text-ink">₼8,420</p>
+                    <span class="mt-3 ui-badge bg-amber-50 text-amber-700">Pending</span>
+                </div>
+                <div class="rounded-2xl bg-slate-50 p-4">
+                    <p class="text-sm font-medium text-muted">Geciken</p>
+                    <p class="mt-2 text-2xl font-semibold text-ink">₼1,180</p>
+                    <span class="mt-3 ui-badge bg-red-50 text-red-700">Overdue</span>
+                </div>
+            </div>
+            <div class="mt-6 overflow-hidden rounded-2xl border border-line">
+                <div class="grid grid-cols-[1.3fr_0.8fr_0.7fr] bg-slate-50 px-4 py-3 text-xs font-semibold uppercase text-muted">
+                    <span>Öğrenci</span>
+                    <span>Plan</span>
+                    <span>Durum</span>
+                </div>
+                <div class="divide-y divide-line">
+                    <div class="grid grid-cols-[1.3fr_0.8fr_0.7fr] items-center px-4 py-3 text-sm">
+                        <span class="font-medium text-ink">Ayan Karimova</span>
+                        <span class="text-muted">Monthly</span>
+                        <span class="ui-badge w-fit bg-emerald-50 text-emerald-700">Paid</span>
+                    </div>
+                    <div class="grid grid-cols-[1.3fr_0.8fr_0.7fr] items-center px-4 py-3 text-sm">
+                        <span class="font-medium text-ink">Murad Hasanli</span>
+                        <span class="text-muted">Per Lesson</span>
+                        <span class="ui-badge w-fit bg-amber-50 text-amber-700">Pending</span>
+                    </div>
+                    <div class="grid grid-cols-[1.3fr_0.8fr_0.7fr] items-center px-4 py-3 text-sm">
+                        <span class="font-medium text-ink">Farida Ali</span>
+                        <span class="text-muted">Monthly</span>
+                        <span class="ui-badge w-fit bg-red-50 text-red-700">Overdue</span>
+                    </div>
+                </div>
+            </div>
+        </article>
+    </div>
+</section>
