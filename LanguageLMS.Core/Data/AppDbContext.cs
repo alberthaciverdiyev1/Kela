@@ -15,6 +15,8 @@ public sealed class AppDbContext(DbContextOptions<AppDbContext> options) : DbCon
 
     public DbSet<Modules.Subject.Entities.Subject> Subjects => Set<Modules.Subject.Entities.Subject>();
 
+    public DbSet<Modules.Lesson.Entities.Lesson> Lessons => Set<Modules.Lesson.Entities.Lesson>();
+
     public DbSet<Modules.User.Entities.User> Users => Set<Modules.User.Entities.User>();
 
     public DbSet<Modules.Group.Entities.Group> Groups => Set<Modules.Group.Entities.Group>();

@@ -6,6 +6,7 @@ using LanguageLMS.Core.Modules.Setting.Services;
 using LanguageLMS.Core.Modules.Auth;
 using LanguageLMS.Core.Modules.Auth.Services;
 using LanguageLMS.Core.Modules.Subject.Services;
+using LanguageLMS.Core.Modules.Lesson.Services;
 using LanguageLMS.Core.Modules.User.Services;
 using LanguageLMS.Core.Modules.Group.Services;
 using Microsoft.AspNetCore.Builder;
@@ -37,6 +38,7 @@ public static class DependencyInjection
         services.AddScoped<ITokenService, JwtTokenService>();
         services.AddScoped<IAuthService, AuthService>();
         services.AddScoped<ISubjectService, SubjectService>();
+        services.AddScoped<ILessonService, LessonService>();
         services.AddScoped<IUserService, UserService>();
         services.AddScoped<IGroupService, GroupService>();
 
