@@ -92,6 +92,7 @@ LanguageLMS.Mvc/     (Program.cs, Controllers, Models, Views)
 - ✅ Adım 32 — **Roles**: JWT `role` claim (`student`/`teacher`/`admin`) + policy'ler (`Student` / `Teacher`=teacher+admin / `Admin`). İçerik uçları → **Teacher**, istifadəçi idarəsi → **Admin**, şagird uçları → **Student**. Boşluqlar bağlandı (əvvəl hamısı açıq idi). + testler.
 - ✅ Adım 33 — **PrivacyPolicy**: `privacy_policies` (type + HTML content). `GET /api/privacy-policy[/{type}]` (public), `PUT /api/privacy-policy` (Teacher, upsert). + testler.
 - ✅ Adım 34 — **Group quiz statistikası** (`GroupQuizStatService`): `GET /api/group/{id}/quiz-stat?quiz_type=lesson|general` → qrupun quizləri üzrə hər şagirdin nəticəsi (attempted, correct, wrong, score %). Reference `GroupQuizStatController` məntiqi. + testler.
+- ✅ Adım 47 — **Kiçik admin/API parçaları (II)**: **in-app (system) notifications** (`system_notifications`, oxundu/oxunmadı — `/api/system-notification`) + **assignment audit log** (`main_category_assignment_logs`, fenn atama/çıxarma qeyd olunur — `GET /api/group/{id}/subject-logs`). + testlər.
 - ✅ Adım 46 — **Kiçik admin/API parçaları (I)**: **sort/reorder** (`POST /api/{lesson,quiz,lesson-content}/sort`), **editor image upload** (`/api/editor/upload`), **clear-cache** (`/api/cache/clear`), **lesson settings endpoint** (`GET/PUT /api/lesson/{id}/settings`). + testlər.
 - ✅ Adım 45 — **Admin funksionallığı (API)**: `GET /api/dashboard` (statistika), **şagird idarəsi** (`/api/students` list/show/status/delete/restore + bulk), **bulk əməliyyatlar** (`POST /api/{banner,subject,lesson,lesson-content,group,question,quiz}/bulk` → delete/restore/activate/deactivate), **CSV export** (students + group quiz-stat). + testlər.
 - ✅ Adım 44 — **Presigned (birbaşa) upload**: `IFileStorage.CreatePresignedPutUrl` + `ExistsAsync`; `POST /api/lesson-content/upload-url` → `{ uploadUrl, path }`; client birbaşa R2-yə PUT edir; sonra `path` ilə content yaradılır. `Video.playback_url` (HLS/m3u8 üçün). + testlər.
@@ -132,4 +133,4 @@ LanguageLMS.Mvc/     (Program.cs, Controllers, Models, Views)
 - [ ] Admin (dashboard, sort order)
 
 ---
-_En son güncelleme: Adım 46 — Sort/reorder + editor upload + clear-cache + lesson settings._
+_En son güncelleme: Adım 47 — In-app notifications + assignment audit log._

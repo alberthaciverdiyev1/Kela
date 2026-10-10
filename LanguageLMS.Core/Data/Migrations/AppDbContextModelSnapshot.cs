@@ -367,6 +367,52 @@ namespace LanguageLMS.Core.Data.Migrations
                     b.ToTable("group_subjects", (string)null);
                 });
 
+            modelBuilder.Entity("LanguageLMS.Core.Modules.Group.Entities.MainCategoryAssignmentLog", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint")
+                        .HasColumnName("id");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
+
+                    b.Property<string>("Action")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("character varying(20)")
+                        .HasColumnName("action");
+
+                    b.Property<DateTimeOffset>("CreatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_at");
+
+                    b.Property<DateTimeOffset?>("DeletedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("deleted_at");
+
+                    b.Property<long>("GroupId")
+                        .HasColumnType("bigint")
+                        .HasColumnName("group_id");
+
+                    b.Property<long>("SubjectId")
+                        .HasColumnType("bigint")
+                        .HasColumnName("subject_id");
+
+                    b.Property<long>("TenantId")
+                        .HasColumnType("bigint")
+                        .HasColumnName("tenant_id");
+
+                    b.Property<DateTimeOffset?>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("updated_at");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("GroupId");
+
+                    b.ToTable("main_category_assignment_logs", (string)null);
+                });
+
             modelBuilder.Entity("LanguageLMS.Core.Modules.Group.Entities.StudentGroup", b =>
                 {
                     b.Property<long>("Id")
@@ -1496,6 +1542,60 @@ namespace LanguageLMS.Core.Data.Migrations
                     b.ToTable("subjects", (string)null);
                 });
 
+            modelBuilder.Entity("LanguageLMS.Core.Modules.SystemNotification.Entities.SystemNotification", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint")
+                        .HasColumnName("id");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
+
+                    b.Property<string>("Body")
+                        .HasColumnType("text")
+                        .HasColumnName("body");
+
+                    b.Property<DateTimeOffset>("CreatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_at");
+
+                    b.Property<string>("Data")
+                        .HasColumnType("text")
+                        .HasColumnName("data");
+
+                    b.Property<DateTimeOffset?>("DeletedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("deleted_at");
+
+                    b.Property<DateTimeOffset?>("ReadAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("read_at");
+
+                    b.Property<long>("RecipientId")
+                        .HasColumnType("bigint")
+                        .HasColumnName("recipient_id");
+
+                    b.Property<long>("TenantId")
+                        .HasColumnType("bigint")
+                        .HasColumnName("tenant_id");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasMaxLength(190)
+                        .HasColumnType("character varying(190)")
+                        .HasColumnName("title");
+
+                    b.Property<DateTimeOffset?>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("updated_at");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("RecipientId", "ReadAt");
+
+                    b.ToTable("system_notifications", (string)null);
+                });
+
             modelBuilder.Entity("LanguageLMS.Core.Modules.Tenant.Entities.Tenant", b =>
                 {
                     b.Property<long>("Id")
@@ -1835,6 +1935,15 @@ namespace LanguageLMS.Core.Data.Migrations
                         .IsRequired();
 
                     b.Navigation("StudentQuiz");
+                });
+
+            modelBuilder.Entity("LanguageLMS.Core.Modules.SystemNotification.Entities.SystemNotification", b =>
+                {
+                    b.HasOne("LanguageLMS.Core.Modules.User.Entities.User", null)
+                        .WithMany()
+                        .HasForeignKey("RecipientId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("LanguageLMS.Core.Modules.Group.Entities.Group", b =>

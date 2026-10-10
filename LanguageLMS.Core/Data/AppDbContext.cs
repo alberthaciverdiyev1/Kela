@@ -80,6 +80,10 @@ public sealed class AppDbContext : DbContext
 
     public DbSet<Modules.Permission.Entities.RolePermission> RolePermissions => Set<Modules.Permission.Entities.RolePermission>();
 
+    public DbSet<Modules.SystemNotification.Entities.SystemNotification> SystemNotifications => Set<Modules.SystemNotification.Entities.SystemNotification>();
+
+    public DbSet<Modules.Group.Entities.MainCategoryAssignmentLog> MainCategoryAssignmentLogs => Set<Modules.Group.Entities.MainCategoryAssignmentLog>();
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);

@@ -117,4 +117,8 @@ public sealed class GroupController(IGroupService service, IGroupQuizStatService
         var bytes = await statService.ExportCsvAsync(id, request, ct);
         return File(bytes, "text/csv", $"group-{id}-quiz-stat.csv");
     }
+
+    [HttpGet("{id:long}/subject-logs")]
+    public async Task<ActionResult<ApiResponse<IReadOnlyList<AssignmentLogResponse>>>> SubjectLogs(long id, CancellationToken ct)
+        => Success(await service.ListSubjectLogsAsync(id, ct));
 }

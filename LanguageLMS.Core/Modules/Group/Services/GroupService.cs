@@ -12,6 +12,7 @@ namespace LanguageLMS.Core.Modules.Group.Services;
 
 using Group = LanguageLMS.Core.Modules.Group.Entities.Group;
 using GroupQuiz = LanguageLMS.Core.Modules.Group.Entities.GroupQuiz;
+using MainCategoryAssignmentLog = LanguageLMS.Core.Modules.Group.Entities.MainCategoryAssignmentLog;
 using GroupSubject = LanguageLMS.Core.Modules.Group.Entities.GroupSubject;
 using StudentGroup = LanguageLMS.Core.Modules.Group.Entities.StudentGroup;
 using Subject = LanguageLMS.Core.Modules.Subject.Entities.Subject;
@@ -216,6 +217,8 @@ public sealed class GroupService(AppDbContext db, IFileStorage storage) : IGroup
             {
                 existing.DeletedAt = null;
             }
+
+            db.MainCategoryAssignmentLogs.Add(new MainCategoryAssignmentLog { GroupId = groupId, SubjectId = subjectId, Action = "attach" });
         }
 
         await db.SaveChangesAsync(ct);
@@ -229,6 +232,7 @@ public sealed class GroupService(AppDbContext db, IFileStorage storage) : IGroup
             ?? throw new KeyNotFoundException($"Subject {subjectId} is not assigned to group {groupId}");
 
         link.DeletedAt = DateTimeOffset.UtcNow;
+        db.MainCategoryAssignmentLogs.Add(new MainCategoryAssignmentLog { GroupId = groupId, SubjectId = subjectId, Action = "detach" });
         await db.SaveChangesAsync(ct);
     }
 
@@ -317,4 +321,14 @@ public sealed class GroupService(AppDbContext db, IFileStorage storage) : IGroup
 
     public Task BulkAsync(BulkRequest request, CancellationToken ct = default)
         => BulkHelper.ApplyAsync<Group>(db, request, ct);
+
+    public async Task<IReadOnlyList<AssignmentLogResponse>> ListSubjectLogsAsync(long groupId, CancellationToken ct = default)
+    {
+        await EnsureGroupExistsAsync(groupId, ct);
+        return await db.MainCategoryAssignmentLogs.AsNoTracking()
+            .Where(x => x.GroupId == groupId)
+            .OrderByDescending(x => x.Id)
+            .Select(x => new AssignmentLogResponse(x.Id, x.SubjectId, x.GroupId, x.Action, x.CreatedAt))
+            .ToListAsync(ct);
+    }
 }

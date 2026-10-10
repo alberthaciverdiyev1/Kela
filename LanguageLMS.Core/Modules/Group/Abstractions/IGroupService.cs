@@ -38,4 +38,6 @@ public interface IGroupService
     Task RemoveQuizAsync(long groupId, long quizId, CancellationToken ct = default);
 
     Task BulkAsync(BulkRequest request, CancellationToken ct = default);
+
+    Task<IReadOnlyList<AssignmentLogResponse>> ListSubjectLogsAsync(long groupId, CancellationToken ct = default);
 }

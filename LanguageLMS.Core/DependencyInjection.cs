@@ -21,6 +21,7 @@ using LanguageLMS.Core.Modules.Students.Services;
 using LanguageLMS.Core.Common.MultiTenancy;
 using LanguageLMS.Core.Common.Caching;
 using LanguageLMS.Core.Modules.Media.Services;
+using LanguageLMS.Core.Modules.SystemNotification.Services;
 using LanguageLMS.Core.Common.Email;
 using LanguageLMS.Core.Common.Push;
 using LanguageLMS.Core.Modules.User.Services;
@@ -41,6 +42,7 @@ public static class DependencyInjection
         services.AddMemoryCache();
         services.AddSingleton<IAppCache, AppCache>();
         services.AddScoped<IUploadService, UploadService>();
+        services.AddScoped<ISystemNotificationService, SystemNotificationService>();
 
         services.AddValidatorsFromAssembly(typeof(DependencyInjection).Assembly);
 

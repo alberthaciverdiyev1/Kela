@@ -18,3 +18,4 @@ global using LanguageLMS.Core.Modules.User.Abstractions;
 global using LanguageLMS.Core.Modules.Dashboard.Abstractions;
 global using LanguageLMS.Core.Modules.Students.Abstractions;
 global using LanguageLMS.Core.Modules.Media.Abstractions;
+global using LanguageLMS.Core.Modules.SystemNotification.Abstractions;
