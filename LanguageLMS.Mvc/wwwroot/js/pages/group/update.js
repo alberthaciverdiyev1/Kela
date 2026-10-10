@@ -9,9 +9,7 @@
         document.getElementById('name').value = data.name;
         document.getElementById('description').value = data.description ?? '';
         document.getElementById('user_id').value = data.userId ?? '';
-        document.getElementById('image').value = '';
-        document.getElementById('remove_image').checked = false;
-        document.getElementById('removeImageBlock').classList.remove('hidden');
+        AdminUI.fileSet('image', data.image);
         window.showModal();
     };
 

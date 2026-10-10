@@ -13,15 +13,16 @@ public sealed class QuestionUpsertRequestValidator : AbstractValidator<QuestionU
 
         RuleFor(x => x.Title)
             .NotEmpty().WithMessage("Title is required")
-            .MaximumLength(1000);
+            .When(x => x.TitleType == "text");
+        RuleFor(x => x.Title).MaximumLength(1000);
 
         RuleFor(x => x.TitleType).Must(t => t is "text" or "image").WithMessage("Title type must be text or image");
         RuleFor(x => x.VariantType).Must(t => t is "text" or "image").WithMessage("Variant type must be text or image");
 
-        RuleFor(x => x.VariantA).NotEmpty().WithMessage("Variant A is required");
-        RuleFor(x => x.VariantB).NotEmpty().WithMessage("Variant B is required");
-        RuleFor(x => x.VariantC).NotEmpty().WithMessage("Variant C is required");
-        RuleFor(x => x.VariantD).NotEmpty().WithMessage("Variant D is required");
+        RuleFor(x => x.VariantA).NotEmpty().WithMessage("Variant A is required").When(x => x.VariantType == "text");
+        RuleFor(x => x.VariantB).NotEmpty().WithMessage("Variant B is required").When(x => x.VariantType == "text");
+        RuleFor(x => x.VariantC).NotEmpty().WithMessage("Variant C is required").When(x => x.VariantType == "text");
+        RuleFor(x => x.VariantD).NotEmpty().WithMessage("Variant D is required").When(x => x.VariantType == "text");
 
         RuleFor(x => x.CorrectAnswer)
             .Must(a => Allowed.Contains(a?.ToUpperInvariant()))

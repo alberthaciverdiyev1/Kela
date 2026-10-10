@@ -1,0 +1,68 @@
+using FluentValidation;
+using LanguageLMS.Core.Modules.Question.Abstractions;
+using LanguageLMS.Core.Modules.Question.Requests;
+using LanguageLMS.Core.Modules.Subject.Abstractions;
+using LanguageLMS.Core.Modules.Subject.Requests;
+using Microsoft.AspNetCore.Mvc;
+
+namespace LanguageLMS.Mvc.Controllers;
+
+[Route("[controller]")]
+public sealed class QuestionController(
+    IQuestionService service,
+    ISubjectService subjects,
+    IValidator<QuestionUpsertRequest> validator) : Controller
+{
+    [HttpGet]
+    public async Task<IActionResult> Index(CancellationToken ct)
+    {
+        ViewData["Title"] = "Suallar";
+        ViewData["Scripts"] = new[] { "~/js/pages/question/list.js", "~/js/pages/question/create.js", "~/js/pages/question/update.js" };
+        ViewData["Subjects"] = await subjects.ListAsync(new SubjectListRequest { PerPage = 500 }, ct);
+        return View();
+    }
+
+    [HttpGet("list")]
+    public async Task<IActionResult> List([FromQuery] QuestionListRequest request, CancellationToken ct)
+        => Json(await service.ListAsync(request, ct));
+
+    [HttpGet("{id:long}")]
+    public async Task<IActionResult> Get(long id, CancellationToken ct)
+        => Json(await service.GetAsync(id, ct));
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> Create([FromForm] QuestionUpsertRequest request, CancellationToken ct)
+    {
+        var result = await validator.ValidateAsync(request, ct);
+        if (!result.IsValid) return BadRequest(Errors(result));
+
+        return Json(await service.CreateAsync(request, ct));
+    }
+
+    [HttpPut("{id:long}")]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> Update(long id, [FromForm] QuestionUpsertRequest request, CancellationToken ct)
+    {
+        var result = await validator.ValidateAsync(request, ct);
+        if (!result.IsValid) return BadRequest(Errors(result));
+
+        return Json(await service.UpdateAsync(id, request, ct));
+    }
+
+    [HttpDelete("{id:long}")]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> Delete(long id, CancellationToken ct)
+    {
+        await service.DeleteAsync(id, ct);
+        return Json(new { ok = true });
+    }
+
+    private static object Errors(FluentValidation.Results.ValidationResult result)
+        => new
+        {
+            errors = result.Errors
+                .GroupBy(e => e.PropertyName)
+                .ToDictionary(g => g.Key, g => g.Select(e => e.ErrorMessage).ToArray())
+        };
+}

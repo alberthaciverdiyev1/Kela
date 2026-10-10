@@ -120,6 +120,33 @@ window.AdminUI = (function () {
         });
     }
 
+    function setPreview(id, url) {
+        const img = document.getElementById(id + '_preview');
+        if (!img) return;
+        img.src = url;
+        img.classList.remove('hidden');
+        document.getElementById(id + '_x').classList.remove('hidden');
+        const nameEl = document.getElementById(id + 'Name');
+        if (nameEl) nameEl.textContent = '';
+        document.getElementById(id + '_remove').value = 'false';
+    }
+
+    function filePreview(id) {
+        const input = document.getElementById(id);
+        if (!input || !input.files.length) return;
+        setPreview(id, URL.createObjectURL(input.files[0]));
+    }
+
+    function fileSet(id, url) { if (url) setPreview(id, url); }
+
+    function fileRemove(id) {
+        document.getElementById(id + '_preview').classList.add('hidden');
+        document.getElementById(id + '_x').classList.add('hidden');
+        document.getElementById(id + '_remove').value = 'true';
+        const input = document.getElementById(id);
+        if (input) input.value = '';
+    }
+
     function loader(show) {
         const el = document.getElementById('listLoader');
         if (!el) return;
@@ -129,5 +156,5 @@ window.AdminUI = (function () {
 
     function reloadAfter(delay) { setTimeout(() => location.reload(), delay || 700); }
 
-    return { notify, error, confirmDelete, get, post, postForm, putForm, postJson, del, table, actions, loader, pagination, token, reloadAfter };
+    return { notify, error, confirmDelete, get, post, postForm, putForm, postJson, del, table, actions, loader, pagination, filePreview, fileSet, fileRemove, token, reloadAfter };
 })();

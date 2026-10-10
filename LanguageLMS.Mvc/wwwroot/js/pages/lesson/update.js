@@ -9,7 +9,7 @@
         document.getElementById('subject_id').value = data.subjectId;
         document.getElementById('title').value = data.title;
         document.getElementById('is_active').checked = data.isActive;
-        document.getElementById('image').value = '';
+        AdminUI.fileSet('image', data.image);
         window.showModal();
     };
 

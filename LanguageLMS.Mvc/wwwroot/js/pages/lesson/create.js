@@ -27,6 +27,7 @@
         fd.append('subject_id', document.getElementById('subject_id').value);
         fd.append('title', document.getElementById('title').value);
         fd.append('is_active', document.getElementById('is_active').checked ? 'true' : 'false');
+        fd.append('RemoveImage', document.getElementById('image_remove').value === 'true' ? 'true' : 'false');
         const file = document.getElementById('image').files[0];
         if (file) fd.append('Image', file);
         return fd;

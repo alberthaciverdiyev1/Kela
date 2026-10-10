@@ -22,7 +22,6 @@
         document.getElementById('description').value = '';
         document.getElementById('user_id').value = '';
         document.getElementById('image').value = '';
-        document.getElementById('removeImageBlock').classList.add('hidden');
         window.showModal();
     };
 
@@ -31,7 +30,7 @@
         fd.append('name', document.getElementById('name').value);
         fd.append('description', document.getElementById('description').value || '');
         fd.append('user_id', document.getElementById('user_id').value || '');
-        fd.append('RemoveImage', document.getElementById('remove_image').checked ? 'true' : 'false');
+        fd.append('RemoveImage', document.getElementById('image_remove').value === 'true' ? 'true' : 'false');
         const file = document.getElementById('image').files[0];
         if (file) fd.append('Image', file);
         return fd;
