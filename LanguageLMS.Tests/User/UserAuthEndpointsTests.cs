@@ -8,7 +8,7 @@ namespace LanguageLMS.Tests.User;
 [Collection("api")]
 public class UserAuthEndpointsTests(ApiFactory factory)
 {
-    private readonly HttpClient _client = factory.CreateClient();
+    private readonly HttpClient _client = factory.TeacherClient();
 
     private static string Email() => $"teacher-{Guid.NewGuid():N}@example.com";
 
@@ -47,7 +47,7 @@ public class UserAuthEndpointsTests(ApiFactory factory)
 
     [Fact]
     public async Task Me_without_token_returns_unauthorized()
-        => Assert.Equal(HttpStatusCode.Unauthorized, (await _client.GetAsync("/api/user-auth/me")).StatusCode);
+        => Assert.Equal(HttpStatusCode.Unauthorized, (await factory.CreateClient().GetAsync("/api/user-auth/me")).StatusCode);
 
     [Fact]
     public async Task Login_with_wrong_password_returns_unauthorized()

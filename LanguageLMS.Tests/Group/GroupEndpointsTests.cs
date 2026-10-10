@@ -7,7 +7,7 @@ namespace LanguageLMS.Tests.Group;
 [Collection("api")]
 public class GroupEndpointsTests(ApiFactory factory)
 {
-    private readonly HttpClient _client = factory.CreateClient();
+    private readonly HttpClient _client = factory.TeacherClient();
 
     private static MultipartFormDataContent Form(string name, string? description = null)
     {

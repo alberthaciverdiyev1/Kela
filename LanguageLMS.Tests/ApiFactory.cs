@@ -1,4 +1,9 @@
+using System.Net.Http.Headers;
+using System.Net.Http.Json;
+using System.Text.Json;
 using LanguageLMS.Core.Data;
+using UserEntity = LanguageLMS.Core.Modules.User.Entities.User;
+using UserTypes = LanguageLMS.Core.Modules.User.Entities.UserTypes;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.EntityFrameworkCore;
@@ -14,6 +19,8 @@ public sealed class ApiFactory : WebApplicationFactory<Program>, IAsyncLifetime
         .WithImage("postgres:17-alpine")
         .Build();
 
+    public string AdminToken { get; private set; } = string.Empty;
+
     public async Task InitializeAsync()
     {
         await _db.StartAsync();
@@ -21,6 +28,29 @@ public sealed class ApiFactory : WebApplicationFactory<Program>, IAsyncLifetime
         using var scope = Services.CreateScope();
         var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
         await db.Database.MigrateAsync();
+
+        // admin seed (test üçün)
+        db.Users.Add(new UserEntity
+        {
+            Name = "Admin",
+            Email = "admin@test.local",
+            PasswordHash = BCrypt.Net.BCrypt.HashPassword("admin123"),
+            Type = UserTypes.Admin
+        });
+        await db.SaveChangesAsync();
+
+        var client = CreateClient();
+        var login = await client.PostAsJsonAsync("/api/user-auth/login", new { email = "admin@test.local", password = "admin123" });
+        var doc = await JsonDocument.ParseAsync(await login.Content.ReadAsStreamAsync());
+        AdminToken = doc.RootElement.GetProperty("data").GetProperty("token").GetString()!;
+    }
+
+    /// <summary>Admin (bütün teacher uçlarına da girişi var) ilə autentifikasiyalı client.</summary>
+    public HttpClient TeacherClient()
+    {
+        var client = CreateClient();
+        client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", AdminToken);
+        return client;
     }
 
     protected override void ConfigureWebHost(IWebHostBuilder builder)

@@ -6,7 +6,7 @@ namespace LanguageLMS.Tests.Setting;
 [Collection("api")]
 public class SettingEndpointsTests(ApiFactory factory)
 {
-    private readonly HttpClient _client = factory.CreateClient();
+    private readonly HttpClient _client = factory.TeacherClient();
 
     private static async Task<JsonElement> ReadJsonAsync(HttpResponseMessage r)
         => (await JsonDocument.ParseAsync(await r.Content.ReadAsStreamAsync())).RootElement.Clone();

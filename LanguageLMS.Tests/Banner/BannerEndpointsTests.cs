@@ -6,7 +6,7 @@ namespace LanguageLMS.Tests.Banner;
 [Collection("api")]
 public class BannerEndpointsTests(ApiFactory factory)
 {
-    private readonly HttpClient _client = factory.CreateClient();
+    private readonly HttpClient _client = factory.TeacherClient();
 
     private static MultipartFormDataContent Form(string title)
         => new() { { new StringContent(title), "title" } };

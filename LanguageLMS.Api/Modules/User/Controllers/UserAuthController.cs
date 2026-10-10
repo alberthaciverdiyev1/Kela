@@ -19,7 +19,7 @@ public sealed class UserAuthController(IUserAuthService service) : ApiController
         [FromBody] UserLoginRequest request, CancellationToken ct)
         => Success(await service.LoginAsync(request, ct), "Login successful");
 
-    [Authorize(Policy = AuthPolicies.User)]
+    [Authorize(Policy = AuthPolicies.Teacher)]
     [HttpGet("me")]
     public async Task<ActionResult<ApiResponse<UserResponse>>> Me(CancellationToken ct)
     {
@@ -27,7 +27,7 @@ public sealed class UserAuthController(IUserAuthService service) : ApiController
         return Success(await service.GetProfileAsync(id, ct));
     }
 
-    [Authorize(Policy = AuthPolicies.User)]
+    [Authorize(Policy = AuthPolicies.Teacher)]
     [HttpPost("logout")]
     public ActionResult<ApiResponse<string>> Logout() => SuccessMessage("Logged out");
 }

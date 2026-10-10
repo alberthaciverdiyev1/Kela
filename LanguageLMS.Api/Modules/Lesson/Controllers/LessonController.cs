@@ -4,10 +4,13 @@ using LanguageLMS.Core.Common.Responses;
 using LanguageLMS.Core.Modules.Lesson.Requests;
 using LanguageLMS.Core.Modules.Lesson.Responses;
 using LanguageLMS.Core.Modules.Lesson.Services;
+using LanguageLMS.Core.Modules.Auth;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace LanguageLMS.Api.Modules.Lesson.Controllers;
 
+[Authorize(Policy = AuthPolicies.Teacher)]
 [Route("api/[controller]")]
 public sealed class LessonController(ILessonService service) : ApiControllerBase
 {

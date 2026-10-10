@@ -8,7 +8,7 @@ namespace LanguageLMS.Tests.Notification;
 [Collection("api")]
 public class NotificationEndpointsTests(ApiFactory factory)
 {
-    private readonly HttpClient _client = factory.CreateClient();
+    private readonly HttpClient _client = factory.TeacherClient();
 
     private static string Unique(string p) => $"{p}-{Guid.NewGuid():N}";
 
@@ -112,5 +112,5 @@ public class NotificationEndpointsTests(ApiFactory factory)
 
     [Fact]
     public async Task Notification_requires_teacher_auth()
-        => Assert.Equal(HttpStatusCode.Unauthorized, (await _client.GetAsync("/api/notification")).StatusCode);
+        => Assert.Equal(HttpStatusCode.Unauthorized, (await factory.CreateClient().GetAsync("/api/notification")).StatusCode);
 }

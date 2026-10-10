@@ -1,13 +1,15 @@
 namespace LanguageLMS.Core.Modules.Auth;
 
-public static class AuthActors
+public static class AuthRoles
 {
     public const string Student = "student";
-    public const string User = "user";
+    public const string Teacher = "teacher";
+    public const string Admin = "admin";
 }
 
 public static class AuthPolicies
 {
     public const string Student = "Student";
-    public const string User = "User";
+    public const string Teacher = "Teacher";
+    public const string Admin = "Admin";
 }

@@ -21,7 +21,7 @@ public sealed class UserAuthService(AppDbContext db, ITokenService tokens) : IUs
             throw new UnauthorizedAccessException("Email or password is incorrect");
         }
 
-        var token = tokens.CreateToken(user.Id, user.Email, user.Name ?? user.Email, AuthActors.User);
+        var token = tokens.CreateToken(user.Id, user.Email, user.Name ?? user.Email, user.Type);
         return new UserAuthResponse(token, ToResponse(user));
     }
 

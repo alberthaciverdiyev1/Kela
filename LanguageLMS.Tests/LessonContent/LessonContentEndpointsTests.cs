@@ -7,7 +7,7 @@ namespace LanguageLMS.Tests.LessonContent;
 [Collection("api")]
 public class LessonContentEndpointsTests(ApiFactory factory)
 {
-    private readonly HttpClient _client = factory.CreateClient();
+    private readonly HttpClient _client = factory.TeacherClient();
 
     private static string Unique(string prefix) => $"{prefix}-{Guid.NewGuid():N}";
 

@@ -56,8 +56,9 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     });
 builder.Services.AddAuthorization(options =>
 {
-    options.AddPolicy(AuthPolicies.Student, p => p.RequireClaim("actor", AuthActors.Student));
-    options.AddPolicy(AuthPolicies.User, p => p.RequireClaim("actor", AuthActors.User));
+    options.AddPolicy(AuthPolicies.Student, p => p.RequireRole(AuthRoles.Student));
+    options.AddPolicy(AuthPolicies.Teacher, p => p.RequireRole(AuthRoles.Teacher, AuthRoles.Admin));
+    options.AddPolicy(AuthPolicies.Admin, p => p.RequireRole(AuthRoles.Admin));
 });
 
 var app = builder.Build();

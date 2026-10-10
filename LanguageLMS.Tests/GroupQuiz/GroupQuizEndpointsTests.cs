@@ -8,7 +8,7 @@ namespace LanguageLMS.Tests.GroupQuiz;
 [Collection("api")]
 public class GroupQuizEndpointsTests(ApiFactory factory)
 {
-    private readonly HttpClient _client = factory.CreateClient();
+    private readonly HttpClient _client = factory.TeacherClient();
 
     private static string Unique(string p) => $"{p}-{Guid.NewGuid():N}";
 

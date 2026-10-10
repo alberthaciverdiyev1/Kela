@@ -8,7 +8,7 @@ namespace LanguageLMS.Tests.Progress;
 [Collection("api")]
 public class ProgressEndpointsTests(ApiFactory factory)
 {
-    private readonly HttpClient _client = factory.CreateClient();
+    private readonly HttpClient _client = factory.TeacherClient();
 
     private static string Unique(string prefix) => $"{prefix}-{Guid.NewGuid():N}";
 
@@ -116,5 +116,5 @@ public class ProgressEndpointsTests(ApiFactory factory)
 
     [Fact]
     public async Task Progress_requires_auth()
-        => Assert.Equal(HttpStatusCode.Unauthorized, (await _client.GetAsync("/api/progress")).StatusCode);
+        => Assert.Equal(HttpStatusCode.Unauthorized, (await factory.CreateClient().GetAsync("/api/progress")).StatusCode);
 }

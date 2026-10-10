@@ -5,10 +5,13 @@ using LanguageLMS.Core.Modules.Question.Responses;
 using LanguageLMS.Core.Modules.Quiz.Requests;
 using LanguageLMS.Core.Modules.Quiz.Responses;
 using LanguageLMS.Core.Modules.Quiz.Services;
+using LanguageLMS.Core.Modules.Auth;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace LanguageLMS.Api.Modules.Quiz.Controllers;
 
+[Authorize(Policy = AuthPolicies.Teacher)]
 [Route("api/[controller]")]
 public sealed class QuizController(IQuizService service) : ApiControllerBase
 {

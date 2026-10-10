@@ -4,10 +4,13 @@ using LanguageLMS.Core.Common.Responses;
 using LanguageLMS.Core.Modules.User.Requests;
 using LanguageLMS.Core.Modules.User.Responses;
 using LanguageLMS.Core.Modules.User.Services;
+using LanguageLMS.Core.Modules.Auth;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace LanguageLMS.Api.Modules.User.Controllers;
 
+[Authorize(Policy = AuthPolicies.Admin)]
 [Route("api/[controller]")]
 public sealed class UserController(IUserService service) : ApiControllerBase
 {

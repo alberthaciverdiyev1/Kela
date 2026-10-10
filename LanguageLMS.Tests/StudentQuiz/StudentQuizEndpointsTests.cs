@@ -8,7 +8,7 @@ namespace LanguageLMS.Tests.StudentQuiz;
 [Collection("api")]
 public class StudentQuizEndpointsTests(ApiFactory factory)
 {
-    private readonly HttpClient _client = factory.CreateClient();
+    private readonly HttpClient _client = factory.TeacherClient();
 
     private static string Unique(string p) => $"{p}-{Guid.NewGuid():N}";
 
@@ -125,5 +125,5 @@ public class StudentQuizEndpointsTests(ApiFactory factory)
 
     [Fact]
     public async Task Requires_auth()
-        => Assert.Equal(HttpStatusCode.Unauthorized, (await _client.GetAsync("/api/student-quiz/results")).StatusCode);
+        => Assert.Equal(HttpStatusCode.Unauthorized, (await factory.CreateClient().GetAsync("/api/student-quiz/results")).StatusCode);
 }

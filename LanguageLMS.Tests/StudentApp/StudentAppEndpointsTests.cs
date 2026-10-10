@@ -8,7 +8,7 @@ namespace LanguageLMS.Tests.StudentApp;
 [Collection("api")]
 public class StudentAppEndpointsTests(ApiFactory factory)
 {
-    private readonly HttpClient _client = factory.CreateClient();
+    private readonly HttpClient _client = factory.TeacherClient();
 
     private static string Unique(string prefix) => $"{prefix}-{Guid.NewGuid():N}";
 
@@ -100,7 +100,7 @@ public class StudentAppEndpointsTests(ApiFactory factory)
 
     [Fact]
     public async Task Student_endpoints_require_auth()
-        => Assert.Equal(HttpStatusCode.Unauthorized, (await _client.GetAsync("/api/student/groups")).StatusCode);
+        => Assert.Equal(HttpStatusCode.Unauthorized, (await factory.CreateClient().GetAsync("/api/student/groups")).StatusCode);
 
     [Fact]
     public async Task User_token_cannot_access_student_endpoints()

@@ -6,10 +6,13 @@ using LanguageLMS.Core.Modules.Group.Responses;
 using LanguageLMS.Core.Modules.Group.Services;
 using LanguageLMS.Core.Modules.Quiz.Responses;
 using LanguageLMS.Core.Modules.Subject.Responses;
+using LanguageLMS.Core.Modules.Auth;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace LanguageLMS.Api.Modules.Group.Controllers;
 
+[Authorize(Policy = AuthPolicies.Teacher)]
 [Route("api/[controller]")]
 public sealed class GroupController(IGroupService service) : ApiControllerBase
 {

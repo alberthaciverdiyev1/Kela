@@ -4,10 +4,13 @@ using LanguageLMS.Core.Common.Responses;
 using LanguageLMS.Core.Modules.Question.Requests;
 using LanguageLMS.Core.Modules.Question.Responses;
 using LanguageLMS.Core.Modules.Question.Services;
+using LanguageLMS.Core.Modules.Auth;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace LanguageLMS.Api.Modules.Question.Controllers;
 
+[Authorize(Policy = AuthPolicies.Teacher)]
 [Route("api/[controller]")]
 public sealed class QuestionController(IQuestionService service) : ApiControllerBase
 {

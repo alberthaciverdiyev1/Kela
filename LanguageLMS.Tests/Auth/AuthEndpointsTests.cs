@@ -8,7 +8,7 @@ namespace LanguageLMS.Tests.Auth;
 [Collection("api")]
 public class AuthEndpointsTests(ApiFactory factory)
 {
-    private readonly HttpClient _client = factory.CreateClient();
+    private readonly HttpClient _client = factory.TeacherClient();
 
     private static async Task<JsonElement> ReadJsonAsync(HttpResponseMessage r)
         => (await JsonDocument.ParseAsync(await r.Content.ReadAsStreamAsync())).RootElement.Clone();
@@ -40,7 +40,7 @@ public class AuthEndpointsTests(ApiFactory factory)
 
     [Fact]
     public async Task Me_without_token_returns_unauthorized()
-        => Assert.Equal(HttpStatusCode.Unauthorized, (await _client.GetAsync("/api/auth/me")).StatusCode);
+        => Assert.Equal(HttpStatusCode.Unauthorized, (await factory.CreateClient().GetAsync("/api/auth/me")).StatusCode);
 
     [Fact]
     public async Task Login_with_wrong_password_returns_unauthorized()

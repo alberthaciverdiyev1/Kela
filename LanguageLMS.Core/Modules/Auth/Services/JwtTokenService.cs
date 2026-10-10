@@ -10,7 +10,7 @@ public sealed class JwtTokenService(IOptions<JwtOptions> options) : ITokenServic
 {
     private readonly JwtOptions _options = options.Value;
 
-    public string CreateToken(long id, string email, string fullName, string actor)
+    public string CreateToken(long id, string email, string fullName, string role)
     {
         var claims = new List<Claim>
         {
@@ -18,7 +18,7 @@ public sealed class JwtTokenService(IOptions<JwtOptions> options) : ITokenServic
             new(ClaimTypes.NameIdentifier, id.ToString()),
             new(JwtRegisteredClaimNames.Email, email),
             new("full_name", fullName),
-            new("actor", actor)
+            new("role", role)
         };
 
         var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_options.Key));

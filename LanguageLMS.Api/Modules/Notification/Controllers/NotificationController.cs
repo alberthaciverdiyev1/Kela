@@ -11,7 +11,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace LanguageLMS.Api.Modules.Notification.Controllers;
 
-[Authorize(Policy = AuthPolicies.User)]
+[Authorize(Policy = AuthPolicies.Teacher)]
 [Route("api/[controller]")]
 public sealed class NotificationController(INotificationService service) : ApiControllerBase
 {

@@ -6,7 +6,7 @@ namespace LanguageLMS.Tests.User;
 [Collection("api")]
 public class UserEndpointsTests(ApiFactory factory)
 {
-    private readonly HttpClient _client = factory.CreateClient();
+    private readonly HttpClient _client = factory.TeacherClient();
 
     private static string Email() => $"teacher-{Guid.NewGuid():N}@example.com";
 

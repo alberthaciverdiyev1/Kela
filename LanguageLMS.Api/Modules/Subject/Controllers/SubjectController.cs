@@ -4,10 +4,13 @@ using LanguageLMS.Core.Common.Responses;
 using LanguageLMS.Core.Modules.Subject.Requests;
 using LanguageLMS.Core.Modules.Subject.Responses;
 using LanguageLMS.Core.Modules.Subject.Services;
+using LanguageLMS.Core.Modules.Auth;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace LanguageLMS.Api.Modules.Subject.Controllers;
 
+[Authorize(Policy = AuthPolicies.Teacher)]
 [Route("api/[controller]")]
 public sealed class SubjectController(ISubjectService service) : ApiControllerBase
 {

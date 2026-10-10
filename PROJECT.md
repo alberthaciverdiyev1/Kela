@@ -89,6 +89,7 @@ LanguageLMS.Mvc/     (Program.cs, Controllers, Models, Views)
 - ✅ Adım 29 — **Şagird imtahanı**: `StudentQuiz` (attempt) + `StudentQuizQuestion` (cavablar). `POST /api/student-quiz/{start,complete}`, `GET .../results[/{id}]`. Bal hesabı, doğru cavab sızması yoxdur, üzvlük yoxlaması. + testler.
 - ✅ Adım 30 — **Group general quizzes**: `GroupQuiz` pivot (general quizlər üçün `Quiz.LessonId` opsiyonel). `POST/GET/DELETE /api/group/{id}/quizzes` + şagird `GET /api/student/quizzes`. + testler.
 - ✅ Adım 31 — **Notification**: `Notification` (+`notification_students` pivot) + `NotificationToken` (cihaz). Müəllim: `/api/notification` (list/create/delete). Şagird: `GET /api/student/notifications`, `POST/DELETE .../token`. Push: `IPushSender` (hazırda `NoOp`, FCM açarları gözləyir). + testler.
+- ✅ Adım 32 — **Roles**: JWT `role` claim (`student`/`teacher`/`admin`) + policy'ler (`Student` / `Teacher`=teacher+admin / `Admin`). İçerik uçları → **Teacher**, istifadəçi idarəsi → **Admin**, şagird uçları → **Student**. Boşluqlar bağlandı (əvvəl hamısı açıq idi). + testler.
 
 ## 5. Durum / Notlar
 
@@ -117,4 +118,4 @@ LanguageLMS.Mvc/     (Program.cs, Controllers, Models, Views)
 - [ ] Admin (dashboard, sort order)
 
 ---
-_En son güncelleme: Adım 31 — Notification (bildiriş + token, push abstraction)._
+_En son güncelleme: Adım 32 — Roles (admin/teacher/student) + endpoint qorunması._
