@@ -17,6 +17,10 @@ public sealed class ExceptionHandlingMiddleware(
         {
             await WriteAsync(context, HttpStatusCode.NotFound, ex.Message);
         }
+        catch (UnauthorizedAccessException ex)
+        {
+            await WriteAsync(context, HttpStatusCode.Unauthorized, ex.Message);
+        }
         catch (ArgumentException ex)
         {
             await WriteAsync(context, HttpStatusCode.BadRequest, ex.Message);

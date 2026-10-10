@@ -3,6 +3,9 @@ using LanguageLMS.Core.Common.Storage;
 using LanguageLMS.Core.Data;
 using LanguageLMS.Core.Modules.Banner.Services;
 using LanguageLMS.Core.Modules.Profession.Services;
+using LanguageLMS.Core.Modules.Setting.Services;
+using LanguageLMS.Core.Modules.Auth;
+using LanguageLMS.Core.Modules.Auth.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
@@ -27,6 +30,11 @@ public static class DependencyInjection
 
         services.AddScoped<IBannerService, BannerService>();
         services.AddScoped<IProfessionService, ProfessionService>();
+        services.AddScoped<ISettingService, SettingService>();
+
+        services.Configure<JwtOptions>(configuration.GetSection(JwtOptions.SectionName));
+        services.AddScoped<ITokenService, JwtTokenService>();
+        services.AddScoped<IAuthService, AuthService>();
 
         return services;
     }

@@ -72,6 +72,8 @@ LanguageLMS.Mvc/     (Program.cs, Controllers, Models, Views)
 - ✅ Adım 12 — Migration uygulandı, uçtan uca doğrulandı (API CRUD + MVC CRUD, gerçek DB).
 - ✅ Adım 13 — **Profession** modülü (2 seviyeli hiyerarşi, benzersiz ad, çocuklu kayıt silinemez) + testler.
 - ✅ Adım 14 — Banner uçları sadeleştirildi: `admin` prefix kaldırıldı, tek `list`; endpointler: list/show/add/update/delete.
+- ✅ Adım 15 — **Setting** modülü (tek satırlık ayar + `/api/app-version`) + testler.
+- ✅ Adım 16 — **Auth** modülü: JWT ile register/login/me/logout (OTP ve roller **yok** — sonra eklenecek) + testler.
 
 ## 5. Durum / Notlar
 
@@ -86,8 +88,8 @@ LanguageLMS.Mvc/     (Program.cs, Controllers, Models, Views)
 
 - [x] Banner
 - [x] Profession
-- [ ] Auth / Student (OTP, token, `student.active`, roller)
-- [ ] Setting
+- [~] Auth / Student — JWT register/login yapıldı; **OTP, roller, student.active bekliyor**
+- [x] Setting
 - [ ] Group / MainCategory / Topic / TopicContent
 - [ ] Video / VoiceRecord / File (BunnyCDN)
 - [ ] Question / Quiz / QuizQuestion
@@ -99,4 +101,4 @@ LanguageLMS.Mvc/     (Program.cs, Controllers, Models, Views)
 - [ ] Admin (dashboard, sort order)
 
 ---
-_En son güncelleme: Adım 14 — Profession modülü + Endpoint sadeleştirme._
+_En son güncelleme: Adım 16 — Setting + Auth (JWT) modülleri._
