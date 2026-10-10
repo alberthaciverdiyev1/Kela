@@ -1,9 +1,9 @@
 @import "tailwindcss";
-
-/* Content kaynakları (ASP.NET Razor dosyaları) */
+@plugin "flowbite/plugin";
 @source "../../Views";
 @source "../../Areas";
 @source "../../Pages";
+@source "../../node_modules/flowbite";
 
 /* Admin dizaynından yalnız RƏNGLƏR götürüldü */
 @theme {

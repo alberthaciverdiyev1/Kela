@@ -92,6 +92,7 @@ LanguageLMS.Mvc/     (Program.cs, Controllers, Models, Views)
 - ✅ Adım 32 — **Roles**: JWT `role` claim (`student`/`teacher`/`admin`) + policy'ler (`Student` / `Teacher`=teacher+admin / `Admin`). İçerik uçları → **Teacher**, istifadəçi idarəsi → **Admin**, şagird uçları → **Student**. Boşluqlar bağlandı (əvvəl hamısı açıq idi). + testler.
 - ✅ Adım 33 — **PrivacyPolicy**: `privacy_policies` (type + HTML content). `GET /api/privacy-policy[/{type}]` (public), `PUT /api/privacy-policy` (Teacher, upsert). + testler.
 - ✅ Adım 34 — **Group quiz statistikası** (`GroupQuizStatService`): `GET /api/group/{id}/quiz-stat?quiz_type=lesson|general` → qrupun quizləri üzrə hər şagirdin nəticəsi (attempted, correct, wrong, score %). Reference `GroupQuizStatController` məntiqi. + testler.
+- ✅ Adım 52 — **Flowbite + UI komponentləri**: Flowbite (`@plugin`, JS `wwwroot/js/flowbite.min.js`), ayrıca **UI partial-ları** (`Views/Shared/Ui/_Button, _Input, _Select` + `Models/Ui`). Subject səhifəsi bu komponentlərlə yenidən yazıldı.
 - ✅ Adım 51 — **Admin: Subject (Fənlər) səhifəsi**: `SubjectController` (`ISubjectService` + validator inject) → list + JSON CRUD action-ları; view: cədvəl + axtarış + pagination + modal, **JS fetch** MVC action-larına (API-yə HTTP yox). + Core DTO birbaşa view model.
 - ✅ Adım 50 — **Admin panel (MVC) başlanğıcı**: admin layout (**sidebar + topbar**, dizaynın yalnız rəngləri: `#004AAD`/`#353859`), **Dashboard** səhifəsi (`DashboardController` → `IDashboardService` inject), default route → Dashboard. Tailwind mənbəyi `wwwroot/css/input.css`. Qayda: **hər səhifə bir controller**, data **MVC controller → Core servisi** (API-yə HTTP yox), UI-da **max JS**.
 - ✅ Adım 49 — **İnfra/sərtləşdirmə**: **CORS** (`Cors:Origins`), **rate limiting** (auth uçlarına fixed-window, yalnız Development xaricində), **strict tenant** (`Tenancy:Strict` — tenant yoxdursa heç nə), **auto-migrate** (`Database:MigrateOnStartup`).
@@ -137,7 +138,7 @@ LanguageLMS.Mvc/     (Program.cs, Controllers, Models, Views)
 - [ ] Admin (dashboard, sort order)
 
 ---
-_En son güncelleme: Adım 51 — Admin Subject səhifəsi (list + CRUD modal + JS).
+_En son güncelleme: Adım 52 — Admin Subject səhifəsi (list + CRUD modal + JS).
 
 ## İnkişaf (dev)
 - `./dev.sh` — API + MVC + Tailwind-i **watch** rejimində işə salır (Ctrl+C ilə dayandırır).

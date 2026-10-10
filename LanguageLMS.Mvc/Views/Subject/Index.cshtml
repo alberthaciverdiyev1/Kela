@@ -5,16 +5,14 @@
 
 <div class="mb-5 flex items-center justify-between">
     <h2 class="text-xl font-semibold text-slate-800">Fənlər</h2>
-    <button type="button" onclick="openCreate()"
-            class="rounded-lg bg-primary px-4 py-2 text-sm font-medium text-white hover:bg-primary-600">
-        + Yeni fənn
-    </button>
+    <partial name="Ui/_Button" model="@(new ButtonModel { Text = "+ Yeni fənn", OnClick = "openCreate()" })" />
 </div>
 
-<form method="get" class="mb-4 flex gap-2">
-    <input name="search" value="@Context.Request.Query["search"]" placeholder="Ad üzrə axtar..."
-           class="w-64 rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-primary focus:outline-none" />
-    <button class="rounded-lg bg-navy px-4 py-2 text-sm font-medium text-white hover:bg-navy-700">Axtar</button>
+<form method="get" class="mb-4 flex items-end gap-2">
+    <div class="w-64">
+        <partial name="Ui/_Input" model="@(new InputModel { Name = "search", Value = Context.Request.Query["search"], Placeholder = "Ad üzrə axtar..." })" />
+    </div>
+    <partial name="Ui/_Button" model="@(new ButtonModel { Text = "Axtar", Type = "submit", Variant = "secondary" })" />
 </form>
 
 <div class="overflow-hidden rounded-xl border border-slate-200 bg-white">
@@ -26,18 +24,16 @@
                 <th class="px-4 py-3 text-right">Əməliyyatlar</th>
             </tr>
         </thead>
-        <tbody class="divide-y divide-slate-100" id="rows">
+        <tbody class="divide-y divide-slate-100">
         @foreach (var s in Model.Data)
         {
-            <tr class="hover:bg-slate-50" data-id="@s.Id" data-name="@s.Name">
+            <tr class="hover:bg-slate-50">
                 <td class="px-4 py-3 text-slate-400">@s.Id</td>
                 <td class="px-4 py-3 font-medium text-slate-800">@s.Name</td>
                 <td class="px-4 py-3">
-                    <div class="flex items-center justify-end gap-4">
-                        <button type="button" class="text-primary hover:text-primary-700"
-                                onclick="openEdit(@s.Id)">Redaktə</button>
-                        <button type="button" class="text-red-600 hover:text-red-800"
-                                onclick="removeItem(@s.Id)">Sil</button>
+                    <div class="flex items-center justify-end gap-2">
+                        <partial name="Ui/_Button" model="@(new ButtonModel { Text = "Redaktə", Variant = "ghost", OnClick = $"openEdit({s.Id})" })" />
+                        <partial name="Ui/_Button" model="@(new ButtonModel { Text = "Sil", Variant = "ghost", OnClick = $"removeItem({s.Id})" })" />
                     </div>
                 </td>
             </tr>
@@ -62,17 +58,19 @@
 }
 
 <!-- Modal -->
-<div id="modal" class="fixed inset-0 z-40 hidden bg-black/40 p-4">
-    <div class="mx-auto mt-24 w-full max-w-md rounded-xl bg-white p-6">
-        <h3 id="modalTitle" class="mb-4 text-lg font-semibold text-slate-800">Yeni fənn</h3>
-        <div id="formError" class="mb-3 hidden rounded-lg bg-red-50 px-3 py-2 text-sm text-red-600"></div>
-        <form id="subjectForm">
+<div id="modal" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/40 p-4">
+    <div class="w-full max-w-md rounded-xl bg-white shadow-xl">
+        <div class="flex items-center justify-between border-b border-slate-200 p-4">
+            <h3 id="modalTitle" class="text-lg font-semibold text-slate-800">Yeni fənn</h3>
+            <button type="button" onclick="closeModal()" class="rounded-lg p-1.5 text-slate-400 hover:bg-slate-100">✕</button>
+        </div>
+        <div id="formError" class="mx-6 mt-4 hidden rounded-lg bg-red-50 px-3 py-2 text-sm text-red-600"></div>
+        <form id="subjectForm" class="space-y-4 p-6">
             <input type="hidden" id="subjectId" />
-            <label class="mb-1 block text-sm font-medium text-slate-700">Ad</label>
-            <input id="name" name="name" class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-primary focus:outline-none" />
-            <div class="mt-5 flex justify-end gap-3">
-                <button type="button" onclick="closeModal()" class="rounded-lg border border-slate-300 px-4 py-2 text-sm text-slate-600">İmtina</button>
-                <button type="submit" class="rounded-lg bg-primary px-4 py-2 text-sm font-medium text-white hover:bg-primary-600">Yadda saxla</button>
+            <partial name="Ui/_Input" model="@(new InputModel { Name = "name", Id = "name", Label = "Ad", Required = true })" />
+            <div class="flex justify-end gap-3">
+                <partial name="Ui/_Button" model="@(new ButtonModel { Text = "İmtina", Variant = "secondary", OnClick = "closeModal()" })" />
+                <partial name="Ui/_Button" model="@(new ButtonModel { Text = "Yadda saxla", Type = "submit" })" />
             </div>
         </form>
     </div>
@@ -87,8 +85,8 @@
     const errBox = document.getElementById('formError');
     const token = document.querySelector('#antiforgery input[name="__RequestVerificationToken"]').value;
 
-    function showModal() { modal.classList.remove('hidden'); }
-    function closeModal() { modal.classList.add('hidden'); errBox.classList.add('hidden'); }
+    function showModal() { modal.classList.remove('hidden'); modal.classList.add('flex'); }
+    function closeModal() { modal.classList.add('hidden'); modal.classList.remove('flex'); errBox.classList.add('hidden'); }
 
     function openCreate() {
         document.getElementById('modalTitle').textContent = 'Yeni fənn';
@@ -98,8 +96,7 @@
     }
 
     async function openEdit(id) {
-        const res = await fetch(`/Subject/Get?id=${id}`);
-        const data = await res.json();
+        const data = await (await fetch(`/Subject/Get?id=${id}`)).json();
         document.getElementById('modalTitle').textContent = 'Fənn redaktəsi';
         document.getElementById('subjectId').value = data.id;
         document.getElementById('name').value = data.name;
@@ -112,10 +109,10 @@
         const fd = new FormData();
         fd.append('name', document.getElementById('name').value);
 
-        const url = id ? `/Subject/Update?id=${id}` : '/Subject/Create';
-        const res = await fetch(url, { method: 'POST', body: fd, headers: { 'RequestVerificationToken': token } });
-        if (res.ok) { location.reload(); return; }
+        const res = await fetch(id ? `/Subject/Update?id=${id}` : '/Subject/Create',
+            { method: 'POST', body: fd, headers: { 'RequestVerificationToken': token } });
 
+        if (res.ok) { location.reload(); return; }
         const body = await res.json();
         errBox.textContent = body.errors ? Object.values(body.errors).flat().join(' • ') : 'Xəta baş verdi';
         errBox.classList.remove('hidden');
@@ -123,8 +120,7 @@
 
     async function removeItem(id) {
         if (!confirm('Silinsin?')) return;
-        const fd = new FormData();
-        await fetch(`/Subject/Delete?id=${id}`, { method: 'POST', body: fd, headers: { 'RequestVerificationToken': token } });
+        await fetch(`/Subject/Delete?id=${id}`, { method: 'POST', headers: { 'RequestVerificationToken': token } });
         location.reload();
     }
 </script>
