@@ -86,6 +86,7 @@ LanguageLMS.Mvc/     (Program.cs, Controllers, Models, Views)
 - ✅ Adım 26 — **Progress / Statistics**: `LessonProgress` (içerik tamamlama), `POST /api/progress` (mark), `GET /api/progress` (dərs üzrə faiz), `GET /api/statistics` (ümumi + fenn üzrə). Paylaşılan `StudentAccessService`. + testler.
 - ✅ Adım 27 — **Question bank** (fenn üzrə suallar): `Question` (title, variant A-E, correct_answer, variant_type), CRUD + testler. (Quiz bölməsi sırada.)
 - ✅ Adım 28 — **Quiz**: `Quiz` (lesson_id, title, duration, type, is_active, is_repeat, sort_order) + `QuizQuestion` pivot. CRUD + sual bağlama/listeleme/çıxarma + questionCount. + testler.
+- ✅ Adım 29 — **Şagird imtahanı**: `StudentQuiz` (attempt) + `StudentQuizQuestion` (cavablar). `POST /api/student-quiz/{start,complete}`, `GET .../results[/{id}]`. Bal hesabı, doğru cavab sızması yoxdur, üzvlük yoxlaması. + testler.
 
 ## 5. Durum / Notlar
 
@@ -106,7 +107,7 @@ LanguageLMS.Mvc/     (Program.cs, Controllers, Models, Views)
 - [x] Setting
 - [x] İçerik zənciri — Subject · Group · group_subjects · Lesson · LessonContent · medya (BunnyCDN). **Profession iptal.**
 - [ ] Video / VoiceRecord / File (BunnyCDN)
-- [~] Question / Quiz — **Question bank + Quiz tamam**; tələbə imtahanı (attempt) sırada
+- [x] Question / Quiz / StudentQuiz — sual bankı, quiz, tələbə imtahanı (bal + nəticələr)
 - [ ] StudentQuiz / QuizRepeat
 - [ ] Progress
 - [ ] Statistics
@@ -115,4 +116,4 @@ LanguageLMS.Mvc/     (Program.cs, Controllers, Models, Views)
 - [ ] Admin (dashboard, sort order)
 
 ---
-_En son güncelleme: Adım 28 — Quiz + sual bağlama._
+_En son güncelleme: Adım 29 — Şagird imtahanı (StudentQuiz)._

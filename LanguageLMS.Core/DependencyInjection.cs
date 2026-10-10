@@ -61,6 +61,7 @@ public static class DependencyInjection
         services.AddScoped<IProgressService, ProgressService>();
         services.AddScoped<IQuestionService, QuestionService>();
         services.AddScoped<IQuizService, QuizService>();
+        services.AddScoped<IStudentQuizService, StudentQuizService>();
         services.AddScoped<IUserService, UserService>();
         services.AddScoped<IUserAuthService, UserAuthService>();
         services.AddScoped<IGroupService, GroupService>();

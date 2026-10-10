@@ -779,6 +779,115 @@ namespace LanguageLMS.Core.Data.Migrations
                     b.ToTable("quiz_questions", (string)null);
                 });
 
+            modelBuilder.Entity("LanguageLMS.Core.Modules.Quiz.Entities.StudentQuiz", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint")
+                        .HasColumnName("id");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
+
+                    b.Property<int>("CompletedQuestionCount")
+                        .HasColumnType("integer")
+                        .HasColumnName("completed_question_count");
+
+                    b.Property<DateTimeOffset>("CreatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_at");
+
+                    b.Property<DateTimeOffset?>("DeletedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("deleted_at");
+
+                    b.Property<DateTimeOffset?>("EndDate")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("end_date");
+
+                    b.Property<bool>("IsCompleted")
+                        .HasColumnType("boolean")
+                        .HasColumnName("is_completed");
+
+                    b.Property<long>("QuizId")
+                        .HasColumnType("bigint")
+                        .HasColumnName("quiz_id");
+
+                    b.Property<DateTimeOffset?>("StartDate")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("start_date");
+
+                    b.Property<long>("StudentId")
+                        .HasColumnType("bigint")
+                        .HasColumnName("student_id");
+
+                    b.Property<int>("TotalQuestionCount")
+                        .HasColumnType("integer")
+                        .HasColumnName("total_question_count");
+
+                    b.Property<DateTimeOffset?>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("updated_at");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("DeletedAt");
+
+                    b.HasIndex("QuizId");
+
+                    b.HasIndex("StudentId");
+
+                    b.ToTable("student_quizzes", (string)null);
+                });
+
+            modelBuilder.Entity("LanguageLMS.Core.Modules.Quiz.Entities.StudentQuizQuestion", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint")
+                        .HasColumnName("id");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
+
+                    b.Property<DateTimeOffset>("CreatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_at");
+
+                    b.Property<DateTimeOffset?>("DeletedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("deleted_at");
+
+                    b.Property<bool>("IsRight")
+                        .HasColumnType("boolean")
+                        .HasColumnName("is_right");
+
+                    b.Property<long>("QuestionId")
+                        .HasColumnType("bigint")
+                        .HasColumnName("question_id");
+
+                    b.Property<string>("StudentAnswer")
+                        .HasMaxLength(2)
+                        .HasColumnType("character varying(2)")
+                        .HasColumnName("student_answer");
+
+                    b.Property<long>("StudentQuizId")
+                        .HasColumnType("bigint")
+                        .HasColumnName("student_quiz_id");
+
+                    b.Property<DateTimeOffset?>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("updated_at");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("DeletedAt");
+
+                    b.HasIndex("QuestionId");
+
+                    b.HasIndex("StudentQuizId");
+
+                    b.ToTable("student_quiz_questions", (string)null);
+                });
+
             modelBuilder.Entity("LanguageLMS.Core.Modules.Setting.Entities.Setting", b =>
                 {
                     b.Property<long>("Id")
@@ -1086,6 +1195,38 @@ namespace LanguageLMS.Core.Data.Migrations
                     b.Navigation("Quiz");
                 });
 
+            modelBuilder.Entity("LanguageLMS.Core.Modules.Quiz.Entities.StudentQuiz", b =>
+                {
+                    b.HasOne("LanguageLMS.Core.Modules.Quiz.Entities.Quiz", null)
+                        .WithMany()
+                        .HasForeignKey("QuizId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("LanguageLMS.Core.Modules.Auth.Entities.Student", null)
+                        .WithMany()
+                        .HasForeignKey("StudentId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("LanguageLMS.Core.Modules.Quiz.Entities.StudentQuizQuestion", b =>
+                {
+                    b.HasOne("LanguageLMS.Core.Modules.Question.Entities.Question", null)
+                        .WithMany()
+                        .HasForeignKey("QuestionId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("LanguageLMS.Core.Modules.Quiz.Entities.StudentQuiz", "StudentQuiz")
+                        .WithMany("Answers")
+                        .HasForeignKey("StudentQuizId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("StudentQuiz");
+                });
+
             modelBuilder.Entity("LanguageLMS.Core.Modules.Group.Entities.Group", b =>
                 {
                     b.Navigation("Memberships");
@@ -1096,6 +1237,11 @@ namespace LanguageLMS.Core.Data.Migrations
             modelBuilder.Entity("LanguageLMS.Core.Modules.Quiz.Entities.Quiz", b =>
                 {
                     b.Navigation("Questions");
+                });
+
+            modelBuilder.Entity("LanguageLMS.Core.Modules.Quiz.Entities.StudentQuiz", b =>
+                {
+                    b.Navigation("Answers");
                 });
 #pragma warning restore 612, 618
         }
