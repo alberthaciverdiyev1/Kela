@@ -92,6 +92,7 @@ LanguageLMS.Mvc/     (Program.cs, Controllers, Models, Views)
 - ✅ Adım 32 — **Roles**: JWT `role` claim (`student`/`teacher`/`admin`) + policy'ler (`Student` / `Teacher`=teacher+admin / `Admin`). İçerik uçları → **Teacher**, istifadəçi idarəsi → **Admin**, şagird uçları → **Student**. Boşluqlar bağlandı (əvvəl hamısı açıq idi). + testler.
 - ✅ Adım 33 — **PrivacyPolicy**: `privacy_policies` (type + HTML content). `GET /api/privacy-policy[/{type}]` (public), `PUT /api/privacy-policy` (Teacher, upsert). + testler.
 - ✅ Adım 34 — **Group quiz statistikası** (`GroupQuizStatService`): `GET /api/group/{id}/quiz-stat?quiz_type=lesson|general` → qrupun quizləri üzrə hər şagirdin nəticəsi (attempted, correct, wrong, score %). Reference `GroupQuizStatController` məntiqi. + testler.
+- ✅ Adım 60 — **Admin: Quiz (İmtahanlar)** səhifəsi: dərs filtri + list (növ, müddət, sual sayı, aktiv); CRUD (lesson, title, duration, type, is_active, **is_repeat** switch-ləri); **Suallar modalı** (əlavə/çıxar). RESTful + `pages/quiz/{list,create,update,questions}.js`.
 - ✅ Adım 59 — **Admin: Question (Suallar)** səhifəsi: fənn filtri + list; **mətn/şəkil** sual və variantlar; **`_FileUpload` preview + mövcud şəkil + X ilə sil**. `QuestionUpsertRequestValidator` şəkil rejiminə uyğunlaşdırıldı (mətn tələbi yalnız `*_type=text`). + CRUD JS.
 - ✅ Adım 58 — **Admin: Group idarəetməsi** — qrup üzrə **Şagirdlər / Fənnlər / İmtahanlar** tab-ları: cari siyahı + əlavə/çıxar. `GET/POST/DELETE /group/{id}/{students,subjects,quizzes}` + `GET /group/options`. `AdminUI.postJson` əlavə olundu.
 - ✅ Adım 57 — **Admin: Group (Qruplar)** səhifəsi: list (axtarış) + CRUD (ad, təsvir, müəllim seçimi, şəkil, şəkil-sil switch). RESTful controller + `pages/group/{list,create,update}.js`.
@@ -145,7 +146,7 @@ LanguageLMS.Mvc/     (Program.cs, Controllers, Models, Views)
 - [ ] Admin (dashboard, sort order)
 
 ---
-_En son güncelleme: Adım 59 — Admin Question səhifəsi + fayl preview/X — Group idarəetməsi (tab-lar) — Admin Group səhifəsi — Admin LessonContent səhifəsi — Admin Lesson səhifəsi — Admin Subject səhifəsi (list + CRUD modal + JS).
+_En son güncelleme: Adım 60 — Admin Quiz səhifəsi — Admin Question səhifəsi + fayl preview/X — Group idarəetməsi (tab-lar) — Admin Group səhifəsi — Admin LessonContent səhifəsi — Admin Lesson səhifəsi — Admin Subject səhifəsi (list + CRUD modal + JS).
 
 ## İnkişaf (dev)
 - `./dev.sh` — API + MVC + Tailwind-i **watch** rejimində işə salır (Ctrl+C ilə dayandırır).
