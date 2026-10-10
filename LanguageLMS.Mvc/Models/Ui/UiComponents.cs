@@ -33,5 +33,6 @@ public class SelectModel
     public string? Label { get; set; }
     public string? Value { get; set; }
     public List<SelectOption> Options { get; set; } = new();
+    public bool Required { get; set; }
     public string? Id { get; set; }
 }

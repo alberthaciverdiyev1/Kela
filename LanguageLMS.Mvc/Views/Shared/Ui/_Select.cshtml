@@ -8,7 +8,7 @@
     {
         <label for="@id" class="mb-1 block text-sm font-medium text-slate-700">@Model.Label</label>
     }
-    <select id="@id" name="@Model.Name"
+    <select id="@id" name="@Model.Name" required="@Model.Required"
             class="block w-full rounded-lg border border-slate-300 bg-slate-50 p-2.5 text-sm text-slate-900 focus:border-primary focus:ring-primary">
         @foreach (var o in Model.Options)
         {
