@@ -1,3 +1,4 @@
+using LanguageLMS.Api.Common.Authorization;
 using LanguageLMS.Api.Common.Controllers;
 using LanguageLMS.Api.Common.Responses;
 using LanguageLMS.Core.Common.Responses;
@@ -12,6 +13,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace LanguageLMS.Api.Modules.Quiz.Controllers;
 
 [Authorize(Policy = AuthPolicies.Teacher)]
+[HasPermission("quiz.manage")]
 [Route("api/[controller]")]
 public sealed class QuizController(IQuizService service) : ApiControllerBase
 {

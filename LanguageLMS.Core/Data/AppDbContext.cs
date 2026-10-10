@@ -76,6 +76,10 @@ public sealed class AppDbContext : DbContext
 
     public DbSet<Modules.Auth.Entities.StudentDevice> StudentDevices => Set<Modules.Auth.Entities.StudentDevice>();
 
+    public DbSet<Modules.Permission.Entities.Permission> Permissions => Set<Modules.Permission.Entities.Permission>();
+
+    public DbSet<Modules.Permission.Entities.RolePermission> RolePermissions => Set<Modules.Permission.Entities.RolePermission>();
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);

@@ -1,4 +1,5 @@
 using System.Security.Claims;
+using LanguageLMS.Api.Common.Authorization;
 using LanguageLMS.Api.Common.Controllers;
 using LanguageLMS.Api.Common.Responses;
 using LanguageLMS.Core.Common.Responses;
@@ -12,6 +13,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace LanguageLMS.Api.Modules.Notification.Controllers;
 
 [Authorize(Policy = AuthPolicies.Teacher)]
+[HasPermission("notification.manage")]
 [Route("api/[controller]")]
 public sealed class NotificationController(INotificationService service) : ApiControllerBase
 {

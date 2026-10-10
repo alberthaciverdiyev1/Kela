@@ -1,3 +1,4 @@
+using LanguageLMS.Api.Common.Authorization;
 using LanguageLMS.Api.Common.Controllers;
 using LanguageLMS.Api.Common.Responses;
 using LanguageLMS.Core.Common.Responses;
@@ -15,6 +16,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace LanguageLMS.Api.Modules.Group.Controllers;
 
 [Authorize(Policy = AuthPolicies.Teacher)]
+[HasPermission("group.manage")]
 [Route("api/[controller]")]
 public sealed class GroupController(IGroupService service, IGroupQuizStatService statService) : ApiControllerBase
 {

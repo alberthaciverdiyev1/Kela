@@ -1,3 +1,4 @@
+using LanguageLMS.Api.Common.Authorization;
 using LanguageLMS.Api.Common.Controllers;
 using LanguageLMS.Api.Common.Responses;
 using LanguageLMS.Core.Modules.Setting.Requests;
@@ -10,6 +11,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace LanguageLMS.Api.Modules.Setting.Controllers;
 
 [Authorize(Policy = AuthPolicies.Teacher)]
+[HasPermission("setting.manage")]
 [Route("api/[controller]")]
 public sealed class SettingController(ISettingService service) : ApiControllerBase
 {
