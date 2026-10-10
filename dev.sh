@@ -34,6 +34,8 @@ ASPNETCORE_URLS="$MVC_URL" dotnet watch --project LanguageLMS.Mvc run --no-launc
 pids+=($!)
 
 if [ -d "LanguageLMS.Mvc/node_modules" ]; then
+  echo "==> Tailwind ilkin build"
+  ( cd LanguageLMS.Mvc && npm run css:build )
   echo "==> Tailwind (watch)"
   ( cd LanguageLMS.Mvc && npm run css:watch ) &
   pids+=($!)
