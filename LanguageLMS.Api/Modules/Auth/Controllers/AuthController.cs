@@ -7,9 +7,11 @@ using LanguageLMS.Core.Modules.Auth.Responses;
 using LanguageLMS.Core.Modules.Auth.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.RateLimiting;
 
 namespace LanguageLMS.Api.Modules.Auth.Controllers;
 
+[EnableRateLimiting("auth")]
 [Route("api/[controller]")]
 public sealed class AuthController(IAuthService service) : ApiControllerBase
 {

@@ -63,7 +63,8 @@ public sealed class ApiFactory : WebApplicationFactory<Program>, IAsyncLifetime
         {
             config.AddInMemoryCollection(new Dictionary<string, string?>
             {
-                ["ConnectionStrings:Postgres"] = _db.GetConnectionString()
+                ["ConnectionStrings:Postgres"] = _db.GetConnectionString(),
+                ["RateLimit:AuthPermitLimit"] = "1000000"
             });
         });
     }

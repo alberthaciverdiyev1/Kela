@@ -3,6 +3,7 @@ using LanguageLMS.Core.Common.Entities;
 using LanguageLMS.Core.Common.MultiTenancy;
 using LanguageLMS.Core.Modules.Banner.Entities;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 
 namespace LanguageLMS.Core.Data;
 
@@ -14,10 +15,13 @@ public sealed class AppDbContext : DbContext
         typeof(Modules.PrivacyPolicy.Entities.PrivacyPolicy)
     ];
 
-    public AppDbContext(DbContextOptions<AppDbContext> options, ITenantProvider tenantProvider)
+    private readonly bool _strictTenant;
+
+    public AppDbContext(DbContextOptions<AppDbContext> options, ITenantProvider tenantProvider, IConfiguration configuration)
         : base(options)
     {
         CurrentTenantId = tenantProvider.TenantId;
+        _strictTenant = configuration.GetValue<bool>("Tenancy:Strict");
     }
 
     public long? CurrentTenantId { get; }
@@ -108,11 +112,14 @@ public sealed class AppDbContext : DbContext
         var parameter = Expression.Parameter(clrType, "e");
 
         var tenantValue = Expression.Property(Expression.Constant(this), nameof(CurrentTenantId));
-        var tenantIsNull = Expression.Equal(tenantValue, Expression.Constant(null, typeof(long?)));
         var tenantEquals = Expression.Equal(
             Expression.Convert(Expression.Property(parameter, "TenantId"), typeof(long?)),
             tenantValue);
-        Expression body = Expression.OrElse(tenantIsNull, tenantEquals);
+
+        // strict rejimdə tenant bilinmirsə heç nə göstərilmir; əks halda tenant bilinmirsə filtr tətbiq olunmur
+        Expression body = _strictTenant
+            ? tenantEquals
+            : Expression.OrElse(Expression.Equal(tenantValue, Expression.Constant(null, typeof(long?))), tenantEquals);
 
         if (withSoftDelete)
         {
