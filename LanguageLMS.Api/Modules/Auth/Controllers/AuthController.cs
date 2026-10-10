@@ -30,6 +30,11 @@ public sealed class AuthController(IAuthService service) : ApiControllerBase
     public async Task<ActionResult<ApiResponse<StudentResponse>>> Me(CancellationToken ct)
         => Success(await service.GetProfileAsync(StudentId, ct));
 
+    // Bir cihazda çoxlu hesab: başqa hesaba keçid → həmin hesabın tokeni qaytarılır
+    [HttpPost("switch-account")]
+    public async Task<ActionResult<ApiResponse<AuthResponse>>> SwitchAccount([FromBody] LoginRequest request, CancellationToken ct)
+        => Success(await service.LoginAsync(request, ct), "Login successful");
+
     [Authorize(Policy = AuthPolicies.Student)]
     [HttpPost("logout")]
     public ActionResult<ApiResponse<string>> Logout() => SuccessMessage("Logged out");
