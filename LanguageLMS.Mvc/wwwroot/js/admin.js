@@ -35,17 +35,20 @@ window.AdminUI = (function () {
 
     async function get(url) { return (await fetch(url)).json(); }
 
-    async function post(url, data) {
-        const fd = new FormData();
-        Object.entries(data || {}).forEach(([k, v]) => fd.append(k, v));
-
-        const res = await fetch(url, { method: 'POST', body: fd, headers: { 'RequestVerificationToken': token() } });
+    async function postForm(url, formData) {
+        const res = await fetch(url, { method: 'POST', body: formData, headers: { 'RequestVerificationToken': token() } });
         let body = null;
         try { body = await res.json(); } catch (e) { /* boş */ }
         return { ok: res.ok, status: res.status, data: body };
     }
 
+    async function post(url, data) {
+        const fd = new FormData();
+        Object.entries(data || {}).forEach(([k, v]) => fd.append(k, v));
+        return postForm(url, fd);
+    }
+
     function reloadAfter(delay) { setTimeout(() => location.reload(), delay || 700); }
 
-    return { notify, error, confirmDelete, get, post, reloadAfter };
+    return { notify, error, confirmDelete, get, post, postForm, token, reloadAfter };
 })();
