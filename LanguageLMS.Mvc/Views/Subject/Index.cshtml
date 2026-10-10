@@ -1,0 +1,131 @@
+@model PagedResponse<SubjectResponse>
+@{
+    ViewData["Title"] = "Fənlər";
+}
+
+<div class="mb-5 flex items-center justify-between">
+    <h2 class="text-xl font-semibold text-slate-800">Fənlər</h2>
+    <button type="button" onclick="openCreate()"
+            class="rounded-lg bg-primary px-4 py-2 text-sm font-medium text-white hover:bg-primary-600">
+        + Yeni fənn
+    </button>
+</div>
+
+<form method="get" class="mb-4 flex gap-2">
+    <input name="search" value="@Context.Request.Query["search"]" placeholder="Ad üzrə axtar..."
+           class="w-64 rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-primary focus:outline-none" />
+    <button class="rounded-lg bg-navy px-4 py-2 text-sm font-medium text-white hover:bg-navy-700">Axtar</button>
+</form>
+
+<div class="overflow-hidden rounded-xl border border-slate-200 bg-white">
+    <table class="w-full text-sm">
+        <thead class="bg-slate-50 text-left text-slate-500">
+            <tr>
+                <th class="px-4 py-3">#</th>
+                <th class="px-4 py-3">Ad</th>
+                <th class="px-4 py-3 text-right">Əməliyyatlar</th>
+            </tr>
+        </thead>
+        <tbody class="divide-y divide-slate-100" id="rows">
+        @foreach (var s in Model.Data)
+        {
+            <tr class="hover:bg-slate-50" data-id="@s.Id" data-name="@s.Name">
+                <td class="px-4 py-3 text-slate-400">@s.Id</td>
+                <td class="px-4 py-3 font-medium text-slate-800">@s.Name</td>
+                <td class="px-4 py-3">
+                    <div class="flex items-center justify-end gap-4">
+                        <button type="button" class="text-primary hover:text-primary-700"
+                                onclick="openEdit(@s.Id)">Redaktə</button>
+                        <button type="button" class="text-red-600 hover:text-red-800"
+                                onclick="removeItem(@s.Id)">Sil</button>
+                    </div>
+                </td>
+            </tr>
+        }
+        @if (Model.Data.Count == 0)
+        {
+            <tr><td colspan="3" class="px-4 py-10 text-center text-slate-400">Nəticə yoxdur</td></tr>
+        }
+        </tbody>
+    </table>
+</div>
+
+@if (Model.LastPage > 1)
+{
+    <div class="mt-4 flex flex-wrap gap-2">
+        @for (var i = 1; i <= Model.LastPage; i++)
+        {
+            <a asp-action="Index" asp-route-page="@i" asp-route-search="@Context.Request.Query["search"]"
+               class="rounded-lg px-3 py-1.5 text-sm @(i == Model.CurrentPage ? "bg-primary text-white" : "border border-slate-200 bg-white text-slate-600 hover:bg-slate-50")">@i</a>
+        }
+    </div>
+}
+
+<!-- Modal -->
+<div id="modal" class="fixed inset-0 z-40 hidden bg-black/40 p-4">
+    <div class="mx-auto mt-24 w-full max-w-md rounded-xl bg-white p-6">
+        <h3 id="modalTitle" class="mb-4 text-lg font-semibold text-slate-800">Yeni fənn</h3>
+        <div id="formError" class="mb-3 hidden rounded-lg bg-red-50 px-3 py-2 text-sm text-red-600"></div>
+        <form id="subjectForm">
+            <input type="hidden" id="subjectId" />
+            <label class="mb-1 block text-sm font-medium text-slate-700">Ad</label>
+            <input id="name" name="name" class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-primary focus:outline-none" />
+            <div class="mt-5 flex justify-end gap-3">
+                <button type="button" onclick="closeModal()" class="rounded-lg border border-slate-300 px-4 py-2 text-sm text-slate-600">İmtina</button>
+                <button type="submit" class="rounded-lg bg-primary px-4 py-2 text-sm font-medium text-white hover:bg-primary-600">Yadda saxla</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<form id="antiforgery">@Html.AntiForgeryToken()</form>
+
+@section Scripts {
+<script>
+    const modal = document.getElementById('modal');
+    const form = document.getElementById('subjectForm');
+    const errBox = document.getElementById('formError');
+    const token = document.querySelector('#antiforgery input[name="__RequestVerificationToken"]').value;
+
+    function showModal() { modal.classList.remove('hidden'); }
+    function closeModal() { modal.classList.add('hidden'); errBox.classList.add('hidden'); }
+
+    function openCreate() {
+        document.getElementById('modalTitle').textContent = 'Yeni fənn';
+        document.getElementById('subjectId').value = '';
+        document.getElementById('name').value = '';
+        showModal();
+    }
+
+    async function openEdit(id) {
+        const res = await fetch(`/Subject/Get?id=${id}`);
+        const data = await res.json();
+        document.getElementById('modalTitle').textContent = 'Fənn redaktəsi';
+        document.getElementById('subjectId').value = data.id;
+        document.getElementById('name').value = data.name;
+        showModal();
+    }
+
+    form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const id = document.getElementById('subjectId').value;
+        const fd = new FormData();
+        fd.append('name', document.getElementById('name').value);
+
+        const url = id ? `/Subject/Update?id=${id}` : '/Subject/Create';
+        const res = await fetch(url, { method: 'POST', body: fd, headers: { 'RequestVerificationToken': token } });
+        if (res.ok) { location.reload(); return; }
+
+        const body = await res.json();
+        errBox.textContent = body.errors ? Object.values(body.errors).flat().join(' • ') : 'Xəta baş verdi';
+        errBox.classList.remove('hidden');
+    });
+
+    async function removeItem(id) {
+        if (!confirm('Silinsin?')) return;
+        const fd = new FormData();
+        await fetch(`/Subject/Delete?id=${id}`, { method: 'POST', body: fd, headers: { 'RequestVerificationToken': token } });
+        location.reload();
+    }
+</script>
+}
