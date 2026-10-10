@@ -1,7 +1,7 @@
 using LanguageLMS.Core.Modules.Setting.Requests;
 using LanguageLMS.Core.Modules.Setting.Responses;
 
-namespace LanguageLMS.Core.Modules.Setting.Services;
+namespace LanguageLMS.Core.Modules.Setting.Abstractions;
 
 public interface ISettingService
 {

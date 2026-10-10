@@ -1,7 +1,7 @@
 using LanguageLMS.Core.Modules.PrivacyPolicy.Requests;
 using LanguageLMS.Core.Modules.PrivacyPolicy.Responses;
 
-namespace LanguageLMS.Core.Modules.PrivacyPolicy.Services;
+namespace LanguageLMS.Core.Modules.PrivacyPolicy.Abstractions;
 
 public interface IPrivacyPolicyService
 {

@@ -4,7 +4,7 @@ using LanguageLMS.Core.Modules.LessonContent.Responses;
 using LanguageLMS.Core.Modules.Quiz.Responses;
 using LanguageLMS.Core.Modules.Subject.Responses;
 
-namespace LanguageLMS.Core.Modules.StudentApp.Services;
+namespace LanguageLMS.Core.Modules.StudentApp.Abstractions;
 
 public record ContentCountResponse(int TopicExplain, int LiveVideo, int Pdf, int VoiceRecord, int TopicQuiz, int GeneralQuiz);
 

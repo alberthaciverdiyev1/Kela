@@ -1,7 +1,7 @@
 using LanguageLMS.Core.Modules.Permission.Requests;
 using LanguageLMS.Core.Modules.Permission.Responses;
 
-namespace LanguageLMS.Core.Modules.Permission.Services;
+namespace LanguageLMS.Core.Modules.Permission.Abstractions;
 
 public interface IPermissionService
 {

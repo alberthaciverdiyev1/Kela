@@ -2,7 +2,7 @@ using LanguageLMS.Core.Common.Responses;
 using LanguageLMS.Core.Modules.Lesson.Requests;
 using LanguageLMS.Core.Modules.Lesson.Responses;
 
-namespace LanguageLMS.Core.Modules.Lesson.Services;
+namespace LanguageLMS.Core.Modules.Lesson.Abstractions;
 
 public interface ILessonService
 {

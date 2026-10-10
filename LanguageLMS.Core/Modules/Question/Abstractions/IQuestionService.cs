@@ -2,7 +2,7 @@ using LanguageLMS.Core.Common.Responses;
 using LanguageLMS.Core.Modules.Question.Requests;
 using LanguageLMS.Core.Modules.Question.Responses;
 
-namespace LanguageLMS.Core.Modules.Question.Services;
+namespace LanguageLMS.Core.Modules.Question.Abstractions;
 
 public interface IQuestionService
 {

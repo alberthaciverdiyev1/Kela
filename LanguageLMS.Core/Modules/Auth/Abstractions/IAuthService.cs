@@ -1,7 +1,7 @@
 using LanguageLMS.Core.Modules.Auth.Requests;
 using LanguageLMS.Core.Modules.Auth.Responses;
 
-namespace LanguageLMS.Core.Modules.Auth.Services;
+namespace LanguageLMS.Core.Modules.Auth.Abstractions;
 
 public interface IAuthService
 {

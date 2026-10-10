@@ -1,4 +1,4 @@
-namespace LanguageLMS.Core.Modules.Auth.Services;
+namespace LanguageLMS.Core.Modules.Auth.Abstractions;
 
 public interface ITokenService
 {

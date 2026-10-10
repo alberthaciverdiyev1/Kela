@@ -1,7 +1,7 @@
 using LanguageLMS.Core.Modules.User.Requests;
 using LanguageLMS.Core.Modules.User.Responses;
 
-namespace LanguageLMS.Core.Modules.User.Services;
+namespace LanguageLMS.Core.Modules.User.Abstractions;
 
 public interface IUserAuthService
 {

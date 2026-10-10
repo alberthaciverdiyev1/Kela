@@ -1,7 +1,7 @@
 using LanguageLMS.Core.Modules.Progress.Requests;
 using LanguageLMS.Core.Modules.Progress.Responses;
 
-namespace LanguageLMS.Core.Modules.Progress.Services;
+namespace LanguageLMS.Core.Modules.Progress.Abstractions;
 
 public interface IProgressService
 {

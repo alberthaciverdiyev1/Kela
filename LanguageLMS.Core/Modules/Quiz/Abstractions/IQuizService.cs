@@ -3,7 +3,7 @@ using LanguageLMS.Core.Modules.Question.Responses;
 using LanguageLMS.Core.Modules.Quiz.Requests;
 using LanguageLMS.Core.Modules.Quiz.Responses;
 
-namespace LanguageLMS.Core.Modules.Quiz.Services;
+namespace LanguageLMS.Core.Modules.Quiz.Abstractions;
 
 public interface IQuizService
 {

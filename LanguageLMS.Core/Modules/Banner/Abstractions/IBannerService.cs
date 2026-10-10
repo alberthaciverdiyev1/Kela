@@ -2,7 +2,7 @@ using LanguageLMS.Core.Common.Responses;
 using LanguageLMS.Core.Modules.Banner.Requests;
 using LanguageLMS.Core.Modules.Banner.Responses;
 
-namespace LanguageLMS.Core.Modules.Banner.Services;
+namespace LanguageLMS.Core.Modules.Banner.Abstractions;
 
 public interface IBannerService
 {

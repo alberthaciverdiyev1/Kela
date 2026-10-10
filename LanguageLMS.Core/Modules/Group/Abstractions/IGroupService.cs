@@ -4,7 +4,7 @@ using LanguageLMS.Core.Modules.Group.Responses;
 using LanguageLMS.Core.Modules.Quiz.Responses;
 using LanguageLMS.Core.Modules.Subject.Responses;
 
-namespace LanguageLMS.Core.Modules.Group.Services;
+namespace LanguageLMS.Core.Modules.Group.Abstractions;
 
 public interface IGroupService
 {

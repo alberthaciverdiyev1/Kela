@@ -2,7 +2,7 @@ using LanguageLMS.Core.Common.Responses;
 using LanguageLMS.Core.Modules.Subject.Requests;
 using LanguageLMS.Core.Modules.Subject.Responses;
 
-namespace LanguageLMS.Core.Modules.Subject.Services;
+namespace LanguageLMS.Core.Modules.Subject.Abstractions;
 
 public interface ISubjectService
 {

@@ -2,7 +2,7 @@ using LanguageLMS.Core.Common.Responses;
 using LanguageLMS.Core.Modules.Notification.Requests;
 using LanguageLMS.Core.Modules.Notification.Responses;
 
-namespace LanguageLMS.Core.Modules.Notification.Services;
+namespace LanguageLMS.Core.Modules.Notification.Abstractions;
 
 public interface INotificationService
 {

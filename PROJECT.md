@@ -92,6 +92,7 @@ LanguageLMS.Mvc/     (Program.cs, Controllers, Models, Views)
 - ✅ Adım 32 — **Roles**: JWT `role` claim (`student`/`teacher`/`admin`) + policy'ler (`Student` / `Teacher`=teacher+admin / `Admin`). İçerik uçları → **Teacher**, istifadəçi idarəsi → **Admin**, şagird uçları → **Student**. Boşluqlar bağlandı (əvvəl hamısı açıq idi). + testler.
 - ✅ Adım 33 — **PrivacyPolicy**: `privacy_policies` (type + HTML content). `GET /api/privacy-policy[/{type}]` (public), `PUT /api/privacy-policy` (Teacher, upsert). + testler.
 - ✅ Adım 34 — **Group quiz statistikası** (`GroupQuizStatService`): `GET /api/group/{id}/quiz-stat?quiz_type=lesson|general` → qrupun quizləri üzrə hər şagirdin nəticəsi (attempted, correct, wrong, score %). Reference `GroupQuizStatController` məntiqi. + testler.
+- ✅ Adım 42 — **Refaktor**: servis interfeysləri `Modules/*/Abstractions/`-ə köçürüldü (Services-də yalnız tətbiqlər); Core+Api-də `GlobalUsings.cs`. + switch-account.
 - ✅ Adım 41 — **İncə icazələr (permissions)**: `permissions` + `role_permissions`; `HasPermission("x")` filter (admin bypass; rol üçün icazə təyin olunmayıbsa permissive); `/api/permission` (Admin: list/create/set-role). İçerik controller'larına tətbiq olundu. + testlər.
 - ✅ Adım 40 — **Quiz repeats**: `StudentQuiz.attempt_time` + `is_repeat` tətbiqi (təkrar quizlər çoxlu cəhd, digərləri yalnız 1). + testlər.
 - ✅ Adım 39 — **Sual şəkilləri**: `Question.title_type`/`variant_type` (text|image), şəkil yükləmə (`title_image`, `variant_x_image`), cavabda `titleUrl`/`variantXUrl`. + test.
@@ -127,4 +128,4 @@ LanguageLMS.Mvc/     (Program.cs, Controllers, Models, Views)
 - [ ] Admin (dashboard, sort order)
 
 ---
-_En son güncelleme: Adım 41 — İncə icazələr (permissions)._
+_En son güncelleme: Adım 42 — İnterfeyslər Abstractions/ folderinə köçürüldü._

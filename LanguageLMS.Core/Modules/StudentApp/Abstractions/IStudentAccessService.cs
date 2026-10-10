@@ -1,4 +1,4 @@
-namespace LanguageLMS.Core.Modules.StudentApp.Services;
+namespace LanguageLMS.Core.Modules.StudentApp.Abstractions;
 
 public record MembershipWindow(DateOnly Start, DateOnly? End);
 

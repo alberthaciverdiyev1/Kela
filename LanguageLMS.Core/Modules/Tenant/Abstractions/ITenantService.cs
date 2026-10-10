@@ -1,7 +1,7 @@
 using LanguageLMS.Core.Modules.Tenant.Requests;
 using LanguageLMS.Core.Modules.Tenant.Responses;
 
-namespace LanguageLMS.Core.Modules.Tenant.Services;
+namespace LanguageLMS.Core.Modules.Tenant.Abstractions;
 
 public interface ITenantService
 {
