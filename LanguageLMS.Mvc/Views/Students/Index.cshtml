@@ -1,0 +1,85 @@
+@{
+    ViewData["Title"] = "Şagirdlər";
+    var activeOptions = new List<SelectOption>
+    {
+        new() { Value = "", Text = "Hamısı" },
+        new() { Value = "true", Text = "Aktiv" },
+        new() { Value = "false", Text = "Deaktiv" }
+    };
+}
+
+<div class="mb-5 flex items-center justify-between">
+    <h2 class="text-xl font-semibold text-slate-800">Şagirdlər</h2>
+    <div class="flex gap-2">
+        <a href="/students/export" class="inline-flex items-center gap-2 rounded-lg border border-slate-300 bg-white px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50">
+            ⬇ Excel
+        </a>
+        <partial name="Ui/_Button" model="@(new ButtonModel { Text = "+ Şagird generasiya et", OnClick = "openGenerate()" })" />
+    </div>
+</div>
+
+<div class="mb-4 flex flex-wrap items-end gap-3">
+    <div class="w-64">
+        <partial name="Ui/_Input" model="@(new InputModel { Name = "search", Id = "search", Placeholder = "Ad / email / telefon..." })" />
+    </div>
+    <div class="w-40">
+        <partial name="Ui/_Select" model="@(new SelectModel { Name = "filter_active", Id = "filter_active", Label = "Status", Options = activeOptions })" />
+    </div>
+    <partial name="Ui/_Button" model="@(new ButtonModel { Text = "Axtar", Variant = "secondary", OnClick = "loadList(1)" })" />
+</div>
+
+<div class="relative overflow-hidden rounded-xl border border-slate-200 bg-white">
+    <div id="listLoader" class="absolute inset-0 z-10 hidden items-center justify-center bg-white/70">
+        <div class="h-9 w-9 animate-spin rounded-full border-4 border-slate-200 border-t-primary"></div>
+    </div>
+    <table class="w-full text-sm">
+        <thead class="bg-slate-50 text-left text-slate-500">
+            <tr>
+                <th class="px-4 py-3">#</th>
+                <th class="px-4 py-3">Ad</th>
+                <th class="px-4 py-3">Email</th>
+                <th class="px-4 py-3">Telefon</th>
+                <th class="px-4 py-3">Status</th>
+                <th class="px-4 py-3 text-right">Əməliyyatlar</th>
+            </tr>
+        </thead>
+        <tbody id="rows" class="divide-y divide-slate-100"></tbody>
+    </table>
+</div>
+
+<div id="pagination" class="mt-4 flex flex-wrap gap-2"></div>
+
+<!-- Generate modal -->
+<div id="generateModal" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/40 p-4">
+    <div class="w-full max-w-md rounded-xl bg-white shadow-xl">
+        <div class="flex items-center justify-between border-b border-slate-200 p-4">
+            <h3 class="text-lg font-semibold text-slate-800">Şagird generasiya et</h3>
+            <button type="button" onclick="closeGenerate()" class="rounded-lg p-1.5 text-slate-400 hover:bg-slate-100">✕</button>
+        </div>
+        <form id="generateForm" class="space-y-4 p-6">
+            <partial name="Ui/_Input" model="@(new InputModel { Name = "count", Id = "gen_count", Label = "Say", Type = "number", Value = "10" })" />
+            <partial name="Ui/_Input" model="@(new InputModel { Name = "fullNamePrefix", Id = "gen_prefix", Label = "Ad prefiksi", Value = "Student" })" />
+            <partial name="Ui/_Input" model="@(new InputModel { Name = "password", Id = "gen_password", Label = "Şifrə", Value = "student123" })" />
+            <div class="flex justify-end gap-3 pt-2">
+                <partial name="Ui/_Button" model="@(new ButtonModel { Text = "İmtina", Variant = "secondary", OnClick = "closeGenerate()" })" />
+                <partial name="Ui/_Button" model="@(new ButtonModel { Text = "Yarat", Type = "submit" })" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Devices modal -->
+<div id="devicesModal" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/40 p-4">
+    <div class="w-full max-w-md rounded-xl bg-white shadow-xl">
+        <div class="flex items-center justify-between border-b border-slate-200 p-4">
+            <h3 id="devicesTitle" class="text-lg font-semibold text-slate-800">Cihazlar</h3>
+            <button type="button" onclick="closeDevices()" class="rounded-lg p-1.5 text-slate-400 hover:bg-slate-100">✕</button>
+        </div>
+        <div class="p-4">
+            <div id="devicesList" class="space-y-2"></div>
+            <button type="button" onclick="unbindDevice()" class="mt-4 w-full rounded-lg border border-red-300 px-4 py-2 text-sm font-medium text-red-600 hover:bg-red-50">Cihazı sıfırla (kilidi aç)</button>
+        </div>
+    </div>
+</div>
+
+<form id="antiforgery">@Html.AntiForgeryToken()</form>
