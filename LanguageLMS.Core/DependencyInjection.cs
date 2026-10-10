@@ -45,7 +45,12 @@ public static class DependencyInjection
 
         // Depolama sağlayıcısı: Storage:Provider = "Local" | "BunnyCdn"
         var storageProvider = configuration["Storage:Provider"] ?? "Local";
-        if (string.Equals(storageProvider, "BunnyCdn", StringComparison.OrdinalIgnoreCase))
+        if (string.Equals(storageProvider, "R2", StringComparison.OrdinalIgnoreCase))
+        {
+            services.Configure<R2Options>(configuration.GetSection(R2Options.SectionName));
+            services.AddSingleton<IFileStorage, R2FileStorage>();
+        }
+        else if (string.Equals(storageProvider, "BunnyCdn", StringComparison.OrdinalIgnoreCase))
         {
             services.AddHttpClient<IFileStorage, BunnyCdnStorage>();
         }
