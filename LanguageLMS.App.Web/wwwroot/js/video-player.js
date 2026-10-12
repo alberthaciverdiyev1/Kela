@@ -33,3 +33,51 @@ window.lmsVideoPlayer = {
         }
     }
 };
+
+// In-app PDF görüntüləyici — pdf.js ilə (mobil brauzerlərdə iframe işləmədiyi üçün).
+window.lmsPdf = {
+    _worker: 'https://cdn.jsdelivr.net/npm/pdfjs-dist@3.11.174/build/pdf.worker.min.js',
+
+    fallbackIframe: function (container, url) {
+        container.innerHTML = '';
+        var f = document.createElement('iframe');
+        f.src = url;
+        f.style.width = '100%';
+        f.style.height = '80vh';
+        f.style.border = '0';
+        container.appendChild(f);
+    },
+
+    render: async function (container, url) {
+        if (!container || !url) return;
+        container.innerHTML = '';
+
+        var lib = window.pdfjsLib;
+        if (!lib) { this.fallbackIframe(container, url); return; }
+
+        try {
+            lib.GlobalWorkerOptions.workerSrc = this._worker;
+            var pdf = await lib.getDocument(url).promise;
+            for (var n = 1; n <= pdf.numPages; n++) {
+                var page = await pdf.getPage(n);
+                var viewport = page.getViewport({ scale: 1.5 });
+                var canvas = document.createElement('canvas');
+                canvas.width = viewport.width;
+                canvas.height = viewport.height;
+                canvas.style.width = '100%';
+                canvas.style.height = 'auto';
+                canvas.style.display = 'block';
+                canvas.style.marginBottom = '10px';
+                canvas.style.borderRadius = '8px';
+                container.appendChild(canvas);
+                await page.render({ canvasContext: canvas.getContext('2d'), viewport: viewport }).promise;
+            }
+        } catch (e) {
+            this.fallbackIframe(container, url);
+        }
+    },
+
+    clear: function (container) {
+        try { if (container) container.innerHTML = ''; } catch (e) { /* noop */ }
+    }
+};
