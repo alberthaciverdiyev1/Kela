@@ -15,6 +15,11 @@ public partial class Profile
     private int _groups;
     private int _quizzes;
     private int _completed;
+    private int _totalContents;
+    private int _completionPercent;
+    private int _attempts;
+    private int _averageScore;
+    private int _bestScore;
 
     protected override async Task OnInitializedAsync()
     {
@@ -22,8 +27,19 @@ public partial class Profile
         {
             _groups = (await Api.StudentGroupsAsync()).Count;
             _quizzes = (await Api.QuizzesAsync()).Count;
-            var progress = await Api.ProgressAsync();
-            _completed = progress.Items.Sum(i => i.CompletedContents);
+
+            var stats = await Api.StatisticsAsync();
+            _completed = stats.Overview.CompletedContents;
+            _totalContents = stats.Overview.TotalContents;
+            _completionPercent = stats.Overview.CompletionPercent;
+
+            var results = await Api.ResultsAsync();
+            _attempts = results.Count;
+            if (results.Count > 0)
+            {
+                _averageScore = (int)Math.Round(results.Average(r => r.ScorePercent));
+                _bestScore = results.Max(r => r.ScorePercent);
+            }
         }
         catch { }
     }
