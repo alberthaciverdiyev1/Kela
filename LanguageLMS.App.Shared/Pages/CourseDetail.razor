@@ -1,5 +1,6 @@
 @page "/courses/{GroupId:long}"
 @inject AppApi Api
+@inject NavigationManager Nav
 
 <PageTitle>Course</PageTitle>
 
@@ -43,6 +44,13 @@
             var groups = await Api.GroupsAsync();
             Name = groups.FirstOrDefault(g => g.Id == GroupId)?.Name;
             _subjects = await Api.SubjectsAsync(GroupId);
+
+            // Qrupda tək fənn varsa, fənn siyahısını göstərmədən birbaşa dərslərə keç
+            if (_subjects.Count == 1)
+            {
+                Nav.NavigateTo($"/subjects/{_subjects[0].Id}", replace: true);
+                return;
+            }
         }
         catch { }
         _loading = false;
