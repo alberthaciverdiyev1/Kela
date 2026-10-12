@@ -1,0 +1,10 @@
+@* Fənn kartı — GroupDetail üçün. *@
+<a href="/subjects/@Subject.Id" class="flex items-center gap-4 rounded-2xl border border-brand-090 bg-white p-4 shadow-[0_4px_15px_rgba(36,78,62,0.03)]">
+    <div class="flex size-11 shrink-0 items-center justify-center rounded-xl bg-brand-081 text-brand-698"><Icon Name="book" Class="size-5" /></div>
+    <p class="min-w-0 flex-1 truncate text-[14px] font-semibold text-brand-776">@Subject.Name</p>
+    <Icon Name="chevron-right" Class="size-4 text-sage-300" />
+</a>
+
+@code {
+    [Parameter, EditorRequired] public Subject Subject { get; set; } = default!;
+}

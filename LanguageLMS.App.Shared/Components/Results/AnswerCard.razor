@@ -1,0 +1,20 @@
+@* Bir sualın cavab təhlili — ResultsDetail üçün. *@
+<div class="rounded-2xl border bg-white p-4 shadow-[0_4px_15px_rgba(36,78,62,0.03)] @(Item.IsRight ? "border-brand-149" : "border-danger-043")">
+    <div class="flex items-start gap-3">
+        <div class="mt-0.5 flex size-6 shrink-0 items-center justify-center rounded-full @(Item.IsRight ? "bg-brand-671 text-white" : "bg-danger-539 text-white")">
+            <Icon Name="@(Item.IsRight ? "check" : "x")" Class="size-3.5" />
+        </div>
+        <div class="min-w-0 flex-1">
+            <p class="text-[13px] font-semibold leading-5 text-brand-776">@Number. @Item.Title</p>
+            <div class="mt-2 flex flex-wrap items-center gap-x-4 gap-y-1 text-[11px]">
+                <span class="text-sage-410">Sizin cavab: <b class="@(Item.IsRight ? "text-brand-671" : "text-danger-539")">@(string.IsNullOrEmpty(Item.StudentAnswer) ? "—" : Item.StudentAnswer)</b></span>
+                <span class="text-sage-410">Doğru cavab: <b class="text-brand-671">@Item.CorrectAnswer</b></span>
+            </div>
+        </div>
+    </div>
+</div>
+
+@code {
+    [Parameter, EditorRequired] public QuizResultItem Item { get; set; } = default!;
+    [Parameter] public int Number { get; set; }
+}

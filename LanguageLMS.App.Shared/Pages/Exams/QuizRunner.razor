@@ -2,13 +2,9 @@
 @inject AppApi Api
 @inject NavigationManager Nav
 
-<PageTitle>Exam</PageTitle>
+<PageTitle>İmtahan</PageTitle>
 
-<header class="flex h-[72px] items-center justify-between border-b border-brand-080 bg-brand-027 px-5">
-    <a href="/exams" class="flex size-10 items-center justify-center rounded-full bg-white text-brand-600 shadow-sm"><Icon Name="arrow-left" Class="size-5" /></a>
-    <h1 class="max-w-[220px] truncate text-[16px] font-bold tracking-[-0.04em] text-brand-784">@(_quiz?.Title ?? "Exam")</h1>
-    <span class="size-10"></span>
-</header>
+<PageHeader Title="@(_quiz?.Title ?? "İmtahan")" Back="/exams"/>
 
 <div class="px-5 pb-28 pt-6">
     @if (_error is not null) { <p class="text-sm text-danger-539">@_error</p> }
@@ -21,8 +17,8 @@
         </div>
         <a href="/results" class="mt-5 block rounded-2xl bg-brand-639 py-4 text-center text-sm font-bold text-white">Nəticələrə keç</a>
     }
-    else if (_quiz is null) { <p class="text-sm text-sage-410">İmtahan başladılır...</p> }
-    else if (_quiz.Questions.Count == 0) { <p class="text-sm text-sage-410">Bu imtahanda sual yoxdur.</p> }
+    else if (_quiz is null) { <Loader/> }
+    else if (_quiz.Questions.Count == 0) { <EmptyState Text="Bu imtahanda sual yoxdur."/> }
     else
     {
         var q = _quiz.Questions[_index];

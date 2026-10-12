@@ -4,13 +4,9 @@
 @inject NavigationManager Nav
 @inject AudioPlayerService Player
 
-<PageTitle>Lesson</PageTitle>
+<PageTitle>Dərs</PageTitle>
 
-<header class="flex h-[72px] items-center justify-between border-b border-brand-080 bg-brand-027 px-5">
-    <a href="javascript:history.back()" class="flex size-10 items-center justify-center rounded-full bg-white text-brand-600 shadow-sm"><Icon Name="arrow-left" Class="size-5" /></a>
-    <h1 class="max-w-[220px] truncate text-[18px] font-bold tracking-[-0.04em] text-brand-784">Dərs</h1>
-    <span class="size-10"></span>
-</header>
+<PageHeader Title="Dərs" Back="javascript:history.back()"/>
 
 @if (_loading)
 {
@@ -18,7 +14,7 @@
 }
 else if (_contents.Count == 0)
 {
-    <p class="px-5 py-10 text-sm text-sage-410">Bu dərs üzrə material yoxdur.</p>
+    <EmptyState Text="Bu dərs üzrə material yoxdur." Class="px-5 py-10 text-sm text-sage-410"/>
 }
 else
 {
@@ -51,21 +47,11 @@ else
             <section class="mt-3 flex flex-col gap-3">
                 @foreach (var c in _others)
                 {
-                    var done = IsDone(c.Id);
-                    <div class="flex items-center gap-4 rounded-2xl border border-brand-090 bg-white p-4 shadow-[0_4px_15px_rgba(36,78,62,0.03)]">
-                        <div class="flex size-11 shrink-0 items-center justify-center rounded-xl bg-brand-081 text-brand-698"><Icon Name="@IconFor(c.Type)" Class="size-5" /></div>
-                        <div class="min-w-0 flex-1">
-                            <p class="truncate text-[14px] font-semibold text-brand-776">@c.Title</p>
-                            <p class="mt-0.5 text-[11px] text-sage-382">@c.TypeLabel@(c.DurationSeconds is > 0 ? $" · {c.DurationSeconds}s" : "")</p>
-                        </div>
-                        @if (!string.IsNullOrEmpty(c.Url) || !string.IsNullOrEmpty(c.PlaybackUrl))
-                        {
-                            <button type="button" @onclick="() => Open(c)" class="rounded-lg px-2.5 py-1.5 text-[12px] font-bold text-brand-639">Aç</button>
-                        }
-                        <button type="button" @onclick="() => MarkAsync(c.Id)" disabled="@done" class="rounded-lg px-2.5 py-1.5 text-[12px] font-bold @(done ? "text-sage-410" : "text-brand-671")">
-                            @(done ? "✓ Tamam" : "Tamamlandı")
-                        </button>
-                    </div>
+                    <ContentRow Content="c"
+                                Done="IsDone(c.Id)"
+                                ShowOpen="@(!string.IsNullOrEmpty(c.Url) || !string.IsNullOrEmpty(c.PlaybackUrl))"
+                                OnOpen="() => Open(c)"
+                                OnMark="() => MarkAsync(c.Id)"/>
                 }
             </section>
         }
@@ -76,14 +62,7 @@ else
             <section class="mt-3 flex flex-col gap-3">
                 @foreach (var q in _quizzes)
                 {
-                    <a href="/exams/@q.Id" class="flex items-center gap-4 rounded-2xl border border-brand-090 bg-white p-4 shadow-[0_4px_15px_rgba(36,78,62,0.03)]">
-                        <div class="flex size-11 shrink-0 items-center justify-center rounded-xl bg-brand-083 text-brand-698"><Icon Name="clipboard-check" Class="size-5" /></div>
-                        <div class="min-w-0 flex-1">
-                            <p class="truncate text-[14px] font-semibold text-brand-776">@q.Title</p>
-                            <p class="mt-0.5 text-[11px] text-sage-382">@q.QuestionCount sual · @q.DurationMinutes dəq</p>
-                        </div>
-                        <Icon Name="chevron-right" Class="size-4 text-sage-300" />
-                    </a>
+                    <QuizCard Quiz="q"/>
                 }
             </section>
         }
@@ -121,13 +100,10 @@ else
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        if (_video is not null && !string.IsNullOrEmpty(_videoUrl))
+        if (_video is not null && !string.IsNullOrEmpty(_videoUrl) && _attached != _videoUrl)
         {
-            if (_attached != _videoUrl)
-            {
-                await JS.InvokeVoidAsync("lmsVideoPlayer.attach", _videoRef, _videoUrl);
-                _attached = _videoUrl;
-            }
+            _attached = _videoUrl;
+            await JS.InvokeVoidAsync("lmsVideoPlayer.attach", _videoRef, _videoUrl);
         }
     }
 
@@ -157,14 +133,6 @@ else
 
         Nav.NavigateTo($"/document?url={Uri.EscapeDataString(url)}&title={Uri.EscapeDataString(c.Title)}");
     }
-
-    private static string IconFor(string? type) => type switch
-    {
-        "video" => "play",
-        "file" => "file",
-        "voice" => "chart",
-        _ => "book"
-    };
 
     private static string Absolute(string? url)
     {

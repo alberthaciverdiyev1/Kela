@@ -1,6 +1,6 @@
 @import "tailwindcss";
-@source "../**/*.razor";
-@source "../**/*.cs";
+@source "../../**/*.razor";
+@source "../../**/*.cs";
 
 @theme {
   /* brand */

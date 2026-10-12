@@ -143,13 +143,13 @@ fi
 # ------------------------------------------------------------------
 if [ "$ENABLE_APP" = "1" ]; then
   echo "==> [APP] Tailwind CSS (App.Shared)"
-  build_css "LanguageLMS.App.Shared/Styles/app.css" "$APP_CSS" "app.css"
+  build_css "LanguageLMS.App.Shared/wwwroot/css/input.css" "$APP_CSS" "app.css"
 
   echo "==> [APP] Tailwind (watch, nəzarətçi)"
   start bash -c "cd '$ROOT/LanguageLMS.App.Shared' || exit 1
 while true; do
-  '$TAILWIND' -i ./Styles/app.css -o ./wwwroot/css/app.css --watch
-  [ -s wwwroot/css/app.css ] || '$TAILWIND' -i ./Styles/app.css -o ./wwwroot/css/app.css --minify
+  '$TAILWIND' -i ./wwwroot/css/input.css -o ./wwwroot/css/app.css --watch
+  [ -s wwwroot/css/app.css ] || '$TAILWIND' -i ./wwwroot/css/input.css -o ./wwwroot/css/app.css --minify
   sleep 1
 done"
 

@@ -1,19 +1,14 @@
 @page "/document"
 @implements IAsyncDisposable
-@inject NavigationManager Nav
 @inject IJSRuntime JS
 
 <PageTitle>Sənəd</PageTitle>
 
-<header class="sticky top-0 z-20 flex h-[72px] items-center justify-between border-b border-brand-080 bg-brand-027 px-5">
-    <a href="javascript:history.back()" class="flex size-10 items-center justify-center rounded-full bg-white text-brand-600 shadow-sm"><Icon Name="arrow-left" Class="size-5" /></a>
-    <h1 class="max-w-[200px] truncate text-[16px] font-bold tracking-[-0.04em] text-brand-784">@(string.IsNullOrWhiteSpace(_title) ? "Sənəd" : _title)</h1>
-    <span class="size-10"></span>
-</header>
+<PageHeader Title="@(string.IsNullOrWhiteSpace(_title) ? "Sənəd" : _title)" Back="javascript:history.back()" Sticky="true"/>
 
 @if (string.IsNullOrEmpty(_url))
 {
-    <p class="px-5 py-10 text-sm text-sage-410">Sənəd tapılmadı.</p>
+    <EmptyState Text="Sənəd tapılmadı." Class="px-5 py-10 text-sm text-sage-410"/>
 }
 else
 {
