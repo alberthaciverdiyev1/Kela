@@ -32,6 +32,7 @@ public sealed class AppApi(ApiClient api)
 
     // --- Quizzes ---
     public Task<List<QuizItem>> QuizzesAsync() => api.GetAsync<List<QuizItem>>("/api/student/quizzes");
+    public Task<List<QuizItem>> LessonQuizzesAsync(long lessonId) => api.GetAsync<List<QuizItem>>($"/api/student/lessons/{lessonId}/quizzes");
     public Task<StartQuizResult> StartQuizAsync(long quizId) => api.PostAsync<StartQuizResult>("/api/student-quiz/start", new { quizId });
     public Task<CompleteQuizResult> CompleteQuizAsync(long attemptId, IEnumerable<(long QuestionId, string? Answer)> answers)
         => api.PostAsync<CompleteQuizResult>("/api/student-quiz/complete", new

@@ -22,4 +22,6 @@ public interface IStudentAppService
     Task<ContentCountResponse> GetContentCountAsync(long studentId, long lessonId, CancellationToken ct = default);
 
     Task<IReadOnlyList<QuizResponse>> ListQuizzesAsync(long studentId, CancellationToken ct = default);
+
+    Task<IReadOnlyList<QuizResponse>> ListLessonQuizzesAsync(long studentId, long lessonId, CancellationToken ct = default);
 }

@@ -160,6 +160,19 @@ public sealed class StudentAppService(
             .ToListAsync(ct);
     }
 
+    public async Task<IReadOnlyList<QuizResponse>> ListLessonQuizzesAsync(long studentId, long lessonId, CancellationToken ct = default)
+    {
+        return await (from gq in db.GroupQuizzes.AsNoTracking()
+                      join q in db.Quizzes.AsNoTracking() on gq.QuizId equals q.Id
+                      where q.LessonId == lessonId
+                            && db.StudentGroups.Any(sg => sg.GroupId == gq.GroupId && sg.StudentId == studentId)
+                      orderby gq.Id
+                      select new QuizResponse(
+                          q.Id, q.LessonId, q.Title, q.DurationMinutes, q.Type, q.IsActive, q.IsRepeat, q.SortOrder,
+                          db.QuizQuestions.Count(qq => qq.QuizId == q.Id)))
+            .ToListAsync(ct);
+    }
+
     /// <summary>Şagirdin tarixli üzvülük pəncərələri varsa, yalnız həmin aralıqlarda yaradılan qeydlər qalır.</summary>
     private async Task<List<T>> ApplyWindowsAsync<T>(
         long studentId, long subjectId, List<T> items, Func<T, DateTimeOffset> createdAt, CancellationToken ct)
