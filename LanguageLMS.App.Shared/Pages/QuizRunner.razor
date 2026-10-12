@@ -80,6 +80,7 @@
             var answers = _quiz.Questions.Select(q =>
                 (q.Id, _answers.TryGetValue(q.Id, out var a) ? a : null));
             _result = await Api.CompleteQuizAsync(_quiz.AttemptId, answers);
+            Nav.NavigateTo($"/results/{_result.AttemptId}");
         }
         catch (Exception ex) { _error = ex.Message; }
         finally { _busy = false; }

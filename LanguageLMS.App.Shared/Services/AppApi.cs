@@ -41,6 +41,7 @@ public sealed class AppApi(ApiClient api)
             answers = answers.Select(a => new { questionId = a.QuestionId, answer = a.Answer })
         });
     public Task<List<QuizResultSummary>> ResultsAsync() => api.GetAsync<List<QuizResultSummary>>("/api/student-quiz/results");
+    public Task<QuizResultDetail> ResultDetailAsync(long attemptId) => api.GetAsync<QuizResultDetail>($"/api/student-quiz/results/{attemptId}");
 
     // --- Progress ---
     public Task<ProgressOverview> ProgressAsync() => api.GetAsync<ProgressOverview>("/api/progress");
