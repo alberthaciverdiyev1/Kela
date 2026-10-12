@@ -20,6 +20,10 @@ ENABLE_WEB="${ENABLE_WEB:-1}"
 ENABLE_APP="${ENABLE_APP:-1}"
 HEALTH_URL="${HEALTH_URL:-$API_URL/openapi/v1.json}"
 
+# Hər watcher üçün ayrı artifacts/output qovluğu — paylaşılan LanguageLMS.Core-un
+# eyni bin qovluğuna paralel build olunmasının qarşısını alır (file lock xətası).
+ARTIFACTS="$ROOT/.dev-artifacts"
+
 TAILWIND="$ROOT/LanguageLMS.Mvc/node_modules/.bin/tailwindcss"
 MVC_CSS="LanguageLMS.Mvc/wwwroot/css/app.css"
 APP_CSS="LanguageLMS.App.Shared/wwwroot/css/app.css"
@@ -126,10 +130,10 @@ while true; do
 done"
 
   echo "==> [WEB] API (watch): $API_URL"
-  ASPNETCORE_URLS="$API_URL" start dotnet watch --project LanguageLMS.Api run --no-launch-profile
+  ASPNETCORE_URLS="$API_URL" start dotnet watch --project LanguageLMS.Api --artifacts-path "$ARTIFACTS/api" run --no-launch-profile
 
   echo "==> [WEB] MVC (watch): $MVC_URL"
-  ASPNETCORE_URLS="$MVC_URL" start dotnet watch --project LanguageLMS.Mvc run --no-launch-profile
+  ASPNETCORE_URLS="$MVC_URL" start dotnet watch --project LanguageLMS.Mvc --artifacts-path "$ARTIFACTS/mvc" run --no-launch-profile
 else
   echo "==> [WEB] atlanır (ENABLE_WEB=0)"
 fi
@@ -150,7 +154,7 @@ while true; do
 done"
 
   echo "==> [APP] Blazor WASM (LanguageLMS.App.Web, watch): $APP_URL"
-  ASPNETCORE_URLS="$APP_URL" start dotnet watch --project LanguageLMS.App.Web run --no-launch-profile
+  ASPNETCORE_URLS="$APP_URL" start dotnet watch --project LanguageLMS.App.Web --artifacts-path "$ARTIFACTS/app" run --no-launch-profile
 else
   echo "==> [APP] atlanır (ENABLE_APP=0)"
 fi

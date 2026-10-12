@@ -6,9 +6,20 @@ obj/
 
 # Node / Tailwind
 node_modules/
+node_modules
+
+# Flutter / Dart
+.dart_tool/
+.flutter-plugins
+.flutter-plugins-dependencies
+.packages
+build/
 
 # OS
 .DS_Store
+
+# dev.sh per-watcher build output
+.dev-artifacts/
 
 # Yüklenen dosyalar (paylaşımlı)
 uploads/
