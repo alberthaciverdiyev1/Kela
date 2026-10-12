@@ -44,4 +44,6 @@ public sealed class AppApi(ApiClient api)
     // --- Progress ---
     public Task<ProgressOverview> ProgressAsync() => api.GetAsync<ProgressOverview>("/api/progress");
     public Task MarkCompletedAsync(long contentId) => api.PostAsync<object>("/api/progress", new { contentId });
+    
+    public Task<List<BannerResponse>> BannersAsync() => api.GetAsync<List<BannerResponse>>("/api/banner");
 }
