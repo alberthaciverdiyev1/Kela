@@ -1,8 +1,7 @@
 using System.Net.Http.Headers;
-using System.Net.Http.Json;
-using System.Text.Json;
+using LanguageLMS.Core.Common.MultiTenancy;
 using LanguageLMS.Core.Data;
-using UserEntity = LanguageLMS.Core.Modules.User.Entities.User;
+using LanguageLMS.Core.Modules.Auth.Abstractions;
 using UserTypes = LanguageLMS.Core.Modules.User.Entities.UserTypes;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
@@ -23,32 +22,25 @@ public sealed class ApiFactory : WebApplicationFactory<Program>, IAsyncLifetime
     {
         await _db.StartAsync();
 
-        using var scope = Services.CreateScope();
-        var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
-        await db.Database.MigrateAsync();
-
-        // admin seed (test üçün)
-        db.Users.Add(new UserEntity
+        // Program startup-da seed edir, ona görə host işə düşməzdən ƏVVƏL migrasiyaları tətbiq et.
+        var options = new DbContextOptionsBuilder<AppDbContext>()
+            .UseNpgsql(_db.GetConnectionString())
+            .Options;
+        await using (var db = new AppDbContext(options, new NullTenantProvider(), new ConfigurationBuilder().Build()))
         {
-            Name = "Admin",
-            Email = "admin@test.local",
-            PasswordHash = BCrypt.Net.BCrypt.HashPassword("admin123"),
-            Type = UserTypes.Admin
-        });
-        await db.SaveChangesAsync();
-
-        var client = CreateClient();
-        var login = await client.PostAsJsonAsync("/api/user-auth/login", new { email = "admin@test.local", password = "admin123" });
-        var body = await login.Content.ReadAsStringAsync();
-        if (!login.IsSuccessStatusCode)
-        {
-            throw new InvalidOperationException($"Admin login failed: {(int)login.StatusCode} {body}");
+            await db.Database.MigrateAsync();
         }
-        var doc = JsonDocument.Parse(body);
-        AdminToken = doc.RootElement.GetProperty("data").GetProperty("token").GetString()!;
+
+        // Host-ı işə sal (Program admin + icazələri seed edir) və admin tokeni yarat.
+        using var scope = Services.CreateScope();
+        var admin = await scope.ServiceProvider.GetRequiredService<AppDbContext>()
+            .Users.IgnoreQueryFilters().FirstAsync(u => u.Type == UserTypes.Admin);
+
+        var tokens = scope.ServiceProvider.GetRequiredService<ITokenService>();
+        AdminToken = tokens.CreateToken(admin.Id, admin.Email, admin.Name ?? "Admin", "admin", 0);
     }
 
-    /// <summary>Admin (bütün teacher uçlarına da girişi var) ilə autentifikasiyalı client.</summary>
+    /// <summary>Admin tokeni ilə client — şagird olmayan istifadəçi yoxlamaları üçün.</summary>
     public HttpClient TeacherClient()
     {
         var client = CreateClient();
@@ -73,6 +65,11 @@ public sealed class ApiFactory : WebApplicationFactory<Program>, IAsyncLifetime
     {
         await _db.DisposeAsync();
         Dispose();
+    }
+
+    private sealed class NullTenantProvider : ITenantProvider
+    {
+        public long? TenantId => null;
     }
 }
 

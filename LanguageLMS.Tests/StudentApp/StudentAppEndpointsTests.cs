@@ -30,28 +30,6 @@ public class StudentAppEndpointsTests(ApiFactory factory)
         return (data.GetProperty("user").GetProperty("id").GetInt64(), data.GetProperty("token").GetString()!);
     }
 
-    private async Task<long> CreateSubjectAsync()
-    {
-        var r = await _client.PostAsync("/api/subject", new MultipartFormDataContent { { new StringContent(Unique("Subject")), "name" } });
-        return (await ReadJsonAsync(r)).GetProperty("data").GetProperty("id").GetInt64();
-    }
-
-    private async Task<long> CreateLessonAsync(long subjectId)
-    {
-        var form = new MultipartFormDataContent
-        {
-            { new StringContent(subjectId.ToString()), "subject_id" },
-            { new StringContent(Unique("Lesson")), "title" }
-        };
-        return (await ReadJsonAsync(await _client.PostAsync("/api/lesson", form))).GetProperty("data").GetProperty("id").GetInt64();
-    }
-
-    private async Task<long> CreateGroupAsync()
-    {
-        var r = await _client.PostAsync("/api/group", new MultipartFormDataContent { { new StringContent(Unique("Group")), "name" } });
-        return (await ReadJsonAsync(r)).GetProperty("data").GetProperty("id").GetInt64();
-    }
-
     private async Task<HttpClient> StudentClientAsync(string token)
     {
         var c = factory.CreateClient();
@@ -63,12 +41,12 @@ public class StudentAppEndpointsTests(ApiFactory factory)
     public async Task Student_sees_assigned_content_chain()
     {
         var (studentId, token) = await RegisterStudentAsync();
-        var subjectId = await CreateSubjectAsync();
-        var lessonId = await CreateLessonAsync(subjectId);
-        var groupId = await CreateGroupAsync();
+        var subjectId = await TestData.SubjectAsync(factory, Unique("Subject"));
+        var lessonId = await TestData.LessonAsync(factory, subjectId, Unique("Lesson"));
+        var groupId = await TestData.GroupAsync(factory, Unique("Group"));
 
-        await _client.PostAsJsonAsync($"/api/group/{groupId}/subjects", new { subjectIds = new[] { subjectId } });
-        await _client.PostAsJsonAsync($"/api/group/{groupId}/students", new { studentIds = new[] { studentId } });
+        await TestData.AssignSubjectsAsync(factory, groupId, subjectId);
+        await TestData.AssignStudentsAsync(factory, groupId, new[] { studentId });
 
         var student = await StudentClientAsync(token);
 
@@ -89,9 +67,9 @@ public class StudentAppEndpointsTests(ApiFactory factory)
     public async Task Student_of_other_group_gets_forbidden()
     {
         var (_, token) = await RegisterStudentAsync();
-        var subjectId = await CreateSubjectAsync();
-        var groupId = await CreateGroupAsync();
-        await _client.PostAsJsonAsync($"/api/group/{groupId}/subjects", new { subjectIds = new[] { subjectId } });
+        var subjectId = await TestData.SubjectAsync(factory, Unique("Subject"));
+        var groupId = await TestData.GroupAsync(factory, Unique("Group"));
+        await TestData.AssignSubjectsAsync(factory, groupId, subjectId);
 
         var student = await StudentClientAsync(token);
         var response = await student.GetAsync($"/api/student/groups/{groupId}/subjects");
@@ -103,20 +81,10 @@ public class StudentAppEndpointsTests(ApiFactory factory)
         => Assert.Equal(HttpStatusCode.Unauthorized, (await factory.CreateClient().GetAsync("/api/student/groups")).StatusCode);
 
     [Fact]
-    public async Task User_token_cannot_access_student_endpoints()
+    public async Task Non_student_token_cannot_access_student_endpoints()
     {
-        // create + login a teacher
-        var email = $"teacher-{Guid.NewGuid():N}@example.com";
-        var form = new MultipartFormDataContent
-        {
-            { new StringContent("T"), "name" }, { new StringContent(email), "email" },
-            { new StringContent("teacher"), "type" }, { new StringContent("secret123"), "password" }
-        };
-        await _client.PostAsync("/api/user", form);
-        var login = await _client.PostAsJsonAsync("/api/user-auth/login", new { email, password = "secret123" });
-        var token = (await ReadJsonAsync(login)).GetProperty("data").GetProperty("token").GetString();
-
-        var teacher = await StudentClientAsync(token!);
-        Assert.Equal(HttpStatusCode.Forbidden, (await teacher.GetAsync("/api/student/groups")).StatusCode);
+        // admin (teacher) tokeni şagird uclarına girə bilməməlidir
+        var admin = await StudentClientAsync(factory.AdminToken);
+        Assert.Equal(HttpStatusCode.Forbidden, (await admin.GetAsync("/api/student/groups")).StatusCode);
     }
 }

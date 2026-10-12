@@ -8,6 +8,7 @@ namespace LanguageLMS.Tests.Progress;
 [Collection("api")]
 public class ProgressEndpointsTests(ApiFactory factory)
 {
+    // şagird qeydiyyatı üçün client (aranjiman TestData servisləri ilə edilir)
     private readonly HttpClient _client = factory.TeacherClient();
 
     private static string Unique(string prefix) => $"{prefix}-{Guid.NewGuid():N}";
@@ -27,36 +28,6 @@ public class ProgressEndpointsTests(ApiFactory factory)
         return (data.GetProperty("user").GetProperty("id").GetInt64(), data.GetProperty("token").GetString()!);
     }
 
-    private async Task<long> CreateSubjectAsync()
-    {
-        var r = await _client.PostAsync("/api/subject", new MultipartFormDataContent { { new StringContent(Unique("Subject")), "name" } });
-        return (await ReadJsonAsync(r)).GetProperty("data").GetProperty("id").GetInt64();
-    }
-
-    private async Task<long> CreateLessonAsync(long subjectId)
-    {
-        var form = new MultipartFormDataContent
-        {
-            { new StringContent(subjectId.ToString()), "subject_id" },
-            { new StringContent(Unique("Lesson")), "title" }
-        };
-        return (await ReadJsonAsync(await _client.PostAsync("/api/lesson", form))).GetProperty("data").GetProperty("id").GetInt64();
-    }
-
-    private async Task<long> CreateContentAsync(long lessonId)
-    {
-        var form = new MultipartFormDataContent
-        {
-            { new StringContent(lessonId.ToString()), "lesson_id" },
-            { new StringContent(Unique("Content")), "title" },
-            { new StringContent("video"), "type" }
-        };
-        var file = new ByteArrayContent(new byte[10]);
-        file.Headers.ContentType = new MediaTypeHeaderValue("application/octet-stream");
-        form.Add(file, "file", "v.mp4");
-        return (await ReadJsonAsync(await _client.PostAsync("/api/lesson-content", form))).GetProperty("data").GetProperty("id").GetInt64();
-    }
-
     private HttpClient Authed(string token)
     {
         var c = factory.CreateClient();
@@ -68,16 +39,13 @@ public class ProgressEndpointsTests(ApiFactory factory)
     public async Task Mark_content_and_read_progress_and_statistics()
     {
         var (studentId, token) = await RegisterStudentAsync();
-        var subjectId = await CreateSubjectAsync();
-        var lessonId = await CreateLessonAsync(subjectId);
-        var contentId = await CreateContentAsync(lessonId);
+        var subjectId = await TestData.SubjectAsync(factory, Unique("Subject"));
+        var lessonId = await TestData.LessonAsync(factory, subjectId, Unique("Lesson"));
+        var contentId = await TestData.LessonContentAsync(factory, lessonId, Unique("Content"));
 
-        // group + assign
-        var groupId = (await ReadJsonAsync(await _client.PostAsync("/api/group",
-            new MultipartFormDataContent { { new StringContent(Unique("Group")), "name" } })))
-            .GetProperty("data").GetProperty("id").GetInt64();
-        await _client.PostAsJsonAsync($"/api/group/{groupId}/subjects", new { subjectIds = new[] { subjectId } });
-        await _client.PostAsJsonAsync($"/api/group/{groupId}/students", new { studentIds = new[] { studentId } });
+        var groupId = await TestData.GroupAsync(factory, Unique("Group"));
+        await TestData.AssignSubjectsAsync(factory, groupId, subjectId);
+        await TestData.AssignStudentsAsync(factory, groupId, new[] { studentId });
 
         var student = Authed(token);
 
@@ -105,9 +73,9 @@ public class ProgressEndpointsTests(ApiFactory factory)
     public async Task Marking_inaccessible_content_returns_forbidden()
     {
         var (_, token) = await RegisterStudentAsync();
-        var subjectId = await CreateSubjectAsync();
-        var lessonId = await CreateLessonAsync(subjectId);
-        var contentId = await CreateContentAsync(lessonId);
+        var subjectId = await TestData.SubjectAsync(factory, Unique("Subject"));
+        var lessonId = await TestData.LessonAsync(factory, subjectId, Unique("Lesson"));
+        var contentId = await TestData.LessonContentAsync(factory, lessonId, Unique("Content"));
 
         var student = Authed(token);
         var response = await student.PostAsJsonAsync("/api/progress", new { contentId });

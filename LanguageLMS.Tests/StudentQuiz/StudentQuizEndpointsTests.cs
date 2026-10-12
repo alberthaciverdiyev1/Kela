@@ -22,37 +22,6 @@ public class StudentQuizEndpointsTests(ApiFactory factory)
         return (d.GetProperty("user").GetProperty("id").GetInt64(), d.GetProperty("token").GetString()!);
     }
 
-    private async Task<long> CreateSubjectAsync()
-    {
-        var r = await _client.PostAsync("/api/subject", new MultipartFormDataContent { { new StringContent(Unique("Subj")), "name" } });
-        return (await Json(r)).GetProperty("data").GetProperty("id").GetInt64();
-    }
-
-    private async Task<long> CreateQuestionAsync(long subjectId, string correct)
-    {
-        var form = new MultipartFormDataContent
-        {
-            { new StringContent(subjectId.ToString()), "subject_id" },
-            { new StringContent(Unique("Q")), "title" },
-            { new StringContent("a"), "variant_a" }, { new StringContent("b"), "variant_b" },
-            { new StringContent("c"), "variant_c" }, { new StringContent("d"), "variant_d" },
-            { new StringContent(correct), "correct_answer" }
-        };
-        return (await Json(await _client.PostAsync("/api/question", form))).GetProperty("data").GetProperty("id").GetInt64();
-    }
-
-    private async Task<long> CreateLessonAsync(long subjectId)
-    {
-        var f = new MultipartFormDataContent { { new StringContent(subjectId.ToString()), "subject_id" }, { new StringContent(Unique("L")), "title" } };
-        return (await Json(await _client.PostAsync("/api/lesson", f))).GetProperty("data").GetProperty("id").GetInt64();
-    }
-
-    private async Task<long> CreateQuizAsync(long lessonId)
-    {
-        var f = new MultipartFormDataContent { { new StringContent(lessonId.ToString()), "lesson_id" }, { new StringContent(Unique("Quiz")), "title" } };
-        return (await Json(await _client.PostAsync("/api/quiz", f))).GetProperty("data").GetProperty("id").GetInt64();
-    }
-
     private HttpClient Authed(string token)
     {
         var c = factory.CreateClient();
@@ -64,16 +33,16 @@ public class StudentQuizEndpointsTests(ApiFactory factory)
     public async Task Start_complete_and_read_results()
     {
         var (studentId, token) = await RegisterStudentAsync();
-        var subjectId = await CreateSubjectAsync();
-        var q1 = await CreateQuestionAsync(subjectId, "A");
-        var q2 = await CreateQuestionAsync(subjectId, "B");
-        var lessonId = await CreateLessonAsync(subjectId);
-        var quizId = await CreateQuizAsync(lessonId);
-        await _client.PostAsJsonAsync($"/api/quiz/{quizId}/questions", new { questionIds = new[] { q1, q2 } });
+        var subjectId = await TestData.SubjectAsync(factory, Unique("Subj"));
+        var q1 = await TestData.QuestionAsync(factory, subjectId, Unique("Q"), "A");
+        var q2 = await TestData.QuestionAsync(factory, subjectId, Unique("Q"), "B");
+        var lessonId = await TestData.LessonAsync(factory, subjectId, Unique("L"));
+        var quizId = await TestData.QuizAsync(factory, lessonId, Unique("Quiz"));
+        await TestData.AssignQuestionsAsync(factory, quizId, q1, q2);
 
-        var groupId = (await Json(await _client.PostAsync("/api/group", new MultipartFormDataContent { { new StringContent(Unique("G")), "name" } }))).GetProperty("data").GetProperty("id").GetInt64();
-        await _client.PostAsJsonAsync($"/api/group/{groupId}/subjects", new { subjectIds = new[] { subjectId } });
-        await _client.PostAsJsonAsync($"/api/group/{groupId}/students", new { studentIds = new[] { studentId } });
+        var groupId = await TestData.GroupAsync(factory, Unique("G"));
+        await TestData.AssignSubjectsAsync(factory, groupId, subjectId);
+        await TestData.AssignStudentsAsync(factory, groupId, new[] { studentId });
 
         var student = Authed(token);
 
@@ -113,10 +82,10 @@ public class StudentQuizEndpointsTests(ApiFactory factory)
     public async Task Start_without_access_returns_forbidden()
     {
         var (_, token) = await RegisterStudentAsync();
-        var subjectId = await CreateSubjectAsync();
-        await CreateQuestionAsync(subjectId, "A");
-        var lessonId = await CreateLessonAsync(subjectId);
-        var quizId = await CreateQuizAsync(lessonId);
+        var subjectId = await TestData.SubjectAsync(factory, Unique("Subj"));
+        await TestData.QuestionAsync(factory, subjectId, Unique("Q"), "A");
+        var lessonId = await TestData.LessonAsync(factory, subjectId, Unique("L"));
+        var quizId = await TestData.QuizAsync(factory, lessonId, Unique("Quiz"));
 
         var student = Authed(token);
         var response = await student.PostAsJsonAsync("/api/student-quiz/start", new { quizId });
