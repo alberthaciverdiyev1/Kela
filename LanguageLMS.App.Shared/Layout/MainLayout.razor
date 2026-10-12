@@ -1,0 +1,26 @@
+@inherits LayoutComponentBase
+@implements IDisposable
+@inject AuthState Auth
+
+@if (!Auth.IsAuthenticated)
+{
+    <Login />
+}
+else
+{
+    <div class="min-h-screen bg-[#dcefe8] text-[#173d30]">
+        <NavMenu />
+        <div class="mx-auto min-h-screen w-full max-w-[430px] overflow-x-hidden bg-[#f8fbf9] shadow-[0_0_60px_rgba(23,77,58,0.12)] lg:ml-[236px] lg:max-w-none lg:shadow-none">
+            @Body
+            <BottomNav />
+        </div>
+    </div>
+}
+
+@code {
+    protected override void OnInitialized() => Auth.Changed += OnAuthChanged;
+
+    private void OnAuthChanged() => InvokeAsync(StateHasChanged);
+
+    public void Dispose() => Auth.Changed -= OnAuthChanged;
+}

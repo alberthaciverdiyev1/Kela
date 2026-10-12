@@ -1,0 +1,14 @@
+<div class="flex flex-col gap-2 text-xs font-bold text-[#44715f]">
+    @if (!string.IsNullOrEmpty(Label))
+    {
+        <label>@Label</label>
+    }
+    <span class="flex items-center gap-3 rounded-2xl border border-[#dbece4] bg-white px-4 py-3.5 focus-within:border-[#57b98e] focus-within:ring-4 focus-within:ring-[#d9f3e7]">
+        @ChildContent
+    </span>
+</div>
+
+@code {
+    [Parameter] public string? Label { get; set; }
+    [Parameter] public RenderFragment? ChildContent { get; set; }
+}

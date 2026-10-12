@@ -1,6 +1,7 @@
 <Solution>
   <Project Path="LanguageLMS.Api/LanguageLMS.Api.csproj" />
-  <Project Path="LanguageLMS.App/LanguageLMS.App.csproj" />
+  <Project Path="LanguageLMS.App.Shared/LanguageLMS.App.Shared.csproj" />
+  <Project Path="LanguageLMS.App.Web/LanguageLMS.App.Web.csproj" />
   <Project Path="LanguageLMS.Core/LanguageLMS.Core.csproj" />
   <Project Path="LanguageLMS.Mvc/LanguageLMS.Mvc.csproj" />
   <Project Path="LanguageLMS.Tests/LanguageLMS.Tests.csproj" />

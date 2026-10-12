@@ -1,0 +1,87 @@
+@page "/exams/{QuizId:long}"
+@inject AppApi Api
+@inject NavigationManager Nav
+
+<PageTitle>Exam</PageTitle>
+
+<header class="flex h-[72px] items-center justify-between border-b border-[#e5f0eb] bg-[#f6faf8] px-5">
+    <a href="/exams" class="flex size-10 items-center justify-center rounded-full bg-white text-[#4c806d] shadow-sm"><Icon Name="arrow-left" Class="size-5" /></a>
+    <h1 class="max-w-[220px] truncate text-[16px] font-bold tracking-[-0.04em] text-[#214d3d]">@(_quiz?.Title ?? "Exam")</h1>
+    <span class="size-10"></span>
+</header>
+
+<div class="px-5 pb-28 pt-6">
+    @if (_error is not null) { <p class="text-sm text-[#c0392b]">@_error</p> }
+    else if (_result is not null)
+    {
+        <div class="rounded-[24px] bg-[#173d30] p-6 text-white">
+            <p class="text-[11px] font-bold uppercase tracking-[0.16em] text-[#a5d8c2]">Result</p>
+            <p class="mt-4 text-5xl font-semibold tracking-[-0.06em]">@_result.ScorePercent%</p>
+            <p class="mt-2 text-[13px] text-[#a6c6b8]">@_result.CorrectCount / @_result.TotalQuestions düzgün</p>
+        </div>
+        <a href="/results" class="mt-5 block rounded-2xl bg-[#1e9a6a] py-4 text-center text-sm font-bold text-white">Nəticələrə keç</a>
+    }
+    else if (_quiz is null) { <p class="text-sm text-[#8aa39a]">İmtahan başladılır...</p> }
+    else if (_quiz.Questions.Count == 0) { <p class="text-sm text-[#8aa39a]">Bu imtahanda sual yoxdur.</p> }
+    else
+    {
+        var q = _quiz.Questions[_index];
+        var isLast = _index == _quiz.Questions.Count - 1;
+
+        <p class="text-[11px] font-bold uppercase tracking-[0.14em] text-[#1e9a6a]">Sual @(_index + 1)/@_quiz.Questions.Count</p>
+        <h2 class="mt-2 text-[19px] font-semibold leading-6 text-[#174d3a]">@q.Title</h2>
+
+        <div class="mt-5 flex flex-col gap-2">
+            @foreach (var o in q.Options)
+            {
+                <label class="flex items-center gap-3 rounded-2xl border border-[#dbece4] bg-white px-4 py-3.5 @(IsSelected(q.Id, o.Key) ? "border-[#57b98e] ring-4 ring-[#d9f3e7]" : "")">
+                    <input type="radio" name="q_@q.Id" checked="@IsSelected(q.Id, o.Key)" @onchange="() => _answers[q.Id] = o.Key" class="size-4 accent-[#1e9a6a]" />
+                    <span class="text-sm font-medium text-[#285542]">@o.Key) @o.Text</span>
+                </label>
+            }
+        </div>
+
+        <div class="mt-6 flex gap-3">
+            <button @onclick="Prev" disabled="@(_index == 0)" class="flex-1 rounded-2xl border border-[#dbece4] bg-white py-3.5 text-sm font-bold text-[#315a49] disabled:opacity-50">Əvvəlki</button>
+            <button @onclick="NextAsync" disabled="@_busy" class="flex-1 rounded-2xl bg-[#1e9a6a] py-3.5 text-sm font-bold text-white disabled:opacity-60">
+                @(isLast ? (_busy ? "Gözləyin..." : "Bitir") : "Növbəti")
+            </button>
+        </div>
+    }
+</div>
+
+@code {
+    [Parameter] public long QuizId { get; set; }
+    private StartQuizResult? _quiz;
+    private CompleteQuizResult? _result;
+    private string? _error;
+    private int _index;
+    private bool _busy;
+    private readonly Dictionary<long, string> _answers = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        try { _quiz = await Api.StartQuizAsync(QuizId); }
+        catch (Exception ex) { _error = ex.Message; }
+    }
+
+    private bool IsSelected(long questionId, string key) => _answers.TryGetValue(questionId, out var a) && a == key;
+
+    private void Prev() { if (_index > 0) _index--; }
+
+    private async Task NextAsync()
+    {
+        if (_quiz is null) return;
+        if (_index < _quiz.Questions.Count - 1) { _index++; return; }
+
+        _busy = true;
+        try
+        {
+            var answers = _quiz.Questions.Select(q =>
+                (q.Id, _answers.TryGetValue(q.Id, out var a) ? a : null));
+            _result = await Api.CompleteQuizAsync(_quiz.AttemptId, answers);
+        }
+        catch (Exception ex) { _error = ex.Message; }
+        finally { _busy = false; }
+    }
+}

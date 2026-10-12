@@ -1,0 +1,48 @@
+@page "/results"
+@inject AppApi Api
+
+<PageTitle>Results</PageTitle>
+
+<header class="flex h-[72px] items-center justify-between border-b border-[#e5f0eb] bg-[#f6faf8] px-5">
+    <a href="/" class="flex size-10 items-center justify-center rounded-full bg-white text-[#4c806d] shadow-sm"><Icon Name="arrow-left" Class="size-5" /></a>
+    <h1 class="text-[18px] font-bold tracking-[-0.04em] text-[#214d3d]">Results</h1>
+    <span class="size-10"></span>
+</header>
+
+<div class="px-5 pb-28 pt-6">
+    <h2 class="text-xl font-bold tracking-[-0.04em] text-[#214d3d]">My results</h2>
+
+    @if (_loading)
+    {
+        <p class="mt-6 text-sm text-[#8aa39a]">Yüklənir...</p>
+    }
+    else if (_results.Count == 0)
+    {
+        <p class="mt-6 text-sm text-[#8aa39a]">Hələ imtahan verməmisiniz.</p>
+    }
+    else
+    {
+        <section class="mt-5 flex flex-col gap-3">
+            @foreach (var r in _results)
+            {
+                <div class="flex items-center gap-4 rounded-2xl border border-[#e2eee8] bg-white p-4">
+                    <div class="flex size-11 shrink-0 items-center justify-center rounded-full bg-[#e0f5ec] text-[12px] font-bold text-[#16845a]">@(r.ScorePercent)%</div>
+                    <div class="min-w-0 flex-1">
+                        <p class="truncate text-[14px] font-semibold text-[#244e3e]">@r.QuizTitle</p>
+                        <p class="mt-0.5 text-[11px] text-[#91aaa0]">@r.CorrectCount/@r.TotalQuestions düzgün</p>
+                    </div>
+                </div>
+            }
+        </section>
+    }
+</div>
+
+@code {
+    private bool _loading = true;
+    private List<QuizResultSummary> _results = new();
+    protected override async Task OnInitializedAsync()
+    {
+        try { _results = await Api.ResultsAsync(); } catch { }
+        _loading = false;
+    }
+}

@@ -1,0 +1,69 @@
+@page "/courses"
+@inject AppApi Api
+@inject NavigationManager Nav
+
+<PageTitle>Courses</PageTitle>
+
+<header class="flex h-[72px] items-center justify-between border-b border-[#e5f0eb] bg-[#f6faf8] px-5">
+    <a href="/" class="flex size-10 items-center justify-center rounded-full bg-white text-[#4c806d] shadow-sm"><Icon Name="arrow-left" Class="size-5" /></a>
+    <h1 class="text-[18px] font-bold tracking-[-0.04em] text-[#214d3d]">Courses</h1>
+    <button class="relative rounded-xl p-2 text-[#769487]"><Icon Name="bell" Class="size-[19px]" /><span class="absolute right-1.5 top-1.5 size-1.5 rounded-full bg-[#ee8d55]"></span></button>
+</header>
+
+<div class="px-5 pb-28 pt-6">
+    <section class="rounded-[24px] bg-[#e0f5ec] p-5">
+        <p class="text-xs font-bold uppercase tracking-[0.14em] text-[#1e9a6a]">Find your next skill</p>
+        <h2 class="mt-2 max-w-[270px] text-[27px] font-bold leading-tight tracking-[-0.055em] text-[#174d3a]">Learn something that moves you forward.</h2>
+        <p class="mt-3 text-sm leading-5 text-[#648f7e]">Curated courses made for your pace and your goals.</p>
+    </section>
+
+    <div class="mt-7 flex items-center justify-between">
+        <div><p class="text-xs font-bold uppercase tracking-[0.14em] text-[#1e9a6a]">Browse library</p><h2 class="mt-1 text-2xl font-bold tracking-[-0.04em] text-[#214d3d]">All courses</h2></div>
+    </div>
+
+    @if (_loading)
+    {
+        <p class="mt-6 text-sm text-[#8aa39a]">Yüklənir...</p>
+    }
+    else if (_groups.Count == 0)
+    {
+        <p class="mt-6 text-sm text-[#8aa39a]">Hələ qrupunuz yoxdur.</p>
+    }
+    else
+    {
+        <section class="mt-5 flex flex-col gap-4">
+            @foreach (var (g, i) in _groups.Select((g, i) => (g, i)))
+            {
+                <article class="overflow-hidden rounded-2xl border border-[#e2eee8] bg-white shadow-[0_4px_15px_rgba(36,78,62,0.03)]">
+                    <div class="relative flex h-[132px] items-center justify-center @Tone(i)">
+                        <span class="text-5xl font-black @ToneText(i)">@(string.IsNullOrEmpty(g.Name) ? "?" : g.Name[..1].ToUpper())</span>
+                        <span class="absolute left-4 top-4 rounded-full bg-white/90 px-2.5 py-1 text-[10px] font-bold text-[#437363]">Course</span>
+                        <button class="absolute bottom-3 right-3 flex size-10 items-center justify-center rounded-full bg-white text-[#1e9a6a] shadow-md"><Icon Name="play" Class="ml-0.5 size-4" /></button>
+                    </div>
+                    <div class="p-4">
+                        <h3 class="font-bold leading-5 tracking-[-0.02em] text-[#244e3e]">@g.Name</h3>
+                        <div class="mt-3 flex flex-wrap items-center gap-x-3 gap-y-1 text-[11px] font-medium text-[#91aaa0]">
+                            <span class="text-[#16845a]">@(g.Description ?? "Ümumi")</span>
+                            <span class="flex items-center gap-1"><Icon Name="users" Class="size-3" />@g.StudentCount tələbə</span>
+                        </div>
+                        <a href="/courses/@g.Id" class="mt-4 inline-flex items-center gap-1 text-[12px] font-bold text-[#1e9a6a]">Dərslərə bax <Icon Name="chevron-right" Class="size-3.5" /></a>
+                    </div>
+                </article>
+            }
+        </section>
+    }
+</div>
+
+@code {
+    private bool _loading = true;
+    private List<Group> _groups = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        try { _groups = await Api.GroupsAsync(); } catch { }
+        _loading = false;
+    }
+
+    private static string Tone(int i) => (i % 4) switch { 0 => "bg-[#dff5ed]", 1 => "bg-[#e4f0fb]", 2 => "bg-[#fff0dc]", _ => "bg-[#f0eafa]" };
+    private static string ToneText(int i) => (i % 4) switch { 0 => "text-[#16845a]", 1 => "text-[#3776b8]", 2 => "text-[#c87628]", _ => "text-[#8065b5]" };
+}
