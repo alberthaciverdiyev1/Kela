@@ -1,47 +1,74 @@
 @page "/lessons/{LessonId:long}"
 @inject AppApi Api
-@inject NavigationManager Nav
+@inject IJSRuntime JS
 
 <PageTitle>Lesson</PageTitle>
 
 <header class="flex h-[72px] items-center justify-between border-b border-brand-080 bg-brand-027 px-5">
     <a href="javascript:history.back()" class="flex size-10 items-center justify-center rounded-full bg-white text-brand-600 shadow-sm"><Icon Name="arrow-left" Class="size-5" /></a>
-    <h1 class="max-w-[220px] truncate text-[18px] font-bold tracking-[-0.04em] text-brand-784">Materiallar</h1>
+    <h1 class="max-w-[220px] truncate text-[18px] font-bold tracking-[-0.04em] text-brand-784">Dərs</h1>
     <span class="size-10"></span>
 </header>
 
-<div class="px-5 pb-28 pt-6">
-    <p class="text-xs font-bold uppercase tracking-[0.14em] text-brand-639">Contents</p>
-    <h2 class="mt-1 text-2xl font-bold tracking-[-0.04em] text-brand-784">Materiallar</h2>
+@if (_loading)
+{
+    <p class="px-5 py-10 text-sm text-sage-410">Yüklənir...</p>
+}
+else if (_contents.Count == 0)
+{
+    <p class="px-5 py-10 text-sm text-sage-410">Bu dərs üzrə material yoxdur.</p>
+}
+else
+{
+    <div class="px-5 pb-28 pt-5">
+        @if (_video is not null)
+        {
+            @* Yuxarıda video *@
+            <div class="overflow-hidden rounded-2xl bg-black shadow-[0_6px_20px_rgba(23,61,48,0.12)]">
+                <video @ref="_videoRef" controls playsinline preload="metadata"
+                       class="aspect-video w-full bg-black"></video>
+            </div>
 
-    @if (_loading) { <p class="mt-6 text-sm text-sage-410">Yüklənir...</p> }
-    else if (_contents.Count == 0) { <p class="mt-6 text-sm text-sage-410">Bu dərs üzrə material yoxdur.</p> }
-    else
-    {
-        <section class="mt-5 flex flex-col gap-3">
-            @foreach (var c in _contents)
-            {
-                var done = _completed.Contains(c.Id);
-                <div class="flex items-center gap-4 rounded-2xl border border-brand-090 bg-white p-4 shadow-[0_4px_15px_rgba(36,78,62,0.03)]">
-                    <div class="flex size-11 shrink-0 items-center justify-center rounded-xl bg-brand-081 text-brand-698"><Icon Name="@IconFor(c.Type)" Class="size-5" /></div>
-                    <div class="min-w-0 flex-1">
-                        <p class="truncate text-[14px] font-semibold text-brand-776">@c.Title</p>
-                        <p class="mt-0.5 text-[11px] text-sage-382">
-                            @c.TypeLabel@(c.DurationSeconds is > 0 ? $" · {c.DurationSeconds}s" : "")
-                        </p>
-                    </div>
-                    @if (!string.IsNullOrEmpty(c.Url) || !string.IsNullOrEmpty(c.PlaybackUrl))
-                    {
-                        <button type="button" @onclick="() => OpenViewer(c)" class="rounded-lg px-2.5 py-1.5 text-[12px] font-bold text-brand-639">Aç</button>
-                    }
-                    <button @onclick="() => MarkAsync(c.Id)" disabled="@done" class="rounded-lg px-2.5 py-1.5 text-[12px] font-bold @(done ? "text-sage-410" : "text-brand-671")">
-                        @(done ? "✓ Tamam" : "Tamamlandı")
+            @* Aşağıda başlıq *@
+            <div class="mt-4">
+                <p class="text-[11px] font-bold uppercase tracking-[0.14em] text-brand-639">Video dərs</p>
+                <h1 class="mt-1 text-xl font-bold tracking-[-0.04em] text-brand-784">@_video.Title</h1>
+                <div class="mt-3 flex items-center gap-3">
+                    <button type="button" @onclick="() => MarkAsync(_video.Id)" disabled="@IsDone(_video.Id)"
+                            class="inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-[12px] font-bold @(IsDone(_video.Id) ? "bg-brand-075 text-sage-410" : "bg-brand-081 text-brand-671")">
+                        <Icon Name="chevron-right" Class="size-3.5" />
+                        @(IsDone(_video.Id) ? "Tamamlandı" : "Tamamlandı kimi işarələ")
                     </button>
                 </div>
-            }
-        </section>
-    }
-</div>
+            </div>
+        }
+
+        @if (_others.Count > 0)
+        {
+            <p class="mt-8 text-xs font-bold uppercase tracking-[0.14em] text-brand-639">Digər materiallar</p>
+            <section class="mt-3 flex flex-col gap-3">
+                @foreach (var c in _others)
+                {
+                    var done = IsDone(c.Id);
+                    <div class="flex items-center gap-4 rounded-2xl border border-brand-090 bg-white p-4 shadow-[0_4px_15px_rgba(36,78,62,0.03)]">
+                        <div class="flex size-11 shrink-0 items-center justify-center rounded-xl bg-brand-081 text-brand-698"><Icon Name="@IconFor(c.Type)" Class="size-5" /></div>
+                        <div class="min-w-0 flex-1">
+                            <p class="truncate text-[14px] font-semibold text-brand-776">@c.Title</p>
+                            <p class="mt-0.5 text-[11px] text-sage-382">@c.TypeLabel@(c.DurationSeconds is > 0 ? $" · {c.DurationSeconds}s" : "")</p>
+                        </div>
+                        @if (!string.IsNullOrEmpty(c.Url) || !string.IsNullOrEmpty(c.PlaybackUrl))
+                        {
+                            <button type="button" @onclick="() => OpenViewer(c)" class="rounded-lg px-2.5 py-1.5 text-[12px] font-bold text-brand-639">Aç</button>
+                        }
+                        <button type="button" @onclick="() => MarkAsync(c.Id)" disabled="@done" class="rounded-lg px-2.5 py-1.5 text-[12px] font-bold @(done ? "text-sage-410" : "text-brand-671")">
+                            @(done ? "✓ Tamam" : "Tamamlandı")
+                        </button>
+                    </div>
+                }
+            </section>
+        }
+    </div>
+}
 
 <MediaViewer Open="_viewerOpen" Url="_viewerUrl" Type="_viewerType" OnClose="CloseViewer" />
 
@@ -49,25 +76,45 @@
     [Parameter] public long LessonId { get; set; }
     private bool _loading = true;
     private List<ContentItem> _contents = new();
+    private ContentItem? _video;
+    private List<ContentItem> _others = new();
     private readonly HashSet<long> _completed = new();
+    private ElementReference _videoRef;
+    private string? _videoUrl;
+    private string? _attached;
     private bool _viewerOpen;
     private string? _viewerUrl;
     private string? _viewerType;
 
-    private void OpenViewer(ContentItem c)
-    {
-        _viewerUrl = Absolute(c.PlaybackUrl ?? c.Url);
-        _viewerType = c.Type;
-        _viewerOpen = true;
-    }
-
-    private void CloseViewer() => _viewerOpen = false;
-
     protected override async Task OnInitializedAsync()
     {
-        try { _contents = await Api.ContentsAsync(LessonId); } catch { }
+        try
+        {
+            _contents = await Api.ContentsAsync(LessonId);
+            _video = _contents.FirstOrDefault(c => c.Type == "video");
+            _others = _contents.Where(c => !ReferenceEquals(c, _video)).ToList();
+            if (_video is not null)
+            {
+                _videoUrl = Absolute(_video.PlaybackUrl ?? _video.Url);
+            }
+        }
+        catch { }
         _loading = false;
     }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (_video is not null && !string.IsNullOrEmpty(_videoUrl))
+        {
+            if (_attached != _videoUrl)
+            {
+                await JS.InvokeVoidAsync("lmsVideoPlayer.attach", _videoRef, _videoUrl);
+                _attached = _videoUrl;
+            }
+        }
+    }
+
+    private bool IsDone(long id) => _completed.Contains(id);
 
     private async Task MarkAsync(long contentId)
     {
@@ -79,6 +126,15 @@
         catch { }
     }
 
+    private void OpenViewer(ContentItem c)
+    {
+        _viewerUrl = Absolute(c.PlaybackUrl ?? c.Url);
+        _viewerType = c.Type;
+        _viewerOpen = true;
+    }
+
+    private void CloseViewer() => _viewerOpen = false;
+
     private static string IconFor(string? type) => type switch
     {
         "video" => "play",
@@ -89,7 +145,7 @@
 
     private static string Absolute(string? url)
     {
-        if (string.IsNullOrEmpty(url)) return "#";
+        if (string.IsNullOrEmpty(url)) return "";
         if (url.StartsWith("http")) return url;
         return $"{AppConfig.ApiBaseUrl}/{url.TrimStart('/')}";
     }
