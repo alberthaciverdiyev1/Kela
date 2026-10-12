@@ -12,5 +12,6 @@ builder.Services.AddScoped<ApiClient>();
 builder.Services.AddScoped<AppApi>();
 builder.Services.AddScoped<AuthState>();
 builder.Services.AddScoped<TokenStore>();
+builder.Services.AddScoped<AudioPlayerService>();
 
 await builder.Build().RunAsync();

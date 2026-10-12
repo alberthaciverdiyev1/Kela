@@ -81,3 +81,40 @@ window.lmsPdf = {
         try { if (container) container.innerHTML = ''; } catch (e) { /* noop */ }
     }
 };
+
+// Alt bölmə audio pleyeri — timeline, seek və sürət üçün.
+window.lmsAudio = {
+    _el: null,
+    _get: function () {
+        if (!this._el) {
+            this._el = new Audio();
+            this._el.preload = 'metadata';
+        }
+        return this._el;
+    },
+    load: function (url) {
+        var a = this._get();
+        a.pause();
+        a.src = url;
+        a.load();
+    },
+    play: function () { return this._get().play(); },
+    pause: function () { this._get().pause(); },
+    seek: function (t) { try { this._get().currentTime = t || 0; } catch (e) { /* noop */ } },
+    setRate: function (r) { try { this._get().playbackRate = r || 1; } catch (e) { /* noop */ } },
+    stop: function () {
+        var a = this._get();
+        a.pause();
+        a.removeAttribute('src');
+        try { a.load(); } catch (e) { /* noop */ }
+    },
+    state: function () {
+        var a = this._get();
+        return {
+            current: a.currentTime || 0,
+            duration: (isFinite(a.duration) ? a.duration : 0),
+            paused: a.paused,
+            rate: a.playbackRate || 1
+        };
+    }
+};

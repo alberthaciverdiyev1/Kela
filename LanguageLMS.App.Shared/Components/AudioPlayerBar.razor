@@ -1,0 +1,159 @@
+@* Alt bölmə audio pleyeri: timeline (seek) + sürət seçimləri (1x, 1.25x, 1.5x, 2x). *@
+@implements IDisposable
+@inject AudioPlayerService Player
+@inject IJSRuntime JS
+
+@if (Player.IsActive)
+{
+    <div class="fixed inset-x-0 bottom-[72px] z-30 mx-auto w-full max-w-[430px] border-t border-brand-104 bg-white/95 px-4 py-3 shadow-[0_-6px_20px_rgba(23,61,48,0.06)] backdrop-blur lg:bottom-0 lg:max-w-none">
+        <div class="flex items-center gap-3">
+            <div class="flex size-9 shrink-0 items-center justify-center rounded-xl bg-brand-081 text-brand-698"><Icon Name="chart" Class="size-4" /></div>
+            <p class="min-w-0 flex-1 truncate text-[13px] font-semibold text-brand-776">@Player.Title</p>
+            <button type="button" @onclick="ToggleAsync" class="flex size-9 items-center justify-center rounded-full bg-brand-671 text-white" aria-label="@(_paused ? "Oynat" : "Fasilə")">
+                <Icon Name="@(_paused ? "play" : "pause")" Class="size-4" />
+            </button>
+            <button type="button" @onclick="StopAsync" class="rounded-lg p-2 text-sage-478" aria-label="Bağla"><Icon Name="x" Class="size-4" /></button>
+        </div>
+
+        <div class="mt-2 flex items-center gap-2">
+            <span class="w-9 text-right text-[10px] tabular-nums text-sage-410">@Fmt(_current)</span>
+            <input type="range" min="0" max="@(_duration > 0 ? _duration : 0)" step="0.1" value="@_current"
+                   @onchange="SeekAsync" class="h-1 flex-1 accent-brand-671" aria-label="Timeline" />
+            <span class="w-9 text-[10px] tabular-nums text-sage-410">@Fmt(_duration)</span>
+        </div>
+
+        <div class="mt-2 flex items-center gap-2">
+            @foreach (var r in Rates)
+            {
+                <button type="button" @onclick="() => SetRateAsync(r)"
+                        class="rounded-full px-2.5 py-0.5 text-[11px] font-bold @(Math.Abs(_rate - r) < 0.001 ? "bg-brand-671 text-white" : "bg-brand-081 text-brand-669")">
+                    @FmtRate(r)
+                </button>
+            }
+        </div>
+    </div>
+}
+
+@code {
+    private static readonly double[] Rates = [1, 1.25, 1.5, 2];
+
+    private double _current;
+    private double _duration;
+    private double _rate = 1;
+    private bool _paused = true;
+    private string? _loadedUrl;
+    private CancellationTokenSource? _cts;
+
+    private record AudioState(double current, double duration, bool paused, double rate);
+
+    protected override void OnInitialized()
+    {
+        Player.Changed += OnChanged;
+        _ = InvokeAsync(SyncAsync);
+        StartPolling();
+    }
+
+    private void OnChanged() => _ = InvokeAsync(async () => { await SyncAsync(); StateHasChanged(); });
+
+    private void StartPolling()
+    {
+        _cts?.Cancel();
+        _cts = new CancellationTokenSource();
+        var token = _cts.Token;
+        _ = Task.Run(async () =>
+        {
+            while (!token.IsCancellationRequested)
+            {
+                await InvokeAsync(async () =>
+                {
+                    if (!Player.IsActive) return;
+                    try
+                    {
+                        var st = await JS.InvokeAsync<AudioState>("lmsAudio.state");
+                        _current = st.current;
+                        _duration = st.duration;
+                        _paused = st.paused;
+                        _rate = st.rate;
+                        StateHasChanged();
+                    }
+                    catch { /* JS hazır deyil */ }
+                });
+                try { await Task.Delay(300, token); } catch { break; }
+            }
+        });
+    }
+
+    private async Task SyncAsync()
+    {
+        if (!Player.IsActive)
+        {
+            _loadedUrl = null;
+            _current = 0;
+            _duration = 0;
+            _paused = true;
+            return;
+        }
+
+        if (_loadedUrl != Player.Url)
+        {
+            _loadedUrl = Player.Url;
+            await JS.InvokeVoidAsync("lmsAudio.load", Player.Url);
+            await JS.InvokeVoidAsync("lmsAudio.setRate", _rate);
+            await JS.InvokeVoidAsync("lmsAudio.play");
+            _paused = false;
+        }
+    }
+
+    private async Task ToggleAsync()
+    {
+        if (_paused)
+        {
+            await JS.InvokeVoidAsync("lmsAudio.play");
+            _paused = false;
+        }
+        else
+        {
+            await JS.InvokeVoidAsync("lmsAudio.pause");
+            _paused = true;
+        }
+    }
+
+    private async Task SeekAsync(ChangeEventArgs e)
+    {
+        if (double.TryParse(e.Value?.ToString(), out var t))
+        {
+            await JS.InvokeVoidAsync("lmsAudio.seek", t);
+            _current = t;
+        }
+    }
+
+    private async Task SetRateAsync(double rate)
+    {
+        _rate = rate;
+        await JS.InvokeVoidAsync("lmsAudio.setRate", rate);
+    }
+
+    private async Task StopAsync()
+    {
+        await JS.InvokeVoidAsync("lmsAudio.stop");
+        _loadedUrl = null;
+        Player.Stop();
+    }
+
+    private static string Fmt(double seconds)
+    {
+        if (seconds <= 0 || double.IsNaN(seconds)) return "0:00";
+        var m = (int)(seconds / 60);
+        var s = (int)(seconds % 60);
+        return $"{m}:{s:00}";
+    }
+
+    private static string FmtRate(double r) => r == Math.Floor(r) ? $"{(int)r}x" : $"{r.ToString(System.Globalization.CultureInfo.InvariantCulture)}x";
+
+    public void Dispose()
+    {
+        Player.Changed -= OnChanged;
+        _cts?.Cancel();
+        _cts?.Dispose();
+    }
+}
