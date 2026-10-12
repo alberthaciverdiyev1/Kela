@@ -1,10 +1,11 @@
+using System.Net;
 using System.Net.Http.Json;
 using System.Text.Json;
 
 namespace LanguageLMS.App.Shared.Services;
 
 /// <summary>API çağırışları: `{success, data, message}` zərfini açır.</summary>
-public sealed class ApiClient(HttpClient http)
+public sealed class ApiClient(HttpClient http, AuthState auth, TokenStore store)
 {
     private static readonly JsonSerializerOptions JsonOptions = new(JsonSerializerDefaults.Web);
 
@@ -39,6 +40,13 @@ public sealed class ApiClient(HttpClient http)
             throw new ApiException($"Şəbəkə xətası: {ex.Message}");
         }
 
+        // Token vaxtı dolub / auth yoxdur → sessiyanı təmizlə (MainLayout login göstərəcək)
+        if (response.StatusCode == HttpStatusCode.Unauthorized && auth.IsAuthenticated)
+        {
+            await SignOutAsync();
+            throw new ApiException("Sessiya bitib. Yenidən daxil olun.", 401);
+        }
+
         var payload = await response.Content.ReadAsStringAsync();
         JsonElement root = default;
         if (!string.IsNullOrWhiteSpace(payload))
@@ -63,5 +71,12 @@ public sealed class ApiClient(HttpClient http)
         }
 
         return default!;
+    }
+
+    private async Task SignOutAsync()
+    {
+        Token = null;
+        auth.Clear();
+        try { await store.RemoveAsync(); } catch { /* JS hazır deyil */ }
     }
 }
