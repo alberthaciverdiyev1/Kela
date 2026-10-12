@@ -1,3 +1,97 @@
 @import "tailwindcss";
 @source "../**/*.razor";
 @source "../**/*.cs";
+
+@theme {
+  /* brand */
+  --color-brand-012: #fbfdfc;
+  --color-brand-022: #f8fbf9;
+  --color-brand-024: #f7fbf9;
+  --color-brand-027: #f6faf8;
+  --color-brand-041: #f1f8f4;
+  --color-brand-049: #edf8f2;
+  --color-brand-061: #e8f7ef;
+  --color-brand-073: #e5f4ed;
+  --color-brand-075: #e8f0eb;
+  --color-brand-080: #e5f0eb;
+  --color-brand-081: #e0f5ec;
+  --color-brand-082: #e5efea;
+  --color-brand-083: #dff5ed;
+  --color-brand-086: #e4eee9;
+  --color-brand-090: #e2eee8;
+  --color-brand-096: #e1ece6;
+  --color-brand-098: #d9f3e7;
+  --color-brand-100: #dfece5;
+  --color-brand-101: #dcefe7;
+  --color-brand-102: #dcefe8;
+  --color-brand-103: #d1fae5;
+  --color-brand-104: #deebe4;
+  --color-brand-108: #dbece4;
+  --color-brand-112: #dbeae3;
+  --color-brand-149: #cfe3d9;
+  --color-brand-253: #a5d8c2;
+  --color-brand-286: #a6c6b8;
+  --color-brand-341: #7dd3a9;
+  --color-brand-414: #7caf9a;
+  --color-brand-467: #57b98e;
+  --color-brand-575: #568370;
+  --color-brand-600: #4c806d;
+  --color-brand-639: #1e9a6a;
+  --color-brand-643: #437363;
+  --color-brand-645: #44715f;
+  --color-brand-667: #416957;
+  --color-brand-669: #38715b;
+  --color-brand-671: #27815e;
+  --color-brand-698: #16845a;
+  --color-brand-712: #167d55;
+  --color-brand-722: #315d4c;
+  --color-brand-727: #315a49;
+  --color-brand-743: #176c4b;
+  --color-brand-755: #285542;
+  --color-brand-776: #244e3e;
+  --color-brand-784: #214d3d;
+  --color-brand-804: #174d3a;
+  --color-brand-835: #064e3b;
+  --color-brand-836: #173d30;
+  /* sage */
+  --color-sage-059: #edf3ef;
+  --color-sage-271: #b0c4bb;
+  --color-sage-300: #a8bdb4;
+  --color-sage-349: #9bb1a8;
+  --color-sage-355: #9aafa7;
+  --color-sage-369: #98aaa4;
+  --color-sage-376: #94aaa1;
+  --color-sage-380: #8daf9f;
+  --color-sage-382: #91aaa0;
+  --color-sage-410: #8aa39a;
+  --color-sage-459: #7b998e;
+  --color-sage-463: #79998b;
+  --color-sage-467: #78988b;
+  --color-sage-473: #78958a;
+  --color-sage-478: #769487;
+  --color-sage-486: #6c9a85;
+  --color-sage-498: #6f9183;
+  --color-sage-500: #6e9182;
+  --color-sage-524: #648f7e;
+  --color-sage-527: #668b7d;
+  --color-sage-561: #5d8373;
+  /* danger */
+  --color-danger-043: #fdeceb;
+  --color-danger-539: #c0392b;
+  /* sun */
+  --color-sun-063: #fff1df;
+  --color-sun-069: #fff0dc;
+  --color-sun-367: #ee8d55;
+  --color-sun-386: #e48755;
+  --color-sun-461: #d8873b;
+  --color-sun-482: #d18137;
+  --color-sun-529: #c87628;
+  /* sky */
+  --color-sky-041: #eef0fb;
+  --color-sky-061: #e4f0fb;
+  --color-sky-406: #687cc7;
+  --color-sky-531: #3776b8;
+  /* grape */
+  --color-grape-051: #f0eafa;
+  --color-grape-447: #8065b5;
+}

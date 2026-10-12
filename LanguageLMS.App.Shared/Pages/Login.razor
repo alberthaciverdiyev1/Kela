@@ -2,54 +2,54 @@
 @inject ApiClient ApiClient
 @inject AuthState Auth
 
-<main class="min-h-screen bg-[#dcefe7] text-[#174d3a]">
-    <div class="mx-auto flex min-h-screen w-full max-w-[430px] flex-col bg-[#f7fbf9] shadow-[0_0_60px_rgba(23,77,58,0.12)]">
+<main class="min-h-screen bg-brand-101 text-brand-804">
+    <div class="mx-auto flex min-h-screen w-full max-w-[430px] flex-col bg-brand-024 shadow-[0_0_60px_rgba(23,77,58,0.12)]">
         <header class="flex items-center px-5 pb-2 pt-6">
-            <span class="mx-auto pr-10 text-sm font-bold text-[#568370]">@(_register ? "Create account" : "Welcome back")</span>
+            <span class="mx-auto pr-10 text-sm font-bold text-brand-575">@(_register ? "Create account" : "Welcome back")</span>
         </header>
 
         <section class="flex flex-1 flex-col px-6 pb-8 pt-10">
             <div class="mb-9 text-center">
-                <div class="mx-auto mb-5 flex size-16 items-center justify-center rounded-[22px] bg-[#1e9a6a] text-2xl font-black text-white shadow-[0_10px_24px_rgba(30,154,106,0.22)]">L</div>
-                <h1 class="text-[30px] font-bold tracking-[-0.06em] text-[#174d3a]">@(_register ? "Get started" : "Hello again")</h1>
-                <p class="mt-2 text-sm leading-6 text-[#78988b]">@(_register ? "Create your student account to begin." : "Continue your learning journey where you left off.")</p>
+                <div class="mx-auto mb-5 flex size-16 items-center justify-center rounded-[22px] bg-brand-639 text-2xl font-black text-white shadow-[0_10px_24px_rgba(30,154,106,0.22)]">L</div>
+                <h1 class="text-[30px] font-bold tracking-[-0.06em] text-brand-804">@(_register ? "Get started" : "Hello again")</h1>
+                <p class="mt-2 text-sm leading-6 text-sage-467">@(_register ? "Create your student account to begin." : "Continue your learning journey where you left off.")</p>
             </div>
 
             <form class="flex flex-col gap-5" @onsubmit="SubmitAsync" @onsubmit:preventDefault>
                 @if (_register)
                 {
                     <Field Label="Full name">
-                        <input @bind="_fullName" placeholder="Your name" class="min-w-0 flex-1 bg-transparent text-sm font-medium text-[#285542] outline-none placeholder:text-[#b0c4bb]" />
+                        <input @bind="_fullName" placeholder="Your name" class="min-w-0 flex-1 bg-transparent text-sm font-medium text-brand-755 outline-none placeholder:text-sage-271" />
                     </Field>
                     <Field Label="Phone (optional)">
-                        <input @bind="_phone" placeholder="+994..." class="min-w-0 flex-1 bg-transparent text-sm font-medium text-[#285542] outline-none placeholder:text-[#b0c4bb]" />
+                        <input @bind="_phone" placeholder="+994..." class="min-w-0 flex-1 bg-transparent text-sm font-medium text-brand-755 outline-none placeholder:text-sage-271" />
                     </Field>
                 }
                 <Field Label="Email address">
-                    <Icon Name="mail" Class="size-5 shrink-0 text-[#7caf9a]" />
-                    <input @bind="_email" type="email" placeholder="you@example.com" class="min-w-0 flex-1 bg-transparent text-sm font-medium text-[#285542] outline-none placeholder:text-[#b0c4bb]" />
+                    <Icon Name="mail" Class="size-5 shrink-0 text-brand-414" />
+                    <input @bind="_email" type="email" placeholder="you@example.com" class="min-w-0 flex-1 bg-transparent text-sm font-medium text-brand-755 outline-none placeholder:text-sage-271" />
                 </Field>
                 <Field Label="Password">
-                    <Icon Name="lock" Class="size-5 shrink-0 text-[#7caf9a]" />
-                    <input @bind="_password" type="@(_show ? "text" : "password")" placeholder="Enter your password" class="min-w-0 flex-1 bg-transparent text-sm font-medium text-[#285542] outline-none placeholder:text-[#b0c4bb]" />
-                    <button type="button" @onclick="() => _show = !_show" class="text-[#8daf9f]">
+                    <Icon Name="lock" Class="size-5 shrink-0 text-brand-414" />
+                    <input @bind="_password" type="@(_show ? "text" : "password")" placeholder="Enter your password" class="min-w-0 flex-1 bg-transparent text-sm font-medium text-brand-755 outline-none placeholder:text-sage-271" />
+                    <button type="button" @onclick="() => _show = !_show" class="text-sage-380">
                         <Icon Name="@(_show ? "eye-off" : "eye")" Class="size-5" />
                     </button>
                 </Field>
 
                 @if (!string.IsNullOrEmpty(_error))
                 {
-                    <p class="rounded-xl bg-[#fdeceb] px-3 py-2 text-xs font-semibold text-[#c0392b]">@_error</p>
+                    <p class="rounded-xl bg-danger-043 px-3 py-2 text-xs font-semibold text-danger-539">@_error</p>
                 }
 
-                <button type="submit" disabled="@_busy" class="mt-2 rounded-2xl bg-[#1e9a6a] py-4 text-sm font-bold text-white shadow-[0_10px_22px_rgba(30,154,106,0.2)] transition hover:bg-[#167d55] disabled:opacity-60">
+                <button type="submit" disabled="@_busy" class="mt-2 rounded-2xl bg-brand-639 py-4 text-sm font-bold text-white shadow-[0_10px_22px_rgba(30,154,106,0.2)] transition hover:bg-brand-712 disabled:opacity-60">
                     @(_busy ? "Please wait..." : (_register ? "Sign up" : "Log in"))
                 </button>
             </form>
 
-            <p class="mt-auto pt-10 text-center text-sm text-[#79998b]">
+            <p class="mt-auto pt-10 text-center text-sm text-sage-463">
                 @(_register ? "Already have an account?" : "Don't have an account?")
-                <button type="button" @onclick="Toggle" class="font-bold cursor-pointer text-[#1e9a6a]">@(_register ? "Log in" : "Sign up")</button>
+                <button type="button" @onclick="Toggle" class="font-bold cursor-pointer text-brand-639">@(_register ? "Log in" : "Sign up")</button>
             </p>
         </section>
     </div>

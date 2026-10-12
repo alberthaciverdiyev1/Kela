@@ -4,37 +4,37 @@
 
 <PageTitle>Lesson</PageTitle>
 
-<header class="flex h-[72px] items-center justify-between border-b border-[#e5f0eb] bg-[#f6faf8] px-5">
-    <a href="javascript:history.back()" class="flex size-10 items-center justify-center rounded-full bg-white text-[#4c806d] shadow-sm"><Icon Name="arrow-left" Class="size-5" /></a>
-    <h1 class="max-w-[220px] truncate text-[18px] font-bold tracking-[-0.04em] text-[#214d3d]">Materiallar</h1>
+<header class="flex h-[72px] items-center justify-between border-b border-brand-080 bg-brand-027 px-5">
+    <a href="javascript:history.back()" class="flex size-10 items-center justify-center rounded-full bg-white text-brand-600 shadow-sm"><Icon Name="arrow-left" Class="size-5" /></a>
+    <h1 class="max-w-[220px] truncate text-[18px] font-bold tracking-[-0.04em] text-brand-784">Materiallar</h1>
     <span class="size-10"></span>
 </header>
 
 <div class="px-5 pb-28 pt-6">
-    <p class="text-xs font-bold uppercase tracking-[0.14em] text-[#1e9a6a]">Contents</p>
-    <h2 class="mt-1 text-2xl font-bold tracking-[-0.04em] text-[#214d3d]">Materiallar</h2>
+    <p class="text-xs font-bold uppercase tracking-[0.14em] text-brand-639">Contents</p>
+    <h2 class="mt-1 text-2xl font-bold tracking-[-0.04em] text-brand-784">Materiallar</h2>
 
-    @if (_loading) { <p class="mt-6 text-sm text-[#8aa39a]">Yüklənir...</p> }
-    else if (_contents.Count == 0) { <p class="mt-6 text-sm text-[#8aa39a]">Bu dərs üzrə material yoxdur.</p> }
+    @if (_loading) { <p class="mt-6 text-sm text-sage-410">Yüklənir...</p> }
+    else if (_contents.Count == 0) { <p class="mt-6 text-sm text-sage-410">Bu dərs üzrə material yoxdur.</p> }
     else
     {
         <section class="mt-5 flex flex-col gap-3">
             @foreach (var c in _contents)
             {
                 var done = _completed.Contains(c.Id);
-                <div class="flex items-center gap-4 rounded-2xl border border-[#e2eee8] bg-white p-4 shadow-[0_4px_15px_rgba(36,78,62,0.03)]">
-                    <div class="flex size-11 shrink-0 items-center justify-center rounded-xl bg-[#e0f5ec] text-[#16845a]"><Icon Name="@IconFor(c.Type)" Class="size-5" /></div>
+                <div class="flex items-center gap-4 rounded-2xl border border-brand-090 bg-white p-4 shadow-[0_4px_15px_rgba(36,78,62,0.03)]">
+                    <div class="flex size-11 shrink-0 items-center justify-center rounded-xl bg-brand-081 text-brand-698"><Icon Name="@IconFor(c.Type)" Class="size-5" /></div>
                     <div class="min-w-0 flex-1">
-                        <p class="truncate text-[14px] font-semibold text-[#244e3e]">@c.Title</p>
-                        <p class="mt-0.5 text-[11px] text-[#91aaa0]">
+                        <p class="truncate text-[14px] font-semibold text-brand-776">@c.Title</p>
+                        <p class="mt-0.5 text-[11px] text-sage-382">
                             @c.TypeLabel@(c.DurationSeconds is > 0 ? $" · {c.DurationSeconds}s" : "")
                         </p>
                     </div>
                     @if (!string.IsNullOrEmpty(c.Url) || !string.IsNullOrEmpty(c.PlaybackUrl))
                     {
-                        <a href="@Absolute(c.PlaybackUrl ?? c.Url)" target="_blank" class="rounded-lg px-2.5 py-1.5 text-[12px] font-bold text-[#1e9a6a]">Aç</a>
+                        <a href="@Absolute(c.PlaybackUrl ?? c.Url)" target="_blank" class="rounded-lg px-2.5 py-1.5 text-[12px] font-bold text-brand-639">Aç</a>
                     }
-                    <button @onclick="() => MarkAsync(c.Id)" disabled="@done" class="rounded-lg px-2.5 py-1.5 text-[12px] font-bold @(done ? "text-[#8aa39a]" : "text-[#27815e]")">
+                    <button @onclick="() => MarkAsync(c.Id)" disabled="@done" class="rounded-lg px-2.5 py-1.5 text-[12px] font-bold @(done ? "text-sage-410" : "text-brand-671")">
                         @(done ? "✓ Tamam" : "Tamamlandı")
                     </button>
                 </div>

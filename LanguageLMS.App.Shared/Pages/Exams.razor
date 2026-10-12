@@ -3,35 +3,35 @@
 
 <PageTitle>Exams</PageTitle>
 
-<header class="flex h-[72px] items-center justify-between border-b border-[#e5f0eb] bg-[#f6faf8] px-5">
-    <a href="/" class="flex size-10 items-center justify-center rounded-full bg-white text-[#4c806d] shadow-sm"><Icon Name="arrow-left" Class="size-5" /></a>
-    <h1 class="text-[18px] font-bold tracking-[-0.04em] text-[#214d3d]">Exams</h1>
-    <a href="/results" class="rounded-xl p-2 text-[#769487]"><Icon Name="clipboard-check" Class="size-[19px]" /></a>
+<header class="flex h-[72px] items-center justify-between border-b border-brand-080 bg-brand-027 px-5">
+    <a href="/" class="flex size-10 items-center justify-center rounded-full bg-white text-brand-600 shadow-sm"><Icon Name="arrow-left" Class="size-5" /></a>
+    <h1 class="text-[18px] font-bold tracking-[-0.04em] text-brand-784">Exams</h1>
+    <a href="/results" class="rounded-xl p-2 text-sage-478"><Icon Name="clipboard-check" Class="size-[19px]" /></a>
 </header>
 
 <div class="px-5 pb-28 pt-6">
-    <h2 class="text-xl font-bold tracking-[-0.04em] text-[#214d3d]">Available exams</h2>
+    <h2 class="text-xl font-bold tracking-[-0.04em] text-brand-784">Available exams</h2>
 
     @if (_loading)
     {
-        <p class="mt-6 text-sm text-[#8aa39a]">Yüklənir...</p>
+        <p class="mt-6 text-sm text-sage-410">Yüklənir...</p>
     }
     else if (_quizzes.Count == 0)
     {
-        <p class="mt-6 text-sm text-[#8aa39a]">Hələ imtahan təyin olunmayıb.</p>
+        <p class="mt-6 text-sm text-sage-410">Hələ imtahan təyin olunmayıb.</p>
     }
     else
     {
         <section class="mt-5 flex flex-col gap-3">
             @foreach (var q in _quizzes)
             {
-                <a href="/exams/@q.Id" class="flex items-center gap-4 rounded-2xl border border-[#e2eee8] bg-white p-4 shadow-[0_4px_15px_rgba(36,78,62,0.03)]">
-                    <div class="flex size-11 shrink-0 items-center justify-center rounded-xl bg-[#dff5ed] text-[#16845a]"><Icon Name="file" Class="size-5" /></div>
+                <a href="/exams/@q.Id" class="flex items-center gap-4 rounded-2xl border border-brand-090 bg-white p-4 shadow-[0_4px_15px_rgba(36,78,62,0.03)]">
+                    <div class="flex size-11 shrink-0 items-center justify-center rounded-xl bg-brand-083 text-brand-698"><Icon Name="file" Class="size-5" /></div>
                     <div class="min-w-0 flex-1">
-                        <p class="truncate text-[14px] font-semibold text-[#244e3e]">@q.Title</p>
-                        <p class="mt-0.5 text-[11px] text-[#91aaa0]">@q.QuestionCount sual · @q.DurationMinutes dəq</p>
+                        <p class="truncate text-[14px] font-semibold text-brand-776">@q.Title</p>
+                        <p class="mt-0.5 text-[11px] text-sage-382">@q.QuestionCount sual · @q.DurationMinutes dəq</p>
                     </div>
-                    <Icon Name="chevron-right" Class="size-4 text-[#a8bdb4]" />
+                    <Icon Name="chevron-right" Class="size-4 text-sage-300" />
                 </a>
             }
         </section>
