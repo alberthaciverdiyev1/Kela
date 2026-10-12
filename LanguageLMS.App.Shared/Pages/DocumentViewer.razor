@@ -8,14 +8,7 @@
 <header class="sticky top-0 z-20 flex h-[72px] items-center justify-between border-b border-brand-080 bg-brand-027 px-5">
     <a href="javascript:history.back()" class="flex size-10 items-center justify-center rounded-full bg-white text-brand-600 shadow-sm"><Icon Name="arrow-left" Class="size-5" /></a>
     <h1 class="max-w-[200px] truncate text-[16px] font-bold tracking-[-0.04em] text-brand-784">@(string.IsNullOrWhiteSpace(_title) ? "Sənəd" : _title)</h1>
-    @if (!string.IsNullOrEmpty(_url))
-    {
-        <a href="@_url" target="_blank" rel="noopener" class="rounded-lg px-3 py-1.5 text-[12px] font-bold text-brand-639">Endir</a>
-    }
-    else
-    {
-        <span class="size-10"></span>
-    }
+    <span class="size-10"></span>
 </header>
 
 @if (string.IsNullOrEmpty(_url))
@@ -24,7 +17,8 @@
 }
 else
 {
-    <div @ref="_pdfRef" class="min-h-[60vh] bg-white p-3"></div>
+    <div @ref="_pdfRef" class="min-h-[60vh] select-none bg-white p-3"
+         @oncontextmenu="() => { }" @oncontextmenu:preventDefault="true"></div>
 }
 
 @code {
