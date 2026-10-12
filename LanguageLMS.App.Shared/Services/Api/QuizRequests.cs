@@ -1,6 +1,6 @@
 using LanguageLMS.App.Shared.Models;
 
-namespace LanguageLMS.App.Shared.Services;
+namespace LanguageLMS.App.Shared.Services.Api;
 
 public sealed partial class AppApi
 {

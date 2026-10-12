@@ -1,4 +1,4 @@
-namespace LanguageLMS.App.Shared.Services;
+namespace LanguageLMS.App.Shared.Services.Api;
 
 /// <summary>
 /// Student app-in bütün API çağırışları — feature-lərə görə ayrı fayllara bölünüb (partial):
