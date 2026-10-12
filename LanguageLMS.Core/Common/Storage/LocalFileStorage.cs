@@ -8,10 +8,12 @@ public sealed class LocalFileStorage : IFileStorage
 {
     private const string DefaultImage = "/images/noPhoto.png";
     private readonly string _root;
+    private readonly IHttpContextAccessor _accessor;
 
-    public LocalFileStorage(IWebHostEnvironment env, IConfiguration config)
+    public LocalFileStorage(IWebHostEnvironment env, IConfiguration config, IHttpContextAccessor accessor)
     {
         _root = StoragePaths.ResolveRoot(env, config);
+        _accessor = accessor;
     }
 
     public async Task<string> UploadAsync(IFormFile file, string folder, CancellationToken ct = default)
@@ -45,13 +47,26 @@ public sealed class LocalFileStorage : IFileStorage
     public string GetUrl(string? path)
     {
         if (string.IsNullOrWhiteSpace(path)) return DefaultImage;
-        if (path.StartsWith("http://") || path.StartsWith("https://")) return path;
+        if (IsAbsolute(path)) return path;
 
-        return $"{StoragePaths.RequestPath}/{path.TrimStart('/')}";
+        return Absolute($"{StoragePaths.RequestPath}/{path.TrimStart('/')}");
     }
 
     public string? CreatePresignedPutUrl(string path, string contentType, TimeSpan expiry) => null;
 
     public Task<bool> ExistsAsync(string path, CancellationToken ct = default)
         => Task.FromResult(File.Exists(Path.Combine(_root, path)));
+
+    private static bool IsAbsolute(string url)
+        => url.StartsWith("http://", StringComparison.OrdinalIgnoreCase)
+           || url.StartsWith("https://", StringComparison.OrdinalIgnoreCase);
+
+    /// <summary>Nisbi yolu cari sorğunun sxem+host-u ilə absolute edir (R2 ilə eyni davranış).</summary>
+    private string Absolute(string relativePath)
+    {
+        var ctx = _accessor.HttpContext;
+        return ctx is null
+            ? relativePath
+            : $"{ctx.Request.Scheme}://{ctx.Request.Host}{relativePath}";
+    }
 }
