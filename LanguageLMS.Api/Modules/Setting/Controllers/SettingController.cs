@@ -1,7 +1,6 @@
 using LanguageLMS.Api.Common.Controllers;
 using LanguageLMS.Api.Common.Responses;
 using LanguageLMS.Core.Modules.Setting.Responses;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace LanguageLMS.Api.Modules.Setting.Controllers;
@@ -10,7 +9,6 @@ namespace LanguageLMS.Api.Modules.Setting.Controllers;
 [Route("api/[controller]")]
 public sealed class SettingController(ISettingService service) : ApiControllerBase
 {
-    [AllowAnonymous]
     [HttpGet("app-version")]
     public async Task<ActionResult<ApiResponse<AppVersionResponse>>> AppVersion(CancellationToken ct)
         => Success(await service.GetAppVersionAsync(ct));

@@ -86,6 +86,12 @@ builder.Services.AddAuthorization(options =>
     options.AddPolicy(AuthPolicies.Student, p => p.RequireRole(AuthRoles.Student));
     options.AddPolicy(AuthPolicies.Teacher, p => p.RequireRole(AuthRoles.Teacher, AuthRoles.Admin));
     options.AddPolicy(AuthPolicies.Admin, p => p.RequireRole(AuthRoles.Admin));
+
+    // Qlobal qorunma: auth olmadan heç bir endpoint işləməz.
+    // Yalnız [AllowAnonymous] işarələnmiş endpoint-lər (auth: login/register/OTP) istisnadır.
+    options.FallbackPolicy = new Microsoft.AspNetCore.Authorization.AuthorizationPolicyBuilder()
+        .RequireAuthenticatedUser()
+        .Build();
 });
 
 var app = builder.Build();
@@ -120,7 +126,7 @@ app.UseStatusCodePages(async context =>
 
 if (app.Environment.IsDevelopment())
 {
-    app.MapOpenApi();
+    app.MapOpenApi().AllowAnonymous();
 }
 
 app.UseHttpsRedirection();

@@ -19,10 +19,12 @@ public sealed class AuthController(IAuthService service) : ApiControllerBase
 
     // --- Auth ---
 
+    [AllowAnonymous]
     [HttpPost("register")]
     public async Task<ActionResult<ApiResponse<AuthResponse>>> Register([FromBody] RegisterRequest request, CancellationToken ct)
         => Success(await service.RegisterAsync(request, ct), "Registered", StatusCodes.Status201Created);
 
+    [AllowAnonymous]
     [HttpPost("login")]
     public async Task<ActionResult<ApiResponse<AuthResponse>>> Login([FromBody] LoginRequest request, CancellationToken ct)
         => Success(await service.LoginAsync(request, ct), "Login successful");
@@ -33,6 +35,7 @@ public sealed class AuthController(IAuthService service) : ApiControllerBase
         => Success(await service.GetProfileAsync(StudentId, ct));
 
     // Bir cihazda çoxlu hesab: başqa hesaba keçid → həmin hesabın tokeni qaytarılır
+    [AllowAnonymous]
     [HttpPost("switch-account")]
     public async Task<ActionResult<ApiResponse<AuthResponse>>> SwitchAccount([FromBody] LoginRequest request, CancellationToken ct)
         => Success(await service.LoginAsync(request, ct), "Login successful");
@@ -43,6 +46,7 @@ public sealed class AuthController(IAuthService service) : ApiControllerBase
 
     // --- OTP ---
 
+    [AllowAnonymous]
     [HttpPost("send-otp")]
     public async Task<ActionResult<ApiResponse<string>>> SendOtp([FromBody] SendOtpRequest request, CancellationToken ct)
     {
@@ -50,10 +54,12 @@ public sealed class AuthController(IAuthService service) : ApiControllerBase
         return SuccessMessage("OTP sent");
     }
 
+    [AllowAnonymous]
     [HttpPost("check-otp")]
     public async Task<ActionResult<ApiResponse<bool>>> CheckOtp([FromBody] CheckOtpRequest request, CancellationToken ct)
         => Success(await service.CheckOtpAsync(request, ct), "OTP checked");
 
+    [AllowAnonymous]
     [HttpPost("reset-password")]
     public async Task<ActionResult<ApiResponse<string>>> ResetPassword([FromBody] ResetPasswordRequest request, CancellationToken ct)
     {
