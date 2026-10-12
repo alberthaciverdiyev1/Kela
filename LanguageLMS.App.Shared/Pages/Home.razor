@@ -28,19 +28,15 @@ else
                 <span class="text-[11px] text-[#91aaa0]">Swipe to explore</span>
             </div>
             <div class="-mx-5 flex gap-4 overflow-x-auto px-5 pb-2 [scrollbar-width:none]">
-                @foreach (var s in Stories)
+                @foreach (var b in _banners)
                 {
                     <button class="flex w-[66px] shrink-0 flex-col items-center gap-2 text-center">
-                        <span class="rounded-full p-[3px] ring-2 ring-offset-2 ring-offset-[#f8fbf9] @s.Ring">
-                            <img src="@s.Image" alt="" class="size-[54px] rounded-full object-cover" />
+                            <span class="rounded-full p-[3px] ring-2 ring-offset-2 ring-offset-[#f8fbf9]">
+                            <img src="@b.Image" alt="" class="size-[54px] rounded-full object-cover" />
                         </span>
-                        <span class="w-full truncate text-[10px] font-semibold text-[#5d8373]">@s.Label</span>
+                        <span class="w-full truncate text-[10px] font-semibold text-[#5d8373]">@b.Title</span>
                     </button>
                 }
-                <button class="flex w-[66px] shrink-0 flex-col items-center gap-2 text-center">
-                    <span class="flex size-[60px] items-center justify-center rounded-full border-2 border-dashed border-[#b5d2c5] bg-white text-2xl font-light text-[#6b9c87]">+</span>
-                    <span class="w-full truncate text-[10px] font-semibold text-[#5d8373]">Add note</span>
-                </button>
             </div>
         </section>
 
@@ -120,17 +116,9 @@ else
 @code {
     private bool _loading = true;
     private int _quizCount;
+    private List<BannerResponse> _banners = new List<BannerResponse>();
 
-    private record Story(string Label, string Image, string Ring);
     private record ContinueCard(string Title, string Category, string Meta, int Progress, string? Image);
-
-    private static readonly Story[] Stories =
-    {
-        new("Your progress", "https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fit=crop&w=180&q=85", "ring-[#27815e]"),
-        new("Design tips", "https://images.unsplash.com/photo-1558655146-9f40138edfeb?auto=format&fit=crop&w=180&q=85", "ring-[#e6a24c]"),
-        new("Weekly goal", "https://images.unsplash.com/photo-1499750310107-5fef28a66643?auto=format&fit=crop&w=180&q=85", "ring-[#788bd0]"),
-        new("Community", "https://images.unsplash.com/photo-1529156069898-49953e39b3ac?auto=format&fit=crop&w=180&q=85", "ring-[#dc7b72]"),
-    };
 
     private List<ContinueCard> ContinueItems { get; } = new();
 
@@ -139,6 +127,7 @@ else
         try
         {
             var quizzes = await Api.QuizzesAsync();
+            _banners = await Api.BannersAsync();
             _quizCount = quizzes.Count;
 
             var progress = await Api.ProgressAsync();
