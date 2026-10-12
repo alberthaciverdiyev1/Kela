@@ -28,14 +28,21 @@ else
                 <span class="text-[11px] text-[#91aaa0]">Swipe to explore</span>
             </div>
             <div class="-mx-5 flex gap-4 overflow-x-auto px-5 pb-2 [scrollbar-width:none]">
-                @foreach (var b in _banners)
+                @for (var i = 0; i < _banners.Count; i++)
                 {
-                    <button class="flex w-[66px] shrink-0 flex-col items-center gap-2 text-center">
-                            <span class="rounded-full p-[3px] ring-2 ring-offset-2 ring-offset-[#f8fbf9]">
+                    var idx = i;
+                    var b = _banners[i];
+                    <button type="button" class="flex w-[66px] shrink-0 flex-col items-center gap-2 text-center"
+                            @onclick="() => OpenStory(idx)">
+                        <span class="rounded-full p-[3px] ring-2 ring-offset-2 ring-offset-[#f8fbf9] @(b.IsNew ? "ring-[#27815e]" : "ring-[#cfe3d9]")">
                             <img src="@b.Image" alt="" class="size-[54px] rounded-full object-cover" />
                         </span>
                         <span class="w-full truncate text-[10px] font-semibold text-[#5d8373]">@b.Title</span>
                     </button>
+                }
+                @if (_banners.Count == 0)
+                {
+                    <span class="self-center text-[11px] text-[#91aaa0]">Hələ banner yoxdur</span>
                 }
             </div>
         </section>
@@ -111,12 +118,27 @@ else
             </div>
         </section>
     </main>
+
+    @if (_storyOpen && _banners.Count > 0)
+    {
+        <StoryViewer Banners="_banners" StartIndex="_storyIndex" OnClose="CloseStory" />
+    }
 }
 
 @code {
     private bool _loading = true;
+    private bool _storyOpen;
+    private int _storyIndex;
     private int _quizCount;
     private List<BannerResponse> _banners = new List<BannerResponse>();
+
+    private void OpenStory(int index)
+    {
+        _storyIndex = index;
+        _storyOpen = true;
+    }
+
+    private void CloseStory() => _storyOpen = false;
 
     private record ContinueCard(string Title, string Category, string Meta, int Progress, string? Image);
 
