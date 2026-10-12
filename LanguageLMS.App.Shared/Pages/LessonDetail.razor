@@ -32,7 +32,7 @@
                     </div>
                     @if (!string.IsNullOrEmpty(c.Url) || !string.IsNullOrEmpty(c.PlaybackUrl))
                     {
-                        <a href="@Absolute(c.PlaybackUrl ?? c.Url)" target="_blank" class="rounded-lg px-2.5 py-1.5 text-[12px] font-bold text-brand-639">Aç</a>
+                        <button type="button" @onclick="() => OpenViewer(c)" class="rounded-lg px-2.5 py-1.5 text-[12px] font-bold text-brand-639">Aç</button>
                     }
                     <button @onclick="() => MarkAsync(c.Id)" disabled="@done" class="rounded-lg px-2.5 py-1.5 text-[12px] font-bold @(done ? "text-sage-410" : "text-brand-671")">
                         @(done ? "✓ Tamam" : "Tamamlandı")
@@ -43,11 +43,25 @@
     }
 </div>
 
+<MediaViewer Open="_viewerOpen" Url="_viewerUrl" Type="_viewerType" OnClose="CloseViewer" />
+
 @code {
     [Parameter] public long LessonId { get; set; }
     private bool _loading = true;
     private List<ContentItem> _contents = new();
     private readonly HashSet<long> _completed = new();
+    private bool _viewerOpen;
+    private string? _viewerUrl;
+    private string? _viewerType;
+
+    private void OpenViewer(ContentItem c)
+    {
+        _viewerUrl = Absolute(c.PlaybackUrl ?? c.Url);
+        _viewerType = c.Type;
+        _viewerOpen = true;
+    }
+
+    private void CloseViewer() => _viewerOpen = false;
 
     protected override async Task OnInitializedAsync()
     {

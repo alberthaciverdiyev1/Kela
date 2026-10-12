@@ -7,19 +7,20 @@
 
 @if (!_ready)
 {
-    <div class="flex min-h-screen items-center justify-center text-sage-459">Yüklənir...</div>
+    <Loader/>
 }
 else if (!Auth.IsAuthenticated)
 {
-    <Login />
+    <Login/>
 }
 else
 {
     <div class="min-h-screen bg-brand-102 text-brand-836">
-        <NavMenu />
-        <div class="mx-auto min-h-screen w-full max-w-[430px] overflow-x-hidden bg-brand-022 shadow-[0_0_60px_rgba(23,77,58,0.12)] lg:ml-[236px] lg:max-w-none lg:shadow-none">
+        <NavMenu/>
+        <div
+            class="mx-auto min-h-screen w-full max-w-[430px] overflow-x-hidden bg-brand-022 shadow-[0_0_60px_rgba(23,77,58,0.12)] lg:ml-[236px] lg:max-w-none lg:shadow-none">
             @Body
-            <BottomNav />
+            <BottomNav/>
         </div>
     </div>
 }
@@ -54,7 +55,14 @@ else
         catch
         {
             ApiClient.Token = null;
-            try { await Store.RemoveAsync(); } catch { /* JS hazır deyil */ }
+            try
+            {
+                await Store.RemoveAsync();
+            }
+            catch
+            {
+                /* JS hazır deyil */
+            }
         }
     }
 

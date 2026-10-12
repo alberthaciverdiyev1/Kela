@@ -1,0 +1,77 @@
+@* Tətbiq daxilində media pəncərəsi: video (m3u8/HLS dəstəyi), pdf, şəkil, audio. *@
+@implements IAsyncDisposable
+@inject IJSRuntime JS
+
+@if (Open && !string.IsNullOrEmpty(Url))
+{
+    <div class="fixed inset-0 z-50 flex items-center justify-center bg-black/90 backdrop-blur-sm"
+         @onclick="CloseAsync">
+        <div class="relative w-full max-w-[920px] px-3" @onclick:stopPropagation="true">
+            <button type="button" class="absolute -top-11 right-3 rounded-full p-2 text-white/80 transition hover:bg-white/10 hover:text-white"
+                    @onclick="CloseAsync" aria-label="Bağla">
+                <Icon Name="x" Class="size-6" />
+            </button>
+
+            @if (Type == "video")
+            {
+                <video @ref="_videoRef" controls playsinline
+                       class="w-full rounded-xl bg-black" style="max-height:82vh"></video>
+            }
+            else if (Type == "image")
+            {
+                <img src="@Url" alt="" class="mx-auto max-h-[82vh] rounded-xl object-contain" />
+            }
+            else if (Type == "voice")
+            {
+                <div class="rounded-xl bg-white p-6">
+                    <p class="mb-4 text-center text-sm font-semibold text-brand-776">Səs yazısı</p>
+                    <audio controls src="@Url" class="w-full"></audio>
+                </div>
+            }
+            else
+            {
+                <iframe src="@Url" title="document"
+                        class="h-[82vh] w-full rounded-xl border-0 bg-white"></iframe>
+            }
+        </div>
+    </div>
+}
+
+@code {
+    [Parameter] public bool Open { get; set; }
+    [Parameter] public string? Url { get; set; }
+    [Parameter] public string? Type { get; set; }
+    [Parameter] public EventCallback OnClose { get; set; }
+
+    private ElementReference _videoRef;
+    private string? _attached;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (Open && Type == "video" && !string.IsNullOrEmpty(Url))
+        {
+            if (_attached != Url)
+            {
+                await JS.InvokeVoidAsync("lmsVideoPlayer.attach", _videoRef, Url);
+                _attached = Url;
+            }
+        }
+        else if (_attached is not null)
+        {
+            await JS.InvokeVoidAsync("lmsVideoPlayer.destroy");
+            _attached = null;
+        }
+    }
+
+    private async Task CloseAsync()
+    {
+        await JS.InvokeVoidAsync("lmsVideoPlayer.destroy");
+        _attached = null;
+        await OnClose.InvokeAsync();
+    }
+
+    public async ValueTask DisposeAsync()
+    {
+        try { await JS.InvokeVoidAsync("lmsVideoPlayer.destroy"); } catch { /* noop */ }
+    }
+}
