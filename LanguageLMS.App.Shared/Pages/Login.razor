@@ -1,6 +1,7 @@
 @inject AppApi Api
 @inject ApiClient ApiClient
 @inject AuthState Auth
+@inject TokenStore Store
 
 <main class="min-h-screen bg-brand-101 text-brand-804">
     <div class="mx-auto flex min-h-screen w-full max-w-[430px] flex-col bg-brand-024 shadow-[0_0_60px_rgba(23,77,58,0.12)]">
@@ -81,6 +82,10 @@
                 ? await Api.RegisterAsync(_fullName.Trim(), _email.Trim(), string.IsNullOrWhiteSpace(_phone) ? null : _phone.Trim(), _password)
                 : await Api.LoginAsync(_email.Trim(), _password);
             Auth.Set(ApiClient.Token ?? "", user);
+            if (!string.IsNullOrWhiteSpace(ApiClient.Token))
+            {
+                await Store.SaveAsync(ApiClient.Token!);
+            }
         }
         catch (Exception ex)
         {

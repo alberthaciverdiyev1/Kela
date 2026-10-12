@@ -11,5 +11,6 @@ builder.Services.AddScoped(_ => new HttpClient { BaseAddress = new Uri(AppConfig
 builder.Services.AddScoped<ApiClient>();
 builder.Services.AddScoped<AppApi>();
 builder.Services.AddScoped<AuthState>();
+builder.Services.AddScoped<TokenStore>();
 
 await builder.Build().RunAsync();
