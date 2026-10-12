@@ -56,33 +56,38 @@ else
                 <a href="/courses" class="flex items-center gap-1 text-[12px] font-semibold text-brand-671">View all <Icon Name="chevron-right" Class="size-3.5" /></a>
             </div>
             <div class="grid gap-4 lg:grid-cols-2">
-                @foreach (var c in ContinueItems)
+                @foreach (var g in _studentGroups)
                 {
-                    <article class="group flex overflow-hidden rounded-xl border border-brand-104 bg-white">
+                    var pct = _groupProgress.GetValueOrDefault(g.Id);
+                    <a href="@($"/courses/{g.Id}")" class="group flex overflow-hidden rounded-xl border border-brand-104 bg-white">
                         <div class="relative w-[112px] shrink-0 sm:w-[150px]">
-                            @if (!string.IsNullOrEmpty(c.Image))
+                            @if (!string.IsNullOrEmpty(g.Image))
                             {
-                                <img src="@c.Image" alt="" class="h-full w-full object-cover" />
+                                <img src="@g.Image" alt="" class="h-full w-full object-cover" />
                             }
                             else
                             {
                                 <div class="flex h-full w-full items-center justify-center bg-brand-083 text-3xl font-black text-brand-698">
-                                    @(string.IsNullOrEmpty(c.Title) ? "?" : c.Title[..1].ToUpper())
+                                    @(string.IsNullOrEmpty(g.Name) ? "?" : g.Name[..1].ToUpper())
                                 </div>
                             }
-                            <span class="absolute left-2.5 top-2.5 rounded bg-white/90 px-2 py-1 text-[9px] font-bold text-brand-669">@c.Category</span>
+                            <span class="absolute left-2.5 top-2.5 rounded bg-white/90 px-2 py-1 text-[9px] font-bold text-brand-669">@g.StudentCount şagird</span>
                         </div>
                         <div class="min-w-0 flex-1 p-4">
-                            <p class="text-[10px] font-medium text-sage-376">@c.Meta</p>
-                            <h3 class="mt-2 line-clamp-2 text-[14px] font-semibold leading-5 text-brand-776">@c.Title</h3>
+                            <p class="text-[10px] font-medium text-sage-376">@g.Description</p>
+                            <h3 class="mt-2 line-clamp-2 text-[14px] font-semibold leading-5 text-brand-776">@g.Name</h3>
                             <div class="mt-5 flex items-center gap-3">
                                 <div class="h-1 flex-1 overflow-hidden rounded-full bg-brand-075">
-                                    <div class="h-full rounded-full bg-brand-671" style="width:@(c.Progress)%"></div>
+                                    <div class="h-full rounded-full bg-brand-671" style="width:@(pct)%"></div>
                                 </div>
-                                <span class="text-[11px] font-bold text-brand-671">@(c.Progress)%</span>
+                                <span class="text-[11px] font-bold text-brand-671">@(pct)%</span>
                             </div>
                         </div>
-                    </article>
+                    </a>
+                }
+                @if (_studentGroups.Count == 0)
+                {
+                    <p class="text-[12px] text-sage-410">Hələ qrupunuz yoxdur.</p>
                 }
             </div>
         </section>
@@ -106,14 +111,11 @@ else
                 </div>
             </div>
             <div class="rounded-xl bg-brand-836 p-5 text-white">
-                <p class="text-[11px] font-bold uppercase tracking-[0.16em] text-brand-253">Learning streak</p>
-                <p class="mt-6 text-4xl font-semibold tracking-[-0.06em]">12 days</p>
-                <p class="mt-2 text-[12px] leading-5 text-brand-286">You are building a consistent habit. Keep it going.</p>
-                <div class="mt-6 flex gap-1.5">
-                    @foreach (var active in new[] { 1, 1, 1, 1, 1, 1, 0 })
-                    {
-                        <span class="size-2 rounded-full @(active == 1 ? "bg-brand-341" : "bg-brand-667")"></span>
-                    }
+                <p class="text-[11px] font-bold uppercase tracking-[0.16em] text-brand-253">Ümumi irəliləyiş</p>
+                <p class="mt-6 text-4xl font-semibold tracking-[-0.06em]">@_overallPercent%</p>
+                <p class="mt-2 text-[12px] leading-5 text-brand-286">@_completedContents / @_totalContents material tamamlandı. Belə davam!</p>
+                <div class="mt-6 h-1.5 w-full overflow-hidden rounded-full bg-brand-667">
+                    <div class="h-full rounded-full bg-brand-341" style="width:@(_overallPercent)%"></div>
                 </div>
             </div>
         </section>
@@ -130,7 +132,12 @@ else
     private bool _storyOpen;
     private int _storyIndex;
     private int _quizCount;
-    private List<BannerResponse> _banners = new List<BannerResponse>();
+    private int _overallPercent;
+    private int _completedContents;
+    private int _totalContents;
+    private List<BannerResponse> _banners = [];
+    private List<GroupResponse> _studentGroups = [];
+    private readonly Dictionary<long, int> _groupProgress = new();
 
     private void OpenStory(int index)
     {
@@ -140,10 +147,6 @@ else
 
     private void CloseStory() => _storyOpen = false;
 
-    private record ContinueCard(string Title, string Category, string Meta, int Progress, string? Image);
-
-    private List<ContinueCard> ContinueItems { get; } = new();
-
     protected override async Task OnInitializedAsync()
     {
         try
@@ -151,23 +154,39 @@ else
             var quizzes = await Api.QuizzesAsync();
             _banners = await Api.BannersAsync();
             _quizCount = quizzes.Count;
+            _studentGroups = await Api.StudentGroupsAsync();
 
-            var progress = await Api.ProgressAsync();
-            foreach (var item in progress.Items.Take(4))
+            // Şagird progressi: ümumi + hər qrup üzrə (fənn statistikasından hesablanır)
+            var stats = await Api.StatisticsAsync();
+            _overallPercent = stats.Overview.CompletionPercent;
+            _completedContents = stats.Overview.CompletedContents;
+            _totalContents = stats.Overview.TotalContents;
+
+            var bySubject = stats.BySubject.ToDictionary(s => s.SubjectId);
+            foreach (var group in _studentGroups)
             {
-                ContinueItems.Add(new ContinueCard(
-                    item.LessonTitle, "Dərs", $"{item.CompletedContents} / {item.TotalContents} material",
-                    item.ProgressPercent, null));
+                var total = 0;
+                var done = 0;
+                try
+                {
+                    var subjects = await Api.SubjectsAsync(group.Id);
+                    foreach (var subject in subjects)
+                    {
+                        if (bySubject.TryGetValue(subject.Id, out var st))
+                        {
+                            total += st.TotalContents;
+                            done += st.CompletedContents;
+                        }
+                    }
+                }
+                catch { /* fənn gəlməzsə 0 */ }
+
+                _groupProgress[group.Id] = total > 0 ? (int)Math.Round(done * 100.0 / total) : 0;
             }
         }
-        catch { /* API əlçatmazsa demo data */ }
-
-        if (ContinueItems.Count == 0)
+        catch
         {
-            ContinueItems.Add(new ContinueCard("UI/UX Design Fundamentals", "Design", "12 of 18 lessons", 68,
-                "https://images.unsplash.com/photo-1561070791-2526d30994b5?auto=format&fit=crop&w=900&q=85"));
-            ContinueItems.Add(new ContinueCard("Modern JavaScript from Zero", "Development", "8 of 20 lessons", 42,
-                "https://images.unsplash.com/photo-1515879218367-8466d910aaa4?auto=format&fit=crop&w=900&q=85"));
+            // API əlçatmazsa boş qalır
         }
 
         _loading = false;

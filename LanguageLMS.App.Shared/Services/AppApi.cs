@@ -43,7 +43,10 @@ public sealed class AppApi(ApiClient api)
 
     // --- Progress ---
     public Task<ProgressOverview> ProgressAsync() => api.GetAsync<ProgressOverview>("/api/progress");
+    public Task<Statistics> StatisticsAsync() => api.GetAsync<Statistics>("/api/statistics");
     public Task MarkCompletedAsync(long contentId) => api.PostAsync<object>("/api/progress", new { contentId });
-    
+
     public Task<List<BannerResponse>> BannersAsync() => api.GetAsync<List<BannerResponse>>("/api/banner");
+
+    public Task<List<GroupResponse>> StudentGroupsAsync() => api.GetAsync<List<GroupResponse>>("/api/student/groups");
 }
