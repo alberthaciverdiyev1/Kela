@@ -14,7 +14,7 @@
     <p class="text-xs font-bold uppercase tracking-[0.14em] text-brand-639">Subjects</p>
     <h2 class="mt-1 text-2xl font-bold tracking-[-0.04em] text-brand-784">Fənlər</h2>
 
-    @if (_loading) { <p class="mt-6 text-sm text-sage-410">Yüklənir...</p> }
+    @if (_loading) { <Loader/> }
     else if (_subjects.Count == 0) { <p class="mt-6 text-sm text-sage-410">Bu qrupda fənn yoxdur.</p> }
     else
     {
