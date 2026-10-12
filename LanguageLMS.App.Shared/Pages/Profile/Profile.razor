@@ -68,28 +68,3 @@
         </button>
     </div>
 </section>
-
-@code {
-    private int _groups;
-    private int _quizzes;
-    private int _completed;
-
-    protected override async Task OnInitializedAsync()
-    {
-        try
-        {
-            _groups = (await Api.StudentGroupsAsync()).Count;
-            _quizzes = (await Api.QuizzesAsync()).Count;
-            var progress = await Api.ProgressAsync();
-            _completed = progress.Items.Sum(i => i.CompletedContents);
-        }
-        catch { }
-    }
-
-    private async Task Logout()
-    {
-        try { await Api.LogoutAsync(); } catch { }
-        try { await Store.RemoveAsync(); } catch { }
-        Auth.Clear();
-    }
-}

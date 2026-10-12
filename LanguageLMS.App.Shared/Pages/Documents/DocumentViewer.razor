@@ -15,33 +15,3 @@ else
     <div @ref="_pdfRef" class="min-h-[60vh] select-none bg-white p-3"
          @oncontextmenu="() => { }" @oncontextmenu:preventDefault="true"></div>
 }
-
-@code {
-    [Parameter, SupplyParameterFromQuery(Name = "url")] public string? UrlQuery { get; set; }
-    [Parameter, SupplyParameterFromQuery(Name = "title")] public string? TitleQuery { get; set; }
-
-    private string? _url;
-    private string? _title;
-    private ElementReference _pdfRef;
-    private string? _attached;
-
-    protected override void OnParametersSet()
-    {
-        _url = UrlQuery;
-        _title = TitleQuery;
-    }
-
-    protected override async Task OnAfterRenderAsync(bool firstRender)
-    {
-        if (!string.IsNullOrEmpty(_url) && _attached != _url)
-        {
-            _attached = _url;
-            await JS.InvokeVoidAsync("lmsPdf.render", _pdfRef, _url);
-        }
-    }
-
-    public async ValueTask DisposeAsync()
-    {
-        try { await JS.InvokeVoidAsync("lmsPdf.clear", _pdfRef); } catch { /* noop */ }
-    }
-}

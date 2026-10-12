@@ -31,15 +31,3 @@ else
         </section>
     </div>
 }
-
-@code {
-    [Parameter] public long AttemptId { get; set; }
-    private bool _loading = true;
-    private QuizResultDetailDto? _detail;
-
-    protected override async Task OnInitializedAsync()
-    {
-        try { _detail = await Api.ResultDetailAsync(AttemptId); } catch { }
-        _loading = false;
-    }
-}

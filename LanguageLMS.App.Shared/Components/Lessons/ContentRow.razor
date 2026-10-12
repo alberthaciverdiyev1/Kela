@@ -13,19 +13,3 @@
         @(Done ? "✓ Tamam" : "Tamamlandı")
     </button>
 </div>
-
-@code {
-    [Parameter, EditorRequired] public ContentItemDto Content { get; set; } = default!;
-    [Parameter] public bool Done { get; set; }
-    [Parameter] public bool ShowOpen { get; set; }
-    [Parameter] public EventCallback OnOpen { get; set; }
-    [Parameter] public EventCallback OnMark { get; set; }
-
-    private string IconName => Content.Type switch
-    {
-        "video" => "play",
-        "file" => "file",
-        "voice" => "chart",
-        _ => "book"
-    };
-}

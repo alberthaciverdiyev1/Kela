@@ -38,14 +38,3 @@
         </section>
     }
 </div>
-
-@code {
-    private bool _loading = true;
-    private List<GroupDto> _groups = new();
-
-    protected override async Task OnInitializedAsync()
-    {
-        try { _groups = await Api.StudentGroupsAsync(); } catch { }
-        _loading = false;
-    }
-}

@@ -21,11 +21,3 @@
         <span class="mt-4 inline-flex items-center gap-1 text-[12px] font-bold text-brand-639">Dərslərə bax <Icon Name="chevron-right" Class="size-3.5" /></span>
     </div>
 </a>
-
-@code {
-    [Parameter, EditorRequired] public GroupDto Group { get; set; } = default!;
-    [Parameter] public int Index { get; set; }
-
-    private string Tone => (Index % 4) switch { 0 => "bg-brand-083", 1 => "bg-sky-061", 2 => "bg-sun-069", _ => "bg-grape-051" };
-    private string ToneText => (Index % 4) switch { 0 => "text-brand-698", 1 => "text-sky-531", 2 => "text-sun-529", _ => "text-grape-447" };
-}

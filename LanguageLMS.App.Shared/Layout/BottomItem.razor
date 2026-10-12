@@ -4,20 +4,3 @@
     <Icon Name="@IconName" Class="size-5" />
     <span>@Label</span>
 </a>
-
-@code {
-    [Parameter] public string Href { get; set; } = "/";
-    [Parameter] public string Label { get; set; } = "";
-    [Parameter] public string IconName { get; set; } = "book";
-    [Parameter] public bool MatchAll { get; set; }
-
-    private string Current => "/" + Nav.ToBaseRelativePath(Nav.Uri).Split('?')[0].TrimEnd('/');
-
-    private bool Active => MatchAll
-        ? Current == "/"
-        : Current == Href || Current.StartsWith(Href + "/");
-
-    private string Css =>
-        "flex min-w-16 flex-col items-center gap-1 text-[10px] font-semibold " +
-        (Active ? "text-brand-671" : "text-sage-369");
-}

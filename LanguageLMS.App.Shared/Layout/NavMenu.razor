@@ -22,7 +22,3 @@
         <p class="mt-1 text-[11px] leading-5 text-sage-410">A little progress each day adds up.</p>
     </div>
 </aside>
-
-@code {
-    private string ToPath(string href) => "/" + Nav.ToBaseRelativePath(Nav.Uri).Split('?')[0].TrimEnd('/');
-}

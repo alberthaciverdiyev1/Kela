@@ -21,15 +21,3 @@
         </section>
     }
 </div>
-
-@code {
-    [Parameter] public long SubjectId { get; set; }
-    private bool _loading = true;
-    private List<LessonDto> _lessons = new();
-
-    protected override async Task OnInitializedAsync()
-    {
-        try { _lessons = await Api.LessonsAsync(SubjectId); } catch { }
-        _loading = false;
-    }
-}
