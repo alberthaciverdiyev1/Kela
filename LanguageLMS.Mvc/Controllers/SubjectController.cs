@@ -1,5 +1,7 @@
 using FluentValidation;
 using LanguageLMS.Core.Common.Bulk;
+using LanguageLMS.Core.Modules.Lesson.Abstractions;
+using LanguageLMS.Core.Modules.Lesson.Requests;
 using LanguageLMS.Core.Modules.Subject.Abstractions;
 using LanguageLMS.Core.Modules.Subject.Requests;
 using Microsoft.AspNetCore.Mvc;
@@ -9,6 +11,7 @@ namespace LanguageLMS.Mvc.Controllers;
 [Route("[controller]")]
 public sealed class SubjectController(
     ISubjectService service,
+    ILessonService lessons,
     IValidator<SubjectUpsertRequest> validator) : Controller
 {
     [HttpGet]
@@ -23,7 +26,20 @@ public sealed class SubjectController(
     public async Task<IActionResult> List([FromQuery] SubjectListRequest request, CancellationToken ct)
         => Json(await service.ListAsync(request, ct));
 
+    // Fənn səhifəsi: fənnin dərsləri
     [HttpGet("{id:long}")]
+    public async Task<IActionResult> Details(long id, CancellationToken ct)
+    {
+        var subject = await service.GetAsync(id, ct);
+        ViewData["Title"] = subject.Name;
+        ViewData["Subject"] = subject;
+        ViewData["Lessons"] = await lessons.ListAsync(new LessonListRequest { SubjectId = id, PerPage = 200 }, ct);
+        ViewData["Scripts"] = new[] { "~/js/pages/subject/details.js" };
+        return View();
+    }
+
+    // Redaktə modalı üçün JSON
+    [HttpGet("{id:long}/edit")]
     public async Task<IActionResult> Get(long id, CancellationToken ct)
         => Json(await service.GetAsync(id, ct));
 

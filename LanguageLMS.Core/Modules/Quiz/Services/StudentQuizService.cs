@@ -19,12 +19,16 @@ public sealed class StudentQuizService(
         var quiz = await db.Quizzes.AsNoTracking().FirstOrDefaultAsync(q => q.Id == request.QuizId && q.IsActive, ct)
             ?? throw new KeyNotFoundException($"Quiz not found: {request.QuizId}");
 
-        var lesson = await db.Lessons.AsNoTracking().FirstOrDefaultAsync(l => l.Id == quiz.LessonId, ct)
-            ?? throw new KeyNotFoundException($"Lesson not found: {quiz.LessonId}");
-
-        if (!await access.HasSubjectAccessAsync(studentId, lesson.SubjectId, ct))
+        // Ümumi (general) imtahanların lesson_id-si olmur — bu halda fənn yoxlaması aparılmır.
+        if (quiz.LessonId is not null)
         {
-            throw new ForbiddenException("You do not have access to this quiz");
+            var lesson = await db.Lessons.AsNoTracking().FirstOrDefaultAsync(l => l.Id == quiz.LessonId, ct)
+                ?? throw new KeyNotFoundException($"Lesson not found: {quiz.LessonId}");
+
+            if (!await access.HasSubjectAccessAsync(studentId, lesson.SubjectId, ct))
+            {
+                throw new ForbiddenException("You do not have access to this quiz");
+            }
         }
 
         var completedAttempts = await db.StudentQuizzes.CountAsync(

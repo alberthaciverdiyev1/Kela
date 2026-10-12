@@ -44,7 +44,7 @@
                 </label>
             </div>
             <div class="w-44">
-                <partial name="Ui/_Select" model="@(new SelectModel { Name = "filter_subject", Id = "filter_subject", Label = "Fənn", Options = subjectFilter })" />
+                <partial name="Ui/_Select" model="@(new SelectModel { Name = "filter_subject", Id = "filter_subject", Label = "Fənn", Options = subjectFilter, Value = (string?)ViewData["SelectedSubjectId"] })" />
             </div>
             <div class="w-36">
                 <partial name="Ui/_Select" model="@(new SelectModel { Name = "filter_status", Id = "filter_status", Label = "Status", Options = statusFilter })" />

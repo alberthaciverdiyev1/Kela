@@ -3,7 +3,7 @@
     const errBox = document.getElementById('formError');
 
     window.openEdit = async function (id) {
-        const data = await AdminUI.get(`/subject/${id}`);
+        const data = await AdminUI.get(`/subject/${id}/edit`);
         document.getElementById('modalTitle').textContent = 'Fənn redaktəsi';
         document.getElementById('entityId').value = data.id;
         document.getElementById('name').value = data.name;

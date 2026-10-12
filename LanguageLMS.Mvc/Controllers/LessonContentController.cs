@@ -15,7 +15,7 @@ public sealed class LessonContentController(
     IValidator<LessonContentUpdateRequest> updateValidator) : Controller
 {
     [HttpGet]
-    public async Task<IActionResult> Index(CancellationToken ct)
+    public async Task<IActionResult> Index([FromQuery(Name = "lesson_id")] long? lessonId, CancellationToken ct)
     {
         ViewData["Title"] = "Materiallar";
         ViewData["Scripts"] = new[]
@@ -25,6 +25,7 @@ public sealed class LessonContentController(
             "~/js/pages/lesson-content/update.js"
         };
         ViewData["Lessons"] = await lessons.ListAsync(new LessonListRequest { PerPage = 200 }, ct);
+        ViewData["SelectedLessonId"] = lessonId?.ToString() ?? "";
         return View();
     }
 

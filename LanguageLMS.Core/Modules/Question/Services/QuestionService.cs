@@ -67,7 +67,7 @@ public sealed class QuestionService(AppDbContext db, IFileStorage storage) : IQu
         var question = new Question
         {
             SubjectId = request.SubjectId,
-            Title = request.Title,
+            Title = request.Title ?? string.Empty,
             VariantA = request.VariantA,
             VariantB = request.VariantB,
             VariantC = request.VariantC,
@@ -95,7 +95,7 @@ public sealed class QuestionService(AppDbContext db, IFileStorage storage) : IQu
         await EnsureSubjectExistsAsync(request.SubjectId, ct);
 
         question.SubjectId = request.SubjectId;
-        question.Title = request.Title;
+        question.Title = request.Title ?? string.Empty;
         question.VariantA = request.VariantA;
         question.VariantB = request.VariantB;
         question.VariantC = request.VariantC;
