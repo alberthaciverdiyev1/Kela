@@ -78,7 +78,7 @@
     {
         try
         {
-            _groups = (await Api.GroupsAsync()).Count;
+            _groups = (await Api.StudentGroupsAsync()).Count;
             _quizzes = (await Api.QuizzesAsync()).Count;
             var progress = await Api.ProgressAsync();
             _completed = progress.Items.Sum(i => i.CompletedContents);

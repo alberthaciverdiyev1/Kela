@@ -25,7 +25,7 @@
 @code {
     [Parameter] public long SubjectId { get; set; }
     private bool _loading = true;
-    private List<Lesson> _lessons = new();
+    private List<LessonDto> _lessons = new();
 
     protected override async Task OnInitializedAsync()
     {

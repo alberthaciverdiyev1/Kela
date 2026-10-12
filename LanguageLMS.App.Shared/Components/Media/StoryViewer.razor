@@ -72,7 +72,7 @@
 </style>
 
 @code {
-    [Parameter, EditorRequired] public IReadOnlyList<BannerResponse> Banners { get; set; } = Array.Empty<BannerResponse>();
+    [Parameter, EditorRequired] public IReadOnlyList<BannerDto> Banners { get; set; } = Array.Empty<BannerDto>();
     [Parameter] public int StartIndex { get; set; }
     [Parameter] public int DurationSeconds { get; set; } = 5;
     [Parameter] public EventCallback OnClose { get; set; }

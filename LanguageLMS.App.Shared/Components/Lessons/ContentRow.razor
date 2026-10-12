@@ -15,7 +15,7 @@
 </div>
 
 @code {
-    [Parameter, EditorRequired] public ContentItem Content { get; set; } = default!;
+    [Parameter, EditorRequired] public ContentItemDto Content { get; set; } = default!;
     [Parameter] public bool Done { get; set; }
     [Parameter] public bool ShowOpen { get; set; }
     [Parameter] public EventCallback OnOpen { get; set; }

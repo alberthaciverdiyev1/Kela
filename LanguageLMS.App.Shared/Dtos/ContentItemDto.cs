@@ -1,6 +1,6 @@
-namespace LanguageLMS.App.Shared.Models;
+namespace LanguageLMS.App.Shared.Dtos;
 
-public record ContentItem(long Id, string Title, string? Description, string? Type, string? Url,
+public record ContentItemDto(long Id, string Title, string? Description, string? Type, string? Url,
     string? PlaybackUrl, int? DurationSeconds)
 {
     public string TypeLabel => Type switch

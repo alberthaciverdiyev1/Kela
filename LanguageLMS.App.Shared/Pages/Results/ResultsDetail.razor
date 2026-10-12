@@ -35,7 +35,7 @@ else
 @code {
     [Parameter] public long AttemptId { get; set; }
     private bool _loading = true;
-    private QuizResultDetail? _detail;
+    private QuizResultDetailDto? _detail;
 
     protected override async Task OnInitializedAsync()
     {

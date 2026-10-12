@@ -23,7 +23,7 @@
 </a>
 
 @code {
-    [Parameter, EditorRequired] public GroupResponse Group { get; set; } = default!;
+    [Parameter, EditorRequired] public GroupDto Group { get; set; } = default!;
     [Parameter] public int Index { get; set; }
 
     private string Tone => (Index % 4) switch { 0 => "bg-brand-083", 1 => "bg-sky-061", 2 => "bg-sun-069", _ => "bg-grape-051" };

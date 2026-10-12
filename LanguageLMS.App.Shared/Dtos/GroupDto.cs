@@ -1,7 +1,7 @@
-namespace LanguageLMS.App.Shared.Models;
+namespace LanguageLMS.App.Shared.Dtos;
 
 /// <summary>Şagirdin qrupu — progress backend-də hesablanıb gəlir.</summary>
-public record GroupResponse(
+public record GroupDto(
     long Id,
     string Name,
     string? Description,
@@ -11,7 +11,6 @@ public record GroupResponse(
     int CompletedContents,
     int ProgressPercent)
 {
-    /// <summary>Real yüklənmiş şəkil var? (default "noPhoto" və boş halda false)</summary>
     public bool HasImage => !string.IsNullOrWhiteSpace(Image)
                             && !Image.Contains("noPhoto", StringComparison.OrdinalIgnoreCase);
 

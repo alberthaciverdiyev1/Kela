@@ -26,14 +26,14 @@
 @code {
     [Parameter] public long GroupId { get; set; }
     private bool _loading = true;
-    private List<Subject> _subjects = new();
+    private List<SubjectDto> _subjects = new();
     private string? Name;
 
     protected override async Task OnInitializedAsync()
     {
         try
         {
-            var groups = await Api.GroupsAsync();
+            var groups = await Api.StudentGroupsAsync();
             Name = groups.FirstOrDefault(g => g.Id == GroupId)?.Name;
             _subjects = await Api.SubjectsAsync(GroupId);
 

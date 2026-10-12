@@ -72,10 +72,10 @@ else
 @code {
     [Parameter] public long LessonId { get; set; }
     private bool _loading = true;
-    private List<ContentItem> _contents = new();
-    private ContentItem? _video;
-    private List<ContentItem> _others = new();
-    private List<QuizItem> _quizzes = new();
+    private List<ContentItemDto> _contents = new();
+    private ContentItemDto? _video;
+    private List<ContentItemDto> _others = new();
+    private List<QuizDto> _quizzes = new();
     private readonly HashSet<long> _completed = new();
     private ElementReference _videoRef;
     private string? _videoUrl;
@@ -119,7 +119,7 @@ else
         catch { }
     }
 
-    private void Open(ContentItem c)
+    private void Open(ContentItemDto c)
     {
         var url = Absolute(c.PlaybackUrl ?? c.Url);
         if (string.IsNullOrEmpty(url)) return;
