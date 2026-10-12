@@ -1,4 +1,5 @@
 using LanguageLMS.Api.Common.Authorization;
+using LanguageLMS.Api.Common.Extensions;
 using LanguageLMS.Core.Common.Bulk;
 using LanguageLMS.Api.Common.Controllers;
 using LanguageLMS.Api.Common.Responses;
@@ -21,12 +22,21 @@ public sealed class BannerController(IBannerService service) : ApiControllerBase
     [Authorize(Policy = AuthPolicies.Student)]
     public async Task<ActionResult<ApiResponse<IReadOnlyList<BannerResponse>>>> List(
         [FromQuery] BannerListRequest request, CancellationToken ct)
-        => Success((await service.ListAsync(request, ct)).Data);
+    {
+        var page = await service.ListAsync(request, ct);
+        var data = page.Data.Select(Absolute).ToList();
+        return Success<IReadOnlyList<BannerResponse>>(data);
+    }
 
     [HttpGet("{id:long}")]
     [Authorize(Policy = AuthPolicies.Student)]
     public async Task<ActionResult<ApiResponse<BannerResponse>>> Show(long id, CancellationToken ct)
-        => Success(await service.GetAsync(id, ct));
+        => Success(Absolute(await service.GetAsync(id, ct)));
+
+    // Şəkil URL-i absolute edir: R2 artıq http(s) qaytarır, local `/uploads/...` üçün
+    // cari host önünə əlavə olunur ki, app (başqa origin) şəkli yükləyə bilsin.
+    private BannerResponse Absolute(BannerResponse banner)
+        => banner with { Image = Request.ToAbsoluteUrl(banner.Image)! };
 
     [HttpPost]
     [Authorize(Policy = AuthPolicies.Teacher)]
