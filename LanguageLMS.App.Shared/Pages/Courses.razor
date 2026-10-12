@@ -1,6 +1,5 @@
 @page "/courses"
 @inject AppApi Api
-@inject NavigationManager Nav
 
 <PageTitle>Courses</PageTitle>
 
@@ -35,15 +34,22 @@
             @foreach (var (g, i) in _groups.Select((g, i) => (g, i)))
             {
                 <article class="overflow-hidden rounded-2xl border border-brand-090 bg-white shadow-[0_4px_15px_rgba(36,78,62,0.03)]">
-                    <div class="relative flex h-[132px] items-center justify-center @Tone(i)">
-                        <span class="text-5xl font-black @ToneText(i)">@(string.IsNullOrEmpty(g.Name) ? "?" : g.Name[..1].ToUpper())</span>
+                    <div class="relative flex h-[132px] items-center justify-center overflow-hidden @Tone(i)">
+                        @if (g.HasImage)
+                        {
+                            <img src="@g.Image" alt="" class="absolute inset-0 h-full w-full object-cover" />
+                        }
+                        else
+                        {
+                            <span class="text-5xl font-black @ToneText(i)">@g.Initial</span>
+                        }
                         <span class="absolute left-4 top-4 rounded-full bg-white/90 px-2.5 py-1 text-[10px] font-bold text-brand-643">Course</span>
-                        <button class="absolute bottom-3 right-3 flex size-10 items-center justify-center rounded-full bg-white text-brand-639 shadow-md"><Icon Name="play" Class="ml-0.5 size-4" /></button>
+                        <a href="/courses/@g.Id" class="absolute bottom-3 right-3 flex size-10 items-center justify-center rounded-full bg-white text-brand-639 shadow-md"><Icon Name="play" Class="ml-0.5 size-4" /></a>
                     </div>
                     <div class="p-4">
                         <h3 class="font-bold leading-5 tracking-[-0.02em] text-brand-776">@g.Name</h3>
                         <div class="mt-3 flex flex-wrap items-center gap-x-3 gap-y-1 text-[11px] font-medium text-sage-382">
-                            <span class="text-brand-698">@(g.Description ?? "Ümumi")</span>
+                            <span class="text-brand-698">@(string.IsNullOrWhiteSpace(g.Description) ? "Ümumi" : g.Description)</span>
                             <span class="flex items-center gap-1"><Icon Name="users" Class="size-3" />@g.StudentCount tələbə</span>
                         </div>
                         <a href="/courses/@g.Id" class="mt-4 inline-flex items-center gap-1 text-[12px] font-bold text-brand-639">Dərslərə bax <Icon Name="chevron-right" Class="size-3.5" /></a>
@@ -56,11 +62,11 @@
 
 @code {
     private bool _loading = true;
-    private List<Group> _groups = new();
+    private List<GroupResponse> _groups = new();
 
     protected override async Task OnInitializedAsync()
     {
-        try { _groups = await Api.GroupsAsync(); } catch { }
+        try { _groups = await Api.StudentGroupsAsync(); } catch { }
         _loading = false;
     }
 

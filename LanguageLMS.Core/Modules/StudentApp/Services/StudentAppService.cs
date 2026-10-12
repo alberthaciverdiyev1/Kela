@@ -6,6 +6,7 @@ using LanguageLMS.Core.Modules.Group.Responses;
 using LanguageLMS.Core.Modules.Lesson.Responses;
 using LanguageLMS.Core.Modules.LessonContent.Responses;
 using LanguageLMS.Core.Modules.Quiz.Responses;
+using LanguageLMS.Core.Modules.StudentApp.Responses;
 using LanguageLMS.Core.Modules.Subject.Responses;
 using Microsoft.EntityFrameworkCore;
 
@@ -18,7 +19,7 @@ public sealed class StudentAppService(
     IFileStorage storage,
     IStudentAccessService access) : IStudentAppService
 {
-    public async Task<IReadOnlyList<GroupResponse>> ListGroupsAsync(long studentId, CancellationToken ct = default)
+    public async Task<IReadOnlyList<StudentGroupResponse>> ListGroupsAsync(long studentId, CancellationToken ct = default)
     {
         var groups = await db.Groups
             .AsNoTracking()
@@ -27,9 +28,51 @@ public sealed class StudentAppService(
             .OrderByDescending(g => g.Id)
             .ToListAsync(ct);
 
-        return groups
-            .Select(g => new GroupResponse(g.Id, g.Name, g.Description, storage.GetUrl(g.Image), g.UserId, g.Memberships.Count))
-            .ToList();
+        // Şagirdin progressi qruplara görə backend-də hesablanır.
+        var accessibleSubjectIds = (await access.AccessibleSubjectIdsAsync(studentId, ct)).ToHashSet();
+        var groupIds = groups.Select(g => g.Id).ToList();
+
+        var groupSubjects = await db.GroupSubjects.AsNoTracking()
+            .Where(gs => groupIds.Contains(gs.GroupId) && accessibleSubjectIds.Contains(gs.SubjectId))
+            .Select(gs => new { gs.GroupId, gs.SubjectId })
+            .ToListAsync(ct);
+
+        var subjectIds = groupSubjects.Select(x => x.SubjectId).Distinct().ToList();
+
+        var lessons = await db.Lessons.AsNoTracking()
+            .Where(l => subjectIds.Contains(l.SubjectId) && l.IsActive)
+            .Select(l => new { l.Id, l.SubjectId })
+            .ToListAsync(ct);
+
+        var lessonIds = lessons.Select(l => l.Id).ToList();
+
+        var contents = await db.LessonContents.AsNoTracking()
+            .Where(c => lessonIds.Contains(c.LessonId) && c.IsActive)
+            .Select(c => new { c.Id, c.LessonId })
+            .ToListAsync(ct);
+
+        var completed = (await db.LessonProgress
+            .Where(p => p.StudentId == studentId)
+            .Select(p => p.LessonContentId)
+            .ToListAsync(ct)).ToHashSet();
+
+        return groups.Select(g =>
+        {
+            var subjectIdsOfGroup = groupSubjects.Where(x => x.GroupId == g.Id).Select(x => x.SubjectId).ToHashSet();
+            var lessonIdsOfGroup = lessons.Where(l => subjectIdsOfGroup.Contains(l.SubjectId)).Select(l => l.Id).ToHashSet();
+            var contentIdsOfGroup = contents.Where(c => lessonIdsOfGroup.Contains(c.LessonId)).Select(c => c.Id).ToList();
+            var done = contentIdsOfGroup.Count(completed.Contains);
+
+            return new StudentGroupResponse(
+                g.Id,
+                g.Name,
+                g.Description,
+                storage.GetUrl(g.Image),
+                g.Memberships.Count,
+                contentIdsOfGroup.Count,
+                done,
+                Percent(done, contentIdsOfGroup.Count));
+        }).ToList();
     }
 
     public async Task<IReadOnlyList<SubjectResponse>> ListSubjectsAsync(
@@ -153,6 +196,8 @@ public sealed class StudentAppService(
 
     private static int ReadFlag(JsonElement root, string name)
         => root.TryGetProperty(name, out var value) && value.ValueKind == JsonValueKind.Number ? value.GetInt32() : 1;
+
+    private static int Percent(int part, int total) => total > 0 ? (int)Math.Round(part * 100.0 / total) : 0;
 
     private LessonContentResponse ToResponse(LessonContent content)
     {

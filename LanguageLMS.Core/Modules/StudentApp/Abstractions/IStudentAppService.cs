@@ -2,6 +2,7 @@ using LanguageLMS.Core.Modules.Group.Responses;
 using LanguageLMS.Core.Modules.Lesson.Responses;
 using LanguageLMS.Core.Modules.LessonContent.Responses;
 using LanguageLMS.Core.Modules.Quiz.Responses;
+using LanguageLMS.Core.Modules.StudentApp.Responses;
 using LanguageLMS.Core.Modules.Subject.Responses;
 
 namespace LanguageLMS.Core.Modules.StudentApp.Abstractions;
@@ -10,7 +11,7 @@ public record ContentCountResponse(int TopicExplain, int LiveVideo, int Pdf, int
 
 public interface IStudentAppService
 {
-    Task<IReadOnlyList<GroupResponse>> ListGroupsAsync(long studentId, CancellationToken ct = default);
+    Task<IReadOnlyList<StudentGroupResponse>> ListGroupsAsync(long studentId, CancellationToken ct = default);
 
     Task<IReadOnlyList<SubjectResponse>> ListSubjectsAsync(long studentId, long groupId, CancellationToken ct = default);
 

@@ -11,6 +11,7 @@ using LanguageLMS.Core.Modules.Notification.Responses;
 using LanguageLMS.Core.Modules.Quiz.Responses;
 using LanguageLMS.Core.Modules.Notification.Services;
 using LanguageLMS.Core.Modules.StudentApp.Services;
+using LanguageLMS.Core.Modules.StudentApp.Responses;
 using LanguageLMS.Core.Modules.Subject.Responses;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -24,7 +25,7 @@ public sealed class StudentController(IStudentAppService service, INotificationS
     private long StudentId => long.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
 
     [HttpGet("groups")]
-    public async Task<ActionResult<ApiResponse<IReadOnlyList<GroupResponse>>>> Groups(CancellationToken ct)
+    public async Task<ActionResult<ApiResponse<IReadOnlyList<StudentGroupResponse>>>> Groups(CancellationToken ct)
         => Success(await service.ListGroupsAsync(StudentId, ct));
 
     [HttpGet("groups/{groupId:long}/subjects")]
