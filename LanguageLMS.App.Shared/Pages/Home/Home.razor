@@ -47,6 +47,22 @@ else
             </div>
         </section>
 
+        @if (_continue.Count > 0)
+        {
+            <section class="mt-10">
+                <div class="mb-4">
+                    <p class="text-[11px] font-bold uppercase tracking-[0.18em] text-brand-671">Davam et</p>
+                    <h2 class="mt-1 text-[22px] font-semibold tracking-[-0.04em]">Qaldığın yerdən</h2>
+                </div>
+                <div class="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
+                    @foreach (var item in _continue)
+                    {
+                        <ContinueCard Item="item"/>
+                    }
+                </div>
+            </section>
+        }
+
         <section class="mt-10">
             <div class="mb-4 flex items-end justify-between">
                 <div>

@@ -21,6 +21,7 @@ public partial class Home
     private int _totalContents;
     private List<BannerDto> _banners = [];
     private List<GroupDto> _studentGroups = [];
+    private List<ProgressItemDto> _continue = [];
 
     private void OpenStory(int index)
     {
@@ -39,6 +40,14 @@ public partial class Home
             _quizCount = quizzes.Count;
             // Qruplar — hər qrupun progressi backend-də hesablanıb gəlir
             _studentGroups = await Api.StudentGroupsAsync();
+
+            // "Davam et" — növbəti materialı olan dərslər
+            var progress = await Api.ProgressAsync();
+            _continue = progress.Items
+                .Where(i => i.NextContent is not null)
+                .OrderByDescending(i => i.ProgressPercent)
+                .Take(6)
+                .ToList();
 
             // Ümumi progress də backend-də hesablanır
             var stats = await Api.StatisticsAsync();
