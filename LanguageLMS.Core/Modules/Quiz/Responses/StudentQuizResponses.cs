@@ -28,6 +28,11 @@ public record CompleteQuizResponse(
 public record QuizResultItem(
     long QuestionId,
     string Title,
+    string? VariantA,
+    string? VariantB,
+    string? VariantC,
+    string? VariantD,
+    string? VariantE,
     string? StudentAnswer,
     string CorrectAnswer,
     bool IsRight);

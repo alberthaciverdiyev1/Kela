@@ -195,6 +195,11 @@ public sealed class StudentQuizService(
             return new QuizResultItem(
                 a.QuestionId,
                 question?.Title ?? string.Empty,
+                question?.VariantA,
+                question?.VariantB,
+                question?.VariantC,
+                question?.VariantD,
+                question?.VariantE,
                 a.StudentAnswer,
                 question?.CorrectAnswer ?? string.Empty,
                 a.IsRight);
