@@ -93,6 +93,45 @@ public class StudentQuizEndpointsTests(ApiFactory factory)
     }
 
     [Fact]
+    public async Task Results_filtered_by_date_range()
+    {
+        var student = await CompletedAttemptAsync();
+        var now = DateTimeOffset.UtcNow;
+
+        var inside = $"/api/student-quiz/results?from={Uri.EscapeDataString(now.AddHours(-1).ToString("o"))}&to={Uri.EscapeDataString(now.AddHours(1).ToString("o"))}";
+        Assert.Equal(1, (await Json(await student.GetAsync(inside))).GetProperty("data").GetArrayLength());
+
+        var outside = $"/api/student-quiz/results?from={Uri.EscapeDataString(now.AddDays(-10).ToString("o"))}&to={Uri.EscapeDataString(now.AddDays(-9).ToString("o"))}";
+        Assert.Equal(0, (await Json(await student.GetAsync(outside))).GetProperty("data").GetArrayLength());
+    }
+
+    [Fact]
     public async Task Requires_auth()
         => Assert.Equal(HttpStatusCode.Unauthorized, (await factory.CreateClient().GetAsync("/api/student-quiz/results")).StatusCode);
+
+    private async Task<HttpClient> CompletedAttemptAsync()
+    {
+        var (studentId, token) = await RegisterStudentAsync();
+        var subjectId = await TestData.SubjectAsync(factory, Unique("Subj"));
+        var q1 = await TestData.QuestionAsync(factory, subjectId, Unique("Q"), "A");
+        var lessonId = await TestData.LessonAsync(factory, subjectId, Unique("L"));
+        var quizId = await TestData.QuizAsync(factory, lessonId, Unique("Quiz"));
+        await TestData.AssignQuestionsAsync(factory, quizId, q1);
+
+        var groupId = await TestData.GroupAsync(factory, Unique("G"));
+        await TestData.AssignSubjectsAsync(factory, groupId, subjectId);
+        await TestData.AssignStudentsAsync(factory, groupId, new[] { studentId });
+
+        var student = Authed(token);
+        var start = await student.PostAsJsonAsync("/api/student-quiz/start", new { quizId });
+        var attemptId = (await Json(start)).GetProperty("data").GetProperty("attemptId").GetInt64();
+
+        var complete = await student.PostAsJsonAsync("/api/student-quiz/complete", new
+        {
+            attemptId,
+            answers = new object[] { new { questionId = q1, answer = "A" } }
+        });
+        Assert.Equal(HttpStatusCode.OK, complete.StatusCode);
+        return student;
+    }
 }

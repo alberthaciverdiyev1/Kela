@@ -27,8 +27,9 @@ public sealed class StudentQuizController(IStudentQuizService service) : ApiCont
         => Success(await service.CompleteAsync(StudentId, request, ct), "Quiz completed");
 
     [HttpGet("results")]
-    public async Task<ActionResult<ApiResponse<IReadOnlyList<QuizResultSummary>>>> Results(CancellationToken ct)
-        => Success(await service.ListResultsAsync(StudentId, ct));
+    public async Task<ActionResult<ApiResponse<IReadOnlyList<QuizResultSummary>>>> Results(
+        [FromQuery] DateTimeOffset? from, [FromQuery] DateTimeOffset? to, CancellationToken ct)
+        => Success(await service.ListResultsAsync(StudentId, from, to, ct));
 
     [HttpGet("results/{attemptId:long}")]
     public async Task<ActionResult<ApiResponse<QuizResultDetail>>> Result(long attemptId, CancellationToken ct)

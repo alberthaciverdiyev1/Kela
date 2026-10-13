@@ -129,11 +129,25 @@ public sealed class StudentQuizService(
             true);
     }
 
-    public async Task<IReadOnlyList<QuizResultSummary>> ListResultsAsync(long studentId, CancellationToken ct = default)
+    public async Task<IReadOnlyList<QuizResultSummary>> ListResultsAsync(
+        long studentId, DateTimeOffset? from = null, DateTimeOffset? to = null, CancellationToken ct = default)
     {
-        var attempts = await db.StudentQuizzes.AsNoTracking()
-            .Where(a => a.StudentId == studentId && a.IsCompleted)
-            .OrderByDescending(a => a.Id)
+        var query = db.StudentQuizzes.AsNoTracking()
+            .Where(a => a.StudentId == studentId && a.IsCompleted);
+
+        if (from is not null)
+        {
+            query = query.Where(a => a.StartDate >= from);
+        }
+
+        if (to is not null)
+        {
+            query = query.Where(a => a.StartDate < to);
+        }
+
+        var attempts = await query
+            .OrderByDescending(a => a.StartDate)
+            .ThenByDescending(a => a.Id)
             .ToListAsync(ct);
 
         var attemptIds = attempts.Select(a => a.Id).ToList();

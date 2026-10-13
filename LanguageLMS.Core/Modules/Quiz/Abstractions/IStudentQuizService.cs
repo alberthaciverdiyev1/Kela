@@ -9,7 +9,12 @@ public interface IStudentQuizService
 
     Task<CompleteQuizResponse> CompleteAsync(long studentId, CompleteQuizRequest request, CancellationToken ct = default);
 
-    Task<IReadOnlyList<QuizResultSummary>> ListResultsAsync(long studentId, CancellationToken ct = default);
+    /// <summary>
+    /// Tələbənin tamamlanmış cəhdlərini qaytarır. <paramref name="from"/> (daxil) və
+    /// <paramref name="to"/> (xaric) verilərsə tarix aralığı üzrə süzgəc tətbiq olunur.
+    /// </summary>
+    Task<IReadOnlyList<QuizResultSummary>> ListResultsAsync(
+        long studentId, DateTimeOffset? from = null, DateTimeOffset? to = null, CancellationToken ct = default);
 
     Task<QuizResultDetail> GetResultAsync(long studentId, long attemptId, CancellationToken ct = default);
 }

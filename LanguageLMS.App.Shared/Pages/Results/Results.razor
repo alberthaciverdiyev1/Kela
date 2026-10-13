@@ -15,12 +15,12 @@
         <div class="mt-4 grid grid-cols-2 gap-3">
             <label class="block">
                 <span class="text-[10px] font-bold uppercase tracking-[0.14em] text-sage-410">Başlanğıc</span>
-                <input type="date" @bind="_from" @bind:after="RecomputeAsync"
+                <input type="date" @bind="_from" @bind:after="LoadAsync"
                        class="mt-1 w-full rounded-xl border border-brand-104 bg-white px-3 py-2 text-[13px] text-brand-755 outline-none focus:border-brand-467" />
             </label>
             <label class="block">
                 <span class="text-[10px] font-bold uppercase tracking-[0.14em] text-sage-410">Son</span>
-                <input type="date" @bind="_to" @bind:after="RecomputeAsync"
+                <input type="date" @bind="_to" @bind:after="LoadAsync"
                        class="mt-1 w-full rounded-xl border border-brand-104 bg-white px-3 py-2 text-[13px] text-brand-755 outline-none focus:border-brand-467" />
             </label>
         </div>
