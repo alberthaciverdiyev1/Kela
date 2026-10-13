@@ -4,33 +4,35 @@
 @inject NavigationManager Nav
 @inject AudioPlayerService Player
 
-<PageTitle>Dərs</PageTitle>
+<PageTitle>Materiallar</PageTitle>
 
-<PageHeader Title="@(Title ?? "Dərs")" Back="javascript:history.back()"/>
+<PageHeader Title="Materiallar" Back="javascript:history.back()"/>
 
-@if (_loading)
-{
-    <Loader/>
-}
-else if (_contents.Count == 0)
-{
-    <EmptyState Text="Bu dərs üzrə material yoxdur." Class="px-5 py-10 text-sm text-sage-410"/>
-}
-else
-{
-    <div class="px-5 pb-28 pt-5">
+<div class="px-5 pb-28 pt-5">
+    <h2 class="mt-1 text-2xl font-bold tracking-[-0.04em] text-brand-784">@(Title ?? "Dərs")</h2>
+
+    @if (_loading)
+    {
+        <Loader/>
+    }
+    else if (_contents.Count == 0)
+    {
+        <EmptyState Text="Bu dərs üzrə material yoxdur."/>
+    }
+    else
+    {
         @if (_video is not null)
         {
             @* Yuxarıda video *@
-            <div class="overflow-hidden rounded-2xl bg-black shadow-[0_6px_20px_rgba(23,61,48,0.12)]">
+            <div class="mt-5 overflow-hidden rounded-2xl bg-black shadow-[0_6px_20px_rgba(23,61,48,0.12)]">
                 <video @ref="_videoRef" controls playsinline preload="metadata"
                        class="aspect-video w-full bg-black"></video>
             </div>
 
-            @* Aşağıda başlıq *@
+            @* Aşağıda material başlığı *@
             <div class="mt-4">
                 <p class="text-[11px] font-bold uppercase tracking-[0.14em] text-brand-639">Video dərs</p>
-                <h1 class="mt-1 text-xl font-bold tracking-[-0.04em] text-brand-784">@_video.Title</h1>
+                <h3 class="mt-1 text-lg font-semibold tracking-[-0.03em] text-brand-776">@_video.Title</h3>
                 <div class="mt-3 flex items-center gap-3">
                     <button type="button" @onclick="() => MarkAsync(_video.Id)" disabled="@IsDone(_video.Id)"
                             class="inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-[12px] font-bold @(IsDone(_video.Id) ? "bg-brand-075 text-sage-410" : "bg-brand-081 text-brand-671")">
@@ -66,5 +68,5 @@ else
                 }
             </section>
         }
-    </div>
-}
+    }
+</div>
