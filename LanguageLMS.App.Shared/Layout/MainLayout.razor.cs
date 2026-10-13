@@ -40,7 +40,7 @@ public partial class MainLayout
             if (!string.IsNullOrWhiteSpace(user.Phone)) lines.Add(user.Phone);
             lines.Add($"ID: {user.Id}");
 
-            await ScreenGuard.EnableAsync(string.Join('\n', lines));
+            await ScreenGuard.EnableAsync(AppConfig.ShowWatermark ? string.Join('\n', lines) : null);
             await Push.RegisterAsync();
         }
         else
