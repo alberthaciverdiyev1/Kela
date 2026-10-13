@@ -53,6 +53,15 @@ public partial class LessonDetail
 
     private bool IsDone(long id) => _completed.Contains(id);
 
+    /// <summary>Video sona çatanda materialı avtomatik "tamamlandı" işarələ.</summary>
+    private async Task OnVideoEndedAsync()
+    {
+        if (_video is not null && !IsDone(_video.Id))
+        {
+            await MarkAsync(_video.Id);
+        }
+    }
+
     private async Task MarkAsync(long contentId)
     {
         try
