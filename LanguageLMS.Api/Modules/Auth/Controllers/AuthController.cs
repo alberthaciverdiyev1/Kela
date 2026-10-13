@@ -88,6 +88,11 @@ public sealed class AuthController(IAuthService service) : ApiControllerBase
         => Success(await service.ChangePhoneAsync(StudentId, request, ct), "Phone changed");
 
     [Authorize(Policy = AuthPolicies.Student)]
+    [HttpPost("change-image")]
+    public async Task<ActionResult<ApiResponse<StudentResponse>>> ChangeImage(IFormFile file, CancellationToken ct)
+        => Success(await service.ChangeImageAsync(StudentId, file, ct), "Image changed");
+
+    [Authorize(Policy = AuthPolicies.Student)]
     [HttpPut("change-full-name")]
     public async Task<ActionResult<ApiResponse<StudentResponse>>> ChangeFullName([FromBody] ChangeFullNameRequest request, CancellationToken ct)
         => Success(await service.ChangeFullNameAsync(StudentId, request, ct), "Name changed");

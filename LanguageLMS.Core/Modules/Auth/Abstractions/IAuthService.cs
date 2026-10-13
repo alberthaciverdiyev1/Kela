@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Http;
 using LanguageLMS.Core.Modules.Auth.Requests;
 using LanguageLMS.Core.Modules.Auth.Responses;
 
@@ -24,6 +25,8 @@ public interface IAuthService
     Task<StudentResponse> ChangePhoneAsync(long studentId, ChangePhoneRequest request, CancellationToken ct = default);
 
     Task<StudentResponse> ChangeFullNameAsync(long studentId, ChangeFullNameRequest request, CancellationToken ct = default);
+
+    Task<StudentResponse> ChangeImageAsync(long studentId, IFormFile file, CancellationToken ct = default);
 
     Task<StudentResponse> SetNotificationStatusAsync(long studentId, NotificationStatusRequest request, CancellationToken ct = default);
 

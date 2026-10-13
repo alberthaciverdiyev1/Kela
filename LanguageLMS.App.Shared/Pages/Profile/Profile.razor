@@ -14,7 +14,20 @@
 @* --- Profil məlumatı (yalnız oxunur) --- *@
 <section class="border-b border-brand-100 px-5 pb-8 pt-8">
     <div class="flex items-start gap-4">
-        <div class="flex size-[82px] shrink-0 items-center justify-center rounded-full bg-brand-103 text-3xl font-black text-brand-835">@(Auth.User?.Initial ?? "L")</div>
+        <div class="relative shrink-0">
+            @if (HasPhoto)
+            {
+                <img src="@Auth.User!.Image" alt="" class="size-[82px] rounded-full object-cover" />
+            }
+            else
+            {
+                <div class="flex size-[82px] items-center justify-center rounded-full bg-brand-103 text-3xl font-black text-brand-835">@(Auth.User?.Initial ?? "L")</div>
+            }
+            <label class="absolute -bottom-1 -right-1 flex size-7 cursor-pointer items-center justify-center rounded-full bg-brand-743 text-white ring-4 ring-brand-022" aria-label="Şəkli dəyiş">
+                <Icon Name="edit" Class="size-3" />
+                <InputFile OnChange="OnImageSelected" accept="image/*" class="hidden" />
+            </label>
+        </div>
         <div class="min-w-0 pt-1">
             <h1 class="text-[24px] font-semibold tracking-[-0.055em]">@(Auth.User?.FullName ?? "Şagird")</h1>
             <p class="mt-1 text-[13px] text-sage-459">@(Auth.User?.Email ?? "")</p>
@@ -31,6 +44,12 @@
     <p class="mb-3 text-[10px] font-bold uppercase tracking-[0.18em] text-brand-671">Hesab</p>
 
     <div class="divide-y divide-brand-075 border-y border-brand-075">
+        <button type="button" @onclick="OpenName" class="flex w-full items-center gap-3 py-4 text-left">
+            <span class="flex size-8 items-center justify-center rounded-lg bg-brand-049 text-brand-639"><Icon Name="edit" Class="size-4" /></span>
+            <span class="flex-1"><span class="block text-[13px] font-semibold">Ad və soyad</span><span class="mt-0.5 block text-[10px] text-sage-410">@(Auth.User?.FullName ?? "")</span></span>
+            <Icon Name="chevron-right" Class="size-4 text-sage-300" />
+        </button>
+
         @if (!string.IsNullOrWhiteSpace(Auth.User?.Phone))
         {
             <button type="button" @onclick="() => OpenPhone()" class="flex w-full items-center gap-3 py-4 text-left">
@@ -54,9 +73,9 @@
             </button>
         </div>
 
-        <a href="mailto:info@languagelms.com" class="flex w-full items-center gap-3 py-4 text-left">
+        <a href="/contact" class="flex w-full items-center gap-3 py-4 text-left">
             <span class="flex size-8 items-center justify-center rounded-lg bg-brand-049 text-brand-639"><Icon Name="mail" Class="size-4" /></span>
-            <span class="flex-1"><span class="block text-[13px] font-semibold">Bizimlə əlaqə</span><span class="mt-0.5 block text-[10px] text-sage-410">info@languagelms.com</span></span>
+            <span class="flex-1"><span class="block text-[13px] font-semibold">Bizimlə əlaqə</span><span class="mt-0.5 block text-[10px] text-sage-410">WhatsApp, Instagram və s.</span></span>
             <Icon Name="chevron-right" Class="size-4 text-sage-300" />
         </a>
 
@@ -79,9 +98,15 @@
 </section>
 
 @* --- Modallar --- *@
+<Modal Open="_nameOpen" Title="Ad və soyad" OnClose="() => _nameOpen = false">
+    <input @bind="_fullName" placeholder="Ad Soyad" class="w-full rounded-xl border border-brand-104 bg-brand-024 px-4 py-3 text-sm outline-none focus:border-brand-467" />
+    @if (!string.IsNullOrEmpty(_nameError)) { <p class="mt-2 text-xs font-semibold text-danger-539">@_nameError</p> }
+    <button type="button" @onclick="SaveNameAsync" disabled="@_busy" class="mt-4 w-full rounded-xl bg-brand-671 py-3 text-sm font-bold text-white disabled:opacity-60">Yadda saxla</button>
+</Modal>
+
 <Modal Open="_phoneOpen" Title="Telefonu dəyiş" OnClose="() => _phoneOpen = false">
     <input @bind="_phone" placeholder="+994..." class="w-full rounded-xl border border-brand-104 bg-brand-024 px-4 py-3 text-sm outline-none focus:border-brand-467" />
-    @if (!string.IsNullOrEmpty(_phoneError)) { <p class="mt-2 text-xs font-semibold text-danger-539">@_phoneError</p> }
+    @if (_imageBusy) { <p class="mt-2 text-xs text-sage-410">Şəkil yüklənir...</p> } { <p class="mt-2 text-xs font-semibold text-danger-539">@_phoneError</p> }
     <button type="button" @onclick="SavePhoneAsync" disabled="@_busy" class="mt-4 w-full rounded-xl bg-brand-671 py-3 text-sm font-bold text-white disabled:opacity-60">Yadda saxla</button>
 </Modal>
 

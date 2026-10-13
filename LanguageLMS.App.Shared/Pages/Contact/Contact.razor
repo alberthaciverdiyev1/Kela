@@ -1,0 +1,59 @@
+@page "/contact"
+@inject AppApi Api
+
+<PageTitle>Bizimlə əlaqə</PageTitle>
+
+<PageHeader Title="Bizimlə əlaqə" Back="/profile"/>
+
+<div class="px-5 pb-28 pt-6">
+    <h2 class="mt-1 text-2xl font-bold tracking-[-0.04em] text-brand-784">Bizimlə əlaqə</h2>
+
+    @if (_loading)
+    {
+        <Loader/>
+    }
+    else if (_contact is null)
+    {
+        <EmptyState Text="Əlaqə məlumatı tapılmadı."/>
+    }
+    else
+    {
+        <section class="mt-5 flex flex-col gap-3">
+            @if (!string.IsNullOrWhiteSpace(_contact.WhatsappNumber))
+            {
+                <a href="@WhatsappUrl(_contact.WhatsappNumber)" target="_blank" rel="noopener" class="flex items-center gap-4 rounded-2xl border border-brand-090 bg-white p-4 shadow-[0_4px_15px_rgba(36,78,62,0.03)]">
+                    <span class="flex size-11 shrink-0 items-center justify-center rounded-xl bg-brand-081 text-brand-698"><Icon Name="phone" Class="size-5" /></span>
+                    <span class="min-w-0 flex-1"><span class="block text-[14px] font-semibold text-brand-776">WhatsApp</span><span class="mt-0.5 block text-[11px] text-sage-382">@_contact.WhatsappNumber</span></span>
+                    <Icon Name="external-link" Class="size-4 text-sage-300" />
+                </a>
+            }
+
+            @if (!string.IsNullOrWhiteSpace(_contact.InstagramUrl))
+            {
+                <a href="@_contact.InstagramUrl" target="_blank" rel="noopener" class="flex items-center gap-4 rounded-2xl border border-brand-090 bg-white p-4 shadow-[0_4px_15px_rgba(36,78,62,0.03)]">
+                    <span class="flex size-11 shrink-0 items-center justify-center rounded-xl bg-sun-063 text-sun-461"><Icon Name="star" Class="size-5" /></span>
+                    <span class="min-w-0 flex-1"><span class="block text-[14px] font-semibold text-brand-776">Instagram</span><span class="mt-0.5 block text-[11px] text-sage-382">@_contact.InstagramUrl</span></span>
+                    <Icon Name="external-link" Class="size-4 text-sage-300" />
+                </a>
+            }
+
+            @if (!string.IsNullOrWhiteSpace(_contact.FacebookUrl))
+            {
+                <a href="@_contact.FacebookUrl" target="_blank" rel="noopener" class="flex items-center gap-4 rounded-2xl border border-brand-090 bg-white p-4 shadow-[0_4px_15px_rgba(36,78,62,0.03)]">
+                    <span class="flex size-11 shrink-0 items-center justify-center rounded-xl bg-sky-041 text-sky-406"><Icon Name="external-link" Class="size-5" /></span>
+                    <span class="min-w-0 flex-1"><span class="block text-[14px] font-semibold text-brand-776">Facebook</span><span class="mt-0.5 block text-[11px] text-sage-382">@_contact.FacebookUrl</span></span>
+                    <Icon Name="external-link" Class="size-4 text-sage-300" />
+                </a>
+            }
+
+            @foreach (var num in ContactNumbers)
+            {
+                <a href="tel:@num" class="flex items-center gap-4 rounded-2xl border border-brand-090 bg-white p-4 shadow-[0_4px_15px_rgba(36,78,62,0.03)]">
+                    <span class="flex size-11 shrink-0 items-center justify-center rounded-xl bg-brand-081 text-brand-698"><Icon Name="phone" Class="size-5" /></span>
+                    <span class="min-w-0 flex-1"><span class="block text-[14px] font-semibold text-brand-776">@num</span><span class="mt-0.5 block text-[11px] text-sage-382">Zəng et</span></span>
+                    <Icon Name="chevron-right" Class="size-4 text-sage-300" />
+                </a>
+            }
+        </section>
+    }
+</div>

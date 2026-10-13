@@ -1,4 +1,5 @@
 using System.Net;
+using System.Net.Http.Headers;
 using System.Net.Http.Json;
 using System.Text.Json;
 
@@ -15,21 +16,34 @@ public sealed class ApiClient(HttpClient http, AuthState auth, TokenStore store)
     {
         http.DefaultRequestHeaders.Authorization = string.IsNullOrWhiteSpace(Token)
             ? null
-            : new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", Token);
+            : new AuthenticationHeaderValue("Bearer", Token);
     }
 
     public Task<T> GetAsync<T>(string path) => SendAsync<T>(HttpMethod.Get, path, null);
     public Task<T> PostAsync<T>(string path, object? body = null) => SendAsync<T>(HttpMethod.Post, path, body);
     public Task<T> PutAsync<T>(string path, object? body = null) => SendAsync<T>(HttpMethod.Put, path, body);
 
-    private async Task<T> SendAsync<T>(HttpMethod method, string path, object? body)
+    /// <summary>Multipart fayl yükləmə (məs. profil şəkli).</summary>
+    public Task<T> PostFileAsync<T>(string path, Stream content, string fileName, string contentType)
+    {
+        var form = new MultipartFormDataContent();
+        var stream = new StreamContent(content);
+        stream.Headers.ContentType = new MediaTypeHeaderValue(
+            string.IsNullOrWhiteSpace(contentType) ? "application/octet-stream" : contentType);
+        form.Add(stream, "file", fileName);
+        return SendRequestAsync<T>(HttpMethod.Post, path, form);
+    }
+
+    private Task<T> SendAsync<T>(HttpMethod method, string path, object? body)
+    {
+        HttpContent? content = body is null ? null : JsonContent.Create(body, options: JsonOptions);
+        return SendRequestAsync<T>(method, path, content);
+    }
+
+    private async Task<T> SendRequestAsync<T>(HttpMethod method, string path, HttpContent? content)
     {
         ApplyAuth();
-        using var request = new HttpRequestMessage(method, path);
-        if (body is not null)
-        {
-            request.Content = JsonContent.Create(body, options: JsonOptions);
-        }
+        using var request = new HttpRequestMessage(method, path) { Content = content };
 
         HttpResponseMessage response;
         try
@@ -41,7 +55,7 @@ public sealed class ApiClient(HttpClient http, AuthState auth, TokenStore store)
             throw new ApiException($"Şəbəkə xətası: {ex.Message}");
         }
 
-        // Token vaxtı dolub / auth yoxdur → sessiyanı təmizlə (MainLayout login göstərəcək)
+        // Token vaxtı dolub / auth yoxdur → sessiyanı təmizlə
         if (response.StatusCode == HttpStatusCode.Unauthorized && auth.IsAuthenticated)
         {
             await SignOutAsync();

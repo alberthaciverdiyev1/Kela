@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Forms;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.JSInterop;
 using LanguageLMS.App.Shared.Dtos;
@@ -14,6 +15,8 @@ public partial class Profile
 {
     private bool _busy;
     private bool _phoneOpen;
+    private bool _nameOpen;
+    private bool _imageBusy;
     private bool _passwordOpen;
     private bool _privacyOpen;
     private bool _logoutOpen;
@@ -21,11 +24,53 @@ public partial class Profile
     private bool _notifications = true;
 
     private string _phone = "";
+    private string _fullName = "";
     private string _currentPassword = "";
     private string _newPassword = "";
     private string? _phoneError;
+    private string? _nameError;
     private string? _passwordError;
     private List<PrivacyPolicyDto> _privacy = new();
+
+    private bool HasPhoto => !string.IsNullOrWhiteSpace(Auth.User?.Image)
+                              && !Auth.User!.Image!.Contains("noPhoto", StringComparison.OrdinalIgnoreCase);
+
+    private void OpenName()
+    {
+        _fullName = Auth.User?.FullName ?? "";
+        _nameError = null;
+        _nameOpen = true;
+    }
+
+    private async Task SaveNameAsync()
+    {
+        _busy = true;
+        _nameError = null;
+        try
+        {
+            var user = await Api.ChangeFullNameAsync(_fullName.Trim());
+            Auth.SetUser(user);
+            _nameOpen = false;
+        }
+        catch (Exception ex) { _nameError = ex.Message; }
+        finally { _busy = false; }
+    }
+
+    private async Task OnImageSelected(InputFileChangeEventArgs e)
+    {
+        var file = e.File;
+        if (file is null) return;
+
+        _imageBusy = true;
+        try
+        {
+            await using var stream = file.OpenReadStream(maxAllowedSize: 5_000_000);
+            var user = await Api.ChangeImageAsync(stream, file.Name, file.ContentType);
+            Auth.SetUser(user);
+        }
+        catch { /* səssiz */ }
+        finally { _imageBusy = false; }
+    }
 
     private void OpenPhone()
     {

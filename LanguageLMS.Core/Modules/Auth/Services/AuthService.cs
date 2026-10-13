@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Http;
 using LanguageLMS.Core.Common.Exceptions;
 using LanguageLMS.Core.Common.Storage;
 using LanguageLMS.Core.Data;
@@ -138,6 +139,15 @@ public sealed class AuthService(
     {
         var student = await GetStudentAsync(studentId, ct);
         student.FullName = request.FullName;
+        await db.SaveChangesAsync(ct);
+        return ToResponse(student);
+    }
+
+    public async Task<StudentResponse> ChangeImageAsync(long studentId, IFormFile file, CancellationToken ct = default)
+    {
+        var student = await GetStudentAsync(studentId, ct);
+        var path = await storage.UploadAsync(file, "student", ct);
+        student.Image = path;
         await db.SaveChangesAsync(ct);
         return ToResponse(student);
     }

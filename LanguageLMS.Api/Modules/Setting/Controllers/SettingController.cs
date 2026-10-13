@@ -9,6 +9,10 @@ namespace LanguageLMS.Api.Modules.Setting.Controllers;
 [Route("api/[controller]")]
 public sealed class SettingController(ISettingService service) : ApiControllerBase
 {
+    [HttpGet("contact")]
+    public async Task<ActionResult<ApiResponse<SettingResponse>>> Contact(CancellationToken ct)
+        => Success(await service.GetAsync(ct));
+
     [HttpGet("app-version")]
     public async Task<ActionResult<ApiResponse<AppVersionResponse>>> AppVersion(CancellationToken ct)
         => Success(await service.GetAppVersionAsync(ct));

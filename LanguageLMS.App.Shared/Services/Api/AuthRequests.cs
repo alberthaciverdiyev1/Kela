@@ -34,4 +34,10 @@ public sealed partial class AppApi
 
     public Task<StudentDto> NotificationStatusAsync(bool enabled)
         => _api.PutAsync<StudentDto>("/api/auth/notification-status", new { enabled });
+
+    public Task<StudentDto> ChangeFullNameAsync(string fullName)
+        => _api.PutAsync<StudentDto>("/api/auth/change-full-name", new { fullName });
+
+    public Task<StudentDto> ChangeImageAsync(Stream content, string fileName, string contentType)
+        => _api.PostFileAsync<StudentDto>("/api/auth/change-image", content, fileName, contentType);
 }
