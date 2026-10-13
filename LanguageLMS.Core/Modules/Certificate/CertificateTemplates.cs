@@ -1,14 +1,11 @@
 namespace LanguageLMS.Core.Modules.Certificate;
 
-/// <summary>Mövcud sertifikat şablonları (UI-da seçim üçün).</summary>
+/// <summary>Mövcud sertifikat şablonları. Hazırda tək şablon var (first).</summary>
 public static class CertificateTemplates
 {
     public static readonly IReadOnlyList<CertificateTemplate> All =
     [
-        new("classic", "Klassik"),
-        new("modern", "Müasir"),
-        new("elegant", "Eleqant"),
-        new("minimal", "Minimal")
+        new("first", "Sertifikat")
     ];
 
     public static string NameOf(string key)
