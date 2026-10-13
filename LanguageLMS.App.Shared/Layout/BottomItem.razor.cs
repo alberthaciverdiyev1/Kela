@@ -23,6 +23,13 @@ public partial class BottomItem
         ? Current == "/"
         : Current == Href || Current.StartsWith(Href + "/");
 
+    protected override void OnInitialized() => Nav.LocationChanged += OnLocationChanged;
+
+    private void OnLocationChanged(object? sender, Microsoft.AspNetCore.Components.Routing.LocationChangedEventArgs e)
+        => InvokeAsync(StateHasChanged);
+
+    public void Dispose() => Nav.LocationChanged -= OnLocationChanged;
+
     private string Css =>
         "flex min-w-16 flex-col items-center gap-1 text-[10px] font-semibold " +
         (Active ? "text-brand-671" : "text-sage-369");
