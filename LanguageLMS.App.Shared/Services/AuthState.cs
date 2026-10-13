@@ -20,6 +20,12 @@ public sealed class AuthState
         Changed?.Invoke();
     }
 
+    public void SetUser(StudentDto user)
+    {
+        User = user;
+        Changed?.Invoke();
+    }
+
     public void Clear()
     {
         Token = null;

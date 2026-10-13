@@ -20,6 +20,7 @@ public sealed class ApiClient(HttpClient http, AuthState auth, TokenStore store)
 
     public Task<T> GetAsync<T>(string path) => SendAsync<T>(HttpMethod.Get, path, null);
     public Task<T> PostAsync<T>(string path, object? body = null) => SendAsync<T>(HttpMethod.Post, path, body);
+    public Task<T> PutAsync<T>(string path, object? body = null) => SendAsync<T>(HttpMethod.Put, path, body);
 
     private async Task<T> SendAsync<T>(HttpMethod method, string path, object? body)
     {

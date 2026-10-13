@@ -25,4 +25,13 @@ public sealed partial class AppApi
 
     public Task<StudentDto> MeAsync() => _api.GetAsync<StudentDto>("/api/auth/me");
     public Task LogoutAsync() => _api.PostAsync<object>("/api/auth/logout");
+
+    public Task<StudentDto> ChangePhoneAsync(string phone)
+        => _api.PutAsync<StudentDto>("/api/auth/change-phone", new { phone });
+
+    public Task ChangePasswordAsync(string currentPassword, string newPassword)
+        => _api.PostAsync<object>("/api/auth/change-password", new { currentPassword, newPassword });
+
+    public Task<StudentDto> NotificationStatusAsync(bool enabled)
+        => _api.PutAsync<StudentDto>("/api/auth/notification-status", new { enabled });
 }
