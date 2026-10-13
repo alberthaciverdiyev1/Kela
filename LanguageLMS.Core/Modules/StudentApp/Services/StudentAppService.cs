@@ -91,6 +91,19 @@ public sealed class StudentAppService(
             .ToListAsync(ct);
     }
 
+    public async Task<SubjectResponse> GetSubjectAsync(long studentId, long subjectId, CancellationToken ct = default)
+    {
+        if (!await access.HasSubjectAccessAsync(studentId, subjectId, ct))
+        {
+            throw new ForbiddenException("You do not have access to this subject");
+        }
+
+        var subject = await db.Subjects.AsNoTracking().FirstOrDefaultAsync(s => s.Id == subjectId, ct)
+            ?? throw new KeyNotFoundException($"Subject not found: {subjectId}");
+
+        return new SubjectResponse(subject.Id, subject.Name, subject.UserId);
+    }
+
     public async Task<IReadOnlyList<LessonResponse>> ListLessonsAsync(
         long studentId, long subjectId, CancellationToken ct = default)
     {
@@ -110,6 +123,20 @@ public sealed class StudentAppService(
         return lessons
             .Select(l => new LessonResponse(l.Id, l.SubjectId, l.Title, storage.GetUrl(l.Image), l.SortOrder, l.IsActive, l.Settings))
             .ToList();
+    }
+
+    public async Task<LessonResponse> GetLessonAsync(long studentId, long lessonId, CancellationToken ct = default)
+    {
+        var lesson = await db.Lessons.AsNoTracking().FirstOrDefaultAsync(x => x.Id == lessonId, ct)
+            ?? throw new KeyNotFoundException($"Lesson not found: {lessonId}");
+
+        if (!await access.HasSubjectAccessAsync(studentId, lesson.SubjectId, ct))
+        {
+            throw new ForbiddenException("You do not have access to this lesson");
+        }
+
+        return new LessonResponse(lesson.Id, lesson.SubjectId, lesson.Title, storage.GetUrl(lesson.Image),
+            lesson.SortOrder, lesson.IsActive, lesson.Settings);
     }
 
     public async Task<IReadOnlyList<LessonContentResponse>> ListContentsAsync(

@@ -32,9 +32,17 @@ public sealed class StudentController(IStudentAppService service, INotificationS
     public async Task<ActionResult<ApiResponse<IReadOnlyList<SubjectResponse>>>> Subjects(long groupId, CancellationToken ct)
         => Success(await service.ListSubjectsAsync(StudentId, groupId, ct));
 
+    [HttpGet("subjects/{subjectId:long}")]
+    public async Task<ActionResult<ApiResponse<SubjectResponse>>> Subject(long subjectId, CancellationToken ct)
+        => Success(await service.GetSubjectAsync(StudentId, subjectId, ct));
+
     [HttpGet("subjects/{subjectId:long}/lessons")]
     public async Task<ActionResult<ApiResponse<IReadOnlyList<LessonResponse>>>> Lessons(long subjectId, CancellationToken ct)
         => Success(await service.ListLessonsAsync(StudentId, subjectId, ct));
+
+    [HttpGet("lessons/{lessonId:long}")]
+    public async Task<ActionResult<ApiResponse<LessonResponse>>> Lesson(long lessonId, CancellationToken ct)
+        => Success(await service.GetLessonAsync(StudentId, lessonId, ct));
 
     [HttpGet("lessons/{lessonId:long}/contents")]
     public async Task<ActionResult<ApiResponse<IReadOnlyList<LessonContentResponse>>>> Contents(long lessonId, CancellationToken ct)

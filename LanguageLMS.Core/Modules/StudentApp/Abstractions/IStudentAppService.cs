@@ -15,7 +15,11 @@ public interface IStudentAppService
 
     Task<IReadOnlyList<SubjectResponse>> ListSubjectsAsync(long studentId, long groupId, CancellationToken ct = default);
 
+    Task<SubjectResponse> GetSubjectAsync(long studentId, long subjectId, CancellationToken ct = default);
+
     Task<IReadOnlyList<LessonResponse>> ListLessonsAsync(long studentId, long subjectId, CancellationToken ct = default);
+
+    Task<LessonResponse> GetLessonAsync(long studentId, long lessonId, CancellationToken ct = default);
 
     Task<IReadOnlyList<LessonContentResponse>> ListContentsAsync(long studentId, long lessonId, CancellationToken ct = default);
 

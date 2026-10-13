@@ -14,6 +14,7 @@ public partial class LessonDetail
 {
     [Parameter] public long LessonId { get; set; }
     private bool _loading = true;
+    private string? Title;
     private List<ContentItemDto> _contents = new();
     private ContentItemDto? _video;
     private List<ContentItemDto> _others = new();
@@ -27,6 +28,7 @@ public partial class LessonDetail
     {
         try
         {
+            Title = (await Api.LessonAsync(LessonId)).Title;
             _contents = await Api.ContentsAsync(LessonId);
             _quizzes = await Api.LessonQuizzesAsync(LessonId);
             _video = _contents.FirstOrDefault(c => c.Type == "video");

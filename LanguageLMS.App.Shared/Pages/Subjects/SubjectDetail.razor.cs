@@ -14,11 +14,17 @@ public partial class SubjectDetail
 {
     [Parameter] public long SubjectId { get; set; }
     private bool _loading = true;
+    private string? Name;
     private List<LessonDto> _lessons = new();
 
     protected override async Task OnInitializedAsync()
     {
-        try { _lessons = await Api.LessonsAsync(SubjectId); } catch { }
+        try
+        {
+            Name = (await Api.SubjectAsync(SubjectId)).Name;
+            _lessons = await Api.LessonsAsync(SubjectId);
+        }
+        catch { }
         _loading = false;
     }
 }
