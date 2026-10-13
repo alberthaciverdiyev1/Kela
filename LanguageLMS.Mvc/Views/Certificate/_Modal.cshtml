@@ -1,0 +1,41 @@
+@using LanguageLMS.Core.Modules.Certificate
+@{
+    var templates = (IReadOnlyList<CertificateTemplate>)(ViewData["Templates"] ?? CertificateTemplates.All);
+}
+<div id="modal" class="fixed inset-0 z-50 hidden items-center justify-center bg-slate-950/40 p-4">
+    <div class="max-h-[90vh] w-full max-w-lg overflow-y-auto rounded-2xl bg-white shadow-2xl">
+        <div class="flex items-center justify-between border-b border-border p-5">
+            <h3 id="modalTitle" class="text-lg font-bold text-slate-900">Yeni sertifikat</h3>
+            <button type="button" onclick="closeModal()" class="rounded-xl p-2 text-slate-400 hover:bg-slate-100">✕</button>
+        </div>
+        <div id="formError" class="mx-6 mt-4 hidden rounded-xl bg-danger-bg px-3 py-2 text-sm font-semibold text-danger"></div>
+        <form id="entityForm" class="space-y-4 p-6">
+            <input type="hidden" id="entityId" />
+
+            <partial name="Ui/_Input" model="@(new InputModel { Name = "title", Id = "title", Label = "Başlıq", Required = true, Placeholder = "Məs. Uğur sertifikatı" })" />
+
+            <div>
+                <label for="templateKey" class="mb-1 block text-sm font-semibold text-slate-600">Şablon</label>
+                <select id="templateKey" name="templateKey" class="admin-field">
+                    @foreach (var t in templates)
+                    {
+                        <option value="@t.Key">@t.Name</option>
+                    }
+                </select>
+            </div>
+
+            <div>
+                <label for="bodyText" class="mb-1 block text-sm font-semibold text-slate-600">Mətn</label>
+                <textarea id="bodyText" name="bodyText" rows="4" class="admin-field"
+                          placeholder="A certificate is awarded to an individual who has attained a specific accomplishment or achievement..."></textarea>
+            </div>
+
+            <partial name="Ui/_FileUpload" model="@(new FileUploadModel { Name = "signature", Id = "signature", Label = "İmza (PNG)", Accept = ".png", Hint = "png, max 5MB" })" />
+
+            <div class="flex justify-end gap-3 pt-2">
+                <partial name="Ui/_Button" model="@(new ButtonModel { Text = "İmtina", Variant = "secondary", OnClick = "closeModal()" })" />
+                <partial name="Ui/_Button" model="@(new ButtonModel { Text = "Yadda saxla", Type = "submit" })" />
+            </div>
+        </form>
+    </div>
+</div>

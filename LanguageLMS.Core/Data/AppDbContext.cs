@@ -28,6 +28,8 @@ public sealed class AppDbContext : DbContext
 
     public DbSet<Banner> Banners => Set<Banner>();
 
+    public DbSet<Modules.Certificate.Entities.Certificate> Certificates => Set<Modules.Certificate.Entities.Certificate>();
+
     public DbSet<Modules.Setting.Entities.Setting> Settings => Set<Modules.Setting.Entities.Setting>();
 
     public DbSet<Modules.Auth.Entities.Student> Students => Set<Modules.Auth.Entities.Student>();

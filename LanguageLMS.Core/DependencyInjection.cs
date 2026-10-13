@@ -63,6 +63,7 @@ public static class DependencyInjection
         }
 
         services.AddScoped<IBannerService, BannerService>();
+        services.AddScoped<LanguageLMS.Core.Modules.Certificate.Abstractions.ICertificateService, LanguageLMS.Core.Modules.Certificate.Services.CertificateService>();
         services.AddScoped<ISettingService, SettingService>();
 
         services.Configure<JwtOptions>(configuration.GetSection(JwtOptions.SectionName));
