@@ -36,12 +36,9 @@
             @* Başlıq + bağla (safe-area) *@
             <div class="absolute inset-x-0 z-30 flex items-center gap-3 px-4"
                  style="top: calc(env(safe-area-inset-top) + 26px)">
-                <div class="flex size-8 shrink-0 items-center justify-center rounded-full bg-brand-103 text-[12px] font-bold text-brand-835">
-                    @(string.IsNullOrWhiteSpace(current.Title) ? "L" : current.Title[..1].ToUpper())
-                </div>
                 <div class="min-w-0 flex-1">
                     <p class="truncate text-[13px] font-semibold text-white">@current.Title</p>
-                    <p class="text-[10px] text-white/60">@(current.IsNew ? "Yeni" : "Banner")</p>
+                    <p class="text-[10px] text-white/60">@(current.IsNew ? "Yeni" : "")</p>
                 </div>
                 <button type="button" class="rounded-full p-1.5 text-white/80 transition hover:bg-white/10 hover:text-white"
                         @onclick="CloseAsync" aria-label="Bağla">

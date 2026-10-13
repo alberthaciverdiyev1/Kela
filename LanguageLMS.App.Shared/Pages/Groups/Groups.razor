@@ -23,7 +23,7 @@
     }
     else
     {
-        <section class="mt-5 flex flex-col gap-4">
+        <section class="mt-5 grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
             @for (var i = 0; i < _groups.Count; i++)
             {
                 <GroupCard Group="_groups[i]" Index="i"/>

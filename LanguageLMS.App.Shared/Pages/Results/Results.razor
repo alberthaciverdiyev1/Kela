@@ -6,8 +6,6 @@
 <PageHeader Title="Nəticələr" Back="/"/>
 
 <div class="px-5 pb-28 pt-6">
-    <h2 class="mt-1 text-2xl font-bold tracking-[-0.04em] text-brand-784">Nəticələrim</h2>
-
     @if (_loading)
     {
         <Loader/>
@@ -39,7 +37,7 @@
         }
         else
         {
-            <section class="mt-5 flex flex-col gap-3">
+            <section class="mt-5 grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
                 @foreach (var r in _filtered)
                 {
                     <ResultCard Result="r"/>

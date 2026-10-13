@@ -32,7 +32,7 @@ else
                 {
                     var idx = i;
                     var b = _banners[i];
-                    <button type="button" class="flex w-[66px] shrink-0 flex-col items-center gap-2 text-center"
+                    <button type="button" class="flex w-[66px] shrink-0 flex-col items-center gap-2 text-center pt-2"
                             @onclick="() => OpenStory(idx)">
                         <span class="rounded-full p-[3px] ring-2 ring-offset-2 ring-offset-brand-022 @(b.IsNew ? "ring-brand-671" : "ring-brand-149")">
                             <img src="@b.Image" alt="" class="size-[54px] rounded-full object-cover" />
@@ -50,12 +50,11 @@ else
         <section class="mt-10">
             <div class="mb-4 flex items-end justify-between">
                 <div>
-                    <p class="text-[11px] font-bold uppercase tracking-[0.18em] text-brand-671">Your queue</p>
                     <h2 class="mt-1 text-[22px] font-semibold tracking-[-0.04em]">Continue learning</h2>
                 </div>
                 <a href="/groups" class="flex items-center gap-1 text-[12px] font-semibold text-brand-671">View all <Icon Name="chevron-right" Class="size-3.5" /></a>
             </div>
-            <div class="grid gap-4 lg:grid-cols-2">
+            <div class="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
                 @foreach (var g in _studentGroups)
                 {
                     <GroupProgressCard Group="g"/>

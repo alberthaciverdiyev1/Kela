@@ -13,7 +13,7 @@
     else if (_subjects.Count == 0) { <EmptyState Text="Bu qrupda fənn yoxdur."/> }
     else
     {
-        <section class="mt-5 flex flex-col gap-3">
+        <section class="mt-5 grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
             @foreach (var s in _subjects)
             {
                 <SubjectCard Subject="s"/>
