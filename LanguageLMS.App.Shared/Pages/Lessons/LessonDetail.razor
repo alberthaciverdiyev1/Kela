@@ -1,8 +1,5 @@
 @page "/lessons/{LessonId:long}"
 @inject AppApi Api
-@inject IJSRuntime JS
-@inject NavigationManager Nav
-@inject AudioPlayerService Player
 
 <PageTitle>Materiallar</PageTitle>
 
@@ -15,58 +12,33 @@
     {
         <Loader/>
     }
-    else if (_contents.Count == 0)
+    else if (_contents.Count == 0 && _quizzes.Count == 0)
     {
         <EmptyState Text="Bu dərs üzrə material yoxdur."/>
     }
     else
     {
-        @if (_video is not null)
-        {
-            @* Yuxarıda video *@
-            <div class="mt-5 overflow-hidden rounded-2xl bg-black shadow-[0_6px_20px_rgba(23,61,48,0.12)]">
-                <video @ref="_videoRef" controls playsinline preload="metadata" @onended="OnVideoEndedAsync"
-                       class="aspect-video w-full bg-black"></video>
-            </div>
-
-            @* Aşağıda material başlığı *@
-            <div class="mt-4">
-                <p class="text-[11px] font-bold uppercase tracking-[0.14em] text-brand-639">Video dərs</p>
-                <h3 class="mt-1 text-lg font-semibold tracking-[-0.03em] text-brand-776">@_video.Title</h3>
-                <div class="mt-3 flex items-center gap-3">
-                    <button type="button" @onclick="() => MarkAsync(_video.Id)" disabled="@IsDone(_video.Id)"
-                            class="inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-[12px] font-bold @(IsDone(_video.Id) ? "bg-brand-075 text-sage-410" : "bg-brand-081 text-brand-671")">
-                        <Icon Name="chevron-right" Class="size-3.5" />
-                        @(IsDone(_video.Id) ? "Tamamlandı" : "Tamamlandı kimi işarələ")
-                    </button>
-                </div>
-            </div>
-        }
-
-        @if (_others.Count > 0)
-        {
-            <p class="mt-8 text-xs font-bold uppercase tracking-[0.14em] text-brand-639">Digər materiallar</p>
-            <section class="mt-3 flex flex-col gap-3">
-                @foreach (var c in _others)
-                {
-                    <ContentRow Content="c"
-                                Done="IsDone(c.Id)"
-                                ShowOpen="@(!string.IsNullOrEmpty(c.Url) || !string.IsNullOrEmpty(c.PlaybackUrl))"
-                                OnOpen="() => Open(c)"
-                                OnMark="() => MarkAsync(c.Id)"/>
-                }
-            </section>
-        }
-
-        @if (_quizzes.Count > 0)
-        {
-            <p class="mt-8 text-xs font-bold uppercase tracking-[0.14em] text-brand-639">Quizlər</p>
-            <section class="mt-3 flex flex-col gap-3">
-                @foreach (var q in _quizzes)
-                {
-                    <QuizCard Quiz="q"/>
-                }
-            </section>
-        }
+        <section class="mt-5 flex flex-col gap-3">
+            @if (_videos.Count > 0)
+            {
+                <SectionCard Icon="play" Title="Video dərslər" Subtitle="@($"{_videos.Count} video")"
+                             Href="@($"/lessons/{LessonId}/contents/video")"/>
+            }
+            @if (_files.Count > 0)
+            {
+                <SectionCard Icon="file" Title="PDF-lər" Subtitle="@($"{_files.Count} material")"
+                             Href="@($"/lessons/{LessonId}/contents/file")" Tone="bg-sun-063 text-sun-461"/>
+            }
+            @if (_voices.Count > 0)
+            {
+                <SectionCard Icon="chart" Title="Səs yazıları" Subtitle="@($"{_voices.Count} audio")"
+                             Href="@($"/lessons/{LessonId}/contents/voice")" Tone="bg-sky-041 text-sky-406"/>
+            }
+            @if (_quizzes.Count > 0)
+            {
+                <SectionCard Icon="clipboard-check" Title="Quizlər" Subtitle="@($"{_quizzes.Count} quiz")"
+                             Href="@($"/lessons/{LessonId}/quizzes")"/>
+            }
+        </section>
     }
 </div>

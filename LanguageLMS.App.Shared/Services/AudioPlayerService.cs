@@ -9,6 +9,11 @@ public sealed class AudioPlayerService
 
     public event Action? Changed;
 
+    /// <summary>Audio sona çatanda tetiklenir (avtomatik "tamamlandı" işarəsi üçün).</summary>
+    public event Action? Ended;
+
+    public void NotifyEnded() => Ended?.Invoke();
+
     public void Play(string url, string? title)
     {
         Url = url;

@@ -1,0 +1,28 @@
+@page "/lessons/{LessonId:long}/quizzes"
+@inject AppApi Api
+
+<PageTitle>Quizlər</PageTitle>
+
+<PageHeader Title="Quizlər" Back="@($"/lessons/{LessonId}")"/>
+
+<div class="px-5 pb-28 pt-5">
+    <h2 class="mt-1 text-2xl font-bold tracking-[-0.04em] text-brand-784">@(Title ?? "Dərs")</h2>
+
+    @if (_loading)
+    {
+        <Loader/>
+    }
+    else if (_quizzes.Count == 0)
+    {
+        <EmptyState Text="Bu dərs üzrə quiz yoxdur."/>
+    }
+    else
+    {
+        <section class="mt-5 flex flex-col gap-3">
+            @foreach (var q in _quizzes)
+            {
+                <QuizCard Quiz="q"/>
+            }
+        </section>
+    }
+</div>

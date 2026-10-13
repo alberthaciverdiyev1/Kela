@@ -18,6 +18,7 @@ public partial class AudioPlayerBar
     private double _duration;
     private double _rate = 1;
     private bool _paused = true;
+    private bool _wasPlaying;
     private string? _loadedUrl;
     private CancellationTokenSource? _cts;
 
@@ -51,6 +52,14 @@ public partial class AudioPlayerBar
                         _duration = st.duration;
                         _paused = st.paused;
                         _rate = st.rate;
+
+                        if (!st.paused) _wasPlaying = true;
+                        else if (_wasPlaying && st.duration > 0 && st.current >= st.duration - 0.5)
+                        {
+                            _wasPlaying = false;
+                            Player.NotifyEnded();
+                        }
+
                         StateHasChanged();
                     }
                     catch { /* JS hazır deyil */ }
