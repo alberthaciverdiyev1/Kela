@@ -7,7 +7,7 @@
         document.getElementById('modalTitle').textContent = 'Sertifikat redaktəsi';
         document.getElementById('entityId').value = data.id;
         document.getElementById('title').value = data.title;
-        document.getElementById('templateKey').value = data.templateKey;
+        window.selectTemplate(data.templateKey);
         document.getElementById('bodyText').value = data.bodyText;
         document.getElementById('signature').value = '';
         document.getElementById('signature_remove').value = 'false';

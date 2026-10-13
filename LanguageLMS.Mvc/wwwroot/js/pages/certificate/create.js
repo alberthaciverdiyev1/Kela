@@ -2,6 +2,16 @@
     const form = document.getElementById('entityForm');
     const errBox = document.getElementById('formError');
 
+    window.selectTemplate = function (key) {
+        const hidden = document.getElementById('templateKey');
+        if (hidden) hidden.value = key;
+        document.querySelectorAll('#templateGrid [data-key]').forEach(el => {
+            const on = el.dataset.key === key;
+            el.classList.toggle('border-primary', on);
+            el.classList.toggle('border-slate-200', !on);
+        });
+    };
+
     window.showModal = function () {
         document.getElementById('modal').classList.remove('hidden');
         document.getElementById('modal').classList.add('flex');
@@ -16,7 +26,7 @@
         document.getElementById('modalTitle').textContent = 'Yeni sertifikat';
         document.getElementById('entityId').value = '';
         document.getElementById('title').value = '';
-        document.getElementById('templateKey').value = document.getElementById('templateKey').options[0].value;
+        window.selectTemplate(document.querySelector('#templateGrid [data-key]').dataset.key);
         document.getElementById('bodyText').value = '';
         document.getElementById('signature').value = '';
         document.getElementById('signature_preview').classList.add('hidden');
