@@ -14,5 +14,8 @@ builder.Services.AddScoped<AppApi>();
 builder.Services.AddScoped<AuthState>();
 builder.Services.AddScoped<TokenStore>();
 builder.Services.AddScoped<AudioPlayerService>();
+builder.Services.AddScoped<IScreenGuard, WebScreenGuard>();
+builder.Services.AddScoped<IDeviceTokenProvider, WebDeviceTokenProvider>();
+builder.Services.AddScoped<PushTokenService>();
 
 await builder.Build().RunAsync();

@@ -1484,6 +1484,60 @@ namespace LanguageLMS.Core.Data.Migrations
                     b.ToTable("student_quiz_questions", (string)null);
                 });
 
+            modelBuilder.Entity("LanguageLMS.Core.Modules.ScreenGuard.Entities.ScreenViolation", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint")
+                        .HasColumnName("id");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
+
+                    b.Property<DateTimeOffset>("CreatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_at");
+
+                    b.Property<DateTimeOffset?>("DeletedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("deleted_at");
+
+                    b.Property<string>("Path")
+                        .HasMaxLength(500)
+                        .HasColumnType("character varying(500)")
+                        .HasColumnName("path");
+
+                    b.Property<long>("StudentId")
+                        .HasColumnType("bigint")
+                        .HasColumnName("student_id");
+
+                    b.Property<long>("TenantId")
+                        .HasColumnType("bigint")
+                        .HasColumnName("tenant_id");
+
+                    b.Property<string>("Type")
+                        .IsRequired()
+                        .HasMaxLength(40)
+                        .HasColumnType("character varying(40)")
+                        .HasColumnName("type");
+
+                    b.Property<DateTimeOffset?>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("updated_at");
+
+                    b.Property<string>("UserAgent")
+                        .HasMaxLength(500)
+                        .HasColumnType("character varying(500)")
+                        .HasColumnName("user_agent");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CreatedAt");
+
+                    b.HasIndex("StudentId");
+
+                    b.ToTable("screen_violations", (string)null);
+                });
+
             modelBuilder.Entity("LanguageLMS.Core.Modules.Setting.Entities.Setting", b =>
                 {
                     b.Property<long>("Id")
@@ -1990,6 +2044,15 @@ namespace LanguageLMS.Core.Data.Migrations
                         .IsRequired();
 
                     b.Navigation("StudentQuiz");
+                });
+
+            modelBuilder.Entity("LanguageLMS.Core.Modules.ScreenGuard.Entities.ScreenViolation", b =>
+                {
+                    b.HasOne("LanguageLMS.Core.Modules.Auth.Entities.Student", null)
+                        .WithMany()
+                        .HasForeignKey("StudentId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("LanguageLMS.Core.Modules.SystemNotification.Entities.SystemNotification", b =>

@@ -83,6 +83,7 @@ public static class DependencyInjection
         services.AddScoped<IQuizService, QuizService>();
         services.AddScoped<IStudentQuizService, StudentQuizService>();
         services.AddScoped<IGroupQuizStatService, GroupQuizStatService>();
+        services.AddScoped<LanguageLMS.Core.Modules.ScreenGuard.Abstractions.IScreenGuardService, LanguageLMS.Core.Modules.ScreenGuard.Services.ScreenGuardService>();
         services.AddScoped<INotificationService, NotificationService>();
         services.AddScoped<IPrivacyPolicyService, PrivacyPolicyService>();
         services.AddScoped<ITenantService, TenantService>();

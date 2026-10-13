@@ -90,6 +90,8 @@ public sealed class AppDbContext : DbContext
 
     public DbSet<Modules.Group.Entities.MainCategoryAssignmentLog> MainCategoryAssignmentLogs => Set<Modules.Group.Entities.MainCategoryAssignmentLog>();
 
+    public DbSet<Modules.ScreenGuard.Entities.ScreenViolation> ScreenViolations => Set<Modules.ScreenGuard.Entities.ScreenViolation>();
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);

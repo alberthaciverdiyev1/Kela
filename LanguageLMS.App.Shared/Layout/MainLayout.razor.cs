@@ -23,7 +23,31 @@ public partial class MainLayout
             await RestoreAsync();
         }
 
+        await ApplyScreenGuardAsync();
         _ready = true;
+    }
+
+    /// <summary>
+    /// Giriş vəziyyətinə görə ekran qoruması və push token qeydiyyatını tənzimləyir.
+    /// Ekran qoruması bütün tələbə tətbiqində aktivdir; watermark və push token isə girişdə qurulur, çıxışda təmizlənir.
+    /// </summary>
+    private async Task ApplyScreenGuardAsync()
+    {
+        if (Auth.IsAuthenticated && Auth.User is { } user)
+        {
+            // Watermark-da mümkün olan bütün məlumatlar (JS tərəfi cihaz/vaxt/route-u özü əlavə edir).
+            var lines = new List<string> { user.FullName, user.Email };
+            if (!string.IsNullOrWhiteSpace(user.Phone)) lines.Add(user.Phone);
+            lines.Add($"ID: {user.Id}");
+
+            await ScreenGuard.EnableAsync(string.Join('\n', lines));
+            await Push.RegisterAsync();
+        }
+        else
+        {
+            await Push.UnregisterAsync();
+            await ScreenGuard.ClearWatermarkAsync();
+        }
     }
 
     /// <summary>localStorage-dəki tokeni bərpa edir və istifadəçini /api/auth/me ilə yeniləyir.</summary>
@@ -52,7 +76,11 @@ public partial class MainLayout
         }
     }
 
-    private void OnAuthChanged() => InvokeAsync(StateHasChanged);
+    private void OnAuthChanged() => _ = InvokeAsync(async () =>
+    {
+        await ApplyScreenGuardAsync();
+        StateHasChanged();
+    });
 
     public void Dispose() => Auth.Changed -= OnAuthChanged;
 }

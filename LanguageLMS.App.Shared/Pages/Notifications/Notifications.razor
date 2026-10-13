@@ -1,0 +1,53 @@
+@page "/notifications"
+@inject AppApi Api
+
+<PageTitle>Bildirişlər</PageTitle>
+
+<PageHeader Title="Bildirişlər" Back="/"/>
+
+<div class="px-5 pb-28 pt-6 lg:px-10 lg:pb-12">
+    @if (_loading)
+    {
+        <Loader/>
+    }
+    else if (_items.Count == 0)
+    {
+        <EmptyState Text="Hələ bildiriş yoxdur."/>
+    }
+    else
+    {
+        <section class="grid gap-3">
+            @foreach (var n in _items)
+            {
+                <article class="rounded-2xl border border-brand-090 bg-white p-4 shadow-[0_4px_15px_rgba(36,78,62,0.03)]">
+                    <div class="flex items-start gap-3">
+                        @if (!string.IsNullOrWhiteSpace(n.Image))
+                        {
+                            <img src="@n.Image" alt="" class="size-11 shrink-0 rounded-xl object-cover" />
+                        }
+                        else
+                        {
+                            <span class="flex size-11 shrink-0 items-center justify-center rounded-xl bg-brand-081 text-brand-671"><Icon Name="bell" Class="size-5" /></span>
+                        }
+                        <div class="min-w-0 flex-1">
+                            <p class="text-[14px] font-semibold leading-5 text-brand-776">@n.Title</p>
+                            @if (!string.IsNullOrWhiteSpace(n.Body))
+                            {
+                                <p class="mt-1 text-[12px] leading-5 text-sage-459">@n.Body</p>
+                            }
+                            <p class="mt-1.5 text-[10px] text-sage-410">@n.CreatedAt.ToLocalTime().ToString("dd.MM.yyyy HH:mm")</p>
+                        </div>
+                    </div>
+                </article>
+            }
+        </section>
+
+        @if (_page < _lastPage)
+        {
+            <button type="button" @onclick="LoadAsync" disabled="@_busy"
+                    class="mt-5 w-full rounded-2xl border border-brand-104 py-3 text-sm font-bold text-brand-727 disabled:opacity-60">
+                @(_busy ? "Yüklənir..." : "Daha çox")
+            </button>
+        }
+    }
+</div>
