@@ -129,9 +129,10 @@ public partial class AudioPlayerBar
     private static string Fmt(double seconds)
     {
         if (seconds <= 0 || double.IsNaN(seconds)) return "0:00";
-        var m = (int)(seconds / 60);
-        var s = (int)(seconds % 60);
-        return $"{m}:{s:00}";
+        var t = TimeSpan.FromSeconds(seconds);
+        return t.TotalHours >= 1
+            ? $"{(int)t.TotalHours}:{t.Minutes:00}:{t.Seconds:00}"
+            : $"{t.Minutes}:{t.Seconds:00}";
     }
 
     private static string FmtRate(double r) => r == Math.Floor(r) ? $"{(int)r}x" : $"{r.ToString(System.Globalization.CultureInfo.InvariantCulture)}x";
