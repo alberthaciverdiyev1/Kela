@@ -152,6 +152,10 @@ public sealed class StudentQuizService(
         return attempts.Select(a =>
         {
             var correct = correctCounts.GetValueOrDefault(a.Id);
+            var duration = a.StartDate.HasValue && a.EndDate.HasValue
+                ? (int?)(int)(a.EndDate.Value - a.StartDate.Value).TotalSeconds
+                : null;
+
             return new QuizResultSummary(
                 a.Id,
                 a.AttemptTime,
@@ -160,7 +164,9 @@ public sealed class StudentQuizService(
                 a.TotalQuestionCount,
                 correct,
                 Percent(correct, a.TotalQuestionCount),
-                a.IsCompleted);
+                a.IsCompleted,
+                a.StartDate,
+                duration);
         }).ToList();
     }
 

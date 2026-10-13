@@ -40,7 +40,9 @@ public record QuizResultSummary(
     int TotalQuestions,
     int CorrectCount,
     int ScorePercent,
-    bool IsCompleted);
+    bool IsCompleted,
+    DateTimeOffset? StartDate = null,
+    int? DurationSeconds = null);
 
 public record QuizResultDetail(
     long AttemptId,
