@@ -23,6 +23,13 @@ public partial class NavItem
         ? Current == "/"
         : Current == Href || Current.StartsWith(Href + "/");
 
+    protected override void OnInitialized() => Nav.LocationChanged += OnLocationChanged;
+
+    private void OnLocationChanged(object? sender, Microsoft.AspNetCore.Components.Routing.LocationChangedEventArgs e)
+        => InvokeAsync(StateHasChanged);
+
+    public void Dispose() => Nav.LocationChanged -= OnLocationChanged;
+
     private string Css =>
         "flex items-center gap-3 rounded-lg px-3 py-2.5 text-left text-[13px] font-medium transition " +
         (Active ? "bg-brand-073 text-brand-743" : "text-sage-473 hover:bg-brand-041");
