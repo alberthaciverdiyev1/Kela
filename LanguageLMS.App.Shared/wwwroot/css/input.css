@@ -95,3 +95,23 @@
   --color-grape-051: #f0eafa;
   --color-grape-447: #8065b5;
 }
+
+@layer base {
+    /* Kliklənə bilən hər şeydə pointer cursor */
+    a[href],
+    button:not(:disabled),
+    [role="button"]:not([aria-disabled="true"]),
+    label:has(input),
+    input[type="checkbox"],
+    input[type="radio"],
+    input[type="submit"],
+    select,
+    summary {
+        cursor: pointer;
+    }
+
+    button:disabled,
+    [aria-disabled="true"] {
+        cursor: not-allowed;
+    }
+}
