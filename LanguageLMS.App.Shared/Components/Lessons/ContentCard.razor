@@ -1,9 +1,35 @@
-@* Material kartı — siyahıda tək material → detal səhifəsinə keçid *@
-<a href="/lessons/@LessonId/content/@Content.Id" class="flex items-center gap-4 rounded-2xl border border-brand-090 bg-white p-4 shadow-[0_4px_15px_rgba(36,78,62,0.03)]">
-    <div class="flex size-11 shrink-0 items-center justify-center rounded-xl bg-brand-081 text-brand-698"><Icon Name="@IconName" Class="size-5" /></div>
-    <div class="min-w-0 flex-1">
-        <p class="truncate text-[14px] font-semibold text-brand-776">@Content.Title</p>
-        <p class="mt-0.5 text-[11px] text-sage-382">@Content.TypeLabel@(Content.DurationSeconds is > 0 ? $" · {Content.DurationSeconds}s" : "")</p>
-    </div>
-    <Icon Name="chevron-right" Class="size-4 text-sage-300" />
-</a>
+@* Material kartı — video: detala keçid; səs: pleyerdə oynat; pdf: sənədi aç (detal yox). *@
+@inject NavigationManager Nav
+@inject AudioPlayerService Player
+
+@if (IsVideo)
+{
+    <a href="/lessons/@LessonId/content/@Content.Id" class="flex items-center gap-4 rounded-2xl border border-brand-090 bg-white p-4 shadow-[0_4px_15px_rgba(36,78,62,0.03)]">
+        <div class="flex size-11 shrink-0 items-center justify-center rounded-xl bg-brand-081 text-brand-698"><Icon Name="play" Class="size-5" /></div>
+        <div class="min-w-0 flex-1">
+            <p class="truncate text-[14px] font-semibold text-brand-776">@Content.Title</p>
+            <p class="mt-0.5 text-[11px] text-sage-382">@Meta</p>
+        </div>
+        <Icon Name="chevron-right" Class="size-4 text-sage-300" />
+    </a>
+}
+else
+{
+    <button type="button" @onclick="ActAsync" class="flex w-full items-center gap-4 rounded-2xl border border-brand-090 bg-white p-4 text-left shadow-[0_4px_15px_rgba(36,78,62,0.03)]">
+        <div class="flex size-11 shrink-0 items-center justify-center rounded-xl bg-brand-081 text-brand-698">
+            <Icon Name="@(IsVoice ? "chart" : "file-text")" Class="size-5" />
+        </div>
+        <div class="min-w-0 flex-1">
+            <p class="truncate text-[14px] font-semibold text-brand-776">@Content.Title</p>
+            <p class="mt-0.5 text-[11px] text-sage-382">@Meta</p>
+        </div>
+        @if (IsVoice)
+        {
+            <span class="flex size-9 shrink-0 items-center justify-center rounded-full bg-brand-671 text-white"><Icon Name="play" Class="ml-0.5 size-4" /></span>
+        }
+        else
+        {
+            <span class="flex size-9 shrink-0 items-center justify-center rounded-full bg-brand-081 text-brand-698"><Icon Name="external-link" Class="size-4" /></span>
+        }
+    </button>
+}
