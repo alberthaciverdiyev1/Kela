@@ -10,12 +10,14 @@ window.lmsVideoPlayer = {
 
         if (!isHls) {
             video.src = url;
+            video.load();
             return;
         }
 
         if (video.canPlayType('application/vnd.apple.mpegurl')) {
             // Safari / iOS native HLS
             video.src = url;
+            video.load();
         } else if (window.Hls && window.Hls.isSupported()) {
             var hls = new window.Hls();
             hls.loadSource(url);

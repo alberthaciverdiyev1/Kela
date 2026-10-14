@@ -21,7 +21,7 @@ public partial class LessonContentDetail
     private bool _done;
     private ElementReference _videoRef;
     private string? _url;
-    private string? _attached;
+    private long? _attachedKey;
 
     private bool IsVideo => _content?.Type == "video";
     private bool IsVoice => _content?.Type == "voice";
@@ -46,7 +46,7 @@ public partial class LessonContentDetail
     {
         _loading = true;
         _done = false;
-        _attached = null;
+        _attachedKey = null;
         try
         {
             var all = await Api.ContentsAsync(LessonId);
@@ -62,9 +62,9 @@ public partial class LessonContentDetail
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        if (IsVideo && !string.IsNullOrEmpty(_url) && _attached != _url)
+        if (!_loading && IsVideo && !string.IsNullOrEmpty(_url) && _attachedKey != ContentId)
         {
-            _attached = _url;
+            _attachedKey = ContentId;
             await JS.InvokeVoidAsync("lmsVideoPlayer.attach", _videoRef, _url);
         }
     }
