@@ -1,3 +1,21 @@
+@{
+    var role = User.FindFirst(System.Security.Claims.ClaimTypes.Role)?.Value ?? "";
+    var roleLabel = role switch
+    {
+        "superadmin" => "SuperAdmin",
+        "admin" => "Admin",
+        "teacher" => "Müəllim",
+        _ => role
+    };
+    var roleClass = role switch
+    {
+        "superadmin" => "badge-success",
+        "admin" => "badge-primary",
+        _ => "badge-neutral"
+    };
+    var displayName = User.Identity?.Name ?? "İstifadəçi";
+    var initial = string.IsNullOrWhiteSpace(displayName) ? "?" : displayName.Trim()[..1].ToUpperInvariant();
+}
 <!DOCTYPE html>
 <html lang="az">
 <head>
@@ -14,49 +32,45 @@
     <div class="flex min-h-screen">
         <partial name="Ui/_Sidebar" />
 
-        <div id="overlay" class="fixed inset-0 z-20 hidden bg-slate-950/35 lg:hidden"></div>
+        <div id="overlay" class="fixed inset-0 z-20 hidden bg-slate-950/40 backdrop-blur-sm lg:hidden"></div>
 
         <div class="flex min-w-0 flex-1 flex-col">
-            <header class="sticky top-0 z-10 flex h-[68px] items-center justify-between border-b border-border bg-white px-5 sm:px-7">
+            <header class="sticky top-0 z-10 flex h-16 items-center justify-between gap-4 border-b border-border bg-white/85 px-4 backdrop-blur sm:px-6">
                 <div class="flex min-w-0 items-center gap-3">
-                    <button id="menuToggle" class="rounded-xl p-2 text-slate-600 hover:bg-slate-100 lg:hidden">
+                    <button id="menuToggle" class="grid h-10 w-10 place-items-center rounded-xl text-slate-600 hover:bg-surface-secondary lg:hidden">
                         <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" d="M4 6h16M4 12h16M4 18h16" /></svg>
                     </button>
-                    <nav class="flex min-w-0 items-center gap-3 text-sm font-medium text-slate-500">
-                        <a href="/dashboard" class="grid h-9 w-9 place-items-center rounded-xl bg-surface-secondary text-slate-700 hover:text-primary">
-                            <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M3 12l9-9 9 9M5 10v10h14V10" /></svg>
-                        </a>
-                        <span class="text-slate-300">›</span>
-                        <span class="truncate text-slate-700">@ViewData["Title"]</span>
-                    </nav>
+                    <h1 class="truncate text-lg font-bold tracking-tight text-slate-900">@ViewData["Title"]</h1>
                 </div>
 
-                <div class="flex items-center gap-4">
-                    <label class="relative hidden w-[290px] lg:block">
-                        <span class="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-slate-500">
-                            <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="m21 21-4.35-4.35M11 18a7 7 0 1 1 0-14 7 7 0 0 1 0 14Z" /></svg>
+                <div class="relative shrink-0">
+                    <button type="button" id="userMenuBtn"
+                            class="flex items-center gap-3 rounded-xl px-2 py-1.5 transition hover:bg-surface-secondary">
+                        <span class="grid h-9 w-9 shrink-0 place-items-center rounded-full bg-primary text-sm font-bold text-white">@initial</span>
+                        <span class="hidden text-left sm:block">
+                            <span class="block max-w-[180px] truncate text-sm font-bold leading-tight text-slate-900">@displayName</span>
+                            <span class="@roleClass mt-0.5 !px-2 !py-0.5 !text-[11px]">@roleLabel</span>
                         </span>
-                        <input type="search" class="admin-field h-11 rounded-xl pl-12 pr-16" placeholder="Axtar..." />
-                        <span class="absolute right-3 top-1/2 -translate-y-1/2 rounded-lg border border-border bg-white px-2 py-1 text-xs font-semibold text-slate-500">Ctrl K</span>
-                    </label>
-                    <button type="button" class="relative grid h-11 w-11 place-items-center rounded-xl bg-white text-slate-700 hover:bg-surface-secondary">
-                        <span class="absolute right-2.5 top-2.5 h-2.5 w-2.5 rounded-full bg-red-500 ring-2 ring-white"></span>
-                        <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M15 17h5l-1.4-1.4A2 2 0 0 1 18 14.2V11a6 6 0 1 0-12 0v3.2a2 2 0 0 1-.6 1.4L4 17h5m6 0a3 3 0 1 1-6 0" /></svg>
+                        <svg class="hidden h-4 w-4 text-slate-400 sm:block" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="m6 9 6 6 6-6" /></svg>
                     </button>
-                    <div class="flex items-center gap-3">
-                        <div class="grid h-11 w-11 place-items-center rounded-full bg-[#fee1d6] text-sm font-bold text-slate-900">A</div>
-                        <span class="hidden text-base font-bold text-slate-900 sm:inline">@(User.Identity?.Name ?? "Admin")</span>
-                        <form method="post" action="/login/logout" class="hidden sm:block">
+
+                    <div id="userMenu" class="absolute right-0 top-full z-20 mt-2 hidden w-60 overflow-hidden rounded-2xl border border-border bg-white shadow-xl">
+                        <div class="border-b border-border px-4 py-3">
+                            <p class="truncate text-sm font-bold text-slate-900">@displayName</p>
+                            <p class="mt-0.5 text-xs font-medium text-slate-500">@roleLabel</p>
+                        </div>
+                        <form method="post" action="/login/logout">
                             @Html.AntiForgeryToken()
-                            <button type="submit" class="text-slate-500 hover:text-danger" title="Çıxış">
+                            <button type="submit" class="flex w-full items-center gap-2.5 px-4 py-3 text-sm font-semibold text-danger transition hover:bg-danger-bg">
                                 <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M15 12H3m12 0-4-4m4 4-4 4M21 4v16" /></svg>
+                                Çıxış
                             </button>
                         </form>
                     </div>
                 </div>
             </header>
 
-            <main class="flex-1 overflow-x-hidden p-5 sm:p-7">
+            <main class="flex-1 overflow-x-hidden p-4 sm:p-6 lg:p-7">
                 <div class="mx-auto w-full max-w-[1440px]">
                     @RenderBody()
                 </div>
@@ -83,6 +97,12 @@
         function closeSidebar() { sidebar.classList.add('-translate-x-full'); overlay.classList.add('hidden'); }
         toggle?.addEventListener('click', openSidebar);
         overlay?.addEventListener('click', closeSidebar);
+
+        const userMenuBtn = document.getElementById('userMenuBtn');
+        const userMenu = document.getElementById('userMenu');
+        userMenuBtn?.addEventListener('click', (e) => { e.stopPropagation(); userMenu.classList.toggle('hidden'); });
+        document.addEventListener('click', () => userMenu?.classList.add('hidden'));
+        document.addEventListener('keydown', (e) => { if (e.key === 'Escape') userMenu?.classList.add('hidden'); });
     </script>
 </body>
 </html>
