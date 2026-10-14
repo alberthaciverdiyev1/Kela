@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype"><value>text/microsoft-resx</value></resheader>
+  <resheader name="version"><value>2.0</value></resheader>
+  <resheader name="reader"><value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+  <resheader name="writer"><value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+  <data name="Api_Registered" xml:space="preserve">
+    <value>Регистрация выполнена</value>
+  </data>
+  <data name="Api_LoginSuccessful" xml:space="preserve">
+    <value>Вход выполнен</value>
+  </data>
+  <data name="Api_LoggedOut" xml:space="preserve">
+    <value>Вы вышли из системы</value>
+  </data>
+  <data name="Api_Logged" xml:space="preserve">
+    <value>Записано</value>
+  </data>
+  <data name="Api_OtpSent" xml:space="preserve">
+    <value>OTP отправлен</value>
+  </data>
+  <data name="Api_OtpChecked" xml:space="preserve">
+    <value>OTP проверен</value>
+  </data>
+  <data name="Api_PasswordResetSuccessfully" xml:space="preserve">
+    <value>Пароль успешно сброшен</value>
+  </data>
+  <data name="Api_PasswordChanged" xml:space="preserve">
+    <value>Пароль изменён</value>
+  </data>
+  <data name="Api_EmailChanged" xml:space="preserve">
+    <value>Эл. почта изменена</value>
+  </data>
+  <data name="Api_PhoneChanged" xml:space="preserve">
+    <value>Телефон изменён</value>
+  </data>
+  <data name="Api_NameChanged" xml:space="preserve">
+    <value>Имя изменено</value>
+  </data>
+  <data name="Api_ImageChanged" xml:space="preserve">
+    <value>Изображение изменено</value>
+  </data>
+  <data name="Api_NotificationStatusUpdated" xml:space="preserve">
+    <value>Статус уведомлений обновлён</value>
+  </data>
+  <data name="Api_AccountDeleted" xml:space="preserve">
+    <value>Аккаунт удалён</value>
+  </data>
+  <data name="Api_TokenSaved" xml:space="preserve">
+    <value>Токен сохранён</value>
+  </data>
+  <data name="Api_TokenRemoved" xml:space="preserve">
+    <value>Токен удалён</value>
+  </data>
+  <data name="Api_ProgressSaved" xml:space="preserve">
+    <value>Прогресс сохранён</value>
+  </data>
+  <data name="Api_QuizStarted" xml:space="preserve">
+    <value>Тест начат</value>
+  </data>
+  <data name="Api_QuizCompleted" xml:space="preserve">
+    <value>Тест завершён</value>
+  </data>
+  <data name="Api_UnexpectedErrorTitle" xml:space="preserve">
+    <value>Непредвиденная ошибка</value>
+  </data>
+  <data name="Api_UnexpectedError" xml:space="preserve">
+    <value>Произошла непредвиденная ошибка.</value>
+  </data>
+  <data name="Api_ValidationFailed" xml:space="preserve">
+    <value>Проверка не пройдена</value>
+  </data>
+</root>

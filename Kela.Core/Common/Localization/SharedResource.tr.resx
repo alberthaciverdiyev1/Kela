@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype"><value>text/microsoft-resx</value></resheader>
+  <resheader name="version"><value>2.0</value></resheader>
+  <resheader name="reader"><value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+  <resheader name="writer"><value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+  <data name="Api_Registered" xml:space="preserve">
+    <value>Kayıt başarılı</value>
+  </data>
+  <data name="Api_LoginSuccessful" xml:space="preserve">
+    <value>Giriş başarılı</value>
+  </data>
+  <data name="Api_LoggedOut" xml:space="preserve">
+    <value>Çıkış yapıldı</value>
+  </data>
+  <data name="Api_Logged" xml:space="preserve">
+    <value>Kaydedildi</value>
+  </data>
+  <data name="Api_OtpSent" xml:space="preserve">
+    <value>OTP gönderildi</value>
+  </data>
+  <data name="Api_OtpChecked" xml:space="preserve">
+    <value>OTP doğrulandı</value>
+  </data>
+  <data name="Api_PasswordResetSuccessfully" xml:space="preserve">
+    <value>Parola başarıyla sıfırlandı</value>
+  </data>
+  <data name="Api_PasswordChanged" xml:space="preserve">
+    <value>Parola değiştirildi</value>
+  </data>
+  <data name="Api_EmailChanged" xml:space="preserve">
+    <value>E-posta değiştirildi</value>
+  </data>
+  <data name="Api_PhoneChanged" xml:space="preserve">
+    <value>Telefon değiştirildi</value>
+  </data>
+  <data name="Api_NameChanged" xml:space="preserve">
+    <value>Ad değiştirildi</value>
+  </data>
+  <data name="Api_ImageChanged" xml:space="preserve">
+    <value>Görsel değiştirildi</value>
+  </data>
+  <data name="Api_NotificationStatusUpdated" xml:space="preserve">
+    <value>Bildirim durumu güncellendi</value>
+  </data>
+  <data name="Api_AccountDeleted" xml:space="preserve">
+    <value>Hesap silindi</value>
+  </data>
+  <data name="Api_TokenSaved" xml:space="preserve">
+    <value>Token kaydedildi</value>
+  </data>
+  <data name="Api_TokenRemoved" xml:space="preserve">
+    <value>Token kaldırıldı</value>
+  </data>
+  <data name="Api_ProgressSaved" xml:space="preserve">
+    <value>İlerleme kaydedildi</value>
+  </data>
+  <data name="Api_QuizStarted" xml:space="preserve">
+    <value>Sınav başlatıldı</value>
+  </data>
+  <data name="Api_QuizCompleted" xml:space="preserve">
+    <value>Sınav tamamlandı</value>
+  </data>
+  <data name="Api_UnexpectedErrorTitle" xml:space="preserve">
+    <value>Beklenmeyen hata</value>
+  </data>
+  <data name="Api_UnexpectedError" xml:space="preserve">
+    <value>Beklenmeyen bir hata oluştu.</value>
+  </data>
+  <data name="Api_ValidationFailed" xml:space="preserve">
+    <value>Doğrulama başarısız</value>
+  </data>
+</root>

@@ -1,0 +1,29 @@
+using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Localization;
+using Microsoft.Extensions.DependencyInjection;
+
+namespace Kela.Core.Common.Localization;
+
+public static class LocalizationExtensions
+{
+    /// <summary>Dəstəklənən dillər: az (default), en, ru, tr. Dil Accept-Language header-indən seçilir.</summary>
+    public static readonly string[] SupportedCultures = ["az", "en", "ru", "tr"];
+
+    public static IServiceCollection AddKelaLocalization(this IServiceCollection services)
+    {
+        services.AddLocalization();
+
+        services.Configure<RequestLocalizationOptions>(options =>
+        {
+            options.SetDefaultCulture("az");
+            options.AddSupportedCultures(SupportedCultures);
+            options.AddSupportedUICultures(SupportedCultures);
+            options.RequestCultureProviders.Insert(0, new AcceptLanguageHeaderRequestCultureProvider());
+        });
+
+        return services;
+    }
+
+    public static IApplicationBuilder UseKelaLocalization(this IApplicationBuilder app)
+        => app.UseRequestLocalization();
+}
