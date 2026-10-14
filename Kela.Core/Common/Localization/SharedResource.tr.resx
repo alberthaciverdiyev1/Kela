@@ -70,4 +70,103 @@
   <data name="Api_ValidationFailed" xml:space="preserve">
     <value>Doğrulama başarısız</value>
   </data>
+  <data name="Validation_EmailRequired" xml:space="preserve">
+    <value>E-posta gereklidir</value>
+  </data>
+  <data name="Validation_EmailInvalid" xml:space="preserve">
+    <value>Geçersiz e-posta</value>
+  </data>
+  <data name="Validation_PasswordRequired" xml:space="preserve">
+    <value>Parola gereklidir</value>
+  </data>
+  <data name="Validation_PasswordMinLength" xml:space="preserve">
+    <value>Parola en az 6 karakter olmalıdır</value>
+  </data>
+  <data name="Validation_CurrentPasswordRequired" xml:space="preserve">
+    <value>Mevcut parola gereklidir</value>
+  </data>
+  <data name="Validation_OtpRequired" xml:space="preserve">
+    <value>OTP gereklidir</value>
+  </data>
+  <data name="Validation_FullNameRequired" xml:space="preserve">
+    <value>Ad soyad gereklidir</value>
+  </data>
+  <data name="Validation_FullNameMaxLength" xml:space="preserve">
+    <value>Ad soyad 255 karakterden uzun olamaz</value>
+  </data>
+  <data name="Validation_TitleRequired" xml:space="preserve">
+    <value>Başlık gereklidir</value>
+  </data>
+  <data name="Validation_TitleMaxLength190" xml:space="preserve">
+    <value>Başlık 190 karakterden uzun olamaz</value>
+  </data>
+  <data name="Validation_NameRequired" xml:space="preserve">
+    <value>Ad gereklidir</value>
+  </data>
+  <data name="Validation_NameMaxLength190" xml:space="preserve">
+    <value>Ad 190 karakterden uzun olamaz</value>
+  </data>
+  <data name="Validation_DescriptionMaxLength255" xml:space="preserve">
+    <value>Açıklama 255 karakterden uzun olamaz</value>
+  </data>
+  <data name="Validation_ImageMaxSize" xml:space="preserve">
+    <value>Görsel boyutu 5 MB&#x27;ı aşamaz</value>
+  </data>
+  <data name="Validation_ImageFormat" xml:space="preserve">
+    <value>Geçersiz görsel formatı (izin verilenler: jpg, jpeg, png)</value>
+  </data>
+  <data name="Validation_SubjectRequired" xml:space="preserve">
+    <value>Ders gereklidir</value>
+  </data>
+  <data name="Validation_LessonRequired" xml:space="preserve">
+    <value>Ders gereklidir</value>
+  </data>
+  <data name="Validation_FileOrPathRequired" xml:space="preserve">
+    <value>Dosya veya yol gereklidir</value>
+  </data>
+  <data name="Validation_AtLeastOneStudent" xml:space="preserve">
+    <value>Herkese gönderilmiyorsa en az bir öğrenci gerekir</value>
+  </data>
+  <data name="Validation_TypeRequired" xml:space="preserve">
+    <value>Tür gereklidir</value>
+  </data>
+  <data name="Validation_ContentRequired" xml:space="preserve">
+    <value>İçerik gereklidir</value>
+  </data>
+  <data name="Validation_TitleType" xml:space="preserve">
+    <value>Başlık türü metin veya görsel olmalıdır</value>
+  </data>
+  <data name="Validation_VariantType" xml:space="preserve">
+    <value>Varyant türü metin veya görsel olmalıdır</value>
+  </data>
+  <data name="Validation_VariantARequired" xml:space="preserve">
+    <value>Varyant A gereklidir</value>
+  </data>
+  <data name="Validation_VariantBRequired" xml:space="preserve">
+    <value>Varyant B gereklidir</value>
+  </data>
+  <data name="Validation_VariantCRequired" xml:space="preserve">
+    <value>Varyant C gereklidir</value>
+  </data>
+  <data name="Validation_VariantDRequired" xml:space="preserve">
+    <value>Varyant D gereklidir</value>
+  </data>
+  <data name="Validation_CorrectAnswer" xml:space="preserve">
+    <value>Doğru cevap A, B, C, D, E&#x27;den biri olmalıdır</value>
+  </data>
+  <data name="Validation_UserType" xml:space="preserve">
+    <value>Tür &#x27;teacher&#x27;, &#x27;admin&#x27; veya &#x27;superadmin&#x27; olmalıdır</value>
+  </data>
+  <data name="Validation_PhoneRequired" xml:space="preserve">
+    <value>Telefon gereklidir</value>
+  </data>
+  <data name="Validation_TemplateRequired" xml:space="preserve">
+    <value>Şablon gereklidir</value>
+  </data>
+  <data name="Validation_TemplateNotExists" xml:space="preserve">
+    <value>Şablon mevcut değil</value>
+  </data>
+  <data name="Validation_BodyTextRequired" xml:space="preserve">
+    <value>Metin gereklidir</value>
+  </data>
 </root>

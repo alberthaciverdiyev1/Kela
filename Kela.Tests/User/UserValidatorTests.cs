@@ -5,7 +5,7 @@ namespace Kela.Tests.User;
 
 public class UserValidatorTests
 {
-    private readonly UserUpsertRequestValidator _validator = new();
+    private readonly UserUpsertRequestValidator _validator = new(new TestLocalizer());
 
     [Theory]
     [InlineData("admin")]

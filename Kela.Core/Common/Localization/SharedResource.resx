@@ -70,4 +70,103 @@
   <data name="Api_ValidationFailed" xml:space="preserve">
     <value>Validation failed</value>
   </data>
+  <data name="Validation_EmailRequired" xml:space="preserve">
+    <value>Email is required</value>
+  </data>
+  <data name="Validation_EmailInvalid" xml:space="preserve">
+    <value>Email is not valid</value>
+  </data>
+  <data name="Validation_PasswordRequired" xml:space="preserve">
+    <value>Password is required</value>
+  </data>
+  <data name="Validation_PasswordMinLength" xml:space="preserve">
+    <value>Password must be at least 6 characters</value>
+  </data>
+  <data name="Validation_CurrentPasswordRequired" xml:space="preserve">
+    <value>Current password is required</value>
+  </data>
+  <data name="Validation_OtpRequired" xml:space="preserve">
+    <value>OTP is required</value>
+  </data>
+  <data name="Validation_FullNameRequired" xml:space="preserve">
+    <value>Full name is required</value>
+  </data>
+  <data name="Validation_FullNameMaxLength" xml:space="preserve">
+    <value>Full name may not be longer than 255 characters</value>
+  </data>
+  <data name="Validation_TitleRequired" xml:space="preserve">
+    <value>Title is required</value>
+  </data>
+  <data name="Validation_TitleMaxLength190" xml:space="preserve">
+    <value>Title may not be longer than 190 characters</value>
+  </data>
+  <data name="Validation_NameRequired" xml:space="preserve">
+    <value>Name is required</value>
+  </data>
+  <data name="Validation_NameMaxLength190" xml:space="preserve">
+    <value>Name may not be longer than 190 characters</value>
+  </data>
+  <data name="Validation_DescriptionMaxLength255" xml:space="preserve">
+    <value>Description may not be longer than 255 characters</value>
+  </data>
+  <data name="Validation_ImageMaxSize" xml:space="preserve">
+    <value>Image size may not exceed 5 MB</value>
+  </data>
+  <data name="Validation_ImageFormat" xml:space="preserve">
+    <value>Invalid image format (allowed: jpg, jpeg, png)</value>
+  </data>
+  <data name="Validation_SubjectRequired" xml:space="preserve">
+    <value>Subject is required</value>
+  </data>
+  <data name="Validation_LessonRequired" xml:space="preserve">
+    <value>Lesson is required</value>
+  </data>
+  <data name="Validation_FileOrPathRequired" xml:space="preserve">
+    <value>File or Path is required</value>
+  </data>
+  <data name="Validation_AtLeastOneStudent" xml:space="preserve">
+    <value>At least one student is required when not sending to all</value>
+  </data>
+  <data name="Validation_TypeRequired" xml:space="preserve">
+    <value>Type is required</value>
+  </data>
+  <data name="Validation_ContentRequired" xml:space="preserve">
+    <value>Content is required</value>
+  </data>
+  <data name="Validation_TitleType" xml:space="preserve">
+    <value>Title type must be text or image</value>
+  </data>
+  <data name="Validation_VariantType" xml:space="preserve">
+    <value>Variant type must be text or image</value>
+  </data>
+  <data name="Validation_VariantARequired" xml:space="preserve">
+    <value>Variant A is required</value>
+  </data>
+  <data name="Validation_VariantBRequired" xml:space="preserve">
+    <value>Variant B is required</value>
+  </data>
+  <data name="Validation_VariantCRequired" xml:space="preserve">
+    <value>Variant C is required</value>
+  </data>
+  <data name="Validation_VariantDRequired" xml:space="preserve">
+    <value>Variant D is required</value>
+  </data>
+  <data name="Validation_CorrectAnswer" xml:space="preserve">
+    <value>Correct answer must be one of A, B, C, D, E</value>
+  </data>
+  <data name="Validation_UserType" xml:space="preserve">
+    <value>Type must be &#x27;teacher&#x27;, &#x27;admin&#x27; or &#x27;superadmin&#x27;</value>
+  </data>
+  <data name="Validation_PhoneRequired" xml:space="preserve">
+    <value>Phone is required</value>
+  </data>
+  <data name="Validation_TemplateRequired" xml:space="preserve">
+    <value>Template is required</value>
+  </data>
+  <data name="Validation_TemplateNotExists" xml:space="preserve">
+    <value>Template does not exist</value>
+  </data>
+  <data name="Validation_BodyTextRequired" xml:space="preserve">
+    <value>Text is required</value>
+  </data>
 </root>

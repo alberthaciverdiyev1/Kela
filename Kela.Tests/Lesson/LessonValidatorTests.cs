@@ -5,7 +5,7 @@ namespace Kela.Tests.Lesson;
 
 public class LessonValidatorTests
 {
-    private readonly LessonUpsertRequestValidator _validator = new();
+    private readonly LessonUpsertRequestValidator _validator = new(new TestLocalizer());
 
     [Fact]
     public void Empty_title_is_invalid()

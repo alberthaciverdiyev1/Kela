@@ -1,22 +1,24 @@
 using FluentValidation;
+using Kela.Core.Common.Localization;
+using Microsoft.Extensions.Localization;
 using Kela.Core.Modules.Auth.Requests;
 
 namespace Kela.Core.Modules.Auth.Validators;
 
 public sealed class RegisterRequestValidator : AbstractValidator<RegisterRequest>
 {
-    public RegisterRequestValidator()
+    public RegisterRequestValidator(IStringLocalizer<SharedResource> L)
     {
         RuleFor(x => x.FullName)
-            .NotEmpty().WithMessage("Full name is required")
-            .MaximumLength(255).WithMessage("Full name may not be longer than 255 characters");
+            .NotEmpty().WithMessage(L["Validation_FullNameRequired"])
+            .MaximumLength(255).WithMessage(L["Validation_FullNameMaxLength"]);
 
         RuleFor(x => x.Email)
-            .NotEmpty().WithMessage("Email is required")
-            .EmailAddress().WithMessage("Email is not valid");
+            .NotEmpty().WithMessage(L["Validation_EmailRequired"])
+            .EmailAddress().WithMessage(L["Validation_EmailInvalid"]);
 
         RuleFor(x => x.Password)
-            .NotEmpty().WithMessage("Password is required")
-            .MinimumLength(6).WithMessage("Password must be at least 6 characters");
+            .NotEmpty().WithMessage(L["Validation_PasswordRequired"])
+            .MinimumLength(6).WithMessage(L["Validation_PasswordMinLength"]);
     }
 }

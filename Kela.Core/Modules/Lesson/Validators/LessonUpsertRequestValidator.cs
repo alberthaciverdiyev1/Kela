@@ -1,4 +1,6 @@
 using FluentValidation;
+using Kela.Core.Common.Localization;
+using Microsoft.Extensions.Localization;
 using Kela.Core.Modules.Lesson.Requests;
 using Microsoft.AspNetCore.Http;
 
@@ -8,20 +10,20 @@ public sealed class LessonUpsertRequestValidator : AbstractValidator<LessonUpser
 {
     private const long MaxImageBytes = 5 * 1024 * 1024;
 
-    public LessonUpsertRequestValidator()
+    public LessonUpsertRequestValidator(IStringLocalizer<SharedResource> L)
     {
         RuleFor(x => x.Title)
-            .NotEmpty().WithMessage("Title is required")
-            .MaximumLength(190).WithMessage("Title may not be longer than 190 characters");
+            .NotEmpty().WithMessage(L["Validation_TitleRequired"])
+            .MaximumLength(190).WithMessage(L["Validation_TitleMaxLength190"]);
 
         RuleFor(x => x.SubjectId)
-            .GreaterThan(0).WithMessage("Subject is required");
+            .GreaterThan(0).WithMessage(L["Validation_SubjectRequired"]);
 
         RuleFor(x => x.Image)
             .Must(file => file is null || file.Length <= MaxImageBytes)
-            .WithMessage("Image size may not exceed 5 MB")
+            .WithMessage(L["Validation_ImageMaxSize"])
             .Must(file => file is null || IsAllowedImage(file))
-            .WithMessage("Invalid image format (allowed: jpg, jpeg, png)");
+            .WithMessage(L["Validation_ImageFormat"]);
     }
 
     private static bool IsAllowedImage(IFormFile file)

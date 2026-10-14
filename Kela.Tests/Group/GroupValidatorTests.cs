@@ -5,7 +5,7 @@ namespace Kela.Tests.Group;
 
 public class GroupValidatorTests
 {
-    private readonly GroupUpsertRequestValidator _validator = new();
+    private readonly GroupUpsertRequestValidator _validator = new(new TestLocalizer());
 
     [Fact]
     public void Empty_name_is_invalid()

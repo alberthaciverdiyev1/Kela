@@ -70,4 +70,103 @@
   <data name="Api_ValidationFailed" xml:space="preserve">
     <value>Doğrulama uğursuz oldu</value>
   </data>
+  <data name="Validation_EmailRequired" xml:space="preserve">
+    <value>E-poçt tələb olunur</value>
+  </data>
+  <data name="Validation_EmailInvalid" xml:space="preserve">
+    <value>E-poçt düzgün deyil</value>
+  </data>
+  <data name="Validation_PasswordRequired" xml:space="preserve">
+    <value>Şifrə tələb olunur</value>
+  </data>
+  <data name="Validation_PasswordMinLength" xml:space="preserve">
+    <value>Şifrə ən azı 6 simvol olmalıdır</value>
+  </data>
+  <data name="Validation_CurrentPasswordRequired" xml:space="preserve">
+    <value>Cari şifrə tələb olunur</value>
+  </data>
+  <data name="Validation_OtpRequired" xml:space="preserve">
+    <value>OTP tələb olunur</value>
+  </data>
+  <data name="Validation_FullNameRequired" xml:space="preserve">
+    <value>Ad və soyad tələb olunur</value>
+  </data>
+  <data name="Validation_FullNameMaxLength" xml:space="preserve">
+    <value>Ad və soyad 255 simvoldan çox ola bilməz</value>
+  </data>
+  <data name="Validation_TitleRequired" xml:space="preserve">
+    <value>Başlıq tələb olunur</value>
+  </data>
+  <data name="Validation_TitleMaxLength190" xml:space="preserve">
+    <value>Başlıq 190 simvoldan çox ola bilməz</value>
+  </data>
+  <data name="Validation_NameRequired" xml:space="preserve">
+    <value>Ad tələb olunur</value>
+  </data>
+  <data name="Validation_NameMaxLength190" xml:space="preserve">
+    <value>Ad 190 simvoldan çox ola bilməz</value>
+  </data>
+  <data name="Validation_DescriptionMaxLength255" xml:space="preserve">
+    <value>Təsvir 255 simvoldan çox ola bilməz</value>
+  </data>
+  <data name="Validation_ImageMaxSize" xml:space="preserve">
+    <value>Şəklin ölçüsü 5 MB-dan çox ola bilməz</value>
+  </data>
+  <data name="Validation_ImageFormat" xml:space="preserve">
+    <value>Yanlış şəkil formatı (icazə verilir: jpg, jpeg, png)</value>
+  </data>
+  <data name="Validation_SubjectRequired" xml:space="preserve">
+    <value>Fənn tələb olunur</value>
+  </data>
+  <data name="Validation_LessonRequired" xml:space="preserve">
+    <value>Dərs tələb olunur</value>
+  </data>
+  <data name="Validation_FileOrPathRequired" xml:space="preserve">
+    <value>Fayl və ya yol tələb olunur</value>
+  </data>
+  <data name="Validation_AtLeastOneStudent" xml:space="preserve">
+    <value>Hamıya göndərilmirsə, ən azı bir şagird seçilməlidir</value>
+  </data>
+  <data name="Validation_TypeRequired" xml:space="preserve">
+    <value>Növ tələb olunur</value>
+  </data>
+  <data name="Validation_ContentRequired" xml:space="preserve">
+    <value>Məzmun tələb olunur</value>
+  </data>
+  <data name="Validation_TitleType" xml:space="preserve">
+    <value>Başlıq növü mətn və ya şəkil olmalıdır</value>
+  </data>
+  <data name="Validation_VariantType" xml:space="preserve">
+    <value>Variant növü mətn və ya şəkil olmalıdır</value>
+  </data>
+  <data name="Validation_VariantARequired" xml:space="preserve">
+    <value>Variant A tələb olunur</value>
+  </data>
+  <data name="Validation_VariantBRequired" xml:space="preserve">
+    <value>Variant B tələb olunur</value>
+  </data>
+  <data name="Validation_VariantCRequired" xml:space="preserve">
+    <value>Variant C tələb olunur</value>
+  </data>
+  <data name="Validation_VariantDRequired" xml:space="preserve">
+    <value>Variant D tələb olunur</value>
+  </data>
+  <data name="Validation_CorrectAnswer" xml:space="preserve">
+    <value>Düzgün cavab A, B, C, D, E-dən biri olmalıdır</value>
+  </data>
+  <data name="Validation_UserType" xml:space="preserve">
+    <value>Növ &#x27;teacher&#x27;, &#x27;admin&#x27; və ya &#x27;superadmin&#x27; olmalıdır</value>
+  </data>
+  <data name="Validation_PhoneRequired" xml:space="preserve">
+    <value>Telefon tələb olunur</value>
+  </data>
+  <data name="Validation_TemplateRequired" xml:space="preserve">
+    <value>Şablon seçilməlidir</value>
+  </data>
+  <data name="Validation_TemplateNotExists" xml:space="preserve">
+    <value>Şablon mövcud deyil</value>
+  </data>
+  <data name="Validation_BodyTextRequired" xml:space="preserve">
+    <value>Mətn tələb olunur</value>
+  </data>
 </root>

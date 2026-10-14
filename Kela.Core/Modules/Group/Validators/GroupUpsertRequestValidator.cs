@@ -1,4 +1,6 @@
 using FluentValidation;
+using Kela.Core.Common.Localization;
+using Microsoft.Extensions.Localization;
 using Kela.Core.Modules.Group.Requests;
 using Microsoft.AspNetCore.Http;
 
@@ -8,20 +10,20 @@ public sealed class GroupUpsertRequestValidator : AbstractValidator<GroupUpsertR
 {
     private const long MaxImageBytes = 5 * 1024 * 1024;
 
-    public GroupUpsertRequestValidator()
+    public GroupUpsertRequestValidator(IStringLocalizer<SharedResource> L)
     {
         RuleFor(x => x.Name)
-            .NotEmpty().WithMessage("Name is required")
-            .MaximumLength(190).WithMessage("Name may not be longer than 190 characters");
+            .NotEmpty().WithMessage(L["Validation_NameRequired"])
+            .MaximumLength(190).WithMessage(L["Validation_NameMaxLength190"]);
 
         RuleFor(x => x.Description)
-            .MaximumLength(255).WithMessage("Description may not be longer than 255 characters");
+            .MaximumLength(255).WithMessage(L["Validation_DescriptionMaxLength255"]);
 
         RuleFor(x => x.Image)
             .Must(file => file is null || file.Length <= MaxImageBytes)
-            .WithMessage("Image size may not exceed 5 MB")
+            .WithMessage(L["Validation_ImageMaxSize"])
             .Must(file => file is null || IsAllowedImage(file))
-            .WithMessage("Invalid image format (allowed: jpg, jpeg, png)");
+            .WithMessage(L["Validation_ImageFormat"]);
     }
 
     private static bool IsAllowedImage(IFormFile file)

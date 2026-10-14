@@ -70,4 +70,103 @@
   <data name="Api_ValidationFailed" xml:space="preserve">
     <value>Проверка не пройдена</value>
   </data>
+  <data name="Validation_EmailRequired" xml:space="preserve">
+    <value>Эл. почта обязательна</value>
+  </data>
+  <data name="Validation_EmailInvalid" xml:space="preserve">
+    <value>Некорректный адрес эл. почты</value>
+  </data>
+  <data name="Validation_PasswordRequired" xml:space="preserve">
+    <value>Пароль обязателен</value>
+  </data>
+  <data name="Validation_PasswordMinLength" xml:space="preserve">
+    <value>Пароль должен содержать не менее 6 символов</value>
+  </data>
+  <data name="Validation_CurrentPasswordRequired" xml:space="preserve">
+    <value>Текущий пароль обязателен</value>
+  </data>
+  <data name="Validation_OtpRequired" xml:space="preserve">
+    <value>OTP обязателен</value>
+  </data>
+  <data name="Validation_FullNameRequired" xml:space="preserve">
+    <value>Полное имя обязательно</value>
+  </data>
+  <data name="Validation_FullNameMaxLength" xml:space="preserve">
+    <value>Полное имя не должно превышать 255 символов</value>
+  </data>
+  <data name="Validation_TitleRequired" xml:space="preserve">
+    <value>Заголовок обязателен</value>
+  </data>
+  <data name="Validation_TitleMaxLength190" xml:space="preserve">
+    <value>Заголовок не должен превышать 190 символов</value>
+  </data>
+  <data name="Validation_NameRequired" xml:space="preserve">
+    <value>Название обязательно</value>
+  </data>
+  <data name="Validation_NameMaxLength190" xml:space="preserve">
+    <value>Название не должно превышать 190 символов</value>
+  </data>
+  <data name="Validation_DescriptionMaxLength255" xml:space="preserve">
+    <value>Описание не должно превышать 255 символов</value>
+  </data>
+  <data name="Validation_ImageMaxSize" xml:space="preserve">
+    <value>Размер изображения не должен превышать 5 МБ</value>
+  </data>
+  <data name="Validation_ImageFormat" xml:space="preserve">
+    <value>Недопустимый формат изображения (разрешены: jpg, jpeg, png)</value>
+  </data>
+  <data name="Validation_SubjectRequired" xml:space="preserve">
+    <value>Предмет обязателен</value>
+  </data>
+  <data name="Validation_LessonRequired" xml:space="preserve">
+    <value>Урок обязателен</value>
+  </data>
+  <data name="Validation_FileOrPathRequired" xml:space="preserve">
+    <value>Требуется файл или путь</value>
+  </data>
+  <data name="Validation_AtLeastOneStudent" xml:space="preserve">
+    <value>При отправке не всем требуется хотя бы один ученик</value>
+  </data>
+  <data name="Validation_TypeRequired" xml:space="preserve">
+    <value>Тип обязателен</value>
+  </data>
+  <data name="Validation_ContentRequired" xml:space="preserve">
+    <value>Содержимое обязательно</value>
+  </data>
+  <data name="Validation_TitleType" xml:space="preserve">
+    <value>Тип заголовка должен быть текстом или изображением</value>
+  </data>
+  <data name="Validation_VariantType" xml:space="preserve">
+    <value>Тип варианта должен быть текстом или изображением</value>
+  </data>
+  <data name="Validation_VariantARequired" xml:space="preserve">
+    <value>Вариант A обязателен</value>
+  </data>
+  <data name="Validation_VariantBRequired" xml:space="preserve">
+    <value>Вариант B обязателен</value>
+  </data>
+  <data name="Validation_VariantCRequired" xml:space="preserve">
+    <value>Вариант C обязателен</value>
+  </data>
+  <data name="Validation_VariantDRequired" xml:space="preserve">
+    <value>Вариант D обязателен</value>
+  </data>
+  <data name="Validation_CorrectAnswer" xml:space="preserve">
+    <value>Правильный ответ должен быть одним из A, B, C, D, E</value>
+  </data>
+  <data name="Validation_UserType" xml:space="preserve">
+    <value>Тип должен быть &#x27;teacher&#x27;, &#x27;admin&#x27; или &#x27;superadmin&#x27;</value>
+  </data>
+  <data name="Validation_PhoneRequired" xml:space="preserve">
+    <value>Телефон обязателен</value>
+  </data>
+  <data name="Validation_TemplateRequired" xml:space="preserve">
+    <value>Шаблон обязателен</value>
+  </data>
+  <data name="Validation_TemplateNotExists" xml:space="preserve">
+    <value>Шаблон не существует</value>
+  </data>
+  <data name="Validation_BodyTextRequired" xml:space="preserve">
+    <value>Текст обязателен</value>
+  </data>
 </root>

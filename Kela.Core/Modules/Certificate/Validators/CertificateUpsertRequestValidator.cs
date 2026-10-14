@@ -1,22 +1,24 @@
 using FluentValidation;
+using Kela.Core.Common.Localization;
+using Microsoft.Extensions.Localization;
 using Kela.Core.Modules.Certificate.Requests;
 
 namespace Kela.Core.Modules.Certificate.Validators;
 
 public sealed class CertificateUpsertRequestValidator : AbstractValidator<CertificateUpsertRequest>
 {
-    public CertificateUpsertRequestValidator()
+    public CertificateUpsertRequestValidator(IStringLocalizer<SharedResource> L)
     {
         RuleFor(x => x.Title)
-            .NotEmpty().WithMessage("Başlıq tələb olunur")
+            .NotEmpty().WithMessage(L["Validation_TitleRequired"])
             .MaximumLength(190);
 
         RuleFor(x => x.TemplateKey)
-            .NotEmpty().WithMessage("Şablon seçilməlidir")
-            .Must(CertificateTemplates.Exists).WithMessage("Şablon mövcud deyil");
+            .NotEmpty().WithMessage(L["Validation_TemplateRequired"])
+            .Must(CertificateTemplates.Exists).WithMessage(L["Validation_TemplateNotExists"]);
 
         RuleFor(x => x.BodyText)
-            .NotEmpty().WithMessage("Mətn tələb olunur")
+            .NotEmpty().WithMessage(L["Validation_BodyTextRequired"])
             .MaximumLength(2000);
     }
 }

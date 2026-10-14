@@ -1,14 +1,16 @@
 using FluentValidation;
+using Kela.Core.Common.Localization;
+using Microsoft.Extensions.Localization;
 using Kela.Core.Modules.Subject.Requests;
 
 namespace Kela.Core.Modules.Subject.Validators;
 
 public sealed class SubjectUpsertRequestValidator : AbstractValidator<SubjectUpsertRequest>
 {
-    public SubjectUpsertRequestValidator()
+    public SubjectUpsertRequestValidator(IStringLocalizer<SharedResource> L)
     {
         RuleFor(x => x.Name)
-            .NotEmpty().WithMessage("Name is required")
-            .MaximumLength(190).WithMessage("Name may not be longer than 190 characters");
+            .NotEmpty().WithMessage(L["Validation_NameRequired"])
+            .MaximumLength(190).WithMessage(L["Validation_NameMaxLength190"]);
     }
 }

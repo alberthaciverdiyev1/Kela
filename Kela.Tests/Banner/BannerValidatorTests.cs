@@ -6,7 +6,7 @@ namespace Kela.Tests.Banner;
 
 public class BannerValidatorTests
 {
-    private readonly BannerUpsertRequestValidator _validator = new();
+    private readonly BannerUpsertRequestValidator _validator = new(new TestLocalizer());
 
     private static IFormFile File(string name, int size)
         => new FormFile(new MemoryStream(new byte[size]), 0, size, "Image", name);

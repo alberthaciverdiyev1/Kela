@@ -5,7 +5,7 @@ namespace Kela.Tests.Subject;
 
 public class SubjectValidatorTests
 {
-    private readonly SubjectUpsertRequestValidator _validator = new();
+    private readonly SubjectUpsertRequestValidator _validator = new(new TestLocalizer());
 
     [Fact]
     public void Empty_name_is_invalid()
