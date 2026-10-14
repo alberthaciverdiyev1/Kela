@@ -1,3 +1,5 @@
+@using Kela.App.Shared.Services.Localization
+@inject Localizer L
 @* Alt bölmə audio pleyeri: timeline (seek) + sürət seçimləri (1x, 1.25x, 1.5x, 2x). *@
 @implements IDisposable
 @inject AudioPlayerService Player
@@ -9,10 +11,10 @@
         <div class="flex items-center gap-3">
             <div class="flex size-9 shrink-0 items-center justify-center rounded-xl bg-brand-081 text-brand-698"><Icon Name="chart" Class="size-4" /></div>
             <p class="min-w-0 flex-1 truncate text-[13px] font-semibold text-brand-776">@Player.Title</p>
-            <button type="button" @onclick="ToggleAsync" class="flex size-9 items-center justify-center rounded-full bg-brand-671 text-white" aria-label="@(_paused ? "Oynat" : "Fasilə")">
+            <button type="button" @onclick="ToggleAsync" class="flex size-9 items-center justify-center rounded-full bg-brand-671 text-white" aria-label="@(_paused ? L["Audio_Play"] : L["Audio_Pause"])">
                 <Icon Name="@(_paused ? "play" : "pause")" Class="size-4" />
             </button>
-            <button type="button" @onclick="StopAsync" class="rounded-lg p-2 text-sage-478" aria-label="Bağla"><Icon Name="x" Class="size-4" /></button>
+            <button type="button" @onclick="StopAsync" class="rounded-lg p-2 text-sage-478" aria-label="@L["Common_Close"]"><Icon Name="x" Class="size-4" /></button>
         </div>
 
         <div class="mt-2 flex items-center gap-2">

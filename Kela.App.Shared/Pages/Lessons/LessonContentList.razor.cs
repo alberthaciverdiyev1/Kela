@@ -21,10 +21,10 @@ public partial class LessonContentList
 
     private string _categoryTitle => Type switch
     {
-        "video" => "Video dərslər",
-        "file" => "PDF-lər",
-        "voice" => "Səs yazıları",
-        _ => "Materiallar"
+        "video" => L["Section_Videos"],
+        "file" => L["Section_Files"],
+        "voice" => L["Section_Voices"],
+        _ => L["Materials_Title"]
     };
 
     protected override async Task OnInitializedAsync()

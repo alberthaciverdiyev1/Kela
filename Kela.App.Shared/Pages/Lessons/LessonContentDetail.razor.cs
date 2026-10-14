@@ -28,9 +28,9 @@ public partial class LessonContentDetail
 
     private string RelatedTitle => _content?.Type switch
     {
-        "video" => "Daha çox video",
-        "voice" => "Daha çox səs yazısı",
-        _ => "Daha çox sənəd"
+        "video" => L["Related_Videos"],
+        "voice" => L["Related_Voices"],
+        _ => L["Related_Documents"]
     };
 
     private static string IconFor(string? type) => type switch

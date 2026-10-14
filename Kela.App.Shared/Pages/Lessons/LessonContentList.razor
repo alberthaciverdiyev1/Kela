@@ -1,3 +1,5 @@
+@using Kela.App.Shared.Services.Localization
+@inject Localizer L
 @page "/lessons/{LessonId:long}/contents/{Type}"
 @inject AppApi Api
 
@@ -6,7 +8,7 @@
 <PageHeader Title="@_categoryTitle" Back="@($"/lessons/{LessonId}")"/>
 
 <div class="px-5 pb-28 pt-5">
-    <h2 class="mt-1 text-2xl font-bold tracking-[-0.04em] text-brand-784">@(Title ?? "Dərs")</h2>
+    <h2 class="mt-1 text-2xl font-bold tracking-[-0.04em] text-brand-784">@(Title ?? L["Lesson_Default"])</h2>
 
     @if (_loading)
     {
@@ -14,7 +16,7 @@
     }
     else if (_items.Count == 0)
     {
-        <EmptyState Text="Bu bölmədə material yoxdur."/>
+        <EmptyState Text="@L["LessonContentList_Empty"]"/>
     }
     else
     {

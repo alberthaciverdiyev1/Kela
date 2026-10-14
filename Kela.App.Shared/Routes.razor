@@ -1,3 +1,5 @@
+@using Kela.App.Shared.Services.Localization
+@inject Localizer L
 <Router AppAssembly="@typeof(Routes).Assembly">
     <Found Context="routeData">
         <RouteView RouteData="@routeData" DefaultLayout="@typeof(MainLayout)" />
@@ -5,7 +7,7 @@
     </Found>
     <NotFound>
         <LayoutView Layout="@typeof(MainLayout)">
-            <div class="p-8 text-center text-brand-722">Səhifə tapılmadı.</div>
+            <div class="p-8 text-center text-brand-722">@L["Common_NotFound"]</div>
         </LayoutView>
     </NotFound>
 </Router>

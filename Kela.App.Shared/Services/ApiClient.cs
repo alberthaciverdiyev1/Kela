@@ -57,14 +57,14 @@ public sealed class ApiClient(HttpClient http, AuthState auth, TokenStore store,
         }
         catch (Exception ex)
         {
-            throw new ApiException($"Şəbəkə xətası: {ex.Message}");
+            throw new ApiException(lang.Format("Error_Network", ex.Message));
         }
 
         // Token vaxtı dolub / auth yoxdur → sessiyanı təmizlə
         if (response.StatusCode == HttpStatusCode.Unauthorized && auth.IsAuthenticated)
         {
             await SignOutAsync();
-            throw new ApiException("Sessiya bitib. Yenidən daxil olun.", 401);
+            throw new ApiException(lang["Error_SessionExpired"], 401);
         }
 
         var payload = await response.Content.ReadAsStringAsync();
@@ -82,7 +82,7 @@ public sealed class ApiClient(HttpClient http, AuthState auth, TokenStore store,
             var message = root.ValueKind == JsonValueKind.Object && root.TryGetProperty("message", out var m)
                 ? m.GetString()
                 : null;
-            throw new ApiException(message ?? $"Xəta ({(int)response.StatusCode})", (int)response.StatusCode);
+            throw new ApiException(message ?? lang.Format("Error_Status", (int)response.StatusCode), (int)response.StatusCode);
         }
 
         if (root.TryGetProperty("data", out var data))
