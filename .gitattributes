@@ -1,0 +1,11 @@
+# Satır sonlarını otomatik normalize et
+* text=auto
+
+# Razor görünümleri GitHub'da C# olarak gösterilsin
+*.cshtml    linguist-language=C#
+*.razor     linguist-language=C#
+*.razor.cs  linguist-language=C#
+
+# Diff'lerde C# renklendirmesi
+*.cshtml    diff=csharp
+*.razor     diff=csharp
