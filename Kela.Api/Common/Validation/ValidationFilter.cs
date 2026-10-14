@@ -1,11 +1,13 @@
 using FluentValidation;
 using Kela.Api.Common.Responses;
+using Kela.Core.Common.Localization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
+using Microsoft.Extensions.Localization;
 
 namespace Kela.Api.Common.Validation;
 
-public sealed class ValidationFilter(IServiceProvider serviceProvider) : IAsyncActionFilter
+public sealed class ValidationFilter(IServiceProvider serviceProvider, IStringLocalizer<SharedResource> L) : IAsyncActionFilter
 {
     public async Task OnActionExecutionAsync(ActionExecutingContext context, ActionExecutionDelegate next)
     {
@@ -28,7 +30,7 @@ public sealed class ValidationFilter(IServiceProvider serviceProvider) : IAsyncA
                     g => g.Select(e => e.ErrorMessage).ToArray());
 
             context.Result = new BadRequestObjectResult(
-                ApiResponse.Error("Validation failed", StatusCodes.Status400BadRequest, errors: errors));
+                ApiResponse.Error(L["Api_ValidationFailed"], StatusCodes.Status400BadRequest, errors: errors));
             return;
         }
 

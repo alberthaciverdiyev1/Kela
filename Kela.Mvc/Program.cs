@@ -1,4 +1,5 @@
 using Kela.Core;
+using Kela.Core.Common.Localization;
 using Kela.Core.Data;
 using Kela.Core.Modules.Auth;
 using Kela.Mvc.Infrastructure;
@@ -13,6 +14,7 @@ builder.Services.AddControllersWithViews(options =>
     options.Conventions.Add(new RouteTokenTransformerConvention(new KebabCaseParameterTransformer()));
 });
 builder.Services.AddCore(builder.Configuration);
+builder.Services.AddKelaLocalization();
 
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
     .AddCookie(options =>
@@ -52,6 +54,7 @@ app.UseHttpsRedirection();
 app.UseStaticFiles();
 app.UseCoreStorage();
 
+app.UseKelaLocalization();
 app.UseRouting();
 app.UseAuthentication();
 app.UseAuthorization();

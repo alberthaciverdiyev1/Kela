@@ -4,16 +4,18 @@ using Kela.Api.Common.Responses;
 using Kela.Core.Modules.Auth;
 using Kela.Core.Modules.Auth.Requests;
 using Kela.Core.Modules.Auth.Responses;
+using Kela.Core.Common.Localization;
 using Kela.Core.Modules.Auth.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.RateLimiting;
+using Microsoft.Extensions.Localization;
 
 namespace Kela.Api.Modules.Auth.Controllers;
 
 [EnableRateLimiting("auth")]
 [Route("api/[controller]")]
-public sealed class AuthController(IAuthService service) : ApiControllerBase
+public sealed class AuthController(IAuthService service, IStringLocalizer<SharedResource> L) : ApiControllerBase
 {
     private long StudentId => long.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
 
@@ -22,12 +24,12 @@ public sealed class AuthController(IAuthService service) : ApiControllerBase
     [AllowAnonymous]
     [HttpPost("register")]
     public async Task<ActionResult<ApiResponse<AuthResponse>>> Register([FromBody] RegisterRequest request, CancellationToken ct)
-        => Success(await service.RegisterAsync(request, ct), "Registered", StatusCodes.Status201Created);
+        => Success(await service.RegisterAsync(request, ct), L["Api_Registered"], StatusCodes.Status201Created);
 
     [AllowAnonymous]
     [HttpPost("login")]
     public async Task<ActionResult<ApiResponse<AuthResponse>>> Login([FromBody] LoginRequest request, CancellationToken ct)
-        => Success(await service.LoginAsync(request, ct), "Login successful");
+        => Success(await service.LoginAsync(request, ct), L["Api_LoginSuccessful"]);
 
     [Authorize(Policy = AuthPolicies.Student)]
     [HttpGet("me")]
@@ -38,11 +40,11 @@ public sealed class AuthController(IAuthService service) : ApiControllerBase
     [AllowAnonymous]
     [HttpPost("switch-account")]
     public async Task<ActionResult<ApiResponse<AuthResponse>>> SwitchAccount([FromBody] LoginRequest request, CancellationToken ct)
-        => Success(await service.LoginAsync(request, ct), "Login successful");
+        => Success(await service.LoginAsync(request, ct), L["Api_LoginSuccessful"]);
 
     [Authorize(Policy = AuthPolicies.Student)]
     [HttpPost("logout")]
-    public ActionResult<ApiResponse<string>> Logout() => SuccessMessage("Logged out");
+    public ActionResult<ApiResponse<string>> Logout() => SuccessMessage(L["Api_LoggedOut"]);
 
     // --- OTP ---
 
@@ -51,20 +53,20 @@ public sealed class AuthController(IAuthService service) : ApiControllerBase
     public async Task<ActionResult<ApiResponse<string>>> SendOtp([FromBody] SendOtpRequest request, CancellationToken ct)
     {
         await service.SendOtpAsync(request, ct);
-        return SuccessMessage("OTP sent");
+        return SuccessMessage(L["Api_OtpSent"]);
     }
 
     [AllowAnonymous]
     [HttpPost("check-otp")]
     public async Task<ActionResult<ApiResponse<bool>>> CheckOtp([FromBody] CheckOtpRequest request, CancellationToken ct)
-        => Success(await service.CheckOtpAsync(request, ct), "OTP checked");
+        => Success(await service.CheckOtpAsync(request, ct), L["Api_OtpChecked"]);
 
     [AllowAnonymous]
     [HttpPost("reset-password")]
     public async Task<ActionResult<ApiResponse<string>>> ResetPassword([FromBody] ResetPasswordRequest request, CancellationToken ct)
     {
         await service.ResetPasswordAsync(request, ct);
-        return SuccessMessage("Password reset successfully");
+        return SuccessMessage(L["Api_PasswordResetSuccessfully"]);
     }
 
     // --- Hesab idarəsi ---
@@ -74,39 +76,39 @@ public sealed class AuthController(IAuthService service) : ApiControllerBase
     public async Task<ActionResult<ApiResponse<string>>> ChangePassword([FromBody] ChangePasswordRequest request, CancellationToken ct)
     {
         await service.ChangePasswordAsync(StudentId, request, ct);
-        return SuccessMessage("Password changed");
+        return SuccessMessage(L["Api_PasswordChanged"]);
     }
 
     [Authorize(Policy = AuthPolicies.Student)]
     [HttpPut("change-email")]
     public async Task<ActionResult<ApiResponse<StudentResponse>>> ChangeEmail([FromBody] ChangeEmailRequest request, CancellationToken ct)
-        => Success(await service.ChangeEmailAsync(StudentId, request, ct), "Email changed");
+        => Success(await service.ChangeEmailAsync(StudentId, request, ct), L["Api_EmailChanged"]);
 
     [Authorize(Policy = AuthPolicies.Student)]
     [HttpPut("change-phone")]
     public async Task<ActionResult<ApiResponse<StudentResponse>>> ChangePhone([FromBody] ChangePhoneRequest request, CancellationToken ct)
-        => Success(await service.ChangePhoneAsync(StudentId, request, ct), "Phone changed");
+        => Success(await service.ChangePhoneAsync(StudentId, request, ct), L["Api_PhoneChanged"]);
 
     [Authorize(Policy = AuthPolicies.Student)]
     [HttpPost("change-image")]
     public async Task<ActionResult<ApiResponse<StudentResponse>>> ChangeImage(IFormFile file, CancellationToken ct)
-        => Success(await service.ChangeImageAsync(StudentId, file, ct), "Image changed");
+        => Success(await service.ChangeImageAsync(StudentId, file, ct), L["Api_ImageChanged"]);
 
     [Authorize(Policy = AuthPolicies.Student)]
     [HttpPut("change-full-name")]
     public async Task<ActionResult<ApiResponse<StudentResponse>>> ChangeFullName([FromBody] ChangeFullNameRequest request, CancellationToken ct)
-        => Success(await service.ChangeFullNameAsync(StudentId, request, ct), "Name changed");
+        => Success(await service.ChangeFullNameAsync(StudentId, request, ct), L["Api_NameChanged"]);
 
     [Authorize(Policy = AuthPolicies.Student)]
     [HttpPut("notification-status")]
     public async Task<ActionResult<ApiResponse<StudentResponse>>> NotificationStatus([FromBody] NotificationStatusRequest request, CancellationToken ct)
-        => Success(await service.SetNotificationStatusAsync(StudentId, request, ct), "Notification status updated");
+        => Success(await service.SetNotificationStatusAsync(StudentId, request, ct), L["Api_NotificationStatusUpdated"]);
 
     [Authorize(Policy = AuthPolicies.Student)]
     [HttpDelete("delete-account")]
     public async Task<ActionResult<ApiResponse<string>>> DeleteAccount(CancellationToken ct)
     {
         await service.DeleteAccountAsync(StudentId, ct);
-        return SuccessMessage("Account deleted");
+        return SuccessMessage(L["Api_AccountDeleted"]);
     }
 }

@@ -7,12 +7,14 @@ using Kela.Api.Common.Routing;
 using Kela.Api.Common.Responses;
 using Kela.Api.Common.Validation;
 using Kela.Core;
+using Kela.Core.Common.Localization;
 using Kela.Core.Modules.Auth;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ApplicationModels;
 using Microsoft.AspNetCore.WebUtilities;
+using Microsoft.Extensions.Localization;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -33,13 +35,15 @@ builder.Services.Configure<ApiBehaviorOptions>(options =>
                 kv => kv.Key,
                 kv => kv.Value!.Errors.Select(e => e.ErrorMessage).ToArray());
 
-        return new BadRequestObjectResult(ApiResponse.Error("Validation failed", 400, errors: errors));
+        var localizer = context.HttpContext.RequestServices.GetRequiredService<IStringLocalizer<SharedResource>>();
+        return new BadRequestObjectResult(ApiResponse.Error(localizer["Api_ValidationFailed"], 400, errors: errors));
     };
 });
 
 builder.Services.AddOpenApi();
 
 builder.Services.AddCore(builder.Configuration);
+builder.Services.AddKelaLocalization();
 
 var corsOrigins = builder.Configuration.GetSection("Cors:Origins").Get<string[]>() ?? [];
 builder.Services.AddCors(options => options.AddDefaultPolicy(policy =>
@@ -108,6 +112,8 @@ if (app.Configuration.GetValue<bool>("Database:MigrateOnStartup"))
 }
 
 app.UseCors();
+
+app.UseKelaLocalization();
 
 // rate limiting yalnız Development xaricində (test/dev rahatlığı üçün)
 if (!app.Environment.IsDevelopment())
