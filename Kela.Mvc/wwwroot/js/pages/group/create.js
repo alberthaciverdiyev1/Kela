@@ -42,6 +42,6 @@
 
         const res = await AdminUI.postForm('/group', window.buildGroupForm());
         if (res.ok) { done(); return; }
-        showError(res.data?.errors ? Object.values(res.data.errors).flat().join(' • ') : 'Xəta baş verdi');
+        showError(AdminUI.errText(res));
     });
 })();

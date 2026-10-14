@@ -6,6 +6,8 @@
         const data = await AdminUI.get(`/lesson-content/${id}`);
         document.getElementById('modalTitle').textContent = 'Material redaktəsi';
         document.getElementById('entityId').value = data.id;
+        document.getElementById('sort_order').value = data.sortOrder ?? 0;
+        document.getElementById('description').value = data.description ?? '';
         document.getElementById('lesson_id').value = data.lessonId;
         document.getElementById('title').value = data.title;
         document.getElementById('type').value = data.type ?? 'video';
@@ -23,12 +25,14 @@
 
         const fd = new FormData();
         fd.append('title', document.getElementById('title').value);
+        fd.append('sort_order', document.getElementById('sort_order').value || '0');
+        fd.append('description', document.getElementById('description').value || '');
         fd.append('is_active', document.getElementById('is_active').checked ? 'true' : 'false');
 
         const res = await AdminUI.putForm(`/lesson-content/${id}`, fd);
         if (res.ok) { AdminUI.notify('Redaktə olundu'); window.closeModal(); loadList(currentPage); return; }
 
-        errBox.textContent = res.data?.errors ? Object.values(res.data.errors).flat().join(' • ') : 'Xəta baş verdi';
+        errBox.textContent = AdminUI.errText(res);
         errBox.classList.remove('hidden');
     });
 })();

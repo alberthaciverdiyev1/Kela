@@ -21,6 +21,6 @@
             slug: document.getElementById('slug').value
         });
         if (res.ok) { AdminUI.notify('Yaradıldı'); window.closeModal(); loadList(); }
-        else AdminUI.error(res.data?.error);
+        else AdminUI.error(AdminUI.errText(res));
     });
 })();

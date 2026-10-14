@@ -6,6 +6,7 @@
         const d = await AdminUI.get(`/quiz/${id}`);
         document.getElementById('modalTitle').textContent = 'İmtahan redaktəsi';
         document.getElementById('entityId').value = d.id;
+        document.getElementById('sort_order').value = d.sortOrder ?? 0;
         document.getElementById('lesson_id').value = d.lessonId ?? '';
         document.getElementById('title').value = d.title;
         document.getElementById('duration_minutes').value = d.durationMinutes;
@@ -23,7 +24,7 @@
         const res = await AdminUI.putForm(`/quiz/${id}`, window.buildQuizForm());
         if (res.ok) { AdminUI.notify('Redaktə olundu'); window.closeModal(); loadList(currentPage); return; }
 
-        errBox.textContent = res.data?.errors ? Object.values(res.data.errors).flat().join(' • ') : 'Xəta baş verdi';
+        errBox.textContent = AdminUI.errText(res);
         errBox.classList.remove('hidden');
     });
 })();

@@ -18,6 +18,8 @@
     window.openCreate = function () {
         document.getElementById('modalTitle').textContent = 'Yeni material';
         document.getElementById('entityId').value = '';
+        document.getElementById('sort_order').value = '';
+        document.getElementById('description').value = '';
         document.getElementById('lesson_id').value = '';
         document.getElementById('title').value = '';
         document.getElementById('type').value = 'video';
@@ -50,7 +52,7 @@
                 const res = await AdminUI.post('/lesson-content',
                     { lesson_id: lessonId, title, type, path: urlRes.data.path, is_active: isActive });
                 if (res.ok) { done(); return; }
-                showError(res.data?.errors ? Object.values(res.data.errors).flat().join(' • ') : 'Xəta baş verdi');
+                showError(AdminUI.errText(res));
                 return;
             }
 
@@ -64,7 +66,7 @@
             const res = await AdminUI.postForm('/lesson-content', fd);
             if (res.ok) { done(); return; }
 
-            showError(res.data?.errors ? Object.values(res.data.errors).flat().join(' • ') : 'Xəta baş verdi');
+            showError(AdminUI.errText(res));
         } finally {
             AdminUI.loader(false);
         }

@@ -16,6 +16,8 @@
         <div id="formError" class="mx-6 mt-4 hidden rounded-xl bg-danger-bg px-3 py-2 text-sm font-semibold text-danger"></div>
         <form id="entityForm" class="space-y-4 p-6">
             <input type="hidden" id="entityId" />
+            <input type="hidden" id="sort_order" />
+            <input type="hidden" id="description" />
             <partial name="Ui/_Select" model="@(new SelectModel {
                 Name = "lesson_id", Id = "lesson_id", Label = "Dərs", Required = true,
                 Options = lessons.Data.Select(l => new SelectOption { Value = l.Id.ToString(), Text = l.Title }).ToList()

@@ -38,7 +38,7 @@
         const res = await AdminUI.putForm('/privacy-policy', fd);
         if (res.ok) { AdminUI.notify('Yadda saxlanıldı'); window.closeModal(); loadList(); return; }
 
-        errBox.textContent = res.data?.errors ? Object.values(res.data.errors).flat().join(' • ') : 'Xəta baş verdi';
+        errBox.textContent = AdminUI.errText(res);
         errBox.classList.remove('hidden');
     });
 })();

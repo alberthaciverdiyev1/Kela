@@ -17,6 +17,8 @@
         fd.append('lesson_id', document.getElementById('lesson_id').value);
         fd.append('title', document.getElementById('title').value);
         fd.append('duration_minutes', document.getElementById('duration_minutes').value || '0');
+        const sortOrder = document.getElementById('sort_order').value;
+        if (sortOrder !== '') fd.append('sort_order', sortOrder);
         fd.append('type', document.getElementById('type').value);
         fd.append('is_active', document.getElementById('is_active').checked ? 'true' : 'false');
         fd.append('is_repeat', document.getElementById('is_repeat').checked ? 'true' : 'false');
@@ -26,6 +28,7 @@
     window.openCreate = function () {
         document.getElementById('modalTitle').textContent = 'Yeni imtahan';
         document.getElementById('entityId').value = '';
+        document.getElementById('sort_order').value = '';
         document.getElementById('lesson_id').value = '';
         document.getElementById('title').value = '';
         document.getElementById('duration_minutes').value = 0;
@@ -42,7 +45,7 @@
         const res = await AdminUI.postForm('/quiz', window.buildQuizForm());
         if (res.ok) { AdminUI.notify('Əlavə olundu'); window.closeModal(); loadList(1); return; }
 
-        errBox.textContent = res.data?.errors ? Object.values(res.data.errors).flat().join(' • ') : 'Xəta baş verdi';
+        errBox.textContent = AdminUI.errText(res);
         errBox.classList.remove('hidden');
     });
 })();

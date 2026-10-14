@@ -60,6 +60,17 @@ window.AdminUI = (function () {
         return { ok: res.ok, status: res.status, data: body };
     }
 
+    // Xəta cavabından göstəriləcək mətni çıxarır: əvvəl validation errors, sonra message/error.
+    function errText(res) {
+        const d = res && res.data;
+        if (d) {
+            if (d.errors) return Object.values(d.errors).flat().join(' • ');
+            if (d.message) return d.message;
+            if (d.error) return d.error;
+        }
+        return 'Xəta baş verdi';
+    }
+
     function badge(text, variant) {
         return `<span class="badge badge-${variant || 'neutral'}">${text}</span>`;
     }
@@ -216,5 +227,5 @@ window.AdminUI = (function () {
 
     function reloadAfter(delay) { setTimeout(() => location.reload(), delay || 700); }
 
-    return { notify, error, confirmDelete, get, post, postForm, putForm, postJson, del, badge, table, actions, selectedIds, bulkDo, sortToggle, loader, pagination, filePreview, fileSet, fileRemove, token, reloadAfter };
+    return { notify, error, errText, confirmDelete, get, post, postForm, putForm, postJson, del, badge, table, actions, selectedIds, bulkDo, sortToggle, loader, pagination, filePreview, fileSet, fileRemove, token, reloadAfter };
 })();

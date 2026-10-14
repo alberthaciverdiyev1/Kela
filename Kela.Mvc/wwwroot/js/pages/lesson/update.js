@@ -6,6 +6,7 @@
         const data = await AdminUI.get(`/lesson/${id}`);
         document.getElementById('modalTitle').textContent = 'Dərs redaktəsi';
         document.getElementById('entityId').value = data.id;
+        document.getElementById('sort_order').value = data.sortOrder ?? 0;
         document.getElementById('subject_id').value = data.subjectId;
         document.getElementById('title').value = data.title;
         document.getElementById('is_active').checked = data.isActive;
@@ -21,7 +22,7 @@
         const res = await AdminUI.putForm(`/lesson/${id}`, window.buildLessonForm());
         if (res.ok) { AdminUI.notify('Redaktə olundu'); window.closeModal(); loadList(currentPage); return; }
 
-        errBox.textContent = res.data?.errors ? Object.values(res.data.errors).flat().join(' • ') : 'Xəta baş verdi';
+        errBox.textContent = AdminUI.errText(res);
         errBox.classList.remove('hidden');
     });
 })();

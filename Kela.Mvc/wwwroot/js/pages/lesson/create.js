@@ -15,6 +15,7 @@
     window.openCreate = function () {
         document.getElementById('modalTitle').textContent = 'Yeni dərs';
         document.getElementById('entityId').value = '';
+        document.getElementById('sort_order').value = '';
         document.getElementById('subject_id').value = '';
         document.getElementById('title').value = '';
         document.getElementById('is_active').checked = true;
@@ -26,6 +27,8 @@
         const fd = new FormData();
         fd.append('subject_id', document.getElementById('subject_id').value);
         fd.append('title', document.getElementById('title').value);
+        const sortOrder = document.getElementById('sort_order').value;
+        if (sortOrder !== '') fd.append('sort_order', sortOrder);
         fd.append('is_active', document.getElementById('is_active').checked ? 'true' : 'false');
         fd.append('RemoveImage', document.getElementById('image_remove').value === 'true' ? 'true' : 'false');
         const file = document.getElementById('image').files[0];
@@ -40,7 +43,7 @@
         const res = await AdminUI.postForm('/lesson', window.buildLessonForm());
         if (res.ok) { AdminUI.notify('Əlavə olundu'); window.closeModal(); loadList(1); return; }
 
-        errBox.textContent = res.data?.errors ? Object.values(res.data.errors).flat().join(' • ') : 'Xəta baş verdi';
+        errBox.textContent = AdminUI.errText(res);
         errBox.classList.remove('hidden');
     });
 })();

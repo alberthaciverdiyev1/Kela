@@ -39,7 +39,7 @@
         const res = await AdminUI.postForm('/user', window.buildUserForm());
         if (res.ok) { AdminUI.notify('Əlavə olundu'); window.closeModal(); loadList(1); return; }
 
-        errBox.textContent = res.data?.errors ? Object.values(res.data.errors).flat().join(' • ') : 'Xəta baş verdi';
+        errBox.textContent = AdminUI.errText(res);
         errBox.classList.remove('hidden');
     });
 })();

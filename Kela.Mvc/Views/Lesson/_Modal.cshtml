@@ -10,6 +10,7 @@
         <div id="formError" class="mx-6 mt-4 hidden rounded-xl bg-danger-bg px-3 py-2 text-sm font-semibold text-danger"></div>
         <form id="entityForm" class="space-y-4 p-6">
             <input type="hidden" id="entityId" />
+            <input type="hidden" id="sort_order" />
             <partial name="Ui/_Select" model="@(new SelectModel {
                 Name = "subject_id", Id = "subject_id", Label = "Fənn", Required = true,
                 Options = subjects.Data.Select(s => new SelectOption { Value = s.Id.ToString(), Text = s.Name }).ToList()
