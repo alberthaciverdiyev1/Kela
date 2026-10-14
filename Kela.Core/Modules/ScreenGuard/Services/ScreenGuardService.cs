@@ -1,6 +1,8 @@
 using Kela.Core.Data;
 using Kela.Core.Modules.ScreenGuard.Abstractions;
 using Kela.Core.Modules.ScreenGuard.Requests;
+using Kela.Core.Modules.ScreenGuard.Responses;
+using Microsoft.EntityFrameworkCore;
 
 namespace Kela.Core.Modules.ScreenGuard.Services;
 
@@ -25,6 +27,19 @@ public sealed class ScreenGuardService(AppDbContext db) : IScreenGuardService
         });
 
         await db.SaveChangesAsync(ct);
+    }
+
+    public async Task<IReadOnlyList<ScreenViolationResponse>> ListAsync(long studentId, int limit = 100, CancellationToken ct = default)
+    {
+        var take = limit is < 1 or > 500 ? 100 : limit;
+
+        return await db.ScreenViolations.AsNoTracking()
+            .Where(x => x.StudentId == studentId)
+            .OrderByDescending(x => x.CreatedAt)
+            .ThenByDescending(x => x.Id)
+            .Take(take)
+            .Select(x => new ScreenViolationResponse(x.Id, x.Type, x.Path, x.UserAgent, x.CreatedAt))
+            .ToListAsync(ct);
     }
 
     private static string? Truncate(string? value)

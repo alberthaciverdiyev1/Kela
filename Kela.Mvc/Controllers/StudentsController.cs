@@ -1,4 +1,7 @@
 using Kela.Core.Common.Bulk;
+using Kela.Core.Modules.Progress.Abstractions;
+using Kela.Core.Modules.Quiz.Abstractions;
+using Kela.Core.Modules.ScreenGuard.Abstractions;
 using Kela.Core.Modules.Students.Abstractions;
 using Kela.Core.Modules.Students.Requests;
 using Microsoft.AspNetCore.Mvc;
@@ -6,13 +9,30 @@ using Microsoft.AspNetCore.Mvc;
 namespace Kela.Mvc.Controllers;
 
 [Route("[controller]")]
-public sealed class StudentsController(IStudentManagementService service) : Controller
+public sealed class StudentsController(
+    IStudentManagementService service,
+    IProgressService progress,
+    IStudentQuizService quizzes,
+    IScreenGuardService screenGuard) : Controller
 {
     [HttpGet]
     public IActionResult Index()
     {
         ViewData["Title"] = "Şagirdlər";
         ViewData["Scripts"] = new[] { "~/js/pages/students/list.js", "~/js/pages/students/generate.js", "~/js/pages/students/devices.js" };
+        return View();
+    }
+
+    [HttpGet("{id:long}/detail")]
+    public async Task<IActionResult> Details(long id, CancellationToken ct)
+    {
+        var student = await service.GetAsync(id, ct);
+        ViewData["Title"] = student.FullName;
+        ViewData["Student"] = student;
+        ViewData["Statistics"] = await progress.GetStatisticsAsync(id, ct);
+        ViewData["Progress"] = await progress.GetProgressAsync(id, ct);
+        ViewData["Results"] = await quizzes.ListResultsAsync(id, null, null, ct);
+        ViewData["Violations"] = await screenGuard.ListAsync(id, 200, ct);
         return View();
     }
 

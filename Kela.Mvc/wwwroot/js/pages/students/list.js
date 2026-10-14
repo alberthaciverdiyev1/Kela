@@ -4,6 +4,7 @@ let lastPage = 1;
 function studentActions(s) {
     const toggle = s.isActive ? 'Deaktiv et' : 'Aktiv et';
     return `<div class="flex items-center justify-end gap-2">
+        <a href="/students/${s.id}/detail" class="px-2 py-1 text-navy hover:bg-slate-100 rounded-lg">Detallar</a>
         <button type="button" class="px-2 py-1 text-primary hover:bg-primary/10 rounded-lg" onclick="toggleStatus(${s.id}, ${!s.isActive})">${toggle}</button>
         <button type="button" class="px-2 py-1 text-navy hover:bg-slate-100 rounded-lg" onclick="openDevices(${s.id})">Cihazlar</button>
         <button type="button" class="px-2 py-1 text-red-600 hover:bg-red-50 rounded-lg" onclick="removeItem(${s.id})">Sil</button>
