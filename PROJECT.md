@@ -1,16 +1,16 @@
-# LanguageLMS — Geliştirme Takip Dosyası
+# Kela — Geliştirme Takip Dosyası
 
 > Projede yaptığımız her adım ve sıradaki işler. Kurallar için: `CLAUDE.md`.
 
 ## 1. Proje Özeti
 
-LanguageLMS — dil öğrenme (LMS) uygulaması. İki istemci, bir çekirdek:
+Kela — dil öğrenme (LMS) uygulaması. İki istemci, bir çekirdek:
 
 | Proje | Rol |
 |---|---|
-| `LanguageLMS.Core` | domain + uygulama + altyapı (entity, EF, servis, DTO, validator, storage) |
-| `LanguageLMS.Api` | REST API (mobil/web istemcileri) |
-| `LanguageLMS.Mvc` | Admin / web paneli (Tailwind CSS) |
+| `Kela.Core` | domain + uygulama + altyapı (entity, EF, servis, DTO, validator, storage) |
+| `Kela.Api` | REST API (mobil/web istemcileri) |
+| `Kela.Mvc` | Admin / web paneli (Tailwind CSS) |
 
 **Mantık kaynağı:** Laravel `BPA-Backend` (`/home/albert/Downloads/BPA-Backend-main/`). Yalnızca iş mantığı taşınır.
 
@@ -19,7 +19,7 @@ LanguageLMS — dil öğrenme (LMS) uygulaması. İki istemci, bir çekirdek:
 | Katman | Seçim |
 |---|---|
 | Framework | .NET 10 |
-| Solution | `LanguageLMS.slnx` |
+| Solution | `Kela.slnx` |
 | ORM | Entity Framework Core 10 + Npgsql (PostgreSQL) |
 | Doğrulama | FluentValidation 12 (Core'da; API'de global filtre, MVC'de servis içi) |
 | API dokümanı | Microsoft.AspNetCore.OpenApi |
@@ -32,13 +32,13 @@ Pragmatik **modular monolith** (dikey dilim). Katmanlar Onion/Clean gibi ayrılm
 Proje tutarsa ileride Domain/Application/Infrastructure olarak ayrılabilir.
 
 ```
-LanguageLMS.Core/
+Kela.Core/
 ├── Common/{Entities,Responses,Storage}
 ├── Data/            (AppDbContext + Migrations)
 ├── Modules/<Feature>/{Entities,Configurations,Services,Requests,Responses,Validators}
 └── DependencyInjection.cs   (AddCore + UseCoreStorage)
-LanguageLMS.Api/     (Program.cs, Common/{Controllers,Middleware,Validation,Responses}, Modules/<F>/Controllers)
-LanguageLMS.Mvc/     (Program.cs, Controllers, Models, Views)
+Kela.Api/     (Program.cs, Common/{Controllers,Middleware,Validation,Responses}, Modules/<F>/Controllers)
+Kela.Mvc/     (Program.cs, Controllers, Models, Views)
 ```
 
 - API yanıtları **tek envelope**: `{ success, statusCode, message, data, errors }` (`Common/Responses/ApiResponse`).
@@ -67,7 +67,7 @@ LanguageLMS.Mvc/     (Program.cs, Controllers, Models, Views)
 - ✅ Adım 7 — **Banner** modülü: entity/config/soft delete/migration, requests+validator, responses, service (cache + CRUD), API controller.
 - ✅ Adım 8 — Birleşik API envelope (tüm yanıtlar tek format).
 - ✅ Adım 9 — Modül içi düzen + tek controller.
-- ✅ Adım 10 — **`LanguageLMS.Core`** ayrıldı; Api & Mvc ince host oldu; paylaşımlı storage.
+- ✅ Adım 10 — **`Kela.Core`** ayrıldı; Api & Mvc ince host oldu; paylaşımlı storage.
 - ✅ Adım 11 — **MVC Banner CRUD** (index/create/edit/update/delete/details), `IBannerService` direkt inject.
 - ✅ Adım 12 — Migration uygulandı, uçtan uca doğrulandı (API CRUD + MVC CRUD, gerçek DB).
 - ✅ Adım 13 — **Profession** modülü (2 seviyeli hiyerarşi, benzersiz ad, çocuklu kayıt silinemez) + testler.
@@ -128,7 +128,7 @@ LanguageLMS.Mvc/     (Program.cs, Controllers, Models, Views)
 ## 5. Durum / Notlar
 
 - 🗄️ DB: `renewLms` (PostgreSQL). `banners` tablosu oluşturuldu (`dotnet ef database update`).
-  Migration komutu: `dotnet ef migrations add <Ad> --project LanguageLMS.Core --startup-project LanguageLMS.Api`
+  Migration komutu: `dotnet ef migrations add <Ad> --project Kela.Core --startup-project Kela.Api`
 - 🔐 **Auth yok** — Banner uç/sayfaları şimdilik herkese açık; roller sonra bağlanacak.
 - 🖼️ Görsel sıkıştırma yok (referanstaki Intervention Image yerine düz yükleme); BunnyCDN ileride.
 - ⚠️ Ortamda `Microsoft.AspNetCore.App.Ref` pack'i eksik → kök `Directory.Build.props` içinde

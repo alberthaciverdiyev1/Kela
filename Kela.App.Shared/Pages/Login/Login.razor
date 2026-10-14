@@ -1,0 +1,120 @@
+@inject AppApi Api
+@inject ApiClient ApiClient
+@inject AuthState Auth
+@inject TokenStore Store
+
+<main class="lms-login">
+    <div class="app">
+
+        @* --- Hero --- *@
+        <section class="hero" aria-label="Təhsil platforması">
+            <img src="_content/Kela.App.Shared/images/login-hero.jpg" alt="" />
+        </section>
+
+        @* --- Ağ panel --- *@
+        <section class="sheet">
+            <div class="handle"></div>
+            <h1 class="heading">@(_register ? "Hesab yarat." : "Öz yolunu seç.")</h1>
+            <p class="subtitle">@(_register ? "Qeydiyyatdan keç və öyrənməyə başla." : "Müxtəlif təkliflərimizdən sən də yararlan.")</p>
+
+            @if (!_register)
+            {
+                <div class="flex items-center justify-between">
+                    <h2 class="section-title">Kurs seç</h2>
+                    <button type="button" class="see-all" @onclick="OpenModal">
+                        Hamısına bax
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m9 5 7 7-7 7"/></svg>
+                    </button>
+                </div>
+
+                <div class="courses" role="group" aria-label="Kurs seçimi">
+                    @for (var i = 0; i < Math.Min(_courses.Count, 10); i++)
+                    {
+                        var idx = i;
+                        <button type="button" class="course" aria-pressed="@(_selected == idx ? "true" : "false")" @onclick="() => _selected = idx">
+                            <span class="emoji">@_courses[idx].Emoji</span>
+                            <span>@_courses[idx].Name</span>
+                        </button>
+                    }
+                </div>
+            }
+
+            <form class="form" @onsubmit="SubmitAsync" @onsubmit:preventDefault>
+                @if (_register)
+                {
+                    <div class="field">
+                        <label for="fullName">Ad və soyad</label>
+                        <div class="control"><input id="fullName" @bind="_fullName" placeholder="Adın" /></div>
+                    </div>
+                    <div class="field">
+                        <label for="phone">Telefon (istəyə bağlı)</label>
+                        <div class="control"><input id="phone" @bind="_phone" placeholder="+994..." /></div>
+                    </div>
+                }
+
+                <div class="field">
+                    <label for="email">Email</label>
+                    <div class="control">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m2 6 10 7 10-7"/></svg>
+                        <input id="email" type="email" @bind="_email" placeholder="Email" autocomplete="email" />
+                    </div>
+                </div>
+
+                <div class="field">
+                    <label for="password">Şifrə</label>
+                    <div class="control">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="10" width="16" height="12" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/><path d="M12 15v3"/></svg>
+                        <input id="password" type="@(_show ? "text" : "password")" @bind="_password" placeholder="••••••••" autocomplete="current-password" />
+                        <button class="eye" type="button" @onclick="() => _show = !_show" aria-label="Şifrəni göstər">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                                @if (_show)
+                                {
+                                    <path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/>
+                                }
+                                else
+                                {
+                                    <path d="M3 3 21 21"/><path d="M10.6 10.6a2 2 0 0 0 2.8 2.8"/><path d="M9.9 5.2A10.7 10.7 0 0 1 12 5c5.1 0 9 5 9 7a11.7 11.7 0 0 1-3.1 3.8"/><path d="M6.1 6.1C3.8 7.6 3 10 3 12c0 2 3.9 7 9 7 1.1 0 2.1-.2 3.1-.6"/>
+                                }
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+
+                @if (!string.IsNullOrEmpty(_error))
+                {
+                    <div class="error">@_error</div>
+                }
+
+                <button class="submit" type="submit" disabled="@_busy">@(_busy ? "Gözləyin..." : (_register ? "Qeydiyyat" : "Daxil ol"))</button>
+            </form>
+
+            <p class="register">
+                @(_register ? "Hesabınız var?" : "Hesabınız yoxdur?")
+                <button type="button" @onclick="Toggle">@(_register ? "Daxil ol" : "Qeydiyyat")</button>
+            </p>
+        </section>
+    </div>
+
+    @* --- Kurs seçimi modalı --- *@
+    @if (_modalOpen)
+    {
+        <div class="modal" role="dialog" aria-modal="true" aria-label="Kurslar" @onclick="CloseModal">
+            <div class="modal-panel" @onclick:stopPropagation="true">
+                <div class="modal-head">
+                    <strong>Kurs seç</strong>
+                    <button type="button" aria-label="Bağla" class="text-2xl" @onclick="CloseModal">×</button>
+                </div>
+                <input class="search" placeholder="Kurs axtar..." @bind="_search" @bind:event="oninput" />
+                <div class="course-list">
+                    @foreach (var (course, idx) in Filtered())
+                    {
+                        <button type="button" class="course-row @(_selected == idx ? "selected" : "")" @onclick="() => SelectFromModal(idx)">
+                            <span class="emoji">@course.Emoji</span>
+                            <span>@course.Name</span>
+                        </button>
+                    }
+                </div>
+            </div>
+        </div>
+    }
+</main>

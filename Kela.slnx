@@ -1,0 +1,8 @@
+<Solution>
+  <Project Path="Kela.Api/Kela.Api.csproj" />
+  <Project Path="Kela.App.Shared/Kela.App.Shared.csproj" />
+  <Project Path="Kela.App.Web/Kela.App.Web.csproj" />
+  <Project Path="Kela.Core/Kela.Core.csproj" />
+  <Project Path="Kela.Mvc/Kela.Mvc.csproj" />
+  <Project Path="Kela.Tests/Kela.Tests.csproj" />
+</Solution>

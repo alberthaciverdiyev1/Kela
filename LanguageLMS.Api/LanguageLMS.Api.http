@@ -1,6 +1,0 @@
-@LanguageLMS.Api_HostAddress = http://localhost:5208
-
-GET {{LanguageLMS.Api_HostAddress}}/weatherforecast/
-Accept: application/json
-
-###

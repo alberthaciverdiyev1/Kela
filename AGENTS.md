@@ -1,4 +1,4 @@
-# LanguageLMS — Geliştirme Kuralları
+# Kela — Geliştirme Kuralları
 
 Bu dosya projede uyulacak kuralları tanımlar. Yeni kural eklendikçe buraya yazılır.
 
@@ -15,9 +15,9 @@ Bu dosya projede uyulacak kuralları tanımlar. Yeni kural eklendikçe buraya ya
 
 | Proje | Rol |
 |---|---|
-| `LanguageLMS.Core` | domain + uygulama + altyapı: entity, EF config, DbContext, servis, DTO, validator, storage |
-| `LanguageLMS.Api` | sunum — JSON API (controller, `ApiResponse` zarfı, middleware) |
-| `LanguageLMS.Mvc` | sunum — Razor MVC + Tailwind (admin paneli) |
+| `Kela.Core` | domain + uygulama + altyapı: entity, EF config, DbContext, servis, DTO, validator, storage |
+| `Kela.Api` | sunum — JSON API (controller, `ApiResponse` zarfı, middleware) |
+| `Kela.Mvc` | sunum — Razor MVC + Tailwind (admin paneli) |
 
 - **İş mantığı yalnızca Core'da yaşar.** Api ve Mvc ince host'lardır; Core'u referans alır.
   Aynı mantık iki yerde **yazılmaz** (hem app hem admin için ayrı sorgu/mantık kopyalanmaz).
@@ -29,7 +29,7 @@ Bu dosya projede uyulacak kuralları tanımlar. Yeni kural eklendikçe buraya ya
 ### Core modül yerleşimi
 Her dosya ilgili alt klasöründe; boşta dosya bırakılmaz.
 ```
-LanguageLMS.Core/Modules/<Feature>/
+Kela.Core/Modules/<Feature>/
 ├── Entities/<Feature>.cs
 ├── Configurations/<Feature>Configuration.cs   (IEntityTypeConfiguration)
 ├── Abstractions/  (<Feature>Service interfeysləri)
@@ -44,8 +44,8 @@ Servis interfeysləri (`I<Feature>Service`) **`Abstractions/`** folderində, tə
 Core və Api-də `GlobalUsings.cs` ilə bütün abstraksiya namespace-ləri qlobal `using` edilir.
 
 ### Controller yerleşimi (sunum)
-- Api: `LanguageLMS.Api/Modules/<Feature>/Controllers/<Feature>Controller.cs`
-- Mvc: `LanguageLMS.Mvc/Controllers/<Feature>Controller.cs`
+- Api: `Kela.Api/Modules/<Feature>/Controllers/<Feature>Controller.cs`
+- Mvc: `Kela.Mvc/Controllers/<Feature>Controller.cs`
 - **Tek controller kuralı:** public + admin uçları **aynı controller'da** toplanır; `admin` route prefix'i yoktur.
 - **Routing konvansiyonu:** controller sınıfına `[Route("api/[controller]")]`; action'lara yalnızca fiil yazılır:
   `[HttpGet]`, `[HttpGet("{id:long}")]`, `[HttpPost]`, `[HttpPut("{id:long}")]`, `[HttpDelete("{id:long}")]`.
@@ -62,8 +62,8 @@ eşleşme olmaz → her böyle alan için `[FromForm(Name = "variant_a")]` kulla
 Entity adı modül adıyla aynı olduğunda (örn. `Banner`), alt namespace'lerde tür adı namespace'e çözülür.
 Bu yüzden entity'yi kullanan dosyalarda tür alias'ı **namespace gövdesinde** tanımlanır:
 ```csharp
-namespace LanguageLMS.Core.Modules.Banner.Services;
-using Banner = LanguageLMS.Core.Modules.Banner.Entities.Banner;
+namespace Kela.Core.Modules.Banner.Services;
+using Banner = Kela.Core.Modules.Banner.Entities.Banner;
 ```
 
 ## Auth / Rollar

@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # Hər iki tərəfi Development rejimində EYNİ ANDA işə salır:
 #   WEB tərəfi : API (watch) + MVC (watch) + MVC Tailwind (watch)
-#   APP tərəfi : Blazor WASM (LanguageLMS.App.Web, watch) + App.Shared Tailwind (watch)
+#   APP tərəfi : Blazor WASM (Kela.App.Web, watch) + App.Shared Tailwind (watch)
 # İstifadə: ./dev.sh    (dayandırmaq üçün Ctrl+C)
 #   ENABLE_WEB=0 ./dev.sh   -> yalnız app tərəfi
 #   ENABLE_APP=0 ./dev.sh   -> yalnız web tərəfi
@@ -20,13 +20,13 @@ ENABLE_WEB="${ENABLE_WEB:-1}"
 ENABLE_APP="${ENABLE_APP:-1}"
 HEALTH_URL="${HEALTH_URL:-$API_URL/openapi/v1.json}"
 
-# Hər watcher üçün ayrı artifacts/output qovluğu — paylaşılan LanguageLMS.Core-un
+# Hər watcher üçün ayrı artifacts/output qovluğu — paylaşılan Kela.Core-un
 # eyni bin qovluğuna paralel build olunmasının qarşısını alır (file lock xətası).
 ARTIFACTS="$ROOT/.dev-artifacts"
 
-TAILWIND="$ROOT/LanguageLMS.Mvc/node_modules/.bin/tailwindcss"
-MVC_CSS="LanguageLMS.Mvc/wwwroot/css/app.css"
-APP_CSS="LanguageLMS.App.Shared/wwwroot/css/app.css"
+TAILWIND="$ROOT/Kela.Mvc/node_modules/.bin/tailwindcss"
+MVC_CSS="Kela.Mvc/wwwroot/css/app.css"
+APP_CSS="Kela.App.Shared/wwwroot/css/app.css"
 
 pids=()
 
@@ -71,7 +71,7 @@ wait_for() {
 # Əvvəlcədən açıq olan bütün layihə proseslərini (watch, dev-server, tailwind) dayandır
 _own_pids() {
   local pat
-  for pat in "LanguageLMS.Api" "LanguageLMS.Mvc" "LanguageLMS.App.Web" "LanguageLMS.App.Shared" "tailwindcss"; do
+  for pat in "Kela.Api" "Kela.Mvc" "Kela.App.Web" "Kela.App.Shared" "tailwindcss"; do
     pgrep -f -- "$pat" 2>/dev/null || true
   done | sort -u | grep -vx -e "$$" -e "$PPID" || true
 }
@@ -106,7 +106,7 @@ kill_existing
 # ------------------------------------------------------------------
 if [ ! -x "$TAILWIND" ] && { [ "$ENABLE_WEB" = "1" ] || [ "$ENABLE_APP" = "1" ]; }; then
   echo "==> node_modules / Tailwind CLI yoxdur — 'npm install' çalışdırılır..."
-  ( cd LanguageLMS.Mvc && npm install )
+  ( cd Kela.Mvc && npm install )
 fi
 
 build_css() { # $1 = input, $2 = output, $3 = ad
@@ -119,10 +119,10 @@ build_css() { # $1 = input, $2 = output, $3 = ad
 # ------------------------------------------------------------------
 if [ "$ENABLE_WEB" = "1" ]; then
   echo "==> [WEB] Tailwind CSS (MVC)"
-  build_css "LanguageLMS.Mvc/wwwroot/css/input.css" "$MVC_CSS" "app.css"
+  build_css "Kela.Mvc/wwwroot/css/input.css" "$MVC_CSS" "app.css"
 
   echo "==> [WEB] Tailwind (watch, nəzarətçi)"
-  start bash -c "cd '$ROOT/LanguageLMS.Mvc' || exit 1
+  start bash -c "cd '$ROOT/Kela.Mvc' || exit 1
 while true; do
   '$TAILWIND' -i ./wwwroot/css/input.css -o ./wwwroot/css/app.css --watch
   [ -s wwwroot/css/app.css ] || '$TAILWIND' -i ./wwwroot/css/input.css -o ./wwwroot/css/app.css --minify
@@ -130,10 +130,10 @@ while true; do
 done"
 
   echo "==> [WEB] API (watch): $API_URL"
-  ASPNETCORE_URLS="$API_URL" start dotnet watch --project LanguageLMS.Api --artifacts-path "$ARTIFACTS/api" run --no-launch-profile
+  ASPNETCORE_URLS="$API_URL" start dotnet watch --project Kela.Api --artifacts-path "$ARTIFACTS/api" run --no-launch-profile
 
   echo "==> [WEB] MVC (watch): $MVC_URL"
-  ASPNETCORE_URLS="$MVC_URL" start dotnet watch --project LanguageLMS.Mvc --artifacts-path "$ARTIFACTS/mvc" run --no-launch-profile
+  ASPNETCORE_URLS="$MVC_URL" start dotnet watch --project Kela.Mvc --artifacts-path "$ARTIFACTS/mvc" run --no-launch-profile
 else
   echo "==> [WEB] atlanır (ENABLE_WEB=0)"
 fi
@@ -143,18 +143,18 @@ fi
 # ------------------------------------------------------------------
 if [ "$ENABLE_APP" = "1" ]; then
   echo "==> [APP] Tailwind CSS (App.Shared)"
-  build_css "LanguageLMS.App.Shared/wwwroot/css/input.css" "$APP_CSS" "app.css"
+  build_css "Kela.App.Shared/wwwroot/css/input.css" "$APP_CSS" "app.css"
 
   echo "==> [APP] Tailwind (watch, nəzarətçi)"
-  start bash -c "cd '$ROOT/LanguageLMS.App.Shared' || exit 1
+  start bash -c "cd '$ROOT/Kela.App.Shared' || exit 1
 while true; do
   '$TAILWIND' -i ./wwwroot/css/input.css -o ./wwwroot/css/app.css --watch
   [ -s wwwroot/css/app.css ] || '$TAILWIND' -i ./wwwroot/css/input.css -o ./wwwroot/css/app.css --minify
   sleep 1
 done"
 
-  echo "==> [APP] Blazor WASM (LanguageLMS.App.Web, watch): $APP_URL"
-  ASPNETCORE_URLS="$APP_URL" start dotnet watch --project LanguageLMS.App.Web --artifacts-path "$ARTIFACTS/app" run --no-launch-profile
+  echo "==> [APP] Blazor WASM (Kela.App.Web, watch): $APP_URL"
+  ASPNETCORE_URLS="$APP_URL" start dotnet watch --project Kela.App.Web --artifacts-path "$ARTIFACTS/app" run --no-launch-profile
 else
   echo "==> [APP] atlanır (ENABLE_APP=0)"
 fi

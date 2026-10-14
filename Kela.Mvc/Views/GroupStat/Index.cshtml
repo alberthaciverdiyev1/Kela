@@ -1,0 +1,54 @@
+@{
+    ViewData["Title"] = "Qrup statistikası";
+    var groups = (PagedResponse<Kela.Core.Modules.Group.Responses.GroupResponse>)ViewData["Groups"]!;
+    var groupOptions = new List<SelectOption> { new() { Value = "", Text = "Qrup seçin" } };
+    groupOptions.AddRange(groups.Data.Select(g => new SelectOption { Value = g.Id.ToString(), Text = g.Name }));
+    var typeOptions = new List<SelectOption>
+    {
+        new() { Value = "", Text = "Hamısı" },
+        new() { Value = "lesson", Text = "Dərs imtahanları" },
+        new() { Value = "general", Text = "Ümumi" }
+    };
+}
+<section class="admin-page">
+    <div class="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+        <div>
+            <h2 class="admin-page-title">Qrup statistikası</h2>
+            <p class="admin-page-subtitle">Qrup üzrə imtahan nəticələrinə baxın və Excel-ə çıxarın.</p>
+        </div>
+        <a id="exportLink" href="#" class="admin-button-secondary">⬇ Excel</a>
+    </div>
+
+    <div class="admin-card">
+        <div class="admin-toolbar">
+            <div class="w-72">
+                <partial name="Ui/_Select" model="@(new SelectModel { Name = "group_id", Id = "group_id", Label = "Qrup", Options = groupOptions })" />
+            </div>
+            <div class="w-52">
+                <partial name="Ui/_Select" model="@(new SelectModel { Name = "quiz_type", Id = "quiz_type", Label = "Növ", Options = typeOptions })" />
+            </div>
+            <button type="button" onclick="load()" class="admin-button-primary h-[46px] px-6">Göstər</button>
+        </div>
+
+        <div id="summary" class="hidden grid-cols-1 gap-4 p-5 sm:grid-cols-3"></div>
+
+        <div class="relative">
+            <div id="listLoader" class="admin-loader"><div class="spinner"></div></div>
+            <div class="overflow-x-auto">
+                <table class="admin-table">
+                    <thead>
+                        <tr>
+                            <th>Şagird</th>
+                            <th class="w-32">Cəhd</th>
+                            <th class="w-40">Tamamlanan sual</th>
+                            <th class="w-24">Düzgün</th>
+                            <th class="w-24">Səhv</th>
+                            <th class="w-24">Bal %</th>
+                        </tr>
+                    </thead>
+                    <tbody id="rows"></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</section>

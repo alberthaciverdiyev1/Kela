@@ -1,5 +1,0 @@
-namespace LanguageLMS.Core.Modules.Students.Responses;
-
-public record StudentDeviceResponse(long Id, string DeviceId, DateTimeOffset CreatedAt);
-
-public record GenerateStudentsResponse(int Created);
