@@ -748,6 +748,11 @@ namespace Kela.Core.Data.Migrations
                         .HasColumnType("bigint")
                         .HasColumnName("tenant_id");
 
+                    b.Property<string>("Thumbnail")
+                        .HasMaxLength(500)
+                        .HasColumnType("character varying(500)")
+                        .HasColumnName("thumbnail");
+
                     b.Property<string>("Title")
                         .HasMaxLength(190)
                         .HasColumnType("character varying(190)")

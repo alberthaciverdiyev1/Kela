@@ -10,4 +10,5 @@ public record LessonContentResponse(
     string? PlaybackUrl,
     int SortOrder,
     bool IsActive,
-    int? DurationSeconds);
+    int? DurationSeconds,
+    string? ThumbnailUrl = null);

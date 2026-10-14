@@ -14,4 +14,7 @@ public class Video : BaseEntity
 
     /// <summary>HLS (m3u8) playback URL — konvertordan sonra doldurulur.</summary>
     public string? PlaybackUrl { get; set; }
+
+    /// <summary>Kadr önizləməsi (thumbnail) yolu — xarici worker tərəfindən yaradılır.</summary>
+    public string? Thumbnail { get; set; }
 }

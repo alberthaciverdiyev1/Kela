@@ -242,14 +242,19 @@ public sealed class StudentAppService(
     private LessonContentResponse ToResponse(LessonContent content)
     {
         if (content.Video is not null)
-            return Row(content, "video", storage.GetUrl(content.Video.Path), content.Video.PlaybackUrl, content.Video.DurationSeconds);
+            return Row(content, "video", storage.GetUrl(content.Video.Path), content.Video.PlaybackUrl,
+                content.Video.DurationSeconds, ThumbnailUrl(content.Video.Thumbnail));
         if (content.MediaFile is not null)
-            return Row(content, "file", storage.GetUrl(content.MediaFile.Path), null, null);
+            return Row(content, "file", storage.GetUrl(content.MediaFile.Path), null, null, null);
         if (content.VoiceRecord is not null)
-            return Row(content, "voice", storage.GetUrl(content.VoiceRecord.Path), null, content.VoiceRecord.DurationSeconds);
-        return Row(content, null, null, null, null);
+            return Row(content, "voice", storage.GetUrl(content.VoiceRecord.Path), null, content.VoiceRecord.DurationSeconds, null);
+        return Row(content, null, null, null, null, null);
     }
 
-    private static LessonContentResponse Row(LessonContent c, string? type, string? url, string? playbackUrl, int? duration) =>
-        new(c.Id, c.LessonId, c.Title, c.Description, type, url, playbackUrl, c.SortOrder, c.IsActive, duration);
+    private string? ThumbnailUrl(string? thumbnail)
+        => string.IsNullOrWhiteSpace(thumbnail) ? null : storage.GetUrl(thumbnail);
+
+    private static LessonContentResponse Row(LessonContent c, string? type, string? url, string? playbackUrl,
+        int? duration, string? thumbnailUrl) =>
+        new(c.Id, c.LessonId, c.Title, c.Description, type, url, playbackUrl, c.SortOrder, c.IsActive, duration, thumbnailUrl);
 }
