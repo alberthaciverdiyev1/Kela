@@ -17,6 +17,7 @@ public partial class MainLayout
     protected override async Task OnInitializedAsync()
     {
         Auth.Changed += OnAuthChanged;
+        Lang.Changed += OnLangChanged;
 
         if (!Auth.IsAuthenticated)
         {
@@ -83,5 +84,11 @@ public partial class MainLayout
         StateHasChanged();
     });
 
-    public void Dispose() => Auth.Changed -= OnAuthChanged;
+    private void OnLangChanged() => _ = InvokeAsync(StateHasChanged);
+
+    public void Dispose()
+    {
+        Auth.Changed -= OnAuthChanged;
+        Lang.Changed -= OnLangChanged;
+    }
 }
