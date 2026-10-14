@@ -10,7 +10,7 @@ using Kela.App.Shared.Services.Api;
 
 namespace Kela.App.Shared.Layout;
 
-public partial class NavItem
+public partial class TopNavItem
 {
     [Parameter] public string Href { get; set; } = "/";
     [Parameter] public string Label { get; set; } = "";
@@ -31,6 +31,6 @@ public partial class NavItem
     public void Dispose() => Nav.LocationChanged -= OnLocationChanged;
 
     private string Css =>
-        "flex items-center gap-3 rounded-lg px-3 py-2.5 text-left text-[13px] font-medium transition " +
-        (Active ? "bg-brand-073 text-brand-743" : "text-sage-473 hover:bg-brand-041");
+        "flex shrink-0 items-center gap-2 rounded-lg px-3 py-2 text-[13px] font-medium transition " +
+        (Active ? "bg-brand-073 text-brand-743" : "text-sage-473 hover:bg-brand-041 hover:text-brand-743");
 }

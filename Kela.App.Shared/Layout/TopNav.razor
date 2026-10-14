@@ -1,0 +1,22 @@
+@inject NavigationManager Nav
+
+<header class="sticky top-0 z-30 hidden h-[68px] items-center gap-6 border-b border-brand-086 bg-brand-022/95 px-8 backdrop-blur md:flex">
+    <a href="/" class="flex shrink-0 items-center gap-2.5">
+        <div class="flex size-8 items-center justify-center rounded-lg bg-brand-743 text-white">
+            <Icon Name="book" Class="size-4" />
+        </div>
+        <span class="text-[19px] font-semibold tracking-[-0.04em]">Kela</span>
+    </a>
+
+    @* overflow-x-auto: dar ekranlarda maddeler itməz, sürüşdürülə bilər *@
+    <nav class="-mx-2 flex flex-1 items-center gap-1 overflow-x-auto px-2 [scrollbar-width:none]">
+        <TopNavItem Href="/" Label="Overview" IconName="dashboard" MatchAll="true" />
+        <TopNavItem Href="/groups" Label="Groups" IconName="book" />
+        <TopNavItem Href="/exams" Label="Exams" IconName="file" />
+        <TopNavItem Href="/results" Label="Results" IconName="clipboard-check" />
+        <TopNavItem Href="/notifications" Label="Notifications" IconName="bell" />
+        <TopNavItem Href="/profile" Label="Profile" IconName="users" />
+    </nav>
+
+    <TopNavItem Href="/contact" Label="Contact" IconName="mail" />
+</header>
