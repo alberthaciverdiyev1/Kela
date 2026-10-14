@@ -184,7 +184,7 @@ public sealed class NotificationService(
     }
 
     private static (int page, int perPage) Normalize(NotificationListRequest request) =>
-        (request.Page < 1 ? 1 : request.Page, request.PerPage is < 1 or > 200 ? 20 : request.PerPage);
+        (request.Page < 1 ? 1 : request.Page, request.PerPage < 1 ? 20 : Math.Min(request.PerPage, 500));
 
     private NotificationResponse ToResponse(Notification n) =>
         new(n.Id, n.Title, n.Body, storage.GetUrl(n.Image), n.All, n.CreatedAt);

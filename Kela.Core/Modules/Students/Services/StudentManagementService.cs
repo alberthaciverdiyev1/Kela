@@ -15,7 +15,7 @@ public sealed class StudentManagementService(AppDbContext db) : Abstractions.ISt
     public async Task<PagedResponse<StudentListItemResponse>> ListAsync(StudentListRequest request, CancellationToken ct = default)
     {
         var page = request.Page < 1 ? 1 : request.Page;
-        var perPage = request.PerPage is < 1 or > 200 ? 20 : request.PerPage;
+        var perPage = request.PerPage < 1 ? 20 : Math.Min(request.PerPage, 500);
 
         var query = Query(request);
         var total = await query.CountAsync(ct);

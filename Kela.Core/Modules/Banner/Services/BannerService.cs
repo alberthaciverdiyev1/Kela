@@ -18,7 +18,7 @@ public sealed class BannerService(AppDbContext db, IFileStorage storage) : IBann
     public async Task<PagedResponse<BannerResponse>> ListAsync(BannerListRequest request, CancellationToken ct = default)
     {
         var page = request.Page < 1 ? 1 : request.Page;
-        var perPage = request.PerPage is < 1 or > 200 ? 20 : request.PerPage;
+        var perPage = request.PerPage < 1 ? 20 : Math.Min(request.PerPage, 500);
 
         var query = db.Banners.AsNoTracking();
 

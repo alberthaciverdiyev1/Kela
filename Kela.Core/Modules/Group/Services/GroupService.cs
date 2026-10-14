@@ -24,7 +24,7 @@ public sealed class GroupService(AppDbContext db, IFileStorage storage) : IGroup
     public async Task<PagedResponse<GroupResponse>> ListAsync(GroupListRequest request, CancellationToken ct = default)
     {
         var page = request.Page < 1 ? 1 : request.Page;
-        var perPage = request.PerPage is < 1 or > 200 ? 20 : request.PerPage;
+        var perPage = request.PerPage < 1 ? 20 : Math.Min(request.PerPage, 500);
 
         var query = db.Groups.AsNoTracking();
 

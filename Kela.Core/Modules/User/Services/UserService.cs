@@ -13,7 +13,7 @@ public sealed class UserService(AppDbContext db) : IUserService
     public async Task<PagedResponse<UserResponse>> ListAsync(UserListRequest request, CancellationToken ct = default)
     {
         var page = request.Page < 1 ? 1 : request.Page;
-        var perPage = request.PerPage is < 1 or > 200 ? 20 : request.PerPage;
+        var perPage = request.PerPage < 1 ? 20 : Math.Min(request.PerPage, 500);
 
         var query = db.Users.AsNoTracking();
 
