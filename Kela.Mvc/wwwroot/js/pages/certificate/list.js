@@ -23,8 +23,8 @@ async function loadList(page) {
     if (total) total.textContent = data.total;
     document.getElementById('tableInfo').textContent = `Cəmi ${data.total} nəticə`;
 
-    AdminUI.table('rows', data.data.map(c => [
-        { html: c.id, cls: 'text-slate-400' },
+    AdminUI.table('rows', data.data.map((c, i) => [
+        { html: AdminUI.rowNo(c, i, currentPage, data.perPage), cls: 'text-slate-400' },
         { html: c.title, cls: 'font-semibold text-slate-800' },
         { html: c.templateName },
         { html: c.signature

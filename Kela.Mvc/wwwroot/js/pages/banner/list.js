@@ -23,8 +23,8 @@ async function loadList(page) {
     if (total) total.textContent = data.total;
     document.getElementById('tableInfo').textContent = `Cəmi ${data.total} nəticə`;
 
-    AdminUI.table('rows', data.data.map(b => [
-        { html: b.id, cls: 'text-slate-400' },
+    AdminUI.table('rows', data.data.map((b, i) => [
+        { html: AdminUI.rowNo(b, i, currentPage, data.perPage), cls: 'text-slate-400' },
         { html: b.image
             ? `<img src="${b.image}" class="h-10 w-16 rounded-lg border border-slate-200 object-cover" />`
             : '<span class="text-slate-400">—</span>' },

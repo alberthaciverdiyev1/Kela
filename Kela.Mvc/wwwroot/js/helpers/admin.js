@@ -26,6 +26,13 @@ window.AdminUI = (function () {
 
     async function get(url) { return (await fetch(url)).json(); }
 
+    // "#" sütunu üçün sıra nömrəsi: order (sortOrder) varsa onu, yoxsa səhifə üzrə ardıcıl indeksi qaytarır.
+    function rowNo(item, index, page, perPage) {
+        const order = item && (item.sortOrder ?? item.SortOrder);
+        if (order !== undefined && order !== null && order !== '') return order;
+        return ((page || 1) - 1) * (perPage || 20) + index + 1;
+    }
+
     async function postForm(url, formData) {
         const res = await fetch(url, { method: 'POST', body: formData, headers: { 'RequestVerificationToken': token() } });
         let body = null; try { body = await res.json(); } catch (e) { /* boş */ }
@@ -348,5 +355,5 @@ window.AdminUI = (function () {
 
     function reloadAfter(delay) { setTimeout(() => location.reload(), delay || 700); }
 
-    return { notify, error, errText, confirmDelete, confirmRestore, restoreItem, restoreButton, syncTrashButton, get, post, postForm, putForm, postJson, putJson, del, badge, table, actions, selectedIds, bulkDo, sortToggle, openSort, closeSort, saveSort, loader, pagination, filePreview, fileSet, fileRemove, token, reloadAfter };
+    return { notify, error, errText, confirmDelete, confirmRestore, restoreItem, restoreButton, syncTrashButton, get, post, postForm, putForm, postJson, putJson, del, badge, table, actions, selectedIds, bulkDo, sortToggle, openSort, closeSort, saveSort, loader, pagination, filePreview, fileSet, fileRemove, rowNo, token, reloadAfter };
 })();

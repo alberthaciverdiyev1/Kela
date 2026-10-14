@@ -20,8 +20,8 @@ async function loadList(page) {
     const data = await AdminUI.get(`/question/list?page=${currentPage}&subject_id=${subjectId}&search=${encodeURIComponent(search)}&is_deleted=${showDeleted ? 1 : 0}`);
     lastPage = data.lastPage;
 
-    AdminUI.table('rows', data.data.map(q => [
-        { html: q.id, cls: 'text-slate-400' },
+    AdminUI.table('rows', data.data.map((q, i) => [
+        { html: AdminUI.rowNo(q, i, currentPage, data.perPage), cls: 'text-slate-400' },
         { html: window.SUBJECTS[q.subjectId] ?? '-', cls: 'text-slate-500' },
         { html: q.titleType === 'image' && q.titleUrl
                 ? `<img src="${q.titleUrl}" class="h-8 w-12 rounded border border-slate-200 object-cover" />`

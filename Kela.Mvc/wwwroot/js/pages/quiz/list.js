@@ -27,8 +27,8 @@ async function loadList(page) {
     const data = await AdminUI.get(`/quiz/list?page=${currentPage}&lesson_id=${lessonId}&is_deleted=${showDeleted ? 1 : 0}`);
     lastPage = data.lastPage;
 
-    AdminUI.table('rows', data.data.map(q => [
-        { html: q.id, cls: 'text-slate-400' },
+    AdminUI.table('rows', data.data.map((q, i) => [
+        { html: AdminUI.rowNo(q, i, currentPage, data.perPage), cls: 'text-slate-400' },
         { html: q.lessonId ? (window.LESSONS[q.lessonId] ?? '-') : '-', cls: 'text-slate-500' },
         { html: q.title, cls: 'font-medium text-slate-800' },
         { html: AdminUI.badge(q.type === 'general' ? 'Ümumi' : 'Dərs', 'neutral') },

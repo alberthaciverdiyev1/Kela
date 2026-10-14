@@ -64,10 +64,12 @@
                     }
                     else
                     {
-                        foreach (var l in lessons.Data.OrderBy(x => x.SortOrder))
+                        var ordered = lessons.Data.OrderBy(x => x.SortOrder).ToList();
+                        @for (var i = 0; i < ordered.Count; i++)
                         {
+                            var l = ordered[i];
                             <tr>
-                                <td class="text-slate-400">@l.Id</td>
+                                <td class="text-slate-400">@(i + 1)</td>
                                 <td class="font-semibold text-slate-800">@l.Title</td>
                                 <td class="text-slate-500">@l.SortOrder</td>
                                 <td>

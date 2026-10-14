@@ -9,8 +9,8 @@ async function loadList(page) {
     const data = await AdminUI.get(`/user/list?page=${currentPage}&search=${encodeURIComponent(search)}&type=${type}`);
     lastPage = data.lastPage;
 
-    AdminUI.table('rows', data.data.map(u => [
-        { html: u.id, cls: 'text-slate-400' },
+    AdminUI.table('rows', data.data.map((u, i) => [
+        { html: AdminUI.rowNo(u, i, currentPage, data.perPage), cls: 'text-slate-400' },
         { html: `${u.name ?? ''} ${u.surname ?? ''}`.trim() || '-', cls: 'font-medium text-slate-800' },
         { html: u.email, cls: 'text-slate-500' },
         { html: u.phoneNumber ?? '-', cls: 'text-slate-500' },

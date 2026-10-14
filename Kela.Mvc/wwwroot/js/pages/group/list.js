@@ -19,8 +19,8 @@ async function loadList(page) {
     const data = await AdminUI.get(`/group/list?page=${currentPage}&search=${encodeURIComponent(search)}&is_deleted=${showDeleted ? 1 : 0}`);
     lastPage = data.lastPage;
 
-    AdminUI.table('rows', data.data.map(g => [
-        { html: g.id, cls: 'text-slate-400' },
+    AdminUI.table('rows', data.data.map((g, i) => [
+        { html: AdminUI.rowNo(g, i, currentPage, data.perPage), cls: 'text-slate-400' },
         { html: g.name, cls: 'font-medium text-slate-800' },
         { html: window.TEACHERS[g.userId] ?? '-', cls: 'text-slate-500' },
         { html: g.studentCount, cls: 'text-slate-500' },

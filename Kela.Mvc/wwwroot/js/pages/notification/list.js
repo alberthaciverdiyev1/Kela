@@ -7,8 +7,8 @@ async function loadList(page) {
     const data = await AdminUI.get(`/notification/list?page=${currentPage}`);
     lastPage = data.lastPage;
 
-    AdminUI.table('rows', data.data.map(n => [
-        { html: n.id, cls: 'text-slate-400' },
+    AdminUI.table('rows', data.data.map((n, i) => [
+        { html: AdminUI.rowNo(n, i, currentPage, data.perPage), cls: 'text-slate-400' },
         { html: n.title, cls: 'font-medium text-slate-800' },
         { html: n.body ?? '-', cls: 'text-slate-500' },
         { html: n.all ? AdminUI.badge('Hamıya', 'primary') : AdminUI.badge('Seçilmiş', 'neutral') },

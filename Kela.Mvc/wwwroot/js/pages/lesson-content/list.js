@@ -21,15 +21,14 @@ async function loadList(page) {
 
     lastPage = data.lastPage;
 
-    AdminUI.table('rows', data.data.map(c => [
-        { html: c.id, cls: 'text-slate-400' },
+    AdminUI.table('rows', data.data.map((c, i) => [
+        { html: AdminUI.rowNo(c, i, currentPage, data.perPage), cls: 'text-slate-400' },
         { html: c.title, cls: 'font-medium text-slate-800' },
         { html: TYPE_TEXT[c.type] ?? '-', cls: 'text-slate-500' },
         { html: c.url ? `<a href="${c.url}" target="_blank" class="text-primary hover:underline">aç</a>` : '-' },
-        { html: c.sortOrder, cls: 'text-slate-500' },
         { html: c.isActive ? AdminUI.badge('Aktiv', 'success') : AdminUI.badge('Deaktiv', 'neutral') },
         { html: showDeleted ? AdminUI.restoreButton(c.id) : AdminUI.actions(c.id), cls: 'text-right' }
-    ]), 7, { rowIds: data.data.map(c => c.id), selectable: !showDeleted });
+    ]), 6, { rowIds: data.data.map(c => c.id), selectable: !showDeleted });
 
     AdminUI.pagination('pagination', currentPage, lastPage, loadList);
     AdminUI.loader(false);
