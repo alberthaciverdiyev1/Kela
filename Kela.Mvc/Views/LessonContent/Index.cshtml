@@ -8,7 +8,8 @@
     <partial name="Ui/_PageHeader" model="@(new PageHeaderModel {
         Title = "Materiallar",
         Subtitle = "Dərslərə aid video, fayl və səs materiallarını idarə edin.",
-        CreateText = "Yeni material" })" />
+        CreateText = "Yeni material",
+        Sortable = true })" />
 
     <div class="admin-card">
         <div class="admin-toolbar">
@@ -46,5 +47,6 @@
 </section>
 
 <partial name="_Modal" />
+<partial name="Ui/_SortModal" />
 
 <form id="antiforgery">@Html.AntiForgeryToken()</form>

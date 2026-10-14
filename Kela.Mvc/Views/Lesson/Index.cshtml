@@ -20,7 +20,8 @@
     <partial name="Ui/_PageHeader" model="@(new PageHeaderModel {
         Title = "Dərslər",
         Subtitle = "Fənlər üzrə dərsləri yaradın və sıralayın.",
-        CreateText = "Yeni dərs" })" />
+        CreateText = "Yeni dərs",
+        Sortable = true })" />
 
     <div class="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
         <partial name="Ui/_StatCard" model="@(new StatCardModel { Id = "stat_total", Label = "Cəmi dərs",
@@ -86,5 +87,6 @@
 
 <partial name="_Modal" />
 <partial name="_SettingsModal" />
+<partial name="Ui/_SortModal" />
 
 <form id="antiforgery">@Html.AntiForgeryToken()</form>

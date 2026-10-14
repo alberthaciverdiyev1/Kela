@@ -1,4 +1,5 @@
 using FluentValidation;
+using Kela.Core.Common.Sorting;
 using Kela.Core.Modules.Lesson.Abstractions;
 using Kela.Core.Modules.Lesson.Requests;
 using Kela.Core.Modules.LessonContent.Abstractions;
@@ -22,7 +23,8 @@ public sealed class LessonContentController(
         {
             "~/js/pages/lesson-content/list.js",
             "~/js/pages/lesson-content/create.js",
-            "~/js/pages/lesson-content/update.js"
+            "~/js/pages/lesson-content/update.js",
+            "~/js/pages/lesson-content/sort.js"
         };
         ViewData["Lessons"] = await lessons.ListAsync(new LessonListRequest { PerPage = 200 }, ct);
         ViewData["SelectedLessonId"] = lessonId?.ToString() ?? "";
@@ -76,6 +78,14 @@ public sealed class LessonContentController(
     public async Task<IActionResult> Delete(long id, CancellationToken ct)
     {
         await service.DeleteAsync(id, ct);
+        return Json(new { ok = true });
+    }
+
+    [HttpPost("sort")]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> Sort([FromBody] SortRequest request, CancellationToken ct)
+    {
+        await service.ReorderAsync(request, ct);
         return Json(new { ok = true });
     }
 

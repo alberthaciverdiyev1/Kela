@@ -1,4 +1,5 @@
 using FluentValidation;
+using Kela.Core.Common.Sorting;
 using Kela.Core.Modules.Lesson.Abstractions;
 using Kela.Core.Modules.Lesson.Requests;
 using Kela.Core.Modules.Question.Abstractions;
@@ -23,7 +24,8 @@ public sealed class QuizController(
         ViewData["Scripts"] = new[]
         {
             "~/js/pages/quiz/list.js", "~/js/pages/quiz/create.js",
-            "~/js/pages/quiz/update.js", "~/js/pages/quiz/questions.js"
+            "~/js/pages/quiz/update.js", "~/js/pages/quiz/questions.js",
+            "~/js/pages/quiz/sort.js"
         };
         ViewData["Lessons"] = await lessons.ListAsync(new LessonListRequest { PerPage = 500 }, ct);
         return View();
@@ -62,6 +64,14 @@ public sealed class QuizController(
     public async Task<IActionResult> Delete(long id, CancellationToken ct)
     {
         await service.DeleteAsync(id, ct);
+        return Json(new { ok = true });
+    }
+
+    [HttpPost("sort")]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> Sort([FromBody] SortRequest request, CancellationToken ct)
+    {
+        await service.ReorderAsync(request, ct);
         return Json(new { ok = true });
     }
 

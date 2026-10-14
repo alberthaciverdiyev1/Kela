@@ -9,7 +9,8 @@
     <partial name="Ui/_PageHeader" model="@(new PageHeaderModel {
         Title = "İmtahanlar",
         Subtitle = "Dərs və ümumi imtahanları, sual seçimini idarə edin.",
-        CreateText = "Yeni imtahan" })" />
+        CreateText = "Yeni imtahan",
+        Sortable = true })" />
 
     <div class="admin-card">
         <div class="admin-toolbar">
@@ -49,5 +50,6 @@
 
 <partial name="_Modal" />
 <partial name="_QuestionsModal" />
+<partial name="Ui/_SortModal" />
 
 <form id="antiforgery">@Html.AntiForgeryToken()</form>

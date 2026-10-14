@@ -1,4 +1,5 @@
 using FluentValidation;
+using Kela.Core.Common.Sorting;
 using Kela.Core.Modules.Lesson.Abstractions;
 using Kela.Core.Modules.Lesson.Requests;
 using Kela.Core.Modules.Subject.Abstractions;
@@ -17,7 +18,7 @@ public sealed class LessonController(
     public async Task<IActionResult> Index([FromQuery(Name = "subject_id")] long? subjectId, CancellationToken ct)
     {
         ViewData["Title"] = "Dərslər";
-        ViewData["Scripts"] = new[] { "~/js/pages/lesson/list.js", "~/js/pages/lesson/create.js", "~/js/pages/lesson/update.js", "~/js/pages/lesson/settings.js" };
+        ViewData["Scripts"] = new[] { "~/js/pages/lesson/list.js", "~/js/pages/lesson/create.js", "~/js/pages/lesson/update.js", "~/js/pages/lesson/settings.js", "~/js/pages/lesson/sort.js" };
         ViewData["Subjects"] = await subjects.ListAsync(new SubjectListRequest { PerPage = 200 }, ct);
         ViewData["SelectedSubjectId"] = subjectId?.ToString() ?? "";
         return View();
@@ -69,6 +70,14 @@ public sealed class LessonController(
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> SetSettings(long id, [FromBody] SetLessonSettingsRequest request, CancellationToken ct)
         => Json(await service.SetSettingsAsync(id, request, ct));
+
+    [HttpPost("sort")]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> Sort([FromBody] SortRequest request, CancellationToken ct)
+    {
+        await service.ReorderAsync(request, ct);
+        return Json(new { ok = true });
+    }
 
     private static object Errors(FluentValidation.Results.ValidationResult result)
         => new

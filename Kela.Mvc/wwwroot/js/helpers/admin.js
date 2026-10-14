@@ -202,6 +202,85 @@ window.AdminUI = (function () {
 
     function sortToggle() { /* səhifə xüsusi tətbiq edə bilər */ }
 
+    // --- Ümumi sıralama modalı ---
+    let _sortItems = [];
+    let _sortSaveUrl = null;
+    let _sortOnSaved = null;
+
+    function openSort(opts) {
+        _sortItems = (opts.items || []).map(x => ({ ...x }));
+        _sortSaveUrl = opts.saveUrl;
+        _sortOnSaved = opts.onSaved;
+        const title = document.getElementById('sortTitle');
+        if (title) title.textContent = opts.title || 'Sırala';
+        renderSort();
+        const modal = document.getElementById('sortModal');
+        if (modal) { modal.classList.remove('hidden'); modal.classList.add('flex'); }
+    }
+
+    function closeSort() {
+        const modal = document.getElementById('sortModal');
+        if (modal) { modal.classList.add('hidden'); modal.classList.remove('flex'); }
+    }
+
+    function renderSort() {
+        const box = document.getElementById('sortList');
+        if (!box) return;
+        box.innerHTML = '';
+        if (!_sortItems.length) {
+            box.innerHTML = '<div class="text-sm text-slate-400">Sıralanacaq element yoxdur</div>';
+            return;
+        }
+        _sortItems.forEach((item, idx) => {
+            const row = document.createElement('div');
+            row.className = 'flex items-center justify-between rounded-lg bg-slate-50 px-3 py-2';
+
+            const label = document.createElement('span');
+            label.className = 'truncate text-sm text-slate-700';
+            label.textContent = item.label || ('#' + item.id);
+
+            const btns = document.createElement('div');
+            btns.className = 'flex items-center gap-1';
+
+            const up = document.createElement('button');
+            up.type = 'button';
+            up.textContent = '↑';
+            up.disabled = idx === 0;
+            up.className = 'grid h-8 w-8 place-items-center rounded-lg border border-border bg-white text-slate-600 hover:bg-surface-secondary disabled:opacity-40';
+            up.addEventListener('click', () => swapSort(idx, idx - 1));
+
+            const down = document.createElement('button');
+            down.type = 'button';
+            down.textContent = '↓';
+            down.disabled = idx === _sortItems.length - 1;
+            down.className = 'grid h-8 w-8 place-items-center rounded-lg border border-border bg-white text-slate-600 hover:bg-surface-secondary disabled:opacity-40';
+            down.addEventListener('click', () => swapSort(idx, idx + 1));
+
+            btns.append(up, down);
+            row.append(label, btns);
+            box.appendChild(row);
+        });
+    }
+
+    function swapSort(a, b) {
+        if (b < 0 || b >= _sortItems.length) return;
+        [_sortItems[a], _sortItems[b]] = [_sortItems[b], _sortItems[a]];
+        renderSort();
+    }
+
+    async function saveSort() {
+        if (!_sortSaveUrl) return;
+        const ids = _sortItems.map(x => x.id);
+        const res = await postJson(_sortSaveUrl, { ids });
+        if (res.ok) {
+            notify('Sıra yeniləndi');
+            if (typeof _sortOnSaved === 'function') _sortOnSaved();
+            closeSort();
+        } else {
+            error(errText(res));
+        }
+    }
+
     function setPreview(id, url) {
         const img = document.getElementById(id + '_preview');
         if (!img) return;
@@ -237,5 +316,5 @@ window.AdminUI = (function () {
 
     function reloadAfter(delay) { setTimeout(() => location.reload(), delay || 700); }
 
-    return { notify, error, errText, confirmDelete, get, post, postForm, putForm, postJson, putJson, del, badge, table, actions, selectedIds, bulkDo, sortToggle, loader, pagination, filePreview, fileSet, fileRemove, token, reloadAfter };
+    return { notify, error, errText, confirmDelete, get, post, postForm, putForm, postJson, putJson, del, badge, table, actions, selectedIds, bulkDo, sortToggle, openSort, closeSort, saveSort, loader, pagination, filePreview, fileSet, fileRemove, token, reloadAfter };
 })();
