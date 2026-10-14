@@ -106,6 +106,20 @@ public class StudentQuizEndpointsTests(ApiFactory factory)
     }
 
     [Fact]
+    public async Task Results_filtered_with_non_utc_offset()
+    {
+        var student = await CompletedAttemptAsync();
+        // İstemci yerel saat dilimini (məs. +04:00) göndərir — Postgres timestamptz yalnız UTC qəbul edir.
+        var now = DateTimeOffset.UtcNow.ToOffset(TimeSpan.FromHours(4));
+
+        var url = $"/api/student-quiz/results?from={Uri.EscapeDataString(now.AddHours(-1).ToString("o"))}&to={Uri.EscapeDataString(now.AddHours(1).ToString("o"))}";
+        var response = await student.GetAsync(url);
+
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        Assert.Equal(1, (await Json(response)).GetProperty("data").GetArrayLength());
+    }
+
+    [Fact]
     public async Task Requires_auth()
         => Assert.Equal(HttpStatusCode.Unauthorized, (await factory.CreateClient().GetAsync("/api/student-quiz/results")).StatusCode);
 

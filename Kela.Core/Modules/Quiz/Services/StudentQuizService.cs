@@ -137,12 +137,14 @@ public sealed class StudentQuizService(
 
         if (from is not null)
         {
-            query = query.Where(a => a.StartDate >= from);
+            var fromUtc = from.Value.ToUniversalTime();
+            query = query.Where(a => a.StartDate >= fromUtc);
         }
 
         if (to is not null)
         {
-            query = query.Where(a => a.StartDate < to);
+            var toUtc = to.Value.ToUniversalTime();
+            query = query.Where(a => a.StartDate < toUtc);
         }
 
         var attempts = await query
