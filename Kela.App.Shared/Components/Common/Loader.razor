@@ -1,5 +1,7 @@
+@using Kela.App.Shared.Services.Localization
+@inject Localizer L
 <div role="status"
-     aria-label="Yüklənir"
+     aria-label="@L["Common_LoadingAria"]"
      class="flex min-h-screen flex-col items-center justify-center bg-[#F7FAF7]">
 
     <div class="relative flex h-[88px] w-[88px] items-center justify-center">
@@ -24,11 +26,11 @@
     </div>
 
     <p class="mt-7 text-[15px] font-semibold tracking-tight text-[#234D3B]">
-        Yüklənir...
+        @L["Common_Loading"]
     </p>
 
     <p class="mt-1.5 text-xs text-[#8AA598]">
-        Bir az gözləyin
+        @L["Common_PleaseWait"]
     </p>
 
     <div class="mt-5 h-[3px] w-28 overflow-hidden rounded-full bg-[#DCE9DF]">

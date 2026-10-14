@@ -1,10 +1,12 @@
+@using Kela.App.Shared.Services.Localization
+@inject Localizer L
 @* "Davam et" kartı — dərs tərəqqisi + növbəti materiala keçid. *@
 <a href="/lessons/@Item.LessonId/content/@Item.NextContent!.ContentId"
    class="flex items-center gap-4 rounded-2xl border border-brand-090 bg-white p-4 shadow-[0_4px_15px_rgba(36,78,62,0.03)]">
     <div class="flex size-11 shrink-0 items-center justify-center rounded-xl bg-brand-083 text-brand-698"><Icon Name="@TypeIcon" Class="size-5" /></div>
     <div class="min-w-0 flex-1">
         <p class="truncate text-[14px] font-semibold text-brand-776">@Item.LessonTitle</p>
-        <p class="mt-0.5 truncate text-[11px] text-sage-382">Növbəti: @Item.NextContent!.Title</p>
+        <p class="mt-0.5 truncate text-[11px] text-sage-382">@string.Format(L["Continue_Next"], Item.NextContent!.Title)</p>
         <div class="mt-2 flex items-center gap-2">
             <div class="h-1 flex-1 overflow-hidden rounded-full bg-brand-075">
                 <div class="h-full rounded-full bg-brand-671" style="width:@(Item.ProgressPercent)%"></div>

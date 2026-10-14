@@ -1,3 +1,5 @@
+@using Kela.App.Shared.Services.Localization
+@inject Localizer L
 @* Aşağıdan/ortadan açılan sadə modal. *@
 @if (Open)
 {
@@ -5,7 +7,7 @@
         <div class="w-full max-w-[430px] rounded-t-3xl bg-white p-5 shadow-xl sm:rounded-2xl" @onclick:stopPropagation="true">
             <div class="flex items-center justify-between">
                 <h3 class="text-[16px] font-bold tracking-[-0.03em] text-brand-784">@Title</h3>
-                <button type="button" @onclick="CloseAsync" class="rounded-lg p-1.5 text-sage-478" aria-label="Bağla">
+                <button type="button" @onclick="CloseAsync" class="rounded-lg p-1.5 text-sage-478" aria-label="@L["Common_Close"]">
                     <Icon Name="x" Class="size-5" />
                 </button>
             </div>

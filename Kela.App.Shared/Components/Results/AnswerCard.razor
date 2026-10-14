@@ -1,3 +1,5 @@
+@using Kela.App.Shared.Services.Localization
+@inject Localizer L
 @* Bir sualın cavab təhlili — bütün variantlar; doğru yaşıl, səhv (seçilən) qırmızı. *@
 <div class="rounded-2xl border bg-white p-4 shadow-[0_4px_15px_rgba(36,78,62,0.03)] @(Item.IsRight ? "border-brand-149" : "border-danger-043")">
     <div class="flex items-start gap-3">
@@ -15,11 +17,11 @@
                         <span class="min-w-0 flex-1">@opt.Text</span>
                         @if (opt.Key == Item.CorrectAnswer)
                         {
-                            <span class="shrink-0 text-[10px] font-bold text-brand-671">Doğru</span>
+                            <span class="shrink-0 text-[10px] font-bold text-brand-671">@L["Result_Correct"]</span>
                         }
                         @if (opt.Key == Item.StudentAnswer)
                         {
-                            <span class="shrink-0 text-[10px] font-bold @(Item.IsRight ? "text-brand-671" : "text-danger-539")">Sizin</span>
+                            <span class="shrink-0 text-[10px] font-bold @(Item.IsRight ? "text-brand-671" : "text-danger-539")">@L["Answer_Your"]</span>
                         }
                     </div>
                 }
@@ -27,7 +29,7 @@
 
             @if (string.IsNullOrEmpty(Item.StudentAnswer))
             {
-                <p class="mt-2 text-[11px] text-sage-410">Cavab verilməyib</p>
+                <p class="mt-2 text-[11px] text-sage-410">@L["Answer_NotAnswered"]</p>
             }
         </div>
     </div>

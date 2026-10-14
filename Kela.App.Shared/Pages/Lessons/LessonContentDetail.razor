@@ -1,3 +1,5 @@
+@using Kela.App.Shared.Services.Localization
+@inject Localizer L
 @page "/lessons/{LessonId:long}/content/{ContentId:long}"
 @implements IDisposable
 @inject AppApi Api
@@ -95,7 +97,7 @@
                                 </span>
                                 <span class="min-w-0 flex-1">
                                     <span class="block truncate text-[13px] font-semibold text-brand-776">@s.Title</span>
-                                    <span class="mt-0.5 block text-[11px] text-sage-410">@s.TypeLabel</span>
+                                    <span class="mt-0.5 block text-[11px] text-sage-410">@L.TypeLabel(s.Type)</span>
                                 </span>
                                 <Icon Name="chevron-right" Class="size-4 shrink-0 text-sage-300" />
                             </a>

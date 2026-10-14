@@ -1,3 +1,5 @@
+@using Kela.App.Shared.Services.Localization
+@inject Localizer L
 @* Qrup kartı (üfiqi, progress ilə) — Home səhifəsi üçün. *@
 <a href="/groups/@Group.Id" class="group flex overflow-hidden rounded-xl border border-brand-104 bg-white">
     <div class="relative w-[112px] shrink-0 sm:w-[150px]">
@@ -9,7 +11,7 @@
         {
             <div class="flex h-full w-full items-center justify-center bg-brand-083 text-3xl font-black text-brand-698">@Group.Initial</div>
         }
-        <span class="absolute left-2.5 top-2.5 rounded bg-white/90 px-2 py-1 text-[9px] font-bold text-brand-669">@Group.StudentCount şagird</span>
+        <span class="absolute left-2.5 top-2.5 rounded bg-white/90 px-2 py-1 text-[9px] font-bold text-brand-669">@string.Format(L["Group_StudentsCountShort"], Group.StudentCount)</span>
     </div>
     <div class="min-w-0 flex-1 p-4">
         <p class="text-[10px] font-medium text-sage-376">@Group.Description</p>

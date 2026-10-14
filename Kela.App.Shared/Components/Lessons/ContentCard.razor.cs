@@ -12,7 +12,7 @@ public partial class ContentCard
     private bool IsVideo => Content.Type == "video";
     private bool IsVoice => Content.Type == "voice";
 
-    private string Meta => $"{Content.TypeLabel}{(!string.IsNullOrEmpty(Content.DurationLabel) ? $" · {Content.DurationLabel}" : "")}";
+    private string Meta => $"{L.TypeLabel(Content.Type)}{(!string.IsNullOrEmpty(Content.DurationLabel) ? $" · {Content.DurationLabel}" : "")}";
 
     private string Url
     {

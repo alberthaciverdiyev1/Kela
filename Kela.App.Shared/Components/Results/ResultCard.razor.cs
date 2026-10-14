@@ -10,7 +10,7 @@ public partial class ResultCard
     private int Wrong => Math.Max(0, Result.TotalQuestions - Result.CorrectCount);
     private int Score => Result.CorrectCount;
 
-    private string Level => Result.ScorePercent >= 70 ? "Yüksək" : Result.ScorePercent >= 40 ? "Orta" : "Aşağı";
+    private string Level => Result.ScorePercent >= 70 ? L["Result_LevelHigh"] : Result.ScorePercent >= 40 ? L["Result_LevelMedium"] : L["Result_LevelLow"];
     private string LevelClass => Result.ScorePercent >= 70
         ? "bg-brand-081 text-brand-671"
         : Result.ScorePercent >= 40 ? "bg-sun-063 text-sun-461" : "bg-danger-043 text-danger-539";
