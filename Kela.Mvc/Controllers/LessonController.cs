@@ -1,4 +1,5 @@
 using FluentValidation;
+using Kela.Core.Common.Bulk;
 using Kela.Core.Common.Sorting;
 using Kela.Core.Modules.Lesson.Abstractions;
 using Kela.Core.Modules.Lesson.Requests;
@@ -76,6 +77,14 @@ public sealed class LessonController(
     public async Task<IActionResult> Sort([FromBody] SortRequest request, CancellationToken ct)
     {
         await service.ReorderAsync(request, ct);
+        return Json(new { ok = true });
+    }
+
+    [HttpPost("bulk")]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> Bulk([FromBody] BulkRequest request, CancellationToken ct)
+    {
+        await service.BulkAsync(request, ct);
         return Json(new { ok = true });
     }
 

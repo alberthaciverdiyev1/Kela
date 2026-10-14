@@ -18,7 +18,7 @@ async function loadList(page) {
             <button type="button" class="px-2 py-1 text-primary hover:bg-primary/10 rounded-lg" onclick="openEdit(${g.id})">Redaktə</button>
             <button type="button" class="px-2 py-1 text-red-600 hover:bg-red-50 rounded-lg" onclick="removeItem(${g.id})">Sil</button>
         </div>`, cls: 'text-right' }
-    ]), 5);
+    ]), 5, { rowIds: data.data.map(g => g.id), selectable: true });
 
     AdminUI.pagination('pagination', currentPage, lastPage, loadList);
     AdminUI.loader(false);

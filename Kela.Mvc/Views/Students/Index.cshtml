@@ -38,12 +38,15 @@
             <button type="button" onclick="loadList(1)" class="admin-button-primary h-[46px] px-6">Axtar</button>
         </div>
 
+        <partial name="Ui/_BulkBar" model="@(new BulkBarModel { Url = "/students/bulk", CanActivate = true, CanDeactivate = true })" />
+
         <div class="relative">
             <div id="listLoader" class="admin-loader"><div class="spinner"></div></div>
             <div class="overflow-x-auto">
                 <table class="admin-table">
                     <thead>
                         <tr>
+                            <th class="w-12"><input type="checkbox" id="checkAll" class="h-5 w-5 rounded-md border-slate-300 text-primary focus:ring-primary" /></th>
                             <th class="w-16">#</th>
                             <th>Ad</th>
                             <th>Email</th>

@@ -25,7 +25,7 @@ async function loadList(page) {
         { html: s.phone ?? '-', cls: 'text-slate-500' },
         { html: s.isActive ? AdminUI.badge('Aktiv', 'success') : AdminUI.badge('Deaktiv', 'neutral') },
         { html: studentActions(s), cls: 'text-right' }
-    ]), 6);
+    ]), 6, { rowIds: data.data.map(s => s.id), selectable: true });
 
     AdminUI.pagination('pagination', currentPage, lastPage, loadList);
     AdminUI.loader(false);

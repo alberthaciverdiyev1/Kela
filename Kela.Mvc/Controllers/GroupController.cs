@@ -1,4 +1,5 @@
 using FluentValidation;
+using Kela.Core.Common.Bulk;
 using Kela.Core.Modules.Group.Abstractions;
 using Kela.Core.Modules.Group.Requests;
 using Kela.Core.Modules.Group.Responses;
@@ -135,6 +136,14 @@ public sealed class GroupController(
     public async Task<IActionResult> RemoveQuiz(long id, long quizId, CancellationToken ct)
     {
         await service.RemoveQuizAsync(id, quizId, ct);
+        return Json(new { ok = true });
+    }
+
+    [HttpPost("bulk")]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> Bulk([FromBody] BulkRequest request, CancellationToken ct)
+    {
+        await service.BulkAsync(request, ct);
         return Json(new { ok = true });
     }
 

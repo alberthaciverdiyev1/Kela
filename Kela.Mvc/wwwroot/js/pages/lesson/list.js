@@ -118,7 +118,7 @@ async function loadList(page) {
         ];
     });
 
-    AdminUI.table('rows', rows, 6);
+    AdminUI.table('rows', rows, 6, { rowIds: items.map(l => l.id), selectable: true });
     renderPagination('pagination', currentPage, lastPage, loadList);
 
     const info = document.getElementById('tableInfo');

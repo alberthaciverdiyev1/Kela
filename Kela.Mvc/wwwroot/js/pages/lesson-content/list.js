@@ -18,7 +18,7 @@ async function loadList(page) {
         { html: c.sortOrder, cls: 'text-slate-500' },
         { html: c.isActive ? AdminUI.badge('Aktiv', 'success') : AdminUI.badge('Deaktiv', 'neutral') },
         { html: AdminUI.actions(c.id), cls: 'text-right' }
-    ]), 7);
+    ]), 7, { rowIds: data.data.map(c => c.id), selectable: true });
 
     AdminUI.pagination('pagination', currentPage, lastPage, loadList);
     AdminUI.loader(false);

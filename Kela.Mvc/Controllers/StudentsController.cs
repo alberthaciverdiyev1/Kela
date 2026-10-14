@@ -1,3 +1,4 @@
+using Kela.Core.Common.Bulk;
 using Kela.Core.Modules.Students.Abstractions;
 using Kela.Core.Modules.Students.Requests;
 using Microsoft.AspNetCore.Mvc;
@@ -51,6 +52,14 @@ public sealed class StudentsController(IStudentManagementService service) : Cont
     [HttpGet("{id:long}/devices")]
     public async Task<IActionResult> Devices(long id, CancellationToken ct)
         => Json(await service.ListDevicesAsync(id, ct));
+
+    [HttpPost("bulk")]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> Bulk([FromBody] BulkRequest request, CancellationToken ct)
+    {
+        await service.BulkAsync(request, ct);
+        return Json(new { ok = true });
+    }
 
     [HttpDelete("{id:long}/devices")]
     [ValidateAntiForgeryToken]

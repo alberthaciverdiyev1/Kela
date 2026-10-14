@@ -1,4 +1,5 @@
 using FluentValidation;
+using Kela.Core.Common.Bulk;
 using Kela.Core.Modules.Question.Abstractions;
 using Kela.Core.Modules.Question.Requests;
 using Kela.Core.Modules.Subject.Abstractions;
@@ -55,6 +56,14 @@ public sealed class QuestionController(
     public async Task<IActionResult> Delete(long id, CancellationToken ct)
     {
         await service.DeleteAsync(id, ct);
+        return Json(new { ok = true });
+    }
+
+    [HttpPost("bulk")]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> Bulk([FromBody] BulkRequest request, CancellationToken ct)
+    {
+        await service.BulkAsync(request, ct);
         return Json(new { ok = true });
     }
 

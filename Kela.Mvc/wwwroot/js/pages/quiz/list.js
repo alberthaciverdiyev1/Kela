@@ -25,7 +25,7 @@ async function loadList(page) {
         { html: q.questionCount, cls: 'text-slate-500' },
         { html: q.isActive ? AdminUI.badge('Aktiv', 'success') : AdminUI.badge('Deaktiv', 'neutral') },
         { html: quizActions(q), cls: 'text-right' }
-    ]), 8);
+    ]), 8, { rowIds: data.data.map(q => q.id), selectable: true });
 
     AdminUI.pagination('pagination', currentPage, lastPage, loadList);
     AdminUI.loader(false);

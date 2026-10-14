@@ -17,7 +17,7 @@ async function loadList(page) {
                 : (q.title ?? '-'), cls: 'font-medium text-slate-800' },
         { html: `<span class="rounded bg-primary/10 px-2 py-0.5 text-xs font-medium text-primary">${q.correctAnswer}</span>` },
         { html: AdminUI.actions(q.id), cls: 'text-right' }
-    ]), 5);
+    ]), 5, { rowIds: data.data.map(q => q.id), selectable: true });
 
     AdminUI.pagination('pagination', currentPage, lastPage, loadList);
     AdminUI.loader(false);
