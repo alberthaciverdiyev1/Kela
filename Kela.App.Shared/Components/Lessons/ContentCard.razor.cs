@@ -23,6 +23,8 @@ public partial class ContentCard
         }
     }
 
+    private string Preview => string.IsNullOrEmpty(Url) ? "" : Url + "#t=0.1";
+
     private Task ActAsync()
     {
         if (IsVoice)

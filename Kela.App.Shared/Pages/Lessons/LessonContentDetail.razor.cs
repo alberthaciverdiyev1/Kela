@@ -40,6 +40,9 @@ public partial class LessonContentDetail
         _ => "file-text"
     };
 
+    /// <summary>Kadr önizləməsi — videonun ilk saniyəsindən statik kadr.</summary>
+    private static string Preview(string? url) => string.IsNullOrEmpty(url) ? "" : url + "#t=0.1";
+
     protected override void OnInitialized() => Player.Ended += OnAudioEnded;
 
     protected override async Task OnParametersSetAsync()

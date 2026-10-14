@@ -5,7 +5,19 @@
 @if (IsVideo)
 {
     <a href="/lessons/@LessonId/content/@Content.Id" class="flex items-center gap-4 rounded-2xl border border-brand-090 bg-white p-4 shadow-[0_4px_15px_rgba(36,78,62,0.03)]">
-        <div class="flex size-11 shrink-0 items-center justify-center rounded-xl bg-brand-081 text-brand-698"><Icon Name="play" Class="size-5" /></div>
+        <span class="relative size-16 shrink-0 overflow-hidden rounded-xl bg-brand-081 text-brand-698">
+            @if (!string.IsNullOrWhiteSpace(Content.ThumbnailUrl))
+            {
+                <img src="@Content.ThumbnailUrl" alt="" class="absolute inset-0 h-full w-full object-cover" />
+            }
+            else
+            {
+                <video src="@Preview" preload="metadata" muted playsinline class="absolute inset-0 h-full w-full object-cover"></video>
+            }
+            <span class="absolute inset-0 grid place-items-center">
+                <span class="grid size-7 place-items-center rounded-full bg-black/45 text-white"><Icon Name="play" Class="size-3.5" /></span>
+            </span>
+        </span>
         <div class="min-w-0 flex-1">
             <p class="truncate text-[14px] font-semibold text-brand-776">@Content.Title</p>
             <p class="mt-0.5 text-[11px] text-sage-382">@Meta</p>

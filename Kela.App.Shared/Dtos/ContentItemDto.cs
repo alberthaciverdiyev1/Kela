@@ -1,7 +1,7 @@
 namespace Kela.App.Shared.Dtos;
 
 public record ContentItemDto(long Id, string Title, string? Description, string? Type, string? Url,
-    string? PlaybackUrl, int? DurationSeconds)
+    string? PlaybackUrl, int? DurationSeconds, string? ThumbnailUrl = null)
 {
     public string TypeLabel => Type switch
     {
