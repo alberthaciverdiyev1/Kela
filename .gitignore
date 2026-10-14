@@ -34,3 +34,7 @@ CLAUDE.md
 
 # Yerel ayarlar (sırlar)
 appsettings.Development.json
+
+# Tailwind build outputs (generated)
+Kela.Mvc/wwwroot/css/app.css
+Kela.App.Shared/wwwroot/css/app.css
