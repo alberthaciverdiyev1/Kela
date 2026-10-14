@@ -1,13 +1,15 @@
+@using Kela.App.Shared.Services.Localization
+@inject Localizer L
 @page "/profile"
 @inject AppApi Api
 @inject AuthState Auth
 @inject TokenStore Store
 
-<PageTitle>Profil</PageTitle>
+<PageTitle>@L["Nav_Profile"]</PageTitle>
 
 <header class="flex h-[68px] items-center justify-between border-b border-brand-096 px-5">
     <span class="rounded-lg p-2 text-sage-527"></span>
-    <p class="text-[11px] font-bold uppercase tracking-[0.18em] text-sage-500">Profil</p>
+    <p class="text-[11px] font-bold uppercase tracking-[0.18em] text-sage-500">@L["Nav_Profile"]</p>
     <span class="rounded-lg p-2 text-sage-527"></span>
 </header>
 
@@ -23,13 +25,13 @@
             {
                 <div class="flex size-[82px] items-center justify-center rounded-full bg-brand-103 text-3xl font-black text-brand-835">@(Auth.User?.Initial ?? "L")</div>
             }
-            <label class="absolute -bottom-1 -right-1 flex size-7 cursor-pointer items-center justify-center rounded-full bg-brand-743 text-white ring-4 ring-brand-022" aria-label="Şəkli dəyiş">
+            <label class="absolute -bottom-1 -right-1 flex size-7 cursor-pointer items-center justify-center rounded-full bg-brand-743 text-white ring-4 ring-brand-022" aria-label="@L["Profile_ChangePhoto"]">
                 <Icon Name="edit" Class="size-3" />
                 <InputFile OnChange="OnImageSelected" accept="image/*" class="hidden" />
             </label>
         </div>
         <div class="min-w-0 pt-1">
-            <h1 class="text-[24px] font-semibold tracking-[-0.055em]">@(Auth.User?.FullName ?? "Şagird")</h1>
+            <h1 class="text-[24px] font-semibold tracking-[-0.055em]">@(Auth.User?.FullName ?? L["Common_Student"])</h1>
             <p class="mt-1 text-[13px] text-sage-459">@(Auth.User?.Email ?? "")</p>
             @if (!string.IsNullOrWhiteSpace(Auth.User?.Phone))
             {
@@ -41,12 +43,12 @@
 
 @* --- Hesab əməliyyatları --- *@
 <section class="px-5 pb-28 pt-7">
-    <p class="mb-3 text-[10px] font-bold uppercase tracking-[0.18em] text-brand-671">Hesab</p>
+    <p class="mb-3 text-[10px] font-bold uppercase tracking-[0.18em] text-brand-671">@L["Profile_Account"]</p>
 
     <div class="divide-y divide-brand-075 border-y border-brand-075">
         <button type="button" @onclick="OpenName" class="flex w-full items-center gap-3 py-4 text-left">
             <span class="flex size-8 items-center justify-center rounded-lg bg-brand-049 text-brand-639"><Icon Name="edit" Class="size-4" /></span>
-            <span class="flex-1"><span class="block text-[13px] font-semibold">Ad və soyad</span><span class="mt-0.5 block text-[10px] text-sage-410">@(Auth.User?.FullName ?? "")</span></span>
+            <span class="flex-1"><span class="block text-[13px] font-semibold">@L["Login_FullName"]</span><span class="mt-0.5 block text-[10px] text-sage-410">@(Auth.User?.FullName ?? "")</span></span>
             <Icon Name="chevron-right" Class="size-4 text-sage-300" />
         </button>
 
@@ -54,20 +56,20 @@
         {
             <button type="button" @onclick="() => OpenPhone()" class="flex w-full items-center gap-3 py-4 text-left">
                 <span class="flex size-8 items-center justify-center rounded-lg bg-brand-049 text-brand-639"><Icon Name="phone" Class="size-4" /></span>
-                <span class="flex-1"><span class="block text-[13px] font-semibold">Telefonu dəyiş</span><span class="mt-0.5 block text-[10px] text-sage-410">@Auth.User!.Phone</span></span>
+                <span class="flex-1"><span class="block text-[13px] font-semibold">@L["Profile_ChangePhone"]</span><span class="mt-0.5 block text-[10px] text-sage-410">@Auth.User!.Phone</span></span>
                 <Icon Name="chevron-right" Class="size-4 text-sage-300" />
             </button>
         }
 
         <button type="button" @onclick="() => _passwordOpen = true" class="flex w-full items-center gap-3 py-4 text-left">
             <span class="flex size-8 items-center justify-center rounded-lg bg-brand-049 text-brand-639"><Icon Name="lock" Class="size-4" /></span>
-            <span class="flex-1"><span class="block text-[13px] font-semibold">Şifrəni dəyiş</span><span class="mt-0.5 block text-[10px] text-sage-410">Hesab təhlükəsizliyi</span></span>
+            <span class="flex-1"><span class="block text-[13px] font-semibold">@L["Profile_ChangePassword"]</span><span class="mt-0.5 block text-[10px] text-sage-410">@L["Profile_Security"]</span></span>
             <Icon Name="chevron-right" Class="size-4 text-sage-300" />
         </button>
 
         <div class="flex w-full items-center gap-3 py-4">
             <span class="flex size-8 items-center justify-center rounded-lg bg-brand-049 text-brand-639"><Icon Name="bell" Class="size-4" /></span>
-            <span class="flex-1"><span class="block text-[13px] font-semibold">Bildirişlər</span><span class="mt-0.5 block text-[10px] text-sage-410">Bildirişləri aktiv/deaktiv et</span></span>
+            <span class="flex-1"><span class="block text-[13px] font-semibold">@L["Nav_Notifications"]</span><span class="mt-0.5 block text-[10px] text-sage-410">@L["Profile_NotifToggle"]</span></span>
             <button type="button" @onclick="ToggleNotificationsAsync" class="relative h-6 w-11 rounded-full transition @(_notifications ? "bg-brand-671" : "bg-brand-100")">
                 <span class="absolute top-0.5 size-5 rounded-full bg-white shadow transition-all @(_notifications ? "left-5" : "left-0.5")"></span>
             </button>
@@ -75,62 +77,62 @@
 
         <a href="/notifications" class="flex w-full items-center gap-3 py-4 text-left">
             <span class="flex size-8 items-center justify-center rounded-lg bg-brand-049 text-brand-639"><Icon Name="bell" Class="size-4" /></span>
-            <span class="flex-1"><span class="block text-[13px] font-semibold">Bildirişlərin siyahısı</span><span class="mt-0.5 block text-[10px] text-sage-410">Gələn bildirişlərə bax</span></span>
+            <span class="flex-1"><span class="block text-[13px] font-semibold">@L["Profile_NotifList"]</span><span class="mt-0.5 block text-[10px] text-sage-410">@L["Profile_NotifListView"]</span></span>
             <Icon Name="chevron-right" Class="size-4 text-sage-300" />
         </a>
 
         <a href="/contact" class="flex w-full items-center gap-3 py-4 text-left">
             <span class="flex size-8 items-center justify-center rounded-lg bg-brand-049 text-brand-639"><Icon Name="mail" Class="size-4" /></span>
-            <span class="flex-1"><span class="block text-[13px] font-semibold">Bizimlə əlaqə</span><span class="mt-0.5 block text-[10px] text-sage-410">WhatsApp, Instagram və s.</span></span>
+            <span class="flex-1"><span class="block text-[13px] font-semibold">@L["Contact_Title"]</span><span class="mt-0.5 block text-[10px] text-sage-410">@L["Profile_ContactDesc"]</span></span>
             <Icon Name="chevron-right" Class="size-4 text-sage-300" />
         </a>
 
         <button type="button" @onclick="OpenPrivacyAsync" class="flex w-full items-center gap-3 py-4 text-left">
             <span class="flex size-8 items-center justify-center rounded-lg bg-brand-049 text-brand-639"><Icon Name="shield" Class="size-4" /></span>
-            <span class="flex-1"><span class="block text-[13px] font-semibold">Gizlilik siyasəti</span><span class="mt-0.5 block text-[10px] text-sage-410">İstifadə şərtləri və gizlilik</span></span>
+            <span class="flex-1"><span class="block text-[13px] font-semibold">@L["Profile_Privacy"]</span><span class="mt-0.5 block text-[10px] text-sage-410">@L["Profile_PrivacyDesc"]</span></span>
             <Icon Name="chevron-right" Class="size-4 text-sage-300" />
         </button>
 
         @* İşləməyən (yalnız görünən) hesab silmə *@
         <div class="flex w-full items-center gap-3 py-4 opacity-60" aria-disabled="true">
             <span class="flex size-8 items-center justify-center rounded-lg bg-danger-043 text-danger-539"><Icon Name="x" Class="size-4" /></span>
-            <span class="flex-1"><span class="block text-[13px] font-semibold text-danger-539">Hesabı sil</span><span class="mt-0.5 block text-[10px] text-sage-410">Hazırda mövcud deyil</span></span>
+            <span class="flex-1"><span class="block text-[13px] font-semibold text-danger-539">@L["Profile_DeleteAccount"]</span><span class="mt-0.5 block text-[10px] text-sage-410">@L["Profile_DeleteUnavailable"]</span></span>
         </div>
     </div>
 
     <button type="button" @onclick="() => _logoutOpen = true" class="mt-6 w-full rounded-2xl border border-danger-043 bg-danger-043/40 py-3.5 text-sm font-bold text-danger-539">
-        Çıxış
+        @L["Profile_Logout"]
     </button>
 </section>
 
 @* --- Modallar --- *@
-<Modal Open="_nameOpen" Title="Ad və soyad" OnClose="() => _nameOpen = false">
-    <input @bind="_fullName" placeholder="Ad Soyad" class="w-full rounded-xl border border-brand-104 bg-brand-024 px-4 py-3 text-sm outline-none focus:border-brand-467" />
+<Modal Open="_nameOpen" Title="@L["Login_FullName"]" OnClose="() => _nameOpen = false">
+    <input @bind="_fullName" placeholder="@L["Profile_FullNamePlaceholder"]" class="w-full rounded-xl border border-brand-104 bg-brand-024 px-4 py-3 text-sm outline-none focus:border-brand-467" />
     @if (!string.IsNullOrEmpty(_nameError)) { <p class="mt-2 text-xs font-semibold text-danger-539">@_nameError</p> }
-    <button type="button" @onclick="SaveNameAsync" disabled="@_busy" class="mt-4 w-full rounded-xl bg-brand-671 py-3 text-sm font-bold text-white disabled:opacity-60">Yadda saxla</button>
+    <button type="button" @onclick="SaveNameAsync" disabled="@_busy" class="mt-4 w-full rounded-xl bg-brand-671 py-3 text-sm font-bold text-white disabled:opacity-60">@L["Common_Save"]</button>
 </Modal>
 
-<Modal Open="_phoneOpen" Title="Telefonu dəyiş" OnClose="() => _phoneOpen = false">
+<Modal Open="_phoneOpen" Title="@L["Profile_ChangePhone"]" OnClose="() => _phoneOpen = false">
     <input @bind="_phone" placeholder="+994..." class="w-full rounded-xl border border-brand-104 bg-brand-024 px-4 py-3 text-sm outline-none focus:border-brand-467" />
-    @if (_imageBusy) { <p class="mt-2 text-xs text-sage-410">Şəkil yüklənir...</p> } { <p class="mt-2 text-xs font-semibold text-danger-539">@_phoneError</p> }
-    <button type="button" @onclick="SavePhoneAsync" disabled="@_busy" class="mt-4 w-full rounded-xl bg-brand-671 py-3 text-sm font-bold text-white disabled:opacity-60">Yadda saxla</button>
+    @if (_imageBusy) { <p class="mt-2 text-xs text-sage-410">@L["Profile_ImageUploading"]</p> } { <p class="mt-2 text-xs font-semibold text-danger-539">@_phoneError</p> }
+    <button type="button" @onclick="SavePhoneAsync" disabled="@_busy" class="mt-4 w-full rounded-xl bg-brand-671 py-3 text-sm font-bold text-white disabled:opacity-60">@L["Common_Save"]</button>
 </Modal>
 
-<Modal Open="_passwordOpen" Title="Şifrəni dəyiş" OnClose="() => _passwordOpen = false">
-    <input @bind="_currentPassword" type="password" placeholder="Cari şifrə" class="w-full rounded-xl border border-brand-104 bg-brand-024 px-4 py-3 text-sm outline-none focus:border-brand-467" />
-    <input @bind="_newPassword" type="password" placeholder="Yeni şifrə" class="mt-3 w-full rounded-xl border border-brand-104 bg-brand-024 px-4 py-3 text-sm outline-none focus:border-brand-467" />
+<Modal Open="_passwordOpen" Title="@L["Profile_ChangePassword"]" OnClose="() => _passwordOpen = false">
+    <input @bind="_currentPassword" type="password" placeholder="@L["Profile_CurrentPassword"]" class="w-full rounded-xl border border-brand-104 bg-brand-024 px-4 py-3 text-sm outline-none focus:border-brand-467" />
+    <input @bind="_newPassword" type="password" placeholder="@L["Profile_NewPassword"]" class="mt-3 w-full rounded-xl border border-brand-104 bg-brand-024 px-4 py-3 text-sm outline-none focus:border-brand-467" />
     @if (!string.IsNullOrEmpty(_passwordError)) { <p class="mt-2 text-xs font-semibold text-danger-539">@_passwordError</p> }
-    <button type="button" @onclick="SavePasswordAsync" disabled="@_busy" class="mt-4 w-full rounded-xl bg-brand-671 py-3 text-sm font-bold text-white disabled:opacity-60">Yadda saxla</button>
+    <button type="button" @onclick="SavePasswordAsync" disabled="@_busy" class="mt-4 w-full rounded-xl bg-brand-671 py-3 text-sm font-bold text-white disabled:opacity-60">@L["Common_Save"]</button>
 </Modal>
 
-<Modal Open="_privacyOpen" Title="Gizlilik siyasəti" OnClose="() => _privacyOpen = false">
+<Modal Open="_privacyOpen" Title="@L["Profile_Privacy"]" OnClose="() => _privacyOpen = false">
     @if (_privacyLoading)
     {
-        <p class="text-sm text-sage-410">Yüklənir...</p>
+        <p class="text-sm text-sage-410">@L["Common_Loading"]</p>
     }
     else if (_privacy.Count == 0)
     {
-        <p class="text-sm text-sage-410">Məlumat yoxdur.</p>
+        <p class="text-sm text-sage-410">@L["Common_NoData"]</p>
     }
     else
     {
@@ -146,10 +148,10 @@
     }
 </Modal>
 
-<Modal Open="_logoutOpen" Title="Çıxış" OnClose="() => _logoutOpen = false">
-    <p class="text-[13px] leading-5 text-sage-459">Hesabdan çıxmaq istədiyinizə əminsiniz?</p>
+<Modal Open="_logoutOpen" Title="@L["Profile_Logout"]" OnClose="() => _logoutOpen = false">
+    <p class="text-[13px] leading-5 text-sage-459">@L["Profile_LogoutConfirm"]</p>
     <div class="mt-5 flex gap-3">
-        <button type="button" @onclick="() => _logoutOpen = false" class="flex-1 rounded-xl border border-brand-104 py-3 text-sm font-bold text-brand-727">Ləğv et</button>
-        <button type="button" @onclick="LogoutAsync" class="flex-1 rounded-xl bg-danger-539 py-3 text-sm font-bold text-white">Çıxış</button>
+        <button type="button" @onclick="() => _logoutOpen = false" class="flex-1 rounded-xl border border-brand-104 py-3 text-sm font-bold text-brand-727">@L["Common_Cancel"]</button>
+        <button type="button" @onclick="LogoutAsync" class="flex-1 rounded-xl bg-danger-539 py-3 text-sm font-bold text-white">@L["Profile_Logout"]</button>
     </div>
 </Modal>

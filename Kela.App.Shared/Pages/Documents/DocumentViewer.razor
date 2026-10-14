@@ -1,14 +1,16 @@
+@using Kela.App.Shared.Services.Localization
+@inject Localizer L
 @page "/document"
 @implements IAsyncDisposable
 @inject IJSRuntime JS
 
-<PageTitle>Sənəd</PageTitle>
+<PageTitle>@L["Document_Title"]</PageTitle>
 
-<PageHeader Title="@(string.IsNullOrWhiteSpace(_title) ? "Sənəd" : _title)" Back="javascript:history.back()" Sticky="true"/>
+<PageHeader Title="@(string.IsNullOrWhiteSpace(_title) ? L["Document_Title"] : _title)" Back="javascript:history.back()" Sticky="true"/>
 
 @if (string.IsNullOrEmpty(_url))
 {
-    <EmptyState Text="Sənəd tapılmadı." Class="px-5 py-10 text-sm text-sage-410"/>
+    <EmptyState Text="@L["Document_NotFound"]" Class="px-5 py-10 text-sm text-sage-410"/>
 }
 else
 {

@@ -1,9 +1,11 @@
+@using Kela.App.Shared.Services.Localization
+@inject Localizer L
 @page "/notifications"
 @inject AppApi Api
 
-<PageTitle>Bildirişlər</PageTitle>
+<PageTitle>@L["Nav_Notifications"]</PageTitle>
 
-<PageHeader Title="Bildirişlər" Back="/"/>
+<PageHeader Title="@L["Nav_Notifications"]" Back="/"/>
 
 <div class="px-5 pb-28 pt-6 lg:px-10 lg:pb-12">
     @if (_loading)
@@ -12,7 +14,7 @@
     }
     else if (_items.Count == 0)
     {
-        <EmptyState Text="Hələ bildiriş yoxdur."/>
+        <EmptyState Text="@L["Notifications_Empty"]"/>
     }
     else
     {
@@ -46,7 +48,7 @@
         {
             <button type="button" @onclick="LoadAsync" disabled="@_busy"
                     class="mt-5 w-full rounded-2xl border border-brand-104 py-3 text-sm font-bold text-brand-727 disabled:opacity-60">
-                @(_busy ? "Yüklənir..." : "Daha çox")
+                @(_busy ? L["Common_Loading"] : L["Common_More"])
             </button>
         }
     }
