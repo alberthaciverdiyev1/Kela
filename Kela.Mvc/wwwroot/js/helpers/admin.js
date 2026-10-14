@@ -54,6 +54,16 @@ window.AdminUI = (function () {
         return { ok: res.ok, status: res.status, data: body };
     }
 
+    async function putJson(url, obj) {
+        const res = await fetch(url, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json', 'RequestVerificationToken': token() },
+            body: JSON.stringify(obj)
+        });
+        let body = null; try { body = await res.json(); } catch (e) { /* boş */ }
+        return { ok: res.ok, status: res.status, data: body };
+    }
+
     async function del(url) {
         const res = await fetch(url, { method: 'DELETE', headers: { 'RequestVerificationToken': token() } });
         let body = null; try { body = await res.json(); } catch (e) { /* boş */ }
@@ -227,5 +237,5 @@ window.AdminUI = (function () {
 
     function reloadAfter(delay) { setTimeout(() => location.reload(), delay || 700); }
 
-    return { notify, error, errText, confirmDelete, get, post, postForm, putForm, postJson, del, badge, table, actions, selectedIds, bulkDo, sortToggle, loader, pagination, filePreview, fileSet, fileRemove, token, reloadAfter };
+    return { notify, error, errText, confirmDelete, get, post, postForm, putForm, postJson, putJson, del, badge, table, actions, selectedIds, bulkDo, sortToggle, loader, pagination, filePreview, fileSet, fileRemove, token, reloadAfter };
 })();

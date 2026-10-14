@@ -1,0 +1,24 @@
+<div id="settingsModal" class="fixed inset-0 z-50 hidden items-center justify-center bg-slate-950/40 p-4">
+    <div class="w-full max-w-lg rounded-2xl bg-white shadow-2xl">
+        <div class="flex items-center justify-between border-b border-border p-5">
+            <h3 id="settingsTitle" class="text-lg font-bold text-slate-900">Məzmun açarları</h3>
+            <button type="button" onclick="closeSettings()" class="rounded-xl p-2 text-slate-400 hover:bg-slate-100">✕</button>
+        </div>
+        <div id="settingsError" class="mx-6 mt-4 hidden rounded-xl bg-danger-bg px-3 py-2 text-sm font-semibold text-danger"></div>
+        <div class="space-y-4 p-6">
+            <p class="text-sm text-slate-500">Bu dərsdə şagirdə hansı bölmələrin görünəcəyini seçin.</p>
+            <div class="grid gap-3 sm:grid-cols-2">
+                <partial name="Ui/_Switch" model="@(new SwitchModel { Name = "topic_explain", Id = "s_topic_explain", Label = "Mövzu izahı", Checked = true })" />
+                <partial name="Ui/_Switch" model="@(new SwitchModel { Name = "live_video", Id = "s_live_video", Label = "Canlı video", Checked = true })" />
+                <partial name="Ui/_Switch" model="@(new SwitchModel { Name = "pdf", Id = "s_pdf", Label = "PDF", Checked = true })" />
+                <partial name="Ui/_Switch" model="@(new SwitchModel { Name = "voice_record", Id = "s_voice_record", Label = "Səs yazısı", Checked = true })" />
+                <partial name="Ui/_Switch" model="@(new SwitchModel { Name = "topic_quiz", Id = "s_topic_quiz", Label = "Mövzu imtahanı", Checked = true })" />
+                <partial name="Ui/_Switch" model="@(new SwitchModel { Name = "general_quiz", Id = "s_general_quiz", Label = "Ümumi imtahan", Checked = true })" />
+            </div>
+            <div class="flex justify-end gap-3 pt-2">
+                <partial name="Ui/_Button" model="@(new ButtonModel { Text = "İmtina", Variant = "secondary", OnClick = "closeSettings()" })" />
+                <partial name="Ui/_Button" model="@(new ButtonModel { Text = "Yadda saxla", OnClick = "saveSettings()" })" />
+            </div>
+        </div>
+    </div>
+</div>

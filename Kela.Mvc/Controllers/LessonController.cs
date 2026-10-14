@@ -17,7 +17,7 @@ public sealed class LessonController(
     public async Task<IActionResult> Index([FromQuery(Name = "subject_id")] long? subjectId, CancellationToken ct)
     {
         ViewData["Title"] = "Dərslər";
-        ViewData["Scripts"] = new[] { "~/js/pages/lesson/list.js", "~/js/pages/lesson/create.js", "~/js/pages/lesson/update.js" };
+        ViewData["Scripts"] = new[] { "~/js/pages/lesson/list.js", "~/js/pages/lesson/create.js", "~/js/pages/lesson/update.js", "~/js/pages/lesson/settings.js" };
         ViewData["Subjects"] = await subjects.ListAsync(new SubjectListRequest { PerPage = 200 }, ct);
         ViewData["SelectedSubjectId"] = subjectId?.ToString() ?? "";
         return View();
@@ -58,6 +58,17 @@ public sealed class LessonController(
         await service.DeleteAsync(id, ct);
         return Json(new { ok = true });
     }
+
+    // --- Məzmun açarları (mövzu izahı, video, pdf, səs, imtahanlar) ---
+
+    [HttpGet("{id:long}/settings")]
+    public async Task<IActionResult> GetSettings(long id, CancellationToken ct)
+        => Json(await service.GetSettingsAsync(id, ct));
+
+    [HttpPut("{id:long}/settings")]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> SetSettings(long id, [FromBody] SetLessonSettingsRequest request, CancellationToken ct)
+        => Json(await service.SetSettingsAsync(id, request, ct));
 
     private static object Errors(FluentValidation.Results.ValidationResult result)
         => new
