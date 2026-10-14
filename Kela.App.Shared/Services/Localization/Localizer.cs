@@ -15,7 +15,7 @@ public sealed class Localizer(IJSRuntime js)
 
     public string this[string key] => _map.TryGetValue(key, out var value) ? value : key;
 
-    private Dictionary<string, string> _map = All["az"];
+    public string Format(string key, params object?[] args) => string.Format(this[key], args);
 
     public string TypeLabel(string? type) => this[type switch
     {
@@ -25,6 +25,8 @@ public sealed class Localizer(IJSRuntime js)
         _ => "Type_Material"
     }];
 
+    private Dictionary<string, string> _map = All["az"];
+
     public async Task InitAsync()
     {
         try
@@ -33,7 +35,6 @@ public sealed class Localizer(IJSRuntime js)
             if (!string.IsNullOrWhiteSpace(saved) && Supported.Contains(saved)) Current = saved;
         }
         catch { /* JS hazır deyil */ }
-
         _map = All.TryGetValue(Current, out var m) ? m : All["az"];
     }
 
@@ -85,6 +86,39 @@ public sealed class Localizer(IJSRuntime js)
             ["Type_File"] = "Fayl",
             ["Type_Voice"] = "Səs yazısı",
             ["Type_Material"] = "Material",
+            ["Login_HeroAria"] = "Təhsil platforması",
+            ["Login_HeadingRegister"] = "Hesab yarat.",
+            ["Login_HeadingLogin"] = "Öz yolunu seç.",
+            ["Login_SubRegister"] = "Qeydiyyatdan keç və öyrənməyə başla.",
+            ["Login_SubLogin"] = "Müxtəlif təkliflərimizdən sən də yararlan.",
+            ["Login_SelectCourse"] = "Kurs seç",
+            ["Login_SeeAll"] = "Hamısına bax",
+            ["Login_CoursesAria"] = "Kurs seçimi",
+            ["Login_FullName"] = "Ad və soyad",
+            ["Login_FullNamePlaceholder"] = "Adın",
+            ["Login_Phone"] = "Telefon (istəyə bağlı)",
+            ["Login_Email"] = "Email",
+            ["Login_Password"] = "Şifrə",
+            ["Login_ShowPassword"] = "Şifrəni göstər",
+            ["Login_Wait"] = "Gözləyin...",
+            ["Login_Register"] = "Qeydiyyat",
+            ["Login_SignIn"] = "Daxil ol",
+            ["Login_HaveAccount"] = "Hesabınız var?",
+            ["Login_NoAccount"] = "Hesabınız yoxdur?",
+            ["Login_Courses"] = "Kurslar",
+            ["Login_SearchCourse"] = "Kurs axtar...",
+            ["Groups_Title"] = "Qruplar",
+            ["Notifications_Aria"] = "Bildirişlər",
+            ["Groups_Empty"] = "Hələ qrupunuz yoxdur.",
+            ["GroupDetail_Title"] = "Qrup",
+            ["Subjects_Title"] = "Fənlər",
+            ["GroupDetail_Empty"] = "Bu qrupda fənn yoxdur.",
+            ["Lessons_Title"] = "Dərslər",
+            ["SubjectDetail_Empty"] = "Bu fənn üzrə dərs yoxdur.",
+            ["Subject_Default"] = "Fənn",
+            ["Exams_Title"] = "İmtahanlar",
+            ["Exams_Available"] = "Mövcud imtahanlar",
+            ["Exams_Empty"] = "Hələ imtahan təyin olunmayıb.",
         },
         ["en"] = new()
         {
@@ -123,6 +157,39 @@ public sealed class Localizer(IJSRuntime js)
             ["Type_File"] = "File",
             ["Type_Voice"] = "Audio",
             ["Type_Material"] = "Material",
+            ["Login_HeroAria"] = "Education platform",
+            ["Login_HeadingRegister"] = "Create an account.",
+            ["Login_HeadingLogin"] = "Choose your path.",
+            ["Login_SubRegister"] = "Sign up and start learning.",
+            ["Login_SubLogin"] = "Take advantage of our offers.",
+            ["Login_SelectCourse"] = "Select a course",
+            ["Login_SeeAll"] = "See all",
+            ["Login_CoursesAria"] = "Course selection",
+            ["Login_FullName"] = "Full name",
+            ["Login_FullNamePlaceholder"] = "Your name",
+            ["Login_Phone"] = "Phone (optional)",
+            ["Login_Email"] = "Email",
+            ["Login_Password"] = "Password",
+            ["Login_ShowPassword"] = "Show password",
+            ["Login_Wait"] = "Please wait...",
+            ["Login_Register"] = "Sign up",
+            ["Login_SignIn"] = "Sign in",
+            ["Login_HaveAccount"] = "Already have an account?",
+            ["Login_NoAccount"] = "Don't have an account?",
+            ["Login_Courses"] = "Courses",
+            ["Login_SearchCourse"] = "Search course...",
+            ["Groups_Title"] = "Groups",
+            ["Notifications_Aria"] = "Notifications",
+            ["Groups_Empty"] = "You have no groups yet.",
+            ["GroupDetail_Title"] = "Group",
+            ["Subjects_Title"] = "Subjects",
+            ["GroupDetail_Empty"] = "No subjects in this group.",
+            ["Lessons_Title"] = "Lessons",
+            ["SubjectDetail_Empty"] = "No lessons for this subject.",
+            ["Subject_Default"] = "Subject",
+            ["Exams_Title"] = "Exams",
+            ["Exams_Available"] = "Available exams",
+            ["Exams_Empty"] = "No exams assigned yet.",
         },
         ["ru"] = new()
         {
@@ -161,6 +228,39 @@ public sealed class Localizer(IJSRuntime js)
             ["Type_File"] = "Файл",
             ["Type_Voice"] = "Аудио",
             ["Type_Material"] = "Материал",
+            ["Login_HeroAria"] = "Образовательная платформа",
+            ["Login_HeadingRegister"] = "Создайте аккаунт.",
+            ["Login_HeadingLogin"] = "Выберите свой путь.",
+            ["Login_SubRegister"] = "Зарегистрируйтесь и начните учиться.",
+            ["Login_SubLogin"] = "Воспользуйтесь нашими предложениями.",
+            ["Login_SelectCourse"] = "Выберите курс",
+            ["Login_SeeAll"] = "Смотреть все",
+            ["Login_CoursesAria"] = "Выбор курса",
+            ["Login_FullName"] = "Имя и фамилия",
+            ["Login_FullNamePlaceholder"] = "Ваше имя",
+            ["Login_Phone"] = "Телефон (необязательно)",
+            ["Login_Email"] = "Эл. почта",
+            ["Login_Password"] = "Пароль",
+            ["Login_ShowPassword"] = "Показать пароль",
+            ["Login_Wait"] = "Подождите...",
+            ["Login_Register"] = "Регистрация",
+            ["Login_SignIn"] = "Войти",
+            ["Login_HaveAccount"] = "Уже есть аккаунт?",
+            ["Login_NoAccount"] = "Нет аккаунта?",
+            ["Login_Courses"] = "Курсы",
+            ["Login_SearchCourse"] = "Поиск курса...",
+            ["Groups_Title"] = "Группы",
+            ["Notifications_Aria"] = "Уведомления",
+            ["Groups_Empty"] = "У вас пока нет групп.",
+            ["GroupDetail_Title"] = "Группа",
+            ["Subjects_Title"] = "Предметы",
+            ["GroupDetail_Empty"] = "В этой группе нет предметов.",
+            ["Lessons_Title"] = "Уроки",
+            ["SubjectDetail_Empty"] = "По этому предмету нет уроков.",
+            ["Subject_Default"] = "Предмет",
+            ["Exams_Title"] = "Экзамены",
+            ["Exams_Available"] = "Доступные экзамены",
+            ["Exams_Empty"] = "Экзамены пока не назначены.",
         },
         ["tr"] = new()
         {
@@ -199,6 +299,39 @@ public sealed class Localizer(IJSRuntime js)
             ["Type_File"] = "Dosya",
             ["Type_Voice"] = "Ses kaydı",
             ["Type_Material"] = "Materyal",
+            ["Login_HeroAria"] = "Eğitim platformu",
+            ["Login_HeadingRegister"] = "Hesap oluştur.",
+            ["Login_HeadingLogin"] = "Yolunu seç.",
+            ["Login_SubRegister"] = "Kaydol ve öğrenmeye başla.",
+            ["Login_SubLogin"] = "Tekliflerimizden yararlan.",
+            ["Login_SelectCourse"] = "Kurs seç",
+            ["Login_SeeAll"] = "Tümünü gör",
+            ["Login_CoursesAria"] = "Kurs seçimi",
+            ["Login_FullName"] = "Ad soyad",
+            ["Login_FullNamePlaceholder"] = "Adın",
+            ["Login_Phone"] = "Telefon (isteğe bağlı)",
+            ["Login_Email"] = "E-posta",
+            ["Login_Password"] = "Parola",
+            ["Login_ShowPassword"] = "Parolayı göster",
+            ["Login_Wait"] = "Lütfen bekleyin...",
+            ["Login_Register"] = "Kayıt ol",
+            ["Login_SignIn"] = "Giriş yap",
+            ["Login_HaveAccount"] = "Hesabınız var mı?",
+            ["Login_NoAccount"] = "Hesabınız yok mu?",
+            ["Login_Courses"] = "Kurslar",
+            ["Login_SearchCourse"] = "Kurs ara...",
+            ["Groups_Title"] = "Gruplar",
+            ["Notifications_Aria"] = "Bildirimler",
+            ["Groups_Empty"] = "Henüz grubunuz yok.",
+            ["GroupDetail_Title"] = "Grup",
+            ["Subjects_Title"] = "Dersler",
+            ["GroupDetail_Empty"] = "Bu grupta ders yok.",
+            ["Lessons_Title"] = "Dersler",
+            ["SubjectDetail_Empty"] = "Bu ders için ders yok.",
+            ["Subject_Default"] = "Ders",
+            ["Exams_Title"] = "Sınavlar",
+            ["Exams_Available"] = "Mevcut sınavlar",
+            ["Exams_Empty"] = "Henüz sınav atanmadı.",
         },
     };
 }

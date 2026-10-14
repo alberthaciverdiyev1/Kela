@@ -1,11 +1,13 @@
+@using Kela.App.Shared.Services.Localization
+@inject Localizer L
 @page "/groups"
 @inject AppApi Api
 
-<PageTitle>Qruplar</PageTitle>
+<PageTitle>@L["Groups_Title"]</PageTitle>
 
-<PageHeader Title="Qruplar" Back="/">
+<PageHeader Title="@L["Groups_Title"]" Back="/">
     <Right>
-        <button class="relative rounded-xl p-2 text-sage-478" aria-label="Bildirişlər">
+        <button class="relative rounded-xl p-2 text-sage-478" aria-label="@L["Notifications_Aria"]">
             <Icon Name="bell" Class="size-[19px]" />
             <span class="absolute right-1.5 top-1.5 size-1.5 rounded-full bg-sun-367"></span>
         </button>
@@ -19,7 +21,7 @@
     }
     else if (_groups.Count == 0)
     {
-        <EmptyState Text="Hələ qrupunuz yoxdur."/>
+        <EmptyState Text="@L["Groups_Empty"]"/>
     }
     else
     {

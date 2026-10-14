@@ -1,3 +1,5 @@
+@using Kela.App.Shared.Services.Localization
+@inject Localizer L
 @inject AppApi Api
 @inject ApiClient ApiClient
 @inject AuthState Auth
@@ -7,27 +9,27 @@
     <div class="app">
 
         @* --- Hero --- *@
-        <section class="hero" aria-label="Təhsil platforması">
+        <section class="hero" aria-label="@L["Login_HeroAria"]">
             <img src="_content/Kela.App.Shared/images/login-hero.jpg" alt="" />
         </section>
 
         @* --- Ağ panel --- *@
         <section class="sheet">
             <div class="handle"></div>
-            <h1 class="heading">@(_register ? "Hesab yarat." : "Öz yolunu seç.")</h1>
-            <p class="subtitle">@(_register ? "Qeydiyyatdan keç və öyrənməyə başla." : "Müxtəlif təkliflərimizdən sən də yararlan.")</p>
+            <h1 class="heading">@(_register ? L["Login_HeadingRegister"] : L["Login_HeadingLogin"])</h1>
+            <p class="subtitle">@(_register ? L["Login_SubRegister"] : L["Login_SubLogin"])</p>
 
             @if (!_register)
             {
                 <div class="flex items-center justify-between">
-                    <h2 class="section-title">Kurs seç</h2>
+                    <h2 class="section-title">@L["Login_SelectCourse"]</h2>
                     <button type="button" class="see-all" @onclick="OpenModal">
-                        Hamısına bax
+                        @L["Login_SeeAll"]
                         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m9 5 7 7-7 7"/></svg>
                     </button>
                 </div>
 
-                <div class="courses" role="group" aria-label="Kurs seçimi">
+                <div class="courses" role="group" aria-label="@L["Login_CoursesAria"]">
                     @for (var i = 0; i < Math.Min(_courses.Count, 10); i++)
                     {
                         var idx = i;
@@ -43,17 +45,17 @@
                 @if (_register)
                 {
                     <div class="field">
-                        <label for="fullName">Ad və soyad</label>
-                        <div class="control"><input id="fullName" @bind="_fullName" placeholder="Adın" /></div>
+                        <label for="fullName">@L["Login_FullName"]</label>
+                        <div class="control"><input id="fullName" @bind="_fullName" placeholder="@L["Login_FullNamePlaceholder"]" /></div>
                     </div>
                     <div class="field">
-                        <label for="phone">Telefon (istəyə bağlı)</label>
+                        <label for="phone">@L["Login_Phone"]</label>
                         <div class="control"><input id="phone" @bind="_phone" placeholder="+994..." /></div>
                     </div>
                 }
 
                 <div class="field">
-                    <label for="email">Email</label>
+                    <label for="email">@L["Login_Email"]</label>
                     <div class="control">
                         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m2 6 10 7 10-7"/></svg>
                         <input id="email" type="email" @bind="_email" placeholder="Email" autocomplete="email" />
@@ -61,11 +63,11 @@
                 </div>
 
                 <div class="field">
-                    <label for="password">Şifrə</label>
+                    <label for="password">@L["Login_Password"]</label>
                     <div class="control">
                         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="10" width="16" height="12" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/><path d="M12 15v3"/></svg>
                         <input id="password" type="@(_show ? "text" : "password")" @bind="_password" placeholder="••••••••" autocomplete="current-password" />
-                        <button class="eye" type="button" @onclick="() => _show = !_show" aria-label="Şifrəni göstər">
+                        <button class="eye" type="button" @onclick="() => _show = !_show" aria-label="@L["Login_ShowPassword"]">
                             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
                                 @if (_show)
                                 {
@@ -85,12 +87,12 @@
                     <div class="error">@_error</div>
                 }
 
-                <button class="submit" type="submit" disabled="@_busy">@(_busy ? "Gözləyin..." : (_register ? "Qeydiyyat" : "Daxil ol"))</button>
+                <button class="submit" type="submit" disabled="@_busy">@(_busy ? L["Login_Wait"] : (_register ? L["Login_Register"] : L["Login_SignIn"]))</button>
             </form>
 
             <p class="register">
-                @(_register ? "Hesabınız var?" : "Hesabınız yoxdur?")
-                <button type="button" @onclick="Toggle">@(_register ? "Daxil ol" : "Qeydiyyat")</button>
+                @(_register ? L["Login_HaveAccount"] : L["Login_NoAccount"])
+                <button type="button" @onclick="Toggle">@(_register ? L["Login_SignIn"] : L["Login_Register"])</button>
             </p>
         </section>
     </div>
@@ -98,13 +100,13 @@
     @* --- Kurs seçimi modalı --- *@
     @if (_modalOpen)
     {
-        <div class="modal" role="dialog" aria-modal="true" aria-label="Kurslar" @onclick="CloseModal">
+        <div class="modal" role="dialog" aria-modal="true" aria-label="@L["Login_Courses"]" @onclick="CloseModal">
             <div class="modal-panel" @onclick:stopPropagation="true">
                 <div class="modal-head">
-                    <strong>Kurs seç</strong>
-                    <button type="button" aria-label="Bağla" class="text-2xl" @onclick="CloseModal">×</button>
+                    <strong>@L["Login_SelectCourse"]</strong>
+                    <button type="button" aria-label="@L["Common_Close"]" class="text-2xl" @onclick="CloseModal">×</button>
                 </div>
-                <input class="search" placeholder="Kurs axtar..." @bind="_search" @bind:event="oninput" />
+                <input class="search" placeholder="@L["Login_SearchCourse"]" @bind="_search" @bind:event="oninput" />
                 <div class="course-list">
                     @foreach (var (course, idx) in Filtered())
                     {

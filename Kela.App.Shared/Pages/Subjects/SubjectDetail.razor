@@ -1,12 +1,14 @@
+@using Kela.App.Shared.Services.Localization
+@inject Localizer L
 @page "/subjects/{SubjectId:long}"
 @inject AppApi Api
 
-<PageTitle>Dərslər</PageTitle>
+<PageTitle>@L["Lessons_Title"]</PageTitle>
 
-<PageHeader Title="Dərslər" Back="/groups"/>
+<PageHeader Title="@L["Lessons_Title"]" Back="/groups"/>
 
 <div class="px-5 pb-28 pt-6">
-    <h2 class="mt-1 text-2xl font-bold tracking-[-0.04em] text-brand-784">@(Name ?? "Fənn")</h2>
+    <h2 class="mt-1 text-2xl font-bold tracking-[-0.04em] text-brand-784">@(Name ?? L["Subject_Default"])</h2>
 
     @if (_loading)
     {
@@ -14,7 +16,7 @@
     }
     else if (_lessons.Count == 0)
     {
-        <EmptyState Text="Bu fənn üzrə dərs yoxdur."/>
+        <EmptyState Text="@L["SubjectDetail_Empty"]"/>
     }
     else
     {
