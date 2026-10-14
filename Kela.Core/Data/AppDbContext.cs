@@ -82,10 +82,6 @@ public sealed class AppDbContext : DbContext
 
     public DbSet<Modules.Auth.Entities.StudentDevice> StudentDevices => Set<Modules.Auth.Entities.StudentDevice>();
 
-    public DbSet<Modules.Permission.Entities.Permission> Permissions => Set<Modules.Permission.Entities.Permission>();
-
-    public DbSet<Modules.Permission.Entities.RolePermission> RolePermissions => Set<Modules.Permission.Entities.RolePermission>();
-
     public DbSet<Modules.SystemNotification.Entities.SystemNotification> SystemNotifications => Set<Modules.SystemNotification.Entities.SystemNotification>();
 
     public DbSet<Modules.Group.Entities.MainCategoryAssignmentLog> MainCategoryAssignmentLogs => Set<Modules.Group.Entities.MainCategoryAssignmentLog>();

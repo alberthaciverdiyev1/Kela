@@ -5,7 +5,6 @@ global using Kela.Core.Modules.Group.Abstractions;
 global using Kela.Core.Modules.Lesson.Abstractions;
 global using Kela.Core.Modules.LessonContent.Abstractions;
 global using Kela.Core.Modules.Notification.Abstractions;
-global using Kela.Core.Modules.Permission.Abstractions;
 global using Kela.Core.Modules.PrivacyPolicy.Abstractions;
 global using Kela.Core.Modules.Progress.Abstractions;
 global using Kela.Core.Modules.Question.Abstractions;

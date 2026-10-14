@@ -15,7 +15,6 @@ using Kela.Core.Modules.Quiz.Services;
 using Kela.Core.Modules.Notification.Services;
 using Kela.Core.Modules.PrivacyPolicy.Services;
 using Kela.Core.Modules.Tenant.Services;
-using Kela.Core.Modules.Permission.Services;
 using Kela.Core.Modules.Dashboard.Services;
 using Kela.Core.Modules.Students.Services;
 using Kela.Core.Common.MultiTenancy;
@@ -86,9 +85,7 @@ public static class DependencyInjection
         services.AddScoped<Kela.Core.Modules.ScreenGuard.Abstractions.IScreenGuardService, Kela.Core.Modules.ScreenGuard.Services.ScreenGuardService>();
         services.AddScoped<INotificationService, NotificationService>();
         services.AddScoped<IPrivacyPolicyService, PrivacyPolicyService>();
-        services.AddScoped<ITenantService, TenantService>();
-        services.AddScoped<IPermissionService, PermissionService>();
-        services.AddScoped<IDashboardService, DashboardService>();
+        services.AddScoped<ITenantService, TenantService>();        services.AddScoped<IDashboardService, DashboardService>();
         services.AddScoped<IStudentManagementService, StudentManagementService>();
 
         services.AddHttpContextAccessor();

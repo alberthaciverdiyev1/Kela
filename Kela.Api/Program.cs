@@ -97,7 +97,6 @@ builder.Services.AddAuthorization(options =>
 var app = builder.Build();
 
 await app.Services.SeedDefaultAdminAsync(app.Configuration);
-await app.Services.SeedDefaultPermissionsAsync();
 
 app.UseMiddleware<ExceptionHandlingMiddleware>();
 
