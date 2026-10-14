@@ -1,6 +1,7 @@
 using Kela.App.Shared;
 using Kela.App.Shared.Services;
 using Kela.App.Shared.Services.Api;
+using Kela.App.Shared.Services.Localization;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 
@@ -17,5 +18,6 @@ builder.Services.AddScoped<AudioPlayerService>();
 builder.Services.AddScoped<IScreenGuard, WebScreenGuard>();
 builder.Services.AddScoped<IDeviceTokenProvider, WebDeviceTokenProvider>();
 builder.Services.AddScoped<PushTokenService>();
+builder.Services.AddScoped<Localizer>();
 
 await builder.Build().RunAsync();

@@ -23,6 +23,7 @@ public partial class MainLayout
             await RestoreAsync();
         }
 
+        await Lang.InitAsync();
         await ApplyScreenGuardAsync();
         _ready = true;
     }

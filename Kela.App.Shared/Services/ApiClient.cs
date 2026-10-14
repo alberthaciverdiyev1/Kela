@@ -2,11 +2,12 @@ using System.Net;
 using System.Net.Http.Headers;
 using System.Net.Http.Json;
 using System.Text.Json;
+using Kela.App.Shared.Services.Localization;
 
 namespace Kela.App.Shared.Services;
 
 /// <summary>API çağırışları: `{success, data, message}` zərfini açır.</summary>
-public sealed class ApiClient(HttpClient http, AuthState auth, TokenStore store)
+public sealed class ApiClient(HttpClient http, AuthState auth, TokenStore store, Localizer lang)
 {
     private static readonly JsonSerializerOptions JsonOptions = new(JsonSerializerDefaults.Web);
 
@@ -17,6 +18,9 @@ public sealed class ApiClient(HttpClient http, AuthState auth, TokenStore store)
         http.DefaultRequestHeaders.Authorization = string.IsNullOrWhiteSpace(Token)
             ? null
             : new AuthenticationHeaderValue("Bearer", Token);
+
+        http.DefaultRequestHeaders.AcceptLanguage.Clear();
+        http.DefaultRequestHeaders.AcceptLanguage.Add(new StringWithQualityHeaderValue(lang.Current));
     }
 
     public Task<T> GetAsync<T>(string path) => SendAsync<T>(HttpMethod.Get, path, null);

@@ -7,6 +7,9 @@
 @inject IScreenGuard ScreenGuard
 @inject PushTokenService Push
 
+@using Kela.App.Shared.Services.Localization
+@inject Localizer Lang
+
 @if (!_ready)
 {
     <Loader/>
