@@ -1,5 +1,6 @@
 using Kela.Core;
 using Kela.Core.Data;
+using Kela.Core.Modules.Auth;
 using Kela.Mvc.Infrastructure;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
@@ -22,10 +23,17 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
         options.SlidingExpiration = true;
     });
 
-// Fallback: [AllowAnonymous] olmayan bütün səhifələr autentifikasiya tələb edir
+// Yalnız personel (teacher/admin/superadmin) MVC-yə girə bilər; student yalnız API-yə.
 builder.Services.AddAuthorization(options =>
 {
-    options.FallbackPolicy = new AuthorizationPolicyBuilder().RequireAuthenticatedUser().Build();
+    options.AddPolicy(AuthPolicies.Teacher, p => p.RequireRole(AuthRoles.Teacher, AuthRoles.Admin, AuthRoles.SuperAdmin));
+    options.AddPolicy(AuthPolicies.Admin, p => p.RequireRole(AuthRoles.Admin, AuthRoles.SuperAdmin));
+    options.AddPolicy(AuthPolicies.SuperAdmin, p => p.RequireRole(AuthRoles.SuperAdmin));
+
+    options.FallbackPolicy = new AuthorizationPolicyBuilder()
+        .RequireAuthenticatedUser()
+        .RequireRole(AuthRoles.Teacher, AuthRoles.Admin, AuthRoles.SuperAdmin)
+        .Build();
 });
 
 var app = builder.Build();

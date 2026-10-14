@@ -1,10 +1,13 @@
 using Kela.Core.Common.Caching;
+using Kela.Core.Modules.Auth;
 using Kela.Core.Modules.Setting.Abstractions;
 using Kela.Core.Modules.Setting.Requests;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Kela.Mvc.Controllers;
 
+[Authorize(Policy = AuthPolicies.Admin)]
 [Route("[controller]")]
 public sealed class SettingController(ISettingService service, IAppCache cache) : Controller
 {

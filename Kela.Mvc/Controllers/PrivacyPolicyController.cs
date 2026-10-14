@@ -1,9 +1,12 @@
+using Kela.Core.Modules.Auth;
 using Kela.Core.Modules.PrivacyPolicy.Abstractions;
 using Kela.Core.Modules.PrivacyPolicy.Requests;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Kela.Mvc.Controllers;
 
+[Authorize(Policy = AuthPolicies.Admin)]
 [Route("[controller]")]
 public sealed class PrivacyPolicyController(IPrivacyPolicyService service) : Controller
 {

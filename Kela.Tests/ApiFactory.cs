@@ -34,10 +34,10 @@ public sealed class ApiFactory : WebApplicationFactory<Program>, IAsyncLifetime
         // Host-ı işə sal (Program admin + icazələri seed edir) və admin tokeni yarat.
         using var scope = Services.CreateScope();
         var admin = await scope.ServiceProvider.GetRequiredService<AppDbContext>()
-            .Users.IgnoreQueryFilters().FirstAsync(u => u.Type == UserTypes.Admin);
+            .Users.IgnoreQueryFilters().FirstAsync(u => u.Type == UserTypes.SuperAdmin);
 
         var tokens = scope.ServiceProvider.GetRequiredService<ITokenService>();
-        AdminToken = tokens.CreateToken(admin.Id, admin.Email, admin.Name ?? "Admin", "admin", 0);
+        AdminToken = tokens.CreateToken(admin.Id, admin.Email, admin.Name ?? "SuperAdmin", "superadmin", 0);
     }
 
     /// <summary>Admin tokeni ilə client — şagird olmayan istifadəçi yoxlamaları üçün.</summary>

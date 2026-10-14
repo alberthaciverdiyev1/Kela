@@ -19,8 +19,9 @@ public class User : BaseEntity
 
 public static class UserTypes
 {
-    public const string Admin = "admin";
     public const string Teacher = "teacher";
+    public const string Admin = "admin";
+    public const string SuperAdmin = "superadmin";
 
-    public static bool IsValid(string type) => type is Admin or Teacher;
+    public static bool IsValid(string type) => type is Teacher or Admin or SuperAdmin;
 }

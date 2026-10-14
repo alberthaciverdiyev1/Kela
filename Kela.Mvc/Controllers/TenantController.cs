@@ -1,9 +1,12 @@
+using Kela.Core.Modules.Auth;
 using Kela.Core.Modules.Tenant.Abstractions;
 using Kela.Core.Modules.Tenant.Requests;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Kela.Mvc.Controllers;
 
+[Authorize(Policy = AuthPolicies.Admin)]
 [Route("[controller]")]
 public sealed class TenantController(ITenantService service) : Controller
 {

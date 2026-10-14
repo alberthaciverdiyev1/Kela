@@ -13,7 +13,7 @@ public sealed class UserUpsertRequestValidator : AbstractValidator<UserUpsertReq
             .EmailAddress().WithMessage("Email is not valid");
 
         RuleFor(x => x.Type)
-            .Must(UserTypes.IsValid).WithMessage("Type must be 'admin' or 'teacher'");
+            .Must(UserTypes.IsValid).WithMessage("Type must be 'teacher', 'admin' or 'superadmin'");
 
         RuleFor(x => x.Password)
             .MinimumLength(6).WithMessage("Password must be at least 6 characters")

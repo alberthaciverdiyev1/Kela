@@ -4,6 +4,10 @@
         new() { Value = "teacher", Text = "Müəllim" },
         new() { Value = "admin", Text = "Admin" }
     };
+    if (User.IsInRole(AuthRoles.SuperAdmin))
+    {
+        typeOptions.Add(new() { Value = "superadmin", Text = "SuperAdmin" });
+    }
 }
 <div id="modal" class="fixed inset-0 z-50 hidden items-center justify-center bg-slate-950/40 p-4">
     <div class="max-h-[90vh] w-full max-w-lg overflow-y-auto rounded-2xl bg-white shadow-2xl">

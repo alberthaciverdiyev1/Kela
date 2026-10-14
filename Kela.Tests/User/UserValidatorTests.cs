@@ -10,6 +10,7 @@ public class UserValidatorTests
     [Theory]
     [InlineData("admin")]
     [InlineData("teacher")]
+    [InlineData("superadmin")]
     public void Valid_type_passes(string type)
         => Assert.True(_validator.Validate(new UserUpsertRequest { Email = "a@b.com", Type = type }).IsValid);
 

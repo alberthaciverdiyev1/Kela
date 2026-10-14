@@ -84,8 +84,9 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
 builder.Services.AddAuthorization(options =>
 {
     options.AddPolicy(AuthPolicies.Student, p => p.RequireRole(AuthRoles.Student));
-    options.AddPolicy(AuthPolicies.Teacher, p => p.RequireRole(AuthRoles.Teacher, AuthRoles.Admin));
-    options.AddPolicy(AuthPolicies.Admin, p => p.RequireRole(AuthRoles.Admin));
+    options.AddPolicy(AuthPolicies.Teacher, p => p.RequireRole(AuthRoles.Teacher, AuthRoles.Admin, AuthRoles.SuperAdmin));
+    options.AddPolicy(AuthPolicies.Admin, p => p.RequireRole(AuthRoles.Admin, AuthRoles.SuperAdmin));
+    options.AddPolicy(AuthPolicies.SuperAdmin, p => p.RequireRole(AuthRoles.SuperAdmin));
 
     // Qlobal qorunma: auth olmadan heç bir endpoint işləməz.
     // Yalnız [AllowAnonymous] işarələnmiş endpoint-lər (auth: login/register/OTP) istisnadır.
