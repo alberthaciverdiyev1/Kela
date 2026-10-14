@@ -3,12 +3,12 @@
 }
 <section class="admin-page">
     <partial name="Ui/_PageHeader" model="@(new PageHeaderModel {
-        Title = "Fənlər",
-        Subtitle = "Tədris olunan fənləri idarə edin.",
-        CreateText = "Yeni fənn",
+        Title = L["Nav_Subjects"],
+        Subtitle = L["Subject_Subtitle"],
+        CreateText = L["Subject_Create"],
         StatCard = new StatCardModel {
             Id = "stat_total",
-            Label = "Cəmi fənn",
+            Label = L["Subject_Total"],
             Icon = "<path stroke-linecap='round' stroke-linejoin='round' d='m4 7 8-4 8 4-8 4-8-4Zm0 5 8 4 8-4M4 17l8 4 8-4' />"
         }
     })" />
@@ -20,11 +20,11 @@
                     <span class="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400">
                         <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="m21 21-4.35-4.35M11 18a7 7 0 1 1 0-14 7 7 0 0 1 0 14Z" /></svg>
                     </span>
-                    <input id="search" name="search" type="search" class="admin-field pl-11" placeholder="Fənn adı üzrə axtar..." />
+                    <input id="search" name="search" type="search" class="admin-field pl-11" placeholder="@L["Subject_Search"]" />
                 </label>
             </div>
-            <button type="button" id="trashBtn" class="admin-button-secondary h-[46px] px-4" onclick="toggleTrash()">Silinənlər</button>
-            <button type="button" onclick="loadList(1)" class="admin-button-primary h-[46px] px-6">Axtar</button>
+            <button type="button" id="trashBtn" class="admin-button-secondary h-[46px] px-4" onclick="toggleTrash()">@L["Common_DeletedItems"]</button>
+            <button type="button" onclick="loadList(1)" class="admin-button-primary h-[46px] px-6">@L["Common_Search"]</button>
         </div>
 
         <partial name="Ui/_BulkBar" model="@(new BulkBarModel { Url = "/subject/bulk" })" />
@@ -38,7 +38,7 @@
                             <th class="w-12"><input type="checkbox" id="checkAll" class="h-5 w-5 rounded-md border-slate-300 text-primary focus:ring-primary" /></th>
                             <th class="w-16">#</th>
                             <th>Ad</th>
-                            <th class="text-right">Əməliyyatlar</th>
+                            <th class="text-right">@L["Common_Actions"]</th>
                         </tr>
                     </thead>
                     <tbody id="rows"></tbody>
@@ -47,7 +47,7 @@
         </div>
 
         <div class="admin-table-footer">
-            <p id="tableInfo" class="text-sm font-medium text-slate-500">Nəticələr yüklənir...</p>
+            <p id="tableInfo" class="text-sm font-medium text-slate-500">@L["Common_LoadingResults"]</p>
             <div id="pagination" class="flex flex-wrap justify-end gap-2"></div>
         </div>
     </div>

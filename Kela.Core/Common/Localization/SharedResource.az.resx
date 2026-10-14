@@ -286,4 +286,76 @@
   <data name="Sort_Hint" xml:space="preserve">
     <value>Elementləri yuxarı/aşağı köçürərək sıralayın, sonra yadda saxlayın.</value>
   </data>
+  <data name="Common_Actions" xml:space="preserve">
+    <value>Əməliyyatlar</value>
+  </data>
+  <data name="Common_DeletedItems" xml:space="preserve">
+    <value>Silinənlər</value>
+  </data>
+  <data name="Common_Search" xml:space="preserve">
+    <value>Axtar</value>
+  </data>
+  <data name="Common_LoadingResults" xml:space="preserve">
+    <value>Nəticələr yüklənir...</value>
+  </data>
+  <data name="Common_All" xml:space="preserve">
+    <value>Hamısı</value>
+  </data>
+  <data name="Common_Archived" xml:space="preserve">
+    <value>Arxivdə</value>
+  </data>
+  <data name="Common_Status" xml:space="preserve">
+    <value>Status</value>
+  </data>
+  <data name="Common_NoData" xml:space="preserve">
+    <value>Məlumat yoxdur</value>
+  </data>
+  <data name="Common_Subject" xml:space="preserve">
+    <value>Fənn</value>
+  </data>
+  <data name="Common_Order" xml:space="preserve">
+    <value>Sıra</value>
+  </data>
+  <data name="Dashboard_Subtitle" xml:space="preserve">
+    <value>Platformanın ümumi vəziyyətinə bir baxış.</value>
+  </data>
+  <data name="Dashboard_QuizAttempts" xml:space="preserve">
+    <value>İmtahan cəhdləri (30 gün)</value>
+  </data>
+  <data name="Dashboard_ActiveStudents" xml:space="preserve">
+    <value>İmtahan verən şagirdlər (30 gün)</value>
+  </data>
+  <data name="Dashboard_Content" xml:space="preserve">
+    <value>Məzmun</value>
+  </data>
+  <data name="Dashboard_TopSubjects" xml:space="preserve">
+    <value>Top fənlər</value>
+  </data>
+  <data name="Dashboard_RecentStudents" xml:space="preserve">
+    <value>Son şagirdlər</value>
+  </data>
+  <data name="Subject_Subtitle" xml:space="preserve">
+    <value>Tədris olunan fənləri idarə edin.</value>
+  </data>
+  <data name="Subject_Create" xml:space="preserve">
+    <value>Yeni fənn</value>
+  </data>
+  <data name="Subject_Total" xml:space="preserve">
+    <value>Cəmi fənn</value>
+  </data>
+  <data name="Subject_Search" xml:space="preserve">
+    <value>Fənn adı üzrə axtar...</value>
+  </data>
+  <data name="Lesson_Subtitle" xml:space="preserve">
+    <value>Fənlər üzrə dərsləri yaradın və sıralayın.</value>
+  </data>
+  <data name="Lesson_Create" xml:space="preserve">
+    <value>Yeni dərs</value>
+  </data>
+  <data name="Lesson_Total" xml:space="preserve">
+    <value>Cəmi dərs</value>
+  </data>
+  <data name="Lesson_Search" xml:space="preserve">
+    <value>Dərs adı və ya müəllim üzrə axtar...</value>
+  </data>
 </root>

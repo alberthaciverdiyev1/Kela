@@ -286,4 +286,76 @@
   <data name="Sort_Hint" xml:space="preserve">
     <value>Move items up/down to sort, then save.</value>
   </data>
+  <data name="Common_Actions" xml:space="preserve">
+    <value>Actions</value>
+  </data>
+  <data name="Common_DeletedItems" xml:space="preserve">
+    <value>Deleted</value>
+  </data>
+  <data name="Common_Search" xml:space="preserve">
+    <value>Search</value>
+  </data>
+  <data name="Common_LoadingResults" xml:space="preserve">
+    <value>Loading results...</value>
+  </data>
+  <data name="Common_All" xml:space="preserve">
+    <value>All</value>
+  </data>
+  <data name="Common_Archived" xml:space="preserve">
+    <value>Archived</value>
+  </data>
+  <data name="Common_Status" xml:space="preserve">
+    <value>Status</value>
+  </data>
+  <data name="Common_NoData" xml:space="preserve">
+    <value>No data</value>
+  </data>
+  <data name="Common_Subject" xml:space="preserve">
+    <value>Subject</value>
+  </data>
+  <data name="Common_Order" xml:space="preserve">
+    <value>Order</value>
+  </data>
+  <data name="Dashboard_Subtitle" xml:space="preserve">
+    <value>An overview of the platform.</value>
+  </data>
+  <data name="Dashboard_QuizAttempts" xml:space="preserve">
+    <value>Quiz attempts (30 days)</value>
+  </data>
+  <data name="Dashboard_ActiveStudents" xml:space="preserve">
+    <value>Students taking quizzes (30 days)</value>
+  </data>
+  <data name="Dashboard_Content" xml:space="preserve">
+    <value>Content</value>
+  </data>
+  <data name="Dashboard_TopSubjects" xml:space="preserve">
+    <value>Top subjects</value>
+  </data>
+  <data name="Dashboard_RecentStudents" xml:space="preserve">
+    <value>Recent students</value>
+  </data>
+  <data name="Subject_Subtitle" xml:space="preserve">
+    <value>Manage taught subjects.</value>
+  </data>
+  <data name="Subject_Create" xml:space="preserve">
+    <value>New subject</value>
+  </data>
+  <data name="Subject_Total" xml:space="preserve">
+    <value>Total subjects</value>
+  </data>
+  <data name="Subject_Search" xml:space="preserve">
+    <value>Search by subject name...</value>
+  </data>
+  <data name="Lesson_Subtitle" xml:space="preserve">
+    <value>Create and order lessons by subject.</value>
+  </data>
+  <data name="Lesson_Create" xml:space="preserve">
+    <value>New lesson</value>
+  </data>
+  <data name="Lesson_Total" xml:space="preserve">
+    <value>Total lessons</value>
+  </data>
+  <data name="Lesson_Search" xml:space="preserve">
+    <value>Search by lesson name or teacher...</value>
+  </data>
 </root>

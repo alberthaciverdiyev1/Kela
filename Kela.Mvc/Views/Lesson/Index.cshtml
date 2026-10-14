@@ -1,25 +1,25 @@
 @{
     ViewData["Title"] = "Dərslər";
     var subjects = (PagedResponse<SubjectResponse>)ViewData["Subjects"]!;
-    var subjectFilter = new List<SelectOption> { new() { Value = "", Text = "Hamısı" } };
+    var subjectFilter = new List<SelectOption> { new() { Value = "", Text = L["Common_All"] } };
     subjectFilter.AddRange(subjects.Data.Select(s => new SelectOption { Value = s.Id.ToString(), Text = s.Name }));
     var statusFilter = new List<SelectOption>
     {
-        new() { Value = "", Text = "Hamısı" },
-        new() { Value = "true", Text = "Aktiv" },
-        new() { Value = "false", Text = "Arxivdə" }
+        new() { Value = "", Text = L["Common_All"] },
+        new() { Value = "true", Text = L["Common_Active"] },
+        new() { Value = "false", Text = L["Common_Archived"] }
     };
 }
 <script>window.SUBJECTS = { @Html.Raw(string.Join(",", subjects.Data.Select(s => $"{s.Id}:\"{System.Text.Json.JsonEncodedText.Encode(s.Name)}\""))) }; </script>
 <section class="admin-page">
     <partial name="Ui/_PageHeader" model="@(new PageHeaderModel {
-        Title = "Dərslər",
-        Subtitle = "Fənlər üzrə dərsləri yaradın və sıralayın.",
-        CreateText = "Yeni dərs",
+        Title = L["Nav_Lessons"],
+        Subtitle = L["Lesson_Subtitle"],
+        CreateText = L["Lesson_Create"],
         Sortable = true,
         StatCard = new StatCardModel {
             Id = "stat_total",
-            Label = "Cəmi dərs",
+            Label = L["Lesson_Total"],
             Icon = "<path stroke-linecap='round' stroke-linejoin='round' d='M12 6.253v13m0-13C10.8 5.5 9 5 7 5S3.2 5.5 2 6.253v13C3.2 18.5 5 18 7 18s3.8.5 5 1.253m0-13C13.2 5.5 15 5 17 5s3.8.5 5 1.253v13C20.8 18.5 19 18 17 18s-3.8.5-5 1.253' />"
         }
     })" />
@@ -31,17 +31,17 @@
                     <span class="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400">
                         <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="m21 21-4.35-4.35M11 18a7 7 0 1 1 0-14 7 7 0 0 1 0 14Z" /></svg>
                     </span>
-                    <input id="search" name="search" type="search" class="admin-field pl-11" placeholder="Dərs adı və ya müəllim üzrə axtar..." />
+                    <input id="search" name="search" type="search" class="admin-field pl-11" placeholder="@L["Lesson_Search"]" />
                 </label>
             </div>
             <div class="w-44">
-                <partial name="Ui/_Select" model="@(new SelectModel { Name = "filter_subject", Id = "filter_subject", Label = "Fənn", Options = subjectFilter, Value = (string?)ViewData["SelectedSubjectId"] })" />
+                <partial name="Ui/_Select" model="@(new SelectModel { Name = "filter_subject", Id = "filter_subject", Label = L["Common_Subject"], Options = subjectFilter, Value = (string?)ViewData["SelectedSubjectId"] })" />
             </div>
             <div class="w-36">
-                <partial name="Ui/_Select" model="@(new SelectModel { Name = "filter_status", Id = "filter_status", Label = "Status", Options = statusFilter })" />
+                <partial name="Ui/_Select" model="@(new SelectModel { Name = "filter_status", Id = "filter_status", Label = L["Common_Status"], Options = statusFilter })" />
             </div>
-            <button type="button" id="trashBtn" class="admin-button-secondary h-[46px] px-4" onclick="toggleTrash()">Silinənlər</button>
-            <button type="button" onclick="loadList(1)" class="admin-button-primary h-[46px] px-6">Axtar</button>
+            <button type="button" id="trashBtn" class="admin-button-secondary h-[46px] px-4" onclick="toggleTrash()">@L["Common_DeletedItems"]</button>
+            <button type="button" onclick="loadList(1)" class="admin-button-primary h-[46px] px-6">@L["Common_Search"]</button>
         </div>
 
         <partial name="Ui/_BulkBar" model="@(new BulkBarModel { Url = "/lesson/bulk", CanActivate = true, CanDeactivate = true })" />
@@ -55,10 +55,10 @@
                             <th class="w-12"><input type="checkbox" id="checkAll" class="h-5 w-5 rounded-md border-slate-300 text-primary focus:ring-primary" /></th>
                             <th class="w-16">#</th>
                             <th>Ad</th>
-                            <th class="w-36">Fənn</th>
-                            <th class="w-24">Sıra</th>
-                            <th class="w-32">Status</th>
-                            <th class="text-right">Əməliyyatlar</th>
+                            <th class="w-36">@L["Common_Subject"]</th>
+                            <th class="w-24">@L["Common_Order"]</th>
+                            <th class="w-32">@L["Common_Status"]</th>
+                            <th class="text-right">@L["Common_Actions"]</th>
                         </tr>
                     </thead>
                     <tbody id="rows"></tbody>
@@ -67,7 +67,7 @@
         </div>
 
         <div class="admin-table-footer">
-            <p id="tableInfo" class="text-sm font-medium text-slate-500">Nəticələr yüklənir...</p>
+            <p id="tableInfo" class="text-sm font-medium text-slate-500">@L["Common_LoadingResults"]</p>
             <div id="pagination" class="flex flex-wrap justify-end gap-2"></div>
         </div>
     </div>

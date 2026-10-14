@@ -21,7 +21,7 @@
     };
 }
 <section class="admin-page">
-    <partial name="Ui/_PageHeader" model="@(new PageHeaderModel { Title = "Dashboard", Subtitle = "Platformanın ümumi vəziyyətinə bir baxış." })" />
+    <partial name="Ui/_PageHeader" model="@(new PageHeaderModel { Title = L["Nav_Dashboard"], Subtitle = L["Dashboard_Subtitle"] })" />
 
     <div class="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
         @foreach (var card in cards)
@@ -40,18 +40,18 @@
 
     <div class="grid gap-4 sm:grid-cols-2">
         <div class="admin-card p-5">
-            <p class="text-sm font-semibold text-slate-500">İmtahan cəhdləri (30 gün)</p>
+            <p class="text-sm font-semibold text-slate-500">@L["Dashboard_QuizAttempts"]</p>
             <p class="mt-1 text-3xl font-extrabold text-primary">@Model.Activity.QuizAttempts30d</p>
         </div>
         <div class="admin-card p-5">
-            <p class="text-sm font-semibold text-slate-500">İmtahan verən şagirdlər (30 gün)</p>
+            <p class="text-sm font-semibold text-slate-500">@L["Dashboard_ActiveStudents"]</p>
             <p class="mt-1 text-3xl font-extrabold text-primary">@Model.Activity.StudentsAttempted30d</p>
         </div>
     </div>
 
     <div class="grid gap-4 lg:grid-cols-3">
         <div class="admin-card p-5 lg:col-span-2">
-            <h3 class="mb-4 text-base font-bold text-slate-900">Məzmun</h3>
+            <h3 class="mb-4 text-base font-bold text-slate-900">@L["Dashboard_Content"]</h3>
             <div class="grid grid-cols-2 gap-3 sm:grid-cols-4">
                 @foreach (var c in content)
                 {
@@ -64,7 +64,7 @@
         </div>
 
         <div class="admin-card p-5">
-            <h3 class="mb-4 text-base font-bold text-slate-900">Top fənlər</h3>
+            <h3 class="mb-4 text-base font-bold text-slate-900">@L["Dashboard_TopSubjects"]</h3>
             <ul class="space-y-3">
                 @foreach (var s in Model.TopSubjects)
                 {
@@ -75,14 +75,14 @@
                 }
                 @if (Model.TopSubjects.Count == 0)
                 {
-                    <li class="text-sm text-slate-400">Məlumat yoxdur</li>
+                    <li class="text-sm text-slate-400">@L["Common_NoData"]</li>
                 }
             </ul>
         </div>
     </div>
 
     <div class="admin-card p-5">
-        <h3 class="mb-2 text-base font-bold text-slate-900">Son şagirdlər</h3>
+        <h3 class="mb-2 text-base font-bold text-slate-900">@L["Dashboard_RecentStudents"]</h3>
         <ul class="divide-y divide-border text-sm">
             @foreach (var st in Model.RecentStudents)
             {
@@ -93,7 +93,7 @@
             }
             @if (Model.RecentStudents.Count == 0)
             {
-                <li class="py-3 text-slate-400">Məlumat yoxdur</li>
+                <li class="py-3 text-slate-400">@L["Common_NoData"]</li>
             }
         </ul>
     </div>

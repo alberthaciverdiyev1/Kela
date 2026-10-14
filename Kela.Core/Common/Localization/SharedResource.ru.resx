@@ -286,4 +286,76 @@
   <data name="Sort_Hint" xml:space="preserve">
     <value>Перемещайте элементы вверх/вниз, затем сохраните.</value>
   </data>
+  <data name="Common_Actions" xml:space="preserve">
+    <value>Действия</value>
+  </data>
+  <data name="Common_DeletedItems" xml:space="preserve">
+    <value>Удалённые</value>
+  </data>
+  <data name="Common_Search" xml:space="preserve">
+    <value>Поиск</value>
+  </data>
+  <data name="Common_LoadingResults" xml:space="preserve">
+    <value>Загрузка результатов...</value>
+  </data>
+  <data name="Common_All" xml:space="preserve">
+    <value>Все</value>
+  </data>
+  <data name="Common_Archived" xml:space="preserve">
+    <value>В архиве</value>
+  </data>
+  <data name="Common_Status" xml:space="preserve">
+    <value>Статус</value>
+  </data>
+  <data name="Common_NoData" xml:space="preserve">
+    <value>Нет данных</value>
+  </data>
+  <data name="Common_Subject" xml:space="preserve">
+    <value>Предмет</value>
+  </data>
+  <data name="Common_Order" xml:space="preserve">
+    <value>Порядок</value>
+  </data>
+  <data name="Dashboard_Subtitle" xml:space="preserve">
+    <value>Обзор состояния платформы.</value>
+  </data>
+  <data name="Dashboard_QuizAttempts" xml:space="preserve">
+    <value>Попытки тестов (30 дней)</value>
+  </data>
+  <data name="Dashboard_ActiveStudents" xml:space="preserve">
+    <value>Ученики, сдающие тесты (30 дней)</value>
+  </data>
+  <data name="Dashboard_Content" xml:space="preserve">
+    <value>Содержимое</value>
+  </data>
+  <data name="Dashboard_TopSubjects" xml:space="preserve">
+    <value>Топ предметов</value>
+  </data>
+  <data name="Dashboard_RecentStudents" xml:space="preserve">
+    <value>Последние ученики</value>
+  </data>
+  <data name="Subject_Subtitle" xml:space="preserve">
+    <value>Управляйте предметами.</value>
+  </data>
+  <data name="Subject_Create" xml:space="preserve">
+    <value>Новый предмет</value>
+  </data>
+  <data name="Subject_Total" xml:space="preserve">
+    <value>Всего предметов</value>
+  </data>
+  <data name="Subject_Search" xml:space="preserve">
+    <value>Поиск по названию предмета...</value>
+  </data>
+  <data name="Lesson_Subtitle" xml:space="preserve">
+    <value>Создавайте и упорядочивайте уроки.</value>
+  </data>
+  <data name="Lesson_Create" xml:space="preserve">
+    <value>Новый урок</value>
+  </data>
+  <data name="Lesson_Total" xml:space="preserve">
+    <value>Всего уроков</value>
+  </data>
+  <data name="Lesson_Search" xml:space="preserve">
+    <value>Поиск по названию урока или учителю...</value>
+  </data>
 </root>

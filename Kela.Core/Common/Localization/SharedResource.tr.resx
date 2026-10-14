@@ -286,4 +286,76 @@
   <data name="Sort_Hint" xml:space="preserve">
     <value>Öğeleri yukarı/aşağı taşıyarak sıralayın, sonra kaydedin.</value>
   </data>
+  <data name="Common_Actions" xml:space="preserve">
+    <value>İşlemler</value>
+  </data>
+  <data name="Common_DeletedItems" xml:space="preserve">
+    <value>Silinenler</value>
+  </data>
+  <data name="Common_Search" xml:space="preserve">
+    <value>Ara</value>
+  </data>
+  <data name="Common_LoadingResults" xml:space="preserve">
+    <value>Sonuçlar yükleniyor...</value>
+  </data>
+  <data name="Common_All" xml:space="preserve">
+    <value>Tümü</value>
+  </data>
+  <data name="Common_Archived" xml:space="preserve">
+    <value>Arşivde</value>
+  </data>
+  <data name="Common_Status" xml:space="preserve">
+    <value>Durum</value>
+  </data>
+  <data name="Common_NoData" xml:space="preserve">
+    <value>Veri yok</value>
+  </data>
+  <data name="Common_Subject" xml:space="preserve">
+    <value>Ders</value>
+  </data>
+  <data name="Common_Order" xml:space="preserve">
+    <value>Sıra</value>
+  </data>
+  <data name="Dashboard_Subtitle" xml:space="preserve">
+    <value>Platformanın genel durumuna bakış.</value>
+  </data>
+  <data name="Dashboard_QuizAttempts" xml:space="preserve">
+    <value>Sınav denemeleri (30 gün)</value>
+  </data>
+  <data name="Dashboard_ActiveStudents" xml:space="preserve">
+    <value>Sınav olan öğrenciler (30 gün)</value>
+  </data>
+  <data name="Dashboard_Content" xml:space="preserve">
+    <value>İçerik</value>
+  </data>
+  <data name="Dashboard_TopSubjects" xml:space="preserve">
+    <value>En iyi dersler</value>
+  </data>
+  <data name="Dashboard_RecentStudents" xml:space="preserve">
+    <value>Son öğrenciler</value>
+  </data>
+  <data name="Subject_Subtitle" xml:space="preserve">
+    <value>Okutulan dersleri yönetin.</value>
+  </data>
+  <data name="Subject_Create" xml:space="preserve">
+    <value>Yeni ders</value>
+  </data>
+  <data name="Subject_Total" xml:space="preserve">
+    <value>Toplam ders</value>
+  </data>
+  <data name="Subject_Search" xml:space="preserve">
+    <value>Ders adına göre ara...</value>
+  </data>
+  <data name="Lesson_Subtitle" xml:space="preserve">
+    <value>Dersleri oluşturun ve sıralayın.</value>
+  </data>
+  <data name="Lesson_Create" xml:space="preserve">
+    <value>Yeni ders</value>
+  </data>
+  <data name="Lesson_Total" xml:space="preserve">
+    <value>Toplam ders</value>
+  </data>
+  <data name="Lesson_Search" xml:space="preserve">
+    <value>Ders adına veya öğretmene göre ara...</value>
+  </data>
 </root>
