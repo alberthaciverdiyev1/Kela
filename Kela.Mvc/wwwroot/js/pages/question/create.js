@@ -17,6 +17,8 @@
         const titleType = document.getElementById('title_type').value;
         document.getElementById('titleTextBlock').classList.toggle('hidden', titleType === 'image');
         document.getElementById('titleImageBlock').classList.toggle('hidden', titleType !== 'image');
+        // Gizli required sahə brauzerin formu submit etməsinə mane olur — rejimə görə söndür
+        document.getElementById('title').required = titleType === 'text';
 
         const variantType = document.getElementById('variant_type').value;
         document.getElementById('variantsTextBlock').classList.toggle('hidden', variantType === 'image');
