@@ -1,6 +1,7 @@
 @inject NavigationManager Nav
+@inject AuthState Auth
 
-<header class="sticky top-0 z-30 hidden h-[68px] items-center gap-6 border-b border-brand-086 bg-brand-022/95 px-8 backdrop-blur md:flex">
+<header class="sticky top-0 z-30 hidden h-[68px] grid-cols-[auto_1fr_auto] items-center gap-6 border-b border-brand-086 bg-brand-022/95 px-8 backdrop-blur md:grid">
     <a href="/" class="flex shrink-0 items-center gap-2.5">
         <div class="flex size-8 items-center justify-center rounded-lg bg-brand-743 text-white">
             <Icon Name="book" Class="size-4" />
@@ -8,15 +9,30 @@
         <span class="text-[19px] font-semibold tracking-[-0.04em]">Kela</span>
     </a>
 
-    @* overflow-x-auto: dar ekranlarda maddeler itməz, sürüşdürülə bilər *@
-    <nav class="-mx-2 flex flex-1 items-center gap-1 overflow-x-auto px-2 [scrollbar-width:none]">
+    @* Ortalanmış menyu; overflow-x-auto: dar ekranlarda maddeler itməz, sürüşdürülə bilər *@
+    <nav class="-mx-2 flex items-center justify-center gap-1 overflow-x-auto px-2 [scrollbar-width:none]">
         <TopNavItem Href="/" Label="Overview" IconName="dashboard" MatchAll="true" />
         <TopNavItem Href="/groups" Label="Groups" IconName="book" />
         <TopNavItem Href="/exams" Label="Exams" IconName="file" />
         <TopNavItem Href="/results" Label="Results" IconName="clipboard-check" />
-        <TopNavItem Href="/notifications" Label="Notifications" IconName="bell" />
-        <TopNavItem Href="/profile" Label="Profile" IconName="users" />
+        <TopNavItem Href="/contact" Label="Contact" IconName="mail" />
     </nav>
 
-    <TopNavItem Href="/contact" Label="Contact" IconName="mail" />
+    <div class="flex items-center justify-self-end gap-3">
+        <a href="/notifications" aria-label="Bildirişlər"
+           class="grid size-9 place-items-center rounded-full text-sage-473 transition hover:bg-brand-041 hover:text-brand-743">
+            <Icon Name="bell" Class="size-[18px]" />
+        </a>
+        <span class="max-w-[160px] truncate text-[13px] font-semibold text-brand-722">@(Auth.User?.FullName ?? "Şagird")</span>
+        <a href="/profile" aria-label="Profil">
+            @if (!string.IsNullOrWhiteSpace(Auth.User?.Image))
+            {
+                <img src="@Auth.User!.Image" alt="" class="size-9 rounded-full object-cover" />
+            }
+            else
+            {
+                <span class="grid size-9 place-items-center rounded-full bg-brand-103 text-[13px] font-bold text-brand-835">@(Auth.User?.Initial ?? "L")</span>
+            }
+        </a>
+    </div>
 </header>
