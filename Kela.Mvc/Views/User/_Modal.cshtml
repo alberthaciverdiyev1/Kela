@@ -1,38 +1,38 @@
 @{
     var typeOptions = new List<SelectOption>
     {
-        new() { Value = "teacher", Text = "Müəllim" },
-        new() { Value = "admin", Text = "Admin" }
+        new() { Value = "teacher", Text = L["Role_Teacher"] },
+        new() { Value = "admin", Text = L["Role_Admin"] }
     };
     if (User.IsInRole(AuthRoles.SuperAdmin))
     {
-        typeOptions.Add(new() { Value = "superadmin", Text = "SuperAdmin" });
+        typeOptions.Add(new() { Value = "superadmin", Text = L["Role_SuperAdmin"] });
     }
 }
 <div id="modal" class="fixed inset-0 z-50 hidden items-center justify-center bg-slate-950/40 p-4">
     <div class="max-h-[90vh] w-full max-w-lg overflow-y-auto rounded-2xl bg-white shadow-2xl">
         <div class="flex items-center justify-between border-b border-border p-5">
-            <h3 id="modalTitle" class="text-lg font-bold text-slate-900">Yeni istifadəçi</h3>
+            <h3 id="modalTitle" class="text-lg font-bold text-slate-900">@L["User_Create"]</h3>
             <button type="button" onclick="closeModal()" class="rounded-xl p-2 text-slate-400 hover:bg-slate-100">✕</button>
         </div>
         <div id="formError" class="mx-6 mt-4 hidden rounded-xl bg-danger-bg px-3 py-2 text-sm font-semibold text-danger"></div>
         <form id="entityForm" class="space-y-4 p-6">
             <input type="hidden" id="entityId" />
             <div class="grid grid-cols-2 gap-4">
-                <partial name="Ui/_Input" model="@(new InputModel { Name = "name", Id = "name", Label = "Ad" })" />
-                <partial name="Ui/_Input" model="@(new InputModel { Name = "surname", Id = "surname", Label = "Soyad" })" />
+                <partial name="Ui/_Input" model="@(new InputModel { Name = "name", Id = "name", Label = L["Common_Name"] })" />
+                <partial name="Ui/_Input" model="@(new InputModel { Name = "surname", Id = "surname", Label = L["User_Surname"] })" />
             </div>
-            <partial name="Ui/_Input" model="@(new InputModel { Name = "email", Id = "email", Label = "Email", Type = "email", Required = true })" />
-            <partial name="Ui/_Input" model="@(new InputModel { Name = "phoneNumber", Id = "phoneNumber", Label = "Telefon" })" />
-            <partial name="Ui/_Select" model="@(new SelectModel { Name = "type", Id = "type", Label = "Tip", Options = typeOptions })" />
+            <partial name="Ui/_Input" model="@(new InputModel { Name = "email", Id = "email", Label = L["Common_Email"], Type = "email", Required = true })" />
+            <partial name="Ui/_Input" model="@(new InputModel { Name = "phoneNumber", Id = "phoneNumber", Label = L["Common_Phone"] })" />
+            <partial name="Ui/_Select" model="@(new SelectModel { Name = "type", Id = "type", Label = L["Common_Type"], Options = typeOptions })" />
             <div>
-                <label class="mb-1 block text-sm font-medium text-slate-700">Şifrə</label>
+                <label class="mb-1 block text-sm font-medium text-slate-700">@L["Common_Password"]</label>
                 <input id="password" type="password" class="block w-full rounded-lg border border-slate-300 bg-slate-50 p-2.5 text-sm" />
-                <p id="passwordHint" class="mt-1 hidden text-xs text-slate-400">Boş buraxsan şifrə dəyişməz.</p>
+                <p id="passwordHint" class="mt-1 hidden text-xs text-slate-400">@L["User_PasswordHint"]</p>
             </div>
             <div class="flex justify-end gap-3 pt-2">
-                <partial name="Ui/_Button" model="@(new ButtonModel { Text = "İmtina", Variant = "secondary", OnClick = "closeModal()" })" />
-                <partial name="Ui/_Button" model="@(new ButtonModel { Text = "Yadda saxla", Type = "submit" })" />
+                <partial name="Ui/_Button" model="@(new ButtonModel { Text = L["Common_Cancel"], Variant = "secondary", OnClick = "closeModal()" })" />
+                <partial name="Ui/_Button" model="@(new ButtonModel { Text = L["Common_Save"], Type = "submit" })" />
             </div>
         </form>
     </div>

@@ -358,4 +358,373 @@
   <data name="Lesson_Search" xml:space="preserve">
     <value>Поиск по названию урока или учителю...</value>
   </data>
+  <data name="Common_Show" xml:space="preserve">
+    <value>Показать</value>
+  </data>
+  <data name="Common_Title" xml:space="preserve">
+    <value>Заголовок</value>
+  </data>
+  <data name="Common_Lesson" xml:space="preserve">
+    <value>Урок</value>
+  </data>
+  <data name="Common_Type" xml:space="preserve">
+    <value>Тип</value>
+  </data>
+  <data name="Common_Teacher" xml:space="preserve">
+    <value>Учитель</value>
+  </data>
+  <data name="Common_Student" xml:space="preserve">
+    <value>Ученик</value>
+  </data>
+  <data name="Common_Name" xml:space="preserve">
+    <value>Название</value>
+  </data>
+  <data name="Common_Phone" xml:space="preserve">
+    <value>Телефон</value>
+  </data>
+  <data name="Common_Group" xml:space="preserve">
+    <value>Группа</value>
+  </data>
+  <data name="Common_General" xml:space="preserve">
+    <value>Общее</value>
+  </data>
+  <data name="Common_Question" xml:space="preserve">
+    <value>Вопрос</value>
+  </data>
+  <data name="Common_Image" xml:space="preserve">
+    <value>Изображение</value>
+  </data>
+  <data name="Common_Content" xml:space="preserve">
+    <value>Содержимое</value>
+  </data>
+  <data name="Common_Date" xml:space="preserve">
+    <value>Дата</value>
+  </data>
+  <data name="Common_Contact" xml:space="preserve">
+    <value>Связь</value>
+  </data>
+  <data name="Common_Body" xml:space="preserve">
+    <value>Текст</value>
+  </data>
+  <data name="Common_NewMaterial" xml:space="preserve">
+    <value>Новый материал</value>
+  </data>
+  <data name="Common_LessonExams" xml:space="preserve">
+    <value>Экзамены уроков</value>
+  </data>
+  <data name="Common_SelectGroup" xml:space="preserve">
+    <value>Выберите группу</value>
+  </data>
+  <data name="LessonContent_Subtitle" xml:space="preserve">
+    <value>Управляйте видео, файлами и аудио уроков.</value>
+  </data>
+  <data name="Question_Create" xml:space="preserve">
+    <value>Новый вопрос</value>
+  </data>
+  <data name="Question_Correct" xml:space="preserve">
+    <value>Правильный</value>
+  </data>
+  <data name="Question_Search" xml:space="preserve">
+    <value>Поиск по тексту вопроса...</value>
+  </data>
+  <data name="Question_Subtitle" xml:space="preserve">
+    <value>Управляйте тестовыми вопросами по предметам.</value>
+  </data>
+  <data name="Quiz_Create" xml:space="preserve">
+    <value>Новый экзамен</value>
+  </data>
+  <data name="Quiz_Duration" xml:space="preserve">
+    <value>Длительность</value>
+  </data>
+  <data name="Quiz_Subtitle" xml:space="preserve">
+    <value>Управляйте уроками, экзаменами и выбором вопросов.</value>
+  </data>
+  <data name="Group_Create" xml:space="preserve">
+    <value>Новая группа</value>
+  </data>
+  <data name="Group_Search" xml:space="preserve">
+    <value>Поиск по названию группы...</value>
+  </data>
+  <data name="Group_Subtitle" xml:space="preserve">
+    <value>Управляйте группами учеников, учителями и участниками.</value>
+  </data>
+  <data name="GroupStat_Attempt" xml:space="preserve">
+    <value>Попытка</value>
+  </data>
+  <data name="GroupStat_Wrong" xml:space="preserve">
+    <value>Неверный</value>
+  </data>
+  <data name="GroupStat_Subtitle" xml:space="preserve">
+    <value>Просматривайте результаты экзаменов по группам и экспортируйте в Excel.</value>
+  </data>
+  <data name="Students_Subtitle" xml:space="preserve">
+    <value>Управляйте аккаунтами учеников, статусами и устройствами.</value>
+  </data>
+  <data name="Students_Search" xml:space="preserve">
+    <value>Поиск по имени / email / телефону...</value>
+  </data>
+  <data name="User_Create" xml:space="preserve">
+    <value>Новый пользователь</value>
+  </data>
+  <data name="User_Search" xml:space="preserve">
+    <value>Поиск по имени / email...</value>
+  </data>
+  <data name="User_Subtitle" xml:space="preserve">
+    <value>Управляйте аккаунтами админов и учителей.</value>
+  </data>
+  <data name="Tenant_Create" xml:space="preserve">
+    <value>Новый арендатор</value>
+  </data>
+  <data name="Tenant_Subtitle" xml:space="preserve">
+    <value>Управляйте арендаторами для отдельных организаций.</value>
+  </data>
+  <data name="Notification_Create" xml:space="preserve">
+    <value>Новое уведомление</value>
+  </data>
+  <data name="Notification_Target" xml:space="preserve">
+    <value>Получатели</value>
+  </data>
+  <data name="Notification_Subtitle" xml:space="preserve">
+    <value>Управляйте уведомлениями для учеников.</value>
+  </data>
+  <data name="Banner_Create" xml:space="preserve">
+    <value>Новый баннер</value>
+  </data>
+  <data name="Banner_Total" xml:space="preserve">
+    <value>Всего баннеров</value>
+  </data>
+  <data name="Banner_Search" xml:space="preserve">
+    <value>Поиск по заголовку баннера...</value>
+  </data>
+  <data name="Banner_Subtitle" xml:space="preserve">
+    <value>Управляйте баннерами на стартовом экране приложения.</value>
+  </data>
+  <data name="Certificate_Create" xml:space="preserve">
+    <value>Новый сертификат</value>
+  </data>
+  <data name="Certificate_Signature" xml:space="preserve">
+    <value>Подпись</value>
+  </data>
+  <data name="Certificate_Total" xml:space="preserve">
+    <value>Всего сертификатов</value>
+  </data>
+  <data name="Certificate_Search" xml:space="preserve">
+    <value>Поиск по заголовку...</value>
+  </data>
+  <data name="Certificate_Template" xml:space="preserve">
+    <value>Шаблон</value>
+  </data>
+  <data name="Certificate_Subtitle" xml:space="preserve">
+    <value>Выберите шаблон, заполните текст и подпись.</value>
+  </data>
+  <data name="Privacy_Create" xml:space="preserve">
+    <value>Новый документ</value>
+  </data>
+  <data name="Privacy_Title" xml:space="preserve">
+    <value>Конфиденциальность и условия</value>
+  </data>
+  <data name="Privacy_Subtitle" xml:space="preserve">
+    <value>Редактируйте юридические документы приложения.</value>
+  </data>
+  <data name="Setting_ClearCache" xml:space="preserve">
+    <value>Очистить кеш</value>
+  </data>
+  <data name="Setting_AndroidMin" xml:space="preserve">
+    <value>Минимальная версия Android</value>
+  </data>
+  <data name="Setting_IosMin" xml:space="preserve">
+    <value>Минимальная версия iOS</value>
+  </data>
+  <data name="Setting_ContactNumber" xml:space="preserve">
+    <value>Контактный номер {0}</value>
+  </data>
+  <data name="Setting_Logo" xml:space="preserve">
+    <value>Логотип</value>
+  </data>
+  <data name="Setting_Subtitle" xml:space="preserve">
+    <value>Управляйте брендингом, контактами и требованиями к версии.</value>
+  </data>
+  <data name="Setting_AppVersions" xml:space="preserve">
+    <value>Версии приложения</value>
+  </data>
+  <data name="Common_Create" xml:space="preserve">
+    <value>Создать</value>
+  </data>
+  <data name="Common_Send" xml:space="preserve">
+    <value>Отправить</value>
+  </data>
+  <data name="Common_Add" xml:space="preserve">
+    <value>Добавить</value>
+  </data>
+  <data name="Common_Text" xml:space="preserve">
+    <value>Текст</value>
+  </data>
+  <data name="Common_Description" xml:space="preserve">
+    <value>Описание</value>
+  </data>
+  <data name="Common_File" xml:space="preserve">
+    <value>Файл</value>
+  </data>
+  <data name="Common_Manage" xml:space="preserve">
+    <value>Управление</value>
+  </data>
+  <data name="Common_Questions" xml:space="preserve">
+    <value>Вопросы</value>
+  </data>
+  <data name="Type_Video" xml:space="preserve">
+    <value>Видео</value>
+  </data>
+  <data name="Type_Voice" xml:space="preserve">
+    <value>Аудио</value>
+  </data>
+  <data name="Quiz_DurationMin" xml:space="preserve">
+    <value>Длительность (мин)</value>
+  </data>
+  <data name="Quiz_Repeat" xml:space="preserve">
+    <value>Разрешить повтор</value>
+  </data>
+  <data name="Common_LessonExam" xml:space="preserve">
+    <value>Экзамен урока</value>
+  </data>
+  <data name="User_Surname" xml:space="preserve">
+    <value>Фамилия</value>
+  </data>
+  <data name="User_PasswordHint" xml:space="preserve">
+    <value>Если оставить пустым, пароль не изменится.</value>
+  </data>
+  <data name="Tenant_Slug" xml:space="preserve">
+    <value>Slug (уникальный, строчные)</value>
+  </data>
+  <data name="Group_NoTeacher" xml:space="preserve">
+    <value>— Учитель не выбран —</value>
+  </data>
+  <data name="Group_SubjectLogs" xml:space="preserve">
+    <value>Журнал предметов</value>
+  </data>
+  <data name="Group_SubjectLogsHint" xml:space="preserve">
+    <value>История назначения/удаления предметов (сначала новые).</value>
+  </data>
+  <data name="Notification_SendToAll" xml:space="preserve">
+    <value>Отправить всем</value>
+  </data>
+  <data name="Notification_StudentsHint" xml:space="preserve">
+    <value>Ученики (Ctrl для выбора нескольких)</value>
+  </data>
+  <data name="Certificate_SignaturePng" xml:space="preserve">
+    <value>Подпись (PNG)</value>
+  </data>
+  <data name="Certificate_TitlePlaceholder" xml:space="preserve">
+    <value>Напр. Сертификат достижений</value>
+  </data>
+  <data name="Privacy_TypeHint" xml:space="preserve">
+    <value>Тип (privacy / terms / about)</value>
+  </data>
+  <data name="Privacy_ContentHtml" xml:space="preserve">
+    <value>Содержимое (HTML)</value>
+  </data>
+  <data name="Question_TitleType" xml:space="preserve">
+    <value>Тип заголовка</value>
+  </data>
+  <data name="Question_VariantType" xml:space="preserve">
+    <value>Тип варианта</value>
+  </data>
+  <data name="Question_CorrectAnswer" xml:space="preserve">
+    <value>Правильный ответ</value>
+  </data>
+  <data name="Question_TitleText" xml:space="preserve">
+    <value>Текст вопроса</value>
+  </data>
+  <data name="Question_ImageLabel" xml:space="preserve">
+    <value>Изображение вопроса</value>
+  </data>
+  <data name="LessonContent_TypeFile" xml:space="preserve">
+    <value>Файл (pdf/документ)</value>
+  </data>
+  <data name="Lesson_SettingsTitle" xml:space="preserve">
+    <value>Переключатели контента</value>
+  </data>
+  <data name="Lesson_SettingsHint" xml:space="preserve">
+    <value>Выберите, какие разделы видит ученик.</value>
+  </data>
+  <data name="Lesson_SetLiveVideo" xml:space="preserve">
+    <value>Живое видео</value>
+  </data>
+  <data name="Lesson_SetTopicExam" xml:space="preserve">
+    <value>Экзамен по теме</value>
+  </data>
+  <data name="Lesson_SetTopicExplanation" xml:space="preserve">
+    <value>Объяснение темы</value>
+  </data>
+  <data name="Lesson_SetGeneralExam" xml:space="preserve">
+    <value>Общий экзамен</value>
+  </data>
+  <data name="Students_Devices" xml:space="preserve">
+    <value>Устройства</value>
+  </data>
+  <data name="Students_ResetDevice" xml:space="preserve">
+    <value>Сбросить устройство (разблокировать)</value>
+  </data>
+  <data name="Students_GenerateTitle" xml:space="preserve">
+    <value>Сгенерировать учеников</value>
+  </data>
+  <data name="Students_GeneratePrefix" xml:space="preserve">
+    <value>Префикс имени</value>
+  </data>
+  <data name="Students_GenerateCount" xml:space="preserve">
+    <value>Количество</value>
+  </data>
+  <data name="Common_ChooseFile" xml:space="preserve">
+    <value>Выберите файл</value>
+  </data>
+  <data name="Common_ActiveLessons" xml:space="preserve">
+    <value>Активные уроки</value>
+  </data>
+  <data name="Common_TotalMaterials" xml:space="preserve">
+    <value>Всего материалов</value>
+  </data>
+  <data name="Common_Exam" xml:space="preserve">
+    <value>Экзамен</value>
+  </data>
+  <data name="Common_NoResults" xml:space="preserve">
+    <value>Нет результатов</value>
+  </data>
+  <data name="Subject_DetailsSubtitle" xml:space="preserve">
+    <value>Уроки по этому предмету.</value>
+  </data>
+  <data name="Subject_LessonsPage" xml:space="preserve">
+    <value>Страница уроков</value>
+  </data>
+  <data name="Subject_NoLessons" xml:space="preserve">
+    <value>Пока нет уроков</value>
+  </data>
+  <data name="Subject_NoLessonsHint" xml:space="preserve">
+    <value>Добавьте первый урок к этому предмету.</value>
+  </data>
+  <data name="Student_TabSubjects" xml:space="preserve">
+    <value>По предметам</value>
+  </data>
+  <data name="Student_TabLessons" xml:space="preserve">
+    <value>По урокам</value>
+  </data>
+  <data name="Student_TabExams" xml:space="preserve">
+    <value>Результаты экзаменов</value>
+  </data>
+  <data name="Student_TabViolations" xml:space="preserve">
+    <value>Нарушения экрана</value>
+  </data>
+  <data name="Student_NextMaterial" xml:space="preserve">
+    <value>Следующий материал</value>
+  </data>
+  <data name="Student_CorrectOverTotal" xml:space="preserve">
+    <value>Верно / Вопросы</value>
+  </data>
+  <data name="Student_Page" xml:space="preserve">
+    <value>Страница</value>
+  </data>
+  <data name="Student_UserAgent" xml:space="preserve">
+    <value>User agent</value>
+  </data>
+  <data name="Student_NoViolations" xml:space="preserve">
+    <value>Нарушения не зафиксированы</value>
+  </data>
 </root>

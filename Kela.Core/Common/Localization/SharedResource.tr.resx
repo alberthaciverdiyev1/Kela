@@ -358,4 +358,373 @@
   <data name="Lesson_Search" xml:space="preserve">
     <value>Ders adına veya öğretmene göre ara...</value>
   </data>
+  <data name="Common_Show" xml:space="preserve">
+    <value>Göster</value>
+  </data>
+  <data name="Common_Title" xml:space="preserve">
+    <value>Başlık</value>
+  </data>
+  <data name="Common_Lesson" xml:space="preserve">
+    <value>Ders</value>
+  </data>
+  <data name="Common_Type" xml:space="preserve">
+    <value>Tür</value>
+  </data>
+  <data name="Common_Teacher" xml:space="preserve">
+    <value>Öğretmen</value>
+  </data>
+  <data name="Common_Student" xml:space="preserve">
+    <value>Öğrenci</value>
+  </data>
+  <data name="Common_Name" xml:space="preserve">
+    <value>Ad</value>
+  </data>
+  <data name="Common_Phone" xml:space="preserve">
+    <value>Telefon</value>
+  </data>
+  <data name="Common_Group" xml:space="preserve">
+    <value>Grup</value>
+  </data>
+  <data name="Common_General" xml:space="preserve">
+    <value>Genel</value>
+  </data>
+  <data name="Common_Question" xml:space="preserve">
+    <value>Soru</value>
+  </data>
+  <data name="Common_Image" xml:space="preserve">
+    <value>Görsel</value>
+  </data>
+  <data name="Common_Content" xml:space="preserve">
+    <value>İçerik</value>
+  </data>
+  <data name="Common_Date" xml:space="preserve">
+    <value>Tarih</value>
+  </data>
+  <data name="Common_Contact" xml:space="preserve">
+    <value>İletişim</value>
+  </data>
+  <data name="Common_Body" xml:space="preserve">
+    <value>Metin</value>
+  </data>
+  <data name="Common_NewMaterial" xml:space="preserve">
+    <value>Yeni materyal</value>
+  </data>
+  <data name="Common_LessonExams" xml:space="preserve">
+    <value>Ders sınavları</value>
+  </data>
+  <data name="Common_SelectGroup" xml:space="preserve">
+    <value>Grup seçin</value>
+  </data>
+  <data name="LessonContent_Subtitle" xml:space="preserve">
+    <value>Ders videolarını, dosyalarını ve seslerini yönetin.</value>
+  </data>
+  <data name="Question_Create" xml:space="preserve">
+    <value>Yeni soru</value>
+  </data>
+  <data name="Question_Correct" xml:space="preserve">
+    <value>Doğru</value>
+  </data>
+  <data name="Question_Search" xml:space="preserve">
+    <value>Soru metninde ara...</value>
+  </data>
+  <data name="Question_Subtitle" xml:space="preserve">
+    <value>Derslere göre test sorularını yönetin.</value>
+  </data>
+  <data name="Quiz_Create" xml:space="preserve">
+    <value>Yeni sınav</value>
+  </data>
+  <data name="Quiz_Duration" xml:space="preserve">
+    <value>Süre</value>
+  </data>
+  <data name="Quiz_Subtitle" xml:space="preserve">
+    <value>Ders ve genel sınavları, soru seçimini yönetin.</value>
+  </data>
+  <data name="Group_Create" xml:space="preserve">
+    <value>Yeni grup</value>
+  </data>
+  <data name="Group_Search" xml:space="preserve">
+    <value>Grup adına göre ara...</value>
+  </data>
+  <data name="Group_Subtitle" xml:space="preserve">
+    <value>Öğrenci gruplarını, öğretmen ve üyelerini yönetin.</value>
+  </data>
+  <data name="GroupStat_Attempt" xml:space="preserve">
+    <value>Deneme</value>
+  </data>
+  <data name="GroupStat_Wrong" xml:space="preserve">
+    <value>Yanlış</value>
+  </data>
+  <data name="GroupStat_Subtitle" xml:space="preserve">
+    <value>Grup sınav sonuçlarını görün ve Excel&#x27;e aktarın.</value>
+  </data>
+  <data name="Students_Subtitle" xml:space="preserve">
+    <value>Öğrenci hesaplarını, durumlarını ve cihazlarını yönetin.</value>
+  </data>
+  <data name="Students_Search" xml:space="preserve">
+    <value>Ad / e-posta / telefona göre ara...</value>
+  </data>
+  <data name="User_Create" xml:space="preserve">
+    <value>Yeni kullanıcı</value>
+  </data>
+  <data name="User_Search" xml:space="preserve">
+    <value>Ad / e-postaya göre ara...</value>
+  </data>
+  <data name="User_Subtitle" xml:space="preserve">
+    <value>Yönetici ve öğretmen hesaplarını yönetin.</value>
+  </data>
+  <data name="Tenant_Create" xml:space="preserve">
+    <value>Yeni kiracı</value>
+  </data>
+  <data name="Tenant_Subtitle" xml:space="preserve">
+    <value>Ayrı kuruluşlar için kiracıları yönetin.</value>
+  </data>
+  <data name="Notification_Create" xml:space="preserve">
+    <value>Yeni bildirim</value>
+  </data>
+  <data name="Notification_Target" xml:space="preserve">
+    <value>Hedef</value>
+  </data>
+  <data name="Notification_Subtitle" xml:space="preserve">
+    <value>Öğrencilere gönderilen bildirimleri yönetin.</value>
+  </data>
+  <data name="Banner_Create" xml:space="preserve">
+    <value>Yeni banner</value>
+  </data>
+  <data name="Banner_Total" xml:space="preserve">
+    <value>Toplam banner</value>
+  </data>
+  <data name="Banner_Search" xml:space="preserve">
+    <value>Banner başlığına göre ara...</value>
+  </data>
+  <data name="Banner_Subtitle" xml:space="preserve">
+    <value>Uygulama açılış ekranında gösterilen bannerları yönetin.</value>
+  </data>
+  <data name="Certificate_Create" xml:space="preserve">
+    <value>Yeni sertifika</value>
+  </data>
+  <data name="Certificate_Signature" xml:space="preserve">
+    <value>İmza</value>
+  </data>
+  <data name="Certificate_Total" xml:space="preserve">
+    <value>Toplam sertifika</value>
+  </data>
+  <data name="Certificate_Search" xml:space="preserve">
+    <value>Başlığa göre ara...</value>
+  </data>
+  <data name="Certificate_Template" xml:space="preserve">
+    <value>Şablon</value>
+  </data>
+  <data name="Certificate_Subtitle" xml:space="preserve">
+    <value>Bir şablon seçin, metni ve imzayı doldurun.</value>
+  </data>
+  <data name="Privacy_Create" xml:space="preserve">
+    <value>Yeni belge</value>
+  </data>
+  <data name="Privacy_Title" xml:space="preserve">
+    <value>Gizlilik ve Şartlar</value>
+  </data>
+  <data name="Privacy_Subtitle" xml:space="preserve">
+    <value>Uygulamada gösterilen hukuki belgeleri düzenleyin.</value>
+  </data>
+  <data name="Setting_ClearCache" xml:space="preserve">
+    <value>Önbelleği temizle</value>
+  </data>
+  <data name="Setting_AndroidMin" xml:space="preserve">
+    <value>Android minimum sürüm</value>
+  </data>
+  <data name="Setting_IosMin" xml:space="preserve">
+    <value>iOS minimum sürüm</value>
+  </data>
+  <data name="Setting_ContactNumber" xml:space="preserve">
+    <value>İletişim numarası {0}</value>
+  </data>
+  <data name="Setting_Logo" xml:space="preserve">
+    <value>Logo</value>
+  </data>
+  <data name="Setting_Subtitle" xml:space="preserve">
+    <value>Uygulama markasını, iletişim bilgilerini ve sürüm gereksinimlerini yönetin.</value>
+  </data>
+  <data name="Setting_AppVersions" xml:space="preserve">
+    <value>Uygulama sürümleri</value>
+  </data>
+  <data name="Common_Create" xml:space="preserve">
+    <value>Oluştur</value>
+  </data>
+  <data name="Common_Send" xml:space="preserve">
+    <value>Gönder</value>
+  </data>
+  <data name="Common_Add" xml:space="preserve">
+    <value>Ekle</value>
+  </data>
+  <data name="Common_Text" xml:space="preserve">
+    <value>Metin</value>
+  </data>
+  <data name="Common_Description" xml:space="preserve">
+    <value>Açıklama</value>
+  </data>
+  <data name="Common_File" xml:space="preserve">
+    <value>Dosya</value>
+  </data>
+  <data name="Common_Manage" xml:space="preserve">
+    <value>Yönet</value>
+  </data>
+  <data name="Common_Questions" xml:space="preserve">
+    <value>Sorular</value>
+  </data>
+  <data name="Type_Video" xml:space="preserve">
+    <value>Video</value>
+  </data>
+  <data name="Type_Voice" xml:space="preserve">
+    <value>Ses kaydı</value>
+  </data>
+  <data name="Quiz_DurationMin" xml:space="preserve">
+    <value>Süre (dk)</value>
+  </data>
+  <data name="Quiz_Repeat" xml:space="preserve">
+    <value>Tekrar izni</value>
+  </data>
+  <data name="Common_LessonExam" xml:space="preserve">
+    <value>Ders sınavı</value>
+  </data>
+  <data name="User_Surname" xml:space="preserve">
+    <value>Soyad</value>
+  </data>
+  <data name="User_PasswordHint" xml:space="preserve">
+    <value>Boş bırakılırsa parola değişmez.</value>
+  </data>
+  <data name="Tenant_Slug" xml:space="preserve">
+    <value>Slug (benzersiz, küçük harf)</value>
+  </data>
+  <data name="Group_NoTeacher" xml:space="preserve">
+    <value>— Öğretmen seçilmedi —</value>
+  </data>
+  <data name="Group_SubjectLogs" xml:space="preserve">
+    <value>Ders kayıtları</value>
+  </data>
+  <data name="Group_SubjectLogsHint" xml:space="preserve">
+    <value>Ders atama/çıkarma geçmişi (en yeniden eskiye).</value>
+  </data>
+  <data name="Notification_SendToAll" xml:space="preserve">
+    <value>Herkese gönder</value>
+  </data>
+  <data name="Notification_StudentsHint" xml:space="preserve">
+    <value>Öğrenciler (birden fazla için Ctrl)</value>
+  </data>
+  <data name="Certificate_SignaturePng" xml:space="preserve">
+    <value>İmza (PNG)</value>
+  </data>
+  <data name="Certificate_TitlePlaceholder" xml:space="preserve">
+    <value>Örn. Başarı sertifikası</value>
+  </data>
+  <data name="Privacy_TypeHint" xml:space="preserve">
+    <value>Tür (privacy / terms / about)</value>
+  </data>
+  <data name="Privacy_ContentHtml" xml:space="preserve">
+    <value>İçerik (HTML)</value>
+  </data>
+  <data name="Question_TitleType" xml:space="preserve">
+    <value>Başlık türü</value>
+  </data>
+  <data name="Question_VariantType" xml:space="preserve">
+    <value>Varyant türü</value>
+  </data>
+  <data name="Question_CorrectAnswer" xml:space="preserve">
+    <value>Doğru cevap</value>
+  </data>
+  <data name="Question_TitleText" xml:space="preserve">
+    <value>Soru metni</value>
+  </data>
+  <data name="Question_ImageLabel" xml:space="preserve">
+    <value>Soru görseli</value>
+  </data>
+  <data name="LessonContent_TypeFile" xml:space="preserve">
+    <value>Dosya (pdf/belge)</value>
+  </data>
+  <data name="Lesson_SettingsTitle" xml:space="preserve">
+    <value>İçerik anahtarları</value>
+  </data>
+  <data name="Lesson_SettingsHint" xml:space="preserve">
+    <value>Öğrencinin bu derste hangi bölümleri göreceğini seçin.</value>
+  </data>
+  <data name="Lesson_SetLiveVideo" xml:space="preserve">
+    <value>Canlı video</value>
+  </data>
+  <data name="Lesson_SetTopicExam" xml:space="preserve">
+    <value>Konu sınavı</value>
+  </data>
+  <data name="Lesson_SetTopicExplanation" xml:space="preserve">
+    <value>Konu anlatımı</value>
+  </data>
+  <data name="Lesson_SetGeneralExam" xml:space="preserve">
+    <value>Genel sınav</value>
+  </data>
+  <data name="Students_Devices" xml:space="preserve">
+    <value>Cihazlar</value>
+  </data>
+  <data name="Students_ResetDevice" xml:space="preserve">
+    <value>Cihazı sıfırla (kilidi aç)</value>
+  </data>
+  <data name="Students_GenerateTitle" xml:space="preserve">
+    <value>Öğrenci oluştur</value>
+  </data>
+  <data name="Students_GeneratePrefix" xml:space="preserve">
+    <value>Ad öneki</value>
+  </data>
+  <data name="Students_GenerateCount" xml:space="preserve">
+    <value>Adet</value>
+  </data>
+  <data name="Common_ChooseFile" xml:space="preserve">
+    <value>Dosya seçin</value>
+  </data>
+  <data name="Common_ActiveLessons" xml:space="preserve">
+    <value>Aktif ders</value>
+  </data>
+  <data name="Common_TotalMaterials" xml:space="preserve">
+    <value>Toplam materyal</value>
+  </data>
+  <data name="Common_Exam" xml:space="preserve">
+    <value>Sınav</value>
+  </data>
+  <data name="Common_NoResults" xml:space="preserve">
+    <value>Sonuç yok</value>
+  </data>
+  <data name="Subject_DetailsSubtitle" xml:space="preserve">
+    <value>Bu derse ait dersler.</value>
+  </data>
+  <data name="Subject_LessonsPage" xml:space="preserve">
+    <value>Dersler sayfası</value>
+  </data>
+  <data name="Subject_NoLessons" xml:space="preserve">
+    <value>Henüz ders yok</value>
+  </data>
+  <data name="Subject_NoLessonsHint" xml:space="preserve">
+    <value>Bu derse ilk dersi ekleyin.</value>
+  </data>
+  <data name="Student_TabSubjects" xml:space="preserve">
+    <value>Derslere göre</value>
+  </data>
+  <data name="Student_TabLessons" xml:space="preserve">
+    <value>Derslere göre</value>
+  </data>
+  <data name="Student_TabExams" xml:space="preserve">
+    <value>Sınav sonuçları</value>
+  </data>
+  <data name="Student_TabViolations" xml:space="preserve">
+    <value>Ekran ihlalleri</value>
+  </data>
+  <data name="Student_NextMaterial" xml:space="preserve">
+    <value>Sıradaki materyal</value>
+  </data>
+  <data name="Student_CorrectOverTotal" xml:space="preserve">
+    <value>Doğru / Soru</value>
+  </data>
+  <data name="Student_Page" xml:space="preserve">
+    <value>Sayfa</value>
+  </data>
+  <data name="Student_UserAgent" xml:space="preserve">
+    <value>Kullanıcı aracısı</value>
+  </data>
+  <data name="Student_NoViolations" xml:space="preserve">
+    <value>İhlal kaydedilmedi</value>
+  </data>
 </root>

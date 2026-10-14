@@ -2,16 +2,16 @@
     ViewData["Title"] = "İstifadəçilər";
     var typeFilter = new List<SelectOption>
     {
-        new() { Value = "", Text = "Hamısı" },
-        new() { Value = "admin", Text = "Admin" },
-        new() { Value = "teacher", Text = "Müəllim" }
+        new() { Value = "", Text = L["Common_All"] },
+        new() { Value = "admin", Text = L["Role_Admin"] },
+        new() { Value = "teacher", Text = L["Role_Teacher"] }
     };
 }
 <section class="admin-page">
     <partial name="Ui/_PageHeader" model="@(new PageHeaderModel {
-        Title = "İstifadəçilər",
-        Subtitle = "Admin və müəllim hesablarını idarə edin.",
-        CreateText = "Yeni istifadəçi" })" />
+        Title = L["Nav_Users"],
+        Subtitle = L["User_Subtitle"],
+        CreateText = L["User_Create"] })" />
 
     <div class="admin-card">
         <div class="admin-toolbar">
@@ -20,11 +20,11 @@
                     <span class="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400">
                         <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="m21 21-4.35-4.35M11 18a7 7 0 1 1 0-14 7 7 0 0 1 0 14Z" /></svg>
                     </span>
-                    <input id="search" name="search" type="search" class="admin-field pl-11" placeholder="Ad / email üzrə axtar..." />
+                    <input id="search" name="search" type="search" class="admin-field pl-11" placeholder="@L["User_Search"]" />
                 </label>
             </div>
             <div class="w-44">
-                <partial name="Ui/_Select" model="@(new SelectModel { Name = "filter_type", Id = "filter_type", Label = "Tip", Options = typeFilter })" />
+                <partial name="Ui/_Select" model="@(new SelectModel { Name = "filter_type", Id = "filter_type", Label = L["Common_Type"], Options = typeFilter })" />
             </div>
             <button type="button" onclick="loadList(1)" class="admin-button-primary h-[46px] px-6">Axtar</button>
         </div>
@@ -40,7 +40,7 @@
                             <th>Email</th>
                             <th>Telefon</th>
                             <th class="w-28">Tip</th>
-                            <th class="text-right">Əməliyyatlar</th>
+                            <th class="text-right">@L["Common_Actions"]</th>
                         </tr>
                     </thead>
                     <tbody id="rows"></tbody>

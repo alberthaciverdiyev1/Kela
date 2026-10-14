@@ -5,9 +5,9 @@
 <script>window.TEACHERS = { @Html.Raw(string.Join(",", teachers.Data.Select(u => $"{u.Id}:\"{System.Text.Json.JsonEncodedText.Encode(($"{u.Name} {u.Surname}".Trim()))}\""))) }; </script>
 <section class="admin-page">
     <partial name="Ui/_PageHeader" model="@(new PageHeaderModel {
-        Title = "Qruplar",
-        Subtitle = "Şagird qruplarını, müəllim və üzvlərini idarə edin.",
-        CreateText = "Yeni qrup" })" />
+        Title = L["Nav_Groups"],
+        Subtitle = L["Group_Subtitle"],
+        CreateText = L["Group_Create"] })" />
 
     <div class="admin-card">
         <div class="admin-toolbar">
@@ -16,10 +16,10 @@
                     <span class="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400">
                         <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="m21 21-4.35-4.35M11 18a7 7 0 1 1 0-14 7 7 0 0 1 0 14Z" /></svg>
                     </span>
-                    <input id="search" name="search" type="search" class="admin-field pl-11" placeholder="Qrup adı üzrə axtar..." />
+                    <input id="search" name="search" type="search" class="admin-field pl-11" placeholder="@L["Group_Search"]" />
                 </label>
             </div>
-            <button type="button" id="trashBtn" class="admin-button-secondary h-[46px] px-4" onclick="toggleTrash()">Silinənlər</button>
+            <button type="button" id="trashBtn" class="admin-button-secondary h-[46px] px-4" onclick="toggleTrash()">@L["Common_DeletedItems"]</button>
             <button type="button" onclick="loadList(1)" class="admin-button-primary h-[46px] px-6">Axtar</button>
         </div>
 
@@ -33,10 +33,10 @@
                         <tr>
                             <th class="w-12"><input type="checkbox" id="checkAll" class="h-5 w-5 rounded-md border-slate-300 text-primary focus:ring-primary" /></th>
                             <th class="w-16">#</th>
-                            <th>Ad</th>
-                            <th>Müəllim</th>
-                            <th class="w-28">Şagird</th>
-                            <th class="text-right">Əməliyyatlar</th>
+                            <th>@L["Common_Name"]</th>
+                            <th>@L["Common_Teacher"]</th>
+                            <th class="w-28">@L["Common_Student"]</th>
+                            <th class="text-right">@L["Common_Actions"]</th>
                         </tr>
                     </thead>
                     <tbody id="rows"></tbody>

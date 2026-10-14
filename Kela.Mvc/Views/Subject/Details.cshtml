@@ -15,10 +15,10 @@
     <div class="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
         <div>
             <h2 class="admin-page-title">@subject.Name</h2>
-            <p class="admin-page-subtitle">Bu fənnə aid dərslər.</p>
+            <p class="admin-page-subtitle">@L["Subject_DetailsSubtitle"]</p>
         </div>
         <div class="flex shrink-0 items-center gap-2">
-            <a href="/lesson?subject_id=@subject.Id" class="admin-button-secondary">Dərslər səhifəsi</a>
+            <a href="/lesson?subject_id=@subject.Id" class="admin-button-secondary">@L["Subject_LessonsPage"]</a>
             <a href="/lesson?subject_id=@subject.Id" class="admin-button-primary">
                 <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 5v14M5 12h14" /></svg>
                 Dərs əlavə et
@@ -27,9 +27,9 @@
     </div>
 
     <div class="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
-        <partial name="Ui/_StatCard" model="@(new StatCardModel { Id = "stat_lessons", Label = "Cəmi dərs",
+        <partial name="Ui/_StatCard" model="@(new StatCardModel { Id = "stat_lessons", Label = L["Lesson_Total"],
             Icon = "<path stroke-linecap='round' stroke-linejoin='round' d='M12 6.253v13m0-13C10.8 5.5 9 5 7 5S3.2 5.5 2 6.253v13C3.2 18.5 5 18 7 18s3.8.5 5 1.253m0-13C13.2 5.5 15 5 17 5s3.8.5 5 1.253v13C20.8 18.5 19 18 17 18s-3.8.5-5 1.253' />" })" />
-        <partial name="Ui/_StatCard" model="@(new StatCardModel { Id = "stat_active_lessons", Label = "Aktiv dərs", Accent = "bg-sky-100 text-sky-600",
+        <partial name="Ui/_StatCard" model="@(new StatCardModel { Id = "stat_active_lessons", Label = L["Common_ActiveLessons"], Accent = "bg-sky-100 text-sky-600",
             Icon = "<path stroke-linecap='round' stroke-linejoin='round' d='m5 13 4 4L19 7' />" })" />
     </div>
     <script>
@@ -44,9 +44,9 @@
                     <tr>
                         <th class="w-16">#</th>
                         <th>Ad</th>
-                        <th class="w-24">Sıra</th>
+                        <th class="w-24">@L["Common_Order"]</th>
                         <th class="w-32">Status</th>
-                        <th class="text-right">Əməliyyatlar</th>
+                        <th class="text-right">@L["Common_Actions"]</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -56,8 +56,8 @@
                             <td colspan="5">
                                 <div class="admin-empty">
                                     <svg class="h-10 w-10 text-slate-300" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M3 7h18M3 12h18M3 17h10" /></svg>
-                                    <p class="text-base font-semibold text-slate-500">Hələ dərs yoxdur</p>
-                                    <p class="text-sm">Bu fənnə ilk dərsi əlavə edin.</p>
+                                    <p class="text-base font-semibold text-slate-500">@L["Subject_NoLessons"]</p>
+                                    <p class="text-sm">@L["Subject_NoLessonsHint"]</p>
                                 </div>
                             </td>
                         </tr>
@@ -79,7 +79,7 @@
                                     }
                                     else
                                     {
-                                        <span class="badge badge-neutral">Arxivdə</span>
+                                        <span class="badge badge-neutral">@L["Common_Archived"]</span>
                                     }
                                 </td>
                                 <td class="text-right">

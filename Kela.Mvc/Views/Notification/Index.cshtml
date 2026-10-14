@@ -3,9 +3,9 @@
 }
 <section class="admin-page">
     <partial name="Ui/_PageHeader" model="@(new PageHeaderModel {
-        Title = "Bildirişlər",
-        Subtitle = "Şagirdlərə göndərilən bildirişləri idarə edin.",
-        CreateText = "Yeni bildiriş" })" />
+        Title = L["Nav_Notifications"],
+        Subtitle = L["Notification_Subtitle"],
+        CreateText = L["Notification_Create"] })" />
 
     <div class="admin-card">
         <div class="relative">
@@ -15,12 +15,12 @@
                     <thead>
                         <tr>
                             <th class="w-16">#</th>
-                            <th>Başlıq</th>
-                            <th>Mətn</th>
-                            <th class="w-32">Hədəf</th>
-                            <th class="w-24">Şəkil</th>
+                            <th>@L["Common_Title"]</th>
+                            <th>@L["Common_Body"]</th>
+                            <th class="w-32">@L["Notification_Target"]</th>
+                            <th class="w-24">@L["Common_Image"]</th>
                             <th class="w-44">Tarix</th>
-                            <th class="text-right">Əməliyyatlar</th>
+                            <th class="text-right">@L["Common_Actions"]</th>
                         </tr>
                     </thead>
                     <tbody id="rows"></tbody>

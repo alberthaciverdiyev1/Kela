@@ -4,7 +4,7 @@
 <div id="modal" class="fixed inset-0 z-50 hidden items-center justify-center bg-slate-950/40 p-4">
     <div class="w-full max-w-lg rounded-2xl bg-white shadow-2xl">
         <div class="flex items-center justify-between border-b border-border p-5">
-            <h3 id="modalTitle" class="text-lg font-bold text-slate-900">Yeni dərs</h3>
+            <h3 id="modalTitle" class="text-lg font-bold text-slate-900">@L["Lesson_Create"]</h3>
             <button type="button" onclick="closeModal()" class="rounded-xl p-2 text-slate-400 hover:bg-slate-100">✕</button>
         </div>
         <div id="formError" class="mx-6 mt-4 hidden rounded-xl bg-danger-bg px-3 py-2 text-sm font-semibold text-danger"></div>
@@ -12,15 +12,15 @@
             <input type="hidden" id="entityId" />
             <input type="hidden" id="sort_order" />
             <partial name="Ui/_Select" model="@(new SelectModel {
-                Name = "subject_id", Id = "subject_id", Label = "Fənn", Required = true,
+                Name = "subject_id", Id = "subject_id", Label = L["Common_Subject"], Required = true,
                 Options = subjects.Data.Select(s => new SelectOption { Value = s.Id.ToString(), Text = s.Name }).ToList()
             })" />
-            <partial name="Ui/_Input" model="@(new InputModel { Name = "title", Id = "title", Label = "Başlıq", Required = true })" />
-            <partial name="Ui/_FileUpload" model="@(new FileUploadModel { Name = "image", Id = "image", Label = "Şəkil", Accept = ".jpg,.jpeg,.png", Hint = "jpg/png, max 5MB" })" />
-            <partial name="Ui/_Switch" model="@(new SwitchModel { Name = "is_active", Id = "is_active", Label = "Aktiv", Checked = true })" />
+            <partial name="Ui/_Input" model="@(new InputModel { Name = "title", Id = "title", Label = L["Common_Title"], Required = true })" />
+            <partial name="Ui/_FileUpload" model="@(new FileUploadModel { Name = "image", Id = "image", Label = L["Common_Image"], Accept = ".jpg,.jpeg,.png", Hint = "jpg/png, max 5MB" })" />
+            <partial name="Ui/_Switch" model="@(new SwitchModel { Name = "is_active", Id = "is_active", Label = L["Common_Active"], Checked = true })" />
             <div class="flex justify-end gap-3 pt-2">
-                <partial name="Ui/_Button" model="@(new ButtonModel { Text = "İmtina", Variant = "secondary", OnClick = "closeModal()" })" />
-                <partial name="Ui/_Button" model="@(new ButtonModel { Text = "Yadda saxla", Type = "submit" })" />
+                <partial name="Ui/_Button" model="@(new ButtonModel { Text = L["Common_Cancel"], Variant = "secondary", OnClick = "closeModal()" })" />
+                <partial name="Ui/_Button" model="@(new ButtonModel { Text = L["Common_Save"], Type = "submit" })" />
             </div>
         </form>
     </div>

@@ -2,19 +2,19 @@
     ViewData["Title"] = "Şagirdlər";
     var activeOptions = new List<SelectOption>
     {
-        new() { Value = "", Text = "Hamısı" },
-        new() { Value = "true", Text = "Aktiv" },
-        new() { Value = "false", Text = "Deaktiv" }
+        new() { Value = "", Text = L["Common_All"] },
+        new() { Value = "true", Text = L["Common_Active"] },
+        new() { Value = "false", Text = L["Common_Inactive"] }
     };
 }
 <section class="admin-page">
     <div class="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
         <div>
-            <h2 class="admin-page-title">Şagirdlər</h2>
-            <p class="admin-page-subtitle">Şagird hesablarını, statuslarını və cihazlarını idarə edin.</p>
+            <h2 class="admin-page-title">@L["Nav_Students"]</h2>
+            <p class="admin-page-subtitle">@L["Students_Subtitle"]</p>
         </div>
         <div class="flex shrink-0 items-center gap-2">
-            <button type="button" id="trashBtn" class="admin-button-secondary" onclick="toggleTrash()">Silinənlər</button>
+            <button type="button" id="trashBtn" class="admin-button-secondary" onclick="toggleTrash()">@L["Common_DeletedItems"]</button>
             <a href="/students/export" class="admin-button-secondary">⬇ Excel</a>
             <button type="button" onclick="openGenerate()" class="admin-button-primary">
                 <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 5v14M5 12h14" /></svg>
@@ -30,11 +30,11 @@
                     <span class="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400">
                         <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="m21 21-4.35-4.35M11 18a7 7 0 1 1 0-14 7 7 0 0 1 0 14Z" /></svg>
                     </span>
-                    <input id="search" name="search" type="search" class="admin-field pl-11" placeholder="Ad / email / telefon üzrə axtar..." />
+                    <input id="search" name="search" type="search" class="admin-field pl-11" placeholder="@L["Students_Search"]" />
                 </label>
             </div>
             <div class="w-40">
-                <partial name="Ui/_Select" model="@(new SelectModel { Name = "filter_active", Id = "filter_active", Label = "Status", Options = activeOptions })" />
+                <partial name="Ui/_Select" model="@(new SelectModel { Name = "filter_active", Id = "filter_active", Label = L["Common_Status"], Options = activeOptions })" />
             </div>
             <button type="button" onclick="loadList(1)" class="admin-button-primary h-[46px] px-6">Axtar</button>
         </div>
@@ -49,11 +49,11 @@
                         <tr>
                             <th class="w-12"><input type="checkbox" id="checkAll" class="h-5 w-5 rounded-md border-slate-300 text-primary focus:ring-primary" /></th>
                             <th class="w-16">#</th>
-                            <th>Ad</th>
-                            <th>Email</th>
-                            <th>Telefon</th>
-                            <th class="w-28">Status</th>
-                            <th class="text-right">Əməliyyatlar</th>
+                            <th>@L["Common_Name"]</th>
+                            <th>@L["Common_Email"]</th>
+                            <th>@L["Common_Phone"]</th>
+                            <th class="w-28">@L["Common_Status"]</th>
+                            <th class="text-right">@L["Common_Actions"]</th>
                         </tr>
                     </thead>
                     <tbody id="rows"></tbody>

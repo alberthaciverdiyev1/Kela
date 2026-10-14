@@ -1,23 +1,23 @@
 @{
     ViewData["Title"] = "Materiallar";
     var lessons = (PagedResponse<LessonResponse>)ViewData["Lessons"]!;
-    var lessonFilter = new List<SelectOption> { new() { Value = "", Text = "Hamısı" } };
+    var lessonFilter = new List<SelectOption> { new() { Value = "", Text = L["Common_All"] } };
     lessonFilter.AddRange(lessons.Data.Select(l => new SelectOption { Value = l.Id.ToString(), Text = l.Title }));
 }
 <section class="admin-page">
     <partial name="Ui/_PageHeader" model="@(new PageHeaderModel {
-        Title = "Materiallar",
-        Subtitle = "Dərslərə aid video, fayl və səs materiallarını idarə edin.",
-        CreateText = "Yeni material",
+        Title = L["Nav_Materials"],
+        Subtitle = L["LessonContent_Subtitle"],
+        CreateText = L["Common_NewMaterial"],
         Sortable = true })" />
 
     <div class="admin-card">
         <div class="admin-toolbar">
             <div class="w-72">
-                <partial name="Ui/_Select" model="@(new SelectModel { Name = "filter_lesson", Id = "filter_lesson", Label = "Dərs", Options = lessonFilter, Value = (string?)ViewData["SelectedLessonId"] })" />
+                <partial name="Ui/_Select" model="@(new SelectModel { Name = "filter_lesson", Id = "filter_lesson", Label = L["Common_Lesson"], Options = lessonFilter, Value = (string?)ViewData["SelectedLessonId"] })" />
             </div>
-            <button type="button" id="trashBtn" class="admin-button-secondary h-[46px] px-4" onclick="toggleTrash()">Silinənlər</button>
-            <button type="button" onclick="loadList(1)" class="admin-button-primary h-[46px] px-6">Göstər</button>
+            <button type="button" id="trashBtn" class="admin-button-secondary h-[46px] px-4" onclick="toggleTrash()">@L["Common_DeletedItems"]</button>
+            <button type="button" onclick="loadList(1)" class="admin-button-primary h-[46px] px-6">@L["Common_Show"]</button>
         </div>
 
         <partial name="Ui/_BulkBar" model="@(new BulkBarModel { Url = "/lesson-content/bulk", CanActivate = true, CanDeactivate = true })" />
@@ -30,11 +30,11 @@
                         <tr>
                             <th class="w-12"><input type="checkbox" id="checkAll" class="h-5 w-5 rounded-md border-slate-300 text-primary focus:ring-primary" /></th>
                             <th class="w-16">#</th>
-                            <th>Başlıq</th>
-                            <th class="w-28">Növ</th>
+                            <th>@L["Common_Title"]</th>
+                            <th class="w-28">@L["Common_Type"]</th>
                             <th class="w-24">Fayl</th>
                             <th class="w-24">Aktiv</th>
-                            <th class="text-right">Əməliyyatlar</th>
+                            <th class="text-right">@L["Common_Actions"]</th>
                         </tr>
                     </thead>
                     <tbody id="rows"></tbody>

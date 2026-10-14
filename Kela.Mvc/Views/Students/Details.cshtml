@@ -31,9 +31,9 @@
     </div>
 
     <div class="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
-        <partial name="Ui/_StatCard" model="@(new StatCardModel { Id = "s_lessons", Label = "Cəmi dərs",
+        <partial name="Ui/_StatCard" model="@(new StatCardModel { Id = "s_lessons", Label = L["Lesson_Total"],
             Icon = "<path stroke-linecap='round' stroke-linejoin='round' d='M12 6.253v13m0-13C10.8 5.5 9 5 7 5S3.2 5.5 2 6.253v13C3.2 18.5 5 18 7 18s3.8.5 5 1.253m0-13C13.2 5.5 15 5 17 5s3.8.5 5 1.253v13C20.8 18.5 19 18 17 18s-3.8.5-5 1.253' />" })" />
-        <partial name="Ui/_StatCard" model="@(new StatCardModel { Id = "s_contents", Label = "Cəmi material", Accent = "bg-sky-100 text-sky-600",
+        <partial name="Ui/_StatCard" model="@(new StatCardModel { Id = "s_contents", Label = L["Common_TotalMaterials"], Accent = "bg-sky-100 text-sky-600",
             Icon = "<path stroke-linecap='round' stroke-linejoin='round' d='M7 3h7l5 5v13H7V3Z' /><path stroke-linecap='round' stroke-linejoin='round' d='M14 3v6h5M10 14h6M10 18h4' />" })" />
         <partial name="Ui/_StatCard" model="@(new StatCardModel { Id = "s_done", Label = "Tamamlanan", Accent = "bg-success-bg text-success",
             Icon = "<path stroke-linecap='round' stroke-linejoin='round' d='m5 13 4 4L19 7' />" })" />
@@ -49,20 +49,20 @@
 
     <div class="admin-card">
         <div class="flex gap-1 border-b border-border px-4 pt-3">
-            <button type="button" data-tab="subjects" class="detail-tabbtn rounded-t-lg px-4 py-2 text-sm font-semibold" onclick="switchDetailTab('subjects')">Fənlər üzrə</button>
-            <button type="button" data-tab="lessons" class="detail-tabbtn rounded-t-lg px-4 py-2 text-sm font-semibold" onclick="switchDetailTab('lessons')">Dərslər üzrə</button>
-            <button type="button" data-tab="results" class="detail-tabbtn rounded-t-lg px-4 py-2 text-sm font-semibold" onclick="switchDetailTab('results')">İmtahan nəticələri</button>
-            <button type="button" data-tab="violations" class="detail-tabbtn rounded-t-lg px-4 py-2 text-sm font-semibold" onclick="switchDetailTab('violations')">Ekran pozuntuları</button>
+            <button type="button" data-tab="subjects" class="detail-tabbtn rounded-t-lg px-4 py-2 text-sm font-semibold" onclick="switchDetailTab('subjects')">@L["Student_TabSubjects"]</button>
+            <button type="button" data-tab="lessons" class="detail-tabbtn rounded-t-lg px-4 py-2 text-sm font-semibold" onclick="switchDetailTab('lessons')">@L["Student_TabLessons"]</button>
+            <button type="button" data-tab="results" class="detail-tabbtn rounded-t-lg px-4 py-2 text-sm font-semibold" onclick="switchDetailTab('results')">@L["Student_TabExams"]</button>
+            <button type="button" data-tab="violations" class="detail-tabbtn rounded-t-lg px-4 py-2 text-sm font-semibold" onclick="switchDetailTab('violations')">@L["Student_TabViolations"]</button>
         </div>
 
         <div id="tab-subjects" class="detail-tab p-4">
             <div class="overflow-x-auto">
                 <table class="admin-table">
-                    <thead><tr><th>Fənn</th><th class="w-40">Material</th><th class="w-32">Tamamlanan</th><th class="w-40">Faiz</th></tr></thead>
+                    <thead><tr><th>@L["Common_Subject"]</th><th class="w-40">Material</th><th class="w-32">Tamamlanan</th><th class="w-40">Faiz</th></tr></thead>
                     <tbody>
                         @if (stats.BySubject.Count == 0)
                         {
-                            <tr><td colspan="4" class="text-center text-sm text-slate-400">Məlumat yoxdur</td></tr>
+                            <tr><td colspan="4" class="text-center text-sm text-slate-400">@L["Common_NoData"]</td></tr>
                         }
                         else
                         {
@@ -89,11 +89,11 @@
         <div id="tab-lessons" class="detail-tab hidden p-4">
             <div class="overflow-x-auto">
                 <table class="admin-table">
-                    <thead><tr><th>Dərs</th><th class="w-40">Tamamlanan</th><th class="w-40">Faiz</th><th>Növbəti material</th></tr></thead>
+                    <thead><tr><th>@L["Common_Lesson"]</th><th class="w-40">Tamamlanan</th><th class="w-40">Faiz</th><th>@L["Student_NextMaterial"]</th></tr></thead>
                     <tbody>
                         @if (progress.Items.Count == 0)
                         {
-                            <tr><td colspan="4" class="text-center text-sm text-slate-400">Məlumat yoxdur</td></tr>
+                            <tr><td colspan="4" class="text-center text-sm text-slate-400">@L["Common_NoData"]</td></tr>
                         }
                         else
                         {
@@ -120,11 +120,11 @@
         <div id="tab-results" class="detail-tab hidden p-4">
             <div class="overflow-x-auto">
                 <table class="admin-table">
-                    <thead><tr><th>İmtahan</th><th class="w-32">Cəhd</th><th class="w-40">Doğru / Sual</th><th class="w-32">Bal</th><th class="w-40">Tarix</th></tr></thead>
+                    <thead><tr><th>@L["Common_Exam"]</th><th class="w-32">@L["GroupStat_Attempt"]</th><th class="w-40">@L["Student_CorrectOverTotal"]</th><th class="w-32">Bal</th><th class="w-40">Tarix</th></tr></thead>
                     <tbody>
                         @if (results.Count == 0)
                         {
-                            <tr><td colspan="5" class="text-center text-sm text-slate-400">Nəticə yoxdur</td></tr>
+                            <tr><td colspan="5" class="text-center text-sm text-slate-400">@L["Common_NoResults"]</td></tr>
                         }
                         else
                         {
@@ -147,11 +147,11 @@
         <div id="tab-violations" class="detail-tab hidden p-4">
             <div class="overflow-x-auto">
                 <table class="admin-table">
-                    <thead><tr><th>Növ</th><th>Səhifə</th><th class="w-44">Tarix</th><th>İstifadəçi agenti</th></tr></thead>
+                    <thead><tr><th>@L["Common_Type"]</th><th>@L["Student_Page"]</th><th class="w-44">Tarix</th><th>@L["Student_UserAgent"]</th></tr></thead>
                     <tbody>
                         @if (violations.Count == 0)
                         {
-                            <tr><td colspan="4" class="text-center text-sm text-slate-400">Pozuntu qeydə alınmayıb</td></tr>
+                            <tr><td colspan="4" class="text-center text-sm text-slate-400">@L["Student_NoViolations"]</td></tr>
                         }
                         else
                         {

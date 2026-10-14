@@ -4,20 +4,20 @@
 <div id="modal" class="fixed inset-0 z-50 hidden items-center justify-center bg-slate-950/40 p-4">
     <div class="max-h-[90vh] w-full max-w-2xl overflow-y-auto rounded-2xl bg-white shadow-2xl">
         <div class="flex items-center justify-between border-b border-border p-5">
-            <h3 class="text-lg font-bold text-slate-900">Yeni bildiriş</h3>
+            <h3 class="text-lg font-bold text-slate-900">@L["Notification_Create"]</h3>
             <button type="button" onclick="closeModal()" class="rounded-xl p-2 text-slate-400 hover:bg-slate-100">✕</button>
         </div>
         <div id="formError" class="mx-6 mt-4 hidden rounded-xl bg-danger-bg px-3 py-2 text-sm font-semibold text-danger"></div>
         <form id="entityForm" class="space-y-4 p-6">
-            <partial name="Ui/_Input" model="@(new InputModel { Name = "title", Id = "title", Label = "Başlıq", Required = true })" />
+            <partial name="Ui/_Input" model="@(new InputModel { Name = "title", Id = "title", Label = L["Common_Title"], Required = true })" />
             <div>
-                <label class="mb-1 block text-sm font-medium text-slate-700">Mətn</label>
+                <label class="mb-1 block text-sm font-medium text-slate-700">@L["Common_Text"]</label>
                 <textarea id="body" rows="3" class="block w-full rounded-lg border border-slate-300 bg-slate-50 p-2.5 text-sm"></textarea>
             </div>
-            <partial name="Ui/_FileUpload" model="@(new FileUploadModel { Name = "image", Id = "image", Label = "Şəkil", Accept = "image/*", Hint = "jpg/png, max 5MB" })" />
-            <partial name="Ui/_Switch" model="@(new SwitchModel { Name = "all", Id = "all", Label = "Hamıya göndər", Checked = true })" />
+            <partial name="Ui/_FileUpload" model="@(new FileUploadModel { Name = "image", Id = "image", Label = L["Common_Image"], Accept = "image/*", Hint = "jpg/png, max 5MB" })" />
+            <partial name="Ui/_Switch" model="@(new SwitchModel { Name = "all", Id = "all", Label = L["Notification_SendToAll"], Checked = true })" />
             <div id="studentsBlock" class="hidden">
-                <label class="mb-1 block text-sm font-medium text-slate-700">Şagirdlər (bir neçə seçmək üçün Ctrl)</label>
+                <label class="mb-1 block text-sm font-medium text-slate-700">@L["Notification_StudentsHint"]</label>
                 <select id="student_ids" multiple size="6" class="block w-full rounded-lg border border-slate-300 bg-slate-50 p-2 text-sm">
                     @foreach (var s in students.Data)
                     {
@@ -26,8 +26,8 @@
                 </select>
             </div>
             <div class="flex justify-end gap-3 pt-2">
-                <partial name="Ui/_Button" model="@(new ButtonModel { Text = "İmtina", Variant = "secondary", OnClick = "closeModal()" })" />
-                <partial name="Ui/_Button" model="@(new ButtonModel { Text = "Göndər", Type = "submit" })" />
+                <partial name="Ui/_Button" model="@(new ButtonModel { Text = L["Common_Cancel"], Variant = "secondary", OnClick = "closeModal()" })" />
+                <partial name="Ui/_Button" model="@(new ButtonModel { Text = L["Common_Send"], Type = "submit" })" />
             </div>
         </form>
     </div>

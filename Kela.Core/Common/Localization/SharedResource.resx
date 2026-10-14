@@ -358,4 +358,373 @@
   <data name="Lesson_Search" xml:space="preserve">
     <value>Search by lesson name or teacher...</value>
   </data>
+  <data name="Common_Show" xml:space="preserve">
+    <value>Show</value>
+  </data>
+  <data name="Common_Title" xml:space="preserve">
+    <value>Title</value>
+  </data>
+  <data name="Common_Lesson" xml:space="preserve">
+    <value>Lesson</value>
+  </data>
+  <data name="Common_Type" xml:space="preserve">
+    <value>Type</value>
+  </data>
+  <data name="Common_Teacher" xml:space="preserve">
+    <value>Teacher</value>
+  </data>
+  <data name="Common_Student" xml:space="preserve">
+    <value>Student</value>
+  </data>
+  <data name="Common_Name" xml:space="preserve">
+    <value>Name</value>
+  </data>
+  <data name="Common_Phone" xml:space="preserve">
+    <value>Phone</value>
+  </data>
+  <data name="Common_Group" xml:space="preserve">
+    <value>Group</value>
+  </data>
+  <data name="Common_General" xml:space="preserve">
+    <value>General</value>
+  </data>
+  <data name="Common_Question" xml:space="preserve">
+    <value>Question</value>
+  </data>
+  <data name="Common_Image" xml:space="preserve">
+    <value>Image</value>
+  </data>
+  <data name="Common_Content" xml:space="preserve">
+    <value>Content</value>
+  </data>
+  <data name="Common_Date" xml:space="preserve">
+    <value>Date</value>
+  </data>
+  <data name="Common_Contact" xml:space="preserve">
+    <value>Contact</value>
+  </data>
+  <data name="Common_Body" xml:space="preserve">
+    <value>Body</value>
+  </data>
+  <data name="Common_NewMaterial" xml:space="preserve">
+    <value>New material</value>
+  </data>
+  <data name="Common_LessonExams" xml:space="preserve">
+    <value>Lesson exams</value>
+  </data>
+  <data name="Common_SelectGroup" xml:space="preserve">
+    <value>Select group</value>
+  </data>
+  <data name="LessonContent_Subtitle" xml:space="preserve">
+    <value>Manage lesson videos, files and audio.</value>
+  </data>
+  <data name="Question_Create" xml:space="preserve">
+    <value>New question</value>
+  </data>
+  <data name="Question_Correct" xml:space="preserve">
+    <value>Correct</value>
+  </data>
+  <data name="Question_Search" xml:space="preserve">
+    <value>Search in question text...</value>
+  </data>
+  <data name="Question_Subtitle" xml:space="preserve">
+    <value>Manage test questions by subject.</value>
+  </data>
+  <data name="Quiz_Create" xml:space="preserve">
+    <value>New exam</value>
+  </data>
+  <data name="Quiz_Duration" xml:space="preserve">
+    <value>Duration</value>
+  </data>
+  <data name="Quiz_Subtitle" xml:space="preserve">
+    <value>Manage lesson and general exams and question selection.</value>
+  </data>
+  <data name="Group_Create" xml:space="preserve">
+    <value>New group</value>
+  </data>
+  <data name="Group_Search" xml:space="preserve">
+    <value>Search by group name...</value>
+  </data>
+  <data name="Group_Subtitle" xml:space="preserve">
+    <value>Manage student groups, teachers and members.</value>
+  </data>
+  <data name="GroupStat_Attempt" xml:space="preserve">
+    <value>Attempt</value>
+  </data>
+  <data name="GroupStat_Wrong" xml:space="preserve">
+    <value>Wrong</value>
+  </data>
+  <data name="GroupStat_Subtitle" xml:space="preserve">
+    <value>View group exam results and export to Excel.</value>
+  </data>
+  <data name="Students_Subtitle" xml:space="preserve">
+    <value>Manage student accounts, statuses and devices.</value>
+  </data>
+  <data name="Students_Search" xml:space="preserve">
+    <value>Search by name / email / phone...</value>
+  </data>
+  <data name="User_Create" xml:space="preserve">
+    <value>New user</value>
+  </data>
+  <data name="User_Search" xml:space="preserve">
+    <value>Search by name / email...</value>
+  </data>
+  <data name="User_Subtitle" xml:space="preserve">
+    <value>Manage admin and teacher accounts.</value>
+  </data>
+  <data name="Tenant_Create" xml:space="preserve">
+    <value>New tenant</value>
+  </data>
+  <data name="Tenant_Subtitle" xml:space="preserve">
+    <value>Manage tenants for separate organizations.</value>
+  </data>
+  <data name="Notification_Create" xml:space="preserve">
+    <value>New notification</value>
+  </data>
+  <data name="Notification_Target" xml:space="preserve">
+    <value>Target</value>
+  </data>
+  <data name="Notification_Subtitle" xml:space="preserve">
+    <value>Manage notifications sent to students.</value>
+  </data>
+  <data name="Banner_Create" xml:space="preserve">
+    <value>New banner</value>
+  </data>
+  <data name="Banner_Total" xml:space="preserve">
+    <value>Total banners</value>
+  </data>
+  <data name="Banner_Search" xml:space="preserve">
+    <value>Search by banner title...</value>
+  </data>
+  <data name="Banner_Subtitle" xml:space="preserve">
+    <value>Manage banners shown on the app splash screen.</value>
+  </data>
+  <data name="Certificate_Create" xml:space="preserve">
+    <value>New certificate</value>
+  </data>
+  <data name="Certificate_Signature" xml:space="preserve">
+    <value>Signature</value>
+  </data>
+  <data name="Certificate_Total" xml:space="preserve">
+    <value>Total certificates</value>
+  </data>
+  <data name="Certificate_Search" xml:space="preserve">
+    <value>Search by title...</value>
+  </data>
+  <data name="Certificate_Template" xml:space="preserve">
+    <value>Template</value>
+  </data>
+  <data name="Certificate_Subtitle" xml:space="preserve">
+    <value>Choose a template, fill in the text and signature once.</value>
+  </data>
+  <data name="Privacy_Create" xml:space="preserve">
+    <value>New document</value>
+  </data>
+  <data name="Privacy_Title" xml:space="preserve">
+    <value>Privacy &amp; Terms</value>
+  </data>
+  <data name="Privacy_Subtitle" xml:space="preserve">
+    <value>Edit legal documents shown in the app.</value>
+  </data>
+  <data name="Setting_ClearCache" xml:space="preserve">
+    <value>Clear cache</value>
+  </data>
+  <data name="Setting_AndroidMin" xml:space="preserve">
+    <value>Android minimum version</value>
+  </data>
+  <data name="Setting_IosMin" xml:space="preserve">
+    <value>iOS minimum version</value>
+  </data>
+  <data name="Setting_ContactNumber" xml:space="preserve">
+    <value>Contact number {0}</value>
+  </data>
+  <data name="Setting_Logo" xml:space="preserve">
+    <value>Logo</value>
+  </data>
+  <data name="Setting_Subtitle" xml:space="preserve">
+    <value>Manage app branding, contact info and version requirements.</value>
+  </data>
+  <data name="Setting_AppVersions" xml:space="preserve">
+    <value>App versions</value>
+  </data>
+  <data name="Common_Create" xml:space="preserve">
+    <value>Create</value>
+  </data>
+  <data name="Common_Send" xml:space="preserve">
+    <value>Send</value>
+  </data>
+  <data name="Common_Add" xml:space="preserve">
+    <value>Add</value>
+  </data>
+  <data name="Common_Text" xml:space="preserve">
+    <value>Text</value>
+  </data>
+  <data name="Common_Description" xml:space="preserve">
+    <value>Description</value>
+  </data>
+  <data name="Common_File" xml:space="preserve">
+    <value>File</value>
+  </data>
+  <data name="Common_Manage" xml:space="preserve">
+    <value>Manage</value>
+  </data>
+  <data name="Common_Questions" xml:space="preserve">
+    <value>Questions</value>
+  </data>
+  <data name="Type_Video" xml:space="preserve">
+    <value>Video</value>
+  </data>
+  <data name="Type_Voice" xml:space="preserve">
+    <value>Audio</value>
+  </data>
+  <data name="Quiz_DurationMin" xml:space="preserve">
+    <value>Duration (min)</value>
+  </data>
+  <data name="Quiz_Repeat" xml:space="preserve">
+    <value>Repeat allowed</value>
+  </data>
+  <data name="Common_LessonExam" xml:space="preserve">
+    <value>Lesson exam</value>
+  </data>
+  <data name="User_Surname" xml:space="preserve">
+    <value>Surname</value>
+  </data>
+  <data name="User_PasswordHint" xml:space="preserve">
+    <value>If left empty, the password won&#x27;t change.</value>
+  </data>
+  <data name="Tenant_Slug" xml:space="preserve">
+    <value>Slug (unique, lowercase)</value>
+  </data>
+  <data name="Group_NoTeacher" xml:space="preserve">
+    <value>— No teacher selected —</value>
+  </data>
+  <data name="Group_SubjectLogs" xml:space="preserve">
+    <value>Subject logs</value>
+  </data>
+  <data name="Group_SubjectLogsHint" xml:space="preserve">
+    <value>Subject assign/remove history (newest first).</value>
+  </data>
+  <data name="Notification_SendToAll" xml:space="preserve">
+    <value>Send to all</value>
+  </data>
+  <data name="Notification_StudentsHint" xml:space="preserve">
+    <value>Students (Ctrl to select multiple)</value>
+  </data>
+  <data name="Certificate_SignaturePng" xml:space="preserve">
+    <value>Signature (PNG)</value>
+  </data>
+  <data name="Certificate_TitlePlaceholder" xml:space="preserve">
+    <value>e.g. Certificate of Achievement</value>
+  </data>
+  <data name="Privacy_TypeHint" xml:space="preserve">
+    <value>Type (privacy / terms / about)</value>
+  </data>
+  <data name="Privacy_ContentHtml" xml:space="preserve">
+    <value>Content (HTML)</value>
+  </data>
+  <data name="Question_TitleType" xml:space="preserve">
+    <value>Title type</value>
+  </data>
+  <data name="Question_VariantType" xml:space="preserve">
+    <value>Variant type</value>
+  </data>
+  <data name="Question_CorrectAnswer" xml:space="preserve">
+    <value>Correct answer</value>
+  </data>
+  <data name="Question_TitleText" xml:space="preserve">
+    <value>Question text</value>
+  </data>
+  <data name="Question_ImageLabel" xml:space="preserve">
+    <value>Question image</value>
+  </data>
+  <data name="LessonContent_TypeFile" xml:space="preserve">
+    <value>File (pdf/document)</value>
+  </data>
+  <data name="Lesson_SettingsTitle" xml:space="preserve">
+    <value>Content toggles</value>
+  </data>
+  <data name="Lesson_SettingsHint" xml:space="preserve">
+    <value>Choose which sections the student sees in this lesson.</value>
+  </data>
+  <data name="Lesson_SetLiveVideo" xml:space="preserve">
+    <value>Live video</value>
+  </data>
+  <data name="Lesson_SetTopicExam" xml:space="preserve">
+    <value>Topic exam</value>
+  </data>
+  <data name="Lesson_SetTopicExplanation" xml:space="preserve">
+    <value>Topic explanation</value>
+  </data>
+  <data name="Lesson_SetGeneralExam" xml:space="preserve">
+    <value>General exam</value>
+  </data>
+  <data name="Students_Devices" xml:space="preserve">
+    <value>Devices</value>
+  </data>
+  <data name="Students_ResetDevice" xml:space="preserve">
+    <value>Reset device (unlock)</value>
+  </data>
+  <data name="Students_GenerateTitle" xml:space="preserve">
+    <value>Generate students</value>
+  </data>
+  <data name="Students_GeneratePrefix" xml:space="preserve">
+    <value>Name prefix</value>
+  </data>
+  <data name="Students_GenerateCount" xml:space="preserve">
+    <value>Count</value>
+  </data>
+  <data name="Common_ChooseFile" xml:space="preserve">
+    <value>Choose file</value>
+  </data>
+  <data name="Common_ActiveLessons" xml:space="preserve">
+    <value>Active lessons</value>
+  </data>
+  <data name="Common_TotalMaterials" xml:space="preserve">
+    <value>Total materials</value>
+  </data>
+  <data name="Common_Exam" xml:space="preserve">
+    <value>Exam</value>
+  </data>
+  <data name="Common_NoResults" xml:space="preserve">
+    <value>No results</value>
+  </data>
+  <data name="Subject_DetailsSubtitle" xml:space="preserve">
+    <value>Lessons for this subject.</value>
+  </data>
+  <data name="Subject_LessonsPage" xml:space="preserve">
+    <value>Lessons page</value>
+  </data>
+  <data name="Subject_NoLessons" xml:space="preserve">
+    <value>No lessons yet</value>
+  </data>
+  <data name="Subject_NoLessonsHint" xml:space="preserve">
+    <value>Add the first lesson to this subject.</value>
+  </data>
+  <data name="Student_TabSubjects" xml:space="preserve">
+    <value>By subjects</value>
+  </data>
+  <data name="Student_TabLessons" xml:space="preserve">
+    <value>By lessons</value>
+  </data>
+  <data name="Student_TabExams" xml:space="preserve">
+    <value>Exam results</value>
+  </data>
+  <data name="Student_TabViolations" xml:space="preserve">
+    <value>Screen violations</value>
+  </data>
+  <data name="Student_NextMaterial" xml:space="preserve">
+    <value>Next material</value>
+  </data>
+  <data name="Student_CorrectOverTotal" xml:space="preserve">
+    <value>Correct / Questions</value>
+  </data>
+  <data name="Student_Page" xml:space="preserve">
+    <value>Page</value>
+  </data>
+  <data name="Student_UserAgent" xml:space="preserve">
+    <value>User agent</value>
+  </data>
+  <data name="Student_NoViolations" xml:space="preserve">
+    <value>No violations recorded</value>
+  </data>
 </root>

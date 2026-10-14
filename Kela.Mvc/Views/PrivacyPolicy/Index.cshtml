@@ -3,9 +3,9 @@
 }
 <section class="admin-page">
     <partial name="Ui/_PageHeader" model="@(new PageHeaderModel {
-        Title = "Gizlilik & Şərtlər",
-        Subtitle = "Tətbiqdə göstərilən hüquqi sənədləri redaktə edin.",
-        CreateText = "Yeni sənəd" })" />
+        Title = L["Privacy_Title"],
+        Subtitle = L["Privacy_Subtitle"],
+        CreateText = L["Privacy_Create"] })" />
 
     <div class="admin-card">
         <div class="relative">
@@ -14,9 +14,9 @@
                 <table class="admin-table">
                     <thead>
                         <tr>
-                            <th class="w-40">Növ</th>
-                            <th>Məzmun</th>
-                            <th class="text-right">Əməliyyatlar</th>
+                            <th class="w-40">@L["Common_Type"]</th>
+                            <th>@L["Common_Content"]</th>
+                            <th class="text-right">@L["Common_Actions"]</th>
                         </tr>
                     </thead>
                     <tbody id="rows"></tbody>
