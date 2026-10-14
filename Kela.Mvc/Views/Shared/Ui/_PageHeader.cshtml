@@ -1,10 +1,13 @@
 @model PageHeaderModel
 <div class="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
     <div>
-        <h2 class="admin-page-title">@Model.Title</h2>
-        @if (!string.IsNullOrEmpty(Model.Subtitle))
+        @if (false)
         {
-            <p class="admin-page-subtitle">@Model.Subtitle</p>
+            <h2 class="admin-page-title">@Model.Title</h2>
+            @if (!string.IsNullOrEmpty(Model.Subtitle))
+            {
+                <p class="admin-page-subtitle">@Model.Subtitle</p>
+            }
         }
     </div>
     <div class="flex shrink-0 items-center gap-2">
