@@ -1,9 +1,11 @@
+@using Kela.App.Shared.Services.Localization
+@inject Localizer L
 @page "/results/{AttemptId:long}"
 @inject AppApi Api
 
-<PageTitle>Nəticə</PageTitle>
+<PageTitle>@L["Result_Detail"]</PageTitle>
 
-<PageHeader Title="Nəticə" Back="/results"/>
+<PageHeader Title="@L["Result_Detail"]" Back="/results"/>
 
 @if (_loading)
 {
@@ -11,7 +13,7 @@
 }
 else if (_detail is null)
 {
-    <EmptyState Text="Nəticə tapılmadı." Class="px-5 py-10 text-sm text-sage-410"/>
+    <EmptyState Text="@L["Result_NotFound"]" Class="px-5 py-10 text-sm text-sage-410"/>
 }
 else
 {
@@ -26,9 +28,9 @@ else
             <p class="mt-2 text-[12px] text-brand-286">@DateLabel · @DurationLabel</p>
 
             <div class="mt-5 grid grid-cols-3 gap-3 border-t border-white/10 pt-4 text-center">
-                <div><p class="text-xl font-semibold tracking-[-0.04em]">@_detail.CorrectCount</p><p class="text-[10px] text-brand-286">Doğru</p></div>
-                <div><p class="text-xl font-semibold tracking-[-0.04em]">@Wrong</p><p class="text-[10px] text-brand-286">Yanlış</p></div>
-                <div><p class="text-xl font-semibold tracking-[-0.04em]">@_detail.TotalQuestions</p><p class="text-[10px] text-brand-286">Sual</p></div>
+                <div><p class="text-xl font-semibold tracking-[-0.04em]">@_detail.CorrectCount</p><p class="text-[10px] text-brand-286">@L["Result_Correct"]</p></div>
+                <div><p class="text-xl font-semibold tracking-[-0.04em]">@Wrong</p><p class="text-[10px] text-brand-286">@L["Result_Wrong"]</p></div>
+                <div><p class="text-xl font-semibold tracking-[-0.04em]">@_detail.TotalQuestions</p><p class="text-[10px] text-brand-286">@L["Result_Questions"]</p></div>
             </div>
 
             <div class="mt-5 flex items-center gap-3">
@@ -38,10 +40,10 @@ else
                 <span class="text-[11px] font-bold text-brand-341">@(_detail.ScorePercent)%</span>
             </div>
 
-            <p class="mt-3 text-[11px] text-brand-286">Bal: <b class="text-white">@Score</b></p>
+            <p class="mt-3 text-[11px] text-brand-286">@string.Format(L["Result_Score"], Score)</p>
         </div>
 
-        <p class="mt-8 text-xs font-bold uppercase tracking-[0.14em] text-brand-639">Cavablar</p>
+        <p class="mt-8 text-xs font-bold uppercase tracking-[0.14em] text-brand-639">@L["Result_Answers"]</p>
         <section class="mt-3 grid gap-3 sm:grid-cols-2">
             @for (var i = 0; i < _detail.Items.Count; i++)
             {

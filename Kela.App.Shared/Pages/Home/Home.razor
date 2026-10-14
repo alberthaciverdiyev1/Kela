@@ -1,3 +1,5 @@
+@using Kela.App.Shared.Services.Localization
+@inject Localizer L
 @page "/"
 @inject AppApi Api
 @inject AuthState Auth
@@ -13,9 +15,9 @@ else
     <header class="sticky top-0 z-20 flex h-[68px] items-center justify-between border-b border-brand-086 bg-brand-022/95 px-5 backdrop-blur md:hidden lg:px-10">
         <div class="flex items-center gap-2.5">
             <div class="flex size-8 items-center justify-center rounded-full bg-brand-103 text-[13px] font-bold text-brand-835">@(Auth.User?.Initial ?? "L")</div>
-            <span class="text-[13px] font-semibold text-brand-722">@(Auth.User?.FullName ?? "Şagird")</span>
+            <span class="text-[13px] font-semibold text-brand-722">@(Auth.User?.FullName ?? L["Common_Student"])</span>
         </div>
-        <a href="/notifications" class="relative rounded-lg p-2 text-sage-498" aria-label="Bildirişlər">
+        <a href="/notifications" class="relative rounded-lg p-2 text-sage-498" aria-label="@L["Notifications_Aria"]">
             <Icon Name="bell" Class="size-[18px]" />
         </a>
     </header>
@@ -23,8 +25,8 @@ else
     <main class="mx-auto w-full max-w-full px-5 pb-28 pt-8 lg:px-10 lg:pb-12 lg:pt-12">
         <section class="mt-1">
             <div class="mb-3 flex items-center justify-between">
-                <p class="text-[11px] font-bold uppercase tracking-[0.18em] text-brand-671">Learning stories</p>
-                <span class="text-[11px] text-sage-382">Swipe to explore</span>
+                <p class="text-[11px] font-bold uppercase tracking-[0.18em] text-brand-671">@L["Home_LearningStories"]</p>
+                <span class="text-[11px] text-sage-382">@L["Home_SwipeExplore"]</span>
             </div>
             <div class="-mx-5 flex gap-4 overflow-x-auto px-5 pb-2 [scrollbar-width:none]">
                 @for (var i = 0; i < _banners.Count; i++)
@@ -41,7 +43,7 @@ else
                 }
                 @if (_banners.Count == 0)
                 {
-                    <span class="self-center text-[11px] text-sage-382">Hələ banner yoxdur</span>
+                    <span class="self-center text-[11px] text-sage-382">@L["Home_NoBanners"]</span>
                 }
             </div>
         </section>
@@ -52,7 +54,7 @@ else
                 {
                     <section>
                 <div class="mb-4">
-                    <h2 class="mt-1 text-[22px] font-semibold tracking-[-0.04em]">Qaldığın yerdən davam et</h2>
+                    <h2 class="mt-1 text-[22px] font-semibold tracking-[-0.04em]">@L["Home_ContinueTitle"]</h2>
                 </div>
                 <div class="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
                     @foreach (var item in _continue)
@@ -66,9 +68,9 @@ else
         <section class="mt-10">
             <div class="mb-4 flex items-end justify-between">
                 <div>
-                    <h2 class="mt-1 text-[22px] font-semibold tracking-[-0.04em]">Continue learning</h2>
+                    <h2 class="mt-1 text-[22px] font-semibold tracking-[-0.04em]">@L["Home_ContinueLearning"]</h2>
                 </div>
-                <a href="/groups" class="flex items-center gap-1 text-[12px] font-semibold text-brand-671">View all <Icon Name="chevron-right" Class="size-3.5" /></a>
+                <a href="/groups" class="flex items-center gap-1 text-[12px] font-semibold text-brand-671">@L["Home_ViewAll"] <Icon Name="chevron-right" Class="size-3.5" /></a>
             </div>
             <div class="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
                 @foreach (var g in _studentGroups)
@@ -77,7 +79,7 @@ else
                 }
                 @if (_studentGroups.Count == 0)
                 {
-                    <p class="text-[12px] text-sage-410">Hələ qrupunuz yoxdur.</p>
+                    <p class="text-[12px] text-sage-410">@L["Groups_Empty"]</p>
                 }
             </div>
                 </section>
@@ -87,24 +89,24 @@ else
                 <div class="rounded-xl border border-brand-104 bg-white p-5">
                 <div class="flex items-center justify-between">
                     <div>
-                        <h2 class="text-[15px] font-semibold">Upcoming</h2>
-                        <p class="mt-1 text-[11px] text-sage-410">This week</p>
+                        <h2 class="text-[15px] font-semibold">@L["Home_Upcoming"]</h2>
+                        <p class="mt-1 text-[11px] text-sage-410">@L["Home_ThisWeek"]</p>
                     </div>
                     <Icon Name="calendar" Class="size-[18px] text-sage-486" />
                 </div>
                 <div class="mt-5 flex items-center gap-3 border-t border-sage-059 pt-4">
                     <div class="w-10 shrink-0 text-center"><p class="text-[10px] font-bold uppercase text-brand-671">May</p><p class="text-lg font-semibold leading-5">24</p></div>
-                    <div class="min-w-0 flex-1"><p class="truncate text-[13px] font-semibold">Design systems workshop</p><p class="mt-1 flex items-center gap-1 text-[11px] text-sage-410"><Icon Name="clock" Class="size-3" /> 10:00 AM · 60 min</p></div>
+                    <div class="min-w-0 flex-1"><p class="truncate text-[13px] font-semibold">@L["Home_DemoWorkshop"]</p><p class="mt-1 flex items-center gap-1 text-[11px] text-sage-410"><Icon Name="clock" Class="size-3" /> 10:00 AM · 60 min</p></div>
                 </div>
                 <div class="mt-4 flex items-center gap-3 border-t border-sage-059 pt-4">
                     <div class="w-10 shrink-0 text-center"><p class="text-[10px] font-bold uppercase text-sun-482">May</p><p class="text-lg font-semibold leading-5">27</p></div>
-                    <div class="min-w-0 flex-1"><p class="truncate text-[13px] font-semibold">Quiz deadline</p><p class="mt-1 flex items-center gap-1 text-[11px] text-sage-410"><Icon Name="file" Class="size-3" /> @(_quizCount) imtahan</p></div>
+                    <div class="min-w-0 flex-1"><p class="truncate text-[13px] font-semibold">@L["Home_DemoQuizDeadline"]</p><p class="mt-1 flex items-center gap-1 text-[11px] text-sage-410"><Icon Name="file" Class="size-3" /> @string.Format(L["Home_ExamCount"], _quizCount)</p></div>
                 </div>
             </div>
             <div class="rounded-xl bg-brand-836 p-5 text-white">
-                <p class="text-[11px] font-bold uppercase tracking-[0.16em] text-brand-253">Ümumi irəliləyiş</p>
+                <p class="text-[11px] font-bold uppercase tracking-[0.16em] text-brand-253">@L["Home_OverallProgress"]</p>
                 <p class="mt-6 text-4xl font-semibold tracking-[-0.06em]">@_overallPercent%</p>
-                <p class="mt-2 text-[12px] leading-5 text-brand-286">@_completedContents / @_totalContents material tamamlandı. Belə davam!</p>
+                <p class="mt-2 text-[12px] leading-5 text-brand-286">@string.Format(L["Home_ProgressText"], _completedContents, _totalContents)</p>
                 <div class="mt-6 h-1.5 w-full overflow-hidden rounded-full bg-brand-667">
                     <div class="h-full rounded-full bg-brand-341" style="width:@(_overallPercent)%"></div>
                 </div>

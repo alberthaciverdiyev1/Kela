@@ -24,8 +24,8 @@ public partial class ResultCard
             if (Result.DurationSeconds is not > 0) return "—";
             var t = TimeSpan.FromSeconds(Result.DurationSeconds.Value);
             return t.TotalHours >= 1
-                ? $"{(int)t.TotalHours} saat {t.Minutes} dəq"
-                : t.TotalMinutes >= 1 ? $"{t.Minutes} dəq {t.Seconds} san" : $"{t.Seconds} san";
+                ? L.Format("Time_HoursMinutes", (int)t.TotalHours, t.Minutes)
+                : t.TotalMinutes >= 1 ? L.Format("Time_MinutesSeconds", t.Minutes, t.Seconds) : L.Format("Time_Seconds", t.Seconds);
         }
     }
 }

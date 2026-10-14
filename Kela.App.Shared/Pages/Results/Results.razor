@@ -1,9 +1,11 @@
+@using Kela.App.Shared.Services.Localization
+@inject Localizer L
 @page "/results"
 @inject AppApi Api
 
-<PageTitle>Nəticələr</PageTitle>
+<PageTitle>@L["Nav_Results"]</PageTitle>
 
-<PageHeader Title="Nəticələr" Back="/"/>
+<PageHeader Title="@L["Nav_Results"]" Back="/"/>
 
 <div class="px-5 pb-28 pt-6">
     @if (_loading)
@@ -14,26 +16,26 @@
     {
         <div class="mt-4 grid grid-cols-2 gap-3">
             <label class="block">
-                <span class="text-[10px] font-bold uppercase tracking-[0.14em] text-sage-410">Başlanğıc</span>
+                <span class="text-[10px] font-bold uppercase tracking-[0.14em] text-sage-410">@L["Results_From"]</span>
                 <input type="date" @bind="_from" @bind:after="LoadAsync"
                        class="mt-1 w-full rounded-xl border border-brand-104 bg-white px-3 py-2 text-[13px] text-brand-755 outline-none focus:border-brand-467" />
             </label>
             <label class="block">
-                <span class="text-[10px] font-bold uppercase tracking-[0.14em] text-sage-410">Son</span>
+                <span class="text-[10px] font-bold uppercase tracking-[0.14em] text-sage-410">@L["Results_To"]</span>
                 <input type="date" @bind="_to" @bind:after="LoadAsync"
                        class="mt-1 w-full rounded-xl border border-brand-104 bg-white px-3 py-2 text-[13px] text-brand-755 outline-none focus:border-brand-467" />
             </label>
         </div>
 
         <div class="mt-4 grid grid-cols-3 gap-3 rounded-2xl bg-brand-836 p-4 text-center text-white">
-            <div><p class="text-2xl font-semibold tracking-[-0.04em]">@_count</p><p class="text-[10px] text-brand-286">İmtahan</p></div>
-            <div><p class="text-2xl font-semibold tracking-[-0.04em]">@_avg%</p><p class="text-[10px] text-brand-286">Orta bal</p></div>
-            <div><p class="text-2xl font-semibold tracking-[-0.04em]">@_best%</p><p class="text-[10px] text-brand-286">Ən yaxşı</p></div>
+            <div><p class="text-2xl font-semibold tracking-[-0.04em]">@_count</p><p class="text-[10px] text-brand-286">@L["Nav_Exam"]</p></div>
+            <div><p class="text-2xl font-semibold tracking-[-0.04em]">@_avg%</p><p class="text-[10px] text-brand-286">@L["Results_Avg"]</p></div>
+            <div><p class="text-2xl font-semibold tracking-[-0.04em]">@_best%</p><p class="text-[10px] text-brand-286">@L["Results_Best"]</p></div>
         </div>
 
         @if (_filtered.Count == 0)
         {
-            <EmptyState Text="Bu aralıqda nəticə yoxdur."/>
+            <EmptyState Text="@L["Results_Empty"]"/>
         }
         else
         {
