@@ -2,6 +2,7 @@ using System.Security.Claims;
 using Kela.Api.Common.Controllers;
 using Kela.Api.Common.Responses;
 using Kela.Core.Common.Responses;
+using Kela.Core.Common.Localization;
 using Kela.Core.Modules.Auth;
 using Kela.Core.Modules.Group.Responses;
 using Kela.Core.Modules.Lesson.Responses;
@@ -15,12 +16,13 @@ using Kela.Core.Modules.StudentApp.Responses;
 using Kela.Core.Modules.Subject.Responses;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Localization;
 
 namespace Kela.Api.Modules.StudentApp.Controllers;
 
 [Authorize(Policy = AuthPolicies.Student)]
 [Route("api/[controller]")]
-public sealed class StudentController(IStudentAppService service, INotificationService notifications) : ApiControllerBase
+public sealed class StudentController(IStudentAppService service, INotificationService notifications, IStringLocalizer<SharedResource> L) : ApiControllerBase
 {
     private long StudentId => long.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
 
@@ -70,13 +72,13 @@ public sealed class StudentController(IStudentAppService service, INotificationS
         [FromBody] SaveNotificationTokenRequest request, CancellationToken ct)
     {
         await notifications.SaveTokenAsync(StudentId, request, ct);
-        return SuccessMessage("Token saved");
+        return SuccessMessage(L["Api_TokenSaved"]);
     }
 
     [HttpDelete("notifications/token")]
     public async Task<ActionResult<ApiResponse<string>>> RemoveToken([FromQuery] string token, CancellationToken ct)
     {
         await notifications.DeactivateTokenAsync(StudentId, token, ct);
-        return SuccessMessage("Token removed");
+        return SuccessMessage(L["Api_TokenRemoved"]);
     }
 }
