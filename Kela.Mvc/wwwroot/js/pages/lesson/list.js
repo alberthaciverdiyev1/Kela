@@ -46,16 +46,9 @@ function rowActions(id) {
 }
 
 function updateStats(data) {
-    const rows = data.data || data.Data || [];
-    const total = data.total ?? data.Total ?? rows.length;
-    const active = rows.filter(x => x.isActive).length;
-    const archive = rows.filter(x => !x.isActive).length;
-    const material = rows.length ? rows.length * 18 + 48 : 0;
-
-    document.getElementById('stat_total').textContent = total;
-    document.getElementById('stat_active').textContent = active;
-    document.getElementById('stat_archive').textContent = archive;
-    document.getElementById('stat_material').textContent = material;
+    const total = data.total ?? data.Total ?? (data.data || []).length;
+    const el = document.getElementById('stat_total');
+    if (el) el.textContent = total;
 }
 
 function renderPagination(containerId, current, last, onSelect) {
@@ -103,9 +96,7 @@ async function loadList(page) {
         const rowNumber = ((currentPage - 1) * perPage) + index + 1;
         const subjectName = window.SUBJECTS[l.subjectId] ?? '-';
         const palette = lessonPalette(index);
-        const updated = l.updatedAt || l.createdAt || '—';
         return [
-            { html: '<input type="checkbox" class="h-5 w-5 rounded-md border-slate-300 text-primary focus:ring-primary" />', cls: 'w-12 px-4' },
             { html: rowNumber, cls: 'text-slate-700 font-semibold' },
             {
                 html: `<div class="flex items-center gap-4">
@@ -117,19 +108,17 @@ async function loadList(page) {
                 </div>`
             },
             { html: subjectBadge(l.subjectId, subjectName) },
-            { html: '<div class="font-semibold text-slate-800">Ümumi</div><div class="text-sm text-slate-500">Target seçilməyib</div>' },
-            { html: `<span class="inline-flex items-center gap-2 text-slate-700"><span class="text-slate-400">⋮⋮</span>${l.sortOrder ?? rowNumber}</span>` },
+            { html: `<span class="inline-flex items-center gap-2 text-slate-700">${l.sortOrder ?? rowNumber}</span>` },
             {
                 html: l.isActive
                     ? '<span class="status-badge bg-success-bg text-success"><span class="h-2 w-2 rounded-full bg-success"></span>Aktiv</span>'
                     : '<span class="status-badge bg-warning-bg text-warning"><span class="h-2 w-2 rounded-full bg-warning"></span>Arxivdə</span>'
             },
-            { html: `<div class="font-medium text-slate-600">${updated === '—' ? '—' : updated}</div>` },
             { html: rowActions(l.id), cls: 'text-right' }
         ];
     });
 
-    AdminUI.table('rows', rows, 9);
+    AdminUI.table('rows', rows, 6);
     renderPagination('pagination', currentPage, lastPage, loadList);
 
     const info = document.getElementById('tableInfo');

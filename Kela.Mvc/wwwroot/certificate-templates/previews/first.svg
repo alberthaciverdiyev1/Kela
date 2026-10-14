@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1056" height="746" viewBox="0 0 1056 746">
+  <rect width="1056" height="746" fill="#ffffff"/>
+  <rect x="8" y="8" width="1040" height="730" fill="none" stroke="#e5e7eb" stroke-width="2"/>
+  <!-- top-right waves -->
+  <path d="M635 8 H1048 V94 C987 49 939 34 866 35 C771 41 699 27 635 8Z" fill="#fff4bf"/>
+  <path d="M650 8 H1048 V73 C994 39 937 28 860 31 C769 34 705 23 650 8Z" fill="#238a43"/>
+  <path d="M714 8 H1048 V48 C970 19 884 21 808 24 C769 24 740 15 714 8Z" fill="#11532c"/>
+  <path d="M884 38 C957 28 1008 49 1048 68 V94 C1004 64 953 46 884 38Z" fill="#ffbf00"/>
+  <!-- bottom-left waves -->
+  <path d="M5 373 C70 502 157 625 340 741 H5Z" fill="#fff4c2"/>
+  <path d="M5 428 C83 550 177 660 352 741 H5Z" fill="#ffc400"/>
+  <path d="M5 463 C100 593 211 690 366 741 H5Z" fill="#258b43"/>
+  <path d="M5 663 C96 711 174 733 258 741 H5Z" fill="#11532c"/>
+  <!-- content -->
+  <g text-anchor="middle" font-family="Georgia, 'Playfair Display', serif">
+    <text x="540" y="250" font-size="30" letter-spacing="8" fill="#94a3b8" font-family="Arial, sans-serif">SERTİFİKAT</text>
+    <text x="540" y="345" font-size="66" font-weight="700" fill="#11532c">Certificate of Achievement</text>
+    <text x="540" y="410" font-size="24" fill="#64748b" font-family="Arial, sans-serif">This certificate is proudly presented to</text>
+    <line x1="330" y1="480" x2="726" y2="480" stroke="#cbd5e1" stroke-width="2"/>
+    <text x="540" y="520" font-size="22" fill="#94a3b8" font-family="Arial, sans-serif">for successfully completing the course</text>
+    <line x1="360" y1="640" x2="520" y2="640" stroke="#cbd5e1" stroke-width="2"/>
+    <text x="440" y="665" font-size="16" fill="#94a3b8" font-family="Arial, sans-serif">Signature</text>
+  </g>
+</svg>
