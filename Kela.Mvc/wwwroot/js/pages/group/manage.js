@@ -15,6 +15,25 @@ function switchTab(tab) {
         el.classList.toggle('text-white', on);
         el.classList.toggle('text-slate-600', !on);
     });
+    if (tab === 'logs') loadLogs();
+}
+
+async function loadLogs() {
+    const items = await AdminUI.get(`/group/${mgGroupId}/subject-logs`);
+    const box = document.getElementById('logsList');
+    const subjName = id => {
+        const s = (mgOptions && mgOptions.subjects || []).find(x => x.id === id);
+        return s ? s.text : ('#' + id);
+    };
+    box.innerHTML = items.length
+        ? items.map(l => {
+            const attach = l.action === 'attach';
+            return `<div class="flex items-center justify-between rounded-lg bg-slate-50 px-3 py-2">
+                <span class="text-sm text-slate-700"><span class="font-semibold">${subjName(l.subjectId)}</span> — <span class="${attach ? 'text-emerald-600' : 'text-red-600'}">${attach ? 'Əlavə edildi' : 'Çıxarıldı'}</span></span>
+                <span class="text-xs text-slate-400">${new Date(l.createdAt).toLocaleString('az')}</span>
+            </div>`;
+        }).join('')
+        : '<div class="text-sm text-slate-400">Qeyd yoxdur</div>';
 }
 
 async function openManage(id) {

@@ -147,6 +147,11 @@ public sealed class GroupController(
         return Json(new { ok = true });
     }
 
+    // Fənn atama/çıxarma audit loqları
+    [HttpGet("{id:long}/subject-logs")]
+    public async Task<IActionResult> SubjectLogs(long id, CancellationToken ct)
+        => Json(await service.ListSubjectLogsAsync(id, ct));
+
     private static object Errors(FluentValidation.Results.ValidationResult result)
         => new
         {

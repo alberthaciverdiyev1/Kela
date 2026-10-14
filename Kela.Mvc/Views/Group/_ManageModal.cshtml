@@ -8,6 +8,7 @@
             <button type="button" data-tab="students" class="manage-tabbtn rounded-t-lg px-4 py-2 text-sm" onclick="switchTab('students')">Şagirdlər</button>
             <button type="button" data-tab="subjects" class="manage-tabbtn rounded-t-lg px-4 py-2 text-sm" onclick="switchTab('subjects')">Fənnlər</button>
             <button type="button" data-tab="quizzes" class="manage-tabbtn rounded-t-lg px-4 py-2 text-sm" onclick="switchTab('quizzes')">İmtahanlar</button>
+            <button type="button" data-tab="logs" class="manage-tabbtn rounded-t-lg px-4 py-2 text-sm" onclick="switchTab('logs')">Fənn loqları</button>
         </div>
         <div class="max-h-[60vh] overflow-y-auto p-4">
             <div id="tab-students" class="manage-tab space-y-3">
@@ -30,6 +31,10 @@
                     <button type="button" onclick="assignMember('quizzes')" class="rounded-lg bg-primary px-4 py-2 text-sm text-white hover:bg-primary-600">Əlavə et</button>
                 </div>
                 <div id="quizzesList" class="space-y-2"></div>
+            </div>
+            <div id="tab-logs" class="manage-tab hidden space-y-3">
+                <p class="text-sm text-slate-500">Fənn atama/çıxarma tarixçəsi (ən yenidən köhnəyə).</p>
+                <div id="logsList" class="space-y-2"></div>
             </div>
         </div>
     </div>
