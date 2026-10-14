@@ -93,6 +93,18 @@
             <Icon Name="chevron-right" Class="size-4 text-sage-300" />
         </button>
 
+        <div class="flex w-full items-center gap-3 py-4">
+            <span class="flex size-8 items-center justify-center rounded-lg bg-brand-049 text-brand-639"><Icon Name="sliders" Class="size-4" /></span>
+            <span class="flex-1"><span class="block text-[13px] font-semibold">@L["Profile_Language"]</span><span class="mt-0.5 block text-[10px] text-sage-410">az / en / ru / tr</span></span>
+            <select value="@L.Current" @onchange="ChangeLang" aria-label="@L["Profile_Language"]"
+                    class="rounded-lg border border-brand-104 bg-white px-2 py-1 text-[12px] font-semibold text-brand-722 outline-none focus:border-brand-467">
+                @foreach (var c in Localizer.Supported)
+                {
+                    <option value="@c">@c.ToUpperInvariant()</option>
+                }
+            </select>
+        </div>
+
         @* İşləməyən (yalnız görünən) hesab silmə *@
         <div class="flex w-full items-center gap-3 py-4 opacity-60" aria-disabled="true">
             <span class="flex size-8 items-center justify-center rounded-lg bg-danger-043 text-danger-539"><Icon Name="x" Class="size-4" /></span>

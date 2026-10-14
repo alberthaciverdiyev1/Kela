@@ -13,6 +13,8 @@ namespace Kela.App.Shared.Pages.Profile;
 
 public partial class Profile
 {
+    private async Task ChangeLang(ChangeEventArgs e) => await L.SetAsync(e.Value?.ToString() ?? "az");
+
     private bool _busy;
     private bool _phoneOpen;
     private bool _nameOpen;

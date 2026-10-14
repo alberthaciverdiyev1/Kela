@@ -51,6 +51,7 @@ public sealed class Localizer(IJSRuntime js)
     {
         ["az"] = new()
         {
+            ["Profile_Language"] = "Dil",
             ["Related_Videos"] = "Daha çox video",
             ["Related_Voices"] = "Daha çox səs yazısı",
             ["Related_Documents"] = "Daha çox sənəd",
@@ -211,6 +212,7 @@ public sealed class Localizer(IJSRuntime js)
         },
         ["en"] = new()
         {
+            ["Profile_Language"] = "Language",
             ["Related_Videos"] = "More videos",
             ["Related_Voices"] = "More audio",
             ["Related_Documents"] = "More documents",
@@ -371,6 +373,7 @@ public sealed class Localizer(IJSRuntime js)
         },
         ["ru"] = new()
         {
+            ["Profile_Language"] = "Язык",
             ["Related_Videos"] = "Ещё видео",
             ["Related_Voices"] = "Ещё аудио",
             ["Related_Documents"] = "Ещё документы",
@@ -531,6 +534,7 @@ public sealed class Localizer(IJSRuntime js)
         },
         ["tr"] = new()
         {
+            ["Profile_Language"] = "Dil",
             ["Related_Videos"] = "Daha fazla video",
             ["Related_Voices"] = "Daha fazla ses",
             ["Related_Documents"] = "Daha fazla belge",
