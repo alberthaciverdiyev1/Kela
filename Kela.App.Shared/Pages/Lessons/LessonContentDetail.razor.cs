@@ -26,7 +26,12 @@ public partial class LessonContentDetail
     private bool IsVideo => _content?.Type == "video";
     private bool IsVoice => _content?.Type == "voice";
 
-    private string RelatedTitle => "Dərs materialları";
+    private string RelatedTitle => _content?.Type switch
+    {
+        "video" => "Daha çox video",
+        "voice" => "Daha çox səs yazısı",
+        _ => "Daha çox sənəd"
+    };
 
     private static string IconFor(string? type) => type switch
     {
@@ -48,7 +53,7 @@ public partial class LessonContentDetail
             _content = all.FirstOrDefault(c => c.Id == ContentId);
             _siblings = _content is null
                 ? new()
-                : all.Where(c => c.Id != ContentId).ToList();
+                : all.Where(c => c.Id != ContentId && c.Type == _content.Type).ToList();
             _url = Absolute(_content?.PlaybackUrl ?? _content?.Url);
         }
         catch { }
