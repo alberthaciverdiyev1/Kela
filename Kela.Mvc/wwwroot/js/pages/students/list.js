@@ -47,18 +47,18 @@ async function loadList(page) {
 async function restoreRow(id) {
     if (!await AdminUI.confirmRestore()) return;
     const res = await AdminUI.postJson(`/students/${id}/restore`, {});
-    if (res.ok) { AdminUI.notify('Bərpa edildi'); loadList(currentPage); }
+    if (res.ok) { AdminUI.notify(L["Js_Restored"]); loadList(currentPage); }
     else AdminUI.error(AdminUI.errText(res));
 }
 
 async function toggleStatus(id, isActive) {
     const res = await AdminUI.postJson(`/students/${id}/status`, { isActive });
-    if (res.ok) { AdminUI.notify('Status dəyişdi'); loadList(currentPage); }
+    if (res.ok) { AdminUI.notify(L["Js_StatusChanged"]); loadList(currentPage); }
     else AdminUI.error();
 }
 
 async function removeItem(id) {
-    if (!await AdminUI.confirmDelete('Bu şagird silinəcək.')) return;
+    if (!await AdminUI.confirmDelete(L["Js_ConfirmDeleteStudent"])) return;
     const res = await AdminUI.del(`/students/${id}`);
     if (res.ok) { AdminUI.notify('Silindi'); loadList(currentPage); }
     else AdminUI.error();

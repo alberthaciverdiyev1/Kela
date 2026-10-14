@@ -14,7 +14,7 @@ async function loadList(page) {
         { html: `${u.name ?? ''} ${u.surname ?? ''}`.trim() || '-', cls: 'font-medium text-slate-800' },
         { html: u.email, cls: 'text-slate-500' },
         { html: u.phoneNumber ?? '-', cls: 'text-slate-500' },
-        { html: u.type === 'superadmin' ? AdminUI.badge('SuperAdmin', 'success') : (u.type === 'admin' ? AdminUI.badge('Admin', 'primary') : AdminUI.badge('Müəllim', 'neutral')) },
+        { html: u.type === 'superadmin' ? AdminUI.badge('SuperAdmin', 'success') : (u.type === 'admin' ? AdminUI.badge('Admin', 'primary') : AdminUI.badge(L["Role_Teacher"], 'neutral')) },
         { html: AdminUI.actions(u.id), cls: 'text-right' }
     ]), 6);
 
@@ -23,7 +23,7 @@ async function loadList(page) {
 }
 
 async function removeItem(id) {
-    if (!await AdminUI.confirmDelete('Bu istifadəçi silinəcək.')) return;
+    if (!await AdminUI.confirmDelete(L["Js_ConfirmDeleteUser"])) return;
     const res = await AdminUI.del(`/user/${id}`);
     if (res.ok) { AdminUI.notify('Silindi'); loadList(currentPage); }
     else AdminUI.error();

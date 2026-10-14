@@ -14,13 +14,13 @@
         if (file) fd.append('Logo', file);
 
         const res = await AdminUI.putForm('/setting', fd);
-        if (res.ok) { AdminUI.notify('Yadda saxlanıldı'); if (res.data.logo) AdminUI.fileSet('logo', res.data.logo); }
+        if (res.ok) { AdminUI.notify(L["Js_Saved"]); if (res.data.logo) AdminUI.fileSet('logo', res.data.logo); }
         else AdminUI.error();
     });
 
     document.getElementById('clearCacheBtn')?.addEventListener('click', async () => {
         const res = await AdminUI.post('/setting/clear-cache', {});
-        if (res.ok) AdminUI.notify('Keş təmizləndi');
+        if (res.ok) AdminUI.notify(L["Js_CacheCleared"]);
         else AdminUI.error();
     });
 })();

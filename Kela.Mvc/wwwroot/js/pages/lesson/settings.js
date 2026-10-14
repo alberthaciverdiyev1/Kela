@@ -15,7 +15,7 @@ async function openSettings(id) {
         AdminUI.get(`/lesson/${id}`),
         AdminUI.get(`/lesson/${id}/settings`)
     ]);
-    document.getElementById('settingsTitle').textContent = (lesson.title || '') + ' — məzmun açarları';
+    document.getElementById('settingsTitle').textContent = (lesson.title || '') + L["Js_ContentKeysSuffix"];
     document.getElementById('settingsError').classList.add('hidden');
     SETTINGS_FIELDS.forEach(([key, elId]) => {
         document.getElementById(elId).checked = !!settings[key];
@@ -35,7 +35,7 @@ async function saveSettings() {
         payload[key] = document.getElementById(elId).checked ? 1 : 0;
     });
     const res = await AdminUI.putJson(`/lesson/${settingsLessonId}/settings`, payload);
-    if (res.ok) { AdminUI.notify('Yadda saxlanıldı'); closeSettings(); return; }
+    if (res.ok) { AdminUI.notify(L["Js_Saved"]); closeSettings(); return; }
     const box = document.getElementById('settingsError');
     box.textContent = AdminUI.errText(res);
     box.classList.remove('hidden');

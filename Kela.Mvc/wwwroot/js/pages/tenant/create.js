@@ -20,7 +20,7 @@
             name: document.getElementById('name').value,
             slug: document.getElementById('slug').value
         });
-        if (res.ok) { AdminUI.notify('Yaradıldı'); window.closeModal(); loadList(); }
+        if (res.ok) { AdminUI.notify(L["Js_Created"]); window.closeModal(); loadList(); }
         else AdminUI.error(AdminUI.errText(res));
     });
 })();

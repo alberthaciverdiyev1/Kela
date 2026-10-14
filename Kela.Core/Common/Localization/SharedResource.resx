@@ -727,4 +727,184 @@
   <data name="Student_NoViolations" xml:space="preserve">
     <value>No violations recorded</value>
   </data>
+  <data name="Js_ConfirmDeleteBanner" xml:space="preserve">
+    <value>Delete this banner?</value>
+  </data>
+  <data name="Js_ConfirmDeleteNotification" xml:space="preserve">
+    <value>Delete this notification?</value>
+  </data>
+  <data name="Js_ConfirmDeleteLesson" xml:space="preserve">
+    <value>Delete this lesson?</value>
+  </data>
+  <data name="Js_ConfirmDeleteSubject" xml:space="preserve">
+    <value>Delete this subject?</value>
+  </data>
+  <data name="Js_ConfirmDeleteQuiz" xml:space="preserve">
+    <value>Delete this exam?</value>
+  </data>
+  <data name="Js_ConfirmDeleteUser" xml:space="preserve">
+    <value>Delete this user?</value>
+  </data>
+  <data name="Js_ConfirmDeleteMaterial" xml:space="preserve">
+    <value>Delete this material?</value>
+  </data>
+  <data name="Js_ConfirmDeleteGroup" xml:space="preserve">
+    <value>Delete this group?</value>
+  </data>
+  <data name="Js_ConfirmDeleteStudent" xml:space="preserve">
+    <value>Delete this student?</value>
+  </data>
+  <data name="Js_ConfirmDeleteCertificate" xml:space="preserve">
+    <value>Delete this certificate?</value>
+  </data>
+  <data name="Js_ConfirmDeleteQuestion" xml:space="preserve">
+    <value>Delete this question?</value>
+  </data>
+  <data name="Js_Irreversible" xml:space="preserve">
+    <value>This action cannot be undone.</value>
+  </data>
+  <data name="Js_AreYouSure" xml:space="preserve">
+    <value>Are you sure?</value>
+  </data>
+  <data name="Js_ConfirmResetDevice" xml:space="preserve">
+    <value>Unlock the device?</value>
+  </data>
+  <data name="Js_ConfirmRemove" xml:space="preserve">
+    <value>Remove?</value>
+  </data>
+  <data name="Js_ConfirmRestore" xml:space="preserve">
+    <value>Restore?</value>
+  </data>
+  <data name="Js_NothingSelected" xml:space="preserve">
+    <value>Nothing selected</value>
+  </data>
+  <data name="Js_Added" xml:space="preserve">
+    <value>Added</value>
+  </data>
+  <data name="Js_Updated" xml:space="preserve">
+    <value>Updated</value>
+  </data>
+  <data name="Js_Created" xml:space="preserve">
+    <value>Created</value>
+  </data>
+  <data name="Js_Restored" xml:space="preserve">
+    <value>Restored</value>
+  </data>
+  <data name="Js_StatusChanged" xml:space="preserve">
+    <value>Status changed</value>
+  </data>
+  <data name="Js_Sent" xml:space="preserve">
+    <value>Sent</value>
+  </data>
+  <data name="Js_Removed" xml:space="preserve">
+    <value>Removed</value>
+  </data>
+  <data name="Js_Unlocked" xml:space="preserve">
+    <value>Unlocked</value>
+  </data>
+  <data name="Js_CacheCleared" xml:space="preserve">
+    <value>Cache cleared</value>
+  </data>
+  <data name="Js_Saved" xml:space="preserve">
+    <value>Saved</value>
+  </data>
+  <data name="Js_Applied" xml:space="preserve">
+    <value>Applied</value>
+  </data>
+  <data name="Js_OrderUpdated" xml:space="preserve">
+    <value>Order updated</value>
+  </data>
+  <data name="Js_ErrorOccured" xml:space="preserve">
+    <value>An error occurred</value>
+  </data>
+  <data name="Js_AdjustSearch" xml:space="preserve">
+    <value>Adjust your search and try again</value>
+  </data>
+  <data name="Js_EditBanner" xml:space="preserve">
+    <value>Edit banner</value>
+  </data>
+  <data name="Js_EditLesson" xml:space="preserve">
+    <value>Edit lesson</value>
+  </data>
+  <data name="Js_EditSubject" xml:space="preserve">
+    <value>Edit subject</value>
+  </data>
+  <data name="Js_EditQuiz" xml:space="preserve">
+    <value>Edit exam</value>
+  </data>
+  <data name="Js_EditUser" xml:space="preserve">
+    <value>Edit user</value>
+  </data>
+  <data name="Js_EditMaterial" xml:space="preserve">
+    <value>Edit material</value>
+  </data>
+  <data name="Js_EditGroup" xml:space="preserve">
+    <value>Edit group</value>
+  </data>
+  <data name="Js_EditCertificate" xml:space="preserve">
+    <value>Edit certificate</value>
+  </data>
+  <data name="Js_EditQuestion" xml:space="preserve">
+    <value>Edit question</value>
+  </data>
+  <data name="Js_SortLessons" xml:space="preserve">
+    <value>Sort lessons</value>
+  </data>
+  <data name="Js_SortLessonsSubject" xml:space="preserve">
+    <value>Sort lessons (selected subject)</value>
+  </data>
+  <data name="Js_SortQuizzes" xml:space="preserve">
+    <value>Sort exams</value>
+  </data>
+  <data name="Js_SortMaterials" xml:space="preserve">
+    <value>Sort materials</value>
+  </data>
+  <data name="Js_SelectLessonFirst" xml:space="preserve">
+    <value>Select a lesson first</value>
+  </data>
+  <data name="Js_Edit" xml:space="preserve">
+    <value>Edit</value>
+  </data>
+  <data name="Js_Old" xml:space="preserve">
+    <value>Old</value>
+  </data>
+  <data name="Js_Selected" xml:space="preserve">
+    <value>Selected</value>
+  </data>
+  <data name="Js_All" xml:space="preserve">
+    <value>Everyone</value>
+  </data>
+  <data name="Js_EditPrefix" xml:space="preserve">
+    <value>Edit: </value>
+  </data>
+  <data name="Js_ManageSuffix" xml:space="preserve">
+    <value> — manage</value>
+  </data>
+  <data name="Js_ContentKeysSuffix" xml:space="preserve">
+    <value> — content toggles</value>
+  </data>
+  <data name="Js_StudentsCreated" xml:space="preserve">
+    <value> students created</value>
+  </data>
+  <data name="Js_Empty" xml:space="preserve">
+    <value>Empty</value>
+  </data>
+  <data name="Js_NothingToSort" xml:space="preserve">
+    <value>Nothing to sort</value>
+  </data>
+  <data name="Js_Voice" xml:space="preserve">
+    <value>Audio</value>
+  </data>
+  <data name="Js_EditDelete" xml:space="preserve">
+    <value>Edit / Delete</value>
+  </data>
+  <data name="Js_QuizCount" xml:space="preserve">
+    <value>Exam count</value>
+  </data>
+  <data name="Js_StudentCount" xml:space="preserve">
+    <value>Student count</value>
+  </data>
+  <data name="Js_TotalQuestions" xml:space="preserve">
+    <value>Total questions</value>
+  </data>
 </root>

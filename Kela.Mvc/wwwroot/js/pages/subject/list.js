@@ -34,7 +34,7 @@ async function loadList(page) {
 }
 
 async function removeItem(id) {
-    if (!await AdminUI.confirmDelete('Bu fənn silinəcək.')) return;
+    if (!await AdminUI.confirmDelete(L["Js_ConfirmDeleteSubject"])) return;
     const res = await AdminUI.del(`/subject/${id}`);
     if (res.ok) { AdminUI.notify('Silindi'); loadList(currentPage); }
     else AdminUI.error();

@@ -29,7 +29,7 @@ async function loadLogs() {
         ? items.map(l => {
             const attach = l.action === 'attach';
             return `<div class="flex items-center justify-between rounded-lg bg-slate-50 px-3 py-2">
-                <span class="text-sm text-slate-700"><span class="font-semibold">${subjName(l.subjectId)}</span> — <span class="${attach ? 'text-emerald-600' : 'text-red-600'}">${attach ? 'Əlavə edildi' : 'Çıxarıldı'}</span></span>
+                <span class="text-sm text-slate-700"><span class="font-semibold">${subjName(l.subjectId)}</span> — <span class="${attach ? 'text-emerald-600' : 'text-red-600'}">${attach ? L["Js_Added"] : L["Js_Removed"]}</span></span>
                 <span class="text-xs text-slate-400">${new Date(l.createdAt).toLocaleString('az')}</span>
             </div>`;
         }).join('')
@@ -39,7 +39,7 @@ async function loadLogs() {
 async function openManage(id) {
     mgGroupId = id;
     const g = await AdminUI.get('/group/' + id);
-    document.getElementById('manageTitle').textContent = g.name + ' — idarə';
+    document.getElementById('manageTitle').textContent = g.name + L["Js_ManageSuffix"];
 
     if (!mgOptions) mgOptions = await AdminUI.get('/group/options');
     fillSelect('studentsSelect', mgOptions.students);
@@ -66,7 +66,7 @@ async function refreshManage() {
 function renderMembers(containerId, items, type, labelFn, idFn) {
     const box = document.getElementById(containerId);
     box.innerHTML = '';
-    if (!items.length) { box.innerHTML = '<div class="text-sm text-slate-400">Boşdur</div>'; return; }
+    if (!items.length) { box.innerHTML = '<div class="text-sm text-slate-400">' + L["Js_Empty"] + '</div>'; return; }
 
     items.forEach(item => {
         const row = document.createElement('div');
@@ -86,12 +86,12 @@ async function assignMember(type) {
     payload[key] = [Number(value)];
 
     const res = await AdminUI.postJson(`/group/${mgGroupId}/${type}`, payload);
-    if (res.ok) { AdminUI.notify('Əlavə olundu'); refreshManage(); }
+    if (res.ok) { AdminUI.notify(L["Js_Added"]); refreshManage(); }
     else AdminUI.error();
 }
 
 async function removeMember(type, id) {
-    if (!await AdminUI.confirmDelete('Çıxarılsın?')) return;
+    if (!await AdminUI.confirmDelete(L["Js_ConfirmRemove"])) return;
     const res = await AdminUI.del(`/group/${mgGroupId}/${type}/${id}`);
     if (res.ok) { AdminUI.notify('Silindi'); refreshManage(); }
     else AdminUI.error();

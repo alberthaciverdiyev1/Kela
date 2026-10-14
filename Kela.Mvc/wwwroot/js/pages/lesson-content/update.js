@@ -4,7 +4,7 @@
 
     window.openEdit = async function (id) {
         const data = await AdminUI.get(`/lesson-content/${id}`);
-        document.getElementById('modalTitle').textContent = 'Material redaktəsi';
+        document.getElementById('modalTitle').textContent = L["Js_EditMaterial"];
         document.getElementById('entityId').value = data.id;
         document.getElementById('sort_order').value = data.sortOrder ?? 0;
         document.getElementById('description').value = data.description ?? '';
@@ -30,7 +30,7 @@
         fd.append('is_active', document.getElementById('is_active').checked ? 'true' : 'false');
 
         const res = await AdminUI.putForm(`/lesson-content/${id}`, fd);
-        if (res.ok) { AdminUI.notify('Redaktə olundu'); window.closeModal(); loadList(currentPage); return; }
+        if (res.ok) { AdminUI.notify(L["Js_Updated"]); window.closeModal(); loadList(currentPage); return; }
 
         errBox.textContent = AdminUI.errText(res);
         errBox.classList.remove('hidden');

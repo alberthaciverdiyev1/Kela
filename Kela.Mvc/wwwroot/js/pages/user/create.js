@@ -24,7 +24,7 @@
     };
 
     window.openCreate = function () {
-        document.getElementById('modalTitle').textContent = 'Yeni istifadəçi';
+        document.getElementById('modalTitle').textContent = L["User_Create"];
         document.getElementById('entityId').value = '';
         ['name', 'surname', 'email', 'phoneNumber', 'password'].forEach(id => document.getElementById(id).value = '');
         document.getElementById('type').value = 'teacher';
@@ -37,7 +37,7 @@
         if (document.getElementById('entityId').value) return; // update.js
 
         const res = await AdminUI.postForm('/user', window.buildUserForm());
-        if (res.ok) { AdminUI.notify('Əlavə olundu'); window.closeModal(); loadList(1); return; }
+        if (res.ok) { AdminUI.notify(L["Js_Added"]); window.closeModal(); loadList(1); return; }
 
         errBox.textContent = AdminUI.errText(res);
         errBox.classList.remove('hidden');

@@ -13,7 +13,7 @@
     };
 
     window.openCreate = function () {
-        document.getElementById('modalTitle').textContent = 'Yeni dərs';
+        document.getElementById('modalTitle').textContent = L["Lesson_Create"];
         document.getElementById('entityId').value = '';
         document.getElementById('sort_order').value = '';
         document.getElementById('subject_id').value = '';
@@ -41,7 +41,7 @@
         if (document.getElementById('entityId').value) return; // update.js idarə edir
 
         const res = await AdminUI.postForm('/lesson', window.buildLessonForm());
-        if (res.ok) { AdminUI.notify('Əlavə olundu'); window.closeModal(); loadList(1); return; }
+        if (res.ok) { AdminUI.notify(L["Js_Added"]); window.closeModal(); loadList(1); return; }
 
         errBox.textContent = AdminUI.errText(res);
         errBox.classList.remove('hidden');

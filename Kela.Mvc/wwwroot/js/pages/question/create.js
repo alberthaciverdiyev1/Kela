@@ -80,7 +80,7 @@
         if (document.getElementById('entityId').value) return; // update.js
 
         const res = await AdminUI.postForm('/question', window.buildQuestionForm());
-        if (res.ok) { AdminUI.notify('Əlavə olundu'); window.closeModal(); loadList(1); return; }
+        if (res.ok) { AdminUI.notify(L["Js_Added"]); window.closeModal(); loadList(1); return; }
 
         errBox.textContent = AdminUI.errText(res);
         errBox.classList.remove('hidden');

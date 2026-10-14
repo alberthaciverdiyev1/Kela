@@ -36,7 +36,7 @@ async function loadList(page) {
 }
 
 async function removeItem(id) {
-    if (!await AdminUI.confirmDelete('Bu qrup silinəcək.')) return;
+    if (!await AdminUI.confirmDelete(L["Js_ConfirmDeleteGroup"])) return;
     const res = await AdminUI.del(`/group/${id}`);
     if (res.ok) { AdminUI.notify('Silindi'); loadList(currentPage); }
     else AdminUI.error();

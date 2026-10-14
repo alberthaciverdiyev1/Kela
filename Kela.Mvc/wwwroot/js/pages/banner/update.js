@@ -4,7 +4,7 @@
 
     window.openEdit = async function (id) {
         const data = await AdminUI.get(`/banner/${id}`);
-        document.getElementById('modalTitle').textContent = 'Banner redaktəsi';
+        document.getElementById('modalTitle').textContent = L["Js_EditBanner"];
         document.getElementById('entityId').value = data.id;
         document.getElementById('title').value = data.title;
         document.getElementById('image').value = '';
@@ -27,7 +27,7 @@
         if (file) fd.append('Image', file);
 
         const res = await AdminUI.putForm(`/banner/${id}`, fd);
-        if (res.ok) { AdminUI.notify('Redaktə olundu'); window.closeModal(); loadList(currentPage); return; }
+        if (res.ok) { AdminUI.notify(L["Js_Updated"]); window.closeModal(); loadList(currentPage); return; }
 
         errBox.textContent = AdminUI.errText(res);
         errBox.classList.remove('hidden');

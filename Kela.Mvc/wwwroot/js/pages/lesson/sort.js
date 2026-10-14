@@ -5,7 +5,7 @@ window.sortClick = async function () {
 
     const data = await AdminUI.get(`/lesson/list?${params.toString()}`);
     AdminUI.openSort({
-        title: subjectId ? 'Dərsləri sırala (seçilmiş fənn)' : 'Dərsləri sırala',
+        title: subjectId ? L["Js_SortLessonsSubject"] : L["Js_SortLessons"],
         items: (data.data || []).map(l => ({ id: l.id, label: l.title })),
         saveUrl: '/lesson/sort',
         onSaved: () => loadList(currentPage)

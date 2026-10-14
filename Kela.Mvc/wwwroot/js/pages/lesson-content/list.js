@@ -1,7 +1,7 @@
 let currentPage = 1;
 let lastPage = 1;
 let showDeleted = false;
-const TYPE_TEXT = { video: 'Video', file: 'Fayl', voice: 'Səs' };
+const TYPE_TEXT = { video: 'Video', file: 'Fayl', voice: L["Js_Voice"] };
 
 function toggleTrash() {
     showDeleted = !showDeleted;
@@ -35,7 +35,7 @@ async function loadList(page) {
 }
 
 async function removeItem(id) {
-    if (!await AdminUI.confirmDelete('Bu material silinəcək.')) return;
+    if (!await AdminUI.confirmDelete(L["Js_ConfirmDeleteMaterial"])) return;
     const res = await AdminUI.del(`/lesson-content/${id}`);
     if (res.ok) { AdminUI.notify('Silindi'); loadList(currentPage); }
     else AdminUI.error();

@@ -5,7 +5,7 @@ window.sortClick = async function () {
 
     const data = await AdminUI.get(`/quiz/list?${params.toString()}`);
     AdminUI.openSort({
-        title: 'İmtahanları sırala',
+        title: L["Js_SortQuizzes"],
         items: (data.data || []).map(q => ({ id: q.id, label: q.title })),
         saveUrl: '/quiz/sort',
         onSaved: () => loadList(currentPage)

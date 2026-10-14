@@ -4,7 +4,7 @@
 
     window.openEdit = async function (id) {
         const data = await AdminUI.get(`/subject/${id}/edit`);
-        document.getElementById('modalTitle').textContent = 'Fənn redaktəsi';
+        document.getElementById('modalTitle').textContent = L["Js_EditSubject"];
         document.getElementById('entityId').value = data.id;
         document.getElementById('name').value = data.name;
         window.showModal();
@@ -19,7 +19,7 @@
         fd.append('name', document.getElementById('name').value);
 
         const res = await AdminUI.putForm(`/subject/${id}`, fd);
-        if (res.ok) { AdminUI.notify('Redaktə olundu'); window.closeModal(); loadList(currentPage); return; }
+        if (res.ok) { AdminUI.notify(L["Js_Updated"]); window.closeModal(); loadList(currentPage); return; }
 
         errBox.textContent = AdminUI.errText(res);
         errBox.classList.remove('hidden');

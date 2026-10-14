@@ -4,7 +4,7 @@
 
     window.openEdit = async function (id) {
         const data = await AdminUI.get(`/group/${id}`);
-        document.getElementById('modalTitle').textContent = 'Qrup redaktəsi';
+        document.getElementById('modalTitle').textContent = L["Js_EditGroup"];
         document.getElementById('entityId').value = data.id;
         document.getElementById('name').value = data.name;
         document.getElementById('description').value = data.description ?? '';
@@ -19,7 +19,7 @@
         if (!id) return; // create.js
 
         const res = await AdminUI.putForm(`/group/${id}`, window.buildGroupForm());
-        if (res.ok) { AdminUI.notify('Redaktə olundu'); window.closeModal(); loadList(currentPage); return; }
+        if (res.ok) { AdminUI.notify(L["Js_Updated"]); window.closeModal(); loadList(currentPage); return; }
 
         errBox.textContent = AdminUI.errText(res);
         errBox.classList.remove('hidden');

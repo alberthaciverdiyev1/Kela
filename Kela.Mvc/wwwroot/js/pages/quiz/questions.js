@@ -29,7 +29,7 @@ async function refreshQuestions() {
     const box = document.getElementById('questionsList');
     box.innerHTML = '';
 
-    if (!items.length) { box.innerHTML = '<div class="text-sm text-slate-400">Boşdur</div>'; return; }
+    if (!items.length) { box.innerHTML = '<div class="text-sm text-slate-400">' + L["Js_Empty"] + '</div>'; return; }
 
     items.forEach(q => {
         const row = document.createElement('div');
@@ -44,12 +44,12 @@ async function assignQuestion() {
     const value = document.getElementById('questionsSelect').value;
     if (!value) return;
     const res = await AdminUI.postJson(`/quiz/${qzId}/questions`, { questionIds: [Number(value)] });
-    if (res.ok) { AdminUI.notify('Əlavə olundu'); refreshQuestions(); }
+    if (res.ok) { AdminUI.notify(L["Js_Added"]); refreshQuestions(); }
     else AdminUI.error();
 }
 
 async function removeQuestion(questionId) {
-    if (!await AdminUI.confirmDelete('Çıxarılsın?')) return;
+    if (!await AdminUI.confirmDelete(L["Js_ConfirmRemove"])) return;
     const res = await AdminUI.del(`/quiz/${qzId}/questions/${questionId}`);
     if (res.ok) { AdminUI.notify('Silindi'); refreshQuestions(); loadList(currentPage); }
     else AdminUI.error();

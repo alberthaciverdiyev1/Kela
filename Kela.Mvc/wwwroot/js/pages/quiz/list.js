@@ -31,7 +31,7 @@ async function loadList(page) {
         { html: AdminUI.rowNo(q, i, currentPage, data.perPage), cls: 'text-slate-400' },
         { html: q.lessonId ? (window.LESSONS[q.lessonId] ?? '-') : '-', cls: 'text-slate-500' },
         { html: q.title, cls: 'font-medium text-slate-800' },
-        { html: AdminUI.badge(q.type === 'general' ? 'Ümumi' : 'Dərs', 'neutral') },
+        { html: AdminUI.badge(q.type === 'general' ? L["Common_General"] : L["Common_Lesson"], 'neutral') },
         { html: q.durationMinutes, cls: 'text-slate-500' },
         { html: q.questionCount, cls: 'text-slate-500' },
         { html: q.isActive ? AdminUI.badge('Aktiv', 'success') : AdminUI.badge('Deaktiv', 'neutral') },
@@ -43,7 +43,7 @@ async function loadList(page) {
 }
 
 async function removeItem(id) {
-    if (!await AdminUI.confirmDelete('Bu imtahan silinəcək.')) return;
+    if (!await AdminUI.confirmDelete(L["Js_ConfirmDeleteQuiz"])) return;
     const res = await AdminUI.del(`/quiz/${id}`);
     if (res.ok) { AdminUI.notify('Silindi'); loadList(currentPage); }
     else AdminUI.error();

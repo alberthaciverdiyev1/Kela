@@ -44,10 +44,10 @@ function subjectBadge(subjectId, subjectName) {
 
 function rowActions(id) {
     return `<div class="flex items-center justify-end gap-2">
-        <button type="button" class="admin-icon-button" title="Məzmun açarları" onclick="openSettings(${id})">
+        <button type="button" class="admin-icon-button" title=L["Lesson_SettingsTitle"] onclick="openSettings(${id})">
             <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M10.3 4.3a2 2 0 0 1 3.4 0l.5.9 1-.3a2 2 0 0 1 2.5 2.5l-.3 1 .9.5a2 2 0 0 1 0 3.4l-.9.5.3 1a2 2 0 0 1-2.5 2.5l-1-.3-.5.9a2 2 0 0 1-3.4 0l-.5-.9-1 .3a2 2 0 0 1-2.5-2.5l.3-1-.9-.5a2 2 0 0 1 0-3.4l.9-.5-.3-1a2 2 0 0 1 2.5-2.5l1 .3.5-.9Z" /><circle cx="12" cy="12" r="2.6" /></svg>
         </button>
-        <button type="button" class="admin-icon-button" title="Redaktə" onclick="openEdit(${id})">
+        <button type="button" class="admin-icon-button" title=L["Js_Edit"] onclick="openEdit(${id})">
             <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M16.86 3.49a2.1 2.1 0 0 1 2.97 2.97L8.5 17.79 4 19l1.21-4.5L16.86 3.49Z" /></svg>
         </button>
         <button type="button" class="admin-icon-button text-danger hover:bg-danger-bg hover:text-danger" title="Sil" onclick="removeItem(${id})">
@@ -123,8 +123,8 @@ async function loadList(page) {
             { html: `<span class="inline-flex items-center gap-2 text-slate-700">${l.sortOrder ?? rowNumber}</span>` },
             {
                 html: l.isActive
-                    ? '<span class="status-badge bg-success-bg text-success"><span class="h-2 w-2 rounded-full bg-success"></span>Aktiv</span>'
-                    : '<span class="status-badge bg-warning-bg text-warning"><span class="h-2 w-2 rounded-full bg-warning"></span>Arxivdə</span>'
+                    ? '<span class="status-badge bg-success-bg text-success"><span class="h-2 w-2 rounded-full bg-success"></span>' + L["Common_Active"] + '</span>'
+                    : '<span class="status-badge bg-warning-bg text-warning"><span class="h-2 w-2 rounded-full bg-warning"></span>' + L["Common_Archived"] + '</span>'
             },
             { html: showDeleted ? AdminUI.restoreButton(l.id) : rowActions(l.id), cls: 'text-right' }
         ];
@@ -145,7 +145,7 @@ async function loadList(page) {
 }
 
 async function removeItem(id) {
-    if (!await AdminUI.confirmDelete('Bu dərs silinəcək.')) return;
+    if (!await AdminUI.confirmDelete(L["Js_ConfirmDeleteLesson"])) return;
     const res = await AdminUI.del(`/lesson/${id}`);
     if (res.ok) { AdminUI.notify('Silindi'); loadList(currentPage); }
     else AdminUI.error();

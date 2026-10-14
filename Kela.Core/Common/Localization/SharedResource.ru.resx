@@ -727,4 +727,184 @@
   <data name="Student_NoViolations" xml:space="preserve">
     <value>Нарушения не зафиксированы</value>
   </data>
+  <data name="Js_ConfirmDeleteBanner" xml:space="preserve">
+    <value>Удалить этот баннер?</value>
+  </data>
+  <data name="Js_ConfirmDeleteNotification" xml:space="preserve">
+    <value>Удалить это уведомление?</value>
+  </data>
+  <data name="Js_ConfirmDeleteLesson" xml:space="preserve">
+    <value>Удалить этот урок?</value>
+  </data>
+  <data name="Js_ConfirmDeleteSubject" xml:space="preserve">
+    <value>Удалить этот предмет?</value>
+  </data>
+  <data name="Js_ConfirmDeleteQuiz" xml:space="preserve">
+    <value>Удалить этот экзамен?</value>
+  </data>
+  <data name="Js_ConfirmDeleteUser" xml:space="preserve">
+    <value>Удалить этого пользователя?</value>
+  </data>
+  <data name="Js_ConfirmDeleteMaterial" xml:space="preserve">
+    <value>Удалить этот материал?</value>
+  </data>
+  <data name="Js_ConfirmDeleteGroup" xml:space="preserve">
+    <value>Удалить эту группу?</value>
+  </data>
+  <data name="Js_ConfirmDeleteStudent" xml:space="preserve">
+    <value>Удалить этого ученика?</value>
+  </data>
+  <data name="Js_ConfirmDeleteCertificate" xml:space="preserve">
+    <value>Удалить этот сертификат?</value>
+  </data>
+  <data name="Js_ConfirmDeleteQuestion" xml:space="preserve">
+    <value>Удалить этот вопрос?</value>
+  </data>
+  <data name="Js_Irreversible" xml:space="preserve">
+    <value>Это действие нельзя отменить.</value>
+  </data>
+  <data name="Js_AreYouSure" xml:space="preserve">
+    <value>Вы уверены?</value>
+  </data>
+  <data name="Js_ConfirmResetDevice" xml:space="preserve">
+    <value>Разблокировать устройство?</value>
+  </data>
+  <data name="Js_ConfirmRemove" xml:space="preserve">
+    <value>Удалить?</value>
+  </data>
+  <data name="Js_ConfirmRestore" xml:space="preserve">
+    <value>Восстановить?</value>
+  </data>
+  <data name="Js_NothingSelected" xml:space="preserve">
+    <value>Ничего не выбрано</value>
+  </data>
+  <data name="Js_Added" xml:space="preserve">
+    <value>Добавлено</value>
+  </data>
+  <data name="Js_Updated" xml:space="preserve">
+    <value>Обновлено</value>
+  </data>
+  <data name="Js_Created" xml:space="preserve">
+    <value>Создано</value>
+  </data>
+  <data name="Js_Restored" xml:space="preserve">
+    <value>Восстановлено</value>
+  </data>
+  <data name="Js_StatusChanged" xml:space="preserve">
+    <value>Статус изменён</value>
+  </data>
+  <data name="Js_Sent" xml:space="preserve">
+    <value>Отправлено</value>
+  </data>
+  <data name="Js_Removed" xml:space="preserve">
+    <value>Удалено</value>
+  </data>
+  <data name="Js_Unlocked" xml:space="preserve">
+    <value>Разблокировано</value>
+  </data>
+  <data name="Js_CacheCleared" xml:space="preserve">
+    <value>Кеш очищен</value>
+  </data>
+  <data name="Js_Saved" xml:space="preserve">
+    <value>Сохранено</value>
+  </data>
+  <data name="Js_Applied" xml:space="preserve">
+    <value>Применено</value>
+  </data>
+  <data name="Js_OrderUpdated" xml:space="preserve">
+    <value>Порядок обновлён</value>
+  </data>
+  <data name="Js_ErrorOccured" xml:space="preserve">
+    <value>Произошла ошибка</value>
+  </data>
+  <data name="Js_AdjustSearch" xml:space="preserve">
+    <value>Измените условия поиска и попробуйте снова</value>
+  </data>
+  <data name="Js_EditBanner" xml:space="preserve">
+    <value>Редактирование баннера</value>
+  </data>
+  <data name="Js_EditLesson" xml:space="preserve">
+    <value>Редактирование урока</value>
+  </data>
+  <data name="Js_EditSubject" xml:space="preserve">
+    <value>Редактирование предмета</value>
+  </data>
+  <data name="Js_EditQuiz" xml:space="preserve">
+    <value>Редактирование экзамена</value>
+  </data>
+  <data name="Js_EditUser" xml:space="preserve">
+    <value>Редактирование пользователя</value>
+  </data>
+  <data name="Js_EditMaterial" xml:space="preserve">
+    <value>Редактирование материала</value>
+  </data>
+  <data name="Js_EditGroup" xml:space="preserve">
+    <value>Редактирование группы</value>
+  </data>
+  <data name="Js_EditCertificate" xml:space="preserve">
+    <value>Редактирование сертификата</value>
+  </data>
+  <data name="Js_EditQuestion" xml:space="preserve">
+    <value>Редактирование вопроса</value>
+  </data>
+  <data name="Js_SortLessons" xml:space="preserve">
+    <value>Сортировать уроки</value>
+  </data>
+  <data name="Js_SortLessonsSubject" xml:space="preserve">
+    <value>Сортировать уроки (выбранный предмет)</value>
+  </data>
+  <data name="Js_SortQuizzes" xml:space="preserve">
+    <value>Сортировать экзамены</value>
+  </data>
+  <data name="Js_SortMaterials" xml:space="preserve">
+    <value>Сортировать материалы</value>
+  </data>
+  <data name="Js_SelectLessonFirst" xml:space="preserve">
+    <value>Сначала выберите урок</value>
+  </data>
+  <data name="Js_Edit" xml:space="preserve">
+    <value>Редактировать</value>
+  </data>
+  <data name="Js_Old" xml:space="preserve">
+    <value>Старый</value>
+  </data>
+  <data name="Js_Selected" xml:space="preserve">
+    <value>Выбранные</value>
+  </data>
+  <data name="Js_All" xml:space="preserve">
+    <value>Всем</value>
+  </data>
+  <data name="Js_EditPrefix" xml:space="preserve">
+    <value>Редактирование: </value>
+  </data>
+  <data name="Js_ManageSuffix" xml:space="preserve">
+    <value> — управление</value>
+  </data>
+  <data name="Js_ContentKeysSuffix" xml:space="preserve">
+    <value> — переключатели контента</value>
+  </data>
+  <data name="Js_StudentsCreated" xml:space="preserve">
+    <value> учеников создано</value>
+  </data>
+  <data name="Js_Empty" xml:space="preserve">
+    <value>Пусто</value>
+  </data>
+  <data name="Js_NothingToSort" xml:space="preserve">
+    <value>Нет элементов для сортировки</value>
+  </data>
+  <data name="Js_Voice" xml:space="preserve">
+    <value>Аудио</value>
+  </data>
+  <data name="Js_EditDelete" xml:space="preserve">
+    <value>Редактировать / Удалить</value>
+  </data>
+  <data name="Js_QuizCount" xml:space="preserve">
+    <value>Кол-во экзаменов</value>
+  </data>
+  <data name="Js_StudentCount" xml:space="preserve">
+    <value>Кол-во учеников</value>
+  </data>
+  <data name="Js_TotalQuestions" xml:space="preserve">
+    <value>Всего вопросов</value>
+  </data>
 </root>

@@ -3,7 +3,7 @@
     const errBox = document.getElementById('formError');
 
     function showError(message) { errBox.textContent = message; errBox.classList.remove('hidden'); }
-    function done() { AdminUI.notify('Əlavə olundu'); window.closeModal(); loadList(1); }
+    function done() { AdminUI.notify(L["Js_Added"]); window.closeModal(); loadList(1); }
 
     window.showModal = function () {
         document.getElementById('modal').classList.remove('hidden');
@@ -36,7 +36,7 @@
         if (document.getElementById('entityId').value) return; // update.js idarə edir
 
         const file = document.getElementById('file').files[0];
-        if (!file) { showError('Fayl seçin'); return; }
+        if (!file) { showError(L["Common_ChooseFile"]); return; }
 
         const lessonId = document.getElementById('lesson_id').value;
         const type = document.getElementById('type').value;

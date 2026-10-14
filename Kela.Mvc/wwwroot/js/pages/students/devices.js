@@ -23,8 +23,8 @@ async function refreshDevices() {
 }
 
 async function unbindDevice() {
-    if (!await AdminUI.confirmDelete('Cihaz kilidi açılsın?')) return;
+    if (!await AdminUI.confirmDelete(L["Js_ConfirmResetDevice"])) return;
     const res = await AdminUI.del(`/students/${devStudentId}/devices`);
-    if (res.ok) { AdminUI.notify('Kilid açıldı'); refreshDevices(); }
+    if (res.ok) { AdminUI.notify(L["Js_Unlocked"]); refreshDevices(); }
     else AdminUI.error();
 }

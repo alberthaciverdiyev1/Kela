@@ -39,7 +39,7 @@ async function loadList(page) {
 }
 
 async function removeItem(id) {
-    if (!await AdminUI.confirmDelete('Bu sertifikat silinəcək.')) return;
+    if (!await AdminUI.confirmDelete(L["Js_ConfirmDeleteCertificate"])) return;
     const res = await AdminUI.del(`/certificate/${id}`);
     if (res.ok) { AdminUI.notify('Silindi'); loadList(currentPage); }
     else AdminUI.error();

@@ -4,7 +4,7 @@
 
     window.openEdit = async function (id) {
         const data = await AdminUI.get(`/certificate/${id}`);
-        document.getElementById('modalTitle').textContent = 'Sertifikat redaktəsi';
+        document.getElementById('modalTitle').textContent = L["Js_EditCertificate"];
         document.getElementById('entityId').value = data.id;
         document.getElementById('title').value = data.title;
         window.selectTemplate(data.templateKey);
@@ -31,7 +31,7 @@
         if (file) fd.append('Signature', file);
 
         const res = await AdminUI.putForm(`/certificate/${id}`, fd);
-        if (res.ok) { AdminUI.notify('Redaktə olundu'); window.closeModal(); loadList(currentPage); return; }
+        if (res.ok) { AdminUI.notify(L["Js_Updated"]); window.closeModal(); loadList(currentPage); return; }
 
         errBox.textContent = AdminUI.errText(res);
         errBox.classList.remove('hidden');

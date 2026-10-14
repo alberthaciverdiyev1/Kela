@@ -16,7 +16,7 @@
             password: document.getElementById('gen_password').value
         });
 
-        if (res.ok) { AdminUI.notify(res.data.created + ' şagird yaradıldı'); window.closeGenerate(); loadList(1); }
+        if (res.ok) { AdminUI.notify(res.data.created + L["Js_StudentsCreated"]); window.closeGenerate(); loadList(1); }
         else AdminUI.error();
     });
 })();

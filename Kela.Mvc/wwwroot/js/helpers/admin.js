@@ -12,13 +12,13 @@ window.AdminUI = (function () {
         });
     }
 
-    function error(message) { notify(message || 'Xəta baş verdi', 'error'); }
+    function error(message) { notify(message || L["Js_ErrorOccured"], 'error'); }
 
     async function confirmDelete(text) {
         const result = await Swal.fire({
-            title: 'Əminsiniz?', text: text || 'Bu əməliyyat geri alına bilməz.',
+            title: L["Js_AreYouSure"], text: text || L["Js_Irreversible"],
             icon: 'warning', showCancelButton: true,
-            confirmButtonText: 'Sil', cancelButtonText: 'İmtina',
+            confirmButtonText: 'Sil', cancelButtonText: L["Common_Cancel"],
             confirmButtonColor: '#ef4444', cancelButtonColor: '#64748b'
         });
         return result.isConfirmed;
@@ -85,13 +85,13 @@ window.AdminUI = (function () {
             if (d.message) return d.message;
             if (d.error) return d.error;
         }
-        return 'Xəta baş verdi';
+        return L["Js_ErrorOccured"];
     }
 
     async function confirmRestore() {
         const result = await Swal.fire({
-            title: 'Bərpa edilsin?', icon: 'question', showCancelButton: true,
-            confirmButtonText: 'Bərpa et', cancelButtonText: 'İmtina',
+            title: L["Js_ConfirmRestore"], icon: 'question', showCancelButton: true,
+            confirmButtonText: L["Common_Restore"], cancelButtonText: L["Common_Cancel"],
             confirmButtonColor: '#004AAD', cancelButtonColor: '#64748b'
         });
         return result.isConfirmed;
@@ -101,14 +101,14 @@ window.AdminUI = (function () {
     async function restoreItem(url, id, cb) {
         if (!await confirmRestore()) return;
         const res = await postJson(url, { ids: [id], action: 'restore' });
-        if (res.ok) { notify('Bərpa edildi'); if (typeof cb === 'function') cb(); }
+        if (res.ok) { notify(L["Js_Restored"]); if (typeof cb === 'function') cb(); }
         else error(errText(res));
     }
 
     // Silinənlər rejimində sətir üçün "Bərpa et" düyməsi.
     function restoreButton(id) {
         return `<div class="flex items-center justify-end gap-1">
-            <button type="button" class="inline-flex items-center gap-1.5 rounded-lg px-2.5 py-1.5 text-sm font-semibold text-primary hover:bg-primary-light" onclick="restoreRow(${id})">Bərpa et</button>
+            <button type="button" class="inline-flex items-center gap-1.5 rounded-lg px-2.5 py-1.5 text-sm font-semibold text-primary hover:bg-primary-light" onclick="restoreRow(${id})">${L["Common_Restore"]}</button>
         </div>`;
     }
 
@@ -140,7 +140,7 @@ window.AdminUI = (function () {
         }
     }
 
-    // cədvəl sətri üçün standart "Redaktə / Sil" düymələri
+    // cədvəl sətri üçün standart L["Js_EditDelete"] düymələri
     function actions(id, opts) {
         opts = opts || {};
         const parts = [];
@@ -166,7 +166,7 @@ window.AdminUI = (function () {
                 <div class="admin-empty">
                     <svg class="h-10 w-10 text-slate-300" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M3 7h18M3 12h18M3 17h10" /></svg>
                     <p class="text-base font-semibold text-slate-500">Nəticə tapılmadı</p>
-                    <p class="text-sm">${opts.empty || 'Axtarış şərtlərini dəyişdirib yenidən yoxlayın'}</p>
+                    <p class="text-sm">${opts.empty || L["Js_AdjustSearch"]}</p>
                 </div></td></tr>`;
             updateBulkBar();
             return;
@@ -232,11 +232,11 @@ window.AdminUI = (function () {
 
     async function bulkDo(url, action, cb) {
         const ids = selectedIds();
-        if (!ids.length) { notify('Heç nə seçilməyib', 'warning'); return; }
+        if (!ids.length) { notify(L["Js_NothingSelected"], 'warning'); return; }
         if (action === 'delete' && !await confirmDelete(`${ids.length} element silinəcək.`)) return;
         const res = await postJson(url, { ids, action });
-        if (res.ok) { notify('Tətbiq olundu'); if (typeof cb === 'function') cb(); }
-        else error(res.data?.message || 'Xəta baş verdi');
+        if (res.ok) { notify(L["Js_Applied"]); if (typeof cb === 'function') cb(); }
+        else error(res.data?.message || L["Js_ErrorOccured"]);
     }
 
     function sortToggle() { /* səhifə xüsusi tətbiq edə bilər */ }
@@ -251,7 +251,7 @@ window.AdminUI = (function () {
         _sortSaveUrl = opts.saveUrl;
         _sortOnSaved = opts.onSaved;
         const title = document.getElementById('sortTitle');
-        if (title) title.textContent = opts.title || 'Sırala';
+        if (title) title.textContent = opts.title || L["Sort_Title"];
         renderSort();
         const modal = document.getElementById('sortModal');
         if (modal) { modal.classList.remove('hidden'); modal.classList.add('flex'); }
@@ -267,7 +267,7 @@ window.AdminUI = (function () {
         if (!box) return;
         box.innerHTML = '';
         if (!_sortItems.length) {
-            box.innerHTML = '<div class="text-sm text-slate-400">Sıralanacaq element yoxdur</div>';
+            box.innerHTML = '<div class="text-sm text-slate-400">' + L["Js_NothingToSort"] + '</div>';
             return;
         }
         _sortItems.forEach((item, idx) => {
@@ -312,7 +312,7 @@ window.AdminUI = (function () {
         const ids = _sortItems.map(x => x.id);
         const res = await postJson(_sortSaveUrl, { ids });
         if (res.ok) {
-            notify('Sıra yeniləndi');
+            notify(L["Js_OrderUpdated"]);
             if (typeof _sortOnSaved === 'function') _sortOnSaved();
             closeSort();
         } else {

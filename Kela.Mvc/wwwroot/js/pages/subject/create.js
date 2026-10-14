@@ -13,7 +13,7 @@
     };
 
     window.openCreate = function () {
-        document.getElementById('modalTitle').textContent = 'Yeni fənn';
+        document.getElementById('modalTitle').textContent = L["Subject_Create"];
         document.getElementById('entityId').value = '';
         document.getElementById('name').value = '';
         window.showModal();
@@ -24,7 +24,7 @@
         if (document.getElementById('entityId').value) return; // update.js idarə edir
 
         const res = await AdminUI.post('/subject', { name: document.getElementById('name').value });
-        if (res.ok) { AdminUI.notify('Əlavə olundu'); window.closeModal(); loadList(1); return; }
+        if (res.ok) { AdminUI.notify(L["Js_Added"]); window.closeModal(); loadList(1); return; }
 
         errBox.textContent = AdminUI.errText(res);
         errBox.classList.remove('hidden');

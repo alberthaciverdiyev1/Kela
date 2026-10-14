@@ -42,7 +42,7 @@
         }
 
         const res = await AdminUI.postForm('/notification', fd);
-        if (res.ok) { AdminUI.notify('Göndərildi'); window.closeModal(); loadList(1); return; }
+        if (res.ok) { AdminUI.notify(L["Js_Sent"]); window.closeModal(); loadList(1); return; }
 
         errBox.textContent = AdminUI.errText(res);
         errBox.classList.remove('hidden');

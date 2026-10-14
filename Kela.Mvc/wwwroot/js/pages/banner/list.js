@@ -29,7 +29,7 @@ async function loadList(page) {
             ? `<img src="${b.image}" class="h-10 w-16 rounded-lg border border-slate-200 object-cover" />`
             : '<span class="text-slate-400">—</span>' },
         { html: b.title, cls: 'font-semibold text-slate-800' },
-        { html: b.isNew ? AdminUI.badge('Yeni', 'primary') : AdminUI.badge('Köhnə', 'neutral') },
+        { html: b.isNew ? AdminUI.badge('Yeni', 'primary') : AdminUI.badge(L["Js_Old"], 'neutral') },
         { html: showDeleted ? AdminUI.restoreButton(b.id) : AdminUI.actions(b.id), cls: 'text-right' }
     ]), 5, { rowIds: data.data.map(b => b.id), selectable: !showDeleted });
 
@@ -38,7 +38,7 @@ async function loadList(page) {
 }
 
 async function removeItem(id) {
-    if (!await AdminUI.confirmDelete('Bu banner silinəcək.')) return;
+    if (!await AdminUI.confirmDelete(L["Js_ConfirmDeleteBanner"])) return;
     const res = await AdminUI.del(`/banner/${id}`);
     if (res.ok) { AdminUI.notify('Silindi'); loadList(currentPage); }
     else AdminUI.error();

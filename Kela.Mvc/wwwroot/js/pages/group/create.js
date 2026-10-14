@@ -3,7 +3,7 @@
     const errBox = document.getElementById('formError');
 
     function showError(m) { errBox.textContent = m; errBox.classList.remove('hidden'); }
-    function done() { AdminUI.notify('Əlavə olundu'); window.closeModal(); loadList(1); }
+    function done() { AdminUI.notify(L["Js_Added"]); window.closeModal(); loadList(1); }
 
     window.showModal = function () {
         document.getElementById('modal').classList.remove('hidden');

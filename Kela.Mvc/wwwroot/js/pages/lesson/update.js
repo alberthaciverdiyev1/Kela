@@ -4,7 +4,7 @@
 
     window.openEdit = async function (id) {
         const data = await AdminUI.get(`/lesson/${id}`);
-        document.getElementById('modalTitle').textContent = 'Dərs redaktəsi';
+        document.getElementById('modalTitle').textContent = L["Js_EditLesson"];
         document.getElementById('entityId').value = data.id;
         document.getElementById('sort_order').value = data.sortOrder ?? 0;
         document.getElementById('subject_id').value = data.subjectId;
@@ -20,7 +20,7 @@
         if (!id) return; // create.js idarə edir
 
         const res = await AdminUI.putForm(`/lesson/${id}`, window.buildLessonForm());
-        if (res.ok) { AdminUI.notify('Redaktə olundu'); window.closeModal(); loadList(currentPage); return; }
+        if (res.ok) { AdminUI.notify(L["Js_Updated"]); window.closeModal(); loadList(currentPage); return; }
 
         errBox.textContent = AdminUI.errText(res);
         errBox.classList.remove('hidden');

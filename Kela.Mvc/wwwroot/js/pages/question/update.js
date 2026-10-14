@@ -5,7 +5,7 @@
 
     window.openEdit = async function (id) {
         const d = await AdminUI.get(`/question/${id}`);
-        document.getElementById('modalTitle').textContent = 'Sual redaktəsi';
+        document.getElementById('modalTitle').textContent = L["Js_EditQuestion"];
         document.getElementById('entityId').value = d.id;
         document.getElementById('subject_id').value = d.subjectId;
         document.getElementById('title_type').value = d.titleType;
@@ -35,7 +35,7 @@
         if (!id) return; // create.js
 
         const res = await AdminUI.putForm(`/question/${id}`, window.buildQuestionForm());
-        if (res.ok) { AdminUI.notify('Redaktə olundu'); window.closeModal(); loadList(currentPage); return; }
+        if (res.ok) { AdminUI.notify(L["Js_Updated"]); window.closeModal(); loadList(currentPage); return; }
 
         errBox.textContent = AdminUI.errText(res);
         errBox.classList.remove('hidden');

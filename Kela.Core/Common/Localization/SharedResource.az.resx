@@ -727,4 +727,184 @@
   <data name="Student_NoViolations" xml:space="preserve">
     <value>Pozuntu qeydə alınmayıb</value>
   </data>
+  <data name="Js_ConfirmDeleteBanner" xml:space="preserve">
+    <value>Bu banner silinəcək.</value>
+  </data>
+  <data name="Js_ConfirmDeleteNotification" xml:space="preserve">
+    <value>Bu bildiriş silinəcək.</value>
+  </data>
+  <data name="Js_ConfirmDeleteLesson" xml:space="preserve">
+    <value>Bu dərs silinəcək.</value>
+  </data>
+  <data name="Js_ConfirmDeleteSubject" xml:space="preserve">
+    <value>Bu fənn silinəcək.</value>
+  </data>
+  <data name="Js_ConfirmDeleteQuiz" xml:space="preserve">
+    <value>Bu imtahan silinəcək.</value>
+  </data>
+  <data name="Js_ConfirmDeleteUser" xml:space="preserve">
+    <value>Bu istifadəçi silinəcək.</value>
+  </data>
+  <data name="Js_ConfirmDeleteMaterial" xml:space="preserve">
+    <value>Bu material silinəcək.</value>
+  </data>
+  <data name="Js_ConfirmDeleteGroup" xml:space="preserve">
+    <value>Bu qrup silinəcək.</value>
+  </data>
+  <data name="Js_ConfirmDeleteStudent" xml:space="preserve">
+    <value>Bu şagird silinəcək.</value>
+  </data>
+  <data name="Js_ConfirmDeleteCertificate" xml:space="preserve">
+    <value>Bu sertifikat silinəcək.</value>
+  </data>
+  <data name="Js_ConfirmDeleteQuestion" xml:space="preserve">
+    <value>Bu sual silinəcək.</value>
+  </data>
+  <data name="Js_Irreversible" xml:space="preserve">
+    <value>Bu əməliyyat geri alına bilməz.</value>
+  </data>
+  <data name="Js_AreYouSure" xml:space="preserve">
+    <value>Əminsiniz?</value>
+  </data>
+  <data name="Js_ConfirmResetDevice" xml:space="preserve">
+    <value>Cihaz kilidi açılsın?</value>
+  </data>
+  <data name="Js_ConfirmRemove" xml:space="preserve">
+    <value>Çıxarılsın?</value>
+  </data>
+  <data name="Js_ConfirmRestore" xml:space="preserve">
+    <value>Bərpa edilsin?</value>
+  </data>
+  <data name="Js_NothingSelected" xml:space="preserve">
+    <value>Heç nə seçilməyib</value>
+  </data>
+  <data name="Js_Added" xml:space="preserve">
+    <value>Əlavə olundu</value>
+  </data>
+  <data name="Js_Updated" xml:space="preserve">
+    <value>Redaktə olundu</value>
+  </data>
+  <data name="Js_Created" xml:space="preserve">
+    <value>Yaradıldı</value>
+  </data>
+  <data name="Js_Restored" xml:space="preserve">
+    <value>Bərpa edildi</value>
+  </data>
+  <data name="Js_StatusChanged" xml:space="preserve">
+    <value>Status dəyişdi</value>
+  </data>
+  <data name="Js_Sent" xml:space="preserve">
+    <value>Göndərildi</value>
+  </data>
+  <data name="Js_Removed" xml:space="preserve">
+    <value>Çıxarıldı</value>
+  </data>
+  <data name="Js_Unlocked" xml:space="preserve">
+    <value>Kilid açıldı</value>
+  </data>
+  <data name="Js_CacheCleared" xml:space="preserve">
+    <value>Keş təmizləndi</value>
+  </data>
+  <data name="Js_Saved" xml:space="preserve">
+    <value>Yadda saxlanıldı</value>
+  </data>
+  <data name="Js_Applied" xml:space="preserve">
+    <value>Tətbiq olundu</value>
+  </data>
+  <data name="Js_OrderUpdated" xml:space="preserve">
+    <value>Sıra yeniləndi</value>
+  </data>
+  <data name="Js_ErrorOccured" xml:space="preserve">
+    <value>Xəta baş verdi</value>
+  </data>
+  <data name="Js_AdjustSearch" xml:space="preserve">
+    <value>Axtarış şərtlərini dəyişdirib yenidən yoxlayın</value>
+  </data>
+  <data name="Js_EditBanner" xml:space="preserve">
+    <value>Banner redaktəsi</value>
+  </data>
+  <data name="Js_EditLesson" xml:space="preserve">
+    <value>Dərs redaktəsi</value>
+  </data>
+  <data name="Js_EditSubject" xml:space="preserve">
+    <value>Fənn redaktəsi</value>
+  </data>
+  <data name="Js_EditQuiz" xml:space="preserve">
+    <value>İmtahan redaktəsi</value>
+  </data>
+  <data name="Js_EditUser" xml:space="preserve">
+    <value>İstifadəçi redaktəsi</value>
+  </data>
+  <data name="Js_EditMaterial" xml:space="preserve">
+    <value>Material redaktəsi</value>
+  </data>
+  <data name="Js_EditGroup" xml:space="preserve">
+    <value>Qrup redaktəsi</value>
+  </data>
+  <data name="Js_EditCertificate" xml:space="preserve">
+    <value>Sertifikat redaktəsi</value>
+  </data>
+  <data name="Js_EditQuestion" xml:space="preserve">
+    <value>Sual redaktəsi</value>
+  </data>
+  <data name="Js_SortLessons" xml:space="preserve">
+    <value>Dərsləri sırala</value>
+  </data>
+  <data name="Js_SortLessonsSubject" xml:space="preserve">
+    <value>Dərsləri sırala (seçilmiş fənn)</value>
+  </data>
+  <data name="Js_SortQuizzes" xml:space="preserve">
+    <value>İmtahanları sırala</value>
+  </data>
+  <data name="Js_SortMaterials" xml:space="preserve">
+    <value>Materialları sırala</value>
+  </data>
+  <data name="Js_SelectLessonFirst" xml:space="preserve">
+    <value>Əvvəlcə dərs seçin</value>
+  </data>
+  <data name="Js_Edit" xml:space="preserve">
+    <value>Redaktə</value>
+  </data>
+  <data name="Js_Old" xml:space="preserve">
+    <value>Köhnə</value>
+  </data>
+  <data name="Js_Selected" xml:space="preserve">
+    <value>Seçilmiş</value>
+  </data>
+  <data name="Js_All" xml:space="preserve">
+    <value>Hamıya</value>
+  </data>
+  <data name="Js_EditPrefix" xml:space="preserve">
+    <value>Redaktə: </value>
+  </data>
+  <data name="Js_ManageSuffix" xml:space="preserve">
+    <value> — idarə</value>
+  </data>
+  <data name="Js_ContentKeysSuffix" xml:space="preserve">
+    <value> — məzmun açarları</value>
+  </data>
+  <data name="Js_StudentsCreated" xml:space="preserve">
+    <value> şagird yaradıldı</value>
+  </data>
+  <data name="Js_Empty" xml:space="preserve">
+    <value>Boşdur</value>
+  </data>
+  <data name="Js_NothingToSort" xml:space="preserve">
+    <value>Sıralanacaq element yoxdur</value>
+  </data>
+  <data name="Js_Voice" xml:space="preserve">
+    <value>Səs</value>
+  </data>
+  <data name="Js_EditDelete" xml:space="preserve">
+    <value>Redaktə / Sil</value>
+  </data>
+  <data name="Js_QuizCount" xml:space="preserve">
+    <value>İmtahan sayı</value>
+  </data>
+  <data name="Js_StudentCount" xml:space="preserve">
+    <value>Şagird sayı</value>
+  </data>
+  <data name="Js_TotalQuestions" xml:space="preserve">
+    <value>Ümumi sual</value>
+  </data>
 </root>

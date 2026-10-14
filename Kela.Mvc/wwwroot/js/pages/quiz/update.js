@@ -4,7 +4,7 @@
 
     window.openEdit = async function (id) {
         const d = await AdminUI.get(`/quiz/${id}`);
-        document.getElementById('modalTitle').textContent = 'İmtahan redaktəsi';
+        document.getElementById('modalTitle').textContent = L["Js_EditQuiz"];
         document.getElementById('entityId').value = d.id;
         document.getElementById('sort_order').value = d.sortOrder ?? 0;
         document.getElementById('lesson_id').value = d.lessonId ?? '';
@@ -22,7 +22,7 @@
         if (!id) return; // create.js
 
         const res = await AdminUI.putForm(`/quiz/${id}`, window.buildQuizForm());
-        if (res.ok) { AdminUI.notify('Redaktə olundu'); window.closeModal(); loadList(currentPage); return; }
+        if (res.ok) { AdminUI.notify(L["Js_Updated"]); window.closeModal(); loadList(currentPage); return; }
 
         errBox.textContent = AdminUI.errText(res);
         errBox.classList.remove('hidden');

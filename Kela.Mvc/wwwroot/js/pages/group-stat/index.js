@@ -1,6 +1,6 @@
 async function load() {
     const groupId = document.getElementById('group_id').value;
-    if (!groupId) { AdminUI.error('Qrup seçin'); return; }
+    if (!groupId) { AdminUI.error(L["Common_SelectGroup"]); return; }
 
     const quizType = document.getElementById('quiz_type').value;
     document.getElementById('exportLink').href = `/group-stat/export?group_id=${groupId}&quiz_type=${quizType}`;
@@ -13,9 +13,9 @@ async function load() {
     summary.classList.remove('hidden');
     summary.classList.add('grid');
     summary.innerHTML = `
-        <div class="rounded-xl border border-slate-200 bg-white p-5"><div class="text-sm text-slate-500">İmtahan sayı</div><div class="text-2xl font-bold text-primary">${data.quizCount}</div></div>
-        <div class="rounded-xl border border-slate-200 bg-white p-5"><div class="text-sm text-slate-500">Ümumi sual</div><div class="text-2xl font-bold text-primary">${data.totalQuestions}</div></div>
-        <div class="rounded-xl border border-slate-200 bg-white p-5"><div class="text-sm text-slate-500">Şagird sayı</div><div class="text-2xl font-bold text-primary">${data.students.length}</div></div>`;
+        <div class="rounded-xl border border-slate-200 bg-white p-5"><div class="text-sm text-slate-500">${L["Js_QuizCount"]}</div><div class="text-2xl font-bold text-primary">${data.quizCount}</div></div>
+        <div class="rounded-xl border border-slate-200 bg-white p-5"><div class="text-sm text-slate-500">${L["Js_TotalQuestions"]}</div><div class="text-2xl font-bold text-primary">${data.totalQuestions}</div></div>
+        <div class="rounded-xl border border-slate-200 bg-white p-5"><div class="text-sm text-slate-500">${L["Js_StudentCount"]}</div><div class="text-2xl font-bold text-primary">${data.students.length}</div></div>`;
 
     AdminUI.table('rows', data.students.map(s => [
         { html: `<div class="font-medium text-slate-800">${s.fullName}</div><div class="text-xs text-slate-400">${s.email}</div>` },
