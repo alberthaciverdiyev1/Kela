@@ -1,5 +1,16 @@
 let currentPage = 1;
 let lastPage = 1;
+let showDeleted = false;
+
+function toggleTrash() {
+    showDeleted = !showDeleted;
+    AdminUI.syncTrashButton('trashBtn', showDeleted);
+    loadList(1);
+}
+
+async function restoreRow(id) {
+    await AdminUI.restoreItem('/quiz/bulk', id, () => loadList(currentPage));
+}
 
 function quizActions(q) {
     return `<div class="flex items-center justify-end gap-2">
@@ -13,7 +24,7 @@ async function loadList(page) {
     currentPage = page || 1;
     const lessonId = document.getElementById('filter_lesson').value;
     AdminUI.loader(true);
-    const data = await AdminUI.get(`/quiz/list?page=${currentPage}&lesson_id=${lessonId}`);
+    const data = await AdminUI.get(`/quiz/list?page=${currentPage}&lesson_id=${lessonId}&is_deleted=${showDeleted ? 1 : 0}`);
     lastPage = data.lastPage;
 
     AdminUI.table('rows', data.data.map(q => [
@@ -24,8 +35,8 @@ async function loadList(page) {
         { html: q.durationMinutes, cls: 'text-slate-500' },
         { html: q.questionCount, cls: 'text-slate-500' },
         { html: q.isActive ? AdminUI.badge('Aktiv', 'success') : AdminUI.badge('Deaktiv', 'neutral') },
-        { html: quizActions(q), cls: 'text-right' }
-    ]), 8, { rowIds: data.data.map(q => q.id), selectable: true });
+        { html: showDeleted ? AdminUI.restoreButton(q.id) : quizActions(q), cls: 'text-right' }
+    ]), 8, { rowIds: data.data.map(q => q.id), selectable: !showDeleted });
 
     AdminUI.pagination('pagination', currentPage, lastPage, loadList);
     AdminUI.loader(false);

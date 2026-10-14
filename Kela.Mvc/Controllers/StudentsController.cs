@@ -57,6 +57,14 @@ public sealed class StudentsController(
         return Json(new { ok = true });
     }
 
+    [HttpPost("{id:long}/restore")]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> Restore(long id, CancellationToken ct)
+    {
+        await service.RestoreAsync(id, ct);
+        return Json(new { ok = true });
+    }
+
     [HttpPost("generate")]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Generate([FromBody] GenerateStudentsRequest request, CancellationToken ct)

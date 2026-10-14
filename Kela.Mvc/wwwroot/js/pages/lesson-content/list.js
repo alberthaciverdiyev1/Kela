@@ -1,12 +1,23 @@
 let currentPage = 1;
 let lastPage = 1;
+let showDeleted = false;
 const TYPE_TEXT = { video: 'Video', file: 'Fayl', voice: 'Səs' };
+
+function toggleTrash() {
+    showDeleted = !showDeleted;
+    AdminUI.syncTrashButton('trashBtn', showDeleted);
+    loadList(1);
+}
+
+async function restoreRow(id) {
+    await AdminUI.restoreItem('/lesson-content/bulk', id, () => loadList(currentPage));
+}
 
 async function loadList(page) {
     currentPage = page || 1;
     const lessonId = document.getElementById('filter_lesson').value;
     AdminUI.loader(true);
-    const data = await AdminUI.get(`/lesson-content/list?page=${currentPage}&lesson_id=${lessonId}`);
+    const data = await AdminUI.get(`/lesson-content/list?page=${currentPage}&lesson_id=${lessonId}&is_deleted=${showDeleted ? 1 : 0}`);
 
     lastPage = data.lastPage;
 
@@ -17,8 +28,8 @@ async function loadList(page) {
         { html: c.url ? `<a href="${c.url}" target="_blank" class="text-primary hover:underline">aç</a>` : '-' },
         { html: c.sortOrder, cls: 'text-slate-500' },
         { html: c.isActive ? AdminUI.badge('Aktiv', 'success') : AdminUI.badge('Deaktiv', 'neutral') },
-        { html: AdminUI.actions(c.id), cls: 'text-right' }
-    ]), 7, { rowIds: data.data.map(c => c.id), selectable: true });
+        { html: showDeleted ? AdminUI.restoreButton(c.id) : AdminUI.actions(c.id), cls: 'text-right' }
+    ]), 7, { rowIds: data.data.map(c => c.id), selectable: !showDeleted });
 
     AdminUI.pagination('pagination', currentPage, lastPage, loadList);
     AdminUI.loader(false);

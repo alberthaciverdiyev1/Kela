@@ -81,6 +81,38 @@ window.AdminUI = (function () {
         return 'Xəta baş verdi';
     }
 
+    async function confirmRestore() {
+        const result = await Swal.fire({
+            title: 'Bərpa edilsin?', icon: 'question', showCancelButton: true,
+            confirmButtonText: 'Bərpa et', cancelButtonText: 'İmtina',
+            confirmButtonColor: '#004AAD', cancelButtonColor: '#64748b'
+        });
+        return result.isConfirmed;
+    }
+
+    // Silinmiş elementi bərpa edir (bulk endpoint-in 'restore' əməliyyatı ilə).
+    async function restoreItem(url, id, cb) {
+        if (!await confirmRestore()) return;
+        const res = await postJson(url, { ids: [id], action: 'restore' });
+        if (res.ok) { notify('Bərpa edildi'); if (typeof cb === 'function') cb(); }
+        else error(errText(res));
+    }
+
+    // Silinənlər rejimində sətir üçün "Bərpa et" düyməsi.
+    function restoreButton(id) {
+        return `<div class="flex items-center justify-end gap-1">
+            <button type="button" class="inline-flex items-center gap-1.5 rounded-lg px-2.5 py-1.5 text-sm font-semibold text-primary hover:bg-primary-light" onclick="restoreRow(${id})">Bərpa et</button>
+        </div>`;
+    }
+
+    // Silinənlər rejimi düyməsinin görünüşünü yeniləyir.
+    function syncTrashButton(btnId, on) {
+        const btn = document.getElementById(btnId);
+        if (!btn) return;
+        btn.classList.toggle('admin-button-secondary', !on);
+        btn.classList.toggle('admin-button-primary', on);
+    }
+
     function badge(text, variant) {
         return `<span class="badge badge-${variant || 'neutral'}">${text}</span>`;
     }
@@ -316,5 +348,5 @@ window.AdminUI = (function () {
 
     function reloadAfter(delay) { setTimeout(() => location.reload(), delay || 700); }
 
-    return { notify, error, errText, confirmDelete, get, post, postForm, putForm, postJson, putJson, del, badge, table, actions, selectedIds, bulkDo, sortToggle, openSort, closeSort, saveSort, loader, pagination, filePreview, fileSet, fileRemove, token, reloadAfter };
+    return { notify, error, errText, confirmDelete, confirmRestore, restoreItem, restoreButton, syncTrashButton, get, post, postForm, putForm, postJson, putJson, del, badge, table, actions, selectedIds, bulkDo, sortToggle, openSort, closeSort, saveSort, loader, pagination, filePreview, fileSet, fileRemove, token, reloadAfter };
 })();

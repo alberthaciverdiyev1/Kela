@@ -1,11 +1,22 @@
 let currentPage = 1;
 let lastPage = 1;
+let showDeleted = false;
+
+function toggleTrash() {
+    showDeleted = !showDeleted;
+    AdminUI.syncTrashButton('trashBtn', showDeleted);
+    loadList(1);
+}
+
+async function restoreRow(id) {
+    await AdminUI.restoreItem('/certificate/bulk', id, () => loadList(currentPage));
+}
 
 async function loadList(page) {
     currentPage = page || 1;
     const search = document.getElementById('search').value;
     AdminUI.loader(true);
-    const data = await AdminUI.get(`/certificate/list?page=${currentPage}&search=${encodeURIComponent(search)}`);
+    const data = await AdminUI.get(`/certificate/list?page=${currentPage}&search=${encodeURIComponent(search)}&is_deleted=${showDeleted ? 1 : 0}`);
     lastPage = data.lastPage;
 
     const total = document.getElementById('stat_total');
@@ -20,8 +31,8 @@ async function loadList(page) {
             ? `<img src="${c.signature}" class="h-10 w-16 rounded-lg border border-slate-200 bg-white object-contain" />`
             : '<span class="text-slate-400">—</span>' },
         { html: new Date(c.createdAt).toLocaleDateString('az'), cls: 'text-slate-500' },
-        { html: AdminUI.actions(c.id), cls: 'text-right' }
-    ]), 6, { rowIds: data.data.map(c => c.id), selectable: true });
+        { html: showDeleted ? AdminUI.restoreButton(c.id) : AdminUI.actions(c.id), cls: 'text-right' }
+    ]), 6, { rowIds: data.data.map(c => c.id), selectable: !showDeleted });
 
     AdminUI.pagination('pagination', currentPage, lastPage, loadList);
     AdminUI.loader(false);

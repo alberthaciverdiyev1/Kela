@@ -1,11 +1,22 @@
 let currentPage = 1;
 let lastPage = 1;
+let showDeleted = false;
+
+function toggleTrash() {
+    showDeleted = !showDeleted;
+    AdminUI.syncTrashButton('trashBtn', showDeleted);
+    loadList(1);
+}
+
+async function restoreRow(id) {
+    await AdminUI.restoreItem('/subject/bulk', id, () => loadList(currentPage));
+}
 
 async function loadList(page) {
     currentPage = page || 1;
     const search = document.getElementById('search').value;
     AdminUI.loader(true);
-    const data = await AdminUI.get(`/subject/list?page=${currentPage}&search=${encodeURIComponent(search)}`);
+    const data = await AdminUI.get(`/subject/list?page=${currentPage}&search=${encodeURIComponent(search)}&is_deleted=${showDeleted ? 1 : 0}`);
     lastPage = data.lastPage;
 
     const total = document.getElementById('stat_total');
@@ -15,8 +26,8 @@ async function loadList(page) {
     AdminUI.table('rows', data.data.map(s => [
         { html: s.id, cls: 'text-slate-400' },
         { html: `<a href="/subject/${s.id}" class="font-semibold text-primary hover:underline">${s.name}</a>` },
-        { html: AdminUI.actions(s.id, { extra: `<a href="/subject/${s.id}" class="inline-flex items-center rounded-lg px-2.5 py-1.5 text-sm font-semibold text-slate-600 hover:bg-surface-secondary">Dərslər</a>` }), cls: 'text-right' }
-    ]), 4, { rowIds: data.data.map(s => s.id), selectable: true });
+        { html: showDeleted ? AdminUI.restoreButton(s.id) : AdminUI.actions(s.id, { extra: `<a href="/subject/${s.id}" class="inline-flex items-center rounded-lg px-2.5 py-1.5 text-sm font-semibold text-slate-600 hover:bg-surface-secondary">Dərslər</a>` }), cls: 'text-right' }
+    ]), 4, { rowIds: data.data.map(s => s.id), selectable: !showDeleted });
 
     AdminUI.pagination('pagination', currentPage, lastPage, loadList);
     AdminUI.loader(false);

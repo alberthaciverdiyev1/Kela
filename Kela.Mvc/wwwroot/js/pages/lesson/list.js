@@ -1,5 +1,16 @@
 let currentPage = 1;
 let lastPage = 1;
+let showDeleted = false;
+
+function toggleTrash() {
+    showDeleted = !showDeleted;
+    AdminUI.syncTrashButton('trashBtn', showDeleted);
+    loadList(1);
+}
+
+async function restoreRow(id) {
+    await AdminUI.restoreItem('/lesson/bulk', id, () => loadList(currentPage));
+}
 
 const subjectStyles = [
     'bg-success-bg text-success',
@@ -83,6 +94,7 @@ async function loadList(page) {
     const params = new URLSearchParams({ page: currentPage, search });
     if (subjectId) params.set('subject_id', subjectId);
     if (status) params.set('is_active', status);
+    if (showDeleted) params.set('is_deleted', '1');
 
     AdminUI.loader(true);
     const data = await AdminUI.get(`/lesson/list?${params.toString()}`);
@@ -114,11 +126,11 @@ async function loadList(page) {
                     ? '<span class="status-badge bg-success-bg text-success"><span class="h-2 w-2 rounded-full bg-success"></span>Aktiv</span>'
                     : '<span class="status-badge bg-warning-bg text-warning"><span class="h-2 w-2 rounded-full bg-warning"></span>Arxivdə</span>'
             },
-            { html: rowActions(l.id), cls: 'text-right' }
+            { html: showDeleted ? AdminUI.restoreButton(l.id) : rowActions(l.id), cls: 'text-right' }
         ];
     });
 
-    AdminUI.table('rows', rows, 6, { rowIds: items.map(l => l.id), selectable: true });
+    AdminUI.table('rows', rows, 6, { rowIds: items.map(l => l.id), selectable: !showDeleted });
     renderPagination('pagination', currentPage, lastPage, loadList);
 
     const info = document.getElementById('tableInfo');

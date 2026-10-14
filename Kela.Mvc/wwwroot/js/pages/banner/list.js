@@ -1,11 +1,22 @@
 let currentPage = 1;
 let lastPage = 1;
+let showDeleted = false;
+
+function toggleTrash() {
+    showDeleted = !showDeleted;
+    AdminUI.syncTrashButton('trashBtn', showDeleted);
+    loadList(1);
+}
+
+async function restoreRow(id) {
+    await AdminUI.restoreItem('/banner/bulk', id, () => loadList(currentPage));
+}
 
 async function loadList(page) {
     currentPage = page || 1;
     const search = document.getElementById('search').value;
     AdminUI.loader(true);
-    const data = await AdminUI.get(`/banner/list?page=${currentPage}&search=${encodeURIComponent(search)}`);
+    const data = await AdminUI.get(`/banner/list?page=${currentPage}&search=${encodeURIComponent(search)}&is_deleted=${showDeleted ? 1 : 0}`);
     lastPage = data.lastPage;
 
     const total = document.getElementById('stat_total');
@@ -19,8 +30,8 @@ async function loadList(page) {
             : '<span class="text-slate-400">—</span>' },
         { html: b.title, cls: 'font-semibold text-slate-800' },
         { html: b.isNew ? AdminUI.badge('Yeni', 'primary') : AdminUI.badge('Köhnə', 'neutral') },
-        { html: AdminUI.actions(b.id), cls: 'text-right' }
-    ]), 5, { rowIds: data.data.map(b => b.id), selectable: true });
+        { html: showDeleted ? AdminUI.restoreButton(b.id) : AdminUI.actions(b.id), cls: 'text-right' }
+    ]), 5, { rowIds: data.data.map(b => b.id), selectable: !showDeleted });
 
     AdminUI.pagination('pagination', currentPage, lastPage, loadList);
     AdminUI.loader(false);
