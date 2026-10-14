@@ -18,7 +18,10 @@ public static class LocalizationExtensions
             options.SetDefaultCulture("az");
             options.AddSupportedCultures(SupportedCultures);
             options.AddSupportedUICultures(SupportedCultures);
-            options.RequestCultureProviders.Insert(0, new AcceptLanguageHeaderRequestCultureProvider());
+            // Əvvəl istifadəçinin seçimi (cookie), sonra brauzerin Accept-Language-ı.
+            options.RequestCultureProviders.Clear();
+            options.RequestCultureProviders.Add(new CookieRequestCultureProvider());
+            options.RequestCultureProviders.Add(new AcceptLanguageHeaderRequestCultureProvider());
         });
 
         return services;
