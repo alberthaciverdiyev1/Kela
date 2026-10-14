@@ -169,4 +169,121 @@
   <data name="Validation_BodyTextRequired" xml:space="preserve">
     <value>Text is required</value>
   </data>
+  <data name="Nav_Dashboard" xml:space="preserve">
+    <value>Dashboard</value>
+  </data>
+  <data name="Nav_Subjects" xml:space="preserve">
+    <value>Subjects</value>
+  </data>
+  <data name="Nav_Lessons" xml:space="preserve">
+    <value>Lessons</value>
+  </data>
+  <data name="Nav_Materials" xml:space="preserve">
+    <value>Materials</value>
+  </data>
+  <data name="Nav_Questions" xml:space="preserve">
+    <value>Questions</value>
+  </data>
+  <data name="Nav_Exams" xml:space="preserve">
+    <value>Exams</value>
+  </data>
+  <data name="Nav_Groups" xml:space="preserve">
+    <value>Groups</value>
+  </data>
+  <data name="Nav_GroupStats" xml:space="preserve">
+    <value>Group statistics</value>
+  </data>
+  <data name="Nav_Students" xml:space="preserve">
+    <value>Students</value>
+  </data>
+  <data name="Nav_Users" xml:space="preserve">
+    <value>Users</value>
+  </data>
+  <data name="Nav_Tenants" xml:space="preserve">
+    <value>Tenants</value>
+  </data>
+  <data name="Nav_Notifications" xml:space="preserve">
+    <value>Notifications</value>
+  </data>
+  <data name="Nav_Banners" xml:space="preserve">
+    <value>Banners</value>
+  </data>
+  <data name="Nav_Certificates" xml:space="preserve">
+    <value>Certificates</value>
+  </data>
+  <data name="Nav_Settings" xml:space="preserve">
+    <value>Settings</value>
+  </data>
+  <data name="Nav_Privacy" xml:space="preserve">
+    <value>Privacy</value>
+  </data>
+  <data name="Sidebar_SectionMain" xml:space="preserve">
+    <value>General</value>
+  </data>
+  <data name="Sidebar_SectionTeaching" xml:space="preserve">
+    <value>Teaching</value>
+  </data>
+  <data name="Sidebar_SectionManagement" xml:space="preserve">
+    <value>Management</value>
+  </data>
+  <data name="Sidebar_SectionContact" xml:space="preserve">
+    <value>Contact</value>
+  </data>
+  <data name="Sidebar_SectionSystem" xml:space="preserve">
+    <value>System</value>
+  </data>
+  <data name="Sidebar_AdminPanel" xml:space="preserve">
+    <value>Admin panel</value>
+  </data>
+  <data name="Role_SuperAdmin" xml:space="preserve">
+    <value>SuperAdmin</value>
+  </data>
+  <data name="Role_Admin" xml:space="preserve">
+    <value>Admin</value>
+  </data>
+  <data name="Role_Teacher" xml:space="preserve">
+    <value>Teacher</value>
+  </data>
+  <data name="Common_User" xml:space="preserve">
+    <value>User</value>
+  </data>
+  <data name="Common_Logout" xml:space="preserve">
+    <value>Log out</value>
+  </data>
+  <data name="Common_Email" xml:space="preserve">
+    <value>Email</value>
+  </data>
+  <data name="Common_Password" xml:space="preserve">
+    <value>Password</value>
+  </data>
+  <data name="Common_SignIn" xml:space="preserve">
+    <value>Sign in</value>
+  </data>
+  <data name="Common_Save" xml:space="preserve">
+    <value>Save</value>
+  </data>
+  <data name="Common_Cancel" xml:space="preserve">
+    <value>Cancel</value>
+  </data>
+  <data name="Common_Delete" xml:space="preserve">
+    <value>Delete</value>
+  </data>
+  <data name="Common_Restore" xml:space="preserve">
+    <value>Restore</value>
+  </data>
+  <data name="Common_Active" xml:space="preserve">
+    <value>Active</value>
+  </data>
+  <data name="Common_Inactive" xml:space="preserve">
+    <value>Inactive</value>
+  </data>
+  <data name="Login_Title" xml:space="preserve">
+    <value>Sign in</value>
+  </data>
+  <data name="Sort_Title" xml:space="preserve">
+    <value>Sort</value>
+  </data>
+  <data name="Sort_Hint" xml:space="preserve">
+    <value>Move items up/down to sort, then save.</value>
+  </data>
 </root>

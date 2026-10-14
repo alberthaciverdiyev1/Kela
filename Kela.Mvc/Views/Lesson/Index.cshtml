@@ -16,12 +16,13 @@
         Title = "Dərslər",
         Subtitle = "Fənlər üzrə dərsləri yaradın və sıralayın.",
         CreateText = "Yeni dərs",
-        Sortable = true })" />
-
-    <div class="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
-        <partial name="Ui/_StatCard" model="@(new StatCardModel { Id = "stat_total", Label = "Cəmi dərs",
-            Icon = "<path stroke-linecap='round' stroke-linejoin='round' d='M12 6.253v13m0-13C10.8 5.5 9 5 7 5S3.2 5.5 2 6.253v13C3.2 18.5 5 18 7 18s3.8.5 5 1.253m0-13C13.2 5.5 15 5 17 5s3.8.5 5 1.253v13C20.8 18.5 19 18 17 18s-3.8.5-5 1.253' />" })" />
-    </div>
+        Sortable = true,
+        StatCard = new StatCardModel {
+            Id = "stat_total",
+            Label = "Cəmi dərs",
+            Icon = "<path stroke-linecap='round' stroke-linejoin='round' d='M12 6.253v13m0-13C10.8 5.5 9 5 7 5S3.2 5.5 2 6.253v13C3.2 18.5 5 18 7 18s3.8.5 5 1.253m0-13C13.2 5.5 15 5 17 5s3.8.5 5 1.253v13C20.8 18.5 19 18 17 18s-3.8.5-5 1.253' />"
+        }
+    })" />
 
     <div class="admin-card">
         <div class="admin-toolbar">

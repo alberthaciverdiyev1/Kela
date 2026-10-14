@@ -1,29 +1,31 @@
 @model PageHeaderModel
-<div class="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
-    <div>
-        @if (false)
+@if (Model.StatCard != null || Model.Sortable || !string.IsNullOrEmpty(Model.CreateText))
+{
+    <div class="flex flex-col gap-4 sm:flex-row sm:items-center @(Model.StatCard != null ? "sm:justify-between" : "sm:justify-end")">
+        @if (Model.StatCard != null)
         {
-            <h2 class="admin-page-title">@Model.Title</h2>
-            @if (!string.IsNullOrEmpty(Model.Subtitle))
-            {
-                <p class="admin-page-subtitle">@Model.Subtitle</p>
-            }
+            <div class="w-full sm:w-80">
+                <partial name="Ui/_StatCard" model="Model.StatCard" />
+            </div>
+        }
+        @if (Model.Sortable || !string.IsNullOrEmpty(Model.CreateText))
+        {
+            <div class="flex shrink-0 items-center gap-2">
+                @if (Model.Sortable)
+                {
+                    <button type="button" id="sortBtn" onclick="sortClick()" class="admin-button-secondary">
+                        <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.9"><path stroke-linecap="round" stroke-linejoin="round" d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01" /></svg>
+                        Sırala
+                    </button>
+                }
+                @if (!string.IsNullOrEmpty(Model.CreateText))
+                {
+                    <button type="button" onclick="@Model.CreateOnClick" class="admin-button-primary">
+                        <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 5v14M5 12h14" /></svg>
+                        @Model.CreateText
+                    </button>
+                }
+            </div>
         }
     </div>
-    <div class="flex shrink-0 items-center gap-2">
-        @if (Model.Sortable)
-        {
-            <button type="button" id="sortBtn" onclick="sortClick()" class="admin-button-secondary">
-                <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.9"><path stroke-linecap="round" stroke-linejoin="round" d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01" /></svg>
-                Sırala
-            </button>
-        }
-        @if (!string.IsNullOrEmpty(Model.CreateText))
-        {
-            <button type="button" onclick="@Model.CreateOnClick" class="admin-button-primary">
-                <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 5v14M5 12h14" /></svg>
-                @Model.CreateText
-            </button>
-        }
-    </div>
-</div>
+}

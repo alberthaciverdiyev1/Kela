@@ -5,22 +5,22 @@
         @if (Model.CanDelete)
         {
             <button type="button" class="rounded-lg bg-danger px-3 py-1.5 text-sm font-semibold text-white hover:brightness-95"
-                    onclick="AdminUI.bulkDo('@Model.Url', 'delete', () => loadList(currentPage))">Sil</button>
+                    onclick="AdminUI.bulkDo('@Model.Url', 'delete', () => loadList(currentPage))">@L["Common_Delete"]</button>
         }
         @if (Model.CanRestore)
         {
             <button type="button" class="rounded-lg border border-border px-3 py-1.5 text-sm font-semibold text-slate-600 hover:bg-surface-secondary"
-                    onclick="AdminUI.bulkDo('@Model.Url', 'restore', () => loadList(currentPage))">Bərpa et</button>
+                    onclick="AdminUI.bulkDo('@Model.Url', 'restore', () => loadList(currentPage))">@L["Common_Restore"]</button>
         }
         @if (Model.CanActivate)
         {
             <button type="button" class="rounded-lg border border-border px-3 py-1.5 text-sm font-semibold text-slate-600 hover:bg-surface-secondary"
-                    onclick="AdminUI.bulkDo('@Model.Url', 'activate', () => loadList(currentPage))">Aktiv</button>
+                    onclick="AdminUI.bulkDo('@Model.Url', 'activate', () => loadList(currentPage))">@L["Common_Active"]</button>
         }
         @if (Model.CanDeactivate)
         {
             <button type="button" class="rounded-lg border border-border px-3 py-1.5 text-sm font-semibold text-slate-600 hover:bg-surface-secondary"
-                    onclick="AdminUI.bulkDo('@Model.Url', 'deactivate', () => loadList(currentPage))">Deaktiv</button>
+                    onclick="AdminUI.bulkDo('@Model.Url', 'deactivate', () => loadList(currentPage))">@L["Common_Inactive"]</button>
         }
     </div>
 </div>

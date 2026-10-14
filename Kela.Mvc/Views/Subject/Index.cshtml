@@ -5,12 +5,13 @@
     <partial name="Ui/_PageHeader" model="@(new PageHeaderModel {
         Title = "Fənlər",
         Subtitle = "Tədris olunan fənləri idarə edin.",
-        CreateText = "Yeni fənn" })" />
-
-    <div class="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
-        <partial name="Ui/_StatCard" model="@(new StatCardModel { Id = "stat_total", Label = "Cəmi fənn",
-            Icon = "<path stroke-linecap='round' stroke-linejoin='round' d='m4 7 8-4 8 4-8 4-8-4Zm0 5 8 4 8-4M4 17l8 4 8-4' />" })" />
-    </div>
+        CreateText = "Yeni fənn",
+        StatCard = new StatCardModel {
+            Id = "stat_total",
+            Label = "Cəmi fənn",
+            Icon = "<path stroke-linecap='round' stroke-linejoin='round' d='m4 7 8-4 8 4-8 4-8-4Zm0 5 8 4 8-4M4 17l8 4 8-4' />"
+        }
+    })" />
 
     <div class="admin-card">
         <div class="admin-toolbar">

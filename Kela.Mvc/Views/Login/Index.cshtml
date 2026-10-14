@@ -1,6 +1,6 @@
 @{
     Layout = "_AuthLayout";
-    ViewData["Title"] = "Giriş";
+    ViewData["Title"] = L["Login_Title"];
 }
 <div class="w-full max-w-sm rounded-2xl bg-white p-8 shadow-lg">
     <div class="mb-6 flex items-center gap-3">
@@ -9,7 +9,7 @@
         </div>
         <div>
             <p class="text-lg font-extrabold leading-none tracking-tight text-slate-900">Kela</p>
-            <p class="mt-1 text-xs font-medium text-slate-400">İdarəetmə paneli</p>
+            <p class="mt-1 text-xs font-medium text-slate-400">@L["Sidebar_AdminPanel"]</p>
         </div>
     </div>
 
@@ -20,12 +20,12 @@
 
     <form method="post" action="/login" class="space-y-4">
         @Html.AntiForgeryToken()
-        <partial name="Ui/_Input" model="@(new InputModel { Name = "Email", Id = "email", Label = "Email", Type = "email", Required = true })" />
+        <partial name="Ui/_Input" model="@(new InputModel { Name = "Email", Id = "email", Label = L["Common_Email"], Type = "email", Required = true })" />
         <div>
-            <label for="password" class="mb-1 block text-sm font-medium text-slate-700">Şifrə</label>
+            <label for="password" class="mb-1 block text-sm font-medium text-slate-700">@L["Common_Password"]</label>
             <input id="password" name="Password" type="password" required
                    class="block w-full rounded-lg border border-slate-300 bg-slate-50 p-2.5 text-sm text-slate-900 focus:border-primary focus:ring-primary" />
         </div>
-        <button type="submit" class="w-full rounded-lg bg-primary px-4 py-2.5 text-sm font-medium text-white hover:bg-primary-600">Daxil ol</button>
+        <button type="submit" class="w-full rounded-lg bg-primary px-4 py-2.5 text-sm font-medium text-white hover:bg-primary-600">@L["Common_SignIn"]</button>
     </form>
 </div>

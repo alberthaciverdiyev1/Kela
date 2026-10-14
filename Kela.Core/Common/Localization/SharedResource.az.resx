@@ -169,4 +169,121 @@
   <data name="Validation_BodyTextRequired" xml:space="preserve">
     <value>Mətn tələb olunur</value>
   </data>
+  <data name="Nav_Dashboard" xml:space="preserve">
+    <value>Dashboard</value>
+  </data>
+  <data name="Nav_Subjects" xml:space="preserve">
+    <value>Fənlər</value>
+  </data>
+  <data name="Nav_Lessons" xml:space="preserve">
+    <value>Dərslər</value>
+  </data>
+  <data name="Nav_Materials" xml:space="preserve">
+    <value>Materiallar</value>
+  </data>
+  <data name="Nav_Questions" xml:space="preserve">
+    <value>Suallar</value>
+  </data>
+  <data name="Nav_Exams" xml:space="preserve">
+    <value>İmtahanlar</value>
+  </data>
+  <data name="Nav_Groups" xml:space="preserve">
+    <value>Qruplar</value>
+  </data>
+  <data name="Nav_GroupStats" xml:space="preserve">
+    <value>Qrup statistikası</value>
+  </data>
+  <data name="Nav_Students" xml:space="preserve">
+    <value>Şagirdlər</value>
+  </data>
+  <data name="Nav_Users" xml:space="preserve">
+    <value>İstifadəçilər</value>
+  </data>
+  <data name="Nav_Tenants" xml:space="preserve">
+    <value>Tenantlar</value>
+  </data>
+  <data name="Nav_Notifications" xml:space="preserve">
+    <value>Bildirişlər</value>
+  </data>
+  <data name="Nav_Banners" xml:space="preserve">
+    <value>Bannerlər</value>
+  </data>
+  <data name="Nav_Certificates" xml:space="preserve">
+    <value>Sertifikatlar</value>
+  </data>
+  <data name="Nav_Settings" xml:space="preserve">
+    <value>Parametrlər</value>
+  </data>
+  <data name="Nav_Privacy" xml:space="preserve">
+    <value>Gizlilik</value>
+  </data>
+  <data name="Sidebar_SectionMain" xml:space="preserve">
+    <value>Ümumi</value>
+  </data>
+  <data name="Sidebar_SectionTeaching" xml:space="preserve">
+    <value>Tədris</value>
+  </data>
+  <data name="Sidebar_SectionManagement" xml:space="preserve">
+    <value>İdarəetmə</value>
+  </data>
+  <data name="Sidebar_SectionContact" xml:space="preserve">
+    <value>Rabitə</value>
+  </data>
+  <data name="Sidebar_SectionSystem" xml:space="preserve">
+    <value>Sistem</value>
+  </data>
+  <data name="Sidebar_AdminPanel" xml:space="preserve">
+    <value>İdarəetmə paneli</value>
+  </data>
+  <data name="Role_SuperAdmin" xml:space="preserve">
+    <value>SuperAdmin</value>
+  </data>
+  <data name="Role_Admin" xml:space="preserve">
+    <value>Admin</value>
+  </data>
+  <data name="Role_Teacher" xml:space="preserve">
+    <value>Müəllim</value>
+  </data>
+  <data name="Common_User" xml:space="preserve">
+    <value>İstifadəçi</value>
+  </data>
+  <data name="Common_Logout" xml:space="preserve">
+    <value>Çıxış</value>
+  </data>
+  <data name="Common_Email" xml:space="preserve">
+    <value>Email</value>
+  </data>
+  <data name="Common_Password" xml:space="preserve">
+    <value>Şifrə</value>
+  </data>
+  <data name="Common_SignIn" xml:space="preserve">
+    <value>Daxil ol</value>
+  </data>
+  <data name="Common_Save" xml:space="preserve">
+    <value>Yadda saxla</value>
+  </data>
+  <data name="Common_Cancel" xml:space="preserve">
+    <value>İmtina</value>
+  </data>
+  <data name="Common_Delete" xml:space="preserve">
+    <value>Sil</value>
+  </data>
+  <data name="Common_Restore" xml:space="preserve">
+    <value>Bərpa et</value>
+  </data>
+  <data name="Common_Active" xml:space="preserve">
+    <value>Aktiv</value>
+  </data>
+  <data name="Common_Inactive" xml:space="preserve">
+    <value>Deaktiv</value>
+  </data>
+  <data name="Login_Title" xml:space="preserve">
+    <value>Giriş</value>
+  </data>
+  <data name="Sort_Title" xml:space="preserve">
+    <value>Sırala</value>
+  </data>
+  <data name="Sort_Hint" xml:space="preserve">
+    <value>Elementləri yuxarı/aşağı köçürərək sıralayın, sonra yadda saxlayın.</value>
+  </data>
 </root>

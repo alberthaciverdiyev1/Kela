@@ -2,9 +2,9 @@
     var role = User.FindFirst(System.Security.Claims.ClaimTypes.Role)?.Value ?? "";
     var roleLabel = role switch
     {
-        "superadmin" => "SuperAdmin",
-        "admin" => "Admin",
-        "teacher" => "Müəllim",
+        "superadmin" => L["Role_SuperAdmin"],
+        "admin" => L["Role_Admin"],
+        "teacher" => L["Role_Teacher"],
         _ => role
     };
     var roleClass = role switch
@@ -13,11 +13,11 @@
         "admin" => "badge-primary",
         _ => "badge-neutral"
     };
-    var displayName = User.Identity?.Name ?? "İstifadəçi";
+    var displayName = User.Identity?.Name ?? L["Common_User"];
     var initial = string.IsNullOrWhiteSpace(displayName) ? "?" : displayName.Trim()[..1].ToUpperInvariant();
 }
 <!DOCTYPE html>
-<html lang="az">
+<html lang="@System.Globalization.CultureInfo.CurrentUICulture.TwoLetterISOLanguageName">
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -63,7 +63,7 @@
                             @Html.AntiForgeryToken()
                             <button type="submit" class="flex w-full items-center gap-2.5 px-4 py-3 text-sm font-semibold text-danger transition hover:bg-danger-bg">
                                 <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M15 12H3m12 0-4-4m4 4-4 4M21 4v16" /></svg>
-                                Çıxış
+                                @L["Common_Logout"]
                             </button>
                         </form>
                     </div>

@@ -5,12 +5,13 @@
     <partial name="Ui/_PageHeader" model="@(new PageHeaderModel {
         Title = "Sertifikatlar",
         Subtitle = "Şablon seçin, mətni və imzanı bir dəfə doldurun.",
-        CreateText = "Yeni sertifikat" })" />
-
-    <div class="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
-        <partial name="Ui/_StatCard" model="@(new StatCardModel { Id = "stat_total", Label = "Cəmi sertifikat",
-            Icon = "<path stroke-linecap='round' stroke-linejoin='round' d='M8 3h8l4 4v14H4V3z' /><path stroke-linecap='round' stroke-linejoin='round' d='M8 12h8M8 16h5' />" })" />
-    </div>
+        CreateText = "Yeni sertifikat",
+        StatCard = new StatCardModel {
+            Id = "stat_total",
+            Label = "Cəmi sertifikat",
+            Icon = "<path stroke-linecap='round' stroke-linejoin='round' d='M8 3h8l4 4v14H4V3z' /><path stroke-linecap='round' stroke-linejoin='round' d='M8 12h8M8 16h5' />"
+        }
+    })" />
 
     <div class="admin-card">
         <div class="admin-toolbar">

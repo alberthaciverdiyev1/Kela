@@ -1,15 +1,15 @@
 <div id="sortModal" class="fixed inset-0 z-50 hidden items-center justify-center bg-slate-950/40 p-4">
     <div class="max-h-[85vh] w-full max-w-lg overflow-y-auto rounded-2xl bg-white shadow-2xl">
         <div class="flex items-center justify-between border-b border-border p-5">
-            <h3 id="sortTitle" class="text-lg font-bold text-slate-900">Sırala</h3>
+            <h3 id="sortTitle" class="text-lg font-bold text-slate-900">@L["Sort_Title"]</h3>
             <button type="button" onclick="AdminUI.closeSort()" class="rounded-xl p-2 text-slate-400 hover:bg-slate-100">✕</button>
         </div>
         <div class="p-5">
-            <p class="mb-4 text-sm text-slate-500">Elementləri yuxarı/aşağı köçürərək sıralayın, sonra yadda saxlayın.</p>
+            <p class="mb-4 text-sm text-slate-500">@L["Sort_Hint"]</p>
             <div id="sortList" class="space-y-2"></div>
             <div class="flex justify-end gap-3 pt-5">
-                <button type="button" onclick="AdminUI.closeSort()" class="inline-flex min-h-[44px] items-center justify-center rounded-[10px] border border-border bg-surface px-4 text-sm font-bold text-slate-600 hover:bg-surface-secondary">İmtina</button>
-                <button type="button" onclick="AdminUI.saveSort()" class="admin-button-primary">Yadda saxla</button>
+                <button type="button" onclick="AdminUI.closeSort()" class="inline-flex min-h-[44px] items-center justify-center rounded-[10px] border border-border bg-surface px-4 text-sm font-bold text-slate-600 hover:bg-surface-secondary">@L["Common_Cancel"]</button>
+                <button type="button" onclick="AdminUI.saveSort()" class="admin-button-primary">@L["Common_Save"]</button>
             </div>
         </div>
     </div>

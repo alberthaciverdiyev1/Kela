@@ -5,12 +5,13 @@
     <partial name="Ui/_PageHeader" model="@(new PageHeaderModel {
         Title = "Bannerlər",
         Subtitle = "Tətbiqin açılış ekranında göstərilən bannerləri idarə edin.",
-        CreateText = "Yeni banner" })" />
-
-    <div class="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
-        <partial name="Ui/_StatCard" model="@(new StatCardModel { Id = "stat_total", Label = "Cəmi banner",
-            Icon = "<path stroke-linecap='round' stroke-linejoin='round' d='M4 5h16v14H4z' /><path stroke-linecap='round' stroke-linejoin='round' d='m4 15 4-4 5 5 3-3 4 4' /><circle cx='9' cy='9' r='1.5' />" })" />
-    </div>
+        CreateText = "Yeni banner",
+        StatCard = new StatCardModel {
+            Id = "stat_total",
+            Label = "Cəmi banner",
+            Icon = "<path stroke-linecap='round' stroke-linejoin='round' d='M4 5h16v14H4z' /><path stroke-linecap='round' stroke-linejoin='round' d='m4 15 4-4 5 5 3-3 4 4' /><circle cx='9' cy='9' r='1.5' />"
+        }
+    })" />
 
     <div class="admin-card">
         <div class="admin-toolbar">
