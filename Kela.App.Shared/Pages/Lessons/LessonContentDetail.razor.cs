@@ -17,6 +17,7 @@ public partial class LessonContentDetail
 
     private bool _loading = true;
     private ContentItemDto? _content;
+    private List<ContentItemDto> _siblings = new();
     private bool _done;
     private ElementReference _videoRef;
     private string? _url;
@@ -25,14 +26,30 @@ public partial class LessonContentDetail
     private bool IsVideo => _content?.Type == "video";
     private bool IsVoice => _content?.Type == "voice";
 
-    protected override async Task OnInitializedAsync()
+    private string RelatedTitle => "Dərs materialları";
+
+    private static string IconFor(string? type) => type switch
     {
+        "video" => "play",
+        "voice" => "chart",
+        _ => "file-text"
+    };
+
+    protected override void OnInitialized() => Player.Ended += OnAudioEnded;
+
+    protected override async Task OnParametersSetAsync()
+    {
+        _loading = true;
+        _done = false;
+        _attached = null;
         try
         {
             var all = await Api.ContentsAsync(LessonId);
             _content = all.FirstOrDefault(c => c.Id == ContentId);
+            _siblings = _content is null
+                ? new()
+                : all.Where(c => c.Id != ContentId).ToList();
             _url = Absolute(_content?.PlaybackUrl ?? _content?.Url);
-            Player.Ended += OnAudioEnded;
         }
         catch { }
         _loading = false;
