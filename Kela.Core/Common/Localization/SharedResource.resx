@@ -967,6 +967,9 @@
   <data name="Js_Empty" xml:space="preserve">
     <value>Empty</value>
   </data>
+  <data name="Js_View" xml:space="preserve">
+    <value>View</value>
+  </data>
   <data name="Js_NothingToSort" xml:space="preserve">
     <value>Nothing to sort</value>
   </data>

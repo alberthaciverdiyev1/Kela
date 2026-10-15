@@ -967,6 +967,9 @@
   <data name="Js_Empty" xml:space="preserve">
     <value>Пусто</value>
   </data>
+  <data name="Js_View" xml:space="preserve">
+    <value>Просмотр</value>
+  </data>
   <data name="Js_NothingToSort" xml:space="preserve">
     <value>Нет элементов для сортировки</value>
   </data>

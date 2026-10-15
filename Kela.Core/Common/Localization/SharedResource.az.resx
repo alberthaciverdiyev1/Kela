@@ -967,6 +967,9 @@
   <data name="Js_Empty" xml:space="preserve">
     <value>Boşdur</value>
   </data>
+  <data name="Js_View" xml:space="preserve">
+    <value>Bax</value>
+  </data>
   <data name="Js_NothingToSort" xml:space="preserve">
     <value>Sıralanacaq element yoxdur</value>
   </data>
