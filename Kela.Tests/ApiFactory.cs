@@ -18,6 +18,9 @@ public sealed class ApiFactory : WebApplicationFactory<Program>, IAsyncLifetime
 
     public string AdminToken { get; private set; } = string.Empty;
 
+    /// <summary>Test verilənlər bazasının connection string-i (birbaşa DbContext testləri üçün).</summary>
+    public string ConnectionString => _db.GetConnectionString();
+
     public async Task InitializeAsync()
     {
         await _db.StartAsync();

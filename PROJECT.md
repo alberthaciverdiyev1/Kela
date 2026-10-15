@@ -137,19 +137,23 @@ Kela.Mvc/     (Program.cs, Controllers, Models, Views)
 ## 6. Yol Haritası
 
 - [x] Banner
-- [x] Profession
-- [~] Auth — Student (register/login) + User (login) hazır; OTP, roller, student.active gözləyir
+- [x] Profession (iptal)
+- [x] Auth — Student + User login; OTP (SMTP konfiq gözləyir), roller, device lock
 - [x] Şagird app axını — groups → subjects → lessons → contents (üzvlük yoxlaması ilə)
 - [x] Progress / Statistics — içerik tamamlama + statistika
-- [x] Setting
-- [x] İçerik zənciri — Subject · Group · group_subjects · Lesson · LessonContent · medya (BunnyCDN). **Profession iptal.**
-- [ ] Video / VoiceRecord / File (BunnyCDN)
+- [x] Setting (+ Kurs profili / platforma setting-i)
+- [x] İçerik zənciri — Subject · Group · Lesson · LessonContent · media (R2)
 - [x] Question / Quiz / StudentQuiz — sual bankı, quiz, tələbə imtahanı (bal + nəticələr)
-- [ ] StudentQuiz / QuizRepeat
-- [ ] Progress
-- [ ] Statistics
 - [x] PrivacyPolicy
-- [ ] Admin (dashboard, sort order)
+- [x] Admin panel — Dashboard, CRUD, sort (drag&drop), avtomatik filtrlər, search, i18n (az/en/tr/ru)
+- [x] **Multi-tenancy** — hər cədvəldə `tenant_id`, adlı query filter, login-də tenant seçimi, superadmin tenant switch
+- [x] **Profil** — hər istifadəçi öz ad/email/telefon/şifrəsini dəyişir
+- [ ] Push bildiriş (FCM) — `IPushSender` NoOp
+- [ ] SMTP e-poçt konfiqurasiyası (OTP)
+- [ ] Video/HLS konvertasiya (m3u8), şəkil sıxışdırma
+- [ ] Certificate — app tərəfi + API endpoint
+- [ ] Media/mətn preview modalı (lesson materialları) — ✅ əlavə olundu
+- [ ] Feedback (SignalR) float button — planlandı
 
 ---
 _En son güncelleme: Adım 66 — Admin Permission + Tenant — Admin login (cookie auth) + bootstrap admin — Admin Setting + PrivacyPolicy — Admin User səhifəsi — Admin Notification səhifəsi — Admin Students səhifəsi — Admin Quiz səhifəsi — Admin Question səhifəsi + fayl preview/X — Group idarəetməsi (tab-lar) — Admin Group səhifəsi — Admin LessonContent səhifəsi — Admin Lesson səhifəsi — Admin Subject səhifəsi (list + CRUD modal + JS).

@@ -43,6 +43,11 @@ namespace Kela.Core.Data.Migrations
                 "SELECT 1, 'Default', 'default', true, now() " +
                 "WHERE NOT EXISTS (SELECT 1 FROM tenants WHERE id = 1);");
 
+            // Açıq id ilə insert identity sequence-i irəli aparmır → növbəti tenant toqquşurdu.
+            migrationBuilder.Sql(
+                "SELECT setval(pg_get_serial_sequence('tenants', 'id'), " +
+                "COALESCE((SELECT MAX(id) FROM tenants), 1));");
+
             var tenantTables = new[]
             {
                 "banners", "certificates", "groups", "group_quizzes", "group_subjects",
