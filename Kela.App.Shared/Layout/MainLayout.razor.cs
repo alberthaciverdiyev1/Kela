@@ -16,8 +16,12 @@ public partial class MainLayout
 
     private bool _ready;
     private string _location = "/";
+    private readonly List<string> _trail = [];
+    private bool _goingBack;
 
     private string RenderKey => Lang.Current + "|" + _location;
+
+    private string TransitionClass => _goingBack ? "page-transition page-back" : "page-transition";
 
     protected override async Task OnInitializedAsync()
     {
@@ -25,6 +29,7 @@ public partial class MainLayout
         Lang.Changed += OnLangChanged;
         Nav.LocationChanged += OnLocationChanged;
         _location = Nav.ToBaseRelativePath(Nav.Uri);
+        _trail.Add(_location);
 
         if (!Auth.IsAuthenticated)
         {
@@ -104,14 +109,40 @@ public partial class MainLayout
         }
     }
 
-    private void OnLangChanged() => _ = InvokeAsync(StateHasChanged);
+    private void OnLangChanged() => _ = InvokeAsync(() =>
+    {
+        // Dil dəyişməsi naviqasiya deyil — keçid animasiyası irəli istiqamətdə qalsın.
+        _goingBack = false;
+        StateHasChanged();
+    });
 
     private void OnLocationChanged(object? sender, Microsoft.AspNetCore.Components.Routing.LocationChangedEventArgs e)
         => _ = InvokeAsync(() =>
         {
-            _location = Nav.ToBaseRelativePath(Nav.Uri);
+            var path = Nav.ToBaseRelativePath(Nav.Uri);
+            _goingBack = IsBackNavigation(path);
+            _location = path;
             StateHasChanged();
         });
+
+    /// <summary>
+    /// Geri naviqasiyanı müəyyən edir. Blazor istiqamət vermir, ona görə keçdiyimiz
+    /// yolları yığıb hədəf yola görə qərar veririk: yol yığında varsa geri qayıdırıq.
+    /// Bu, həm 'geri' düyməsini (pushState), həm history.back()-i (popstate) tutur.
+    /// </summary>
+    private bool IsBackNavigation(string path)
+    {
+        var idx = _trail.LastIndexOf(path);
+
+        if (idx >= 0 && idx < _trail.Count - 1)
+        {
+            _trail.RemoveRange(idx + 1, _trail.Count - idx - 1);
+            return true;
+        }
+
+        if (idx < 0) _trail.Add(path);
+        return false;
+    }
 
     public void Dispose()
     {

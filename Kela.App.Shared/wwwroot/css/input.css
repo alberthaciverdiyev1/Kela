@@ -142,6 +142,17 @@
   background-color: var(--color-brand-022);
 }
 
+@keyframes pageInReverse {
+  from { transform: translateX(-100%); }
+  to { transform: none; }
+}
+
+/* Geri naviqasiya: gələn səhifə soldan sürüşür (native pop hissi).
+   Yalnız animation-name əvəzlənir — müddət və easing .page-transition-dan qalır. */
+.page-transition.page-back {
+  animation-name: pageInReverse;
+}
+
 /* İskelet (skeleton) — məzmun gözləyərkən səhifənin formasını saxlayan yer tutucu.
    @layer components içindədir ki, Tailwind utility-ləri (məs. bg-white/20) onu
    əzə bilsin — qat xarici CSS qatlı CSS-dən üstün olardı.
