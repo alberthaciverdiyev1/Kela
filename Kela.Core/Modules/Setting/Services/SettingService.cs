@@ -18,7 +18,8 @@ public sealed class SettingService(AppDbContext db, IFileStorage storage, IConfi
         if (db.CurrentTenantId is null) return Empty();
 
         var setting = await db.Settings.AsNoTracking().FirstOrDefaultAsync(ct);
-        return setting is null ? Empty() : ToResponse(setting);
+        var name = await TenantNameAsync(ct);
+        return setting is null ? Empty(name) : ToResponse(setting, name);
     }
 
     public async Task<SettingResponse> UpdateAsync(SettingUpsertRequest request, CancellationToken ct = default)
@@ -28,13 +29,59 @@ public sealed class SettingService(AppDbContext db, IFileStorage storage, IConfi
             throw new ArgumentException("Tenant context is required to update settings");
         }
 
-        var setting = await db.Settings.FirstOrDefaultAsync(ct);
+        var setting = await db.Settings.FirstOrDefaultAsync(ct) ?? AddNew();
+        await ApplyAsync(setting, request, ct);
+
+        return ToResponse(setting, await TenantNameAsync(ct));
+    }
+
+    public async Task<SettingResponse> GetPlatformAsync(CancellationToken ct = default)
+    {
+        var setting = await db.Settings.IgnoreQueryFilters(new[] { "Tenant" })
+            .AsNoTracking()
+            .FirstOrDefaultAsync(x => x.TenantId == 0, ct);
+
+        return setting is null ? Empty() : ToResponse(setting, null);
+    }
+
+    public async Task<SettingResponse> UpdatePlatformAsync(SettingUpsertRequest request, CancellationToken ct = default)
+    {
+        // Platforma setting-i yalnız tenant konteksti olmayanda (superadmin switch etməmiş) redaktə olunur.
+        if (db.CurrentTenantId is not null)
+        {
+            throw new ArgumentException("Platform settings require a tenant-free (superadmin) context");
+        }
+
+        var setting = await db.Settings.IgnoreQueryFilters(new[] { "Tenant" })
+            .FirstOrDefaultAsync(x => x.TenantId == 0, ct);
         if (setting is null)
         {
-            setting = new Setting();
+            setting = new Setting { TenantId = 0 };
             db.Settings.Add(setting);
         }
 
+        await ApplyAsync(setting, request, ct);
+        return ToResponse(setting, null);
+    }
+
+    public async Task<AppVersionResponse> GetAppVersionAsync(CancellationToken ct = default)
+    {
+        var setting = await db.Settings.AsNoTracking().FirstOrDefaultAsync(ct);
+
+        return new AppVersionResponse(
+            new AppVersionPlatform(setting?.AndroidMinVersion, config["App:GooglePlayUrl"]),
+            new AppVersionPlatform(setting?.IosMinVersion, config["App:AppStoreUrl"]));
+    }
+
+    private Setting AddNew()
+    {
+        var setting = new Setting();
+        db.Settings.Add(setting);
+        return setting;
+    }
+
+    private async Task ApplyAsync(Setting setting, SettingUpsertRequest request, CancellationToken ct)
+    {
         if (request.RemoveLogo)
         {
             await storage.DeleteAsync(setting.Logo, ct);
@@ -60,20 +107,21 @@ public sealed class SettingService(AppDbContext db, IFileStorage storage, IConfi
         setting.IosMinVersion = request.IosMinVersion;
 
         await db.SaveChangesAsync(ct);
-        return ToResponse(setting);
     }
 
-    public async Task<AppVersionResponse> GetAppVersionAsync(CancellationToken ct = default)
+    private async Task<string?> TenantNameAsync(CancellationToken ct)
     {
-        var setting = await db.Settings.AsNoTracking().FirstOrDefaultAsync(ct);
+        if (db.CurrentTenantId is not long id) return null;
 
-        return new AppVersionResponse(
-            new AppVersionPlatform(setting?.AndroidMinVersion, config["App:GooglePlayUrl"]),
-            new AppVersionPlatform(setting?.IosMinVersion, config["App:AppStoreUrl"]));
+        return await db.Tenants.AsNoTracking()
+            .Where(t => t.Id == id)
+            .Select(t => t.Name)
+            .FirstOrDefaultAsync(ct);
     }
 
-    private SettingResponse ToResponse(Setting s) =>
+    private SettingResponse ToResponse(Setting s, string? name) =>
         new(
+            name,
             s.Id,
             storage.GetUrl(s.Logo),
             s.Description,
@@ -89,6 +137,6 @@ public sealed class SettingService(AppDbContext db, IFileStorage storage, IConfi
             s.AndroidMinVersion,
             s.IosMinVersion);
 
-    private SettingResponse Empty() =>
-        new(0, storage.GetUrl(null), null, null, null, null, null, null, null, null, null, null, null, null);
+    private SettingResponse Empty(string? name = null) =>
+        new(name, 0, storage.GetUrl(null), null, null, null, null, null, null, null, null, null, null, null, null);
 }

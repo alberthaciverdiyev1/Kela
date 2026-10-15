@@ -13,6 +13,11 @@ public sealed class SettingController(ISettingService service) : ApiControllerBa
     public async Task<ActionResult<ApiResponse<SettingResponse>>> Contact(CancellationToken ct)
         => Success(await service.GetAsync(ct));
 
+    /// <summary>Platforma (superadmin) əlaqə məlumatları — tenant-dan asılı olmayan.</summary>
+    [HttpGet("platform")]
+    public async Task<ActionResult<ApiResponse<SettingResponse>>> Platform(CancellationToken ct)
+        => Success(await service.GetPlatformAsync(ct));
+
     [HttpGet("app-version")]
     public async Task<ActionResult<ApiResponse<AppVersionResponse>>> AppVersion(CancellationToken ct)
         => Success(await service.GetAppVersionAsync(ct));

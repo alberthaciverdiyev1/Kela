@@ -46,6 +46,16 @@
                 </div>
 
                 <div class="flex items-center gap-3">
+                    @if (role == "superadmin" && !string.IsNullOrEmpty(User.FindFirst("tenant_name")?.Value))
+                    {
+                        <div class="hidden items-center gap-2 rounded-lg border border-primary bg-primary-light px-2.5 py-1.5 sm:flex">
+                            <span class="text-xs font-bold text-primary">@User.FindFirst("tenant_name")!.Value</span>
+                            <form method="post" action="/tenant/switch-off" class="inline">
+                                @Html.AntiForgeryToken()
+                                <button type="submit" class="text-xs font-bold text-danger hover:underline">@L["Tenant_SwitchOff"]</button>
+                            </form>
+                        </div>
+                    }
                     <select id="langSelect" onchange="setLang(this.value)" aria-label="Language"
                             class="rounded-lg border border-border bg-white px-2 py-1.5 text-xs font-semibold text-slate-600 outline-none focus:border-primary">
                         @foreach (var c in Kela.Core.Common.Localization.LocalizationExtensions.SupportedCultures)

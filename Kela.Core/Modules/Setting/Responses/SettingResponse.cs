@@ -1,6 +1,7 @@
 namespace Kela.Core.Modules.Setting.Responses;
 
 public record SettingResponse(
+    string? Name,
     long Id,
     string? Logo,
     string? Description,

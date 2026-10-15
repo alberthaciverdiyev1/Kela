@@ -1,11 +1,5 @@
 using Microsoft.AspNetCore.Components;
-using Microsoft.AspNetCore.Components.Web;
-using Microsoft.JSInterop;
 using Kela.App.Shared.Dtos;
-using Kela.App.Shared.Dtos.Auth;
-using Kela.App.Shared.Dtos.Progress;
-using Kela.App.Shared.Dtos.Quiz;
-using Kela.App.Shared.Services;
 using Kela.App.Shared.Services.Api;
 
 namespace Kela.App.Shared.Pages.Contact;
@@ -13,19 +7,24 @@ namespace Kela.App.Shared.Pages.Contact;
 public partial class Contact
 {
     private bool _loading = true;
-    private ContactDto? _contact;
-
-    private IEnumerable<string> ContactNumbers =>
-        new[] { _contact?.ContactNumber1, _contact?.ContactNumber2, _contact?.ContactNumber3, _contact?.ContactNumber4 }
-            .Where(n => !string.IsNullOrWhiteSpace(n))
-            .Select(n => n!);
+    private ContactDto? _course;
+    private ContactDto? _platform;
 
     protected override async Task OnInitializedAsync()
     {
-        try { _contact = await Api.ContactAsync(); } catch { }
+        try { _course = await Api.ContactAsync(); } catch { }
+        try { _platform = await Api.PlatformContactAsync(); } catch { }
         _loading = false;
     }
 
-    private static string WhatsappUrl(string number)
-        => $"https://wa.me/{new string(number.Where(char.IsDigit).ToArray())}";
+    private static bool HasChannels(ContactDto? c)
+        => c is not null && (
+            !string.IsNullOrWhiteSpace(c.WhatsappNumber)
+            || !string.IsNullOrWhiteSpace(c.InstagramUrl)
+            || !string.IsNullOrWhiteSpace(c.FacebookUrl)
+            || !string.IsNullOrWhiteSpace(c.Email)
+            || !string.IsNullOrWhiteSpace(c.ContactNumber1)
+            || !string.IsNullOrWhiteSpace(c.ContactNumber2)
+            || !string.IsNullOrWhiteSpace(c.ContactNumber3)
+            || !string.IsNullOrWhiteSpace(c.ContactNumber4));
 }

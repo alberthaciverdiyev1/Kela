@@ -8,54 +8,49 @@
 <PageHeader Title="@L["Contact_Title"]" Back="/profile"/>
 
 <div class="px-5 pb-28 pt-6">
-    <h2 class="mt-1 text-2xl font-bold tracking-[-0.04em] text-brand-784">@L["Contact_Title"]</h2>
-
     @if (_loading)
     {
         <Loader/>
     }
-    else if (_contact is null)
-    {
-        <EmptyState Text="@L["Contact_Empty"]"/>
-    }
     else
     {
-        <section class="mt-5 grid gap-3 sm:grid-cols-2">
-            @if (!string.IsNullOrWhiteSpace(_contact.WhatsappNumber))
-            {
-                <a href="@WhatsappUrl(_contact.WhatsappNumber)" target="_blank" rel="noopener" class="flex items-center gap-4 rounded-2xl border border-brand-090 bg-white p-4 shadow-[0_4px_15px_rgba(36,78,62,0.03)]">
-                    <span class="flex size-11 shrink-0 items-center justify-center rounded-xl bg-brand-081 text-brand-698"><Icon Name="phone" Class="size-5" /></span>
-                    <span class="min-w-0 flex-1"><span class="block text-[14px] font-semibold text-brand-776">WhatsApp</span><span class="mt-0.5 block text-[11px] text-sage-382">@_contact.WhatsappNumber</span></span>
-                    <Icon Name="external-link" Class="size-4 text-sage-300" />
-                </a>
-            }
+        @* --- Yuxarı: kurs (tenant) --- *@
+        @if (_course is not null)
+        {
+            <section class="rounded-2xl border border-brand-090 bg-white p-5 shadow-[0_4px_15px_rgba(36,78,62,0.03)]">
+                <div class="flex items-center gap-3">
+                    @if (!string.IsNullOrWhiteSpace(_course.Logo))
+                    {
+                        <img src="@_course.Logo" alt="" class="size-12 rounded-xl object-cover"/>
+                    }
+                    <h2 class="text-xl font-bold tracking-[-0.03em] text-brand-784">@(string.IsNullOrWhiteSpace(_course.Name) ? L["Contact_Title"] : _course.Name)</h2>
+                </div>
 
-            @if (!string.IsNullOrWhiteSpace(_contact.InstagramUrl))
-            {
-                <a href="@_contact.InstagramUrl" target="_blank" rel="noopener" class="flex items-center gap-4 rounded-2xl border border-brand-090 bg-white p-4 shadow-[0_4px_15px_rgba(36,78,62,0.03)]">
-                    <span class="flex size-11 shrink-0 items-center justify-center rounded-xl bg-sun-063 text-sun-461"><Icon Name="star" Class="size-5" /></span>
-                    <span class="min-w-0 flex-1"><span class="block text-[14px] font-semibold text-brand-776">Instagram</span><span class="mt-0.5 block text-[11px] text-sage-382">@_contact.InstagramUrl</span></span>
-                    <Icon Name="external-link" Class="size-4 text-sage-300" />
-                </a>
-            }
+                @if (!string.IsNullOrWhiteSpace(_course.Description))
+                {
+                    <p class="mt-3 whitespace-pre-line text-[13px] leading-6 text-sage-382">@_course.Description</p>
+                }
 
-            @if (!string.IsNullOrWhiteSpace(_contact.FacebookUrl))
-            {
-                <a href="@_contact.FacebookUrl" target="_blank" rel="noopener" class="flex items-center gap-4 rounded-2xl border border-brand-090 bg-white p-4 shadow-[0_4px_15px_rgba(36,78,62,0.03)]">
-                    <span class="flex size-11 shrink-0 items-center justify-center rounded-xl bg-sky-041 text-sky-406"><Icon Name="external-link" Class="size-5" /></span>
-                    <span class="min-w-0 flex-1"><span class="block text-[14px] font-semibold text-brand-776">Facebook</span><span class="mt-0.5 block text-[11px] text-sage-382">@_contact.FacebookUrl</span></span>
-                    <Icon Name="external-link" Class="size-4 text-sage-300" />
-                </a>
-            }
+                @if (!string.IsNullOrWhiteSpace(_course.Address))
+                {
+                    <p class="mt-3 text-[13px] text-brand-776">@_course.Address</p>
+                }
 
-            @foreach (var num in ContactNumbers)
-            {
-                <a href="tel:@num" class="flex items-center gap-4 rounded-2xl border border-brand-090 bg-white p-4 shadow-[0_4px_15px_rgba(36,78,62,0.03)]">
-                    <span class="flex size-11 shrink-0 items-center justify-center rounded-xl bg-brand-081 text-brand-698"><Icon Name="phone" Class="size-5" /></span>
-                    <span class="min-w-0 flex-1"><span class="block text-[14px] font-semibold text-brand-776">@num</span><span class="mt-0.5 block text-[11px] text-sage-382">@L["Contact_Call"]</span></span>
-                    <Icon Name="chevron-right" Class="size-4 text-sage-300" />
-                </a>
-            }
-        </section>
+                <ContactChannels Contact="_course"/>
+            </section>
+        }
+
+        @* --- Aşağı: platforma (admin) --- *@
+        @if (HasChannels(_platform))
+        {
+            <h3 class="mt-8 px-1 text-sm font-bold uppercase tracking-wider text-sage-382">@L["Contact_Support"]</h3>
+            <section class="mt-3 rounded-2xl border border-brand-090 bg-white p-5 shadow-[0_4px_15px_rgba(36,78,62,0.03)]">
+                @if (!string.IsNullOrWhiteSpace(_platform.Description))
+                {
+                    <p class="mb-1 whitespace-pre-line text-[13px] leading-6 text-sage-382">@_platform.Description</p>
+                }
+                <ContactChannels Contact="_platform"/>
+            </section>
+        }
     }
 </div>

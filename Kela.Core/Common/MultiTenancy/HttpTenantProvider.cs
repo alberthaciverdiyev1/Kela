@@ -48,6 +48,9 @@ public sealed class HttpTenantProvider(IHttpContextAccessor accessor, ITenantSco
             if (scope.Override is not null) return false;
             if (context.Request.Headers.ContainsKey("X-Tenant-Id")) return false;
 
+            // Superadmin bir tenant-a "switch" edibsə (tenant_id claim var), cross-tenant deyil.
+            if (ClaimTenant(context) is not null) return false;
+
             return true;
         }
     }

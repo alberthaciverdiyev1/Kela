@@ -478,6 +478,18 @@
   <data name="User_Subtitle" xml:space="preserve">
     <value>Manage admin and teacher accounts.</value>
   </data>
+  <data name="Nav_PlatformSettings" xml:space="preserve">
+    <value>Platform settings</value>
+  </data>
+  <data name="Platform_Subtitle" xml:space="preserve">
+    <value>Platform-wide contact details (shown under the course contact in the app).</value>
+  </data>
+  <data name="Tenant_Switch" xml:space="preserve">
+    <value>Enter</value>
+  </data>
+  <data name="Tenant_SwitchOff" xml:space="preserve">
+    <value>Exit tenant</value>
+  </data>
   <data name="Tenant_Create" xml:space="preserve">
     <value>New tenant</value>
   </data>

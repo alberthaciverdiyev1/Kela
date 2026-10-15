@@ -1,0 +1,64 @@
+@using Kela.App.Shared.Dtos
+@using Kela.App.Shared.Services.Localization
+@inject Localizer L
+
+@if (Contact is not null)
+{
+    <section class="mt-4 grid gap-3 sm:grid-cols-2">
+        @if (!string.IsNullOrWhiteSpace(Contact.WhatsappNumber))
+        {
+            <a href="@WhatsappUrl(Contact.WhatsappNumber)" target="_blank" rel="noopener" class="flex items-center gap-4 rounded-2xl border border-brand-090 bg-white p-4 shadow-[0_4px_15px_rgba(36,78,62,0.03)]">
+                <span class="flex size-11 shrink-0 items-center justify-center rounded-xl bg-brand-081 text-brand-698"><Icon Name="phone" Class="size-5"/></span>
+                <span class="min-w-0 flex-1"><span class="block text-[14px] font-semibold text-brand-776">WhatsApp</span><span class="mt-0.5 block text-[11px] text-sage-382">@Contact.WhatsappNumber</span></span>
+                <Icon Name="external-link" Class="size-4 text-sage-300"/>
+            </a>
+        }
+
+        @if (!string.IsNullOrWhiteSpace(Contact.InstagramUrl))
+        {
+            <a href="@Contact.InstagramUrl" target="_blank" rel="noopener" class="flex items-center gap-4 rounded-2xl border border-brand-090 bg-white p-4 shadow-[0_4px_15px_rgba(36,78,62,0.03)]">
+                <span class="flex size-11 shrink-0 items-center justify-center rounded-xl bg-sun-063 text-sun-461"><Icon Name="star" Class="size-5"/></span>
+                <span class="min-w-0 flex-1"><span class="block text-[14px] font-semibold text-brand-776">Instagram</span><span class="mt-0.5 block text-[11px] text-sage-382">@Contact.InstagramUrl</span></span>
+                <Icon Name="external-link" Class="size-4 text-sage-300"/>
+            </a>
+        }
+
+        @if (!string.IsNullOrWhiteSpace(Contact.FacebookUrl))
+        {
+            <a href="@Contact.FacebookUrl" target="_blank" rel="noopener" class="flex items-center gap-4 rounded-2xl border border-brand-090 bg-white p-4 shadow-[0_4px_15px_rgba(36,78,62,0.03)]">
+                <span class="flex size-11 shrink-0 items-center justify-center rounded-xl bg-sky-041 text-sky-406"><Icon Name="external-link" Class="size-5"/></span>
+                <span class="min-w-0 flex-1"><span class="block text-[14px] font-semibold text-brand-776">Facebook</span><span class="mt-0.5 block text-[11px] text-sage-382">@Contact.FacebookUrl</span></span>
+                <Icon Name="external-link" Class="size-4 text-sage-300"/>
+            </a>
+        }
+
+        @if (!string.IsNullOrWhiteSpace(Contact.Email))
+        {
+            <a href="mailto:@Contact.Email" class="flex items-center gap-4 rounded-2xl border border-brand-090 bg-white p-4 shadow-[0_4px_15px_rgba(36,78,62,0.03)]">
+                <span class="flex size-11 shrink-0 items-center justify-center rounded-xl bg-brand-081 text-brand-698"><Icon Name="mail" Class="size-5"/></span>
+                <span class="min-w-0 flex-1"><span class="block text-[14px] font-semibold text-brand-776">@L["Contact_Email"]</span><span class="mt-0.5 block text-[11px] text-sage-382">@Contact.Email</span></span>
+            </a>
+        }
+
+        @foreach (var num in Numbers)
+        {
+            <a href="tel:@num" class="flex items-center gap-4 rounded-2xl border border-brand-090 bg-white p-4 shadow-[0_4px_15px_rgba(36,78,62,0.03)]">
+                <span class="flex size-11 shrink-0 items-center justify-center rounded-xl bg-brand-081 text-brand-698"><Icon Name="phone" Class="size-5"/></span>
+                <span class="min-w-0 flex-1"><span class="block text-[14px] font-semibold text-brand-776">@num</span><span class="mt-0.5 block text-[11px] text-sage-382">@L["Contact_Call"]</span></span>
+                <Icon Name="chevron-right" Class="size-4 text-sage-300"/>
+            </a>
+        }
+    </section>
+}
+
+@code {
+    [Parameter] public ContactDto? Contact { get; set; }
+
+    private IEnumerable<string> Numbers =>
+        new[] { Contact?.ContactNumber1, Contact?.ContactNumber2, Contact?.ContactNumber3, Contact?.ContactNumber4 }
+            .Where(n => !string.IsNullOrWhiteSpace(n))
+            .Select(n => n!);
+
+    private static string WhatsappUrl(string number)
+        => $"https://wa.me/{new string(number.Where(char.IsDigit).ToArray())}";
+}

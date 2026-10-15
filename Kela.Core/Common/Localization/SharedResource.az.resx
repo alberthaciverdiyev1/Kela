@@ -478,6 +478,18 @@
   <data name="User_Subtitle" xml:space="preserve">
     <value>Admin və müəllim hesablarını idarə edin.</value>
   </data>
+  <data name="Nav_PlatformSettings" xml:space="preserve">
+    <value>Platforma parametrləri</value>
+  </data>
+  <data name="Platform_Subtitle" xml:space="preserve">
+    <value>Platforma üzrə əlaqə məlumatları (app-də kurs əlaqəsindən aşağıda göstərilir).</value>
+  </data>
+  <data name="Tenant_Switch" xml:space="preserve">
+    <value>Daxil ol</value>
+  </data>
+  <data name="Tenant_SwitchOff" xml:space="preserve">
+    <value>Tenant-dan çıx</value>
+  </data>
   <data name="Tenant_Create" xml:space="preserve">
     <value>Yeni tenant</value>
   </data>
