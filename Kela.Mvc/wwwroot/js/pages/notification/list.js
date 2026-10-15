@@ -3,8 +3,9 @@ let lastPage = 1;
 
 async function loadList(page) {
     currentPage = page || 1;
+    const search = document.getElementById('search')?.value ?? '';
     AdminUI.loader(true);
-    const data = await AdminUI.get(`/notification/list?page=${currentPage}`);
+    const data = await AdminUI.get(`/notification/list?page=${currentPage}&search=${encodeURIComponent(search)}`);
     lastPage = data.lastPage;
 
     AdminUI.table('rows', data.data.map((n, i) => [

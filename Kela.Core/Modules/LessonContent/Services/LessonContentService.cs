@@ -37,6 +37,12 @@ public sealed class LessonContentService(AppDbContext db, IFileStorage storage) 
             query = query.Where(x => x.LessonId == request.LessonId);
         }
 
+        if (!string.IsNullOrWhiteSpace(request.Search))
+        {
+            var term = $"%{request.Search.Trim()}%";
+            query = query.Where(x => EF.Functions.ILike(x.Title, term));
+        }
+
         var total = await query.CountAsync(ct);
         var items = await query
             .Include(x => x.Video).Include(x => x.MediaFile).Include(x => x.VoiceRecord)

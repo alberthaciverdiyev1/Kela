@@ -8,6 +8,11 @@
         CreateText = L["Tenant_Create"] })" />
 
     <div class="admin-card">
+        <partial name="Ui/_FilterBar" model="@(new FilterBarModel {
+            SearchPlaceholder = L["Common_SearchPlaceholder"],
+            ButtonText = L["Common_Search"]
+        })" />
+
         <div class="relative">
             <div id="listLoader" class="admin-loader"><div class="spinner"></div></div>
             <div class="overflow-x-auto">

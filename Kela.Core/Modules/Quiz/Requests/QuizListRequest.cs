@@ -4,6 +4,8 @@ namespace Kela.Core.Modules.Quiz.Requests;
 
 public class QuizListRequest
 {
+    public string? Search { get; set; }
+
     [FromQuery(Name = "lesson_id")]
     public long? LessonId { get; set; }
 

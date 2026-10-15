@@ -16,8 +16,10 @@ async function restoreRow(id) {
 async function loadList(page) {
     currentPage = page || 1;
     const lessonId = document.getElementById('filter_lesson').value;
+    const search = document.getElementById('search').value;
+    const params = new URLSearchParams({ page: currentPage, lesson_id: lessonId, is_deleted: showDeleted ? 1 : 0, search });
     AdminUI.loader(true);
-    const data = await AdminUI.get(`/lesson-content/list?page=${currentPage}&lesson_id=${lessonId}&is_deleted=${showDeleted ? 1 : 0}`);
+    const data = await AdminUI.get(`/lesson-content/list?${params.toString()}`);
 
     lastPage = data.lastPage;
 

@@ -23,8 +23,10 @@ function quizActions(q) {
 async function loadList(page) {
     currentPage = page || 1;
     const lessonId = document.getElementById('filter_lesson').value;
+    const search = document.getElementById('search').value;
+    const params = new URLSearchParams({ page: currentPage, lesson_id: lessonId, is_deleted: showDeleted ? 1 : 0, search });
     AdminUI.loader(true);
-    const data = await AdminUI.get(`/quiz/list?page=${currentPage}&lesson_id=${lessonId}&is_deleted=${showDeleted ? 1 : 0}`);
+    const data = await AdminUI.get(`/quiz/list?${params.toString()}`);
     lastPage = data.lastPage;
 
     AdminUI.table('rows', data.data.map((q, i) => [

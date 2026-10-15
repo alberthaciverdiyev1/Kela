@@ -4,6 +4,8 @@ namespace Kela.Core.Modules.LessonContent.Requests;
 
 public class LessonContentListRequest
 {
+    public string? Search { get; set; }
+
     [FromQuery(Name = "lesson_id")]
     public long? LessonId { get; set; }
 

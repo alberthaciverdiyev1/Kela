@@ -37,6 +37,12 @@ public sealed class QuizService(AppDbContext db, IFileStorage storage) : IQuizSe
             query = query.Where(x => x.IsActive == request.IsActive);
         }
 
+        if (!string.IsNullOrWhiteSpace(request.Search))
+        {
+            var term = $"%{request.Search.Trim()}%";
+            query = query.Where(x => EF.Functions.ILike(x.Title, term));
+        }
+
         var total = await query.CountAsync(ct);
         var items = await query
             .Include(x => x.Questions)

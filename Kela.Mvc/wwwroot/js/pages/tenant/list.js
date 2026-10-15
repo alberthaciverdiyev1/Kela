@@ -2,8 +2,11 @@ async function loadList() {
     AdminUI.loader(true);
     const data = await AdminUI.get('/tenant/list');
 
-    AdminUI.table('rows', data.map((t, i) => [
-        { html: AdminUI.rowNo(t, i, 1, data.length), cls: 'text-slate-400' },
+    const q = (document.getElementById('search')?.value ?? '').trim().toLowerCase();
+    const items = q ? data.filter(t => (t.name + ' ' + t.slug).toLowerCase().includes(q)) : data;
+
+    AdminUI.table('rows', items.map((t, i) => [
+        { html: AdminUI.rowNo(t, i, 1, items.length), cls: 'text-slate-400' },
         { html: t.name, cls: 'font-medium text-slate-800' },
         { html: `<code class="text-sm text-slate-500">${t.slug}</code>` },
         { html: t.isActive ? AdminUI.badge('Aktiv', 'success') : AdminUI.badge('Deaktiv', 'neutral') },
