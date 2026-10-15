@@ -46,13 +46,13 @@
     <link rel="stylesheet" href="~/css/app.css" asp-append-version="true" />
 </head>
 <body class="min-h-screen bg-background text-text-primary">
-    <div class="flex min-h-screen">
+    <div class="flex h-dvh overflow-hidden">
         <partial name="Ui/_Sidebar" />
 
         <div id="overlay" class="fixed inset-0 z-20 hidden bg-slate-950/40 backdrop-blur-sm lg:hidden"></div>
 
-        <div class="flex min-w-0 flex-1 flex-col">
-            <header class="sticky top-0 z-10 flex h-16 items-center justify-between gap-4 border-b border-border bg-white/85 px-4 backdrop-blur sm:px-6">
+        <div class="flex min-h-0 min-w-0 flex-1 flex-col">
+            <header class="z-10 flex h-16 shrink-0 items-center justify-between gap-4 border-b border-border bg-white/85 px-4 backdrop-blur sm:px-6">
                 <div class="flex min-w-0 items-center gap-3">
                     <button id="menuToggle" class="grid h-10 w-10 place-items-center rounded-xl text-slate-600 hover:bg-surface-secondary lg:hidden">
                         <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" d="M4 6h16M4 12h16M4 18h16" /></svg>
@@ -126,7 +126,7 @@
                 </div>
             </header>
 
-            <main class="flex-1 overflow-x-hidden p-4 sm:p-6 lg:p-7">
+            <main class="flex-1 overflow-y-auto overflow-x-hidden p-4 sm:p-6 lg:p-7">
                 <div class="mx-auto w-full max-w-[1440px]">
                     @RenderBody()
                 </div>
