@@ -11,7 +11,7 @@
 
 <PageHeader Title="@(_content is null ? L["Type_Material"] : L.TypeLabel(_content.Type))" Back="javascript:history.back()"/>
 
-<div class="px-5 pb-28 pt-5 lg:mx-auto lg:max-w-[1100px]">
+<div @key="_loading" class="px-5 pb-28 pt-5 lg:mx-auto lg:max-w-[1100px] @(!_loading ? "page-fade" : null)">
     @if (_loading)
     {
         <Skeleton Class="mt-1 h-7 w-2/3 rounded-md"/>

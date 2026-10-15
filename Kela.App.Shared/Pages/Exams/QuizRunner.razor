@@ -8,7 +8,7 @@
 
 <PageHeader Title="@(_quiz?.Title ?? L["Nav_Exam"])" Back="/exams"/>
 
-<div class="px-5 pb-28 pt-6">
+<div @key="_quiz is null" class="px-5 pb-28 pt-6 @(_quiz is null ? null : "page-fade")">
     @if (_error is not null) { <p class="text-sm text-danger-539">@_error</p> }
     else if (_result is not null)
     {

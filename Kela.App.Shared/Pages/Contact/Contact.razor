@@ -7,7 +7,7 @@
 
 <PageHeader Title="@L["Contact_Title"]" Back="/profile"/>
 
-<div class="px-5 pb-28 pt-6">
+<div @key="_loading" class="px-5 pb-28 pt-6 @(!_loading ? "page-fade" : null)">
     @if (_loading)
     {
         <section class="rounded-2xl border border-brand-090 bg-white p-5 shadow-[0_4px_15px_rgba(36,78,62,0.03)]">

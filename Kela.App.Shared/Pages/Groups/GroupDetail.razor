@@ -8,7 +8,7 @@
 
 <PageHeader Title="@L["Subjects_Title"]" Back="/groups"/>
 
-<div class="px-5 pb-28 pt-6">
+<div @key="_loading" class="px-5 pb-28 pt-6 @(!_loading ? "page-fade" : null)">
     <h2 class="mt-1 text-2xl font-bold tracking-[-0.04em] text-brand-784">@(Name ?? L["GroupDetail_Title"])</h2>
 
     @if (_loading) { <SkeletonCardGrid Count="4"/> }

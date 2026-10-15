@@ -158,6 +158,18 @@
   animation: none;
 }
 
+/* Yükləmə -> məzmun keçidi: məzmun "partlayaraq" deyil, qısa fade ilə oturur.
+   Element @key="_loading" ilə bağlanır ki, vəziyyət dəyişəndə yenidən yaransın
+   və animasiya təzədən oynasın. */
+@keyframes pageFadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.page-fade {
+  animation: pageFadeIn 0.16s ease-out;
+}
+
 /* İskelet (skeleton) — məzmun gözləyərkən səhifənin formasını saxlayan yer tutucu.
    @layer components içindədir ki, Tailwind utility-ləri (məs. bg-white/20) onu
    əzə bilsin — qat xarici CSS qatlı CSS-dən üstün olardı.
