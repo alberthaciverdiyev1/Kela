@@ -14,5 +14,11 @@ public interface IUserService
 
     Task<UserResponse> UpdateAsync(long id, UserUpsertRequest request, CancellationToken ct = default);
 
+    /// <summary>İstifadəçinin öz profilini (ad, soyad, email, telefon) yeniləməsi.</summary>
+    Task<UserResponse> UpdateProfileAsync(long id, UserProfileRequest request, CancellationToken ct = default);
+
+    /// <summary>İstifadəçinin öz şifrəsini dəyişməsi (cari şifrə yoxlanılır).</summary>
+    Task ChangePasswordAsync(long id, UserChangePasswordRequest request, CancellationToken ct = default);
+
     Task DeleteAsync(long id, CancellationToken ct = default);
 }

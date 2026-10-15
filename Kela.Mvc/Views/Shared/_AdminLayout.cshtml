@@ -114,6 +114,10 @@
                             <p class="truncate text-sm font-bold text-slate-900">@displayName</p>
                             <p class="mt-0.5 text-xs font-medium text-slate-500">@roleLabel</p>
                         </div>
+                        <a href="/profile" class="flex w-full items-center gap-2.5 border-b border-border px-4 py-3 text-sm font-semibold text-slate-700 transition hover:bg-surface-secondary">
+                            <svg class="h-5 w-5 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M16 7a4 4 0 1 1-8 0 4 4 0 0 1 8 0ZM12 14a7 7 0 0 0-7 7h14a7 7 0 0 0-7-7Z" /></svg>
+                            @L["Nav_Profile"]
+                        </a>
                         <form method="post" action="/login/logout">
                             @Html.AntiForgeryToken()
                             <button type="submit" class="flex w-full items-center gap-2.5 px-4 py-3 text-sm font-semibold text-danger transition hover:bg-danger-bg">

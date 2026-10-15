@@ -109,6 +109,37 @@ public sealed class UserService(AppDbContext db) : IUserService
         return ToResponse(user);
     }
 
+    public async Task<UserResponse> UpdateProfileAsync(long id, UserProfileRequest request, CancellationToken ct = default)
+    {
+        var user = await db.Users.FirstOrDefaultAsync(x => x.Id == id, ct)
+            ?? throw new KeyNotFoundException($"User not found: {id}");
+
+        var email = request.Email.Trim().ToLowerInvariant();
+        await EnsureEmailAvailableAsync(email, id, ct);
+
+        user.Name = request.Name;
+        user.Surname = request.Surname;
+        user.Email = email;
+        user.PhoneNumber = request.PhoneNumber;
+
+        await db.SaveChangesAsync(ct);
+        return ToResponse(user);
+    }
+
+    public async Task ChangePasswordAsync(long id, UserChangePasswordRequest request, CancellationToken ct = default)
+    {
+        var user = await db.Users.FirstOrDefaultAsync(x => x.Id == id, ct)
+            ?? throw new KeyNotFoundException($"User not found: {id}");
+
+        if (!BCrypt.Net.BCrypt.Verify(request.CurrentPassword, user.PasswordHash))
+        {
+            throw new ArgumentException("Current password is incorrect");
+        }
+
+        user.PasswordHash = BCrypt.Net.BCrypt.HashPassword(request.NewPassword);
+        await db.SaveChangesAsync(ct);
+    }
+
     public async Task DeleteAsync(long id, CancellationToken ct = default)
     {
         var user = await db.Users.FirstOrDefaultAsync(x => x.Id == id, ct)

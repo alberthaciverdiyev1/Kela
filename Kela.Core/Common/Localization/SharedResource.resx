@@ -385,6 +385,39 @@
   <data name="Common_Student" xml:space="preserve">
     <value>Student</value>
   </data>
+  <data name="Nav_Profile" xml:space="preserve">
+    <value>Profile</value>
+  </data>
+  <data name="Common_Surname" xml:space="preserve">
+    <value>Surname</value>
+  </data>
+  <data name="Profile_Title" xml:space="preserve">
+    <value>Profile</value>
+  </data>
+  <data name="Profile_Subtitle" xml:space="preserve">
+    <value>Manage your personal info and password</value>
+  </data>
+  <data name="Profile_Personal" xml:space="preserve">
+    <value>Personal info</value>
+  </data>
+  <data name="Profile_Password" xml:space="preserve">
+    <value>Password</value>
+  </data>
+  <data name="Profile_CurrentPassword" xml:space="preserve">
+    <value>Current password</value>
+  </data>
+  <data name="Profile_NewPassword" xml:space="preserve">
+    <value>New password</value>
+  </data>
+  <data name="Profile_ConfirmPassword" xml:space="preserve">
+    <value>Confirm password</value>
+  </data>
+  <data name="Profile_ChangePassword" xml:space="preserve">
+    <value>Change password</value>
+  </data>
+  <data name="Profile_PasswordMismatch" xml:space="preserve">
+    <value>Passwords do not match</value>
+  </data>
   <data name="Common_Name" xml:space="preserve">
     <value>Name</value>
   </data>

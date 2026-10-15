@@ -385,6 +385,39 @@
   <data name="Common_Student" xml:space="preserve">
     <value>Ученик</value>
   </data>
+  <data name="Nav_Profile" xml:space="preserve">
+    <value>Профиль</value>
+  </data>
+  <data name="Common_Surname" xml:space="preserve">
+    <value>Фамилия</value>
+  </data>
+  <data name="Profile_Title" xml:space="preserve">
+    <value>Профиль</value>
+  </data>
+  <data name="Profile_Subtitle" xml:space="preserve">
+    <value>Управляйте личными данными и паролем</value>
+  </data>
+  <data name="Profile_Personal" xml:space="preserve">
+    <value>Личные данные</value>
+  </data>
+  <data name="Profile_Password" xml:space="preserve">
+    <value>Пароль</value>
+  </data>
+  <data name="Profile_CurrentPassword" xml:space="preserve">
+    <value>Текущий пароль</value>
+  </data>
+  <data name="Profile_NewPassword" xml:space="preserve">
+    <value>Новый пароль</value>
+  </data>
+  <data name="Profile_ConfirmPassword" xml:space="preserve">
+    <value>Подтвердите пароль</value>
+  </data>
+  <data name="Profile_ChangePassword" xml:space="preserve">
+    <value>Изменить пароль</value>
+  </data>
+  <data name="Profile_PasswordMismatch" xml:space="preserve">
+    <value>Пароли не совпадают</value>
+  </data>
   <data name="Common_Name" xml:space="preserve">
     <value>Название</value>
   </data>

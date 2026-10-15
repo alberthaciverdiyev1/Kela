@@ -385,6 +385,39 @@
   <data name="Common_Student" xml:space="preserve">
     <value>Şagird</value>
   </data>
+  <data name="Nav_Profile" xml:space="preserve">
+    <value>Profil</value>
+  </data>
+  <data name="Common_Surname" xml:space="preserve">
+    <value>Soyad</value>
+  </data>
+  <data name="Profile_Title" xml:space="preserve">
+    <value>Profil</value>
+  </data>
+  <data name="Profile_Subtitle" xml:space="preserve">
+    <value>Şəxsi məlumatlarınızı və şifrənizi idarə edin</value>
+  </data>
+  <data name="Profile_Personal" xml:space="preserve">
+    <value>Şəxsi məlumatlar</value>
+  </data>
+  <data name="Profile_Password" xml:space="preserve">
+    <value>Şifrə</value>
+  </data>
+  <data name="Profile_CurrentPassword" xml:space="preserve">
+    <value>Cari şifrə</value>
+  </data>
+  <data name="Profile_NewPassword" xml:space="preserve">
+    <value>Yeni şifrə</value>
+  </data>
+  <data name="Profile_ConfirmPassword" xml:space="preserve">
+    <value>Yeni şifrə (təkrar)</value>
+  </data>
+  <data name="Profile_ChangePassword" xml:space="preserve">
+    <value>Şifrəni dəyiş</value>
+  </data>
+  <data name="Profile_PasswordMismatch" xml:space="preserve">
+    <value>Şifrələr uyğun gəlmir</value>
+  </data>
   <data name="Common_Name" xml:space="preserve">
     <value>Ad</value>
   </data>
