@@ -3,6 +3,7 @@ using Android.Content.PM;
 using Android.OS;
 using Android.Views;
 using AndroidX.Activity;
+using AndroidX.Core.View;
 
 namespace Kela.App;
 
@@ -17,6 +18,13 @@ public class MainActivity : MauiAppCompatActivity
 
         // Screenshot və ekran yazılışını bloklayır — WebView-da (lms-guard.js) mümkün deyil.
         Window?.SetFlags(WindowManagerFlags.Secure, WindowManagerFlags.Secure);
+
+        // Status bar ikonları (saat, batareya, şəbəkə) tünd olmalıdır: tətbiqin fonu
+        // açıqdır və ağ ikonlar ağ fon üzərində oxunmur.
+        if (Window is not null)
+        {
+            WindowCompat.GetInsetsController(Window, Window.DecorView).AppearanceLightStatusBars = true;
+        }
 
         // WebView-da geri tuşu default olaraq aktiviti bağlayır; bu callback onu
         // Blazor naviqasiya yığınına bağlayır (OnBackPressed API 33-də deprecated-dir).
