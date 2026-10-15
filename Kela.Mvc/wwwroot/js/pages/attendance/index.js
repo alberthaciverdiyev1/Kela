@@ -160,7 +160,7 @@ async function saveDay() {
     const btn = document.getElementById('saveBtn');
     if (btn) btn.disabled = true;
 
-    const res = await AdminUI.postJson('/attendance', { groupId: Number(id), date: selected, students });
+    const res = await AdminUI.postJson('/attendance/save', { groupId: Number(id), date: selected, students });
 
     if (btn) btn.disabled = false;
 

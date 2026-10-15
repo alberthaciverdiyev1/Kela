@@ -37,7 +37,7 @@ public sealed class AttendanceController(
         CancellationToken ct)
         => Json(await attendance.GetDayAsync(groupId, date, ct));
 
-    [HttpPost]
+    [HttpPost("save")]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Save([FromBody] SaveAttendanceRequest request, CancellationToken ct)
     {
