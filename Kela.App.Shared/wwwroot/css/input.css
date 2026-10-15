@@ -168,8 +168,9 @@
     position: relative;
     overflow: hidden;
     background-color: var(--color-brand-090);
-    /* Məzmun 120ms-dən tez gəlsə iskelet heç görünmür (backwards fill). */
-    animation: skeleton-appear 0.18s ease-out 0.12s backwards;
+    /* Gecikməli görünmə BURADA İŞLƏMİR: iskelet gözləmə vaxtı səhifənin
+       yeganə məzmunudur, gecikdirsək ekran 120ms boş qalır (cihazda ölçüldü).
+       İçəriyin "partlayaraq" gəlməsi ayrı məsələdir — burada həll olunmur. */
   }
 
   .skeleton::after {
@@ -180,10 +181,6 @@
     background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.7), transparent);
     animation: skeleton-sweep 1.4s ease-in-out infinite;
   }
-}
-
-@keyframes skeleton-appear {
-  from { opacity: 0; }
 }
 
 @keyframes skeleton-sweep {
