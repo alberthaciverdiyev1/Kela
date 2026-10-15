@@ -97,6 +97,18 @@
 }
 
 @layer base {
+    html {
+        /* WebView-da scroll sərhədində lastik band / parıltı native olmayan hiss verir */
+        overscroll-behavior: none;
+    }
+
+    body {
+        /* Toxunmada boz rəng parıltısı və uzun basmada kontekst menyusu — native-də yoxdur */
+        -webkit-tap-highlight-color: transparent;
+        -webkit-touch-callout: none;
+        -webkit-font-smoothing: antialiased;
+    }
+
     /* Kliklənə bilən hər şeydə pointer cursor */
     a[href],
     button:not(:disabled),
@@ -116,9 +128,12 @@
     }
 }
 
-/* Səhifə keçid animasiyası (Blazor route dəyişdikdə tətbiq olunur) */
+/* Səhifə keçid animasiyası (Blazor route dəyişdikdə tətbiq olunur).
+   Yuxarıdan sürüşmə əvəzinə sağdan sürüşmə — native push keçidinin hissi.
+   will-change istifadə edilmir: daimi layer transform səhifədəki position:fixed
+   elementləri (Modal, StoryViewer, AudioPlayerBar) sındırır. */
 @keyframes pageIn {
-  from { opacity: 0; transform: translateY(8px); }
+  from { opacity: 0; transform: translateX(16px); }
   to { opacity: 1; transform: none; }
 }
-.page-transition { animation: pageIn 0.22s ease-out; }
+.page-transition { animation: pageIn 0.18s cubic-bezier(0.2, 0.8, 0.2, 1); }
