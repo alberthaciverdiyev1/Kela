@@ -15,7 +15,6 @@ public sealed class WebScreenGuard(IJSRuntime js, AppApi api) : IScreenGuard, IA
         try
         {
             _ref ??= DotNetObjectReference.Create(this);
-            NativeScreenGuard.Apply();
             await js.InvokeVoidAsync("lmsGuard.registerCallback", _ref);
             await js.InvokeVoidAsync("lmsGuard.enable");
             if (!string.IsNullOrWhiteSpace(watermark))
@@ -39,7 +38,6 @@ public sealed class WebScreenGuard(IJSRuntime js, AppApi api) : IScreenGuard, IA
     {
         try
         {
-            NativeScreenGuard.Remove();
             if (_ref is not null) await js.InvokeVoidAsync("lmsGuard.unregisterCallback", _ref);
             await js.InvokeVoidAsync("lmsGuard.disable");
         }

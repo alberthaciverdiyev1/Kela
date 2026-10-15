@@ -9,7 +9,7 @@ public static class MauiProgram
 {
     public static MauiApp CreateMauiApp()
     {
-        AppConfig.ShowWatermark = false; // native: FLAG_SECURE var, watermark lazımsız
+        AppConfig.ShowWatermark = false; // native: FLAG_SECURE MainActivity-də tətbiq olunur, watermark lazımsız
 
         var builder = MauiApp.CreateBuilder();
         builder

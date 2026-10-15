@@ -1,8 +1,8 @@
 namespace Kela.App.Shared.Services;
 
 /// <summary>
-/// Ekran qoruması qatı. Web-də sürtünmə + blur + watermark + aşkarlama (lms-guard.js),
-/// native-də isə əlavə olaraq platforma bayraqları (Android FLAG_SECURE, iOS capture aşkarlama) tətbiq edilir.
+/// Ekran qoruması qatı: sürtünmə + blur + watermark + aşkarlama (lms-guard.js).
+/// OS səviyyəsində blok (Android FLAG_SECURE) platforma host-unda tətbiq olunur — MainActivity.OnCreate.
 /// </summary>
 public interface IScreenGuard
 {
