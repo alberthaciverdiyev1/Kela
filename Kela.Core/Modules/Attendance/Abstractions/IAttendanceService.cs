@@ -16,4 +16,7 @@ public interface IAttendanceService
 
     /// <summary>Şagirdin öz yoxlama xülasəsi (bütün qruplar üzrə).</summary>
     Task<StudentAttendanceResponse> GetStudentSummaryAsync(long studentId, int take = 10, CancellationToken ct = default);
+
+    /// <summary>Şagirdin bir qrup üzrə ay təqvimi (gün-gün iştirak).</summary>
+    Task<StudentAttendanceMonthResponse> GetStudentMonthAsync(long studentId, long groupId, int year, int month, CancellationToken ct = default);
 }

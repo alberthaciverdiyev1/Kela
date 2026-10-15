@@ -233,6 +233,13 @@
   <data name="Attendance_AllAbsent" xml:space="preserve">
     <value>All absent</value>
   </data>
+
+  <data name="Attendance_OpenCalendar" xml:space="preserve">
+    <value>View calendar</value>
+  </data>
+  <data name="Attendance_MyMonthSummary" xml:space="preserve">
+    <value>This month: {0} / {1}</value>
+  </data>
   <data name="Attendance_MyTitle" xml:space="preserve">
     <value>Attendance</value>
   </data>

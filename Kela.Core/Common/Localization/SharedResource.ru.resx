@@ -233,6 +233,13 @@
   <data name="Attendance_AllAbsent" xml:space="preserve">
     <value>Все отсутствуют</value>
   </data>
+
+  <data name="Attendance_OpenCalendar" xml:space="preserve">
+    <value>Открыть календарь</value>
+  </data>
+  <data name="Attendance_MyMonthSummary" xml:space="preserve">
+    <value>За этот месяц: {0} / {1}</value>
+  </data>
   <data name="Attendance_MyTitle" xml:space="preserve">
     <value>Посещаемость</value>
   </data>

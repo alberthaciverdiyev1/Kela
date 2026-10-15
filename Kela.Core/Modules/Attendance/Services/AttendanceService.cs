@@ -103,6 +103,24 @@ public sealed class AttendanceService(AppDbContext db) : IAttendanceService
         return new StudentAttendanceResponse(rows.Count, present, rows.Count - present, percent, recent);
     }
 
+    public async Task<StudentAttendanceMonthResponse> GetStudentMonthAsync(
+        long studentId, long groupId, int year, int month, CancellationToken ct = default)
+    {
+        await EnsureGroupAsync(groupId, ct);
+
+        var from = new DateOnly(year, month, 1);
+        var to = from.AddMonths(1);
+
+        var rows = await db.AttendanceRecords.AsNoTracking()
+            .Where(x => x.StudentId == studentId && x.GroupId == groupId && x.Date >= from && x.Date < to)
+            .OrderBy(x => x.Date)
+            .Select(x => new { x.Date, x.IsPresent })
+            .ToListAsync(ct);
+
+        var days = rows.Select(r => new StudentAttendanceDayItem(r.Date, r.IsPresent)).ToList();
+        return new StudentAttendanceMonthResponse(groupId, year, month, rows.Count(r => r.IsPresent), rows.Count, days);
+    }
+
     private async Task EnsureGroupAsync(long groupId, CancellationToken ct)
     {
         if (!await db.Groups.AnyAsync(g => g.Id == groupId, ct))

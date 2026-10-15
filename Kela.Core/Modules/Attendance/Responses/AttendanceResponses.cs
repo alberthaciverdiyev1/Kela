@@ -21,3 +21,13 @@ public record StudentAttendanceResponse(
     int AbsentCount,
     int Percent,
     List<StudentAttendanceItem> Recent);
+
+public record StudentAttendanceDayItem(DateOnly Date, bool IsPresent);
+
+public record StudentAttendanceMonthResponse(
+    long GroupId,
+    int Year,
+    int Month,
+    int PresentCount,
+    int TotalCount,
+    List<StudentAttendanceDayItem> Days);
