@@ -71,8 +71,11 @@ public sealed class AuthService(
             await EnsureTenantActiveAsync(tenantId.Value, ct);
         }
 
-        var student = await db.Students.IgnoreQueryFilters()
-            .FirstOrDefaultAsync(x => x.Email == email && x.DeletedAt == null, ct);
+        var student = tenantId is long tid
+            ? await db.Students.IgnoreQueryFilters()
+                .FirstOrDefaultAsync(x => x.TenantId == tid && x.Email == email && x.DeletedAt == null, ct)
+            : await db.Students.IgnoreQueryFilters()
+                .FirstOrDefaultAsync(x => x.Email == email && x.DeletedAt == null, ct);
 
         if (student is null || !BCrypt.Net.BCrypt.Verify(request.Password, student.PasswordHash))
         {

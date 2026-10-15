@@ -19,8 +19,16 @@ public sealed class UserAuthService(AppDbContext db, ITokenService tokens, ITena
     public async Task<UserAuthResponse> LoginAsync(UserLoginRequest request, CancellationToken ct = default)
     {
         var email = request.Email.Trim().ToLowerInvariant();
+        var requestedTenant = request.TenantId ?? tenantProvider.TenantId;
+
+        // Email tenant-a görə unikaldır → sorğu tenant ilə məhdudlaşdırılır
+        // (superadmin qlobal olduğu üçün tenant 0-da axtarılır).
+        var scopeTenant = requestedTenant ?? 0L;
+        // Superadmin (tenant 0) seçilmiş tenant-dan asılı olmayaraq tapılır (üzərində üstünlük).
         var user = await db.Users.IgnoreQueryFilters()
-            .FirstOrDefaultAsync(x => x.Email == email && x.DeletedAt == null, ct);
+            .Where(x => x.Email == email && x.DeletedAt == null && (x.TenantId == 0 || x.TenantId == scopeTenant))
+            .OrderByDescending(x => x.TenantId == 0)
+            .FirstOrDefaultAsync(ct);
 
         if (user is null || !BCrypt.Net.BCrypt.Verify(request.Password, user.PasswordHash))
         {
