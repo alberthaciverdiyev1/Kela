@@ -10,6 +10,39 @@
     function clearError() { errBox.classList.add('hidden'); }
     function done() { AdminUI.notify(L["Js_Added"]); window.closeModal(); loadList(1); }
 
+    function clearInvalid() {
+        document.querySelectorAll('[data-invalid]').forEach(el => {
+            el.style.borderColor = '';
+            el.style.boxShadow = '';
+            el.removeAttribute('data-invalid');
+        });
+    }
+    function markInvalid(el) {
+        el.style.borderColor = '#dc2626';
+        el.style.boxShadow = '0 0 0 3px rgba(220,38,38,.15)';
+        el.setAttribute('data-invalid', '1');
+    }
+    function validateRequired(n) {
+        clearInvalid();
+        const panel = document.querySelector('[data-step-panel="' + n + '"]');
+        const req = panel ? [...panel.querySelectorAll('input[required],select[required],textarea[required]')] : [];
+        const empty = req.filter(el => !el.value || !String(el.value).trim());
+        if (empty.length) {
+            empty.forEach(markInvalid);
+            showError(L["Common_RequiredFields"]);
+            return false;
+        }
+        return true;
+    }
+
+    window.toggleAllCheck = function (containerId, checked) {
+        document.querySelectorAll('#' + containerId + ' [data-name]').forEach(row => {
+            if (row.classList.contains('hidden')) return;
+            const cb = row.querySelector('input[type=checkbox]');
+            if (cb) cb.checked = checked;
+        });
+    };
+
     window.showModal = function () {
         document.getElementById('modal').classList.remove('hidden');
         document.getElementById('modal').classList.add('flex');
@@ -66,7 +99,7 @@
             el.classList.toggle('hidden', term.length > 0 && !el.dataset.name.includes(term)));
     };
 
-    window.wizardNext = function () { if (step < 4) setStep(step + 1); };
+    window.wizardNext = function () { if (!validateRequired(step)) return; if (step < 4) setStep(step + 1); };
     window.wizardPrev = function () { if (step > 1) setStep(step - 1); };
 
     window.setWizardMode = function (isCreate) {
@@ -84,6 +117,7 @@
         document.getElementById('image').value = '';
         AdminUI.fileRemove('image');
         clearError();
+        clearInvalid();
 
         window.setWizardMode(true);
         window.showModal();
@@ -106,9 +140,8 @@
         e.preventDefault();
         if (document.getElementById('entityId').value) return; // update.js
 
-        if (!document.getElementById('name').value.trim()) {
+        if (!validateRequired(1)) {
             setStep(1);
-            showError(L["Js_ErrorOccured"]);
             return;
         }
 

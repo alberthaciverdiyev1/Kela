@@ -36,7 +36,10 @@
 
                 @* Step 2 *@
                 <div data-step-panel="2" class="hidden space-y-3">
-                    <p class="text-sm font-semibold text-slate-600">@L["Group_StepSubjects"]</p>
+                    <div class="flex items-center justify-between">
+                        <p class="text-sm font-semibold text-slate-600">@L["Group_StepSubjects"]</p>
+                        <label class="flex items-center gap-2 text-xs font-bold text-primary"><input type="checkbox" onchange="toggleAllCheck('subjectsList', this.checked)" class="h-4 w-4 rounded border-slate-300 text-primary focus:ring-primary" />@L["Group_SelectAll"]</label>
+                    </div>
                     <div id="subjectsList" class="max-h-[45vh] space-y-1 overflow-y-auto rounded-xl border border-border p-2">
                         <div class="p-3 text-sm text-slate-400">@L["Common_LoadingResults"]</div>
                     </div>
@@ -44,7 +47,10 @@
 
                 @* Step 3 *@
                 <div data-step-panel="3" class="hidden space-y-3">
-                    <p class="text-sm font-semibold text-slate-600">@L["Group_StepStudents"]</p>
+                    <div class="flex items-center justify-between">
+                        <p class="text-sm font-semibold text-slate-600">@L["Group_StepStudents"]</p>
+                        <label class="flex items-center gap-2 text-xs font-bold text-primary"><input type="checkbox" onchange="toggleAllCheck('studentsList', this.checked)" class="h-4 w-4 rounded border-slate-300 text-primary focus:ring-primary" />@L["Group_SelectAll"]</label>
+                    </div>
                     <input id="studentSearch" type="search" class="admin-field" placeholder="@L["Common_SearchPlaceholder"]" oninput="filterCheckList('studentsList', this.value)" />
                     <div id="studentsList" class="max-h-[40vh] space-y-1 overflow-y-auto rounded-xl border border-border p-2">
                         <div class="p-3 text-sm text-slate-400">@L["Common_LoadingResults"]</div>
@@ -53,7 +59,10 @@
 
                 @* Step 4 *@
                 <div data-step-panel="4" class="hidden space-y-3">
-                    <p class="text-sm font-semibold text-slate-600">@L["Group_StepQuizzes"]</p>
+                    <div class="flex items-center justify-between">
+                        <p class="text-sm font-semibold text-slate-600">@L["Group_StepQuizzes"]</p>
+                        <label class="flex items-center gap-2 text-xs font-bold text-primary"><input type="checkbox" onchange="toggleAllCheck('quizzesList', this.checked)" class="h-4 w-4 rounded border-slate-300 text-primary focus:ring-primary" />@L["Group_SelectAll"]</label>
+                    </div>
                     <input id="quizSearch" type="search" class="admin-field" placeholder="@L["Common_SearchPlaceholder"]" oninput="filterCheckList('quizzesList', this.value)" />
                     <div id="quizzesList" class="max-h-[40vh] space-y-1 overflow-y-auto rounded-xl border border-border p-2">
                         <div class="p-3 text-sm text-slate-400">@L["Common_LoadingResults"]</div>

@@ -277,6 +277,12 @@
   <data name="Group_StepQuizzes" xml:space="preserve">
     <value>Экзамены</value>
   </data>
+  <data name="Group_SelectAll" xml:space="preserve">
+    <value>Выбрать все</value>
+  </data>
+  <data name="Common_RequiredFields" xml:space="preserve">
+    <value>Заполните обязательные поля</value>
+  </data>
   <data name="Common_Save" xml:space="preserve">
     <value>Сохранить</value>
   </data>

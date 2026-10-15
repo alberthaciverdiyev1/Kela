@@ -277,6 +277,12 @@
   <data name="Group_StepQuizzes" xml:space="preserve">
     <value>İmtahanlar</value>
   </data>
+  <data name="Group_SelectAll" xml:space="preserve">
+    <value>Hamısını seç</value>
+  </data>
+  <data name="Common_RequiredFields" xml:space="preserve">
+    <value>Zəruri xanaları doldurun</value>
+  </data>
   <data name="Common_Save" xml:space="preserve">
     <value>Yadda saxla</value>
   </data>
