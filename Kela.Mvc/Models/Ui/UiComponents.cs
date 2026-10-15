@@ -70,6 +70,7 @@ public class PageHeaderModel
     public string? CreateText { get; set; }
     public string CreateOnClick { get; set; } = "openCreate()";
     public bool Sortable { get; set; }
+    public StatCardModel? StatCard { get; set; }
 }
 
 public class StatCardModel
