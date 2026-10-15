@@ -53,6 +53,10 @@ namespace Kela.Core.Data.Migrations
                         .HasColumnName("expires_at")
                         .HasDefaultValueSql("now() + interval '10 minutes'");
 
+                    b.Property<long>("TenantId")
+                        .HasColumnType("bigint")
+                        .HasColumnName("tenant_id");
+
                     b.Property<DateTimeOffset?>("UsedAt")
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("used_at");
@@ -130,7 +134,7 @@ namespace Kela.Core.Data.Migrations
 
                     b.HasIndex("DeletedAt");
 
-                    b.HasIndex("Email")
+                    b.HasIndex("TenantId", "Email")
                         .IsUnique();
 
                     b.ToTable("students", (string)null);
@@ -1726,7 +1730,7 @@ namespace Kela.Core.Data.Migrations
 
                     b.HasIndex("DeletedAt");
 
-                    b.HasIndex("Email")
+                    b.HasIndex("TenantId", "Email")
                         .IsUnique();
 
                     b.ToTable("users", (string)null);
