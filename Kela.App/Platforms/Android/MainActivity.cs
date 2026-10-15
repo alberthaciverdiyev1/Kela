@@ -21,9 +21,15 @@ public class MainActivity : MauiAppCompatActivity
 
         // Status bar ikonları (saat, batareya, şəbəkə) tünd olmalıdır: tətbiqin fonu
         // açıqdır və ağ ikonlar ağ fon üzərində oxunmur.
-        if (Window is not null)
+        var window = Window;
+        var decorView = window?.DecorView;
+        var insets = window is not null && decorView is not null
+            ? WindowCompat.GetInsetsController(window, decorView)
+            : null;
+
+        if (insets is not null)
         {
-            WindowCompat.GetInsetsController(Window, Window.DecorView).AppearanceLightStatusBars = true;
+            insets.AppearanceLightStatusBars = true;
         }
 
         // WebView-da geri tuşu default olaraq aktiviti bağlayır; bu callback onu
