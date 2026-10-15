@@ -34,6 +34,10 @@ public sealed class StudentController(IStudentAppService service, INotificationS
     public async Task<ActionResult<ApiResponse<IReadOnlyList<SubjectResponse>>>> Subjects(long groupId, CancellationToken ct)
         => Success(await service.ListSubjectsAsync(StudentId, groupId, ct));
 
+    [HttpGet("subjects")]
+    public async Task<ActionResult<ApiResponse<IReadOnlyList<SubjectResponse>>>> AllSubjects(CancellationToken ct)
+        => Success(await service.ListAllSubjectsAsync(StudentId, ct));
+
     [HttpGet("subjects/{subjectId:long}")]
     public async Task<ActionResult<ApiResponse<SubjectResponse>>> Subject(long subjectId, CancellationToken ct)
         => Success(await service.GetSubjectAsync(StudentId, subjectId, ct));
@@ -55,8 +59,12 @@ public sealed class StudentController(IStudentAppService service, INotificationS
         => Success(await service.GetContentCountAsync(StudentId, lessonId, ct));
 
     [HttpGet("quizzes")]
-    public async Task<ActionResult<ApiResponse<IReadOnlyList<QuizResponse>>>> Quizzes(CancellationToken ct)
-        => Success(await service.ListQuizzesAsync(StudentId, ct));
+    public async Task<ActionResult<ApiResponse<IReadOnlyList<QuizResponse>>>> Quizzes(
+        [FromQuery(Name = "subject_id")] long? subjectId,
+        [FromQuery(Name = "lesson_id")] long? lessonId,
+        [FromQuery] bool general,
+        CancellationToken ct)
+        => Success(await service.ListQuizzesAsync(StudentId, subjectId, lessonId, general, ct));
 
     [HttpGet("lessons/{lessonId:long}/quizzes")]
     public async Task<ActionResult<ApiResponse<IReadOnlyList<QuizResponse>>>> LessonQuizzes(long lessonId, CancellationToken ct)

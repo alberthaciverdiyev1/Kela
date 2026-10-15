@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Components;
+using Kela.App.Shared.Dtos;
 using Kela.App.Shared.Dtos.Quiz;
 using Kela.App.Shared.Services;
 using Kela.App.Shared.Services.Api;
@@ -8,37 +9,63 @@ namespace Kela.App.Shared.Pages.Exams;
 public partial class Exams
 {
     private bool _loading = true;
+    private bool _busy;
     private List<QuizDto> _quizzes = new();
+    private List<SubjectDto> _subjects = new();
+    private List<LessonDto> _lessons = new();
 
-    // "general" (default) | "all" | "lesson"
-    private string _mode = "general";
+    private long? _subjectId;
     private long? _lessonId;
-
-    private IEnumerable<(long Id, string Title)> Lessons =>
-        _quizzes.Where(q => q.LessonId is not null)
-            .GroupBy(q => q.LessonId!.Value)
-            .Select(g => (g.Key, g.First().LessonTitle ?? $"#{g.Key}"));
-
-    private List<QuizDto> Filtered => _mode switch
-    {
-        "all" => _quizzes,
-        "lesson" => _quizzes.Where(q => q.LessonId == _lessonId).ToList(),
-        _ => _quizzes.Where(q => q.LessonId is null).ToList()
-    };
+    private bool _onlyGeneral = true;   // default: ümumi imtahanlar
 
     protected override async Task OnInitializedAsync()
     {
-        try { _quizzes = await Api.QuizzesAsync(); } catch { }
-        _lessonId = Lessons.Select(l => (long?)l.Id).FirstOrDefault();
-        _loading = false;
+        try { _subjects = await Api.AllSubjectsAsync(); } catch { }
+        await ReloadAsync();
     }
 
-    private void SetMode(string mode)
+    private async Task ReloadAsync()
     {
-        _mode = mode;
-        if (mode == "lesson" && _lessonId is null)
+        _busy = true;
+        try
         {
-            _lessonId = Lessons.Select(l => (long?)l.Id).FirstOrDefault();
+            _quizzes = _onlyGeneral
+                ? await Api.QuizzesAsync(general: true)
+                : await Api.QuizzesAsync(_subjectId, _lessonId);
         }
+        catch { _quizzes = new(); }
+        finally { _busy = false; _loading = false; }
+    }
+
+    private async Task SetModeAsync(bool general)
+    {
+        _onlyGeneral = general;
+        if (general)
+        {
+            _subjectId = null;
+            _lessonId = null;
+            _lessons = new();
+        }
+        await ReloadAsync();
+    }
+
+    private async Task OnSubjectChangedAsync(ChangeEventArgs e)
+    {
+        _subjectId = long.TryParse(e.Value?.ToString(), out var id) && id > 0 ? id : null;
+        _lessonId = null;
+        _lessons = new();
+
+        if (_subjectId is long sid)
+        {
+            try { _lessons = await Api.LessonsAsync(sid); } catch { }
+        }
+
+        await ReloadAsync();
+    }
+
+    private async Task OnLessonChangedAsync(ChangeEventArgs e)
+    {
+        _lessonId = long.TryParse(e.Value?.ToString(), out var id) && id > 0 ? id : null;
+        await ReloadAsync();
     }
 }

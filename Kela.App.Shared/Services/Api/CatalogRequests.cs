@@ -10,6 +10,7 @@ public sealed partial class AppApi
     // --- Catalog (groups / subjects / lessons / contents) ---
     public Task<List<GroupDto>> StudentGroupsAsync() => _api.GetAsync<List<GroupDto>>("/api/student/groups");
     public Task<List<SubjectDto>> SubjectsAsync(long groupId) => _api.GetAsync<List<SubjectDto>>($"/api/student/groups/{groupId}/subjects");
+    public Task<List<SubjectDto>> AllSubjectsAsync() => _api.GetAsync<List<SubjectDto>>("/api/student/subjects");
     public Task<SubjectDto> SubjectAsync(long subjectId) => _api.GetAsync<SubjectDto>($"/api/student/subjects/{subjectId}");
     public Task<List<LessonDto>> LessonsAsync(long subjectId) => _api.GetAsync<List<LessonDto>>($"/api/student/subjects/{subjectId}/lessons");
     public Task<LessonDto> LessonAsync(long lessonId) => _api.GetAsync<LessonDto>($"/api/student/lessons/{lessonId}");

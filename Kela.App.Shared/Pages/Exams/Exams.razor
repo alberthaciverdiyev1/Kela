@@ -14,44 +14,53 @@
 <div class="px-5 pb-28 pt-6">
     <h2 class="text-xl font-bold tracking-[-0.04em] text-brand-784">@L["Exams_Available"]</h2>
 
-    @* --- Filter --- *@
+    @* --- Filter (backend) --- *@
     <div class="mt-4 flex flex-wrap gap-2">
-        @foreach (var (key, label) in new[] { ("all", L["Exams_All"]), ("general", L["Exams_General"]), ("lesson", L["Exams_ByLesson"]) })
-        {
-            var k = key;
-            <button type="button" @onclick="() => SetMode(k)"
-                    class="rounded-full border px-4 py-1.5 text-[13px] font-semibold transition @(_mode == k ? "border-brand-698 bg-brand-081 text-brand-698" : "border-brand-090 bg-white text-sage-382 hover:bg-brand-022")">
-                @label
-            </button>
-        }
+        <button type="button" @onclick="() => SetModeAsync(false)"
+                class="rounded-full border px-4 py-1.5 text-[13px] font-semibold transition @(!_onlyGeneral ? "border-brand-698 bg-brand-081 text-brand-698" : "border-brand-090 bg-white text-sage-382 hover:bg-brand-022")">
+            @L["Exams_All"]
+        </button>
+        <button type="button" @onclick="() => SetModeAsync(true)"
+                class="rounded-full border px-4 py-1.5 text-[13px] font-semibold transition @(_onlyGeneral ? "border-brand-698 bg-brand-081 text-brand-698" : "border-brand-090 bg-white text-sage-382 hover:bg-brand-022")">
+            @L["Exams_General"]
+        </button>
     </div>
 
-    @if (_mode == "lesson" && Lessons.Any())
+    @if (!_onlyGeneral)
     {
-        <div class="mt-3 flex flex-wrap gap-2">
-            @foreach (var lesson in Lessons)
-            {
-                var lid = lesson.Id;
-                <button type="button" @onclick="() => _lessonId = lid"
-                        class="rounded-full border px-3.5 py-1 text-[12px] font-medium transition @(_lessonId == lid ? "border-brand-698 bg-brand-081 text-brand-698" : "border-brand-090 bg-white text-sage-382 hover:bg-brand-022")">
-                    @lesson.Title
-                </button>
-            }
+        <div class="mt-3 grid gap-2 sm:grid-cols-2">
+            <select value="@_subjectId" @onchange="OnSubjectChangedAsync"
+                    class="w-full rounded-2xl border border-brand-090 bg-white px-4 py-3 text-[13px] font-medium text-brand-776 outline-none focus:border-brand-467">
+                <option value="">@L["Exams_AllSubjects"]</option>
+                @foreach (var s in _subjects)
+                {
+                    <option value="@s.Id">@s.Name</option>
+                }
+            </select>
+
+            <select value="@_lessonId" @onchange="OnLessonChangedAsync" disabled="@(_subjectId is null)"
+                    class="w-full rounded-2xl border border-brand-090 bg-white px-4 py-3 text-[13px] font-medium text-brand-776 outline-none focus:border-brand-467 disabled:opacity-60">
+                <option value="">@L["Exams_AllLessons"]</option>
+                @foreach (var l in _lessons)
+                {
+                    <option value="@l.Id">@l.Title</option>
+                }
+            </select>
         </div>
     }
 
-    @if (_loading)
+    @if (_loading || _busy)
     {
         <Loader/>
     }
-    else if (Filtered.Count == 0)
+    else if (_quizzes.Count == 0)
     {
         <EmptyState Text="@L["Exams_Empty"]"/>
     }
     else
     {
         <section class="mt-5 grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
-            @foreach (var q in Filtered)
+            @foreach (var q in _quizzes)
             {
                 <QuizCard Quiz="q"/>
             }

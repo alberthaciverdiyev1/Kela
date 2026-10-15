@@ -175,16 +175,48 @@ public sealed class StudentAppService(
         return ParseCounts(lesson.Settings);
     }
 
-    public async Task<IReadOnlyList<QuizResponse>> ListQuizzesAsync(long studentId, CancellationToken ct = default)
+    public async Task<IReadOnlyList<SubjectResponse>> ListAllSubjectsAsync(long studentId, CancellationToken ct = default)
     {
-        return await (from gq in db.GroupQuizzes.AsNoTracking()
-                      join q in db.Quizzes.AsNoTracking() on gq.QuizId equals q.Id
-                      where db.StudentGroups.Any(sg => sg.GroupId == gq.GroupId && sg.StudentId == studentId)
-                      orderby gq.Id
-                      select new QuizResponse(
-                          q.Id, q.LessonId, q.Title, q.DurationMinutes, q.Type, q.IsActive, q.IsRepeat, q.SortOrder,
-                          db.QuizQuestions.Count(qq => qq.QuizId == q.Id),
-                          db.Lessons.Where(l => l.Id == q.LessonId).Select(l => l.Title).FirstOrDefault()))
+        var subjectIds = await db.StudentGroups.AsNoTracking()
+            .Where(sg => sg.StudentId == studentId)
+            .Join(db.GroupSubjects.AsNoTracking(), sg => sg.GroupId, gs => gs.GroupId, (_, gs) => gs.SubjectId)
+            .Distinct()
+            .ToListAsync(ct);
+
+        return await db.Subjects.AsNoTracking()
+            .Where(s => subjectIds.Contains(s.Id))
+            .OrderBy(s => s.Name)
+            .Select(s => new SubjectResponse(s.Id, s.Name, s.UserId))
+            .ToListAsync(ct);
+    }
+
+    public async Task<IReadOnlyList<QuizResponse>> ListQuizzesAsync(
+        long studentId, long? subjectId = null, long? lessonId = null, bool general = false, CancellationToken ct = default)
+    {
+        var quizzes = db.GroupQuizzes.AsNoTracking()
+            .Where(gq => db.StudentGroups.Any(sg => sg.GroupId == gq.GroupId && sg.StudentId == studentId))
+            .Join(db.Quizzes.AsNoTracking(), gq => gq.QuizId, q => q.Id, (_, q) => q);
+
+        if (lessonId is long lid)
+        {
+            quizzes = quizzes.Where(q => q.LessonId == lid);
+        }
+
+        if (general)
+        {
+            quizzes = quizzes.Where(q => q.LessonId == null);
+        }
+
+        if (subjectId is long sid)
+        {
+            quizzes = quizzes.Where(q => db.Lessons.Any(l => l.Id == q.LessonId && l.SubjectId == sid));
+        }
+
+        return await quizzes.OrderBy(q => q.Id)
+            .Select(q => new QuizResponse(
+                q.Id, q.LessonId, q.Title, q.DurationMinutes, q.Type, q.IsActive, q.IsRepeat, q.SortOrder,
+                db.QuizQuestions.Count(qq => qq.QuizId == q.Id),
+                db.Lessons.Where(l => l.Id == q.LessonId).Select(l => l.Title).FirstOrDefault()))
             .ToListAsync(ct);
     }
 

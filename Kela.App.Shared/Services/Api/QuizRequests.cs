@@ -8,7 +8,16 @@ namespace Kela.App.Shared.Services.Api;
 public sealed partial class AppApi
 {
     // --- Quizzes ---
-    public Task<List<QuizDto>> QuizzesAsync() => _api.GetAsync<List<QuizDto>>("/api/student/quizzes");
+    public Task<List<QuizDto>> QuizzesAsync(long? subjectId = null, long? lessonId = null, bool general = false)
+    {
+        var query = new List<string>(3);
+        if (subjectId is > 0) query.Add($"subject_id={subjectId}");
+        if (lessonId is > 0) query.Add($"lesson_id={lessonId}");
+        if (general) query.Add("general=true");
+        var qs = query.Count > 0 ? "?" + string.Join("&", query) : string.Empty;
+        return _api.GetAsync<List<QuizDto>>($"/api/student/quizzes{qs}");
+    }
+
     public Task<List<QuizDto>> LessonQuizzesAsync(long lessonId) => _api.GetAsync<List<QuizDto>>($"/api/student/lessons/{lessonId}/quizzes");
 
     public Task<StartQuizResultDto> StartQuizAsync(long quizId)
