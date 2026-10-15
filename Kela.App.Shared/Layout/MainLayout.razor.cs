@@ -12,6 +12,8 @@ namespace Kela.App.Shared.Layout;
 
 public partial class MainLayout
 {
+    [Inject] private NavigationManager Nav { get; set; } = default!;
+
     private bool _ready;
 
     protected override async Task OnInitializedAsync()
@@ -26,6 +28,7 @@ public partial class MainLayout
 
         await Lang.InitAsync();
         await ApplyScreenGuardAsync();
+        EnforcePasswordChange();
         _ready = true;
     }
 
@@ -82,8 +85,19 @@ public partial class MainLayout
     private void OnAuthChanged() => _ = InvokeAsync(async () =>
     {
         await ApplyScreenGuardAsync();
+        EnforcePasswordChange();
         StateHasChanged();
     });
+
+    /// <summary>İlk girişdə (təsadüfi şifrə) profil səhifəsinə yönləndirir — şifrə dəyişmək üçün.</summary>
+    private void EnforcePasswordChange()
+    {
+        if (Auth.User?.MustChangePassword == true &&
+            !Nav.Uri.Contains("/profile", StringComparison.OrdinalIgnoreCase))
+        {
+            Nav.NavigateTo("/profile");
+        }
+    }
 
     private void OnLangChanged() => _ = InvokeAsync(StateHasChanged);
 

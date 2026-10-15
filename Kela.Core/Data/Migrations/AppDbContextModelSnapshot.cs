@@ -108,6 +108,10 @@ namespace Kela.Core.Data.Migrations
                         .HasDefaultValue(true)
                         .HasColumnName("is_active");
 
+                    b.Property<bool>("MustChangePassword")
+                        .HasColumnType("boolean")
+                        .HasColumnName("must_change_password");
+
                     b.Property<bool>("NotificationStatus")
                         .HasColumnType("boolean")
                         .HasColumnName("notification_status");

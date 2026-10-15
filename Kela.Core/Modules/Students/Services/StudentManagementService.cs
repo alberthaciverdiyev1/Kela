@@ -117,7 +117,8 @@ public sealed class StudentManagementService(AppDbContext db) : Abstractions.ISt
                 FullName = $"{request.FullNamePrefix} {i}",
                 Email = email,
                 PasswordHash = BCrypt.Net.BCrypt.HashPassword(password),
-                IsActive = true
+                IsActive = true,
+                MustChangePassword = true
             };
             db.Students.Add(student);
             created.Add((student, password));

@@ -1,5 +1,5 @@
 namespace Kela.Core.Modules.Auth.Responses;
 
-public record StudentResponse(long Id, string FullName, string Email, string? Phone, string? Image);
+public record StudentResponse(long Id, string FullName, string Email, string? Phone, string? Image, bool MustChangePassword = false);
 
 public record AuthResponse(string Token, StudentResponse User);

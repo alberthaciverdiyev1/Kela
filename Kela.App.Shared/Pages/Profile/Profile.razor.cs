@@ -104,6 +104,7 @@ public partial class Profile
             await Api.ChangePasswordAsync(_currentPassword, _newPassword);
             _currentPassword = _newPassword = "";
             _passwordOpen = false;
+            try { Auth.SetUser(await Api.MeAsync()); } catch { }
         }
         catch (Exception ex) { _passwordError = ex.Message; }
         finally { _busy = false; }

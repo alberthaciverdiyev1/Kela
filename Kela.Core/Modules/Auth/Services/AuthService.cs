@@ -155,6 +155,7 @@ public sealed class AuthService(
         }
 
         student.PasswordHash = BCrypt.Net.BCrypt.HashPassword(request.NewPassword);
+        student.MustChangePassword = false;
         await db.SaveChangesAsync(ct);
     }
 
@@ -225,5 +226,5 @@ public sealed class AuthService(
     private static string Normalize(string email) => email.Trim().ToLowerInvariant();
 
     private StudentResponse ToResponse(Student student) =>
-        new(student.Id, student.FullName, student.Email, student.Phone, storage.GetUrl(student.Image));
+        new(student.Id, student.FullName, student.Email, student.Phone, storage.GetUrl(student.Image), student.MustChangePassword);
 }

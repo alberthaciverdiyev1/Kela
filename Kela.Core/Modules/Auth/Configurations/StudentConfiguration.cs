@@ -22,6 +22,7 @@ public sealed class StudentConfiguration : IEntityTypeConfiguration<Student>
         builder.Property(x => x.Image).HasColumnName("image").HasMaxLength(500);
         builder.Property(x => x.IsActive).HasColumnName("is_active").HasDefaultValue(true);
         builder.Property(x => x.NotificationStatus).HasColumnName("notification_status");
+        builder.Property(x => x.MustChangePassword).HasColumnName("must_change_password");
 
         builder.Property(x => x.CreatedAt).HasColumnName("created_at");
         builder.Property(x => x.UpdatedAt).HasColumnName("updated_at");
