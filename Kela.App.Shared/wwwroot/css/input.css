@@ -128,12 +128,16 @@
     }
 }
 
-/* Səhifə keçid animasiyası (Blazor route dəyişdikdə tətbiq olunur).
-   Yuxarıdan sürüşmə əvəzinə sağdan sürüşmə — native push keçidinin hissi.
-   will-change istifadə edilmir: daimi layer transform səhifədəki position:fixed
-   elementləri (Modal, StoryViewer, AudioPlayerBar) sındırır. */
+/* Səhifə keçidi: sağdan sola tam genişlikdə sürüşmə (native push hissi).
+   opacity animasiya olunmur — native push-da gələn səhifə şəffaf görünmür.
+   Fon rəngi verilir ki, kənardan girən element boş yerə sürüşmüş kimi durmasın.
+   will-change istifadə edilmir: daimi layer transform, səhifə daxilindəki
+   position:fixed elementləri (Modal, StoryViewer) sındırır. */
 @keyframes pageIn {
-  from { opacity: 0; transform: translateX(16px); }
-  to { opacity: 1; transform: none; }
+  from { transform: translateX(100%); }
+  to { transform: none; }
 }
-.page-transition { animation: pageIn 0.18s cubic-bezier(0.2, 0.8, 0.2, 1); }
+.page-transition {
+  animation: pageIn 0.25s cubic-bezier(0.2, 0.8, 0.2, 1);
+  background-color: var(--color-brand-022);
+}
