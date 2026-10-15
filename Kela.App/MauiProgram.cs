@@ -1,5 +1,6 @@
 using Kela.App.Shared.Services;
 using Kela.App.Shared.Services.Api;
+using Kela.App.Shared.Services.Localization;
 using Microsoft.Extensions.Logging;
 
 namespace Kela.App;
@@ -32,6 +33,7 @@ public static class MauiProgram
         builder.Services.AddScoped<IScreenGuard, WebScreenGuard>();
         builder.Services.AddScoped<IDeviceTokenProvider, WebDeviceTokenProvider>();
         builder.Services.AddScoped<PushTokenService>();
+        builder.Services.AddScoped<Localizer>();
 
         return builder.Build();
     }
