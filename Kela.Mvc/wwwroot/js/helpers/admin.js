@@ -272,49 +272,68 @@ window.AdminUI = (function () {
         }
         _sortItems.forEach((item, idx) => {
             const row = document.createElement('div');
-            row.className = 'flex items-center justify-between rounded-lg bg-slate-50 px-3 py-2';
+            row.className = 'sort-row flex items-center gap-3 rounded-lg border border-border bg-white px-3 py-2.5 cursor-grab active:cursor-grabbing transition';
+            row.draggable = true;
+            row.dataset.index = idx;
+
+            const handle = document.createElement('span');
+            handle.className = 'shrink-0 text-slate-300';
+            handle.innerHTML = '<svg class="h-5 w-5" fill="currentColor" viewBox="0 0 20 20"><circle cx="7" cy="5" r="1.5"/><circle cx="13" cy="5" r="1.5"/><circle cx="7" cy="10" r="1.5"/><circle cx="13" cy="10" r="1.5"/><circle cx="7" cy="15" r="1.5"/><circle cx="13" cy="15" r="1.5"/></svg>';
 
             const label = document.createElement('span');
-            label.className = 'truncate text-sm text-slate-700';
+            label.className = 'flex-1 truncate text-sm text-slate-700';
             label.textContent = item.label || ('#' + item.id);
 
-            const btns = document.createElement('div');
-            btns.className = 'flex items-center gap-1';
-
-            const up = document.createElement('button');
-            up.type = 'button';
-            up.textContent = '↑';
-            up.disabled = idx === 0;
-            up.className = 'grid h-8 w-8 place-items-center rounded-lg border border-border bg-white text-slate-600 hover:bg-surface-secondary disabled:opacity-40';
-            up.addEventListener('click', () => swapSort(idx, idx - 1));
-
-            const down = document.createElement('button');
-            down.type = 'button';
-            down.textContent = '↓';
-            down.disabled = idx === _sortItems.length - 1;
-            down.className = 'grid h-8 w-8 place-items-center rounded-lg border border-border bg-white text-slate-600 hover:bg-surface-secondary disabled:opacity-40';
-            down.addEventListener('click', () => swapSort(idx, idx + 1));
-
-            btns.append(up, down);
-            row.append(label, btns);
+            row.append(handle, label);
             box.appendChild(row);
+        });
+        wireSortDnD();
+    }
+
+    let _dragIndex = null;
+
+    function wireSortDnD() {
+        const box = document.getElementById('sortList');
+        if (!box) return;
+        box.querySelectorAll('.sort-row').forEach(row => {
+            row.addEventListener('dragstart', e => {
+                _dragIndex = Number(row.dataset.index);
+                row.classList.add('opacity-50');
+                e.dataTransfer.effectAllowed = 'move';
+                try { e.dataTransfer.setData('text/plain', String(_dragIndex)); } catch (err) { /* boş */ }
+            });
+            row.addEventListener('dragend', () => {
+                row.classList.remove('opacity-50');
+                box.querySelectorAll('.sort-row').forEach(r => r.classList.remove('border-primary', 'bg-primary-light'));
+            });
+            row.addEventListener('dragover', e => {
+                e.preventDefault();
+                e.dataTransfer.dropEffect = 'move';
+                box.querySelectorAll('.sort-row').forEach(r => r.classList.remove('border-primary', 'bg-primary-light'));
+                if (Number(row.dataset.index) !== _dragIndex) row.classList.add('border-primary', 'bg-primary-light');
+            });
+            row.addEventListener('drop', e => {
+                e.preventDefault();
+                const from = _dragIndex;
+                const to = Number(row.dataset.index);
+                _dragIndex = null;
+                if (from === null || from === to) { renderSort(); return; }
+                const [moved] = _sortItems.splice(from, 1);
+                _sortItems.splice(to, 0, moved);
+                renderSort();
+                persistSort();
+            });
         });
     }
 
-    function swapSort(a, b) {
-        if (b < 0 || b >= _sortItems.length) return;
-        [_sortItems[a], _sortItems[b]] = [_sortItems[b], _sortItems[a]];
-        renderSort();
-    }
-
-    async function saveSort() {
+    // Drag&amp;drop bitdikdə sıranı avtomatik yadda saxlayır (Save düyməsi yoxdur).
+    async function persistSort() {
         if (!_sortSaveUrl) return;
         const ids = _sortItems.map(x => x.id);
         const res = await postJson(_sortSaveUrl, { ids });
         if (res.ok) {
             notify(L["Js_OrderUpdated"]);
             if (typeof _sortOnSaved === 'function') _sortOnSaved();
-            closeSort();
         } else {
             error(errText(res));
         }
@@ -355,5 +374,5 @@ window.AdminUI = (function () {
 
     function reloadAfter(delay) { setTimeout(() => location.reload(), delay || 700); }
 
-    return { notify, error, errText, confirmDelete, confirmRestore, restoreItem, restoreButton, syncTrashButton, get, post, postForm, putForm, postJson, putJson, del, badge, table, actions, selectedIds, bulkDo, sortToggle, openSort, closeSort, saveSort, loader, pagination, filePreview, fileSet, fileRemove, rowNo, token, reloadAfter };
+    return { notify, error, errText, confirmDelete, confirmRestore, restoreItem, restoreButton, syncTrashButton, get, post, postForm, putForm, postJson, putJson, del, badge, table, actions, selectedIds, bulkDo, sortToggle, openSort, closeSort, persistSort, loader, pagination, filePreview, fileSet, fileRemove, rowNo, token, reloadAfter };
 })();

@@ -265,6 +265,9 @@
   <data name="Common_Cancel" xml:space="preserve">
     <value>Cancel</value>
   </data>
+  <data name="Common_Close" xml:space="preserve">
+    <value>Close</value>
+  </data>
   <data name="Common_Delete" xml:space="preserve">
     <value>Delete</value>
   </data>
@@ -284,7 +287,7 @@
     <value>Sort</value>
   </data>
   <data name="Sort_Hint" xml:space="preserve">
-    <value>Move items up/down to sort, then save.</value>
+    <value>Drag and drop to reorder — changes are saved automatically.</value>
   </data>
   <data name="Common_Actions" xml:space="preserve">
     <value>Actions</value>

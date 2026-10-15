@@ -265,6 +265,9 @@
   <data name="Common_Cancel" xml:space="preserve">
     <value>Отмена</value>
   </data>
+  <data name="Common_Close" xml:space="preserve">
+    <value>Закрыть</value>
+  </data>
   <data name="Common_Delete" xml:space="preserve">
     <value>Удалить</value>
   </data>
@@ -284,7 +287,7 @@
     <value>Сортировка</value>
   </data>
   <data name="Sort_Hint" xml:space="preserve">
-    <value>Перемещайте элементы вверх/вниз, затем сохраните.</value>
+    <value>Перетащите элементы для сортировки — изменения сохраняются автоматически.</value>
   </data>
   <data name="Common_Actions" xml:space="preserve">
     <value>Действия</value>
