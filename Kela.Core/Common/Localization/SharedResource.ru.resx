@@ -259,6 +259,24 @@
   <data name="Common_SignIn" xml:space="preserve">
     <value>Войти</value>
   </data>
+  <data name="Common_Next" xml:space="preserve">
+    <value>Далее</value>
+  </data>
+  <data name="Common_Back" xml:space="preserve">
+    <value>Назад</value>
+  </data>
+  <data name="Group_StepInfo" xml:space="preserve">
+    <value>Информация</value>
+  </data>
+  <data name="Group_StepSubjects" xml:space="preserve">
+    <value>Предметы</value>
+  </data>
+  <data name="Group_StepStudents" xml:space="preserve">
+    <value>Студенты</value>
+  </data>
+  <data name="Group_StepQuizzes" xml:space="preserve">
+    <value>Экзамены</value>
+  </data>
   <data name="Common_Save" xml:space="preserve">
     <value>Сохранить</value>
   </data>

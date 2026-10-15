@@ -259,6 +259,24 @@
   <data name="Common_SignIn" xml:space="preserve">
     <value>Giriş yap</value>
   </data>
+  <data name="Common_Next" xml:space="preserve">
+    <value>İleri</value>
+  </data>
+  <data name="Common_Back" xml:space="preserve">
+    <value>Geri</value>
+  </data>
+  <data name="Group_StepInfo" xml:space="preserve">
+    <value>Bilgi</value>
+  </data>
+  <data name="Group_StepSubjects" xml:space="preserve">
+    <value>Dersler</value>
+  </data>
+  <data name="Group_StepStudents" xml:space="preserve">
+    <value>Öğrenciler</value>
+  </data>
+  <data name="Group_StepQuizzes" xml:space="preserve">
+    <value>Sınavlar</value>
+  </data>
   <data name="Common_Save" xml:space="preserve">
     <value>Kaydet</value>
   </data>

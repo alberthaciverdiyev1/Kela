@@ -4,21 +4,70 @@
     teacherOptions.AddRange(teachers.Data.Select(u => new SelectOption { Value = u.Id.ToString(), Text = $"{u.Name} {u.Surname}".Trim() }));
 }
 <div id="modal" class="fixed inset-0 z-50 hidden items-center justify-center bg-slate-950/40 p-4">
-    <div class="w-full max-w-lg rounded-2xl bg-white shadow-2xl">
+    <div class="flex max-h-[92vh] w-full max-w-lg flex-col rounded-2xl bg-white shadow-2xl">
         <div class="flex items-center justify-between border-b border-border p-5">
             <h3 id="modalTitle" class="text-lg font-bold text-slate-900">@L["Group_Create"]</h3>
             <button type="button" onclick="closeModal()" class="rounded-xl p-2 text-slate-400 hover:bg-slate-100">✕</button>
         </div>
+
+        @* --- Addım göstəricisi (yalnız create) --- *@
+        <div id="wizardSteps" class="flex items-center gap-2 px-6 pt-4">
+            @foreach (var (n, label) in new[] { (1, L["Group_StepInfo"].Value), (2, L["Group_StepSubjects"].Value), (3, L["Group_StepStudents"].Value), (4, L["Group_StepQuizzes"].Value) })
+            {
+                <div class="flex flex-1 items-center gap-2">
+                    <span data-step-dot="@n" class="grid h-7 w-7 shrink-0 place-items-center rounded-full bg-slate-100 text-xs font-bold text-slate-500">@n</span>
+                    <span data-step-label="@n" class="hidden text-xs font-semibold text-slate-400 sm:inline">@label</span>
+                </div>
+            }
+        </div>
+
         <div id="formError" class="mx-6 mt-4 hidden rounded-xl bg-danger-bg px-3 py-2 text-sm font-semibold text-danger"></div>
-        <form id="entityForm" class="space-y-4 p-6">
+
+        <form id="entityForm" class="flex min-h-0 flex-1 flex-col">
             <input type="hidden" id="entityId" />
-            <partial name="Ui/_Input" model="@(new InputModel { Name = "name", Id = "name", Label = L["Common_Name"], Required = true })" />
-            <partial name="Ui/_Input" model="@(new InputModel { Name = "description", Id = "description", Label = L["Common_Description"] })" />
-            <partial name="Ui/_Select" model="@(new SelectModel { Name = "user_id", Id = "user_id", Label = L["Common_Teacher"], Options = teacherOptions })" />
-            <partial name="Ui/_FileUpload" model="@(new FileUploadModel { Name = "image", Id = "image", Label = L["Common_Image"], Accept = ".jpg,.jpeg,.png", Hint = "jpg/png, max 5MB" })" />
-            <div class="flex justify-end gap-3 pt-2">
-                <partial name="Ui/_Button" model="@(new ButtonModel { Text = L["Common_Cancel"], Variant = "secondary", OnClick = "closeModal()" })" />
-                <partial name="Ui/_Button" model="@(new ButtonModel { Text = L["Common_Save"], Type = "submit" })" />
+            <div class="min-h-0 flex-1 space-y-4 overflow-y-auto p-6">
+                @* Step 1 *@
+                <div data-step-panel="1" class="space-y-4">
+                    <partial name="Ui/_Input" model="@(new InputModel { Name = "name", Id = "name", Label = L["Common_Name"], Required = true })" />
+                    <partial name="Ui/_Input" model="@(new InputModel { Name = "description", Id = "description", Label = L["Common_Description"] })" />
+                    <partial name="Ui/_Select" model="@(new SelectModel { Name = "user_id", Id = "user_id", Label = L["Common_Teacher"], Options = teacherOptions })" />
+                    <partial name="Ui/_FileUpload" model="@(new FileUploadModel { Name = "image", Id = "image", Label = L["Common_Image"], Accept = ".jpg,.jpeg,.png", Hint = "jpg/png, max 5MB" })" />
+                </div>
+
+                @* Step 2 *@
+                <div data-step-panel="2" class="hidden space-y-3">
+                    <p class="text-sm font-semibold text-slate-600">@L["Group_StepSubjects"]</p>
+                    <div id="subjectsList" class="max-h-[45vh] space-y-1 overflow-y-auto rounded-xl border border-border p-2">
+                        <div class="p-3 text-sm text-slate-400">@L["Common_LoadingResults"]</div>
+                    </div>
+                </div>
+
+                @* Step 3 *@
+                <div data-step-panel="3" class="hidden space-y-3">
+                    <p class="text-sm font-semibold text-slate-600">@L["Group_StepStudents"]</p>
+                    <input id="studentSearch" type="search" class="admin-field" placeholder="@L["Common_SearchPlaceholder"]" oninput="filterCheckList('studentsList', this.value)" />
+                    <div id="studentsList" class="max-h-[40vh] space-y-1 overflow-y-auto rounded-xl border border-border p-2">
+                        <div class="p-3 text-sm text-slate-400">@L["Common_LoadingResults"]</div>
+                    </div>
+                </div>
+
+                @* Step 4 *@
+                <div data-step-panel="4" class="hidden space-y-3">
+                    <p class="text-sm font-semibold text-slate-600">@L["Group_StepQuizzes"]</p>
+                    <input id="quizSearch" type="search" class="admin-field" placeholder="@L["Common_SearchPlaceholder"]" oninput="filterCheckList('quizzesList', this.value)" />
+                    <div id="quizzesList" class="max-h-[40vh] space-y-1 overflow-y-auto rounded-xl border border-border p-2">
+                        <div class="p-3 text-sm text-slate-400">@L["Common_LoadingResults"]</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="flex items-center justify-between gap-3 border-t border-border p-5">
+                <button type="button" id="prevBtn" onclick="wizardPrev()" class="admin-button-secondary hidden">@L["Common_Back"]</button>
+                <div class="ml-auto flex gap-3">
+                    <button type="button" onclick="closeModal()" class="admin-button-secondary">@L["Common_Cancel"]</button>
+                    <button type="button" id="nextBtn" onclick="wizardNext()" class="admin-button-primary">@L["Common_Next"]</button>
+                    <button type="submit" id="saveBtn" class="admin-button-primary hidden">@L["Common_Save"]</button>
+                </div>
             </div>
         </form>
     </div>

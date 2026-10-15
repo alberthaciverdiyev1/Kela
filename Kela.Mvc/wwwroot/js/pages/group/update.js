@@ -10,6 +10,9 @@
         document.getElementById('description').value = data.description ?? '';
         document.getElementById('user_id').value = data.userId ?? '';
         AdminUI.fileSet('image', data.image);
+        errBox.classList.add('hidden');
+
+        window.setWizardMode(false);
         window.showModal();
     };
 
