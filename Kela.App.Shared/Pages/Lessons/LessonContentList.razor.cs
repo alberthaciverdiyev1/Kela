@@ -27,7 +27,15 @@ public partial class LessonContentList
         _ => L["Materials_Title"]
     };
 
+    protected override void OnInitialized() => OnRefresh(FetchAsync);
+
     protected override async Task OnInitializedAsync()
+    {
+        await FetchAsync();
+        _loading = false;
+    }
+
+    private async Task FetchAsync()
     {
         try
         {
@@ -36,6 +44,5 @@ public partial class LessonContentList
             _items = all.Where(c => c.Type == Type).ToList();
         }
         catch { }
-        _loading = false;
     }
 }

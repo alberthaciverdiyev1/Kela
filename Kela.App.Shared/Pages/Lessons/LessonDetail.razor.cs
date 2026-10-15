@@ -23,7 +23,15 @@ public partial class LessonDetail
     private List<ContentItemDto> _files => _contents.Where(c => c.Type == "file").ToList();
     private List<ContentItemDto> _voices => _contents.Where(c => c.Type == "voice").ToList();
 
+    protected override void OnInitialized() => OnRefresh(FetchAsync);
+
     protected override async Task OnInitializedAsync()
+    {
+        await FetchAsync();
+        _loading = false;
+    }
+
+    private async Task FetchAsync()
     {
         try
         {
@@ -32,6 +40,5 @@ public partial class LessonDetail
             _quizzes = await Api.LessonQuizzesAsync(LessonId);
         }
         catch { }
-        _loading = false;
     }
 }

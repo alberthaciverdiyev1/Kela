@@ -31,7 +31,15 @@ public partial class Home
 
     private void CloseStory() => _storyOpen = false;
 
+    protected override void OnInitialized() => OnRefresh(FetchAsync);
+
     protected override async Task OnInitializedAsync()
+    {
+        await FetchAsync();
+        _loading = false;
+    }
+
+    private async Task FetchAsync()
     {
         try
         {
@@ -59,7 +67,5 @@ public partial class Home
         {
             // API əlçatmazsa boş qalır
         }
-
-        _loading = false;
     }
 }

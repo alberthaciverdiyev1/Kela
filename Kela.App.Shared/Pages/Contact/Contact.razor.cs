@@ -10,11 +10,18 @@ public partial class Contact
     private ContactDto? _course;
     private ContactDto? _platform;
 
+    protected override void OnInitialized() => OnRefresh(FetchAsync);
+
     protected override async Task OnInitializedAsync()
+    {
+        await FetchAsync();
+        _loading = false;
+    }
+
+    private async Task FetchAsync()
     {
         try { _course = await Api.ContactAsync(); } catch { }
         try { _platform = await Api.PlatformContactAsync(); } catch { }
-        _loading = false;
     }
 
     private static bool HasChannels(ContactDto? c)

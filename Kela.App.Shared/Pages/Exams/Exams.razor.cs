@@ -18,23 +18,30 @@ public partial class Exams
     private long? _lessonId;
     private bool _onlyGeneral = true;   // default: ümumi imtahanlar
 
+    protected override void OnInitialized() => OnRefresh(FetchAsync);
+
     protected override async Task OnInitializedAsync()
     {
         try { _subjects = await Api.AllSubjectsAsync(); } catch { }
         await ReloadAsync();
     }
 
+    private Task<List<QuizDto>> QueryAsync() => _onlyGeneral
+        ? Api.QuizzesAsync(general: true)
+        : Api.QuizzesAsync(_subjectId, _lessonId);
+
     private async Task ReloadAsync()
     {
         _busy = true;
-        try
-        {
-            _quizzes = _onlyGeneral
-                ? await Api.QuizzesAsync(general: true)
-                : await Api.QuizzesAsync(_subjectId, _lessonId);
-        }
+        try { _quizzes = await QueryAsync(); }
         catch { _quizzes = new(); }
         finally { _busy = false; _loading = false; }
+    }
+
+    /// <summary>Yeniləmə: skeleton göstərilməsin deyə _busy/_loading toxunulmur.</summary>
+    private async Task FetchAsync()
+    {
+        try { _quizzes = await QueryAsync(); } catch { }
     }
 
     private async Task SetModeAsync(bool general)

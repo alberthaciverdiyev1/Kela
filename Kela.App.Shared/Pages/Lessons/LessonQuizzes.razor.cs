@@ -18,7 +18,15 @@ public partial class LessonQuizzes
     private string? Title;
     private List<QuizDto> _quizzes = new();
 
+    protected override void OnInitialized() => OnRefresh(FetchAsync);
+
     protected override async Task OnInitializedAsync()
+    {
+        await FetchAsync();
+        _loading = false;
+    }
+
+    private async Task FetchAsync()
     {
         try
         {
@@ -26,6 +34,5 @@ public partial class LessonQuizzes
             _quizzes = await Api.LessonQuizzesAsync(LessonId);
         }
         catch { }
-        _loading = false;
     }
 }

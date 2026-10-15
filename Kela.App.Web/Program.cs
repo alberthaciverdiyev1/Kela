@@ -20,5 +20,6 @@ builder.Services.AddScoped<IDeviceTokenProvider, WebDeviceTokenProvider>();
 builder.Services.AddScoped<PushTokenService>();
 builder.Services.AddScoped<Localizer>();
 builder.Services.AddScoped<NavIntent>();
+builder.Services.AddScoped<RefreshSignal>();
 
 await builder.Build().RunAsync();

@@ -17,7 +17,15 @@ public partial class SubjectDetail
     private string? Name;
     private List<LessonDto> _lessons = new();
 
+    protected override void OnInitialized() => OnRefresh(FetchAsync);
+
     protected override async Task OnInitializedAsync()
+    {
+        await FetchAsync();
+        _loading = false;
+    }
+
+    private async Task FetchAsync()
     {
         try
         {
@@ -25,6 +33,5 @@ public partial class SubjectDetail
             _lessons = await Api.LessonsAsync(SubjectId);
         }
         catch { }
-        _loading = false;
     }
 }

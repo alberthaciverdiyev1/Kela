@@ -14,10 +14,18 @@ public partial class Notifications
     private int _lastPage = 1;
     private readonly List<NotificationDto> _items = new();
 
-    protected override Task OnInitializedAsync() => LoadAsync();
+    // Yeniləmə: siyahını başa qaytarıb ilk səhifəni yenidən çəkir.
+    protected override void OnInitialized() => OnRefresh(async () =>
+    {
+        _page = 0;
+        _items.Clear();
+        await FetchAsync();
+    });
+
+    protected override Task OnInitializedAsync() => FetchAsync();
 
     /// <summary>Növbəti səhifəni çəkir (ilk səhifədə siyahını sıfırlayır).</summary>
-    private async Task LoadAsync()
+    private async Task FetchAsync()
     {
         if (_busy) return;
         _busy = true;

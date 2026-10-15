@@ -15,9 +15,16 @@ public partial class Groups
     private bool _loading = true;
     private List<GroupDto> _groups = new();
 
+    protected override void OnInitialized() => OnRefresh(FetchAsync);
+
     protected override async Task OnInitializedAsync()
     {
-        try { _groups = await Api.StudentGroupsAsync(); } catch { }
+        await FetchAsync();
         _loading = false;
+    }
+
+    private async Task FetchAsync()
+    {
+        try { _groups = await Api.StudentGroupsAsync(); } catch { }
     }
 }

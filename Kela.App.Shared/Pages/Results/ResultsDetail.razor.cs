@@ -36,9 +36,16 @@ public partial class ResultsDetail
         }
     }
 
+    protected override void OnInitialized() => OnRefresh(FetchAsync);
+
     protected override async Task OnInitializedAsync()
     {
-        try { _detail = await Api.ResultDetailAsync(AttemptId); } catch { }
+        await FetchAsync();
         _loading = false;
+    }
+
+    private async Task FetchAsync()
+    {
+        try { _detail = await Api.ResultDetailAsync(AttemptId); } catch { }
     }
 }

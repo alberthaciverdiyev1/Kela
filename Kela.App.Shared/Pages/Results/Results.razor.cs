@@ -22,12 +22,18 @@ public partial class Results
     private int _avg;
     private int _best;
 
-    protected override Task OnInitializedAsync() => LoadAsync();
+    protected override void OnInitialized() => OnRefresh(FetchAsync);
+
+    protected override async Task OnInitializedAsync()
+    {
+        await FetchAsync();
+        _loading = false;
+    }
 
     /// <summary>
     /// Seçilmiş tarix aralığı üzrə nəticələri serverdən çəkir. Süzgəc API-də tətbiq olunur.
     /// </summary>
-    private async Task LoadAsync()
+    private async Task FetchAsync()
     {
         try
         {
@@ -41,7 +47,6 @@ public partial class Results
         }
 
         Recompute();
-        _loading = false;
     }
 
     private void Recompute()

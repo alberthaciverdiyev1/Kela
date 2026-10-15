@@ -17,7 +17,15 @@ public partial class GroupDetail
     private List<SubjectDto> _subjects = new();
     private string? Name;
 
+    protected override void OnInitialized() => OnRefresh(FetchAsync);
+
     protected override async Task OnInitializedAsync()
+    {
+        await FetchAsync();
+        _loading = false;
+    }
+
+    private async Task FetchAsync()
     {
         try
         {
@@ -29,10 +37,8 @@ public partial class GroupDetail
             if (_subjects.Count == 1)
             {
                 Nav.NavigateTo($"/subjects/{_subjects[0].Id}", replace: true);
-                return;
             }
         }
         catch { }
-        _loading = false;
     }
 }

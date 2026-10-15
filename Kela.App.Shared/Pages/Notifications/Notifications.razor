@@ -1,3 +1,4 @@
+@inherits RefreshablePage
 @using Kela.App.Shared.Services.Localization
 @inject Localizer L
 @page "/notifications"
@@ -46,7 +47,7 @@
 
         @if (_page < _lastPage)
         {
-            <button type="button" @onclick="LoadAsync" disabled="@_busy"
+            <button type="button" @onclick="FetchAsync" disabled="@_busy"
                     class="mt-5 w-full rounded-2xl border border-brand-104 py-3 text-sm font-bold text-brand-727 disabled:opacity-60">
                 @(_busy ? L["Common_Loading"] : L["Common_More"])
             </button>
