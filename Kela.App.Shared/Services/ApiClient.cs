@@ -13,11 +13,20 @@ public sealed class ApiClient(HttpClient http, AuthState auth, TokenStore store,
 
     public string? Token { get; set; }
 
+    /// <summary>Seçilmiş tenant — hər sorğuda X-Tenant-Id header-ı kimi göndərilir.</summary>
+    public long? TenantId { get; set; }
+
     private void ApplyAuth()
     {
         http.DefaultRequestHeaders.Authorization = string.IsNullOrWhiteSpace(Token)
             ? null
             : new AuthenticationHeaderValue("Bearer", Token);
+
+        http.DefaultRequestHeaders.Remove("X-Tenant-Id");
+        if (TenantId is > 0)
+        {
+            http.DefaultRequestHeaders.Add("X-Tenant-Id", TenantId.Value.ToString());
+        }
 
         http.DefaultRequestHeaders.AcceptLanguage.Clear();
         http.DefaultRequestHeaders.AcceptLanguage.Add(new StringWithQualityHeaderValue(lang.Current));

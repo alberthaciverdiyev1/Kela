@@ -41,3 +41,5 @@
 .lms-login .course-row .emoji{font-size:24px}
 .lms-login .course-row.selected{color:#087e42;background:#f1faf3;border-radius:10px}
 @media(max-height:740px){.lms-login .hero{height:220px}.lms-login .subtitle{margin-bottom:16px}.lms-login .courses{margin-top:7px}.lms-login .form{margin-top:12px}.lms-login .field{margin-bottom:10px}}
+
+.lms-login .control select{border:0;outline:0;min-width:0;width:100%;background:transparent;font-size:14px;color:#10232c;appearance:none;-webkit-appearance:none;cursor:pointer}

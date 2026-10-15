@@ -1,6 +1,9 @@
+@using Kela.Core.Modules.Tenant.Responses
 @{
     Layout = "_AuthLayout";
     ViewData["Title"] = L["Login_Title"];
+    var tenantList = ViewData["Tenants"] as IReadOnlyList<TenantResponse> ?? new List<TenantResponse>();
+    var tenantOptions = tenantList.Select(t => new SelectOption { Value = t.Id.ToString(), Text = t.Name }).ToList();
 }
 <div class="w-full max-w-sm rounded-2xl bg-white p-8 shadow-lg">
     <div class="mb-6 flex items-center gap-3">
@@ -20,6 +23,7 @@
 
     <form method="post" action="/login" class="space-y-4">
         @Html.AntiForgeryToken()
+        <partial name="Ui/_Select" model="@(new SelectModel { Name = "TenantId", Id = "tenantId", Label = L["Common_Tenant"], Required = true, Options = tenantOptions })" />
         <partial name="Ui/_Input" model="@(new InputModel { Name = "Email", Id = "email", Label = L["Common_Email"], Type = "email", Required = true })" />
         <div>
             <label for="password" class="mb-1 block text-sm font-medium text-slate-700">@L["Common_Password"]</label>

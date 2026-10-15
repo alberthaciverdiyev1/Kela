@@ -6,6 +6,7 @@ namespace Kela.App.Shared.Services;
 public sealed class TokenStore(IJSRuntime js)
 {
     private const string Key = "lms.token";
+    private const string TenantKey = "lms.tenant";
 
     public ValueTask<string?> GetAsync()
         => js.InvokeAsync<string?>("localStorage.getItem", Key);
@@ -14,5 +15,18 @@ public sealed class TokenStore(IJSRuntime js)
         => js.InvokeVoidAsync("localStorage.setItem", Key, token);
 
     public ValueTask RemoveAsync()
-        => js.InvokeVoidAsync("localStorage.removeItem", Key);
+    {
+        var removeToken = js.InvokeVoidAsync("localStorage.removeItem", Key).AsTask();
+        var removeTenant = js.InvokeVoidAsync("localStorage.removeItem", TenantKey).AsTask();
+        return new ValueTask(Task.WhenAll(removeToken, removeTenant));
+    }
+
+    public async ValueTask<long?> GetTenantAsync()
+    {
+        var value = await js.InvokeAsync<string?>("localStorage.getItem", TenantKey);
+        return long.TryParse(value, out var id) ? id : null;
+    }
+
+    public ValueTask SaveTenantAsync(long tenantId)
+        => js.InvokeVoidAsync("localStorage.setItem", TenantKey, tenantId.ToString());
 }

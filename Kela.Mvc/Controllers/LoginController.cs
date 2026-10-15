@@ -1,5 +1,7 @@
 using System.Security.Claims;
+using Kela.Core.Modules.Tenant.Abstractions;
 using Kela.Core.Modules.User.Abstractions;
+using Kela.Core.Modules.User.Entities;
 using Kela.Core.Modules.User.Requests;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
@@ -10,13 +12,15 @@ namespace Kela.Mvc.Controllers;
 
 [AllowAnonymous]
 [Route("[controller]")]
-public sealed class LoginController(IUserAuthService service) : Controller
+public sealed class LoginController(IUserAuthService service, ITenantService tenants) : Controller
 {
     [HttpGet]
-    public IActionResult Index()
+    public async Task<IActionResult> Index(CancellationToken ct)
     {
         ViewData["Title"] = "Giriş";
         if (User.Identity?.IsAuthenticated == true) return RedirectToAction("Index", "Dashboard");
+
+        ViewData["Tenants"] = await tenants.ListPublicAsync(ct);
         return View();
     }
 
@@ -37,6 +41,12 @@ public sealed class LoginController(IUserAuthService service) : Controller
                 new(ClaimTypes.Role, user.Type)
             };
 
+            // Tenant claim — sonrakı sorğularda məlumat yalnız bu tenant-la məhdudlaşır.
+            if (user.Type != UserTypes.SuperAdmin && request.TenantId is > 0)
+            {
+                claims.Add(new Claim("tenant_id", request.TenantId.Value.ToString()));
+            }
+
             var identity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
             await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(identity));
 
@@ -44,7 +54,8 @@ public sealed class LoginController(IUserAuthService service) : Controller
         }
         catch (UnauthorizedAccessException)
         {
-            ViewData["Error"] = "Email və ya şifrə yanlışdır.";
+            ViewData["Error"] = "Email, şifrə və ya tenant yanlışdır.";
+            ViewData["Tenants"] = await tenants.ListPublicAsync(ct);
             return View();
         }
     }

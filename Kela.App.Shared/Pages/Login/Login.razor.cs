@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Components;
+using Kela.App.Shared.Dtos;
 using Kela.App.Shared.Services;
 using Kela.App.Shared.Services.Api;
 
@@ -13,6 +14,9 @@ public partial class Login
     private bool _modalOpen;
     private string _search = "";
 
+    private List<TenantDto> _tenants = new();
+    private long? _tenantId;
+
     private string _email = "";
     private string _password = "";
     private string _fullName = "";
@@ -21,6 +25,19 @@ public partial class Login
     private bool _busy;
     private bool _register;
     private string? _error;
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            _tenants = await Api.TenantsAsync();
+            _tenantId = _tenants.FirstOrDefault()?.Id;
+        }
+        catch
+        {
+            _tenants = new List<TenantDto>();
+        }
+    }
 
     private void Toggle()
     {
@@ -60,13 +77,20 @@ public partial class Login
         _error = null;
         try
         {
+            if (_tenantId is not > 0)
+            {
+                _error = L["Login_SelectTenant"];
+                return;
+            }
+
             var user = _register
-                ? await Api.RegisterAsync(_fullName.Trim(), _email.Trim(), string.IsNullOrWhiteSpace(_phone) ? null : _phone.Trim(), _password)
-                : await Api.LoginAsync(_email.Trim(), _password);
+                ? await Api.RegisterAsync(_fullName.Trim(), _email.Trim(), string.IsNullOrWhiteSpace(_phone) ? null : _phone.Trim(), _password, _tenantId.Value)
+                : await Api.LoginAsync(_email.Trim(), _password, _tenantId.Value);
             Auth.Set(ApiClient.Token ?? "", user);
             if (!string.IsNullOrWhiteSpace(ApiClient.Token))
             {
                 await Store.SaveAsync(ApiClient.Token!);
+                await Store.SaveTenantAsync(_tenantId.Value);
             }
         }
         catch (Exception ex)

@@ -8,17 +8,19 @@ namespace Kela.App.Shared.Services.Api;
 public sealed partial class AppApi
 {
     // --- Auth ---
-    public async Task<StudentDto> LoginAsync(string email, string password)
+    public async Task<StudentDto> LoginAsync(string email, string password, long tenantId)
     {
-        var result = await _api.PostAsync<AuthResultDto>("/api/auth/login", new { email, password });
+        _api.TenantId = tenantId;
+        var result = await _api.PostAsync<AuthResultDto>("/api/auth/login", new { email, password, tenantId });
         _api.Token = result.Token;
         return result.User;
     }
 
-    public async Task<StudentDto> RegisterAsync(string fullName, string email, string? phone, string password)
+    public async Task<StudentDto> RegisterAsync(string fullName, string email, string? phone, string password, long tenantId)
     {
+        _api.TenantId = tenantId;
         var result = await _api.PostAsync<AuthResultDto>("/api/auth/register",
-            new { fullName, email, phone, password });
+            new { fullName, email, phone, password, tenantId });
         _api.Token = result.Token;
         return result.User;
     }

@@ -60,6 +60,7 @@ public partial class MainLayout
             var token = await Store.GetAsync();
             if (string.IsNullOrWhiteSpace(token)) return;
 
+            ApiClient.TenantId = await Store.GetTenantAsync();
             ApiClient.Token = token;
             var user = await Api.MeAsync();
             Auth.Set(token, user);
