@@ -1,0 +1,35 @@
+@{
+    var groups = (PagedResponse<Kela.Core.Modules.Group.Responses.GroupResponse>)ViewData["Groups"]!;
+    var groupOptions = new List<SelectOption> { new() { Value = "", Text = L["Common_SelectGroup"] } };
+    groupOptions.AddRange(groups.Data.Select(g => new SelectOption { Value = g.Id.ToString(), Text = g.Name }));
+}
+<section class="admin-page">
+    <partial name="Ui/_PageHeader" model="@(new PageHeaderModel {
+        Title = L["Attendance_Title"], Subtitle = L["Attendance_Subtitle"] })" />
+
+    <div class="admin-card">
+        <div class="admin-toolbar flex flex-wrap items-end gap-4 border-b border-border p-5">
+            <div class="w-64">
+                <partial name="Ui/_Select" model="@(new SelectModel {
+                    Name = "group_id", Id = "group_id", Label = L["Common_Group"], Options = groupOptions })" />
+            </div>
+            <div id="monthSummary" class="ml-auto text-sm text-slate-500"></div>
+        </div>
+
+        <div class="grid gap-6 p-5 lg:grid-cols-[minmax(0,420px)_minmax(0,1fr)] lg:items-start">
+            <div>
+                <div id="calendar" class="attendance-calendar inline-block rounded-2xl border border-border bg-white p-2"></div>
+                <div class="mt-4 flex flex-wrap items-center gap-4 text-xs text-slate-500">
+                    <span class="flex items-center gap-1.5"><i class="att-dot att-full"></i>@L["Attendance_LegendFull"]</span>
+                    <span class="flex items-center gap-1.5"><i class="att-dot att-part"></i>@L["Attendance_LegendPartial"]</span>
+                    <span class="flex items-center gap-1.5"><i class="att-dot att-low"></i>@L["Attendance_LegendLow"]</span>
+                    <span class="flex items-center gap-1.5"><i class="att-dot att-none"></i>@L["Attendance_LegendNone"]</span>
+                </div>
+            </div>
+
+            <div id="dayPanel" class="admin-empty">@L["Attendance_PickDay"]</div>
+        </div>
+    </div>
+</section>
+
+<form id="antiforgery">@Html.AntiForgeryToken()</form>

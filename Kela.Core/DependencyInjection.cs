@@ -25,6 +25,7 @@ using Kela.Core.Common.Email;
 using Kela.Core.Common.Push;
 using Kela.Core.Modules.User.Services;
 using Kela.Core.Modules.Group.Services;
+using Kela.Core.Modules.Attendance.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
@@ -96,6 +97,7 @@ public static class DependencyInjection
         services.AddScoped<IUserService, UserService>();
         services.AddScoped<IUserAuthService, UserAuthService>();
         services.AddScoped<IGroupService, GroupService>();
+        services.AddScoped<IAttendanceService, AttendanceService>();
 
         return services;
     }

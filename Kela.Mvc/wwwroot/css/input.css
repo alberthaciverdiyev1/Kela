@@ -331,3 +331,17 @@
     font-weight: 700;
   }
 }
+
+/* --- Yoklama təqvimi ---
+   Gün hüceyrələrinin rəngi həmin günün iştirak faizini göstərir.
+   Rənglər flowbite-datepicker-in öz siniflərinin üzərinə yazılır. */
+.attendance-calendar .datepicker-cell.att-full { background-color: #d1fae5; color: #065f46; font-weight: 600; }
+.attendance-calendar .datepicker-cell.att-part { background-color: #fef3c7; color: #92400e; font-weight: 600; }
+.attendance-calendar .datepicker-cell.att-low  { background-color: #fee2e2; color: #991b1b; font-weight: 600; }
+.attendance-calendar .datepicker-cell.selected { outline: 2px solid #004aad; outline-offset: 1px; }
+
+.att-dot { display: inline-block; width: 10px; height: 10px; border-radius: 9999px; }
+.att-dot.att-full { background-color: #10b981; }
+.att-dot.att-part { background-color: #f59e0b; }
+.att-dot.att-low  { background-color: #ef4444; }
+.att-dot.att-none { background-color: #cbd5e1; }

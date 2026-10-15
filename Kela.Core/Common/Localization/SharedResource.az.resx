@@ -118,6 +118,15 @@
   <data name="Validation_SubjectRequired" xml:space="preserve">
     <value>Fənn tələb olunur</value>
   </data>
+  <data name="Validation_GroupRequired" xml:space="preserve">
+    <value>Qrup tələb olunur</value>
+  </data>
+  <data name="Validation_DateRequired" xml:space="preserve">
+    <value>Tarix tələb olunur</value>
+  </data>
+  <data name="Validation_StudentsRequired" xml:space="preserve">
+    <value>Şagird siyahısı tələb olunur</value>
+  </data>
   <data name="Validation_LessonRequired" xml:space="preserve">
     <value>Dərs tələb olunur</value>
   </data>
@@ -189,6 +198,61 @@
   </data>
   <data name="Nav_Groups" xml:space="preserve">
     <value>Qruplar</value>
+  </data>
+
+  <data name="Nav_Attendance" xml:space="preserve">
+    <value>Yoxlama</value>
+  </data>
+  <data name="Attendance_Title" xml:space="preserve">
+    <value>Yoxlama</value>
+  </data>
+  <data name="Attendance_Subtitle" xml:space="preserve">
+    <value>Qrup üzrə günlük iştirakı qeyd edin</value>
+  </data>
+  <data name="Attendance_PickDay" xml:space="preserve">
+    <value>İştirakı qeyd etmək üçün təqvimdən gün seçin</value>
+  </data>
+  <data name="Attendance_LegendFull" xml:space="preserve">
+    <value>Hamısı iştirak edib</value>
+  </data>
+  <data name="Attendance_LegendPartial" xml:space="preserve">
+    <value>Yarıdan çoxu</value>
+  </data>
+  <data name="Attendance_LegendLow" xml:space="preserve">
+    <value>Az iştirak</value>
+  </data>
+  <data name="Attendance_LegendNone" xml:space="preserve">
+    <value>Qeyd yoxdur</value>
+  </data>
+  <data name="Attendance_MonthSummary" xml:space="preserve">
+    <value>Ay üzrə: {0} / {1}</value>
+  </data>
+  <data name="Attendance_AllPresent" xml:space="preserve">
+    <value>Hamısı hazır</value>
+  </data>
+  <data name="Attendance_AllAbsent" xml:space="preserve">
+    <value>Hamısı qayıb</value>
+  </data>
+  <data name="Attendance_MyTitle" xml:space="preserve">
+    <value>Dərslərə iştirak</value>
+  </data>
+  <data name="Attendance_MyPercent" xml:space="preserve">
+    <value>{0}% iştirak</value>
+  </data>
+  <data name="Attendance_MyCount" xml:space="preserve">
+    <value>{0} / {1} dərs</value>
+  </data>
+  <data name="Attendance_None" xml:space="preserve">
+    <value>Hələ qeyd yoxdur</value>
+  </data>
+  <data name="Attendance_Present" xml:space="preserve">
+    <value>İştirak edib</value>
+  </data>
+  <data name="Attendance_Absent" xml:space="preserve">
+    <value>İştirak etməyib</value>
+  </data>
+  <data name="Js_NoStudents" xml:space="preserve">
+    <value>Bu qrupda şagird yoxdur</value>
   </data>
   <data name="Nav_GroupStats" xml:space="preserve">
     <value>Qrup statistikası</value>

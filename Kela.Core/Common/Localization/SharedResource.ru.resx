@@ -118,6 +118,15 @@
   <data name="Validation_SubjectRequired" xml:space="preserve">
     <value>Предмет обязателен</value>
   </data>
+  <data name="Validation_GroupRequired" xml:space="preserve">
+    <value>Требуется группа</value>
+  </data>
+  <data name="Validation_DateRequired" xml:space="preserve">
+    <value>Требуется дата</value>
+  </data>
+  <data name="Validation_StudentsRequired" xml:space="preserve">
+    <value>Требуется список учеников</value>
+  </data>
   <data name="Validation_LessonRequired" xml:space="preserve">
     <value>Урок обязателен</value>
   </data>
@@ -189,6 +198,61 @@
   </data>
   <data name="Nav_Groups" xml:space="preserve">
     <value>Группы</value>
+  </data>
+
+  <data name="Nav_Attendance" xml:space="preserve">
+    <value>Посещаемость</value>
+  </data>
+  <data name="Attendance_Title" xml:space="preserve">
+    <value>Посещаемость</value>
+  </data>
+  <data name="Attendance_Subtitle" xml:space="preserve">
+    <value>Отмечайте посещаемость по группам</value>
+  </data>
+  <data name="Attendance_PickDay" xml:space="preserve">
+    <value>Выберите день в календаре</value>
+  </data>
+  <data name="Attendance_LegendFull" xml:space="preserve">
+    <value>Все присутствовали</value>
+  </data>
+  <data name="Attendance_LegendPartial" xml:space="preserve">
+    <value>Больше половины</value>
+  </data>
+  <data name="Attendance_LegendLow" xml:space="preserve">
+    <value>Низкая посещаемость</value>
+  </data>
+  <data name="Attendance_LegendNone" xml:space="preserve">
+    <value>Нет записи</value>
+  </data>
+  <data name="Attendance_MonthSummary" xml:space="preserve">
+    <value>За месяц: {0} / {1}</value>
+  </data>
+  <data name="Attendance_AllPresent" xml:space="preserve">
+    <value>Все присутствуют</value>
+  </data>
+  <data name="Attendance_AllAbsent" xml:space="preserve">
+    <value>Все отсутствуют</value>
+  </data>
+  <data name="Attendance_MyTitle" xml:space="preserve">
+    <value>Посещаемость</value>
+  </data>
+  <data name="Attendance_MyPercent" xml:space="preserve">
+    <value>{0}% посещаемости</value>
+  </data>
+  <data name="Attendance_MyCount" xml:space="preserve">
+    <value>{0} / {1} занятий</value>
+  </data>
+  <data name="Attendance_None" xml:space="preserve">
+    <value>Записей пока нет</value>
+  </data>
+  <data name="Attendance_Present" xml:space="preserve">
+    <value>Присутствовал</value>
+  </data>
+  <data name="Attendance_Absent" xml:space="preserve">
+    <value>Отсутствовал</value>
+  </data>
+  <data name="Js_NoStudents" xml:space="preserve">
+    <value>В этой группе нет учеников</value>
   </data>
   <data name="Nav_GroupStats" xml:space="preserve">
     <value>Статистика групп</value>

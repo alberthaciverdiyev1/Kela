@@ -94,6 +94,8 @@ public sealed class AppDbContext : DbContext
 
     public DbSet<Modules.ScreenGuard.Entities.ScreenViolation> ScreenViolations => Set<Modules.ScreenGuard.Entities.ScreenViolation>();
 
+    public DbSet<Modules.Attendance.Entities.AttendanceRecord> AttendanceRecords => Set<Modules.Attendance.Entities.AttendanceRecord>();
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);

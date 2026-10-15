@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Components.Forms;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.JSInterop;
 using Kela.App.Shared.Dtos;
+using Kela.App.Shared.Dtos.Attendance;
 using Kela.App.Shared.Dtos.Auth;
 using Kela.App.Shared.Dtos.Progress;
 using Kela.App.Shared.Dtos.Quiz;
@@ -13,6 +14,13 @@ namespace Kela.App.Shared.Pages.Profile;
 
 public partial class Profile
 {
+    protected override async Task OnInitializedAsync()
+    {
+        try { _attendance = await Api.MyAttendanceAsync(); }
+        catch { /* profil qalan hissəsi işləməyə davam etsin */ }
+        _attendanceLoading = false;
+    }
+
     private async Task ChangeLang(ChangeEventArgs e) => await L.SetAsync(e.Value?.ToString() ?? "az");
 
     private bool _busy;
@@ -23,6 +31,8 @@ public partial class Profile
     private bool _privacyOpen;
     private bool _logoutOpen;
     private bool _privacyLoading;
+    private MyAttendanceDto? _attendance;
+    private bool _attendanceLoading = true;
     private bool _notifications = true;
 
     private string _phone = "";

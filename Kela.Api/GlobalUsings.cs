@@ -1,5 +1,6 @@
 // Core modul abstraksiyaları (interfeyslər) — qlobal using
 global using Kela.Core.Modules.Auth.Abstractions;
+global using Kela.Core.Modules.Attendance.Abstractions;
 global using Kela.Core.Modules.Banner.Abstractions;
 global using Kela.Core.Modules.Group.Abstractions;
 global using Kela.Core.Modules.Lesson.Abstractions;
