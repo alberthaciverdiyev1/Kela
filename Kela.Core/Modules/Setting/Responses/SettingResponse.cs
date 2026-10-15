@@ -3,6 +3,9 @@ namespace Kela.Core.Modules.Setting.Responses;
 public record SettingResponse(
     long Id,
     string? Logo,
+    string? Description,
+    string? Email,
+    string? Address,
     string? WhatsappNumber,
     string? ContactNumber1,
     string? ContactNumber2,

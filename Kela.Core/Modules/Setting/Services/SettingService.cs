@@ -15,12 +15,19 @@ public sealed class SettingService(AppDbContext db, IFileStorage storage, IConfi
 
     public async Task<SettingResponse> GetAsync(CancellationToken ct = default)
     {
+        if (db.CurrentTenantId is null) return Empty();
+
         var setting = await db.Settings.AsNoTracking().FirstOrDefaultAsync(ct);
         return setting is null ? Empty() : ToResponse(setting);
     }
 
     public async Task<SettingResponse> UpdateAsync(SettingUpsertRequest request, CancellationToken ct = default)
     {
+        if (db.CurrentTenantId is null)
+        {
+            throw new ArgumentException("Tenant context is required to update settings");
+        }
+
         var setting = await db.Settings.FirstOrDefaultAsync(ct);
         if (setting is null)
         {
@@ -39,6 +46,9 @@ public sealed class SettingService(AppDbContext db, IFileStorage storage, IConfi
             setting.Logo = await storage.UploadAsync(request.Logo, LogoFolder, ct);
         }
 
+        setting.Description = request.Description;
+        setting.Email = request.Email;
+        setting.Address = request.Address;
         setting.WhatsappNumber = request.WhatsappNumber;
         setting.ContactNumber1 = request.ContactNumber1;
         setting.ContactNumber2 = request.ContactNumber2;
@@ -66,6 +76,9 @@ public sealed class SettingService(AppDbContext db, IFileStorage storage, IConfi
         new(
             s.Id,
             storage.GetUrl(s.Logo),
+            s.Description,
+            s.Email,
+            s.Address,
             s.WhatsappNumber,
             s.ContactNumber1,
             s.ContactNumber2,
@@ -77,5 +90,5 @@ public sealed class SettingService(AppDbContext db, IFileStorage storage, IConfi
             s.IosMinVersion);
 
     private SettingResponse Empty() =>
-        new(0, storage.GetUrl(null), null, null, null, null, null, null, null, null, null);
+        new(0, storage.GetUrl(null), null, null, null, null, null, null, null, null, null, null, null, null);
 }

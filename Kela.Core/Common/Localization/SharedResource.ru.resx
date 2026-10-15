@@ -550,6 +550,30 @@
   <data name="Setting_Subtitle" xml:space="preserve">
     <value>Управляйте брендингом, контактами и требованиями к версии.</value>
   </data>
+  <data name="Setting_CourseProfile" xml:space="preserve">
+    <value>Профиль курса</value>
+  </data>
+  <data name="Setting_NoTenant" xml:space="preserve">
+    <value>Нет контекста арендатора. Войдите как администратор курса, чтобы изменить настройки.</value>
+  </data>
+  <data name="Setting_CourseInfo" xml:space="preserve">
+    <value>Информация о курсе</value>
+  </data>
+  <data name="Setting_CourseName" xml:space="preserve">
+    <value>Название курса</value>
+  </data>
+  <data name="Setting_About" xml:space="preserve">
+    <value>О курсе</value>
+  </data>
+  <data name="Setting_AboutPlaceholder" xml:space="preserve">
+    <value>Краткое описание вашего курса...</value>
+  </data>
+  <data name="Setting_Address" xml:space="preserve">
+    <value>Адрес</value>
+  </data>
+  <data name="Setting_Branding" xml:space="preserve">
+    <value>Брендинг</value>
+  </data>
   <data name="Setting_AppVersions" xml:space="preserve">
     <value>Версии приложения</value>
   </data>

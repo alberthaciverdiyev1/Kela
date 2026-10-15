@@ -13,7 +13,6 @@ public sealed class ApiClient(HttpClient http, AuthState auth, TokenStore store,
 
     public string? Token { get; set; }
 
-    /// <summary>Seçilmiş tenant — hər sorğuda X-Tenant-Id header-ı kimi göndərilir.</summary>
     public long? TenantId { get; set; }
 
     private void ApplyAuth()
@@ -80,7 +79,14 @@ public sealed class ApiClient(HttpClient http, AuthState auth, TokenStore store,
         JsonElement root = default;
         if (!string.IsNullOrWhiteSpace(payload))
         {
-            try { root = JsonDocument.Parse(payload).RootElement; } catch { /* qeyri-JSON */ }
+            try
+            {
+                root = JsonDocument.Parse(payload).RootElement;
+            }
+            catch
+            {
+                /* qeyri-JSON */
+            }
         }
 
         var success = root.ValueKind == JsonValueKind.Object
@@ -91,7 +97,8 @@ public sealed class ApiClient(HttpClient http, AuthState auth, TokenStore store,
             var message = root.ValueKind == JsonValueKind.Object && root.TryGetProperty("message", out var m)
                 ? m.GetString()
                 : null;
-            throw new ApiException(message ?? lang.Format("Error_Status", (int)response.StatusCode), (int)response.StatusCode);
+            throw new ApiException(message ?? lang.Format("Error_Status", (int)response.StatusCode),
+                (int)response.StatusCode);
         }
 
         if (root.TryGetProperty("data", out var data))
@@ -106,6 +113,13 @@ public sealed class ApiClient(HttpClient http, AuthState auth, TokenStore store,
     {
         Token = null;
         auth.Clear();
-        try { await store.RemoveAsync(); } catch { /* JS hazır deyil */ }
+        try
+        {
+            await store.RemoveAsync();
+        }
+        catch
+        {
+            /* JS hazır deyil */
+        }
     }
 }

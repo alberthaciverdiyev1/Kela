@@ -1,6 +1,7 @@
 @{
     var controller = (string?)ViewContext.RouteData.Values["controller"] ?? "";
     var isAdmin = User.IsInRole(AuthRoles.Admin) || User.IsInRole(AuthRoles.SuperAdmin);
+    var isSuperAdmin = User.IsInRole(AuthRoles.SuperAdmin);
     string Active(string c) => controller.Equals(c, StringComparison.OrdinalIgnoreCase)
         ? "bg-primary-light text-primary"
         : "text-slate-600 hover:bg-surface-secondary hover:text-slate-900";
@@ -70,10 +71,13 @@
                     <svg class="h-5 w-5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4.354a4 4 0 1 1 0 5.292M15 21H3v-1a6 6 0 0 1 12 0v1Zm0 0h6v-1a6 6 0 0 0-9-5.197" /></svg>
                     @L["Nav_Users"]
                 </a>
-                <a href="/tenant" class="flex h-10 items-center gap-3 rounded-xl px-3 text-[15px] font-medium transition @Active("Tenant")">
-                    <svg class="h-5 w-5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M4 21V5a2 2 0 0 1 2-2h6a2 2 0 0 1 2 2v16M14 21V9h4a2 2 0 0 1 2 2v10M2 21h20M7 7h2M7 11h2M7 15h2" /></svg>
-                    @L["Nav_Tenants"]
-                </a>
+                @if (isSuperAdmin)
+                {
+                    <a href="/tenant" class="flex h-10 items-center gap-3 rounded-xl px-3 text-[15px] font-medium transition @Active("Tenant")">
+                        <svg class="h-5 w-5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M4 21V5a2 2 0 0 1 2-2h6a2 2 0 0 1 2 2v16M14 21V9h4a2 2 0 0 1 2 2v10M2 21h20M7 7h2M7 11h2M7 15h2" /></svg>
+                        @L["Nav_Tenants"]
+                    </a>
+                }
             }
         </div>
 

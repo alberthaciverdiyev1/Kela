@@ -8,6 +8,12 @@ public class SettingUpsertRequest
 
     public bool RemoveLogo { get; set; }
 
+    public string? Description { get; set; }
+
+    public string? Email { get; set; }
+
+    public string? Address { get; set; }
+
     public string? WhatsappNumber { get; set; }
 
     public string? ContactNumber1 { get; set; }

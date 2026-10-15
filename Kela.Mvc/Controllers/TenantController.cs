@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Kela.Mvc.Controllers;
 
-[Authorize(Policy = AuthPolicies.Admin)]
+[Authorize(Policy = AuthPolicies.SuperAdmin)]
 [Route("[controller]")]
 public sealed class TenantController(ITenantService service) : Controller
 {

@@ -550,6 +550,30 @@
   <data name="Setting_Subtitle" xml:space="preserve">
     <value>Manage app branding, contact info and version requirements.</value>
   </data>
+  <data name="Setting_CourseProfile" xml:space="preserve">
+    <value>Course profile</value>
+  </data>
+  <data name="Setting_NoTenant" xml:space="preserve">
+    <value>No tenant context. Sign in as a tenant administrator to edit course settings.</value>
+  </data>
+  <data name="Setting_CourseInfo" xml:space="preserve">
+    <value>Course info</value>
+  </data>
+  <data name="Setting_CourseName" xml:space="preserve">
+    <value>Course name</value>
+  </data>
+  <data name="Setting_About" xml:space="preserve">
+    <value>About</value>
+  </data>
+  <data name="Setting_AboutPlaceholder" xml:space="preserve">
+    <value>Short description of your course...</value>
+  </data>
+  <data name="Setting_Address" xml:space="preserve">
+    <value>Address</value>
+  </data>
+  <data name="Setting_Branding" xml:space="preserve">
+    <value>Branding</value>
+  </data>
   <data name="Setting_AppVersions" xml:space="preserve">
     <value>App versions</value>
   </data>

@@ -1472,6 +1472,11 @@ namespace Kela.Core.Data.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
 
+                    b.Property<string>("Address")
+                        .HasMaxLength(500)
+                        .HasColumnType("character varying(500)")
+                        .HasColumnName("address");
+
                     b.Property<string>("AndroidMinVersion")
                         .HasMaxLength(20)
                         .HasColumnType("character varying(20)")
@@ -1496,6 +1501,16 @@ namespace Kela.Core.Data.Migrations
                         .HasMaxLength(50)
                         .HasColumnType("character varying(50)")
                         .HasColumnName("contact_number_4");
+
+                    b.Property<string>("Description")
+                        .HasMaxLength(2000)
+                        .HasColumnType("character varying(2000)")
+                        .HasColumnName("description");
+
+                    b.Property<string>("Email")
+                        .HasMaxLength(190)
+                        .HasColumnType("character varying(190)")
+                        .HasColumnName("email");
 
                     b.Property<string>("FacebookUrl")
                         .HasMaxLength(500)
