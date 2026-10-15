@@ -7,10 +7,9 @@ namespace Kela.App.Shared.Pages.Login;
 
 public partial class Login
 {
-    // Demo kurs siyahısı — SONRA API-dən gələcək ({ id, name, logoUrl }).
-    private readonly List<CourseOption> _courses = BuildDemoCourses();
+    private static readonly string[] CourseEmojis =
+        ["🎓", "🦉", "📚", "🇹🇷", "🐍", "📊", "🟣", "🇩🇪", "🇫🇷", "📐", "⚛️", "🧪"];
 
-    private int _selected;
     private bool _modalOpen;
     private string _search = "";
 
@@ -39,6 +38,8 @@ public partial class Login
         }
     }
 
+    private string Emoji(TenantDto t) => CourseEmojis[Math.Abs(t.Id) % CourseEmojis.Length];
+
     private void Toggle()
     {
         _register = !_register;
@@ -53,22 +54,24 @@ public partial class Login
 
     private void CloseModal() => _modalOpen = false;
 
-    private void SelectFromModal(int index)
+    private void Select(TenantDto tenant)
     {
-        _selected = index;
+        _tenantId = tenant.Id;
+        _error = null;
+    }
+
+    private void SelectFromModal(TenantDto tenant)
+    {
+        Select(tenant);
         CloseModal();
     }
 
-    private IEnumerable<(CourseOption Course, int Index)> Filtered()
+    private IEnumerable<TenantDto> Filtered()
     {
         var q = _search.Trim().ToLowerInvariant();
-        for (var i = 0; i < _courses.Count; i++)
-        {
-            if (q.Length == 0 || _courses[i].Name.ToLowerInvariant().Contains(q))
-            {
-                yield return (_courses[i], i);
-            }
-        }
+        return q.Length == 0
+            ? _tenants
+            : _tenants.Where(t => t.Name.ToLowerInvariant().Contains(q));
     }
 
     private async Task SubmitAsync()
@@ -102,18 +105,4 @@ public partial class Login
             _busy = false;
         }
     }
-
-    private static List<CourseOption> BuildDemoCourses()
-    {
-        var list = new List<CourseOption>
-        {
-            new("İngilis Dili", "🦉"), new("Türk Dili", "🇹🇷"), new("Proqramlaşdırma", "🐍"),
-            new("IELTS", "📊"), new("Dizayn", "🟣"), new("Alman Dili", "🇩🇪"),
-            new("Fransız Dili", "🇫🇷"), new("Riyaziyyat", "📐"), new("Fizika", "⚛️"), new("Kimya", "🧪")
-        };
-        for (var i = 11; i <= 110; i++) list.Add(new CourseOption($"Kurs {i}", "📚"));
-        return list;
-    }
-
-    public record CourseOption(string Name, string Emoji);
 }

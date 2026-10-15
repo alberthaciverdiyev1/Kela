@@ -19,49 +19,33 @@
             <h1 class="heading">@(_register ? L["Login_HeadingRegister"] : L["Login_HeadingLogin"])</h1>
             <p class="subtitle">@(_register ? L["Login_SubRegister"] : L["Login_SubLogin"])</p>
 
-            @if (!_register)
-            {
-                <div class="flex items-center justify-between">
-                    <h2 class="section-title">@L["Login_SelectCourse"]</h2>
-                    <button type="button" class="see-all" @onclick="OpenModal">
-                        @L["Login_SeeAll"]
-                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m9 5 7 7-7 7"/></svg>
-                    </button>
-                </div>
+            <div class="flex items-center justify-between">
+                <h2 class="section-title">@L["Login_SelectCourse"]</h2>
+                <button type="button" class="see-all" @onclick="OpenModal">
+                    @L["Login_SeeAll"]
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m9 5 7 7-7 7"/></svg>
+                </button>
+            </div>
 
-                <div class="courses" role="group" aria-label="@L["Login_CoursesAria"]">
-                    @for (var i = 0; i < Math.Min(_courses.Count, 10); i++)
+            <div class="courses" role="group" aria-label="@L["Login_CoursesAria"]">
+                @if (_tenants.Count == 0)
+                {
+                    <p class="muted">@L["Login_NoTenants"]</p>
+                }
+                else
+                {
+                    foreach (var t in _tenants.Take(10))
                     {
-                        var idx = i;
-                        <button type="button" class="course" aria-pressed="@(_selected == idx ? "true" : "false")" @onclick="() => _selected = idx">
-                            <span class="emoji">@_courses[idx].Emoji</span>
-                            <span>@_courses[idx].Name</span>
+                        var tenant = t;
+                        <button type="button" class="course" aria-pressed="@(_tenantId == tenant.Id ? "true" : "false")" @onclick="() => Select(tenant)">
+                            <span class="emoji">@Emoji(tenant)</span>
+                            <span>@tenant.Name</span>
                         </button>
                     }
-                </div>
-            }
+                }
+            </div>
 
             <form class="form" @onsubmit="SubmitAsync" @onsubmit:preventDefault>
-                <div class="field">
-                    <label for="tenant">@L["Login_Tenant"]</label>
-                    <div class="control">
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21h18M5 21V7l7-4 7 4v14M9 9h.01M9 13h.01M9 17h.01M15 9h.01M15 13h.01M15 17h.01"/></svg>
-                        @if (_tenants.Count == 0)
-                        {
-                            <select id="tenant" disabled><option>@L["Login_NoTenants"]</option></select>
-                        }
-                        else
-                        {
-                            <select id="tenant" @bind="_tenantId">
-                                @foreach (var t in _tenants)
-                                {
-                                    <option value="@t.Id">@t.Name</option>
-                                }
-                            </select>
-                        }
-                    </div>
-                </div>
-
                 @if (_register)
                 {
                     <div class="field">
@@ -128,11 +112,12 @@
                 </div>
                 <input class="search" placeholder="@L["Login_SearchCourse"]" @bind="_search" @bind:event="oninput" />
                 <div class="course-list">
-                    @foreach (var (course, idx) in Filtered())
+                    @foreach (var t in Filtered())
                     {
-                        <button type="button" class="course-row @(_selected == idx ? "selected" : "")" @onclick="() => SelectFromModal(idx)">
-                            <span class="emoji">@course.Emoji</span>
-                            <span>@course.Name</span>
+                        var tenant = t;
+                        <button type="button" class="course-row @(_tenantId == tenant.Id ? "selected" : "")" @onclick="() => SelectFromModal(tenant)">
+                            <span class="emoji">@Emoji(tenant)</span>
+                            <span>@tenant.Name</span>
                         </button>
                     }
                 </div>
