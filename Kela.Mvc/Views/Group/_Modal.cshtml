@@ -58,11 +58,10 @@
                     <div id="wizGenPanel" class="hidden space-y-3 rounded-xl border border-border p-3">
                         <div class="grid grid-cols-2 gap-2">
                             <input id="wg_count" type="number" value="100" class="admin-field" />
-                            <input id="wg_domain" value="generated.local" class="admin-field" />
+                            <input id="wg_domain" value="kela.az" class="admin-field" />
                             <input id="wg_prefix" value="Student" class="admin-field" />
-                            <input id="wg_password" value="student123" class="admin-field" />
+                            <input id="wg_password" placeholder="parol (boş=random)" class="admin-field" />
                         </div>
-                        <label class="flex items-center gap-2 text-sm font-medium text-slate-600"><input type="checkbox" id="wg_send" class="h-4 w-4 rounded border-slate-300 text-primary focus:ring-primary" />@L["Students_SendCredentials"]</label>
                         <div class="flex justify-end gap-2">
                             <button type="button" onclick="wizToggleGen()" class="admin-button-secondary">@L["Common_Cancel"]</button>
                             <button type="button" onclick="wizGenerate()" class="admin-button-primary">@L["Common_Generate"]</button>

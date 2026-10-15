@@ -292,6 +292,9 @@
   <data name="Students_SendCredentials" xml:space="preserve">
     <value>Отправить данные по почте</value>
   </data>
+  <data name="Students_PasswordOptional" xml:space="preserve">
+    <value>Пароль (оставьте пустым — случайный надёжный пароль)</value>
+  </data>
   <data name="Common_Save" xml:space="preserve">
     <value>Сохранить</value>
   </data>

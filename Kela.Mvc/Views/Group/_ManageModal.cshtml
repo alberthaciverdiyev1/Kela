@@ -21,11 +21,10 @@
                 <div id="groupGenPanel" class="hidden space-y-3 rounded-xl border border-border p-3">
                     <div class="grid grid-cols-2 gap-2">
                         <input id="gg_count" type="number" value="100" placeholder="100" class="admin-field" />
-                        <input id="gg_domain" value="generated.local" placeholder="domain" class="admin-field" />
+                        <input id="gg_domain" value="kela.az" placeholder="domain" class="admin-field" />
                         <input id="gg_prefix" value="Student" placeholder="prefix" class="admin-field" />
-                        <input id="gg_password" value="student123" placeholder="parol" class="admin-field" />
+                        <input id="gg_password" placeholder="parol (boş=random)" class="admin-field" />
                     </div>
-                    <label class="flex items-center gap-2 text-sm font-medium text-slate-600"><input type="checkbox" id="gg_send" class="h-4 w-4 rounded border-slate-300 text-primary focus:ring-primary" />@L["Students_SendCredentials"]</label>
                     <div class="flex justify-end gap-2">
                         <button type="button" onclick="toggleGroupGen()" class="admin-button-secondary">@L["Common_Cancel"]</button>
                         <button type="button" onclick="generateIntoGroup()" class="admin-button-primary">@L["Common_Generate"]</button>

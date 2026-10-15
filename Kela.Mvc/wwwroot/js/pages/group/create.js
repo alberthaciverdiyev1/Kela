@@ -46,12 +46,13 @@
             count: Number(document.getElementById('wg_count').value),
             fullNamePrefix: document.getElementById('wg_prefix').value,
             emailDomain: document.getElementById('wg_domain').value,
-            password: document.getElementById('wg_password').value,
-            sendCredentials: document.getElementById('wg_send').checked
+            password: document.getElementById('wg_password').value
         });
         if (!res.ok) { AdminUI.error(AdminUI.errText(res)); return; }
 
-        (res.data.students || []).forEach(s => generatedStudentIds.push(s.id));
+        const list = res.data.students || [];
+        list.forEach(s => generatedStudentIds.push(s.id));
+        if (list.length) AdminUI.downloadCsv('students-' + Date.now() + '.csv', ['Ad', 'E-poçt', 'Şifrə'], list.map(s => [s.fullName, s.email, s.password]));
         const info = document.getElementById('wizGenInfo');
         info.textContent = generatedStudentIds.length + ' ' + L["Common_Generate"];
         info.classList.remove('hidden');

@@ -292,6 +292,9 @@
   <data name="Students_SendCredentials" xml:space="preserve">
     <value>Bilgileri e-posta ile gönder</value>
   </data>
+  <data name="Students_PasswordOptional" xml:space="preserve">
+    <value>Parola (boş bırakın — rastgele güçlü parola)</value>
+  </data>
   <data name="Common_Save" xml:space="preserve">
     <value>Kaydet</value>
   </data>

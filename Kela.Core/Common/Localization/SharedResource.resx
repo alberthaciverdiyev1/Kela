@@ -292,6 +292,9 @@
   <data name="Students_SendCredentials" xml:space="preserve">
     <value>Send credentials by email</value>
   </data>
+  <data name="Students_PasswordOptional" xml:space="preserve">
+    <value>Password (leave empty for a random secure password)</value>
+  </data>
   <data name="Common_Save" xml:space="preserve">
     <value>Save</value>
   </data>

@@ -1,6 +1,6 @@
+using System.Security.Cryptography;
 using ClosedXML.Excel;
 using Kela.Core.Common.Bulk;
-using Kela.Core.Common.Email;
 using Kela.Core.Common.Responses;
 using Kela.Core.Data;
 using Kela.Core.Modules.Students.Requests;
@@ -11,7 +11,7 @@ namespace Kela.Core.Modules.Students.Services;
 
 using Student = Kela.Core.Modules.Auth.Entities.Student;
 
-public sealed class StudentManagementService(AppDbContext db, IEmailSender email) : Abstractions.IStudentManagementService
+public sealed class StudentManagementService(AppDbContext db) : Abstractions.IStudentManagementService
 {
     public async Task<PagedResponse<StudentListItemResponse>> ListAsync(StudentListRequest request, CancellationToken ct = default)
     {
@@ -92,28 +92,42 @@ public sealed class StudentManagementService(AppDbContext db, IEmailSender email
     public async Task<GenerateStudentsResponse> GenerateAsync(GenerateStudentsRequest request, CancellationToken ct = default)
     {
         var count = request.Count is < 1 or > 1000 ? 10 : request.Count;
-        var hash = BCrypt.Net.BCrypt.HashPassword(request.Password);
-        var domain = string.IsNullOrWhiteSpace(request.EmailDomain) ? "generated.local" : request.EmailDomain.Trim().TrimStart('@');
+        var fixedPassword = string.IsNullOrWhiteSpace(request.Password) ? null : request.Password;
+        var domain = string.IsNullOrWhiteSpace(request.EmailDomain) ? "kela.az" : request.EmailDomain.Trim().TrimStart('@');
 
-        var created = new List<Student>(count);
+        var taken = (await db.Students.IgnoreQueryFilters(new[] { "SoftDelete" })
+                .Where(s => EF.Functions.ILike(s.Email, "%@" + domain))
+                .Select(s => s.Email)
+                .ToListAsync(ct))
+            .ToHashSet(StringComparer.OrdinalIgnoreCase);
+
+        var created = new List<(Student Student, string Password)>(count);
         for (var i = 1; i <= count; i++)
         {
+            var email = $"{request.EmailPrefix}{i}@{domain}".ToLowerInvariant();
+            while (taken.Contains(email))
+            {
+                email = $"{request.EmailPrefix}{i}-{Guid.NewGuid():N}"[..(request.EmailPrefix.Length + 7)] + $"@{domain}";
+            }
+            taken.Add(email);
+
+            var password = fixedPassword ?? GeneratePassword();
             var student = new Student
             {
                 FullName = $"{request.FullNamePrefix} {i}",
-                Email = $"{request.EmailPrefix}{i}@{domain}".ToLowerInvariant(),
-                PasswordHash = hash,
+                Email = email,
+                PasswordHash = BCrypt.Net.BCrypt.HashPassword(password),
                 IsActive = true
             };
             db.Students.Add(student);
-            created.Add(student);
+            created.Add((student, password));
         }
 
         await db.SaveChangesAsync(ct);
 
         if (request.GroupId is long groupId)
         {
-            foreach (var student in created)
+            foreach (var (student, _) in created)
             {
                 db.StudentGroups.Add(new Modules.Group.Entities.StudentGroup
                 {
@@ -124,23 +138,8 @@ public sealed class StudentManagementService(AppDbContext db, IEmailSender email
             await db.SaveChangesAsync(ct);
         }
 
-        var sent = false;
-        if (request.SendCredentials)
-        {
-            foreach (var student in created)
-            {
-                try
-                {
-                    await email.SendAsync(student.Email, "Hesab məlumatlarınız",
-                        $"<p>Salam, {student.FullName}.</p><p>E-poçt: <b>{student.Email}</b><br/>Şifrə: <b>{request.Password}</b></p>", ct);
-                }
-                catch { /* SMTP konfiqurasiya olunmayıb */ }
-            }
-            sent = true;
-        }
-
-        return new GenerateStudentsResponse(count, sent,
-            created.Select(s => new GeneratedStudentInfo(s.Id, s.FullName, s.Email)).ToList());
+        return new GenerateStudentsResponse(count,
+            created.Select(x => new GeneratedStudentInfo(x.Student.Id, x.Student.FullName, x.Student.Email, x.Password)).ToList());
     }
 
     public async Task<IReadOnlyList<StudentDeviceResponse>> ListDevicesAsync(long studentId, CancellationToken ct = default)
@@ -195,4 +194,21 @@ public sealed class StudentManagementService(AppDbContext db, IEmailSender email
 
     private static StudentListItemResponse ToResponse(Student s) =>
         new(s.Id, s.FullName, s.Email, s.Phone, s.IsActive, s.CreatedAt);
+
+    /// <summary>Təsadüfi güclü şifrə (12 simvol: hərf + rəqəm, oxşar simvollar istisna).</summary>
+    private static string GeneratePassword()
+    {
+        const string letters = "abcdefghjkmnpqrstuvwxyzABCDEFGHJKLMNPQRSTUVWXYZ";
+        const string digits = "23456789";
+        var chars = new char[12];
+        for (var i = 0; i < chars.Length; i++)
+        {
+            var pool = i % 3 == 2 ? digits : letters;
+            chars[i] = pool[RandomNumberGenerator.GetInt32(pool.Length)];
+        }
+        // ən azı bir hərf və bir rəqəm zəmanətli olsun
+        chars[0] = letters[RandomNumberGenerator.GetInt32(letters.Length)];
+        chars[^1] = digits[RandomNumberGenerator.GetInt32(digits.Length)];
+        return new string(chars);
+    }
 }
