@@ -13,18 +13,25 @@ namespace Kela.App.Shared.Layout;
 public partial class MainLayout
 {
     [Inject] private NavigationManager Nav { get; set; } = default!;
+    [Inject] private NavIntent Intent { get; set; } = default!;
 
     private bool _ready;
     private readonly List<string> _trail = [];
-    private bool _goingBack;
+    private NavKind _kind = NavKind.Forward;
+    private bool _instant;
+    private DateTime _lastSwap = DateTime.MinValue;
 
     // Açar yalnız route-dan asılıdır və canlı oxunur ki, @Body ilə EYNİ render-də
-    // dəyişsin. İstiqamət (_goingBack) BİLƏRƏKDƏN daxil edilmir: o, set olunanda
-    // açar ikinci dəfə dəyişir, element iki dəfə yaradılır və birinci animasiya
-    // yarıda qırılır — nəticədə keçid iki hərəkətə bölünür.
+    // bir dəfə dəyişsin. Növ (_kind) və _instant BİLƏRƏKDƏN daxil edilmir: onlar
+    // set olunanda açar ikinci dəfə dəyişər, element iki dəfə yaradılar və birinci
+    // animasiya yarıda qırılardı.
     private string RenderKey => $"{Lang.Current}|{Nav.ToBaseRelativePath(Nav.Uri)}";
 
-    private string TransitionClass => _goingBack ? "page-transition page-back" : "page-transition";
+    private string TransitionClass => _instant || _kind == NavKind.Tab
+        ? "page-transition page-none"
+        : _kind == NavKind.Back
+            ? "page-transition page-back"
+            : "page-transition";
 
     protected override async Task OnInitializedAsync()
     {
@@ -111,26 +118,46 @@ public partial class MainLayout
         }
     }
 
-    private void OnLangChanged() => _ = InvokeAsync(() =>
-    {
-        // Dil dəyişməsi naviqasiya deyil — keçid animasiyası irəli istiqamətdə qalsın.
-        _goingBack = false;
-        StateHasChanged();
-    });
+    private void OnLangChanged() => _ = InvokeAsync(StateHasChanged);
 
     private void OnLocationChanged(object? sender, Microsoft.AspNetCore.Components.Routing.LocationChangedEventArgs e)
     {
-        // İstiqamət SINXRON təyin olunur, InvokeAsync içində yox: render növbəsi
-        // işlənməzdən əvvəl hazır olmalıdır, əks halda element səhv siniflə yaranır.
-        _goingBack = IsBackNavigation(Nav.ToBaseRelativePath(Nav.Uri));
+        // Növ render növbəsi işlənməmişdən əvvəl SINXRON təyin olunur.
+        _kind = ResolveKind(Nav.ToBaseRelativePath(Nav.Uri), Intent.Take());
+
+        // Ardıcıl sürətli keçidlərdə animasiya yarımçıq qırılır və "sıçrayış" kimi
+        // görünür; bu halda animasiya tamamilə söndürülür.
+        var now = DateTime.UtcNow;
+        _instant = now - _lastSwap < TimeSpan.FromMilliseconds(300);
+        _lastSwap = now;
+
         _ = InvokeAsync(StateHasChanged);
     }
 
     /// <summary>
-    /// Geri naviqasiyanı müəyyən edir. Blazor istiqamət vermir, ona görə keçdiyimiz
-    /// yolları yığıb hədəf yola görə qərar veririk: yol yığında varsa geri qayıdırıq.
-    /// Bu, həm 'geri' düyməsini (pushState), həm history.back()-i (popstate) tutur.
+    /// Keçid növünü müəyyən edir. Əvvəlcə komponentin qeyd etdiyi niyyətə baxılır
+    /// (sekme / geri); niyyət yoxdursa hədəf yolun keçdiyimiz yollarda olub-olmaması
+    /// ilə geri qayıdışı təxmin edirik (hardware geri tuşu bu yolla tutulur).
     /// </summary>
+    private NavKind ResolveKind(string path, NavKind intent)
+    {
+        switch (intent)
+        {
+            case NavKind.Back:
+                var idx = _trail.IndexOf(path);
+                if (idx >= 0) _trail.RemoveRange(idx + 1, _trail.Count - idx - 1);
+                else _trail.Add(path);
+                return NavKind.Back;
+
+            case NavKind.Tab:
+                if (_trail.Count == 0 || _trail[^1] != path) _trail.Add(path);
+                return NavKind.Tab;
+
+            default:
+                return IsBackNavigation(path) ? NavKind.Back : NavKind.Forward;
+        }
+    }
+
     private bool IsBackNavigation(string path)
     {
         var idx = _trail.LastIndexOf(path);

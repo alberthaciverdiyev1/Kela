@@ -134,7 +134,7 @@
    will-change istifadə edilmir: daimi layer transform, səhifə daxilindəki
    position:fixed elementləri (Modal, StoryViewer) sındırır. */
 @keyframes pageIn {
-  from { transform: translateX(100%); }
+  from { transform: translateX(45%); }
   to { transform: none; }
 }
 .page-transition {
@@ -143,7 +143,7 @@
 }
 
 @keyframes pageInReverse {
-  from { transform: translateX(-100%); }
+  from { transform: translateX(-45%); }
   to { transform: none; }
 }
 
@@ -151,6 +151,11 @@
    Yalnız animation-name əvəzlənir — müddət və easing .page-transition-dan qalır. */
 .page-transition.page-back {
   animation-name: pageInReverse;
+}
+
+/* Sekme keçidi və sürətli ardıcıl keçidlər: animasiya yoxdur (native davranış). */
+.page-transition.page-none {
+  animation: none;
 }
 
 /* İskelet (skeleton) — məzmun gözləyərkən səhifənin formasını saxlayan yer tutucu.
@@ -163,6 +168,8 @@
     position: relative;
     overflow: hidden;
     background-color: var(--color-brand-090);
+    /* Məzmun 120ms-dən tez gəlsə iskelet heç görünmür (backwards fill). */
+    animation: skeleton-appear 0.18s ease-out 0.12s backwards;
   }
 
   .skeleton::after {
@@ -173,6 +180,10 @@
     background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.7), transparent);
     animation: skeleton-sweep 1.4s ease-in-out infinite;
   }
+}
+
+@keyframes skeleton-appear {
+  from { opacity: 0; }
 }
 
 @keyframes skeleton-sweep {

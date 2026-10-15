@@ -19,5 +19,6 @@ builder.Services.AddScoped<IScreenGuard, WebScreenGuard>();
 builder.Services.AddScoped<IDeviceTokenProvider, WebDeviceTokenProvider>();
 builder.Services.AddScoped<PushTokenService>();
 builder.Services.AddScoped<Localizer>();
+builder.Services.AddScoped<NavIntent>();
 
 await builder.Build().RunAsync();

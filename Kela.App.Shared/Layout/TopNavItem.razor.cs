@@ -12,6 +12,8 @@ namespace Kela.App.Shared.Layout;
 
 public partial class TopNavItem
 {
+    [Inject] private NavIntent Intent { get; set; } = default!;
+
     [Parameter] public string Href { get; set; } = "/";
     [Parameter] public string Label { get; set; } = "";
     [Parameter] public string IconName { get; set; } = "book";
@@ -29,6 +31,12 @@ public partial class TopNavItem
         => InvokeAsync(StateHasChanged);
 
     public void Dispose() => Nav.LocationChanged -= OnLocationChanged;
+
+    private void Open()
+    {
+        Intent.Next = NavKind.Tab;
+        Nav.NavigateTo(Href);
+    }
 
     private string Css =>
         "flex shrink-0 items-center gap-2 rounded-lg px-3 py-2 text-[13px] font-medium transition " +

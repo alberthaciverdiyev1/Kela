@@ -1,6 +1,7 @@
 @implements IDisposable
 @inject NavigationManager Nav
 
-<a href="@Href" class="@Css">
+@* Sekme niyyəti naviqasiyadan əvvəl qeyd olunsun (bax: BottomItem). *@
+<a href="@Href" @onclick="Open" @onclick:preventDefault class="@Css">
     <Icon Name="@IconName" Class="size-[17px]" /><span class="whitespace-nowrap">@Label</span>
 </a>

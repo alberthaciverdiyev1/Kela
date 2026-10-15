@@ -1,7 +1,9 @@
 @implements IDisposable
 @inject NavigationManager Nav
 
-<a href="@Href" class="@Css">
+@* @onclick:preventDefault: default keçid ləğv olunur, naviqasiyanı özümüz edirik ki
+   niyyət (sekme) naviqasiyadan ƏVVƏL qeyd olunsun. *@
+<a href="@Href" @onclick="Open" @onclick:preventDefault class="@Css">
     <Icon Name="@IconName" Class="size-5" />
     <span>@Label</span>
 </a>

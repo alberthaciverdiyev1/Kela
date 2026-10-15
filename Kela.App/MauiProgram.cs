@@ -34,6 +34,7 @@ public static class MauiProgram
         builder.Services.AddScoped<IDeviceTokenProvider, WebDeviceTokenProvider>();
         builder.Services.AddScoped<PushTokenService>();
         builder.Services.AddScoped<Localizer>();
+        builder.Services.AddScoped<NavIntent>();
 
         return builder.Build();
     }
