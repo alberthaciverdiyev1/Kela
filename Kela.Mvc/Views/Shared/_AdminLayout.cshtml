@@ -13,6 +13,15 @@
         "admin" => "badge-primary",
         _ => "badge-neutral"
     };
+    var langs = new (string Code, string Flag, string Name)[]
+    {
+        ("az", "🇦🇿", "Azərbaycan"),
+        ("ru", "🇷🇺", "Русский"),
+        ("tr", "🇹🇷", "Türkçe"),
+        ("en", "🇬🇧", "English")
+    };
+    var currentLang = System.Globalization.CultureInfo.CurrentUICulture.TwoLetterISOLanguageName;
+    var currentLangItem = langs.FirstOrDefault(l => l.Code == currentLang);
     var displayName = User.Identity?.Name ?? L["Common_User"];
     var initial = string.IsNullOrWhiteSpace(displayName) ? "?" : displayName.Trim()[..1].ToUpperInvariant();
     var jsKeys = new[] { "Js_ConfirmDeleteBanner", "Js_ConfirmDeleteNotification", "Js_ConfirmDeleteLesson", "Js_ConfirmDeleteSubject", "Js_ConfirmDeleteQuiz", "Js_ConfirmDeleteUser", "Js_ConfirmDeleteMaterial", "Js_ConfirmDeleteGroup", "Js_ConfirmDeleteStudent", "Js_ConfirmDeleteCertificate", "Js_ConfirmDeleteQuestion", "Js_Irreversible", "Js_AreYouSure", "Js_ConfirmResetDevice", "Js_ConfirmRemove", "Js_ConfirmRestore", "Js_NothingSelected", "Js_Added", "Js_Updated", "Js_Created", "Js_Restored", "Js_StatusChanged", "Js_Sent", "Js_Removed", "Js_Unlocked", "Js_CacheCleared", "Js_Saved", "Js_Applied", "Js_OrderUpdated", "Js_ErrorOccured", "Js_AdjustSearch", "Js_EditBanner", "Js_EditLesson", "Js_EditSubject", "Js_EditQuiz", "Js_EditUser", "Js_EditMaterial", "Js_EditGroup", "Js_EditCertificate", "Js_EditQuestion", "Js_SortLessons", "Js_SortLessonsSubject", "Js_SortQuizzes", "Js_SortMaterials", "Js_SelectLessonFirst", "Js_Edit", "Js_Old", "Js_Selected", "Js_All", "Js_EditPrefix", "Js_ManageSuffix", "Js_ContentKeysSuffix", "Js_StudentsCreated", "Js_Empty", "Js_NothingToSort", "Js_Voice", "Js_EditDelete", "Js_QuizCount", "Js_StudentCount", "Js_TotalQuestions", "Common_Cancel", "Common_Delete", "Common_ChooseFile", "Common_SelectGroup", "Common_Lesson", "Role_Teacher", "Common_General", "Common_Archived", "Lesson_SettingsTitle", "Sort_Title", "Common_Save", "Common_Active", "Common_Restore", "Subject_Create", "User_Create", "Lesson_Create", "Privacy_Create" };
@@ -56,13 +65,29 @@
                             </form>
                         </div>
                     }
-                    <select id="langSelect" onchange="setLang(this.value)" aria-label="Language"
-                            class="rounded-lg border border-border bg-white px-2 py-1.5 text-xs font-semibold text-slate-600 outline-none focus:border-primary">
-                        @foreach (var c in Kela.Core.Common.Localization.LocalizationExtensions.SupportedCultures)
-                        {
-                            <option value="@c" selected="@(c == System.Globalization.CultureInfo.CurrentUICulture.TwoLetterISOLanguageName)">@c.ToUpperInvariant()</option>
-                        }
-                    </select>
+                    <div class="relative shrink-0">
+                        <button type="button" id="langMenuBtn" aria-label="Language"
+                                class="flex items-center gap-2 rounded-xl border border-border bg-white px-3 py-2 text-sm font-semibold text-slate-600 transition hover:bg-surface-secondary">
+                            <svg class="h-4 w-4 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9" /><path stroke-linecap="round" stroke-linejoin="round" d="M3 12h18M12 3a15 15 0 0 1 0 18M12 3a15 15 0 0 0 0 18" /></svg>
+                            <span class="text-base leading-none">@(currentLangItem.Flag ?? "🌐")</span>
+                            <span class="hidden sm:inline">@(currentLangItem.Name ?? currentLang.ToUpperInvariant())</span>
+                            <svg class="h-3.5 w-3.5 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="m6 9 6 6 6-6" /></svg>
+                        </button>
+                        <div id="langMenu" class="absolute right-0 top-full z-20 mt-2 hidden w-48 overflow-hidden rounded-2xl border border-border bg-white shadow-xl">
+                            @foreach (var lang in langs)
+                            {
+                                <button type="button" onclick="setLang('@lang.Code')"
+                                        class="flex w-full items-center gap-3 px-4 py-2.5 text-sm font-medium transition hover:bg-surface-secondary @(lang.Code == currentLang ? "bg-primary-light text-primary" : "text-slate-600")">
+                                    <span class="text-lg leading-none">@lang.Flag</span>
+                                    <span class="flex-1 text-left">@lang.Name</span>
+                                    @if (lang.Code == currentLang)
+                                    {
+                                        <svg class="h-4 w-4 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.2"><path stroke-linecap="round" stroke-linejoin="round" d="m5 13 4 4L19 7" /></svg>
+                                    }
+                                </button>
+                            }
+                        </div>
+                    </div>
 
                     <div class="relative shrink-0">
                     <button type="button" id="userMenuBtn"
@@ -128,9 +153,18 @@
 
         const userMenuBtn = document.getElementById('userMenuBtn');
         const userMenu = document.getElementById('userMenu');
-        userMenuBtn?.addEventListener('click', (e) => { e.stopPropagation(); userMenu.classList.toggle('hidden'); });
-        document.addEventListener('click', () => userMenu?.classList.add('hidden'));
-        document.addEventListener('keydown', (e) => { if (e.key === 'Escape') userMenu?.classList.add('hidden'); });
+        const langMenuBtn = document.getElementById('langMenuBtn');
+        const langMenu = document.getElementById('langMenu');
+
+        function closeMenus() {
+            userMenu?.classList.add('hidden');
+            langMenu?.classList.add('hidden');
+        }
+
+        userMenuBtn?.addEventListener('click', (e) => { e.stopPropagation(); langMenu?.classList.add('hidden'); userMenu.classList.toggle('hidden'); });
+        langMenuBtn?.addEventListener('click', (e) => { e.stopPropagation(); userMenu?.classList.add('hidden'); langMenu.classList.toggle('hidden'); });
+        document.addEventListener('click', closeMenus);
+        document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeMenus(); });
     </script>
 </body>
 </html>
