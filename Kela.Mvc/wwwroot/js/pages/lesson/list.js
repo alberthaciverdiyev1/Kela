@@ -155,7 +155,5 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('search')?.addEventListener('keydown', (event) => {
         if (event.key === 'Enter') loadList(1);
     });
-    document.getElementById('filter_subject')?.addEventListener('change', () => loadList(1));
-    document.getElementById('filter_status')?.addEventListener('change', () => loadList(1));
     loadList(1);
 });

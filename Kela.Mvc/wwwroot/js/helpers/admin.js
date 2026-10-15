@@ -339,8 +339,7 @@ window.AdminUI = (function () {
         }
     }
 
-    function setPreview(id, url) {
-        const img = document.getElementById(id + '_preview');
+    function setPreview(id, url) {        const img = document.getElementById(id + '_preview');
         if (!img) return;
         img.src = url;
         img.classList.remove('hidden');
@@ -373,6 +372,33 @@ window.AdminUI = (function () {
     }
 
     function reloadAfter(delay) { setTimeout(() => location.reload(), delay || 700); }
+
+    // Filtr panelindəki (.admin-toolbar) hər select dəyişəndə siyahını avtomatik yeniləyir.
+    // "Axtar" düyməsinə basmağa ehtiyac qalmır. data-no-auto ilə element istisna edilə bilər.
+    function filterReload() {
+        const reload = window.loadList || window.load;
+        if (typeof reload === 'function') reload(1);
+    }
+
+    document.addEventListener('change', function (e) {
+        const el = e.target;
+        if (!el || el.tagName !== 'SELECT') return;
+        if (!el.closest('.admin-toolbar')) return;
+        if (el.hasAttribute('data-no-auto')) return;
+        filterReload();
+    });
+
+    // Axtarış sahəsinə yazdıqca da avtomatik axtarır (debounce ilə).
+    let _filterTimer = null;
+    document.addEventListener('input', function (e) {
+        const el = e.target;
+        if (!el || el.tagName !== 'INPUT') return;
+        if (!el.closest('.admin-toolbar')) return;
+        if (el.type !== 'search' && el.id !== 'search') return;
+        if (el.hasAttribute('data-no-auto')) return;
+        clearTimeout(_filterTimer);
+        _filterTimer = setTimeout(filterReload, 350);
+    });
 
     return { notify, error, errText, confirmDelete, confirmRestore, restoreItem, restoreButton, syncTrashButton, get, post, postForm, putForm, postJson, putJson, del, badge, table, actions, selectedIds, bulkDo, sortToggle, openSort, closeSort, persistSort, loader, pagination, filePreview, fileSet, fileRemove, rowNo, token, reloadAfter };
 })();
