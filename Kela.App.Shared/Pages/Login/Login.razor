@@ -38,7 +38,14 @@
                     {
                         var tenant = t;
                         <button type="button" class="course" aria-pressed="@(_tenantId == tenant.Id ? "true" : "false")" @onclick="() => Select(tenant)">
-                            <span class="emoji">@Emoji(tenant)</span>
+                            @if (!string.IsNullOrWhiteSpace(tenant.Logo))
+                            {
+                                <img class="logo" src="@tenant.Logo" alt=""/>
+                            }
+                            else
+                            {
+                                <span class="emoji">@Emoji(tenant)</span>
+                            }
                             <span>@tenant.Name</span>
                         </button>
                     }
@@ -116,7 +123,14 @@
                     {
                         var tenant = t;
                         <button type="button" class="course-row @(_tenantId == tenant.Id ? "selected" : "")" @onclick="() => SelectFromModal(tenant)">
-                            <span class="emoji">@Emoji(tenant)</span>
+                            @if (!string.IsNullOrWhiteSpace(tenant.Logo))
+                            {
+                                <img class="logo" src="@tenant.Logo" alt=""/>
+                            }
+                            else
+                            {
+                                <span class="emoji">@Emoji(tenant)</span>
+                            }
                             <span>@tenant.Name</span>
                         </button>
                     }

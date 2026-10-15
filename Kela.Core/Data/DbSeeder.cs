@@ -46,7 +46,31 @@ public static class DbSeeder
             logger.LogWarning("Default superadmin yaradıldı: {Email}", email);
         }
 
+        await SeedSampleTenantsAsync(db, configuration, logger, ct);
         await SeedTenantAccountsAsync(db, configuration, logger, ct);
+    }
+
+    /// <summary>Yalnız təzə quraşdırmada (≤1 tenant) bir neçə nümunə kurs yaradır.</summary>
+    private static async Task SeedSampleTenantsAsync(AppDbContext db, IConfiguration configuration, ILogger logger, CancellationToken ct)
+    {
+        if (!(configuration.GetValue<bool?>("Seed:SampleTenants") ?? true)) return;
+        if (await db.Tenants.CountAsync(ct) > 1) return;
+
+        var samples = new (string Name, string Slug)[]
+        {
+            ("İngilis Dili", "ingilis-dili"),
+            ("Türk Dili", "turk-dili"),
+            ("Proqramlaşdırma", "programlasdirma")
+        };
+
+        foreach (var (name, slug) in samples)
+        {
+            if (await db.Tenants.AnyAsync(t => t.Slug == slug, ct)) continue;
+            db.Tenants.Add(new Tenant { Name = name, Slug = slug });
+        }
+
+        await db.SaveChangesAsync(ct);
+        logger.LogWarning("Nümunə tenant-lar yaradıldı ({Count}).", samples.Length);
     }
 
     /// <summary>Hər tenant üçün default student və admin hesablarını yaradır (idempotent).</summary>
