@@ -1,5 +1,8 @@
 using FluentValidation;
+using Kela.Core.Common.Localization;
+using Kela.Core.Common.Validation;
 using Kela.Core.Modules.User.Requests;
+using Microsoft.Extensions.Localization;
 
 namespace Kela.Core.Modules.User.Validators;
 
@@ -16,9 +19,9 @@ public sealed class UserProfileRequestValidator : AbstractValidator<UserProfileR
 
 public sealed class UserChangePasswordRequestValidator : AbstractValidator<UserChangePasswordRequest>
 {
-    public UserChangePasswordRequestValidator()
+    public UserChangePasswordRequestValidator(IStringLocalizer<SharedResource> L)
     {
         RuleFor(x => x.CurrentPassword).NotEmpty();
-        RuleFor(x => x.NewPassword).NotEmpty().MinimumLength(6);
+        RuleFor(x => x.NewPassword).StrongPassword(L);
     }
 }

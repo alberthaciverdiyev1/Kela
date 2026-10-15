@@ -295,6 +295,12 @@
   <data name="Students_PasswordOptional" xml:space="preserve">
     <value>Parol (boş buraxın — təsadüfi güclü şifrə yaradılır)</value>
   </data>
+  <data name="Validation_PasswordLetter" xml:space="preserve">
+    <value>Şifrədə ən azı bir hərf olmalıdır</value>
+  </data>
+  <data name="Validation_PasswordDigit" xml:space="preserve">
+    <value>Şifrədə ən azı bir rəqəm olmalıdır</value>
+  </data>
   <data name="Common_Save" xml:space="preserve">
     <value>Yadda saxla</value>
   </data>

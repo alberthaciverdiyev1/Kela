@@ -295,6 +295,12 @@
   <data name="Students_PasswordOptional" xml:space="preserve">
     <value>Password (leave empty for a random secure password)</value>
   </data>
+  <data name="Validation_PasswordLetter" xml:space="preserve">
+    <value>Password must contain at least one letter</value>
+  </data>
+  <data name="Validation_PasswordDigit" xml:space="preserve">
+    <value>Password must contain at least one digit</value>
+  </data>
   <data name="Common_Save" xml:space="preserve">
     <value>Save</value>
   </data>

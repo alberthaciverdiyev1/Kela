@@ -1,6 +1,7 @@
 using FluentValidation;
 using Kela.Core.Common.Localization;
 using Microsoft.Extensions.Localization;
+using Kela.Core.Common.Validation;
 using Kela.Core.Modules.User.Entities;
 using Kela.Core.Modules.User.Requests;
 
@@ -18,7 +19,9 @@ public sealed class UserUpsertRequestValidator : AbstractValidator<UserUpsertReq
             .Must(UserTypes.IsValid).WithMessage(L["Validation_UserType"]);
 
         RuleFor(x => x.Password)
-            .MinimumLength(6).WithMessage(L["Validation_PasswordMinLength"])
+            .MinimumLength(PasswordRules.MinLength).WithMessage(L["Validation_PasswordMinLength"])
+            .Matches("[A-Za-z]").WithMessage(L["Validation_PasswordLetter"])
+            .Matches("[0-9]").WithMessage(L["Validation_PasswordDigit"])
             .When(x => !string.IsNullOrWhiteSpace(x.Password));
 
         RuleFor(x => x.Name).MaximumLength(190);

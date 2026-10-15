@@ -1,6 +1,7 @@
 using FluentValidation;
 using Kela.Core.Common.Localization;
 using Microsoft.Extensions.Localization;
+using Kela.Core.Common.Validation;
 using Kela.Core.Modules.Auth.Requests;
 
 namespace Kela.Core.Modules.Auth.Validators;
@@ -17,8 +18,6 @@ public sealed class RegisterRequestValidator : AbstractValidator<RegisterRequest
             .NotEmpty().WithMessage(L["Validation_EmailRequired"])
             .EmailAddress().WithMessage(L["Validation_EmailInvalid"]);
 
-        RuleFor(x => x.Password)
-            .NotEmpty().WithMessage(L["Validation_PasswordRequired"])
-            .MinimumLength(6).WithMessage(L["Validation_PasswordMinLength"]);
+        RuleFor(x => x.Password).StrongPassword(L);
     }
 }

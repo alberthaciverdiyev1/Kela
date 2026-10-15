@@ -295,6 +295,12 @@
   <data name="Students_PasswordOptional" xml:space="preserve">
     <value>Пароль (оставьте пустым — случайный надёжный пароль)</value>
   </data>
+  <data name="Validation_PasswordLetter" xml:space="preserve">
+    <value>Пароль должен содержать хотя бы одну букву</value>
+  </data>
+  <data name="Validation_PasswordDigit" xml:space="preserve">
+    <value>Пароль должен содержать хотя бы одну цифру</value>
+  </data>
   <data name="Common_Save" xml:space="preserve">
     <value>Сохранить</value>
   </data>

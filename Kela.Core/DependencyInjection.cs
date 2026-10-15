@@ -70,8 +70,7 @@ public static class DependencyInjection
         services.AddScoped<IAuthService, AuthService>();
         services.AddScoped<IOtpService, OtpService>();
         services.AddScoped<IStudentDeviceService, StudentDeviceService>();
-        services.Configure<SmtpOptions>(configuration.GetSection(SmtpOptions.SectionName));
-        services.AddScoped<IEmailSender, SmtpEmailSender>();
+        services.AddScoped<IEmailSender, NoOpEmailSender>();
         services.AddScoped<ISubjectService, SubjectService>();
         services.AddScoped<ILessonService, LessonService>();
         services.AddScoped<ILessonContentService, LessonContentService>();

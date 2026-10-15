@@ -1,6 +1,7 @@
 using FluentValidation;
 using Kela.Core.Common.Localization;
 using Microsoft.Extensions.Localization;
+using Kela.Core.Common.Validation;
 using Kela.Core.Modules.Auth.Requests;
 
 namespace Kela.Core.Modules.Auth.Validators;
@@ -26,7 +27,7 @@ public sealed class ResetPasswordRequestValidator : AbstractValidator<ResetPassw
     {
         RuleFor(x => x.Email).NotEmpty().EmailAddress().WithMessage(L["Validation_EmailInvalid"]);
         RuleFor(x => x.Otp).NotEmpty().WithMessage(L["Validation_OtpRequired"]);
-        RuleFor(x => x.NewPassword).NotEmpty().MinimumLength(6).WithMessage(L["Validation_PasswordMinLength"]);
+        RuleFor(x => x.NewPassword).StrongPassword(L);
     }
 }
 
@@ -35,7 +36,7 @@ public sealed class ChangePasswordRequestValidator : AbstractValidator<ChangePas
     public ChangePasswordRequestValidator(IStringLocalizer<SharedResource> L)
     {
         RuleFor(x => x.CurrentPassword).NotEmpty().WithMessage(L["Validation_CurrentPasswordRequired"]);
-        RuleFor(x => x.NewPassword).NotEmpty().MinimumLength(6).WithMessage(L["Validation_PasswordMinLength"]);
+        RuleFor(x => x.NewPassword).StrongPassword(L);
     }
 }
 
