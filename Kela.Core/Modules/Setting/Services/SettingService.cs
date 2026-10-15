@@ -123,7 +123,7 @@ public sealed class SettingService(AppDbContext db, IFileStorage storage, IConfi
         new(
             name,
             s.Id,
-            storage.GetUrl(s.Logo),
+            ResolveLogo(s.Logo),
             s.Description,
             s.Email,
             s.Address,
@@ -138,5 +138,8 @@ public sealed class SettingService(AppDbContext db, IFileStorage storage, IConfi
             s.IosMinVersion);
 
     private SettingResponse Empty(string? name = null) =>
-        new(name, 0, storage.GetUrl(null), null, null, null, null, null, null, null, null, null, null, null, null);
+        new(name, 0, null, null, null, null, null, null, null, null, null, null, null, null, null);
+
+    /// <summary>Loqo yoxdursa <c>null</c> qaytarır (placeholder yerinə) — çağıran tərəf fallback seçə bilir.</summary>
+    private string? ResolveLogo(string? path) => string.IsNullOrWhiteSpace(path) ? null : storage.GetUrl(path);
 }
