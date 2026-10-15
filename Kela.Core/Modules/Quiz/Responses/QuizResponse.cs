@@ -9,4 +9,5 @@ public record QuizResponse(
     bool IsActive,
     bool IsRepeat,
     int SortOrder,
-    int QuestionCount);
+    int QuestionCount,
+    string? LessonTitle = null);

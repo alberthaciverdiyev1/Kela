@@ -183,7 +183,8 @@ public sealed class StudentAppService(
                       orderby gq.Id
                       select new QuizResponse(
                           q.Id, q.LessonId, q.Title, q.DurationMinutes, q.Type, q.IsActive, q.IsRepeat, q.SortOrder,
-                          db.QuizQuestions.Count(qq => qq.QuizId == q.Id)))
+                          db.QuizQuestions.Count(qq => qq.QuizId == q.Id),
+                          db.Lessons.Where(l => l.Id == q.LessonId).Select(l => l.Title).FirstOrDefault()))
             .ToListAsync(ct);
     }
 
