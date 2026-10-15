@@ -1,6 +1,5 @@
 namespace Kela.App.Shared.Services;
 
-/// <summary>Alt bölmədəki audio pleyerin vəziyyəti (tətbiq daxilində paylaşılır).</summary>
 public sealed class AudioPlayerService
 {
     public string? Url { get; private set; }
@@ -8,8 +7,6 @@ public sealed class AudioPlayerService
     public bool IsActive => !string.IsNullOrEmpty(Url);
 
     public event Action? Changed;
-
-    /// <summary>Audio sona çatanda tetiklenir (avtomatik "tamamlandı" işarəsi üçün).</summary>
     public event Action? Ended;
 
     public void NotifyEnded() => Ended?.Invoke();

@@ -1,10 +1,5 @@
 #!/usr/bin/env bash
-# Hər iki tərəfi Development rejimində EYNİ ANDA işə salır:
-#   WEB tərəfi : API (watch) + MVC (watch) + MVC Tailwind (watch)
-#   APP tərəfi : Blazor WASM (Kela.App.Web, watch) + App.Shared Tailwind (watch)
-# İstifadə: ./dev.sh    (dayandırmaq üçün Ctrl+C)
-#   ENABLE_WEB=0 ./dev.sh   -> yalnız app tərəfi
-#   ENABLE_APP=0 ./dev.sh   -> yalnız web tərəfi
+
 set -euo pipefail
 
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
@@ -20,8 +15,6 @@ ENABLE_WEB="${ENABLE_WEB:-1}"
 ENABLE_APP="${ENABLE_APP:-1}"
 HEALTH_URL="${HEALTH_URL:-$API_URL/openapi/v1.json}"
 
-# Hər watcher üçün ayrı artifacts/output qovluğu — paylaşılan Kela.Core-un
-# eyni bin qovluğuna paralel build olunmasının qarşısını alır (file lock xətası).
 ARTIFACTS="$ROOT/.dev-artifacts"
 
 TAILWIND="$ROOT/Kela.Mvc/node_modules/.bin/tailwindcss"
@@ -30,7 +23,6 @@ APP_CSS="Kela.App.Shared/wwwroot/css/app.css"
 
 pids=()
 
-# Komandanı ayrı proses qrupunda arxa planda işə sal
 start() {
   local dir=""
   if [ "${1:-}" = "--in" ]; then dir="$2"; shift 2; fi
@@ -68,7 +60,6 @@ wait_for() {
   return 1
 }
 
-# Əvvəlcədən açıq olan bütün layihə proseslərini (watch, dev-server, tailwind) dayandır
 _own_pids() {
   local pat
   for pat in "Kela.Api" "Kela.Mvc" "Kela.App.Web" "Kela.App.Shared" "tailwindcss"; do
