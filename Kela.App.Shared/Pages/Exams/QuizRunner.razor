@@ -36,14 +36,29 @@
                 </div>
             }
         </div>
-        <h2 class="mt-2 text-[19px] font-semibold leading-6 text-brand-804">@q.Title</h2>
+        @if (q.HasTitleImage)
+        {
+            <img src="@q.TitleUrl" alt="" class="mt-3 w-full rounded-2xl border border-brand-090 object-contain" />
+        }
+        else if (!string.IsNullOrWhiteSpace(q.Title))
+        {
+            <h2 class="mt-2 text-[19px] font-semibold leading-6 text-brand-804">@q.Title</h2>
+        }
 
         <div class="mt-5 flex flex-col gap-2">
             @foreach (var o in q.Options)
             {
                 <label class="flex items-center gap-3 rounded-2xl border border-brand-108 bg-white px-4 py-3.5 @(IsSelected(q.Id, o.Key) ? "border-brand-467 ring-4 ring-brand-098" : "")">
                     <input type="radio" name="q_@q.Id" checked="@IsSelected(q.Id, o.Key)" @onchange="() => _answers[q.Id] = o.Key" class="size-4 accent-brand-639" />
-                    <span class="text-sm font-medium text-brand-755">@o.Key) @o.Text</span>
+                    <span class="text-sm font-medium text-brand-755">@o.Key)</span>
+                    @if (!string.IsNullOrWhiteSpace(o.Url))
+                    {
+                        <img src="@o.Url" alt="" class="h-20 w-20 rounded-xl border border-brand-090 object-cover" />
+                    }
+                    else
+                    {
+                        <span class="text-sm font-medium text-brand-755">@o.Text</span>
+                    }
                 </label>
             }
         </div>

@@ -1,4 +1,5 @@
 using Kela.Core.Common.Exceptions;
+using Kela.Core.Common.Storage;
 using Kela.Core.Data;
 using Kela.Core.Modules.Quiz.Requests;
 using Kela.Core.Modules.Quiz.Responses;
@@ -12,7 +13,8 @@ using StudentQuizQuestion = Kela.Core.Modules.Quiz.Entities.StudentQuizQuestion;
 
 public sealed class StudentQuizService(
     AppDbContext db,
-    IStudentAccessService access) : IStudentQuizService
+    IStudentAccessService access,
+    IFileStorage storage) : IStudentQuizService
 {
     public async Task<StartQuizResponse> StartAsync(long studentId, StartQuizRequest request, CancellationToken ct = default)
     {
@@ -42,7 +44,7 @@ public sealed class StudentQuizService(
         var totalAttempts = await db.StudentQuizzes.CountAsync(
             a => a.StudentId == studentId && a.QuizId == quiz.Id, ct);
 
-        var questions = await QuestionsForQuiz(quiz.Id).ToListAsync(ct);
+        var questions = await QuestionsForQuizAsync(quiz.Id, ct);
 
         var attempt = new StudentQuiz
         {
@@ -236,12 +238,32 @@ public sealed class StudentQuizService(
             items);
     }
 
-    private IQueryable<QuizQuestionForStudent> QuestionsForQuiz(long quizId) =>
-        from qq in db.QuizQuestions.AsNoTracking()
-        join q in db.Questions.AsNoTracking() on qq.QuestionId equals q.Id
-        where qq.QuizId == quizId
-        orderby qq.SortOrder, qq.Id
-        select new QuizQuestionForStudent(q.Id, q.Title, q.VariantA, q.VariantB, q.VariantC, q.VariantD, q.VariantE);
+    private async Task<List<QuizQuestionForStudent>> QuestionsForQuizAsync(long quizId, CancellationToken ct)
+    {
+        var rows = await (from qq in db.QuizQuestions.AsNoTracking()
+                          join q in db.Questions.AsNoTracking() on qq.QuestionId equals q.Id
+                          where qq.QuizId == quizId
+                          orderby qq.SortOrder, qq.Id
+                          select new
+                          {
+                              q.Id, q.Title, q.TitleType, q.VariantType,
+                              q.VariantA, q.VariantB, q.VariantC, q.VariantD, q.VariantE
+                          }).ToListAsync(ct);
+
+        return rows.Select(q => new QuizQuestionForStudent(
+            q.Id, q.Title,
+            q.VariantA, q.VariantB, q.VariantC, q.VariantD, q.VariantE,
+            q.TitleType, ResolveUrl(q.TitleType, q.Title),
+            q.VariantType,
+            ResolveUrl(q.VariantType, q.VariantA),
+            ResolveUrl(q.VariantType, q.VariantB),
+            ResolveUrl(q.VariantType, q.VariantC),
+            ResolveUrl(q.VariantType, q.VariantD),
+            ResolveUrl(q.VariantType, q.VariantE))).ToList();
+    }
+
+    private string? ResolveUrl(string? type, string? value)
+        => type == "image" && !string.IsNullOrWhiteSpace(value) ? storage.GetUrl(value) : null;
 
     private static int Percent(int part, int total) => total > 0 ? (int)Math.Round(part * 100.0 / total) : 0;
 }

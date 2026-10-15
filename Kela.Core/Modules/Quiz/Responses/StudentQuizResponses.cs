@@ -7,7 +7,15 @@ public record QuizQuestionForStudent(
     string? VariantB,
     string? VariantC,
     string? VariantD,
-    string? VariantE);
+    string? VariantE,
+    string TitleType = "text",
+    string? TitleUrl = null,
+    string VariantType = "text",
+    string? VariantAUrl = null,
+    string? VariantBUrl = null,
+    string? VariantCUrl = null,
+    string? VariantDUrl = null,
+    string? VariantEUrl = null);
 
 public record StartQuizResponse(
     long AttemptId,
