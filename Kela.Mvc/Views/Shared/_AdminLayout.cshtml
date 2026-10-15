@@ -45,8 +45,8 @@
     <link rel="stylesheet" href="~/css/sweetalert2.min.css" />
     <link rel="stylesheet" href="~/css/app.css" asp-append-version="true" />
 </head>
-<body class="min-h-screen bg-background text-text-primary">
-    <div class="flex h-dvh overflow-hidden">
+<body class="h-dvh overflow-hidden bg-background text-text-primary">
+    <div class="flex h-full overflow-hidden">
         <partial name="Ui/_Sidebar" />
 
         <div id="overlay" class="fixed inset-0 z-20 hidden bg-slate-950/40 backdrop-blur-sm lg:hidden"></div>
@@ -130,7 +130,7 @@
                 </div>
             </header>
 
-            <main class="flex-1 overflow-y-auto overflow-x-hidden p-4 sm:p-6 lg:p-7">
+            <main class="min-h-0 flex-1 overflow-y-auto overflow-x-hidden p-4 sm:p-6 lg:p-7">
                 <div class="mx-auto w-full max-w-[1440px]">
                     @RenderBody()
                 </div>
