@@ -15,11 +15,16 @@ public partial class MainLayout
     [Inject] private NavigationManager Nav { get; set; } = default!;
 
     private bool _ready;
+    private string _location = "/";
+
+    private string RenderKey => Lang.Current + "|" + _location;
 
     protected override async Task OnInitializedAsync()
     {
         Auth.Changed += OnAuthChanged;
         Lang.Changed += OnLangChanged;
+        Nav.LocationChanged += OnLocationChanged;
+        _location = Nav.ToBaseRelativePath(Nav.Uri);
 
         if (!Auth.IsAuthenticated)
         {
@@ -101,9 +106,17 @@ public partial class MainLayout
 
     private void OnLangChanged() => _ = InvokeAsync(StateHasChanged);
 
+    private void OnLocationChanged(object? sender, Microsoft.AspNetCore.Components.Routing.LocationChangedEventArgs e)
+        => _ = InvokeAsync(() =>
+        {
+            _location = Nav.ToBaseRelativePath(Nav.Uri);
+            StateHasChanged();
+        });
+
     public void Dispose()
     {
         Auth.Changed -= OnAuthChanged;
         Lang.Changed -= OnLangChanged;
+        Nav.LocationChanged -= OnLocationChanged;
     }
 }

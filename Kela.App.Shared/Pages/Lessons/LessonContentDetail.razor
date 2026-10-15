@@ -83,8 +83,8 @@
                                         }
                                         else
                                         {
-                                            <video src="@Preview(s.Url)" preload="metadata" muted playsinline
-                                                   class="absolute inset-0 h-full w-full object-cover"></video>
+                                            @* Çoxsaylı <video> elementi WebView-i dondurur → statik ikon göstərilir *@
+                                            <span class="grid h-full w-full place-items-center"><Icon Name="play" Class="size-5" /></span>
                                         }
                                         <span class="absolute inset-0 grid place-items-center">
                                             <span class="grid size-6 place-items-center rounded-full bg-black/45 text-white"><Icon Name="play" Class="size-3" /></span>

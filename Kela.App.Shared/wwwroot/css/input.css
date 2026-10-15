@@ -115,3 +115,10 @@
         cursor: not-allowed;
     }
 }
+
+/* Səhifə keçid animasiyası (Blazor route dəyişdikdə tətbiq olunur) */
+@keyframes pageIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: none; }
+}
+.page-transition { animation: pageIn 0.22s ease-out; }

@@ -23,8 +23,8 @@ else
     <div class="min-h-screen bg-brand-102 text-brand-836">
         <TopNav/>
         <div class="mx-auto min-h-screen w-full max-w-[430px] overflow-x-hidden bg-brand-022 shadow-[0_0_60px_rgba(23,77,58,0.12)] md:max-w-none md:px-8 md:shadow-none">
-            @* Dil dəyişəndə səhifə məzmunu da dərhal yenidən render olunsun *@
-            <div @key="Lang.Current">
+            @* Səhifə keçidində və dil dəyişəndə məzmun yenidən render olunur (animasiya üçün) *@
+            <div @key="RenderKey" class="page-transition">
                 @Body
             </div>
             <BottomNav/>
