@@ -26,7 +26,16 @@
         var q = _quiz.Questions[_index];
         var isLast = _index == _quiz.Questions.Count - 1;
 
-        <p class="text-[11px] font-bold uppercase tracking-[0.14em] text-brand-639">@L.Format("Exam_QuestionOf", _index + 1, _quiz.Questions.Count)</p>
+        <div class="flex items-center justify-between">
+            <p class="text-[11px] font-bold uppercase tracking-[0.14em] text-brand-639">@L.Format("Exam_QuestionOf", _index + 1, _quiz.Questions.Count)</p>
+            @if (_quiz.DurationMinutes > 0)
+            {
+                <div class="flex items-center gap-1.5 rounded-full px-3 py-1 text-[13px] font-bold @(_remaining <= 60 ? "bg-[#fdecef] text-[#c0392b]" : "bg-brand-081 text-brand-639")">
+                    <Icon Name="clock" Class="size-4"/>
+                    <span>@FormatTime(_remaining)</span>
+                </div>
+            }
+        </div>
         <h2 class="mt-2 text-[19px] font-semibold leading-6 text-brand-804">@q.Title</h2>
 
         <div class="mt-5 flex flex-col gap-2">
@@ -44,6 +53,21 @@
             <button @onclick="NextAsync" disabled="@_busy" class="flex-1 rounded-2xl bg-brand-639 py-3.5 text-sm font-bold text-white disabled:opacity-60">
                 @(isLast ? (_busy ? L["Login_Wait"] : L["Exam_Finish"]) : L["Exam_Next"])
             </button>
+        </div>
+    }
+
+    @* --- Vaxt bitdi modalı --- *@
+    @if (_timeUp)
+    {
+        <div class="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4">
+            <div class="w-full max-w-sm rounded-[24px] bg-white p-6 text-center shadow-2xl">
+                <div class="mx-auto flex size-14 items-center justify-center rounded-full bg-[#fdecef] text-[#c0392b]">
+                    <Icon Name="clock" Class="size-7"/>
+                </div>
+                <p class="mt-4 text-lg font-bold text-brand-804">@L["Exam_TimeUp"]</p>
+                <p class="mt-2 text-[13px] leading-5 text-sage-382">@L["Exam_TimeUpHint"]</p>
+                <button type="button" class="mt-5 w-full rounded-2xl bg-brand-639 py-3.5 text-sm font-bold text-white active:opacity-90" @onclick="CloseTimeUpAndSubmitAsync">@L["Exam_SeeResults"]</button>
+            </div>
         </div>
     }
 </div>
