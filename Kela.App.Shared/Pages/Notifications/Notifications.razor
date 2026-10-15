@@ -10,7 +10,7 @@
 <div class="px-5 pb-28 pt-6 lg:px-10 lg:pb-12">
     @if (_loading)
     {
-        <Loader/>
+        <SkeletonList Count="5"/>
     }
     else if (_items.Count == 0)
     {

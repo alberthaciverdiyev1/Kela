@@ -11,7 +11,7 @@
 <div class="px-5 pb-28 pt-6">
     <h2 class="mt-1 text-2xl font-bold tracking-[-0.04em] text-brand-784">@(Name ?? L["GroupDetail_Title"])</h2>
 
-    @if (_loading) { <Loader/> }
+    @if (_loading) { <SkeletonCardGrid Count="4"/> }
     else if (_subjects.Count == 0) { <EmptyState Text="@L["GroupDetail_Empty"]"/> }
     else
     {

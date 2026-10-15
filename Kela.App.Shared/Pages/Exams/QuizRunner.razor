@@ -19,7 +19,27 @@
         </div>
         <a href="/results" class="mt-5 block rounded-2xl bg-brand-639 py-4 text-center text-sm font-bold text-white">@L["Exam_GoResults"]</a>
     }
-    else if (_quiz is null) { <Loader/> }
+    else if (_quiz is null)
+    {
+        <div class="flex items-center justify-between">
+            <Skeleton Class="h-3 w-28 rounded-md"/>
+            <Skeleton Class="h-6 w-20 rounded-full"/>
+        </div>
+        <Skeleton Class="mt-4 h-6 w-3/4 rounded-md"/>
+        <div class="mt-5 flex flex-col gap-2">
+            @for (var i = 0; i < 4; i++)
+            {
+                <div class="flex items-center gap-3 rounded-2xl border border-brand-108 bg-white px-4 py-3">
+                    <Skeleton Class="size-4 shrink-0 rounded-full"/>
+                    <Skeleton Class="h-3.5 w-2/3 rounded-md"/>
+                </div>
+            }
+        </div>
+        <div class="mt-6 flex gap-3">
+            <Skeleton Class="h-[50px] flex-1 rounded-2xl"/>
+            <Skeleton Class="h-[50px] flex-1 rounded-2xl"/>
+        </div>
+    }
     else if (_quiz.Questions.Count == 0) { <EmptyState Text="@L["Exam_NoQuestions"]"/> }
     else
     {

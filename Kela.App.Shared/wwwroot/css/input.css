@@ -141,3 +141,33 @@
   animation: pageIn 0.25s cubic-bezier(0.2, 0.8, 0.2, 1);
   background-color: var(--color-brand-022);
 }
+
+/* İskelet (skeleton) — məzmun gözləyərkən səhifənin formasını saxlayan yer tutucu.
+   @layer components içindədir ki, Tailwind utility-ləri (məs. bg-white/20) onu
+   əzə bilsin — qat xarici CSS qatlı CSS-dən üstün olardı.
+   Şüa (shimmer) transform ilə hərəkət edir: GPU-da kompozisiya olunur.
+   Radius verilmir: hər istifadə öz rounded-* sinfini verir. */
+@layer components {
+  .skeleton {
+    position: relative;
+    overflow: hidden;
+    background-color: var(--color-brand-090);
+  }
+
+  .skeleton::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    transform: translateX(-100%);
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.7), transparent);
+    animation: skeleton-sweep 1.4s ease-in-out infinite;
+  }
+}
+
+@keyframes skeleton-sweep {
+  to { transform: translateX(100%); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .skeleton::after { animation: none; }
+}

@@ -1,0 +1,20 @@
+@* Sətir siyahısı iskeleti — Notifications kimi ikon + mətn bloklu siyahılar üçün. *@
+<section class="grid gap-3">
+    @for (var i = 0; i < Count; i++)
+    {
+        <article class="rounded-2xl border border-brand-090 bg-white p-4 shadow-[0_4px_15px_rgba(36,78,62,0.03)]">
+            <div class="flex items-start gap-3">
+                <Skeleton Class="size-11 shrink-0 rounded-xl"/>
+                <div class="min-w-0 flex-1">
+                    <Skeleton Class="h-3.5 w-2/3 rounded-md"/>
+                    <Skeleton Class="mt-2 h-3 w-full rounded-md"/>
+                    <Skeleton Class="mt-1.5 h-2.5 w-24 rounded-md"/>
+                </div>
+            </div>
+        </article>
+    }
+</section>
+
+@code {
+    [Parameter] public int Count { get; set; } = 5;
+}
