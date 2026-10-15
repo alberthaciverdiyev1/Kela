@@ -13,13 +13,15 @@
         Sortable = true })" />
 
     <div class="admin-card">
-        <div class="admin-toolbar">
-            <div class="w-72">
-                <partial name="Ui/_Select" model="@(new SelectModel { Name = "filter_lesson", Id = "filter_lesson", Label = L["Common_Lesson"], Options = lessonFilter })" />
-            </div>
-            <button type="button" id="trashBtn" class="admin-button-secondary h-[46px] px-4" onclick="toggleTrash()">@L["Common_DeletedItems"]</button>
-            <button type="button" onclick="loadList(1)" class="admin-button-primary h-[46px] px-6">@L["Common_Show"]</button>
-        </div>
+        <partial name="Ui/_FilterBar" model="@(new FilterBarModel {
+            Search = false,
+            Selects = new List<FilterSelectModel> {
+                new() { WidthClass = "w-44", Select = new SelectModel { Name = "filter_lesson", Id = "filter_lesson", Label = L["Common_Lesson"], Options = lessonFilter } }
+            },
+            Trash = true,
+            TrashText = L["Common_DeletedItems"],
+            ButtonText = L["Common_Show"]
+        })" />
 
         <partial name="Ui/_BulkBar" model="@(new BulkBarModel { Url = "/quiz/bulk", CanActivate = true, CanDeactivate = true })" />
 

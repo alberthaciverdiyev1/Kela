@@ -1,0 +1,29 @@
+@model FilterBarModel
+@* Admin siyahı səhifələri üçün vahid filtr paneli — Dərslər səhifəsindəki ilə eynidir. *@
+<div class="admin-toolbar">
+    @if (Model.Search)
+    {
+        <div class="grow">
+            <label class="relative block">
+                <span class="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400">
+                    <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="m21 21-4.35-4.35M11 18a7 7 0 1 1 0-14 7 7 0 0 1 0 14Z" /></svg>
+                </span>
+                <input id="search" name="search" type="search" class="admin-field pl-11" placeholder="@Model.SearchPlaceholder" />
+            </label>
+        </div>
+    }
+    @foreach (var s in Model.Selects)
+    {
+        <div class="@s.WidthClass">
+            <partial name="Ui/_Select" model="s.Select" />
+        </div>
+    }
+    @if (Model.Trash)
+    {
+        <button type="button" id="@Model.TrashId" class="admin-button-secondary h-[46px] px-4" onclick="@Model.TrashOnClick">@Model.TrashText</button>
+    }
+    @if (Model.ShowButton)
+    {
+        <button type="button" onclick="@Model.ButtonOnClick" class="admin-button-primary h-[46px] px-6">@Model.ButtonText</button>
+    }
+</div>

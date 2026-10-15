@@ -20,15 +20,15 @@
     </div>
 
     <div class="admin-card">
-        <div class="admin-toolbar">
-            <div class="w-72">
-                <partial name="Ui/_Select" model="@(new SelectModel { Name = "group_id", Id = "group_id", Label = L["Common_Group"], Options = groupOptions })" />
-            </div>
-            <div class="w-52">
-                <partial name="Ui/_Select" model="@(new SelectModel { Name = "quiz_type", Id = "quiz_type", Label = L["Common_Type"], Options = typeOptions })" />
-            </div>
-            <button type="button" onclick="load()" class="admin-button-primary h-[46px] px-6">@L["Common_Show"]</button>
-        </div>
+        <partial name="Ui/_FilterBar" model="@(new FilterBarModel {
+            Search = false,
+            Selects = new List<FilterSelectModel> {
+                new() { WidthClass = "w-44", Select = new SelectModel { Name = "group_id", Id = "group_id", Label = L["Common_Group"], Options = groupOptions } },
+                new() { WidthClass = "w-36", Select = new SelectModel { Name = "quiz_type", Id = "quiz_type", Label = L["Common_Type"], Options = typeOptions } }
+            },
+            ButtonText = L["Common_Show"],
+            ButtonOnClick = "load()"
+        })" />
 
         <div id="summary" class="hidden grid-cols-1 gap-4 p-5 sm:grid-cols-3"></div>
 

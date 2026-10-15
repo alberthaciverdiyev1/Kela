@@ -14,18 +14,12 @@
     })" />
 
     <div class="admin-card">
-        <div class="admin-toolbar">
-            <div class="grow">
-                <label class="relative block">
-                    <span class="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400">
-                        <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="m21 21-4.35-4.35M11 18a7 7 0 1 1 0-14 7 7 0 0 1 0 14Z" /></svg>
-                    </span>
-                    <input id="search" name="search" type="search" class="admin-field pl-11" placeholder="@L["Certificate_Search"]" />
-                </label>
-            </div>
-            <button type="button" id="trashBtn" class="admin-button-secondary h-[46px] px-4" onclick="toggleTrash()">@L["Common_DeletedItems"]</button>
-            <button type="button" onclick="loadList(1)" class="admin-button-primary h-[46px] px-6">Axtar</button>
-        </div>
+        <partial name="Ui/_FilterBar" model="@(new FilterBarModel {
+            SearchPlaceholder = L["Certificate_Search"],
+            Trash = true,
+            TrashText = L["Common_DeletedItems"],
+            ButtonText = L["Common_Search"]
+        })" />
 
         <partial name="Ui/_BulkBar" model="@(new BulkBarModel { Url = "/certificate/bulk" })" />
 
