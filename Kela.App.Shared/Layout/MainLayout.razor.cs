@@ -14,6 +14,7 @@ public partial class MainLayout
 {
     [Inject] private NavigationManager Nav { get; set; } = default!;
     [Inject] private NavIntent Intent { get; set; } = default!;
+    [Inject] private IJSRuntime JS { get; set; } = default!;
 
     private bool _ready;
     private readonly List<string> _trail = [];
@@ -21,11 +22,16 @@ public partial class MainLayout
     private bool _instant;
     private DateTime _lastSwap = DateTime.MinValue;
 
+    private DotNetObjectReference<MainLayout>? _selfRef;
+    private int _refreshToken;
+
     // Açar yalnız route-dan asılıdır və canlı oxunur ki, @Body ilə EYNİ render-də
     // bir dəfə dəyişsin. Növ (_kind) və _instant BİLƏRƏKDƏN daxil edilmir: onlar
     // set olunanda açar ikinci dəfə dəyişər, element iki dəfə yaradılar və birinci
     // animasiya yarıda qırılardı.
-    private string RenderKey => $"{Lang.Current}|{Nav.ToBaseRelativePath(Nav.Uri)}";
+    // _refreshToken: aşağı çəkib yeniləmə sayfanı yenidən qurur (açar dəyişir),
+    // beləcə səhifənin öz yükləmə axını təkrar işləyir — hər səhifədə ayrı kod lazım deyil.
+    private string RenderKey => $"{Lang.Current}|{_refreshToken}|{Nav.ToBaseRelativePath(Nav.Uri)}";
 
     private string TransitionClass => _instant || _kind == NavKind.Tab
         ? "page-transition page-none"
@@ -172,10 +178,38 @@ public partial class MainLayout
         return false;
     }
 
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (!firstRender) return;
+
+        try
+        {
+            _selfRef = DotNetObjectReference.Create(this);
+            await JS.InvokeVoidAsync("kelaPull.register", _selfRef);
+        }
+        catch
+        {
+            /* JS hələ hazır deyil */
+        }
+    }
+
+    /// <summary>Aşağı çəkərək yeniləmə: cari səhifəni yenidən qurur və məlumatı yenidən yükləyir.</summary>
+    [JSInvokable]
+    public Task OnPullRefresh() => InvokeAsync(() =>
+    {
+        if (!Auth.IsAuthenticated) return;   // giriş ekranında yeniləmə mənasızdır
+
+        // Keçid animasiyası təkrarlanmasın — səhifə yerində yenilənir.
+        _instant = true;
+        _refreshToken++;
+        StateHasChanged();
+    });
+
     public void Dispose()
     {
         Auth.Changed -= OnAuthChanged;
         Lang.Changed -= OnLangChanged;
         Nav.LocationChanged -= OnLocationChanged;
+        _selfRef?.Dispose();
     }
 }
