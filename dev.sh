@@ -121,10 +121,10 @@ while true; do
 done"
 
   echo "==> [WEB] API (watch): $API_URL"
-  ASPNETCORE_URLS="$API_URL" start dotnet watch --project Kela.Api --artifacts-path "$ARTIFACTS/api" run --no-launch-profile
+  DOTNET_WATCH_SUPPRESS_BROWSER_REFRESH=1 ASPNETCORE_URLS="$API_URL" start dotnet watch --project Kela.Api --artifacts-path "$ARTIFACTS/api" run --no-launch-profile
 
   echo "==> [WEB] MVC (watch): $MVC_URL"
-  ASPNETCORE_URLS="$MVC_URL" start dotnet watch --project Kela.Mvc --artifacts-path "$ARTIFACTS/mvc" run --no-launch-profile
+  DOTNET_WATCH_SUPPRESS_BROWSER_REFRESH=1 ASPNETCORE_URLS="$MVC_URL" start dotnet watch --project Kela.Mvc --artifacts-path "$ARTIFACTS/mvc" run --no-launch-profile
 else
   echo "==> [WEB] atlanır (ENABLE_WEB=0)"
 fi
@@ -145,7 +145,7 @@ while true; do
 done"
 
   echo "==> [APP] Blazor WASM (Kela.App.Web, watch): $APP_URL"
-  ASPNETCORE_URLS="$APP_URL" start dotnet watch --project Kela.App.Web --artifacts-path "$ARTIFACTS/app" run --no-launch-profile
+  DOTNET_WATCH_SUPPRESS_BROWSER_REFRESH=1 ASPNETCORE_URLS="$APP_URL" start dotnet watch --project Kela.App.Web --artifacts-path "$ARTIFACTS/app" run --no-launch-profile
 else
   echo "==> [APP] atlanır (ENABLE_APP=0)"
 fi
