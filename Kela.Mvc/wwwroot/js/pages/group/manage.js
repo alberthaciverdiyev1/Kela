@@ -77,6 +77,29 @@ function renderMembers(containerId, items, type, labelFn, idFn) {
     });
 }
 
+
+window.toggleGroupGen = function () {
+    document.getElementById('groupGenPanel').classList.toggle('hidden');
+};
+
+window.generateIntoGroup = async function () {
+    const res = await AdminUI.postJson('/students/generate', {
+        groupId: mgGroupId,
+        count: Number(document.getElementById('gg_count').value),
+        fullNamePrefix: document.getElementById('gg_prefix').value,
+        emailDomain: document.getElementById('gg_domain').value,
+        password: document.getElementById('gg_password').value,
+        sendCredentials: document.getElementById('gg_send').checked
+    });
+    if (res.ok) {
+        AdminUI.notify(res.data.created + L["Js_StudentsCreated"]);
+        document.getElementById('groupGenPanel').classList.add('hidden');
+        refreshManage();
+    } else {
+        AdminUI.error(AdminUI.errText(res));
+    }
+};
+
 async function assignMember(type) {
     const value = document.getElementById(type + 'Select').value;
     if (!value) return;

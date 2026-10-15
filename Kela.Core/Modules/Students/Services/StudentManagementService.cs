@@ -1,5 +1,6 @@
 using ClosedXML.Excel;
 using Kela.Core.Common.Bulk;
+using Kela.Core.Common.Email;
 using Kela.Core.Common.Responses;
 using Kela.Core.Data;
 using Kela.Core.Modules.Students.Requests;
@@ -10,7 +11,7 @@ namespace Kela.Core.Modules.Students.Services;
 
 using Student = Kela.Core.Modules.Auth.Entities.Student;
 
-public sealed class StudentManagementService(AppDbContext db) : Abstractions.IStudentManagementService
+public sealed class StudentManagementService(AppDbContext db, IEmailSender email) : Abstractions.IStudentManagementService
 {
     public async Task<PagedResponse<StudentListItemResponse>> ListAsync(StudentListRequest request, CancellationToken ct = default)
     {
@@ -92,20 +93,54 @@ public sealed class StudentManagementService(AppDbContext db) : Abstractions.ISt
     {
         var count = request.Count is < 1 or > 1000 ? 10 : request.Count;
         var hash = BCrypt.Net.BCrypt.HashPassword(request.Password);
+        var domain = string.IsNullOrWhiteSpace(request.EmailDomain) ? "generated.local" : request.EmailDomain.Trim().TrimStart('@');
 
-        for (var i = 0; i < count; i++)
+        var created = new List<Student>(count);
+        for (var i = 1; i <= count; i++)
         {
-            db.Students.Add(new Student
+            var student = new Student
             {
-                FullName = $"{request.FullNamePrefix} {i + 1}",
-                Email = $"{request.EmailPrefix}-{Guid.NewGuid():N}@generated.local",
+                FullName = $"{request.FullNamePrefix} {i}",
+                Email = $"{request.EmailPrefix}{i}@{domain}".ToLowerInvariant(),
                 PasswordHash = hash,
                 IsActive = true
-            });
+            };
+            db.Students.Add(student);
+            created.Add(student);
         }
 
         await db.SaveChangesAsync(ct);
-        return new GenerateStudentsResponse(count);
+
+        if (request.GroupId is long groupId)
+        {
+            foreach (var student in created)
+            {
+                db.StudentGroups.Add(new Modules.Group.Entities.StudentGroup
+                {
+                    GroupId = groupId,
+                    StudentId = student.Id
+                });
+            }
+            await db.SaveChangesAsync(ct);
+        }
+
+        var sent = false;
+        if (request.SendCredentials)
+        {
+            foreach (var student in created)
+            {
+                try
+                {
+                    await email.SendAsync(student.Email, "Hesab məlumatlarınız",
+                        $"<p>Salam, {student.FullName}.</p><p>E-poçt: <b>{student.Email}</b><br/>Şifrə: <b>{request.Password}</b></p>", ct);
+                }
+                catch { /* SMTP konfiqurasiya olunmayıb */ }
+            }
+            sent = true;
+        }
+
+        return new GenerateStudentsResponse(count, sent,
+            created.Select(s => new GeneratedStudentInfo(s.Id, s.FullName, s.Email)).ToList());
     }
 
     public async Task<IReadOnlyList<StudentDeviceResponse>> ListDevicesAsync(long studentId, CancellationToken ct = default)

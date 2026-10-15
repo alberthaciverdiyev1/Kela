@@ -5,6 +5,7 @@
     let createMode = true;
     let step = 1;
     let options = null;
+    let generatedStudentIds = [];
 
     function showError(m) { errBox.textContent = m; errBox.classList.remove('hidden'); }
     function clearError() { errBox.classList.add('hidden'); }
@@ -34,6 +35,29 @@
         }
         return true;
     }
+
+
+    window.wizToggleGen = function () {
+        document.getElementById('wizGenPanel').classList.toggle('hidden');
+    };
+
+    window.wizGenerate = async function () {
+        const res = await AdminUI.postJson('/students/generate', {
+            count: Number(document.getElementById('wg_count').value),
+            fullNamePrefix: document.getElementById('wg_prefix').value,
+            emailDomain: document.getElementById('wg_domain').value,
+            password: document.getElementById('wg_password').value,
+            sendCredentials: document.getElementById('wg_send').checked
+        });
+        if (!res.ok) { AdminUI.error(AdminUI.errText(res)); return; }
+
+        (res.data.students || []).forEach(s => generatedStudentIds.push(s.id));
+        const info = document.getElementById('wizGenInfo');
+        info.textContent = generatedStudentIds.length + ' ' + L["Common_Generate"];
+        info.classList.remove('hidden');
+        document.getElementById('wizGenPanel').classList.add('hidden');
+        AdminUI.notify(res.data.created + L["Js_StudentsCreated"]);
+    };
 
     window.toggleAllCheck = function (containerId, checked) {
         document.querySelectorAll('#' + containerId + ' [data-name]').forEach(row => {
@@ -115,6 +139,8 @@
         document.getElementById('description').value = '';
         document.getElementById('user_id').value = '';
         document.getElementById('image').value = '';
+        generatedStudentIds = [];
+        document.getElementById('wizGenInfo')?.classList.add('hidden');
         AdminUI.fileRemove('image');
         clearError();
         clearInvalid();
@@ -150,7 +176,7 @@
 
         const id = res.data.id;
         const subjects = collect('subjectsList');
-        const students = collect('studentsList');
+        const students = [...new Set([...collect('studentsList'), ...generatedStudentIds])];
         const quizzes = collect('quizzesList');
 
         if (subjects.length) await AdminUI.postJson(`/group/${id}/subjects`, { subjectIds: subjects });

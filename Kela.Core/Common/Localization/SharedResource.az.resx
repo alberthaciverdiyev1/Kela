@@ -283,6 +283,15 @@
   <data name="Common_RequiredFields" xml:space="preserve">
     <value>Zəruri xanaları doldurun</value>
   </data>
+  <data name="Common_Generate" xml:space="preserve">
+    <value>Generasiya et</value>
+  </data>
+  <data name="Students_EmailDomain" xml:space="preserve">
+    <value>E-poçt domeni</value>
+  </data>
+  <data name="Students_SendCredentials" xml:space="preserve">
+    <value>Şifrələri e-poçtla göndər</value>
+  </data>
   <data name="Common_Save" xml:space="preserve">
     <value>Yadda saxla</value>
   </data>

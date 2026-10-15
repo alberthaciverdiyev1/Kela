@@ -283,6 +283,15 @@
   <data name="Common_RequiredFields" xml:space="preserve">
     <value>Please fill in the required fields</value>
   </data>
+  <data name="Common_Generate" xml:space="preserve">
+    <value>Generate</value>
+  </data>
+  <data name="Students_EmailDomain" xml:space="preserve">
+    <value>Email domain</value>
+  </data>
+  <data name="Students_SendCredentials" xml:space="preserve">
+    <value>Send credentials by email</value>
+  </data>
   <data name="Common_Save" xml:space="preserve">
     <value>Save</value>
   </data>
