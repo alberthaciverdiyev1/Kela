@@ -15,11 +15,14 @@ public partial class MainLayout
     [Inject] private NavigationManager Nav { get; set; } = default!;
 
     private bool _ready;
-    private string _location = "/";
     private readonly List<string> _trail = [];
     private bool _goingBack;
 
-    private string RenderKey => Lang.Current + "|" + _location;
+    // Açar yalnız route-dan asılıdır və canlı oxunur ki, @Body ilə EYNİ render-də
+    // dəyişsin. İstiqamət (_goingBack) BİLƏRƏKDƏN daxil edilmir: o, set olunanda
+    // açar ikinci dəfə dəyişir, element iki dəfə yaradılır və birinci animasiya
+    // yarıda qırılır — nəticədə keçid iki hərəkətə bölünür.
+    private string RenderKey => $"{Lang.Current}|{Nav.ToBaseRelativePath(Nav.Uri)}";
 
     private string TransitionClass => _goingBack ? "page-transition page-back" : "page-transition";
 
@@ -28,8 +31,7 @@ public partial class MainLayout
         Auth.Changed += OnAuthChanged;
         Lang.Changed += OnLangChanged;
         Nav.LocationChanged += OnLocationChanged;
-        _location = Nav.ToBaseRelativePath(Nav.Uri);
-        _trail.Add(_location);
+        _trail.Add(Nav.ToBaseRelativePath(Nav.Uri));
 
         if (!Auth.IsAuthenticated)
         {
@@ -117,13 +119,12 @@ public partial class MainLayout
     });
 
     private void OnLocationChanged(object? sender, Microsoft.AspNetCore.Components.Routing.LocationChangedEventArgs e)
-        => _ = InvokeAsync(() =>
-        {
-            var path = Nav.ToBaseRelativePath(Nav.Uri);
-            _goingBack = IsBackNavigation(path);
-            _location = path;
-            StateHasChanged();
-        });
+    {
+        // İstiqamət SINXRON təyin olunur, InvokeAsync içində yox: render növbəsi
+        // işlənməzdən əvvəl hazır olmalıdır, əks halda element səhv siniflə yaranır.
+        _goingBack = IsBackNavigation(Nav.ToBaseRelativePath(Nav.Uri));
+        _ = InvokeAsync(StateHasChanged);
+    }
 
     /// <summary>
     /// Geri naviqasiyanı müəyyən edir. Blazor istiqamət vermir, ona görə keçdiyimiz
