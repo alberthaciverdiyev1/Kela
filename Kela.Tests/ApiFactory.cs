@@ -56,7 +56,8 @@ public sealed class ApiFactory : WebApplicationFactory<Program>, IAsyncLifetime
             config.AddInMemoryCollection(new Dictionary<string, string?>
             {
                 ["ConnectionStrings:Postgres"] = _db.GetConnectionString(),
-                ["RateLimit:AuthPermitLimit"] = "1000000"
+                ["RateLimit:AuthPermitLimit"] = "1000000",
+                ["Tenancy:Strict"] = "false"
             });
         });
     }
@@ -70,6 +71,8 @@ public sealed class ApiFactory : WebApplicationFactory<Program>, IAsyncLifetime
     private sealed class NullTenantProvider : ITenantProvider
     {
         public long? TenantId => null;
+
+        public bool IgnoreTenant => false;
     }
 }
 

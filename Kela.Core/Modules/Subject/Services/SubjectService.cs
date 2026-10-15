@@ -20,7 +20,7 @@ public sealed class SubjectService(AppDbContext db) : ISubjectService
 
         if (request.IsDeleted == 1)
         {
-            query = query.IgnoreQueryFilters().Where(x => x.DeletedAt != null);
+            query = query.IgnoreQueryFilters(new[] { "SoftDelete" }).Where(x => x.DeletedAt != null);
         }
 
         if (!string.IsNullOrWhiteSpace(request.Search))
@@ -45,7 +45,7 @@ public sealed class SubjectService(AppDbContext db) : ISubjectService
     public async Task<SubjectResponse> GetAsync(long id, CancellationToken ct = default)
     {
         var category = await db.Subjects
-            .IgnoreQueryFilters()
+            .IgnoreQueryFilters(new[] { "SoftDelete" })
             .AsNoTracking()
             .FirstOrDefaultAsync(x => x.Id == id, ct)
             ?? throw new KeyNotFoundException($"Subject not found: {id}");
@@ -72,7 +72,7 @@ public sealed class SubjectService(AppDbContext db) : ISubjectService
     public async Task<SubjectResponse> UpdateAsync(long id, SubjectUpsertRequest request, CancellationToken ct = default)
     {
         var category = await db.Subjects
-            .IgnoreQueryFilters()
+            .IgnoreQueryFilters(new[] { "SoftDelete" })
             .FirstOrDefaultAsync(x => x.Id == id, ct)
             ?? throw new KeyNotFoundException($"Subject not found: {id}");
 
@@ -96,7 +96,7 @@ public sealed class SubjectService(AppDbContext db) : ISubjectService
 
     private async Task EnsureNameAvailableAsync(string name, long? excludeId, CancellationToken ct)
     {
-        var exists = await db.Subjects.IgnoreQueryFilters()
+        var exists = await db.Subjects.IgnoreQueryFilters(new[] { "SoftDelete" })
             .AnyAsync(x => x.Name == name && (excludeId == null || x.Id != excludeId), ct);
 
         if (exists)

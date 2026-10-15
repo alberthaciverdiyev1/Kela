@@ -24,7 +24,7 @@ public sealed class BannerService(AppDbContext db, IFileStorage storage) : IBann
 
         if (request.IsDeleted == 1)
         {
-            query = query.IgnoreQueryFilters().Where(x => x.DeletedAt != null);
+            query = query.IgnoreQueryFilters(new[] { "SoftDelete" }).Where(x => x.DeletedAt != null);
         }
 
         if (!string.IsNullOrWhiteSpace(request.Search))
@@ -50,7 +50,7 @@ public sealed class BannerService(AppDbContext db, IFileStorage storage) : IBann
     public async Task<BannerResponse> GetAsync(long id, CancellationToken ct = default)
     {
         var banner = await db.Banners
-            .IgnoreQueryFilters()
+            .IgnoreQueryFilters(new[] { "SoftDelete" })
             .AsNoTracking()
             .FirstOrDefaultAsync(x => x.Id == id, ct)
             ?? throw new KeyNotFoundException($"Banner not found: {id}");
@@ -79,7 +79,7 @@ public sealed class BannerService(AppDbContext db, IFileStorage storage) : IBann
     public async Task<BannerResponse> UpdateAsync(long id, BannerUpsertRequest request, CancellationToken ct = default)
     {
         var banner = await db.Banners
-            .IgnoreQueryFilters()
+            .IgnoreQueryFilters(new[] { "SoftDelete" })
             .FirstOrDefaultAsync(x => x.Id == id, ct)
             ?? throw new KeyNotFoundException($"Banner not found: {id}");
 

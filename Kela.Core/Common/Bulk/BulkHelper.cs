@@ -29,7 +29,7 @@ public static class BulkHelper
             throw new ArgumentException("Ids are required");
         }
 
-        var items = await db.Set<T>().IgnoreQueryFilters().Where(x => request.Ids.Contains(x.Id)).ToListAsync(ct);
+        var items = await db.Set<T>().IgnoreQueryFilters(new[] { "SoftDelete" }).Where(x => request.Ids.Contains(x.Id)).ToListAsync(ct);
         var now = DateTimeOffset.UtcNow;
         var isActiveProperty = typeof(T).GetProperty("IsActive");
 

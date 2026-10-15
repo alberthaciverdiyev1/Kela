@@ -30,7 +30,7 @@ public sealed class GroupService(AppDbContext db, IFileStorage storage) : IGroup
 
         if (request.IsDeleted == 1)
         {
-            query = query.IgnoreQueryFilters().Where(x => x.DeletedAt != null);
+            query = query.IgnoreQueryFilters(new[] { "SoftDelete" }).Where(x => x.DeletedAt != null);
         }
 
         if (request.UserId.HasValue)
@@ -61,7 +61,7 @@ public sealed class GroupService(AppDbContext db, IFileStorage storage) : IGroup
     public async Task<GroupResponse> GetAsync(long id, CancellationToken ct = default)
     {
         var group = await db.Groups
-            .IgnoreQueryFilters()
+            .IgnoreQueryFilters(new[] { "SoftDelete" })
             .AsNoTracking()
             .Include(x => x.Memberships)
             .FirstOrDefaultAsync(x => x.Id == id, ct)
@@ -93,7 +93,7 @@ public sealed class GroupService(AppDbContext db, IFileStorage storage) : IGroup
     public async Task<GroupResponse> UpdateAsync(long id, GroupUpsertRequest request, CancellationToken ct = default)
     {
         var group = await db.Groups
-            .IgnoreQueryFilters()
+            .IgnoreQueryFilters(new[] { "SoftDelete" })
             .Include(x => x.Memberships)
             .FirstOrDefaultAsync(x => x.Id == id, ct)
             ?? throw new KeyNotFoundException($"Group not found: {id}");
@@ -146,7 +146,7 @@ public sealed class GroupService(AppDbContext db, IFileStorage storage) : IGroup
             }
 
             var existing = await db.StudentGroups
-                .IgnoreQueryFilters()
+                .IgnoreQueryFilters(new[] { "SoftDelete" })
                 .FirstOrDefaultAsync(x => x.GroupId == groupId && x.StudentId == studentId, ct);
 
             if (existing is null)
@@ -206,7 +206,7 @@ public sealed class GroupService(AppDbContext db, IFileStorage storage) : IGroup
             }
 
             var existing = await db.GroupSubjects
-                .IgnoreQueryFilters()
+                .IgnoreQueryFilters(new[] { "SoftDelete" })
                 .FirstOrDefaultAsync(x => x.GroupId == groupId && x.SubjectId == subjectId, ct);
 
             if (existing is null)
@@ -263,7 +263,7 @@ public sealed class GroupService(AppDbContext db, IFileStorage storage) : IGroup
             }
 
             var existing = await db.GroupQuizzes
-                .IgnoreQueryFilters()
+                .IgnoreQueryFilters(new[] { "SoftDelete" })
                 .FirstOrDefaultAsync(x => x.GroupId == groupId && x.QuizId == quizId, ct);
 
             if (existing is null)

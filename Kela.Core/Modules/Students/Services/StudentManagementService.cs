@@ -30,12 +30,12 @@ public sealed class StudentManagementService(AppDbContext db) : Abstractions.ISt
     }
 
     public async Task<StudentListItemResponse> GetAsync(long id, CancellationToken ct = default)
-        => ToResponse(await db.Students.IgnoreQueryFilters().AsNoTracking().FirstOrDefaultAsync(x => x.Id == id, ct)
+        => ToResponse(await db.Students.IgnoreQueryFilters(new[] { "SoftDelete" }).AsNoTracking().FirstOrDefaultAsync(x => x.Id == id, ct)
             ?? throw new KeyNotFoundException($"Student not found: {id}"));
 
     public async Task<StudentListItemResponse> SetStatusAsync(long id, SetStudentStatusRequest request, CancellationToken ct = default)
     {
-        var student = await db.Students.IgnoreQueryFilters().FirstOrDefaultAsync(x => x.Id == id, ct)
+        var student = await db.Students.IgnoreQueryFilters(new[] { "SoftDelete" }).FirstOrDefaultAsync(x => x.Id == id, ct)
             ?? throw new KeyNotFoundException($"Student not found: {id}");
 
         student.IsActive = request.IsActive;
@@ -53,7 +53,7 @@ public sealed class StudentManagementService(AppDbContext db) : Abstractions.ISt
 
     public async Task RestoreAsync(long id, CancellationToken ct = default)
     {
-        var student = await db.Students.IgnoreQueryFilters().FirstOrDefaultAsync(x => x.Id == id, ct)
+        var student = await db.Students.IgnoreQueryFilters(new[] { "SoftDelete" }).FirstOrDefaultAsync(x => x.Id == id, ct)
             ?? throw new KeyNotFoundException($"Student not found: {id}");
         student.DeletedAt = null;
         await db.SaveChangesAsync(ct);
@@ -132,7 +132,7 @@ public sealed class StudentManagementService(AppDbContext db) : Abstractions.ISt
 
         if (request.IsDeleted == 1)
         {
-            query = query.IgnoreQueryFilters().Where(x => x.DeletedAt != null);
+            query = query.IgnoreQueryFilters(new[] { "SoftDelete" }).Where(x => x.DeletedAt != null);
         }
 
         if (request.IsActive.HasValue)

@@ -33,7 +33,7 @@ public sealed class ProgressService(
         }
 
         var existing = await db.LessonProgress
-            .IgnoreQueryFilters()
+            .IgnoreQueryFilters(new[] { "SoftDelete" })
             .FirstOrDefaultAsync(x => x.StudentId == studentId && x.LessonContentId == request.ContentId, ct);
 
         if (existing is null)

@@ -89,6 +89,7 @@ public static class DependencyInjection
         services.AddScoped<IStudentManagementService, StudentManagementService>();
 
         services.AddHttpContextAccessor();
+        services.AddScoped<ITenantScope, TenantScope>();
         services.AddScoped<ITenantProvider, HttpTenantProvider>();
 
         services.Configure<FcmOptions>(configuration.GetSection(FcmOptions.SectionName));

@@ -14,6 +14,16 @@ public sealed class TenantService(AppDbContext db) : ITenantService
             .Select(x => new TenantResponse(x.Id, x.Name, x.Slug, x.IsActive))
             .ToListAsync(ct);
 
+    public async Task<IReadOnlyList<TenantResponse>> ListPublicAsync(CancellationToken ct = default)
+        => await db.Tenants.AsNoTracking().Where(x => x.IsActive).OrderBy(x => x.Name)
+            .Select(x => new TenantResponse(x.Id, x.Name, x.Slug, x.IsActive))
+            .ToListAsync(ct);
+
+    public async Task<TenantResponse?> GetByIdAsync(long id, CancellationToken ct = default)
+        => await db.Tenants.AsNoTracking().Where(x => x.Id == id)
+            .Select(x => new TenantResponse(x.Id, x.Name, x.Slug, x.IsActive))
+            .FirstOrDefaultAsync(ct);
+
     public async Task<TenantResponse> CreateAsync(CreateTenantRequest request, CancellationToken ct = default)
     {
         var slug = request.Slug.Trim().ToLowerInvariant();

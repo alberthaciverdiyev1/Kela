@@ -24,7 +24,7 @@ public sealed class QuestionService(AppDbContext db, IFileStorage storage) : IQu
 
         if (request.IsDeleted == 1)
         {
-            query = query.IgnoreQueryFilters().Where(x => x.DeletedAt != null);
+            query = query.IgnoreQueryFilters(new[] { "SoftDelete" }).Where(x => x.DeletedAt != null);
         }
 
         if (request.SubjectId.HasValue)
@@ -53,7 +53,7 @@ public sealed class QuestionService(AppDbContext db, IFileStorage storage) : IQu
 
     public async Task<QuestionResponse> GetAsync(long id, CancellationToken ct = default)
     {
-        var question = await db.Questions.IgnoreQueryFilters().AsNoTracking()
+        var question = await db.Questions.IgnoreQueryFilters(new[] { "SoftDelete" }).AsNoTracking()
             .FirstOrDefaultAsync(x => x.Id == id, ct)
             ?? throw new KeyNotFoundException($"Question not found: {id}");
 
@@ -88,7 +88,7 @@ public sealed class QuestionService(AppDbContext db, IFileStorage storage) : IQu
 
     public async Task<QuestionResponse> UpdateAsync(long id, QuestionUpsertRequest request, CancellationToken ct = default)
     {
-        var question = await db.Questions.IgnoreQueryFilters()
+        var question = await db.Questions.IgnoreQueryFilters(new[] { "SoftDelete" })
             .FirstOrDefaultAsync(x => x.Id == id, ct)
             ?? throw new KeyNotFoundException($"Question not found: {id}");
 

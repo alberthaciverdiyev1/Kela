@@ -29,7 +29,7 @@ public sealed class LessonContentService(AppDbContext db, IFileStorage storage) 
 
         if (request.IsDeleted == 1)
         {
-            query = query.IgnoreQueryFilters().Where(x => x.DeletedAt != null);
+            query = query.IgnoreQueryFilters(new[] { "SoftDelete" }).Where(x => x.DeletedAt != null);
         }
 
         if (request.LessonId.HasValue)
@@ -110,7 +110,7 @@ public sealed class LessonContentService(AppDbContext db, IFileStorage storage) 
     public async Task<LessonContentResponse> UpdateAsync(
         long id, LessonContentUpdateRequest request, CancellationToken ct = default)
     {
-        var content = await db.LessonContents.IgnoreQueryFilters()
+        var content = await db.LessonContents.IgnoreQueryFilters(new[] { "SoftDelete" })
             .Include(x => x.Video).Include(x => x.MediaFile).Include(x => x.VoiceRecord)
             .FirstOrDefaultAsync(x => x.Id == id, ct)
             ?? throw new KeyNotFoundException($"Lesson content not found: {id}");

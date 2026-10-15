@@ -19,7 +19,7 @@ public sealed class UserService(AppDbContext db) : IUserService
 
         if (request.IsDeleted == 1)
         {
-            query = query.IgnoreQueryFilters().Where(x => x.DeletedAt != null);
+            query = query.IgnoreQueryFilters(new[] { "SoftDelete" }).Where(x => x.DeletedAt != null);
         }
 
         if (!string.IsNullOrWhiteSpace(request.Type))
@@ -51,7 +51,7 @@ public sealed class UserService(AppDbContext db) : IUserService
 
     public async Task<UserResponse> GetAsync(long id, CancellationToken ct = default)
     {
-        var user = await db.Users.IgnoreQueryFilters().AsNoTracking()
+        var user = await db.Users.IgnoreQueryFilters(new[] { "SoftDelete" }).AsNoTracking()
             .FirstOrDefaultAsync(x => x.Id == id, ct)
             ?? throw new KeyNotFoundException($"User not found: {id}");
 
@@ -86,7 +86,7 @@ public sealed class UserService(AppDbContext db) : IUserService
 
     public async Task<UserResponse> UpdateAsync(long id, UserUpsertRequest request, CancellationToken ct = default)
     {
-        var user = await db.Users.IgnoreQueryFilters()
+        var user = await db.Users.IgnoreQueryFilters(new[] { "SoftDelete" })
             .FirstOrDefaultAsync(x => x.Id == id, ct)
             ?? throw new KeyNotFoundException($"User not found: {id}");
 
@@ -120,7 +120,7 @@ public sealed class UserService(AppDbContext db) : IUserService
 
     private async Task EnsureEmailAvailableAsync(string email, long? excludeId, CancellationToken ct)
     {
-        var exists = await db.Users.IgnoreQueryFilters()
+        var exists = await db.Users.IgnoreQueryFilters(new[] { "SoftDelete" })
             .AnyAsync(x => x.Email == email && (excludeId == null || x.Id != excludeId), ct);
 
         if (exists)

@@ -18,7 +18,7 @@ public sealed class UserConfiguration : IEntityTypeConfiguration<User>
         builder.Property(x => x.Surname).HasColumnName("surname").HasMaxLength(190);
 
         builder.Property(x => x.Email).HasColumnName("email").HasMaxLength(190).IsRequired();
-        builder.HasIndex(x => x.Email).IsUnique();
+        builder.HasIndex(x => new { x.TenantId, x.Email }).IsUnique();
 
         builder.Property(x => x.PasswordHash).HasColumnName("password").IsRequired();
         builder.Property(x => x.PhoneNumber).HasColumnName("phone_number").HasMaxLength(50);

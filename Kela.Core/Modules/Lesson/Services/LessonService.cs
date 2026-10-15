@@ -26,7 +26,7 @@ public sealed class LessonService(AppDbContext db, IFileStorage storage) : ILess
 
         if (request.IsDeleted == 1)
         {
-            query = query.IgnoreQueryFilters().Where(x => x.DeletedAt != null);
+            query = query.IgnoreQueryFilters(new[] { "SoftDelete" }).Where(x => x.DeletedAt != null);
         }
 
         if (request.SubjectId.HasValue)
@@ -61,7 +61,7 @@ public sealed class LessonService(AppDbContext db, IFileStorage storage) : ILess
 
     public async Task<LessonResponse> GetAsync(long id, CancellationToken ct = default)
     {
-        var lesson = await db.Lessons.IgnoreQueryFilters().AsNoTracking()
+        var lesson = await db.Lessons.IgnoreQueryFilters(new[] { "SoftDelete" }).AsNoTracking()
             .FirstOrDefaultAsync(x => x.Id == id, ct)
             ?? throw new KeyNotFoundException($"Lesson not found: {id}");
 
@@ -94,7 +94,7 @@ public sealed class LessonService(AppDbContext db, IFileStorage storage) : ILess
 
     public async Task<LessonResponse> UpdateAsync(long id, LessonUpsertRequest request, CancellationToken ct = default)
     {
-        var lesson = await db.Lessons.IgnoreQueryFilters()
+        var lesson = await db.Lessons.IgnoreQueryFilters(new[] { "SoftDelete" })
             .FirstOrDefaultAsync(x => x.Id == id, ct)
             ?? throw new KeyNotFoundException($"Lesson not found: {id}");
 
@@ -164,7 +164,7 @@ public sealed class LessonService(AppDbContext db, IFileStorage storage) : ILess
 
     public async Task<LessonSettingsResponse> SetSettingsAsync(long id, SetLessonSettingsRequest request, CancellationToken ct = default)
     {
-        var lesson = await db.Lessons.IgnoreQueryFilters().FirstOrDefaultAsync(x => x.Id == id, ct)
+        var lesson = await db.Lessons.IgnoreQueryFilters(new[] { "SoftDelete" }).FirstOrDefaultAsync(x => x.Id == id, ct)
             ?? throw new KeyNotFoundException($"Lesson not found: {id}");
 
         lesson.Settings = LessonSettings.Serialize(request);

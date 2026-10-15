@@ -1,3 +1,4 @@
+using Kela.Core.Modules.Tenant.Entities;
 using Kela.Core.Modules.User.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -14,6 +15,14 @@ public static class DbSeeder
         using var scope = services.CreateScope();
         var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
         var logger = scope.ServiceProvider.GetRequiredService<ILoggerFactory>().CreateLogger("DbSeeder");
+
+        // Default tenant yoxdursa yaradılır (login səhifəsində görünsün).
+        if (!await db.Tenants.AnyAsync(x => x.Slug == "default", ct))
+        {
+            db.Tenants.Add(new Tenant { Name = "Default", Slug = "default" });
+            await db.SaveChangesAsync(ct);
+            logger.LogWarning("Default tenant yaradıldı.");
+        }
 
         if (await db.Users.IgnoreQueryFilters().AnyAsync(u => u.Type == UserTypes.SuperAdmin, ct)) return;
 

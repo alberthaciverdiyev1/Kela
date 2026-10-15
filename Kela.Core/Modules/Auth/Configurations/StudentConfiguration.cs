@@ -15,7 +15,7 @@ public sealed class StudentConfiguration : IEntityTypeConfiguration<Student>
 
         builder.Property(x => x.FullName).HasColumnName("full_name").HasMaxLength(255).IsRequired();
         builder.Property(x => x.Email).HasColumnName("email").HasMaxLength(190).IsRequired();
-        builder.HasIndex(x => x.Email).IsUnique();
+        builder.HasIndex(x => new { x.TenantId, x.Email }).IsUnique();
 
         builder.Property(x => x.Phone).HasColumnName("phone").HasMaxLength(50);
         builder.Property(x => x.PasswordHash).HasColumnName("password").IsRequired();

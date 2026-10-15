@@ -24,7 +24,7 @@ public sealed class QuizService(AppDbContext db, IFileStorage storage) : IQuizSe
 
         if (request.IsDeleted == 1)
         {
-            query = query.IgnoreQueryFilters().Where(x => x.DeletedAt != null);
+            query = query.IgnoreQueryFilters(new[] { "SoftDelete" }).Where(x => x.DeletedAt != null);
         }
 
         if (request.LessonId.HasValue)
@@ -53,7 +53,7 @@ public sealed class QuizService(AppDbContext db, IFileStorage storage) : IQuizSe
 
     public async Task<QuizResponse> GetAsync(long id, CancellationToken ct = default)
     {
-        var quiz = await db.Quizzes.IgnoreQueryFilters().AsNoTracking()
+        var quiz = await db.Quizzes.IgnoreQueryFilters(new[] { "SoftDelete" }).AsNoTracking()
             .Include(x => x.Questions)
             .FirstOrDefaultAsync(x => x.Id == id, ct)
             ?? throw new KeyNotFoundException($"Quiz not found: {id}");
@@ -84,7 +84,7 @@ public sealed class QuizService(AppDbContext db, IFileStorage storage) : IQuizSe
 
     public async Task<QuizResponse> UpdateAsync(long id, QuizUpsertRequest request, CancellationToken ct = default)
     {
-        var quiz = await db.Quizzes.IgnoreQueryFilters()
+        var quiz = await db.Quizzes.IgnoreQueryFilters(new[] { "SoftDelete" })
             .Include(x => x.Questions)
             .FirstOrDefaultAsync(x => x.Id == id, ct)
             ?? throw new KeyNotFoundException($"Quiz not found: {id}");
@@ -130,7 +130,7 @@ public sealed class QuizService(AppDbContext db, IFileStorage storage) : IQuizSe
                 throw new ArgumentException($"Question not found: {questionId}");
             }
 
-            var existing = await db.QuizQuestions.IgnoreQueryFilters()
+            var existing = await db.QuizQuestions.IgnoreQueryFilters(new[] { "SoftDelete" })
                 .FirstOrDefaultAsync(x => x.QuizId == quizId && x.QuestionId == questionId, ct);
 
             if (existing is null)

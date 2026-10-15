@@ -66,7 +66,7 @@ public sealed class NotificationService(
 
         if (request.IsDeleted == 1)
         {
-            query = query.IgnoreQueryFilters().Where(x => x.DeletedAt != null);
+            query = query.IgnoreQueryFilters(new[] { "SoftDelete" }).Where(x => x.DeletedAt != null);
         }
 
         if (!string.IsNullOrWhiteSpace(request.Search))
@@ -108,7 +108,7 @@ public sealed class NotificationService(
     public async Task SaveTokenAsync(long studentId, SaveNotificationTokenRequest request, CancellationToken ct = default)
     {
         var token = await db.NotificationTokens
-            .IgnoreQueryFilters()
+            .IgnoreQueryFilters(new[] { "SoftDelete" })
             .FirstOrDefaultAsync(t => t.Token == request.Token, ct);
 
         if (token is null)

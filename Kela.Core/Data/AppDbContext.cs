@@ -12,19 +12,25 @@ public sealed class AppDbContext : DbContext
     private static readonly Type[] TenantScopedPlainEntities =
     [
         typeof(Modules.Setting.Entities.Setting),
-        typeof(Modules.PrivacyPolicy.Entities.PrivacyPolicy)
+        typeof(Modules.PrivacyPolicy.Entities.PrivacyPolicy),
+        typeof(Modules.Auth.Entities.OtpCode)
     ];
 
     private readonly bool _strictTenant;
+    private readonly ITenantProvider _tenantProvider;
 
     public AppDbContext(DbContextOptions<AppDbContext> options, ITenantProvider tenantProvider, IConfiguration configuration)
         : base(options)
     {
-        CurrentTenantId = tenantProvider.TenantId;
+        _tenantProvider = tenantProvider;
         _strictTenant = configuration.GetValue<bool>("Tenancy:Strict");
     }
 
-    public long? CurrentTenantId { get; }
+    /// <summary>Cari tenant — canlı oxunur ki, login zamanı təyin olunan tenant dərhal tətbiq olunsun.</summary>
+    public long? CurrentTenantId => _tenantProvider.TenantId;
+
+    /// <summary>Superadmin cross-tenant rejimi — tenant filtri söndürülür.</summary>
+    public bool IgnoreTenantFilter => _tenantProvider.IgnoreTenant;
 
     public DbSet<Banner> Banners => Set<Banner>();
 
@@ -102,33 +108,45 @@ public sealed class AppDbContext : DbContext
             if (!isBase && !isTenantScopedPlain) continue;
 
             entityType.FindProperty("TenantId")?.SetColumnName("tenant_id");
-            modelBuilder.Entity(entityType.ClrType).HasQueryFilter(BuildFilter(entityType.ClrType, isBase));
+
+            // İki AYRI adlı filtri: "Tenant" (həmişə aktiv) və "SoftDelete" (yalnız BaseEntity).
+            // Beləliklə silinmişləri göstərmək üçün yalnız SoftDelete söndürülə bilər — tenant filtri qalır.
+            modelBuilder.Entity(entityType.ClrType).HasQueryFilter("Tenant", BuildTenantFilter(entityType.ClrType));
+
+            if (isBase)
+            {
+                modelBuilder.Entity(entityType.ClrType).HasQueryFilter("SoftDelete", BuildSoftDeleteFilter(entityType.ClrType));
+            }
         }
     }
 
-    /// <summary>Soft-delete (+ tenant) global filter: deleted_at IS NULL ve tenant_id = current tenant (tenant bilinirse).</summary>
-    private LambdaExpression BuildFilter(Type clrType, bool withSoftDelete)
+    /// <summary>Tenant filtri: cross-tenant (superadmin) → yoxdur; strict → yalnız cari tenant; əks halda tenant yoxdursa filtrsiz.</summary>
+    private LambdaExpression BuildTenantFilter(Type clrType)
     {
         var parameter = Expression.Parameter(clrType, "e");
 
-        var tenantValue = Expression.Property(Expression.Constant(this), nameof(CurrentTenantId));
+        var ctx = Expression.Constant(this);
+        var crossTenant = Expression.Property(ctx, nameof(IgnoreTenantFilter));
+        var tenantValue = Expression.Property(ctx, nameof(CurrentTenantId));
         var tenantEquals = Expression.Equal(
             Expression.Convert(Expression.Property(parameter, "TenantId"), typeof(long?)),
             tenantValue);
 
-        // strict rejimdə tenant bilinmirsə heç nə göstərilmir; əks halda tenant bilinmirsə filtr tətbiq olunmur
-        Expression body = _strictTenant
+        Expression tenantPart = _strictTenant
             ? tenantEquals
             : Expression.OrElse(Expression.Equal(tenantValue, Expression.Constant(null, typeof(long?))), tenantEquals);
 
-        if (withSoftDelete)
-        {
-            var softDelete = Expression.Equal(
-                Expression.Property(parameter, nameof(BaseEntity.DeletedAt)),
-                Expression.Constant(null, typeof(DateTimeOffset?)));
-            body = Expression.AndAlso(softDelete, body);
-        }
+        Expression body = Expression.OrElse(crossTenant, tenantPart);
+        return Expression.Lambda(body, parameter);
+    }
 
+    /// <summary>Soft-delete filtri: deleted_at IS NULL.</summary>
+    private static LambdaExpression BuildSoftDeleteFilter(Type clrType)
+    {
+        var parameter = Expression.Parameter(clrType, "e");
+        var body = Expression.Equal(
+            Expression.Property(parameter, nameof(BaseEntity.DeletedAt)),
+            Expression.Constant(null, typeof(DateTimeOffset?)));
         return Expression.Lambda(body, parameter);
     }
 

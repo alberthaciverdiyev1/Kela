@@ -24,7 +24,7 @@ public sealed class CertificateService(AppDbContext db, IFileStorage storage) : 
 
         if (request.IsDeleted == 1)
         {
-            query = query.IgnoreQueryFilters().Where(x => x.DeletedAt != null);
+            query = query.IgnoreQueryFilters(new[] { "SoftDelete" }).Where(x => x.DeletedAt != null);
         }
 
         if (!string.IsNullOrWhiteSpace(request.Search))
@@ -49,7 +49,7 @@ public sealed class CertificateService(AppDbContext db, IFileStorage storage) : 
     public async Task<CertificateResponse> GetAsync(long id, CancellationToken ct = default)
     {
         var certificate = await db.Certificates
-            .IgnoreQueryFilters()
+            .IgnoreQueryFilters(new[] { "SoftDelete" })
             .AsNoTracking()
             .FirstOrDefaultAsync(x => x.Id == id, ct)
             ?? throw new KeyNotFoundException($"Certificate not found: {id}");
@@ -80,7 +80,7 @@ public sealed class CertificateService(AppDbContext db, IFileStorage storage) : 
     public async Task<CertificateResponse> UpdateAsync(long id, CertificateUpsertRequest request, CancellationToken ct = default)
     {
         var certificate = await db.Certificates
-            .IgnoreQueryFilters()
+            .IgnoreQueryFilters(new[] { "SoftDelete" })
             .FirstOrDefaultAsync(x => x.Id == id, ct)
             ?? throw new KeyNotFoundException($"Certificate not found: {id}");
 
