@@ -8,13 +8,55 @@ public static class NodePaths
     /// <summary>
     /// Çıxış prefiksi mənbə açarından törədilir ki, fayl hansı tenant qovluğundadırsa
     /// çıxış da orada olsun (tenant adı sonradan dəyişsə belə uyğun qalsın).
+    ///
+    /// Qovluq adı <c>{videoId}-{ad}</c> formasındadır: bucket-da insan tərəfindən
+    /// oxunaqlı olsun, amma ID də qalsın — iki dərsin adı eyni ola bilər və video
+    /// sonradan adlansa mövcud fayllar yetim qalmamalıdır.
     /// </summary>
-    public static string OutputPrefix(string sourcePath, long videoId, int version, string tenantFolder)
+    public static string OutputPrefix(string sourcePath, long videoId, string? title, int version, string tenantFolder)
     {
         var index = sourcePath.IndexOf(RawMarker, StringComparison.OrdinalIgnoreCase);
         var baseFolder = index > 0 ? sourcePath[..index] : tenantFolder;
 
-        return $"{baseFolder.TrimEnd('/')}/videos/m3u8/{videoId}/v{version}";
+        var slug = Slug(title);
+        var folder = slug.Length == 0 ? videoId.ToString() : $"{videoId}-{slug}";
+
+        return $"{baseFolder.TrimEnd('/')}/videos/m3u8/{folder}/v{version}";
+    }
+
+    /// <summary>Başlığı bucket açarına yararlı hala salır (kiçik hərf, ASCII, tire).</summary>
+    private static string Slug(string? title)
+    {
+        if (string.IsNullOrWhiteSpace(title)) return string.Empty;
+
+        var builder = new System.Text.StringBuilder(title.Length);
+        var lastWasDash = false;
+
+        foreach (var ch in title.Trim().ToLowerInvariant())
+        {
+            // Azərbaycan hərfləri əvvəlcə sadələşdirilir ki, "ə" → "e" olsun.
+            var mapped = ch switch
+            {
+                'ə' => 'e', 'ı' => 'i', 'ö' => 'o', 'ü' => 'u', 'ç' => 'c',
+                'ş' => 's', 'ğ' => 'g', 'ñ' => 'n', 'ё' => 'e',
+                _ => ch
+            };
+
+            if (mapped is >= 'a' and <= 'z' or >= '0' and <= '9')
+            {
+                builder.Append(mapped);
+                lastWasDash = false;
+            }
+            else if (!lastWasDash && builder.Length > 0)
+            {
+                builder.Append('-');
+                lastWasDash = true;
+            }
+        }
+
+        var result = builder.ToString().Trim('-');
+
+        return result.Length <= 60 ? result : result[..60].Trim('-');
     }
 
     public static string MasterKey(string outputPrefix) => $"{outputPrefix}/master.m3u8";

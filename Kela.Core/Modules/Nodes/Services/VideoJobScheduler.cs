@@ -41,7 +41,7 @@ public sealed class VideoJobScheduler(
 
         var profiles = VideoLadder.ForSource(Settings.Ladder, sourceHeight);
         var tenantFolder = await folders.ResolveAsync(video.TenantId, ct);
-        var prefix = NodePaths.OutputPrefix(video.Path, video.Id, video.ConversionVersion, tenantFolder);
+        var prefix = NodePaths.OutputPrefix(video.Path, video.Id, video.Title, video.ConversionVersion, tenantFolder);
 
         var created = new List<VideoJob>();
 
@@ -175,7 +175,11 @@ public sealed class VideoJobScheduler(
                       AND tenant_id = {node.TenantId}
                       AND status = ANY({new[] { JobStatus.Pending, JobStatus.Queued }})
                       AND (next_attempt_at IS NULL OR next_attempt_at <= now())
-                    ORDER BY priority DESC, id
+                    -- Əvvəlcə ən köhnə video bitirilir, sonra növbəti. Beləliklə
+                    -- bir videonun bütün pillələri paralel paylanır və video tam
+                    -- hazır olur; əvvəlki sıralamada bütün 1080p-lər əvvəl
+                    -- götürüldüyü üçün heç bir video tamamlanmırdı.
+                    ORDER BY video_id, priority DESC, id
                     LIMIT {take}
                     FOR UPDATE SKIP LOCKED
                     """)

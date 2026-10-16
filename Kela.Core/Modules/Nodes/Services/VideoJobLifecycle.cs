@@ -355,7 +355,7 @@ public sealed class VideoJobLifecycle(
         if (video is null) return JobOperationResult.NotFound();
 
         var tenantFolder = await folders.ResolveAsync(video.TenantId, ct);
-        var prefix = NodePaths.OutputPrefix(video.Path, video.Id, video.ConversionVersion, tenantFolder);
+        var prefix = NodePaths.OutputPrefix(video.Path, video.Id, video.Title, video.ConversionVersion, tenantFolder);
 
         var jobs = await db.VideoJobs.IgnoreQueryFilters()
             .Where(j => j.VideoId == videoId && j.OutputPrefix == prefix)

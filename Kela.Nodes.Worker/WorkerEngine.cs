@@ -147,18 +147,38 @@ public sealed class WorkerEngine : IAsyncDisposable
         Profile = ProfileAdvisor.Resolve(Settings.Limits.Profile, Device, Encoders, Settings.Limits);
         Log.Info("worker", $"Resurs profili: {Profile.Profile} — {Profile.Description}");
 
+        // Cihaz ilk dəfə qoşulanda (və ya encoder dəyişəndə) real encoding sürəti ölçülür —
+        // koordinator cihazları bu balla müqayisə edir.
+        if (Settings.Benchmark is { } stored && stored.Encoder == Encoders.Chosen.Name)
+        {
+            BenchmarkResult = stored;
+        }
+        else
+        {
+            await MeasureAsync(ct);
+        }
+
         Notify();
         return true;
     }
 
+    /// <summary>İstifadəçi əl ilə yenidən ölçmək istədikdə.</summary>
     public async Task<NodeBenchmarkResult> RunBenchmarkAsync(CancellationToken ct = default)
     {
         if (Encoders is null) await PrepareAsync(ct);
 
-        BenchmarkResult = await _benchmark!.RunAsync(Encoders!.Chosen, ct);
+        await MeasureAsync(ct);
         Notify();
 
-        return BenchmarkResult;
+        return BenchmarkResult!;
+    }
+
+    private async Task MeasureAsync(CancellationToken ct)
+    {
+        BenchmarkResult = await _benchmark!.RunAsync(Encoders!.Chosen, ct);
+
+        Settings.Benchmark = BenchmarkResult;
+        Settings.Save();
     }
 
     /// <summary>Birdəfəlik qeydiyyat kodu ilə cihazı koordinatora tanıdır.</summary>

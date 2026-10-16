@@ -47,9 +47,14 @@ public class NodeSchedulingTests(ApiFactory factory)
 
         var prefix = jobs.Select(j => j.OutputPrefix).Distinct().Single();
 
-        // Çıxış mənbə faylının tenant qovluğu altında və versiyalı olmalıdır.
+        // Çıxış mənbə faylının tenant qovluğu altında, oxunaqlı adla və versiyalı olmalıdır.
         Assert.StartsWith(path[..path.IndexOf("/videos/raw/", StringComparison.Ordinal)], prefix);
-        Assert.EndsWith($"/videos/m3u8/{videoId}/v1", prefix);
+        Assert.EndsWith($"/v1", prefix);
+
+        var folder = prefix.Split('/')[^2];
+        Assert.StartsWith($"{videoId}-", folder);
+        Assert.DoesNotContain(" ", folder);
+        Assert.Equal(folder.ToLowerInvariant(), folder);
     }
 
     [Fact]

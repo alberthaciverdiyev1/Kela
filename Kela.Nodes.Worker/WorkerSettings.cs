@@ -26,6 +26,12 @@ public sealed class WorkerSettings
     /// <summary>Tətbiq açılanda worker özü işə düşsün.</summary>
     public bool AutoStart { get; set; }
 
+    /// <summary>
+    /// Son benchmark nəticəsi. Encoder dəyişməyibsə yenidən ölçülmür — sınaq
+    /// hər açılışda 10-20 saniyə encoding vaxtı alır.
+    /// </summary>
+    public NodeBenchmarkResult? Benchmark { get; set; }
+
     /// <summary>FFmpeg yolu. Boşdursa PATH-dən tapılır.</summary>
     public string FfmpegPath { get; set; } = string.Empty;
 
