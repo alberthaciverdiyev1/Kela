@@ -41,6 +41,12 @@ public sealed class WorkerSettings
     /// </summary>
     public NodeBenchmarkResult? Benchmark { get; set; }
 
+    /// <summary>
+    /// Əlavə axtarış qovluğu. Android-də tətbiqin native kitabxana qovluğudur —
+    /// jniLibs-dən çıxan ikililər yalnız oradan icra oluna bilər.
+    /// </summary>
+    public string PlatformBinaryDirectory { get; set; } = string.Empty;
+
     /// <summary>FFmpeg yolu. Boşdursa PATH-dən tapılır.</summary>
     public string FfmpegPath { get; set; } = string.Empty;
 

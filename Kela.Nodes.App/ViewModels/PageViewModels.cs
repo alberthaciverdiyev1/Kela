@@ -227,11 +227,27 @@ public sealed class SettingsViewModel : ObservableObject
 
         SaveCommand = new RelayCommand(Save);
         RegisterCommand = new AsyncRelayCommand(Register);
+
+        AndroidCommand = new AsyncRelayCommand(async () =>
+        {
+            await PlatformExtras.Current.RequestAllAsync();
+
+            // Sistem dialoqları bağlandıqdan sonra vəziyyət yenidən oxunur.
+            await Task.Delay(1500);
+            Raise(nameof(AndroidStatus));
+        });
     }
 
     public RelayCommand SaveCommand { get; }
 
     public AsyncRelayCommand RegisterCommand { get; }
+
+    public AsyncRelayCommand AndroidCommand { get; }
+
+    /// <summary>Yalnız Android-də göstərilir.</summary>
+    public bool ShowAndroid => PlatformExtras.Current.IsSupported;
+
+    public string AndroidStatus => PlatformExtras.Current.Status();
 
     /// <summary>Cihaza uyğun avtomatik seçim də daxil olmaqla resurs profilləri.</summary>
     public IReadOnlyList<ProfileOption> Profiles { get; } =

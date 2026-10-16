@@ -23,6 +23,12 @@ public sealed partial class MainViewModel : ObservableObject
     public MainViewModel()
     {
         Settings = WorkerSettings.Load();
+
+        // Android-də ikililər yalnız native kitabxana qovluğundan icra olunur.
+        if (PlatformExtras.Current.NativeBinaryDirectory is { Length: > 0 } binaries)
+        {
+            Settings.PlatformBinaryDirectory = binaries;
+        }
         Log = new WorkerLog();
         Engine = new WorkerEngine(Settings, Log);
 

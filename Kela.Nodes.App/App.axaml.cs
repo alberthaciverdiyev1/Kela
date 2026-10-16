@@ -6,26 +6,31 @@ using Kela.Nodes.App.Views;
 
 namespace Kela.Nodes.App;
 
-// Android başlığı 'Android.App' namespace-ini qlobal using kimi əlavə edir,
-// ona görə baza sinif tam adla göstərilir.
 public sealed class App : Avalonia.Application
 {
     public override void Initialize() => AvaloniaXamlLoader.Load(this);
 
     public override void OnFrameworkInitializationCompleted()
     {
-        if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
+        var model = new MainViewModel();
+
+        switch (ApplicationLifetime)
         {
-            var model = new MainViewModel();
+            case IClassicDesktopStyleApplicationLifetime desktop:
+                desktop.MainWindow = new MainWindow { DataContext = model };
+                desktop.ShutdownRequested += (_, _) => model.Engine.StopAsync().GetAwaiter().GetResult();
+                break;
 
-            desktop.MainWindow = new MainWindow { DataContext = model };
-            desktop.ShutdownRequested += (_, _) => model.Engine.StopAsync().GetAwaiter().GetResult();
+            // Android və iOS tək görünüş işlədir: Window yox, birbaşa idarə elementi verilir.
+            case ISingleViewApplicationLifetime singleView:
+                singleView.MainView = new MainView { DataContext = model };
+                break;
+        }
 
-            // "Avtomatik başlat" seçilibsə və cihaz qeydə alınıbsa, worker dərhal qoşulur.
-            if (model.Settings.AutoStart && model.Settings.IsRegistered)
-            {
-                _ = model.Engine.StartAsync();
-            }
+        // "Avtomatik başlat" seçilibsə və cihaz qeydə alınıbsa, worker dərhal qoşulur.
+        if (model.Settings.AutoStart && model.Settings.IsRegistered)
+        {
+            _ = model.Engine.StartAsync();
         }
 
         base.OnFrameworkInitializationCompleted();

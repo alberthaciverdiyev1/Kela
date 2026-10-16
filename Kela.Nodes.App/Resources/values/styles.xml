@@ -1,8 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-  <!-- Platformanın öz teması seçilir: əlavə Material/AppCompat paketi tələb olunmur. -->
-  <style name="MyTheme.NoActionBar" parent="android:Theme.Material.Light.NoActionBar">
-    <item name="android:windowActionBar">false</item>
-    <item name="android:windowNoTitle">true</item>
+  <!--
+    AvaloniaMainActivity AppCompatActivity-dən törəyir, ona görə AppCompat teması
+    mütləqdir — platformanın öz Material teması ilə tətbiq açılışda çökür.
+  -->
+  <style name="MyTheme.NoActionBar" parent="Theme.AppCompat.DayNight.NoActionBar">
+    <item name="windowActionBar">false</item>
+    <item name="windowNoTitle">true</item>
   </style>
 </resources>

@@ -40,9 +40,16 @@ public sealed class FfmpegLocator(WorkerSettings settings, WorkerLog log)
         return null;
     }
 
-    private static IEnumerable<string> Candidates(string configured, string environmentVariable, string name)
+    private IEnumerable<string> Candidates(string configured, string environmentVariable, string name)
     {
         if (!string.IsNullOrWhiteSpace(configured)) yield return configured;
+
+        // Platformanın verdiyi qovluq (Android: native lib dir) ən etibarlı yerdir.
+        if (!string.IsNullOrWhiteSpace(settings.PlatformBinaryDirectory))
+        {
+            yield return Path.Combine(settings.PlatformBinaryDirectory, name + ".so");
+            yield return Path.Combine(settings.PlatformBinaryDirectory, name);
+        }
 
         var fromEnvironment = Environment.GetEnvironmentVariable(environmentVariable);
         if (!string.IsNullOrWhiteSpace(fromEnvironment)) yield return fromEnvironment;
