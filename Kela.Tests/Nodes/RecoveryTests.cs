@@ -96,6 +96,34 @@ public class RecoveryTests(ApiFactory factory)
     }
 
     [Fact]
+    public async Task A_job_that_hangs_forever_is_taken_back()
+    {
+        var (videoId, _) = await _h.CreateVideoAsync();
+        var node = await _h.RegisterNodeAsync(NodeTestHarness.Unique("node"), maxConcurrentJobs: 64);
+        var assignment = (await _h.ClaimForVideoAsync(node, videoId)).First();
+
+        // Cihaz canlıdır və heartbeat göndərir, amma iş saatlardır bitmir.
+        // Lease hər dəfə uzadıldığı üçün əvvəllər bu tapşırıq ələ keçmirdi.
+        await _h.DbAsync(async db =>
+        {
+            var job = await db.VideoJobs.IgnoreQueryFilters().FirstAsync(j => j.Id == assignment.JobId);
+            job.Status = JobStatus.Processing;
+            job.LeaseExpiresAt = DateTimeOffset.UtcNow.AddHours(1);
+            job.StartedAt = DateTimeOffset.UtcNow.AddHours(-10);
+            await db.SaveChangesAsync();
+
+            var worker = await db.WorkerNodes.IgnoreQueryFilters().FirstAsync(n => n.Id == node.Id);
+            worker.Status = NodeStatus.Online;
+            worker.LastSeenAt = DateTimeOffset.UtcNow;
+            await db.SaveChangesAsync();
+        });
+
+        await _h.ReapAsync();
+
+        Assert.Equal(JobStatus.Pending, (await _h.JobAsync(assignment.JobId))!.Status);
+    }
+
+    [Fact]
     public async Task A_network_failure_retries_the_whole_video_instead_of_marking_it_broken()
     {
         var (videoId, _) = await _h.CreateVideoAsync();

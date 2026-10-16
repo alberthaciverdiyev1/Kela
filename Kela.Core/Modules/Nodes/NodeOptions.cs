@@ -20,6 +20,13 @@ public class NodeOptions
     public int MaxAttempts { get; set; } = 5;
 
     /// <summary>
+    /// Bir tapşırığın icra olunma müddətinin yuxarı həddi (saat). Cihaz canlı qalıb
+    /// işi bitirə bilmirsə (məsələn ffmpeg kilitlənib) heartbeat lease-i sonsuza qədər
+    /// uzadır və video heç vaxt tamamlanmır. Bu hədd keçəndə tapşırıq geri alınır.
+    /// </summary>
+    public int JobTimeoutHours { get; set; } = 6;
+
+    /// <summary>
     /// Bir video üçün tam konversiya dövrünün maksimum təkrarı. Keçici şəbəkə xətası
     /// bütün pillələri uğursuz etsə, video dərhal "failed" olmur; bu qədər dövr
     /// yenidən sınanır. Qalıcı xətada təkrar edilmir.

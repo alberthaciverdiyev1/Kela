@@ -110,8 +110,11 @@ public sealed class VideoJobScheduler(
                           AND n.deleted_at IS NULL
                           AND (n.status = 'offline' OR n.last_seen_at < now() - make_interval(secs => {1}))
                     )
+                    -- Cihaz canlıdır, amma iş həddən artıq uzanıb (kilidləmiş ffmpeg):
+                    -- heartbeat lease-i sonsuza qədər uzadardı və video heç vaxt bitməzdi.
+                    OR (started_at IS NOT NULL AND started_at < now() - make_interval(hours => {2}))
                   )
-            """, [JobStatus.Reclaimable, Settings.OfflineAfterSeconds]);
+            """, [JobStatus.Reclaimable, Settings.OfflineAfterSeconds, Settings.JobTimeoutHours]);
 
         if (reaped > 0) logger.LogWarning("Reclaimed {Count} expired video jobs", reaped);
 
