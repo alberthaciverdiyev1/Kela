@@ -40,7 +40,7 @@ async function loadList(page) {
 async function removeItem(id) {
     if (!await AdminUI.confirmDelete(L["Js_ConfirmDeleteBanner"])) return;
     const res = await AdminUI.del(`/banner/${id}`);
-    if (res.ok) { AdminUI.notify('Silindi'); loadList(currentPage); }
+    if (res.ok) { AdminUI.notify(L["Js_Deleted"]); loadList(currentPage); }
     else AdminUI.error();
 }
 

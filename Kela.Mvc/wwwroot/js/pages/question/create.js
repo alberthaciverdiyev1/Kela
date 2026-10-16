@@ -49,7 +49,7 @@
     };
 
     window.openCreate = function () {
-        document.getElementById('modalTitle').textContent = 'Yeni sual';
+        document.getElementById('modalTitle').textContent = L["Question_Create"];
         document.getElementById('entityId').value = '';
         document.getElementById('subject_id').value = '';
         document.getElementById('title_type').value = 'text';

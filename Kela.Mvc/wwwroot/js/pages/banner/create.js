@@ -4,7 +4,7 @@
 
 
     window.openCreate = function () {
-        document.getElementById('modalTitle').textContent = 'Yeni banner';
+        document.getElementById('modalTitle').textContent = L["Banner_Create"];
         document.getElementById('entityId').value = '';
         document.getElementById('title').value = '';
         document.getElementById('image').value = '';

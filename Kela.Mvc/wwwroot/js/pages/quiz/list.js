@@ -37,7 +37,7 @@ async function loadList(page) {
         { html: AdminUI.badge(q.type === 'general' ? L["Common_General"] : L["Common_Lesson"], 'neutral') },
         { html: q.durationMinutes, cls: 'text-slate-500' },
         { html: q.questionCount, cls: 'text-slate-500' },
-        { html: q.isActive ? AdminUI.badge('Aktiv', 'success') : AdminUI.badge('Deaktiv', 'neutral') },
+        { html: q.isActive ? AdminUI.badge(L["Common_Active"], 'success') : AdminUI.badge(L["Common_Archived"], 'neutral') },
         { html: showDeleted ? AdminUI.restoreButton(q.id) : quizActions(q), cls: 'text-right' }
     ]), 8, { rowIds: data.data.map(q => q.id), selectable: !showDeleted });
 
@@ -48,7 +48,7 @@ async function loadList(page) {
 async function removeItem(id) {
     if (!await AdminUI.confirmDelete(L["Js_ConfirmDeleteQuiz"])) return;
     const res = await AdminUI.del(`/quiz/${id}`);
-    if (res.ok) { AdminUI.notify('Silindi'); loadList(currentPage); }
+    if (res.ok) { AdminUI.notify(L["Js_Deleted"]); loadList(currentPage); }
     else AdminUI.error();
 }
 

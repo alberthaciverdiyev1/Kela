@@ -10,7 +10,7 @@ async function loadList() {
         { html: AdminUI.rowNo(t, i, 1, items.length), cls: 'text-slate-400' },
         { html: t.name, cls: 'font-medium text-slate-800' },
         { html: `<code class="text-sm text-slate-500">${t.slug}</code>` },
-        { html: t.isActive ? AdminUI.badge('Aktiv', 'success') : AdminUI.badge('Deaktiv', 'neutral') },
+        { html: t.isActive ? AdminUI.badge(L["Common_Active"], 'success') : AdminUI.badge(L["Common_Archived"], 'neutral') },
         { html: AdminUI.rowActions([AdminUI.actionButton(L["Tenant_Switch"], `switchTenant(${t.id})`, { tone: 'primary' })]), cls: 'text-right' }
     ]), 5);
 

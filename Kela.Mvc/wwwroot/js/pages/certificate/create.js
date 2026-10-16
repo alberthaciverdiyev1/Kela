@@ -14,7 +14,7 @@
 
 
     window.openCreate = function () {
-        document.getElementById('modalTitle').textContent = 'Yeni sertifikat';
+        document.getElementById('modalTitle').textContent = L["Certificate_Create"];
         document.getElementById('entityId').value = '';
         document.getElementById('title').value = '';
         window.selectTemplate(document.querySelector('#templateGrid [data-key]').dataset.key);

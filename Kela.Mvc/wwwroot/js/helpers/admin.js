@@ -18,7 +18,7 @@ window.AdminUI = (function () {
         const result = await Swal.fire({
             title: L["Js_AreYouSure"], text: text || L["Js_Irreversible"],
             icon: 'warning', showCancelButton: true,
-            confirmButtonText: 'Sil', cancelButtonText: L["Common_Cancel"],
+            confirmButtonText: L["Common_Delete"], cancelButtonText: L["Common_Cancel"],
             confirmButtonColor: '#ef4444', cancelButtonColor: '#64748b'
         });
         return result.isConfirmed;
@@ -203,7 +203,7 @@ window.AdminUI = (function () {
             tbody.innerHTML = `<tr><td colspan="${cols}">
                 <div class="admin-empty">
                     <svg class="h-10 w-10 text-slate-300" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M3 7h18M3 12h18M3 17h10" /></svg>
-                    <p class="text-base font-semibold text-slate-500">Nəticə tapılmadı</p>
+                    <p class="text-base font-semibold text-slate-500">${L["Js_NoResults"]}</p>
                     <p class="text-sm">${opts.empty || L["Js_AdjustSearch"]}</p>
                 </div></td></tr>`;
             updateBulkBar();
@@ -260,7 +260,7 @@ window.AdminUI = (function () {
     function updateBulkBar() {
         const ids = selectedIds();
         const count = document.getElementById('bulkCount');
-        if (count) count.textContent = `${ids.length} seçilib`;
+        if (count) count.textContent = (L["Js_SelectedCount"] || '{0}').replace('{0}', ids.length);
         const bar = document.getElementById('bulkBar');
         if (bar) {
             bar.classList.toggle('hidden', ids.length === 0);
@@ -271,7 +271,7 @@ window.AdminUI = (function () {
     async function bulkDo(url, action, cb) {
         const ids = selectedIds();
         if (!ids.length) { notify(L["Js_NothingSelected"], 'warning'); return; }
-        if (action === 'delete' && !await confirmDelete(`${ids.length} element silinəcək.`)) return;
+        if (action === 'delete' && !await confirmDelete((L["Js_ConfirmBulkDelete"] || '{0}').replace('{0}', ids.length))) return;
         const res = await postJson(url, { ids, action });
         if (res.ok) { notify(L["Js_Applied"]); if (typeof cb === 'function') cb(); }
         else error(res.data?.message || L["Js_ErrorOccured"]);

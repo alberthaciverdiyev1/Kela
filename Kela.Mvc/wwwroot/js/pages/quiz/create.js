@@ -17,7 +17,7 @@
     };
 
     window.openCreate = function () {
-        document.getElementById('modalTitle').textContent = 'Yeni imtahan';
+        document.getElementById('modalTitle').textContent = L["Quiz_Create"];
         document.getElementById('entityId').value = '';
         document.getElementById('sort_order').value = '';
         document.getElementById('lesson_id').value = '';

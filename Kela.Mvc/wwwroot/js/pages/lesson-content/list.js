@@ -68,7 +68,7 @@ async function loadList(page) {
         { html: TYPE_TEXT[c.type] ?? '-', cls: 'text-slate-500' },
         { html: statusBadge(c) },
         { html: c.url ? `<button type="button" class="text-primary hover:underline" onclick="previewContent(${c.id})">${L["Js_View"]}</button>` : '-' },
-        { html: c.isActive ? AdminUI.badge('Aktiv', 'success') : AdminUI.badge('Deaktiv', 'neutral') },
+        { html: c.isActive ? AdminUI.badge(L["Common_Active"], 'success') : AdminUI.badge(L["Common_Archived"], 'neutral') },
         { html: showDeleted ? AdminUI.restoreButton(c.id) : AdminUI.actions(c.id), cls: 'text-right' }
     ]), 7, { rowIds: data.data.map(c => c.id), selectable: !showDeleted });
 
@@ -146,7 +146,7 @@ document.getElementById('previewModal').addEventListener('modal:closed', () => {
 async function removeItem(id) {
     if (!await AdminUI.confirmDelete(L["Js_ConfirmDeleteMaterial"])) return;
     const res = await AdminUI.del(`/lesson-content/${id}`);
-    if (res.ok) { AdminUI.notify('Silindi'); loadList(currentPage); }
+    if (res.ok) { AdminUI.notify(L["Js_Deleted"]); loadList(currentPage); }
     else AdminUI.error();
 }
 

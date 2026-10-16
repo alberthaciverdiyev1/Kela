@@ -121,6 +121,6 @@ async function assignMember(type) {
 async function removeMember(type, id) {
     if (!await AdminUI.confirmDelete(L["Js_ConfirmRemove"])) return;
     const res = await AdminUI.del(`/group/${mgGroupId}/${type}/${id}`);
-    if (res.ok) { AdminUI.notify('Silindi'); refreshManage(); }
+    if (res.ok) { AdminUI.notify(L["Js_Deleted"]); refreshManage(); }
     else AdminUI.error();
 }

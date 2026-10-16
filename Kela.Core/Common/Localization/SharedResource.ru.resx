@@ -1155,6 +1155,18 @@
   <data name="GroupStat_Score" xml:space="preserve">
     <value>Балл %</value>
   </data>
+  <data name="Js_Deleted" xml:space="preserve">
+    <value>Удалено</value>
+  </data>
+  <data name="Js_NoResults" xml:space="preserve">
+    <value>Ничего не найдено</value>
+  </data>
+  <data name="Js_SelectedCount" xml:space="preserve">
+    <value>Выбрано: {0}</value>
+  </data>
+  <data name="Js_ConfirmBulkDelete" xml:space="preserve">
+    <value>Будет удалено элементов: {0}.</value>
+  </data>
   <data name="Js_Edit" xml:space="preserve">
     <value>Редактировать</value>
   </data>

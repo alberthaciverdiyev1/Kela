@@ -1155,6 +1155,18 @@
   <data name="GroupStat_Score" xml:space="preserve">
     <value>Bal %</value>
   </data>
+  <data name="Js_Deleted" xml:space="preserve">
+    <value>Silindi</value>
+  </data>
+  <data name="Js_NoResults" xml:space="preserve">
+    <value>Nəticə tapılmadı</value>
+  </data>
+  <data name="Js_SelectedCount" xml:space="preserve">
+    <value>{0} seçilib</value>
+  </data>
+  <data name="Js_ConfirmBulkDelete" xml:space="preserve">
+    <value>{0} element silinəcək.</value>
+  </data>
   <data name="Js_Edit" xml:space="preserve">
     <value>Redaktə</value>
   </data>

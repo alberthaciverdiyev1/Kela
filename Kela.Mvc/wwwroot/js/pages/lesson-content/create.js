@@ -7,7 +7,7 @@
 
 
     window.openCreate = function () {
-        document.getElementById('modalTitle').textContent = 'Yeni material';
+        document.getElementById('modalTitle').textContent = L["Common_NewMaterial"];
         document.getElementById('entityId').value = '';
         document.getElementById('sort_order').value = '';
         document.getElementById('description').value = '';

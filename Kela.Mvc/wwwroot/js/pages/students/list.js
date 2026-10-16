@@ -34,7 +34,7 @@ async function loadList(page) {
         { html: s.fullName, cls: 'font-medium text-slate-800' },
         { html: s.email, cls: 'text-slate-500' },
         { html: s.phone ?? '-', cls: 'text-slate-500' },
-        { html: showDeleted ? AdminUI.badge('Silinib', 'danger') : (s.isActive ? AdminUI.badge('Aktiv', 'success') : AdminUI.badge('Deaktiv', 'neutral')) },
+        { html: showDeleted ? AdminUI.badge(L["Js_Deleted"], 'danger') : (s.isActive ? AdminUI.badge(L["Common_Active"], 'success') : AdminUI.badge(L["Common_Archived"], 'neutral')) },
         { html: studentActions(s), cls: 'text-right' }
     ]), 6, { rowIds: data.data.map(s => s.id), selectable: !showDeleted });
 
@@ -58,7 +58,7 @@ async function toggleStatus(id, isActive) {
 async function removeItem(id) {
     if (!await AdminUI.confirmDelete(L["Js_ConfirmDeleteStudent"])) return;
     const res = await AdminUI.del(`/students/${id}`);
-    if (res.ok) { AdminUI.notify('Silindi'); loadList(currentPage); }
+    if (res.ok) { AdminUI.notify(L["Js_Deleted"]); loadList(currentPage); }
     else AdminUI.error();
 }
 
