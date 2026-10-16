@@ -85,5 +85,33 @@ window.AdminUI = window.AdminUI || {};
         return result.isConfirmed;
     }
 
-    Object.assign(UI, { badge, chip, statCard, actionButton, actionLink, rowActions, actions, statusSwitch, toggleHidden, syncTrashButton, restoreButton, restoreItem, confirmRestore });
+
+    // Tablar: klik → aktiv sinif + panellərin göstərilməsi (data-tab-panel).
+    // Səhifə "tab:change" hadisəsini dinləyib öz yükləməsini edə bilər.
+    function initTabs(root) {
+        (root || document).querySelectorAll('.admin-tabs').forEach(box => {
+            if (box.dataset.ready === '1') return;
+            box.dataset.ready = '1';
+
+            box.addEventListener('click', (e) => {
+                const tab = e.target.closest('.admin-tab');
+                if (!tab) return;
+                selectTab(box, tab.dataset.tab);
+            });
+        });
+    }
+
+    function selectTab(boxOrId, name) {
+        const box = typeof boxOrId === 'string' ? document.getElementById(boxOrId) : boxOrId;
+        if (!box) return;
+        box.querySelectorAll('.admin-tab').forEach(t => t.classList.toggle('is-active', t.dataset.tab === name));
+        (box.dataset.panels
+            ? document.querySelectorAll(box.dataset.panels)
+            : document.querySelectorAll('[data-tab-panel]'))
+            .forEach(p => p.classList.toggle('hidden', p.dataset.tabPanel !== name));
+
+        document.dispatchEvent(new CustomEvent('tab:change', { detail: { tab: name } }));
+    }
+
+    Object.assign(UI, { initTabs, selectTab, badge, chip, statCard, actionButton, actionLink, rowActions, actions, statusSwitch, toggleHidden, syncTrashButton, restoreButton, restoreItem, confirmRestore });
 })(window.AdminUI);

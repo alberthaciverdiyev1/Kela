@@ -48,14 +48,16 @@
     </script>
 
     <div class="admin-card">
-        <div class="flex gap-1 border-b border-border px-4 pt-3">
-            <button type="button" data-tab="subjects" class="detail-tabbtn rounded-t-lg px-4 py-2 text-sm font-semibold" onclick="switchDetailTab('subjects')">@L["Student_TabSubjects"]</button>
-            <button type="button" data-tab="lessons" class="detail-tabbtn rounded-t-lg px-4 py-2 text-sm font-semibold" onclick="switchDetailTab('lessons')">@L["Student_TabLessons"]</button>
-            <button type="button" data-tab="results" class="detail-tabbtn rounded-t-lg px-4 py-2 text-sm font-semibold" onclick="switchDetailTab('results')">@L["Student_TabExams"]</button>
-            <button type="button" data-tab="violations" class="detail-tabbtn rounded-t-lg px-4 py-2 text-sm font-semibold" onclick="switchDetailTab('violations')">@L["Student_TabViolations"]</button>
+        <div class="border-b border-border p-4">
+            <div class="admin-tabs" id="detailTabs">
+                @foreach (var (tab, label) in new[] { ("subjects", L["Student_TabSubjects"].Value), ("lessons", L["Student_TabLessons"].Value), ("results", L["Student_TabExams"].Value), ("violations", L["Student_TabViolations"].Value) })
+                {
+                    <button type="button" data-tab="@tab" class="admin-tab@(tab == "subjects" ? " is-active" : "")">@label</button>
+                }
+            </div>
         </div>
 
-        <div id="tab-subjects" class="detail-tab p-4">
+        <div id="tab-subjects" data-tab-panel="subjects" class="detail-tab p-4">
             <div class="overflow-x-auto">
                 <table class="admin-table">
                     <thead><tr><th>@L["Common_Subject"]</th><th class="w-40">Material</th><th class="w-32">Tamamlanan</th><th class="w-40">Faiz</th></tr></thead>
@@ -86,7 +88,7 @@
             </div>
         </div>
 
-        <div id="tab-lessons" class="detail-tab hidden p-4">
+        <div id="tab-lessons" data-tab-panel="lessons" class="detail-tab hidden p-4">
             <div class="overflow-x-auto">
                 <table class="admin-table">
                     <thead><tr><th>@L["Common_Lesson"]</th><th class="w-40">Tamamlanan</th><th class="w-40">Faiz</th><th>@L["Student_NextMaterial"]</th></tr></thead>
@@ -117,7 +119,7 @@
             </div>
         </div>
 
-        <div id="tab-results" class="detail-tab hidden p-4">
+        <div id="tab-results" data-tab-panel="results" class="detail-tab hidden p-4">
             <div class="overflow-x-auto">
                 <table class="admin-table">
                     <thead><tr><th>@L["Common_Exam"]</th><th class="w-32">@L["GroupStat_Attempt"]</th><th class="w-40">@L["Student_CorrectOverTotal"]</th><th class="w-32">Bal</th><th class="w-40">Tarix</th></tr></thead>
@@ -144,7 +146,7 @@
             </div>
         </div>
 
-        <div id="tab-violations" class="detail-tab hidden p-4">
+        <div id="tab-violations" data-tab-panel="violations" class="detail-tab hidden p-4">
             <div class="overflow-x-auto">
                 <table class="admin-table">
                     <thead><tr><th>@L["Common_Type"]</th><th>@L["Student_Page"]</th><th class="w-44">Tarix</th><th>@L["Student_UserAgent"]</th></tr></thead>
@@ -173,15 +175,5 @@
 </section>
 
 <script>
-    function switchDetailTab(tab) {
-        document.querySelectorAll('.detail-tab').forEach(el => el.classList.add('hidden'));
-        document.getElementById('tab-' + tab).classList.remove('hidden');
-        document.querySelectorAll('.detail-tabbtn').forEach(el => {
-            const on = el.dataset.tab === tab;
-            el.classList.toggle('bg-primary', on);
-            el.classList.toggle('text-white', on);
-            el.classList.toggle('text-slate-600', !on);
-        });
-    }
-    document.addEventListener('DOMContentLoaded', () => switchDetailTab('subjects'));
+    // Tablar ortaq komponentlə idarə olunur (AdminUI.selectTab).
 </script>

@@ -13,17 +13,10 @@ function fillSelect(id, items) {
         items.map(o => `<option value="${o.id}">${o.text}</option>`).join('');
 }
 
-function switchTab(tab) {
-    document.querySelectorAll('.manage-tab').forEach(el => el.classList.add('hidden'));
-    document.getElementById('tab-' + tab).classList.remove('hidden');
-    document.querySelectorAll('.manage-tabbtn').forEach(el => {
-        const on = el.dataset.tab === tab;
-        el.classList.toggle('bg-primary', on);
-        el.classList.toggle('text-white', on);
-        el.classList.toggle('text-slate-600', !on);
-    });
-    if (tab === 'logs') loadLogs();
-}
+// Tab keçidi ortaq komponentdədir; burada yalnız səhifəyə aid yükləmə qalır.
+document.addEventListener('tab:change', (e) => { if (e.detail.tab === 'logs') loadLogs(); });
+
+function switchTab(tab) { AdminUI.selectTab('manageTabs', tab); }
 
 async function loadLogs() {
     const items = await AdminUI.get(`/group/${mgGroupId}/subject-logs`);

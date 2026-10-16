@@ -256,6 +256,7 @@ window.AdminUI = window.AdminUI || {};
     document.addEventListener('DOMContentLoaded', () => {
         UI.enhanceSelects();
         UI.initEditors();
+        UI.initTabs();
     });
 
     // Açıq siyahı scroll zamanı düyməni izləyir.
