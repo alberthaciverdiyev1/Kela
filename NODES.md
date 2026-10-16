@@ -39,16 +39,26 @@ Kela.Api ──► Nodes modulu (koordinator)          Kela.Nodes.App (Avalonia 
 7. Bütün pillələr bitəndə server **master playlist-i özü yazır** və videonu
    `ready` edir. Yarımçıq çıxış heç vaxt yayıma çıxmır.
 
+Tapşırıqlar **video üzrə** paylanır: əvvəlcə ən köhnə videonun bütün pillələri
+götürülür (müxtəlif cihazlara düşə bilər), video tamamlanır, sonra növbəti.
+Əvvəl resolution üzrə sıralandıqda eyni cihaz bütün 1080p-ləri əvvəl götürür və
+heç bir video tam hazır olmurdu.
+
 ### R2 quruluşu
 
 ```
 {tenant}/videos/raw/{ad}.mp4                    ← orijinal (dəyişməz)
-{tenant}/videos/m3u8/{videoId}/v{versiya}/
+{tenant}/videos/m3u8/{videoId}-{ad-sluq}/v{versiya}/
 ├── master.m3u8                                 ← koordinator yazır
 ├── thumb.jpg                                   ← ən aşağı pillə yaradır
 ├── 360p/{index.m3u8, segment_00000.ts, …}
 ├── 480p/…
 └── 720p/…
+
+Məsələn: kela/videos/m3u8/33-content-video/v1/720p/index.m3u8
+
+Qovluqda ID də saxlanılır — iki dərsin adı eyni ola bilər və video sonradan
+adlansa artıq yayımlanmış fayllar yetim qalmasın.
 ```
 
 `v{versiya}` — yenidən konversiyada artır. Yeni versiya tam hazır olana qədər
