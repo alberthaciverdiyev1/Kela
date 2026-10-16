@@ -96,6 +96,33 @@ public class RecoveryTests(ApiFactory factory)
     }
 
     [Fact]
+    public async Task Two_videos_sharing_one_source_file_are_published_separately()
+    {
+        var (firstVideoId, path) = await _h.CreateVideoAsync();
+        var secondVideoId = await _h.CreateSecondVideoForSameSourceAsync(path);
+
+        Assert.NotEqual(firstVideoId, secondVideoId);
+
+        var node = await _h.RegisterNodeAsync(NodeTestHarness.Unique("node"), maxConcurrentJobs: 64);
+
+        // Yalnız BİRİNCİ videonun pillələri tamamlanır.
+        foreach (var assignment in await _h.ClaimForVideoAsync(node, firstVideoId))
+        {
+            await _h.CompleteVariantAsync(node, assignment);
+        }
+
+        var first = await _h.VideoAsync(firstVideoId);
+        var second = await _h.VideoAsync(secondVideoId);
+
+        // Nəticə mənbə yolu ilə deyil, tapşırığın videosu ilə yazılmalıdır.
+        Assert.Equal(VideoStatus.Ready, first!.ConversionStatus);
+        Assert.NotNull(first.PlaybackUrl);
+
+        Assert.NotEqual(VideoStatus.Ready, second!.ConversionStatus);
+        Assert.Null(second.PlaybackUrl);
+    }
+
+    [Fact]
     public async Task A_job_that_hangs_forever_is_taken_back()
     {
         var (videoId, _) = await _h.CreateVideoAsync();

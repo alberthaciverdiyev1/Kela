@@ -4,6 +4,7 @@ using Kela.Core.Modules.Notification.Requests;
 using Kela.Core.Modules.Students.Abstractions;
 using Kela.Core.Modules.Students.Requests;
 using Microsoft.AspNetCore.Mvc;
+using Kela.Mvc.Infrastructure;
 
 namespace Kela.Mvc.Controllers;
 
@@ -23,7 +24,10 @@ public sealed class NotificationController(
 
     [HttpGet("list")]
     public async Task<IActionResult> List([FromQuery] NotificationListRequest request, CancellationToken ct)
-        => Json(await service.ListAsync(request, ct));
+    {
+        if (!User.IsAdmin()) request.IsDeleted = 0;
+        return Json(await service.ListAsync(request, ct));
+    }
 
     [HttpGet("{id:long}")]
     public async Task<IActionResult> Get(long id, CancellationToken ct)

@@ -6,6 +6,7 @@ using Kela.Core.Modules.User.Entities;
 using Kela.Core.Modules.User.Requests;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Kela.Mvc.Infrastructure;
 
 namespace Kela.Mvc.Controllers;
 
@@ -24,7 +25,10 @@ public sealed class UserController(
 
     [HttpGet("list")]
     public async Task<IActionResult> List([FromQuery] UserListRequest request, CancellationToken ct)
-        => Json(await service.ListAsync(request, ct));
+    {
+        if (!User.IsAdmin()) request.IsDeleted = 0;
+        return Json(await service.ListAsync(request, ct));
+    }
 
     [HttpGet("{id:long}")]
     public async Task<IActionResult> Get(long id, CancellationToken ct)

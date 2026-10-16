@@ -24,11 +24,26 @@ public sealed class VideoProcessingService(AppDbContext db) : IVideoProcessingSe
         if (string.IsNullOrWhiteSpace(request.SourcePath))
             throw new ArgumentException("sourcePath is required", nameof(request));
 
-        if (request.Status is not (VideoStatus.Ready or VideoStatus.Failed))
-            throw new ArgumentException($"status must be '{VideoStatus.Ready}' or '{VideoStatus.Failed}'", nameof(request));
-
         var video = await FindAsync(request.SourcePath, ct);
         if (video is null) return false;
+
+        return await ApplyAsync(video, request, ct);
+    }
+
+    public async Task<bool> MarkProcessedAsync(long videoId, VideoProcessedRequest request, CancellationToken ct = default)
+    {
+        var video = await db.Videos.IgnoreQueryFilters()
+            .FirstOrDefaultAsync(x => x.Id == videoId && x.DeletedAt == null, ct);
+
+        if (video is null) return false;
+
+        return await ApplyAsync(video, request, ct);
+    }
+
+    private async Task<bool> ApplyAsync(Video video, VideoProcessedRequest request, CancellationToken ct)
+    {
+        if (request.Status is not (VideoStatus.Ready or VideoStatus.Failed))
+            throw new ArgumentException($"status must be '{VideoStatus.Ready}' or '{VideoStatus.Failed}'", nameof(request));
 
         var failed = request.Status == VideoStatus.Failed;
 

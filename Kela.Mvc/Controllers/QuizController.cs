@@ -8,6 +8,7 @@ using Kela.Core.Modules.Question.Requests;
 using Kela.Core.Modules.Quiz.Abstractions;
 using Kela.Core.Modules.Quiz.Requests;
 using Microsoft.AspNetCore.Mvc;
+using Kela.Mvc.Infrastructure;
 
 namespace Kela.Mvc.Controllers;
 
@@ -33,7 +34,10 @@ public sealed class QuizController(
 
     [HttpGet("list")]
     public async Task<IActionResult> List([FromQuery] QuizListRequest request, CancellationToken ct)
-        => Json(await service.ListAsync(request, ct));
+    {
+        if (!User.IsAdmin()) request.IsDeleted = 0;
+        return Json(await service.ListAsync(request, ct));
+    }
 
     [HttpGet("{id:long}")]
     public async Task<IActionResult> Get(long id, CancellationToken ct)
@@ -79,6 +83,8 @@ public sealed class QuizController(
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Bulk([FromBody] BulkRequest request, CancellationToken ct)
     {
+        // Bərpa yalnız adminin əməliyyatıdır — silinmişləri yalnız o görür.
+        if (request.Action == BulkActions.Restore && !User.IsAdmin()) return Forbid();
         await service.BulkAsync(request, ct);
         return Json(new { ok = true });
     }

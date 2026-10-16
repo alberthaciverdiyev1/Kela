@@ -430,7 +430,7 @@ public sealed class VideoJobLifecycle(
             }
 
             // Köhnə uğurlu versiya silinmir — istifadəçi əvvəlki m3u8-i oynatmağa davam edir.
-            await videoProcessing.MarkProcessedAsync(new VideoProcessedRequest
+            await videoProcessing.MarkProcessedAsync(videoId, new VideoProcessedRequest
             {
                 SourcePath = video.Path,
                 Status = VideoStatus.Failed,
@@ -456,7 +456,7 @@ public sealed class VideoJobLifecycle(
 
         if (completed.Count == 0)
         {
-            await videoProcessing.MarkProcessedAsync(new VideoProcessedRequest
+            await videoProcessing.MarkProcessedAsync(videoId, new VideoProcessedRequest
             {
                 SourcePath = video.Path,
                 Status = VideoStatus.Failed,
@@ -480,7 +480,7 @@ public sealed class VideoJobLifecycle(
         video.ConversionError = null;
         await db.SaveChangesAsync(ct);
 
-        await videoProcessing.MarkProcessedAsync(new VideoProcessedRequest
+        await videoProcessing.MarkProcessedAsync(videoId, new VideoProcessedRequest
         {
             SourcePath = video.Path,
             PlaybackUrl = masterKey,

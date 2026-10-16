@@ -57,6 +57,30 @@ internal sealed class NodeTestHarness(ApiFactory factory)
         return (videoId, await VideoPathAsync(videoId));
     }
 
+    /// <summary>
+    /// Eyni mənbə faylına işarə edən ikinci video yaradır — bir fayl bir neçə dərsdə
+    /// istifadə oluna bilər və o halda yol üzrə axtarış qeyri-müəyyən olur.
+    /// </summary>
+    public async Task<long> CreateSecondVideoForSameSourceAsync(string path)
+    {
+        var subjectId = await TestData.SubjectAsync(Factory, Unique("Subject"));
+        var lessonId = await TestData.LessonAsync(Factory, subjectId, Unique("Lesson"));
+
+        var content = await ServiceAsync<Core.Modules.LessonContent.Abstractions.ILessonContentService,
+            Core.Modules.LessonContent.Responses.LessonContentResponse>(
+            s => s.CreateAsync(new Core.Modules.LessonContent.Requests.LessonContentCreateRequest
+            {
+                LessonId = lessonId,
+                Title = Unique("Video"),
+                Type = Core.Modules.LessonContent.Entities.LessonContentType.Video,
+                IsActive = true,
+                Path = path
+            }));
+
+        return await DbAsync(db => db.LessonContents.Where(c => c.Id == content.Id)
+            .Select(c => c.Video!.Id).FirstAsync());
+    }
+
     public Task<string> VideoPathAsync(long videoId)
         => DbAsync(async db => await db.Videos.IgnoreQueryFilters()
             .Where(v => v.Id == videoId).Select(v => v.Path).FirstAsync());
