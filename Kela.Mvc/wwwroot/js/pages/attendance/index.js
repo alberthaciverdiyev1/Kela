@@ -55,11 +55,10 @@ function renderChips() {
     el.querySelectorAll('.att-chip').forEach(btn => {
         btn.addEventListener('click', () => {
             groupId = Number(btn.dataset.id);
-            selected = null;
-            document.getElementById('dayPanel').className = 'admin-empty';
-            document.getElementById('dayPanel').textContent = L["Attendance_PickDay"];
             renderChips();
             loadMonth();
+            // Seçilmiş gün qalır — yeni qrupun həmin günü yüklənir.
+            if (selected) loadDay();
         });
     });
 }
@@ -71,12 +70,14 @@ function dayClass(day) {
     const isToday = current.getFullYear() === today.getFullYear()
         && current.getMonth() === today.getMonth() && day === today.getDate();
     const ring = isToday ? ' ring-2 ring-primary/40 ring-offset-1' : '';
+    const key = ymd(new Date(current.getFullYear(), current.getMonth(), day));
+    const picked = key === selected ? ' att-selected' : '';
     const base = 'flex aspect-square items-center justify-center rounded-xl text-sm font-semibold cursor-pointer select-none ';
 
-    if (!row || !row.totalCount) return base + 'text-slate-400 hover:bg-slate-100' + ring;
+    if (!row || !row.totalCount) return base + 'text-slate-400 hover:bg-slate-100' + ring + picked;
 
     const ratio = row.presentCount / row.totalCount;
-    return base + (ratio >= 1 ? 'att-full' : ratio >= 0.5 ? 'att-part' : 'att-low') + ring;
+    return base + (ratio >= 1 ? 'att-full' : ratio >= 0.5 ? 'att-part' : 'att-low') + ring + picked;
 }
 
 function renderCalendar() {
@@ -107,6 +108,7 @@ function renderCalendar() {
     document.querySelectorAll('#calendar [data-day]').forEach(cell => {
         cell.addEventListener('click', () => {
             selected = ymd(new Date(current.getFullYear(), current.getMonth(), Number(cell.dataset.day)));
+            renderCalendar();   // seçilmiş günün işarəsi dərhal görünsün
             loadDay();
         });
     });
@@ -174,7 +176,8 @@ async function loadDay() {
             ${data.students.map(s => `
                 <label class="att-row flex items-center gap-3 rounded-xl border px-3 py-2 transition"
                        data-student="${s.studentId}">
-                    <input type="checkbox" class="att-check size-4" data-student="${s.studentId}" ${s.isPresent ? 'checked' : ''} />
+                    <input type="checkbox" class="att-check size-4" data-student="${s.studentId}"
+                           data-recorded="${s.isRecorded ? '1' : '0'}" ${s.isPresent ? 'checked' : ''} />
                     <span class="min-w-0 flex-1">
                         <span class="block truncate text-sm font-medium text-slate-800">${esc(s.fullName)}</span>
                         <span class="block truncate text-xs text-slate-400">${esc(s.email)}</span>
@@ -187,11 +190,14 @@ async function loadDay() {
     // "qayıb" ilə "qeyd olunmayıb" qarışmasın.
     panel.querySelectorAll('.att-row').forEach(row => {
         const box = row.querySelector('.att-check');
-        const paint = () => {
+        // Sətir yalnız açıq şəkildə "qayıb" olanda qırmızıdır: ya əvvəl qeyd
+        // olunub, ya da istifadəçi indi işarəni götürüb.
+        const paint = (explicit) => {
+            const absent = !box.checked && (explicit || box.dataset.recorded === '1');
             row.classList.toggle('att-present', box.checked);
-            row.classList.toggle('att-absent', !box.checked);
+            row.classList.toggle('att-absent', absent);
             row.querySelector('.att-state').textContent =
-                box.checked ? L["Attendance_Present"] : L["Attendance_Absent"];
+                box.checked ? L["Attendance_Present"] : (absent ? L["Attendance_Absent"] : '');
 
             const el = document.getElementById('dayCount');
             if (el) {
@@ -200,13 +206,16 @@ async function loadDay() {
                 el.textContent = checked + ' / ' + total;
             }
         };
-        box.addEventListener('change', paint);
-        paint();
+        box.addEventListener('change', () => paint(true));
+        paint(false);
     });
 }
 
 function markAll(present) {
-    document.querySelectorAll('.att-check').forEach(c => { c.checked = present; });
+    document.querySelectorAll('.att-check').forEach(c => {
+        c.checked = present;
+        c.dispatchEvent(new Event('change', { bubbles: true }));
+    });
 }
 
 async function saveDay() {

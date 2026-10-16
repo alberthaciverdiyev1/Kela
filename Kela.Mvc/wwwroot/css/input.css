@@ -360,6 +360,9 @@
   .chip-violet  { background: #ede9fe; color: #6d28d9; }
 }
 
+/* Seçilmiş günün işarəsi — qrup dəyişsə də qalır. */
+#calendar .att-selected { outline: 2px solid var(--primary); outline-offset: 1px; }
+
 /* Gün panelindəki şagird sətri: işarə "qayıb" deməkdir, ona görə vəziyyət
    hər an görünür — qeyd olunmamış günlə qarışmasın. */
 .att-row.att-present { border-color: #a7f3d0; background-color: #ecfdf5; }
