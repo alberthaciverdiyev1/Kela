@@ -420,6 +420,9 @@
   <data name="Group_StepQuizzesHint" xml:space="preserve">
     <value>Sınavları seçin</value>
   </data>
+  <data name="Group_WillGenerate" xml:space="preserve">
+    <value>Grup kaydedilince {0} öğrenci arka planda oluşturulacak</value>
+  </data>
   <data name="Group_StepInfo" xml:space="preserve">
     <value>Bilgi</value>
   </data>

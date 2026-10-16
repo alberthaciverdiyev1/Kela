@@ -17,7 +17,8 @@ public sealed class HttpTenantProvider(IHttpContextAccessor accessor, ITenantSco
         get
         {
             var context = accessor.HttpContext;
-            if (context is null) return null;
+            // HTTP konteksti olmayan yer (arxa plan işi) → açıq şəkildə verilən tenant.
+            if (context is null) return scope.Override;
 
             var isAuthenticated = context.User?.Identity?.IsAuthenticated == true;
             var isSuperAdmin = GetRole(context) == "superadmin";

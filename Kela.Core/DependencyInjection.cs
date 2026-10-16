@@ -104,6 +104,11 @@ public static class DependencyInjection
 
         services.AddHttpContextAccessor();
         services.AddScoped<ITenantScope, TenantScope>();
+
+        // Arxa plan işləri (uzun sürən generasiya və s.)
+        services.AddSingleton<Kela.Core.Common.Jobs.BackgroundJobs>();
+        services.AddSingleton<Kela.Core.Common.Jobs.IBackgroundJobs>(sp => sp.GetRequiredService<Kela.Core.Common.Jobs.BackgroundJobs>());
+        services.AddHostedService<Kela.Core.Common.Jobs.BackgroundJobWorker>();
         services.AddScoped<ITenantProvider, HttpTenantProvider>();
 
         services.Configure<FcmOptions>(configuration.GetSection(FcmOptions.SectionName));

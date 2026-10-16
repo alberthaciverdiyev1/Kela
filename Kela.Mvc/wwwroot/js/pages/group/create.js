@@ -4,8 +4,8 @@
 
     let createMode = true;
     let step = 1;
+    let genSpec = null;
     let options = null;
-    let generatedStudentIds = [];
 
     function showError(m) { errBox.textContent = m; errBox.classList.remove('hidden'); }
     function clearError() { errBox.classList.add('hidden'); }
@@ -41,23 +41,19 @@
         document.getElementById('wizGenPanel').classList.toggle('hidden');
     };
 
-    window.wizGenerate = async function () {
-        const res = await AdminUI.postJson('/students/generate', {
-            count: Number(document.getElementById('wg_count').value),
-            fullNamePrefix: document.getElementById('wg_prefix').value,
-            emailDomain: document.getElementById('wg_domain').value,
-            password: document.getElementById('wg_password').value
-        });
-        if (!res.ok) { AdminUI.error(AdminUI.errText(res)); return; }
-
-        const list = res.data.students || [];
-        list.forEach(s => generatedStudentIds.push(s.id));
-        if (list.length) AdminUI.downloadCsv('students-' + Date.now() + '.csv', ['Ad', 'E-poçt', 'Şifrə'], list.map(s => [s.fullName, s.email, s.password]));
-        const info = document.getElementById('wizGenInfo');
-        info.textContent = generatedStudentIds.length + ' ' + L["Common_Generate"];
-        info.classList.remove('hidden');
+    window.wizGenerate = function () {
+        // Generasiya dərhal başlamır: parametrlər yadda saxlanılır və qrup
+        // yaradılan POST ilə serverə verilir (orada arxa plan işi kimi işləyir).
+        genSpec = {
+            count: Number(document.getElementById('wg_count').value || 0),
+            prefix: document.getElementById('wg_prefix').value || 'student',
+            domain: document.getElementById('wg_domain').value || 'kela.az',
+            password: document.getElementById('wg_password').value || ''
+        };
         document.getElementById('wizGenPanel').classList.add('hidden');
-        AdminUI.notify(res.data.created + L["Js_StudentsCreated"]);
+        const info = document.getElementById('wizGenInfo');
+        info.textContent = (L["Group_WillGenerate"] || '{0}').replace('{0}', genSpec.count);
+        info.classList.remove('hidden');
     };
 
     window.toggleAllCheck = function (containerId, checked) {
@@ -167,7 +163,7 @@
         document.getElementById('description').value = '';
         document.getElementById('user_id').value = '';
         document.getElementById('image').value = '';
-        generatedStudentIds = [];
+        genSpec = null;
         document.getElementById('wizGenInfo')?.classList.add('hidden');
         AdminUI.fileRemove('image');
         clearError();
@@ -187,6 +183,13 @@
         fd.append('RemoveImage', document.getElementById('image_remove').value === 'true' ? 'true' : 'false');
         const file = document.getElementById('image').files[0];
         if (file) fd.append('Image', file);
+        // Generasiya parametrləri (əgər istifadəçi generasiya seçibsə) — server arxa planda işlədir.
+        if (genSpec && genSpec.count > 0) {
+            fd.append('generate_count', String(genSpec.count));
+            fd.append('generate_prefix', genSpec.prefix);
+            fd.append('generate_domain', genSpec.domain);
+            if (genSpec.password) fd.append('generate_password', genSpec.password);
+        }
         return fd;
     };
 
@@ -204,7 +207,7 @@
 
         const id = res.data.id;
         const subjects = collect('subjectsList');
-        const students = [...new Set([...collect('studentsList'), ...generatedStudentIds])];
+        const students = collect('studentsList');
         const quizzes = collect('quizzesList');
 
         if (subjects.length) await AdminUI.postJson(`/group/${id}/subjects`, { subjectIds: subjects });

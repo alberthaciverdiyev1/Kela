@@ -1,3 +1,8 @@
+using Microsoft.Extensions.DependencyInjection;
+using Kela.Core.Modules.Students.Abstractions;
+using Kela.Core.Modules.Students.Requests;
+using Kela.Core.Common.MultiTenancy;
+using Kela.Core.Common.Jobs;
 using Kela.Core.Common.Sorting;
 using Kela.Core.Common.Responses;
 using Kela.Core.Common.Storage;
@@ -18,7 +23,7 @@ using GroupSubject = Kela.Core.Modules.Group.Entities.GroupSubject;
 using StudentGroup = Kela.Core.Modules.Group.Entities.StudentGroup;
 using Subject = Kela.Core.Modules.Subject.Entities.Subject;
 
-public sealed class GroupService(AppDbContext db, IFileStorage storage, ITenantFolder folders) : IGroupService
+public sealed class GroupService(AppDbContext db, IFileStorage storage, ITenantFolder folders, IBackgroundJobs jobs) : IGroupService
 {
     private async Task<string> FolderAsync(CancellationToken ct)
         => $"{await folders.ResolveAsync(ct: ct)}/groups";
@@ -88,6 +93,29 @@ public sealed class GroupService(AppDbContext db, IFileStorage storage, ITenantF
 
         db.Groups.Add(group);
         await db.SaveChangesAsync(ct);
+
+        // Şagird generasiyası baha başa gəlir (BCrypt) — sorğunu gözlətməmək üçün
+        // arxa plana atılır və nəticə birbaşa bu qrupa əlavə olunur.
+        if (request.GenerateCount > 0)
+        {
+            var tenantId = group.TenantId;
+            var groupId = group.Id;
+            var spec = new GenerateStudentsRequest
+            {
+                Count = request.GenerateCount,
+                GroupId = groupId,
+                EmailPrefix = string.IsNullOrWhiteSpace(request.GeneratePrefix) ? "student" : request.GeneratePrefix,
+                EmailDomain = string.IsNullOrWhiteSpace(request.GenerateDomain) ? "kela.az" : request.GenerateDomain,
+                Password = request.GeneratePassword
+            };
+
+            jobs.Enqueue($"group-{groupId}-generate-students", async (sp, token) =>
+            {
+                // Arxa planda HTTP konteksti yoxdur — tenant açıq şəkildə verilir.
+                sp.GetRequiredService<ITenantScope>().Override = tenantId;
+                await sp.GetRequiredService<IStudentManagementService>().GenerateAsync(spec, token);
+            });
+        }
 
         return ToResponse(group);
     }

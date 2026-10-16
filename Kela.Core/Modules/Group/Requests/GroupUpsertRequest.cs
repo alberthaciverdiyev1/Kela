@@ -15,4 +15,17 @@ public class GroupUpsertRequest
 
     [FromForm(Name = "user_id")]
     public long? UserId { get; set; }
+
+    /// <summary>Qrupla birlikdə şagird generasiya edilsin? Arxa planda işə düşür.</summary>
+    [FromForm(Name = "generate_count")]
+    public int GenerateCount { get; set; }
+
+    [FromForm(Name = "generate_prefix")]
+    public string? GeneratePrefix { get; set; }
+
+    [FromForm(Name = "generate_domain")]
+    public string? GenerateDomain { get; set; }
+
+    [FromForm(Name = "generate_password")]
+    public string? GeneratePassword { get; set; }
 }

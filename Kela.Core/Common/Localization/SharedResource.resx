@@ -420,6 +420,9 @@
   <data name="Group_StepQuizzesHint" xml:space="preserve">
     <value>Choose the exams</value>
   </data>
+  <data name="Group_WillGenerate" xml:space="preserve">
+    <value>{0} students will be created in the background once the group is saved</value>
+  </data>
   <data name="Group_StepInfo" xml:space="preserve">
     <value>Info</value>
   </data>

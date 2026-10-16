@@ -420,6 +420,9 @@
   <data name="Group_StepQuizzesHint" xml:space="preserve">
     <value>Выберите экзамены</value>
   </data>
+  <data name="Group_WillGenerate" xml:space="preserve">
+    <value>После сохранения группы {0} учеников будут созданы в фоне</value>
+  </data>
   <data name="Group_StepInfo" xml:space="preserve">
     <value>Информация</value>
   </data>
