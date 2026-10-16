@@ -44,6 +44,9 @@ function subjectBadge(subjectId, subjectName) {
 
 function rowActions(id) {
     return `<div class="flex items-center justify-end gap-2">
+        <a href="/lesson-content?lesson_id=${id}" class="admin-icon-button" title="${L["Nav_Materials"]}">
+            <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M3 7h18M3 12h18M3 17h12" /></svg>
+        </a>
         <button type="button" class="admin-icon-button" title=L["Lesson_SettingsTitle"] onclick="openSettings(${id})">
             <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M10.3 4.3a2 2 0 0 1 3.4 0l.5.9 1-.3a2 2 0 0 1 2.5 2.5l-.3 1 .9.5a2 2 0 0 1 0 3.4l-.9.5.3 1a2 2 0 0 1-2.5 2.5l-1-.3-.5.9a2 2 0 0 1-3.4 0l-.5-.9-1 .3a2 2 0 0 1-2.5-2.5l.3-1-.9-.5a2 2 0 0 1 0-3.4l.9-.5-.3-1a2 2 0 0 1 2.5-2.5l1 .3.5-.9Z" /><circle cx="12" cy="12" r="2.6" /></svg>
         </button>
@@ -114,7 +117,7 @@ async function loadList(page) {
                 html: `<div class="flex items-center gap-4">
                     <span class="grid h-11 w-11 shrink-0 place-items-center rounded-xl ${palette}">${lessonIcon(index)}</span>
                     <div>
-                        <p class="font-bold text-slate-950">${l.title}</p>
+                        <a href="/lesson-content?lesson_id=${l.id}" class="font-bold text-slate-950 hover:text-primary">${l.title}</a>
                         <p class="mt-0.5 text-sm text-slate-500">${subjectName} dərsi</p>
                     </div>
                 </div>`
