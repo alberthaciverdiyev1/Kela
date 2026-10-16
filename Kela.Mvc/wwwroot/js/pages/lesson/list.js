@@ -101,7 +101,7 @@ async function loadList(page) {
     if (showDeleted) params.set('is_deleted', '1');
 
     AdminUI.loader(true);
-    const data = await AdminUI.get(`/lesson/list?${params.toString()}`);
+    const data = await AdminUI.get(AdminUI.addSort(`/lesson/list?${params.toString()}`));
     const items = data.data || data.Data || [];
     const perPage = data.perPage || data.PerPage || 20;
 
