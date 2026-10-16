@@ -12,42 +12,28 @@ async function restoreRow(id) {
     await AdminUI.restoreItem('/lesson/bulk', id, () => loadList(currentPage));
 }
 
-const subjectTones = ['primary', 'info', 'violet', 'danger', 'warning'];
 
-function lessonIcon(index) {
-    const icons = [
-        '<path stroke-linecap="round" stroke-linejoin="round" d="M12 6.253v13m0-13C10.8 5.5 9 5 7 5S3.2 5.5 2 6.253v13C3.2 18.5 5 18 7 18s3.8.5 5 1.253m0-13C13.2 5.5 15 5 17 5s3.8.5 5 1.253v13C20.8 18.5 19 18 17 18s-3.8.5-5 1.253" />',
-        '<path stroke-linecap="round" stroke-linejoin="round" d="M9 18V5l12-2v13M9 9l12-2M9 18a3 3 0 1 1-6 0 3 3 0 0 1 6 0Zm12-2a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />',
-        '<path stroke-linecap="round" stroke-linejoin="round" d="M7 3h10l4 4v14H3V3h4Zm6 1v5h5M8 13h8M8 17h5" />',
-        '<path stroke-linecap="round" stroke-linejoin="round" d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20M4 4.5A2.5 2.5 0 0 1 6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15Z" />',
-        '<path stroke-linecap="round" stroke-linejoin="round" d="M8 9h8M8 13h6M8 17h4M5 3h14v18H5V3Z" />',
-        '<path stroke-linecap="round" stroke-linejoin="round" d="m8 9-4 3 4 3m8-6 4 3-4 3M14 5l-4 14" />'
-    ];
-
-    return `<svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.9">${icons[index % icons.length]}</svg>`;
+// Dərs üçün tək ikon — digər səhifələrdəki kimi sətir başına dəyişən rəng yox.
+function lessonIcon() {
+    return '<path stroke-linecap="round" stroke-linejoin="round" d="M12 6.253v13m0-13C10.8 5.5 9 5 7 5S3.2 5.5 2 6.253v13C3.2 18.5 5 18 7 18s3.8.5 5 1.253m0-13C13.2 5.5 15 5 17 5s3.8.5 5 1.253v13C20.8 18.5 19 18 17 18s-3.8.5-5 1.253" />';
 }
 
-// Storage şəkil olmadıqda placeholder qaytarır (bax: IFileStorage.GetUrl) — onu real şəkil saymırıq.
 function hasImage(url) {
+    // Storage şəkil olmadıqda placeholder qaytarır (bax: IFileStorage.GetUrl) — onu real şəkil saymırıq.
     return !!url && !String(url).includes('noPhoto');
 }
 
-function lessonThumb(lesson, index) {
-    // İkon həmişə altdadır: şəkil yüklənməzsə (obyekt silinmiş ola bilər) sınıq şəkil
-    // işarəsi yerinə ikon görünür.
+function lessonThumb(lesson) {
+    // İkon həmişə altdadır: şəkil yüklənməzsə sınıq şəkil işarəsi yerinə ikon görünür.
     const img = hasImage(lesson.image)
         ? `<img src="${lesson.image}" alt="" class="absolute inset-0 h-full w-full object-cover" onerror="this.remove()" />`
         : '';
-    return `<span class="relative grid h-11 w-11 shrink-0 place-items-center overflow-hidden rounded-xl ${lessonPalette(index)}">${lessonIcon(index)}${img}</span>`;
+    return `<span class="relative grid h-11 w-11 shrink-0 place-items-center overflow-hidden rounded-xl bg-primary-light text-primary">
+        <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.9">${lessonIcon()}</svg>${img}</span>`;
 }
 
-function lessonPalette(index) {
-    return ['bg-success-bg text-success', 'bg-sky-100 text-sky-600', 'bg-warning-bg text-warning', 'bg-violet-100 text-violet-700', 'bg-danger-bg text-danger', 'bg-cyan-100 text-cyan-700'][index % 6];
-}
-
-function subjectBadge(subjectId, subjectName) {
-    const tone = subjectTones[Number(subjectId || 0) % subjectTones.length];
-    return AdminUI.chip(subjectName || '-', tone);
+function subjectBadge(subjectName) {
+    return AdminUI.chip(subjectName || '-', 'primary');
 }
 
 function rowActions(id) {
@@ -114,14 +100,14 @@ async function loadList(page) {
             { html: AdminUI.rowNo(l, index, currentPage, perPage), cls: 'text-slate-400' },
             {
                 html: `<div class="flex items-center gap-4">
-                    ${lessonThumb(l, index)}
+                    ${lessonThumb(l)}
                     <div>
                         <a href="/lesson-content?lesson_id=${l.id}" class="font-bold text-slate-950 hover:text-primary">${l.title}</a>
                         <p class="mt-0.5 text-sm text-slate-500">${subjectName} dərsi</p>
                     </div>
                 </div>`
             },
-            { html: subjectBadge(l.subjectId, subjectName) },
+            { html: subjectBadge(subjectName) },
             { html: `<span class="inline-flex items-center gap-2 text-slate-700">${l.sortOrder ?? rowNumber}</span>` },
             {
                 html: AdminUI.statusSwitch(l.isActive, `setStatus(${l.id}, ${!l.isActive})`)
