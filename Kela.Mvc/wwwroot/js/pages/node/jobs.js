@@ -55,7 +55,7 @@ window.JobsPage = (function () {
     }
 
     function error(message) {
-        Swal.fire({ title: L["Job_Error"], text: decodeURIComponent(message), icon: 'error' });
+        AdminUI.swal({ title: L["Job_Error"], text: decodeURIComponent(message), icon: 'error' });
     }
 
     return { reload, requeue, error };

@@ -5,21 +5,41 @@ window.AdminUI = (function () {
         return el ? el.value : '';
     }
 
+    // SweetAlert panelin dizaynına salınır: brend rəngi, künclər və öz düymələrimiz
+    // (buttonsStyling: false → .admin-button-* istifadə olunur).
+    const SWAL_BASE = {
+        buttonsStyling: false,
+        reverseButtons: true,
+        customClass: {
+            popup: 'admin-swal',
+            title: 'admin-swal-title',
+            htmlContainer: 'admin-swal-text',
+            actions: 'admin-swal-actions',
+            confirmButton: 'admin-button-primary',
+            cancelButton: 'admin-button-secondary'
+        }
+    };
+
+    function swal(options) {
+        return Swal.fire(Object.assign({}, SWAL_BASE, options));
+    }
+
     function notify(message, icon) {
-        Swal.fire({
+        Swal.fire(Object.assign({}, SWAL_BASE, {
             toast: true, position: 'top-end', icon: icon || 'success', title: message,
-            showConfirmButton: false, timer: 2500, timerProgressBar: true
-        });
+            showConfirmButton: false, timer: 2500, timerProgressBar: true,
+            customClass: Object.assign({}, SWAL_BASE.customClass, { popup: 'admin-swal admin-swal-toast' })
+        }));
     }
 
     function error(message) { notify(message || L["Js_ErrorOccured"], 'error'); }
 
     async function confirmDelete(text) {
-        const result = await Swal.fire({
+        const result = await swal({
             title: L["Js_AreYouSure"], text: text || L["Js_Irreversible"],
             icon: 'warning', showCancelButton: true,
             confirmButtonText: L["Common_Delete"], cancelButtonText: L["Common_Cancel"],
-            confirmButtonColor: '#ef4444', cancelButtonColor: '#64748b'
+            customClass: Object.assign({}, SWAL_BASE.customClass, { confirmButton: 'admin-button-danger' })
         });
         return result.isConfirmed;
     }
@@ -89,10 +109,9 @@ window.AdminUI = (function () {
     }
 
     async function confirmRestore() {
-        const result = await Swal.fire({
+        const result = await swal({
             title: L["Js_ConfirmRestore"], icon: 'question', showCancelButton: true,
-            confirmButtonText: L["Common_Restore"], cancelButtonText: L["Common_Cancel"],
-            confirmButtonColor: '#004AAD', cancelButtonColor: '#64748b'
+            confirmButtonText: L["Common_Restore"], cancelButtonText: L["Common_Cancel"]
         });
         return result.isConfirmed;
     }
@@ -801,5 +820,5 @@ window.AdminUI = (function () {
         _filterTimer = setTimeout(filterReload, 350);
     });
 
-    return { notify, error, errText, openModal, closeModal, resetForm, validateForm, enhanceSelects, syncSelect, badge, chip, statCard, statusSwitch, actions, actionButton, actionLink, rowActions, confirmDelete, confirmRestore, restoreItem, restoreButton, syncTrashButton, toggleHidden, get, post, postForm, putForm, postJson, putJson, del, table, setInfo, addSort, selectedIds, bulkDo, sortToggle, openSort, closeSort, persistSort, loader, pagination, filePreview, fileSet, fileRemove, fileReset, rowNo, token, reloadAfter, downloadCsv };
+    return { notify, error, errText, openModal, closeModal, swal, resetForm, validateForm, enhanceSelects, syncSelect, badge, chip, statCard, statusSwitch, actions, actionButton, actionLink, rowActions, confirmDelete, confirmRestore, restoreItem, restoreButton, syncTrashButton, toggleHidden, get, post, postForm, putForm, postJson, putJson, del, table, setInfo, addSort, selectedIds, bulkDo, sortToggle, openSort, closeSort, persistSort, loader, pagination, filePreview, fileSet, fileRemove, fileReset, rowNo, token, reloadAfter, downloadCsv };
 })();

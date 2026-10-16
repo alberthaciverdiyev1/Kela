@@ -360,6 +360,28 @@
   .chip-violet  { background: #ede9fe; color: #6d28d9; }
 }
 
+/* ---------- SweetAlert panel üslubunda ----------
+   JS: AdminUI.swal / notify (buttonsStyling: false, .admin-button-* düymələri). */
+.admin-swal {
+  border-radius: 16px;
+  padding: 24px;
+  font-family: var(--font-sans);
+  box-shadow: 0 24px 60px rgba(15, 23, 42, 0.18);
+}
+
+.admin-swal-title { font-size: 18px; font-weight: 700; color: #0f172a; }
+.admin-swal-text { font-size: 14px; color: #475569; }
+.admin-swal-actions { gap: 10px; }
+.admin-swal .admin-button-primary,
+.admin-swal .admin-button-secondary,
+.admin-swal .admin-button-danger { min-height: 40px; padding: 8px 16px; font-size: 14px; }
+
+.admin-swal-toast {
+  border-radius: 12px;
+  padding: 10px 14px;
+  box-shadow: 0 12px 30px rgba(15, 23, 42, 0.14);
+}
+
 /* ---------- Status açarı ----------
    Sətirdən aktiv/deaktiv etmək üçün kiçik switch (JS: AdminUI.statusSwitch). */
 .admin-switch {
