@@ -10,6 +10,8 @@
         document.getElementById('modal').classList.add('flex');
     };
     window.closeModal = function () {
+        if (uploading) return;   // yarımçıq yükləmə itməsin
+
         document.getElementById('modal').classList.add('hidden');
         document.getElementById('modal').classList.remove('flex');
         errBox.classList.add('hidden');
@@ -39,7 +41,57 @@
     // Serverdən keçən yol üçün Kestrel limiti ~30 MB-dır — ondan böyüyü qəbul edilmir.
     const SERVER_FALLBACK_MAX = 25 * 1024 * 1024;
 
-    function showProgress(percent) {
+    function formatBytes(bytes) {
+        if (bytes >= 1024 * 1024) return (bytes / 1048576).toFixed(1) + ' MB';
+        if (bytes >= 1024) return Math.round(bytes / 1024) + ' KB';
+        return Math.round(bytes) + ' B';
+    }
+
+    // Sürət ani ölçmələrlə təlaşlı olur; son bir neçə nümunənin ortası götürülür.
+    let speedTracker = null;
+
+    function startProgress(totalBytes) {
+        speedTracker = { total: totalBytes, lastAt: performance.now(), lastBytes: 0, samples: [] };
+
+        const box = document.getElementById('uploadProgress');
+        if (box) box.classList.remove('hidden');
+
+        setProgressText(0, 0);
+    }
+
+    function measureSpeed(bytes) {
+        if (!speedTracker) return null;
+
+        const now = performance.now();
+        const seconds = (now - speedTracker.lastAt) / 1000;
+        if (seconds < 0.3) return null;   // çox qısa aralıq — etibarsız ölçmə
+
+        const delta = bytes - speedTracker.lastBytes;
+        speedTracker.lastAt = now;
+        speedTracker.lastBytes = bytes;
+
+        speedTracker.samples.push(delta / seconds);
+        if (speedTracker.samples.length > 8) speedTracker.samples.shift();
+
+        const sum = speedTracker.samples.reduce((a, b) => a + b, 0);
+        return sum / speedTracker.samples.length;
+    }
+
+    function setProgressText(loaded, total) {
+        const sizeEl = document.getElementById('uploadSize');
+        const speedEl = document.getElementById('uploadSpeed');
+
+        if (sizeEl && total) {
+            sizeEl.textContent = formatBytes(loaded) + ' / ' + formatBytes(total);
+        }
+
+        if (speedEl) {
+            const speed = measureSpeed(loaded);
+            speedEl.textContent = speed ? formatBytes(speed) + '/s' : '';
+        }
+    }
+
+    function showProgress(percent, loaded, total) {
         const box = document.getElementById('uploadProgress');
         const bar = document.getElementById('uploadBar');
         const label = document.getElementById('uploadPercent');
@@ -49,18 +101,59 @@
         box.classList.remove('hidden');
         bar.style.width = value + '%';
         if (label) label.textContent = value + '%';
+
+        if (loaded != null && total) setProgressText(loaded, total);
     }
 
     function hideProgress() {
         const box = document.getElementById('uploadProgress');
         const bar = document.getElementById('uploadBar');
+        const speedEl = document.getElementById('uploadSpeed');
+        const sizeEl = document.getElementById('uploadSize');
+
+        const label = document.getElementById('uploadLabel');
+
         if (box) box.classList.add('hidden');
-        if (bar) bar.style.width = '0%';
+        if (bar) {
+            bar.style.width = '0%';
+            bar.classList.remove('bg-emerald-500');
+            bar.classList.add('bg-primary');
+        }
+        if (label) label.textContent = L["Common_Uploading"];
+        if (speedEl) speedEl.textContent = '';
+        if (sizeEl) sizeEl.textContent = '';
+        speedTracker = null;
     }
 
-    function setBusy(busy) {
-        const btn = document.getElementById('saveBtn');
-        if (btn) btn.disabled = busy;
+    // Yükləmə gedərkən modal bağlanmasın: yarımçıq yükləmə itir və R2-də yetim
+    // obyekt qalır. Ona görə saxla/iptal/bağla düymələri və fayl seçimi kilidlənir.
+    let uploading = false;
+
+    function lockModal(locked) {
+        uploading = locked;
+
+        ['saveBtn', 'cancelBtn', 'modalCloseBtn', 'file'].forEach(function (id) {
+            const el = document.getElementById(id);
+            if (el) el.disabled = locked;
+        });
+    }
+
+    function showSuccess(totalBytes) {
+        const label = document.getElementById('uploadLabel');
+        const bar = document.getElementById('uploadBar');
+        const speed = document.getElementById('uploadSpeed');
+        const size = document.getElementById('uploadSize');
+        const percent = document.getElementById('uploadPercent');
+
+        if (label) label.textContent = L["Common_UploadDone"];
+        if (bar) {
+            bar.style.width = '100%';
+            bar.classList.remove('bg-primary');
+            bar.classList.add('bg-emerald-500');
+        }
+        if (percent) percent.textContent = '100%';
+        if (speed) speed.textContent = '';
+        if (size && totalBytes) size.textContent = formatBytes(totalBytes) + ' / ' + formatBytes(totalBytes);
     }
 
     // fetch yükləmə gedişatını bildirmir — irəliləyiş çubuğu üçün XHR lazımdır.
@@ -120,13 +213,16 @@
                     const blob = file.slice((u.partNumber - 1) * partSize, u.partNumber * partSize);
 
                     const put = await putWithProgress(u.url, blob, 'application/octet-stream',
-                        (sent) => { loaded[i] = sent; showProgress(overall()); });
+                        (sent) => {
+                            loaded[i] = sent;
+                            showProgress(overall(), loaded.reduce((a, b) => a + b, 0), file.size);
+                        });
 
                     if (!put.ok) throw new Error('part ' + u.partNumber + ': ' + put.status);
 
                     loaded[i] = blob.size;
                     parts[u.partNumber - 1] = { partNumber: u.partNumber, eTag: put.etag };
-                    showProgress(overall());
+                    showProgress(overall(), loaded.reduce((a, b) => a + b, 0), file.size);
                 }
             };
 
@@ -144,6 +240,14 @@
         }
     }
 
+    // Uğur vəziyyəti bir an görünsün, sonra modal bağlansın.
+    async function finishSuccess(totalBytes) {
+        showSuccess(totalBytes);
+        await new Promise(r => setTimeout(r, 700));
+        lockModal(false);
+        done();
+    }
+
     form.addEventListener('submit', async (e) => {
         e.preventDefault();
         if (document.getElementById('entityId').value) return; // update.js idarə edir
@@ -158,17 +262,18 @@
         const contentType = file.type || 'application/octet-stream';
 
         try {
-            setBusy(true);
-            showProgress(0);
+            lockModal(true);
+            startProgress(file.size);
 
             // 1) Böyük fayl -> çoxhissəli yükləmə (paralel, hissə-hissə bərpa oluna bilən)
             if (file.size > MP_THRESHOLD) {
                 const path = await uploadMultipart(file, lessonId, type, contentType);
                 if (!path) { showError(L["Js_FileTooLarge"]); return; }
 
+                showSuccess(file.size);
                 const res = await AdminUI.post('/lesson-content',
                     { lesson_id: lessonId, title, type, path, is_active: isActive });
-                if (res.ok) { done(); return; }
+                if (res.ok) { await finishSuccess(file.size); return; }
                 showError(AdminUI.errText(res));
                 return;
             }
@@ -178,12 +283,13 @@
                 { lessonId, type, fileName: file.name, contentType });
             if (urlRes.ok && urlRes.data?.uploadUrl) {
                 const put = await putWithProgress(urlRes.data.uploadUrl, file, contentType,
-                    (sent, totalBytes) => showProgress(sent / totalBytes * 100));
+                    (sent, totalBytes) => showProgress(sent / totalBytes * 100, sent, totalBytes));
 
                 if (put.ok) {
+                    showSuccess(file.size);
                     const res = await AdminUI.post('/lesson-content',
                         { lesson_id: lessonId, title, type, path: urlRes.data.path, is_active: isActive });
-                    if (res.ok) { done(); return; }
+                    if (res.ok) { await finishSuccess(file.size); return; }
                     showError(AdminUI.errText(res));
                     return;
                 }
@@ -205,7 +311,7 @@
         } catch (err) {
             showError(String(err && err.message ? err.message : err));
         } finally {
-            setBusy(false);
+            lockModal(false);
             hideProgress();
             AdminUI.loader(false);
         }

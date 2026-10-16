@@ -294,6 +294,10 @@
   </data>
 
 
+
+  <data name="Common_UploadDone" xml:space="preserve">
+    <value>Успешно загружено</value>
+  </data>
   <data name="Common_Uploading" xml:space="preserve">
     <value>Загрузка…</value>
   </data>

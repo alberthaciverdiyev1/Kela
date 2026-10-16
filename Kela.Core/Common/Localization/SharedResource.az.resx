@@ -294,6 +294,10 @@
   </data>
 
 
+
+  <data name="Common_UploadDone" xml:space="preserve">
+    <value>Uğurla yükləndi</value>
+  </data>
   <data name="Common_Uploading" xml:space="preserve">
     <value>Yüklənir…</value>
   </data>
