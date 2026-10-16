@@ -1,0 +1,18 @@
+@{
+    var subjects = (PagedResponse<SubjectResponse>)ViewData["Subjects"]!;
+}
+<form id="entityForm" class="space-y-4 p-6">
+    <input type="hidden" id="entityId" />
+    <input type="hidden" id="sort_order" />
+    <partial name="Ui/_Select" model="@(new SelectModel {
+        Name = "subject_id", Id = "subject_id", Label = L["Common_Subject"], Required = true,
+        Options = subjects.Data.Select(s => new SelectOption { Value = s.Id.ToString(), Text = s.Name }).ToList()
+    })" />
+    <partial name="Ui/_Input" model="@(new InputModel { Name = "title", Id = "title", Label = L["Common_Title"], Required = true })" />
+    <partial name="Ui/_FileUpload" model="@(new FileUploadModel { Name = "image", Id = "image", Label = L["Common_Image"], Accept = ".jpg,.jpeg,.png", Hint = "jpg/png, max 5MB" })" />
+    <partial name="Ui/_Switch" model="@(new SwitchModel { Name = "is_active", Id = "is_active", Label = L["Common_Active"], Checked = true })" />
+    <div class="flex justify-end gap-3 pt-2">
+        <partial name="Ui/_Button" model="@(new ButtonModel { Text = L["Common_Cancel"], Variant = "secondary", OnClick = "AdminUI.closeModal('modal')" })" />
+        <partial name="Ui/_Button" model="@(new ButtonModel { Text = L["Common_Save"], Type = "submit" })" />
+    </div>
+</form>

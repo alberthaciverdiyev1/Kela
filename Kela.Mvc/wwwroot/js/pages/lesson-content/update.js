@@ -16,7 +16,7 @@
         document.getElementById('lesson_id').disabled = true;
         document.getElementById('type').disabled = true;
         renderCurrentFile(data);
-        window.showModal();
+        AdminUI.openModal('modal');
     };
 
     // Redaktədə fayl dəyişdirilə bilmir — mövcud material göstərilir ki,
@@ -58,7 +58,7 @@
         fd.append('is_active', document.getElementById('is_active').checked ? 'true' : 'false');
 
         const res = await AdminUI.putForm(`/lesson-content/${id}`, fd);
-        if (res.ok) { AdminUI.notify(L["Js_Updated"]); window.closeModal(); loadList(currentPage); return; }
+        if (res.ok) { AdminUI.notify(L["Js_Updated"]); AdminUI.closeModal('modal'); loadList(currentPage); return; }
 
         errBox.textContent = AdminUI.errText(res);
         errBox.classList.remove('hidden');

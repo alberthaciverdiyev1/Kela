@@ -241,6 +241,47 @@ window.AdminUI = (function () {
 
     function sortToggle() { /* səhifə xüsusi tətbiq edə bilər */ }
 
+    // --- Modallar ---
+    // Bütün modallar üçün ortaq aç/bağla. Bağlanmanı dayandırmaq lazımdırsa,
+    // səhifə "modal:before-close" hadisəsini preventDefault edir (məs. yükləmə gedərkən).
+    function openModal(id) {
+        const modal = typeof id === 'string' ? document.getElementById(id) : id;
+        if (!modal) return;
+        modal.dispatchEvent(new CustomEvent('modal:open'));
+        modal.classList.remove('hidden');
+        modal.classList.add('flex');
+    }
+
+    function closeModal(id) {
+        const modal = typeof id === 'string' ? document.getElementById(id) : id;
+        if (!modal || modal.classList.contains('hidden')) return;
+        if (!modal.dispatchEvent(new CustomEvent('modal:before-close', { cancelable: true }))) return;
+
+        modal.classList.add('hidden');
+        modal.classList.remove('flex');
+
+        const err = modal.querySelector('[data-modal-error]');
+        if (err) err.classList.add('hidden');
+
+        modal.dispatchEvent(new CustomEvent('modal:closed'));
+    }
+
+    function openModals() {
+        return [...document.querySelectorAll('[data-modal]')].filter(m => !m.classList.contains('hidden'));
+    }
+
+    document.addEventListener('keydown', (e) => {
+        if (e.key !== 'Escape') return;
+        const open = openModals();
+        if (open.length) closeModal(open[open.length - 1]);
+    });
+
+    // Fon sahəsinə (paneldən kənara) klik modalı bağlayır.
+    document.addEventListener('click', (e) => {
+        const backdrop = e.target.closest ? e.target.closest('[data-modal]') : null;
+        if (backdrop && e.target === backdrop) closeModal(backdrop);
+    });
+
     // --- Ümumi sıralama modalı ---
     let _sortItems = [];
     let _sortSaveUrl = null;
@@ -253,13 +294,11 @@ window.AdminUI = (function () {
         const title = document.getElementById('sortTitle');
         if (title) title.textContent = opts.title || L["Sort_Title"];
         renderSort();
-        const modal = document.getElementById('sortModal');
-        if (modal) { modal.classList.remove('hidden'); modal.classList.add('flex'); }
+        openModal('sortModal');
     }
 
     function closeSort() {
-        const modal = document.getElementById('sortModal');
-        if (modal) { modal.classList.add('hidden'); modal.classList.remove('flex'); }
+        closeModal('sortModal');
     }
 
     function renderSort() {
@@ -460,5 +499,5 @@ window.AdminUI = (function () {
         _filterTimer = setTimeout(filterReload, 350);
     });
 
-    return { notify, error, errText, confirmDelete, confirmRestore, restoreItem, restoreButton, syncTrashButton, get, post, postForm, putForm, postJson, putJson, del, badge, table, actions, selectedIds, bulkDo, sortToggle, openSort, closeSort, persistSort, loader, pagination, filePreview, fileSet, fileRemove, fileReset, rowNo, token, reloadAfter, downloadCsv };
+    return { notify, error, errText, openModal, closeModal, confirmDelete, confirmRestore, restoreItem, restoreButton, syncTrashButton, get, post, postForm, putForm, postJson, putJson, del, badge, table, actions, selectedIds, bulkDo, sortToggle, openSort, closeSort, persistSort, loader, pagination, filePreview, fileSet, fileRemove, fileReset, rowNo, token, reloadAfter, downloadCsv };
 })();

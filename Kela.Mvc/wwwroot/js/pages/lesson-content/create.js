@@ -3,19 +3,8 @@
     const errBox = document.getElementById('formError');
 
     function showError(message) { errBox.textContent = message; errBox.classList.remove('hidden'); }
-    function done() { AdminUI.notify(L["Js_Added"]); window.closeModal(); loadList(1); }
+    function done() { AdminUI.notify(L["Js_Added"]); AdminUI.closeModal('modal'); loadList(1); }
 
-    window.showModal = function () {
-        document.getElementById('modal').classList.remove('hidden');
-        document.getElementById('modal').classList.add('flex');
-    };
-    window.closeModal = function () {
-        if (uploading) return;   // yarımçıq yükləmə itməsin
-
-        document.getElementById('modal').classList.add('hidden');
-        document.getElementById('modal').classList.remove('flex');
-        errBox.classList.add('hidden');
-    };
 
     window.openCreate = function () {
         document.getElementById('modalTitle').textContent = 'Yeni material';
@@ -33,7 +22,7 @@
         document.getElementById('currentFile').classList.add('hidden');
         document.getElementById('lesson_id').disabled = false;
         document.getElementById('type').disabled = false;
-        window.showModal();
+        AdminUI.openModal('modal');
     };
 
     // Böyük fayllar hissələrə bölünür: GB-larla videoda nazik PUT nə paralel yüklənmə,
@@ -136,13 +125,21 @@
     // obyekt qalır. Ona görə saxla/iptal/bağla düymələri və fayl seçimi kilidlənir.
     let uploading = false;
 
+    // Yarımçıq yükləmə itməsin deyə bağlanmanı dayandırırıq (ESC, fon klik, X, İmtina).
+    document.getElementById('modal').addEventListener('modal:before-close', function (e) {
+        if (uploading) e.preventDefault();
+    });
+
     function lockModal(locked) {
         uploading = locked;
 
-        ['saveBtn', 'cancelBtn', 'modalCloseBtn', 'file'].forEach(function (id) {
+        ['saveBtn', 'cancelBtn', 'file'].forEach(function (id) {
             const el = document.getElementById(id);
             if (el) el.disabled = locked;
         });
+
+        const close = document.querySelector('#modal [data-modal-close]');
+        if (close) close.disabled = locked;
     }
 
     function showSuccess(totalBytes) {
@@ -436,7 +433,7 @@
             if (!contentId) { showError(L["Js_ErrorOccured"]); return; }
 
             lockModal(false);
-            window.closeModal();
+            AdminUI.closeModal('modal');
             loadList(1);
 
             widgetShow(file.name);

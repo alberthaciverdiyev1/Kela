@@ -11,7 +11,7 @@
         document.getElementById('title').value = data.title;
         document.getElementById('is_active').checked = data.isActive;
         AdminUI.fileSet('image', data.image);
-        window.showModal();
+        AdminUI.openModal('modal');
     };
 
     form.addEventListener('submit', async (e) => {
@@ -20,7 +20,7 @@
         if (!id) return; // create.js idarə edir
 
         const res = await AdminUI.putForm(`/lesson/${id}`, window.buildLessonForm());
-        if (res.ok) { AdminUI.notify(L["Js_Updated"]); window.closeModal(); loadList(currentPage); return; }
+        if (res.ok) { AdminUI.notify(L["Js_Updated"]); AdminUI.closeModal('modal'); loadList(currentPage); return; }
 
         errBox.textContent = AdminUI.errText(res);
         errBox.classList.remove('hidden');

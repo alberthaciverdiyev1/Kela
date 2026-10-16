@@ -63,6 +63,25 @@ public class BulkBarModel
     public bool CanDeactivate { get; set; }
 }
 
+public class ModalModel
+{
+    public string Id { get; set; } = "modal";
+
+    /// <summary>Başlıq elementinin id-si — JS redaktə zamanı mətni dəyişir. Null → idsiz başlıq.</summary>
+    public string? TitleId { get; set; } = "modalTitle";
+
+    public string? Title { get; set; }
+
+    public string WidthClass { get; set; } = "max-w-lg";
+
+    /// <summary>Modal gövdəsi — adətən səhifənin öz formal partial-ı.</summary>
+    public Microsoft.AspNetCore.Html.IHtmlContent? Body { get; set; }
+
+    public bool ShowError { get; set; } = true;
+
+    public string ErrorId { get; set; } = "formError";
+}
+
 public class PageHeaderModel
 {
     public string Title { get; set; } = string.Empty;

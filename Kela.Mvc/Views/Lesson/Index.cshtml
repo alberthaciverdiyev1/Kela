@@ -65,7 +65,15 @@
     </div>
 </section>
 
-<partial name="_Modal" />
+@{
+    var modalBody = await Html.PartialAsync("_ModalFields");
+}
+
+<partial name="Ui/_Modal" model="@(new ModalModel {
+    Title = L["Lesson_Create"],
+    WidthClass = "max-w-lg",
+    Body = modalBody
+})" />
 <partial name="_SettingsModal" />
 <partial name="Ui/_SortModal" />
 

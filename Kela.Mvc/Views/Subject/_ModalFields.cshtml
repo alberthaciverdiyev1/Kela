@@ -1,0 +1,8 @@
+<form id="entityForm" class="space-y-4 p-6">
+    <input type="hidden" id="entityId" />
+    <partial name="Ui/_Input" model="@(new InputModel { Name = "name", Id = "name", Label = L["Common_Name"], Required = true })" />
+    <div class="flex justify-end gap-3 pt-2">
+        <partial name="Ui/_Button" model="@(new ButtonModel { Text = L["Common_Cancel"], Variant = "secondary", OnClick = "AdminUI.closeModal('modal')" })" />
+        <partial name="Ui/_Button" model="@(new ButtonModel { Text = L["Common_Save"], Type = "submit" })" />
+    </div>
+</form>

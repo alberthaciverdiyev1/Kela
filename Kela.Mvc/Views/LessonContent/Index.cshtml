@@ -71,7 +71,15 @@
     </div>
 </div>
 
-<partial name="_Modal" />
+@{
+    var modalBody = await Html.PartialAsync("_ModalFields");
+}
+
+<partial name="Ui/_Modal" model="@(new ModalModel {
+    Title = L["Common_NewMaterial"],
+    WidthClass = "max-w-lg",
+    Body = modalBody
+})" />
 <partial name="Ui/_SortModal" />
 
 <form id="antiforgery">@Html.AntiForgeryToken()</form>

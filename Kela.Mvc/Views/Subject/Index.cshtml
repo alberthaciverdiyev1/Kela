@@ -47,6 +47,14 @@
     </div>
 </section>
 
-<partial name="_Modal" />
+@{
+    var modalBody = await Html.PartialAsync("_ModalFields");
+}
+
+<partial name="Ui/_Modal" model="@(new ModalModel {
+    Title = L["Subject_Create"],
+    WidthClass = "max-w-md",
+    Body = modalBody
+})" />
 
 <form id="antiforgery">@Html.AntiForgeryToken()</form>
