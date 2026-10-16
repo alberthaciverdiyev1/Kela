@@ -361,6 +361,24 @@ public sealed class VideoJobLifecycle(
             .Where(j => j.VideoId == videoId && j.OutputPrefix == prefix)
             .ToListAsync(ct);
 
+        if (jobs.Count == 0)
+        {
+            // Prefiks mənbə açarından törədilir; tenant qovluğu sonradan dəyişsə
+            // hesablanan prefiks tapşırıqlardakı ilə uyğun gəlməyə bilər. O halda
+            // videonun ən son versiyasını işlədən tapşırıqlar götürülür ki, video
+            // "işlənir" vəziyyətində ilişib qalmasın.
+            jobs = await db.VideoJobs.IgnoreQueryFilters()
+                .Where(j => j.VideoId == videoId)
+                .OrderByDescending(j => j.Id)
+                .Take(16)
+                .ToListAsync(ct);
+
+            var latest = jobs.FirstOrDefault()?.OutputPrefix;
+
+            jobs = latest is null ? [] : [.. jobs.Where(j => j.OutputPrefix == latest)];
+            prefix = latest ?? prefix;
+        }
+
         if (jobs.Count == 0) return JobOperationResult.Ok();
         if (jobs.Any(j => JobStatus.IsActive(j.Status))) return JobOperationResult.Ok();
 
