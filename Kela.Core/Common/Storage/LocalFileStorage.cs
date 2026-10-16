@@ -19,7 +19,11 @@ public sealed class LocalFileStorage : IFileStorage
     public async Task<string> UploadAsync(IFormFile file, string folder, CancellationToken ct = default)
     {
         var extension = Path.GetExtension(file.FileName).ToLowerInvariant();
-        var fileName = $"{folder}-{Guid.NewGuid():N}{extension}";
+
+        // Qovluq çoxseqmentli ola bilər (məs. "kela/videos/raw"); fayl adı üçün yalnız
+        // son seqmenti götürürük, əks halda yol ikilənir.
+        var prefix = folder.Split('/', StringSplitOptions.RemoveEmptyEntries).LastOrDefault() ?? "file";
+        var fileName = $"{prefix}-{Guid.NewGuid():N}{extension}";
 
         var directory = Path.Combine(_root, folder);
         Directory.CreateDirectory(directory);

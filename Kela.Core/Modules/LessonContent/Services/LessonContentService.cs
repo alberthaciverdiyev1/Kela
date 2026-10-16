@@ -72,7 +72,7 @@ public sealed class LessonContentService(AppDbContext db, IFileStorage storage, 
         await EnsureLessonExistsAsync(request.LessonId, ct);
 
         var extension = Path.GetExtension(request.FileName).ToLowerInvariant();
-        var folder = await FolderForAsync(request.Type, ct);
+        var folder = await FolderForAsync(request.Type, await LessonTenantAsync(request.LessonId, ct), ct);
         var path = $"{folder}/{Guid.NewGuid():N}{extension}";
 
         var uploadUrl = storage.CreatePresignedPutUrl(path, request.ContentType, UploadUrlExpiry)
@@ -146,7 +146,8 @@ public sealed class LessonContentService(AppDbContext db, IFileStorage storage, 
         // birbaşa R2-yə yüklənibsə path verilir; əks halda API-dən keçərək yükləyirik
         if (request.File is not null)
         {
-            return await storage.UploadAsync(request.File, await FolderForAsync(request.Type, ct), ct);
+            var folder = await FolderForAsync(request.Type, await LessonTenantAsync(request.LessonId, ct), ct);
+            return await storage.UploadAsync(request.File, folder, ct);
         }
 
         if (!string.IsNullOrWhiteSpace(request.Path))
@@ -168,9 +169,9 @@ public sealed class LessonContentService(AppDbContext db, IFileStorage storage, 
     /// Konversiyadan sonra worker m3u8-i <c>{tenant}/videos/m3u8</c> altına yazır və həmin
     /// açarı callback ilə bildirir.
     /// </summary>
-    private async Task<string> FolderForAsync(LessonContentType type, CancellationToken ct)
+    private async Task<string> FolderForAsync(LessonContentType type, long? fallbackTenantId, CancellationToken ct)
     {
-        var prefix = await TenantFolderAsync(ct);
+        var prefix = await TenantFolderAsync(fallbackTenantId, ct);
 
         return type switch
         {
@@ -184,9 +185,11 @@ public sealed class LessonContentService(AppDbContext db, IFileStorage storage, 
     /// Qovluq adı kimi tenant-ın slug-ı işlədilir (ad boşluq və Azərbaycan hərfləri
     /// daşıya bilər, slug isə URL-təhlükəsizdir). Slug boşdursa ad sadələşdirilir.
     /// </summary>
-    private async Task<string> TenantFolderAsync(CancellationToken ct)
+    private async Task<string> TenantFolderAsync(long? fallbackTenantId, CancellationToken ct)
     {
-        var id = tenants.TenantId;
+        // Superadmin tenant-a keçməyibsə sorğuda tenant olmur; o halda məzmunun aid
+        // olduğu dərsin tenant-ını götürürük — fayl "shared" qovluğuna düşməsin.
+        var id = tenants.TenantId is > 0 ? tenants.TenantId : fallbackTenantId;
         if (id is not > 0) return "shared";
 
         var tenant = await db.Tenants.AsNoTracking()
@@ -219,6 +222,10 @@ public sealed class LessonContentService(AppDbContext db, IFileStorage storage, 
     private IQueryable<LessonContent> WithMedia() =>
         db.LessonContents.AsNoTracking()
             .Include(x => x.Video).Include(x => x.MediaFile).Include(x => x.VoiceRecord);
+
+    private Task<long?> LessonTenantAsync(long lessonId, CancellationToken ct)
+        => db.Lessons.AsNoTracking().Where(x => x.Id == lessonId)
+            .Select(x => (long?)x.TenantId).FirstOrDefaultAsync(ct);
 
     private async Task EnsureLessonExistsAsync(long lessonId, CancellationToken ct)
     {
