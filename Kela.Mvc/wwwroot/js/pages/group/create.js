@@ -9,7 +9,7 @@
 
     function showError(m) { errBox.textContent = m; errBox.classList.remove('hidden'); }
     function clearError() { errBox.classList.add('hidden'); }
-    function done() { AdminUI.notify(L["Js_Added"]); window.closeModal(); loadList(1); }
+    function done() { AdminUI.notify(L["Js_Added"]); AdminUI.closeModal('modal'); loadList(1); }
 
     function clearInvalid() {
         document.querySelectorAll('[data-invalid]').forEach(el => {
@@ -68,15 +68,6 @@
         });
     };
 
-    window.showModal = function () {
-        document.getElementById('modal').classList.remove('hidden');
-        document.getElementById('modal').classList.add('flex');
-    };
-    window.closeModal = function () {
-        document.getElementById('modal').classList.add('hidden');
-        document.getElementById('modal').classList.remove('flex');
-        clearError();
-    };
 
     function setStep(n) {
         step = n;
@@ -147,7 +138,7 @@
         clearInvalid();
 
         window.setWizardMode(true);
-        window.showModal();
+        AdminUI.openModal('modal');
 
         try { await loadOptions(); } catch { /* options boş */ }
     };

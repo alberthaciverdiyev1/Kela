@@ -12,7 +12,7 @@
         document.getElementById('image_preview').classList.add('hidden');
         document.getElementById('image_x').classList.add('hidden');
         if (data.image) AdminUI.fileSet('image', data.image);
-        window.showModal();
+        AdminUI.openModal('modal');
     };
 
     form.addEventListener('submit', async (e) => {
@@ -27,7 +27,7 @@
         if (file) fd.append('Image', file);
 
         const res = await AdminUI.putForm(`/banner/${id}`, fd);
-        if (res.ok) { AdminUI.notify(L["Js_Updated"]); window.closeModal(); loadList(currentPage); return; }
+        if (res.ok) { AdminUI.notify(L["Js_Updated"]); AdminUI.closeModal('modal'); loadList(currentPage); return; }
 
         errBox.textContent = AdminUI.errText(res);
         errBox.classList.remove('hidden');

@@ -1,0 +1,30 @@
+@{
+    var typeOptions = new List<SelectOption>
+    {
+        new() { Value = "teacher", Text = L["Role_Teacher"] },
+        new() { Value = "admin", Text = L["Role_Admin"] }
+    };
+    if (User.IsInRole(AuthRoles.SuperAdmin))
+    {
+        typeOptions.Add(new() { Value = "superadmin", Text = L["Role_SuperAdmin"] });
+    }
+}
+<form id="entityForm" class="space-y-4 p-6">
+    <input type="hidden" id="entityId" />
+    <div class="grid grid-cols-2 gap-4">
+        <partial name="Ui/_Input" model="@(new InputModel { Name = "name", Id = "name", Label = L["Common_Name"] })" />
+        <partial name="Ui/_Input" model="@(new InputModel { Name = "surname", Id = "surname", Label = L["User_Surname"] })" />
+    </div>
+    <partial name="Ui/_Input" model="@(new InputModel { Name = "email", Id = "email", Label = L["Common_Email"], Type = "email", Required = true })" />
+    <partial name="Ui/_Input" model="@(new InputModel { Name = "phoneNumber", Id = "phoneNumber", Label = L["Common_Phone"] })" />
+    <partial name="Ui/_Select" model="@(new SelectModel { Name = "type", Id = "type", Label = L["Common_Type"], Options = typeOptions })" />
+    <div>
+        <label class="mb-1 block text-sm font-medium text-slate-700">@L["Common_Password"]</label>
+        <input id="password" type="password" class="block w-full rounded-lg border border-slate-300 bg-slate-50 p-2.5 text-sm" />
+        <p id="passwordHint" class="mt-1 hidden text-xs text-slate-400">@L["User_PasswordHint"]</p>
+    </div>
+    <div class="flex justify-end gap-3 pt-2">
+        <partial name="Ui/_Button" model="@(new ButtonModel { Text = L["Common_Cancel"], Variant = "secondary", OnClick = "AdminUI.closeModal('modal')" })" />
+        <partial name="Ui/_Button" model="@(new ButtonModel { Text = L["Common_Save"], Type = "submit" })" />
+    </div>
+</form>

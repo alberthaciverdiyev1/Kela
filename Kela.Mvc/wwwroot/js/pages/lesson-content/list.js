@@ -123,9 +123,7 @@ function previewContent(id) {
     document.getElementById('previewFullscreenBtn')
         .classList.toggle('hidden', !document.getElementById('previewVideo'));
 
-    const modal = document.getElementById('previewModal');
-    modal.classList.remove('hidden');
-    modal.classList.add('flex');
+    AdminUI.openModal('previewModal');
 }
 
 function togglePreviewFullscreen() {
@@ -133,16 +131,16 @@ function togglePreviewFullscreen() {
 }
 
 function closePreview() {
-    const body = document.getElementById('previewBody');
-    body.innerHTML = '';
-    AdminMedia.destroy();
-    document.getElementById('previewFullscreenBtn').classList.add('hidden');
-    const modal = document.getElementById('previewModal');
-    modal.classList.add('hidden');
-    modal.classList.remove('flex');
+    AdminUI.closeModal('previewModal');
 }
 
-document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closePreview(); });
+// ESC/fon klik ortaq modallarda idarə olunur (admin.js) — burada yalnız
+// preview-a aid resurslar (video/hls) buraxılır.
+document.getElementById('previewModal').addEventListener('modal:closed', () => {
+    document.getElementById('previewBody').innerHTML = '';
+    AdminMedia.destroy();
+    document.getElementById('previewFullscreenBtn').classList.add('hidden');
+});
 
 async function removeItem(id) {
     if (!await AdminUI.confirmDelete(L["Js_ConfirmDeleteMaterial"])) return;

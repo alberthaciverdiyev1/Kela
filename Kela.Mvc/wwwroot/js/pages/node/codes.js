@@ -1,16 +1,8 @@
 // Birdəfəlik qeydiyyat kodları.
 window.CodesPage = (function () {
-    const modal = () => document.getElementById('codeModal');
+    function open() { AdminUI.openModal('codeModal'); }
 
-    function open() {
-        modal().classList.remove('hidden');
-        modal().classList.add('flex');
-    }
-
-    function close() {
-        modal().classList.add('hidden');
-        modal().classList.remove('flex');
-    }
+    function close() { AdminUI.closeModal('codeModal'); }
 
     async function reload() {
         const codes = await AdminUI.get('/node/codes');
@@ -24,7 +16,7 @@ window.CodesPage = (function () {
                     : code.isExpired ? AdminUI.badge(L["Node_Expired"], 'danger')
                         : AdminUI.badge(L["Node_Unused"], 'success')
             },
-            { html: `<div class="flex justify-end"><button type="button" class="inline-flex items-center rounded-lg px-2.5 py-1.5 text-sm font-semibold text-danger hover:bg-danger-light" onclick="CodesPage.remove(${code.id})">${L["Common_Delete"]}</button></div>`, cls: 'text-right' }
+            { html: `<div class="flex justify-end"><button type="button" class="inline-flex items-center rounded-lg px-2.5 py-1.5 text-sm font-semibold text-danger hover:bg-danger-bg" onclick="CodesPage.remove(${code.id})">${L["Common_Delete"]}</button></div>`, cls: 'text-right' }
         ]), 5, { empty: L["Node_NoCodes"] });
     }
 

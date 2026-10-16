@@ -1,0 +1,50 @@
+@{
+    var subjects = (PagedResponse<SubjectResponse>)ViewData["Subjects"]!;
+    var subjectOptions = subjects.Data.Select(s => new SelectOption { Value = s.Id.ToString(), Text = s.Name }).ToList();
+    var textImage = new List<SelectOption> { new() { Value = "text", Text = L["Common_Text"] }, new() { Value = "image", Text = L["Common_Image"] } };
+    var answers = new[] { "A", "B", "C", "D", "E" }.Select(a => new SelectOption { Value = a, Text = a }).ToList();
+}
+<form id="entityForm" class="space-y-4 p-6">
+    <input type="hidden" id="entityId" />
+    <input type="hidden" id="rawTitle" />
+    @foreach (var v in new[] { "A", "B", "C", "D", "E" })
+    {
+        <input type="hidden" id="raw@(v)" />
+    }
+
+    <partial name="Ui/_Select" model="@(new SelectModel { Name = "subject_id", Id = "subject_id", Label = L["Common_Subject"], Required = true, Options = subjectOptions })" />
+
+    <div class="grid grid-cols-2 gap-4">
+        <partial name="Ui/_Select" model="@(new SelectModel { Name = "title_type", Id = "title_type", Label = L["Question_TitleType"], Options = textImage })" />
+        <partial name="Ui/_Select" model="@(new SelectModel { Name = "variant_type", Id = "variant_type", Label = L["Question_VariantType"], Options = textImage })" />
+    </div>
+
+    <div id="titleTextBlock">
+        <partial name="Ui/_Input" model="@(new InputModel { Name = "title", Id = "title", Label = L["Question_TitleText"], Required = true })" />
+    </div>
+    <div id="titleImageBlock" class="hidden">
+        <partial name="Ui/_FileUpload" model="@(new FileUploadModel { Name = "title_image", Id = "title_image", Label = L["Question_ImageLabel"], Accept = "image/*" })" />
+    </div>
+
+    <div id="variantsTextBlock" class="space-y-3">
+        @foreach (var v in new[] { "A", "B", "C", "D", "E" })
+        {
+            <partial name="Ui/_Input" model="@(new InputModel { Name = $"variant_{v.ToLower()}", Id = $"variant_{v.ToLower()}", Label = $"Variant {v}" })" />
+        }
+    </div>
+    <div id="variantsImageBlock" class="hidden space-y-3">
+        @foreach (var v in new[] { "A", "B", "C", "D", "E" })
+        {
+            <partial name="Ui/_FileUpload" model="@(new FileUploadModel { Name = $"variant_{v.ToLower()}_image", Id = $"variant_{v.ToLower()}_image", Label = $"Variant {v} şəkli", Accept = "image/*" })" />
+        }
+    </div>
+
+    <div class="grid grid-cols-2 gap-4">
+        <partial name="Ui/_Select" model="@(new SelectModel { Name = "correct_answer", Id = "correct_answer", Label = L["Question_CorrectAnswer"], Options = answers })" />
+    </div>
+
+    <div class="flex justify-end gap-3 pt-2">
+        <partial name="Ui/_Button" model="@(new ButtonModel { Text = L["Common_Cancel"], Variant = "secondary", OnClick = "AdminUI.closeModal('modal')" })" />
+        <partial name="Ui/_Button" model="@(new ButtonModel { Text = L["Common_Save"], Type = "submit" })" />
+    </div>
+</form>

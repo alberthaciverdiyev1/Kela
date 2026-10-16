@@ -54,8 +54,31 @@
     </div>
 </section>
 
-<partial name="_Modal" />
-<partial name="_QuestionsModal" />
+@{
+    var modalBody = await Html.PartialAsync("_ModalFields");
+}
+
+<partial name="Ui/_Modal" model="@(new ModalModel
+{
+    Id = "modal",
+    TitleId = "modalTitle",
+    Title = L["Quiz_Create"],
+    WidthClass = "max-w-lg",
+    Body = modalBody
+})" />
+@{
+    var questionsModalBody = await Html.PartialAsync("_QuestionsModalFields");
+}
+
+<partial name="Ui/_Modal" model="@(new ModalModel
+{
+    Id = "questionsModal",
+    TitleId = "questionsTitle",
+    Title = L["Common_Questions"],
+    WidthClass = "max-w-2xl",
+    ShowError = false,
+    Body = questionsModalBody
+})" />
 <partial name="Ui/_SortModal" />
 
 <form id="antiforgery">@Html.AntiForgeryToken()</form>

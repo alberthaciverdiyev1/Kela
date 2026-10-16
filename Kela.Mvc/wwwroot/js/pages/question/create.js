@@ -3,15 +3,6 @@
     const errBox = document.getElementById('formError');
     const VARIANTS = ['a', 'b', 'c', 'd', 'e'];
 
-    window.showModal = function () {
-        document.getElementById('modal').classList.remove('hidden');
-        document.getElementById('modal').classList.add('flex');
-    };
-    window.closeModal = function () {
-        document.getElementById('modal').classList.add('hidden');
-        document.getElementById('modal').classList.remove('flex');
-        errBox.classList.add('hidden');
-    };
 
     window.toggleBlocks = function () {
         const titleType = document.getElementById('title_type').value;
@@ -69,7 +60,7 @@
         document.getElementById('rawTitle').value = '';
         ['A', 'B', 'C', 'D', 'E'].forEach(v => document.getElementById('raw' + v).value = '');
         window.toggleBlocks();
-        window.showModal();
+        AdminUI.openModal('modal');
     };
 
     document.getElementById('title_type').addEventListener('change', window.toggleBlocks);
@@ -80,7 +71,7 @@
         if (document.getElementById('entityId').value) return; // update.js
 
         const res = await AdminUI.postForm('/question', window.buildQuestionForm());
-        if (res.ok) { AdminUI.notify(L["Js_Added"]); window.closeModal(); loadList(1); return; }
+        if (res.ok) { AdminUI.notify(L["Js_Added"]); AdminUI.closeModal('modal'); loadList(1); return; }
 
         errBox.textContent = AdminUI.errText(res);
         errBox.classList.remove('hidden');

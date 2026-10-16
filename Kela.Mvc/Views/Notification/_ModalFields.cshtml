@@ -1,0 +1,25 @@
+@{
+    var students = (PagedResponse<StudentListItemResponse>)ViewData["Students"]!;
+}
+<form id="entityForm" class="space-y-4 p-6">
+    <partial name="Ui/_Input" model="@(new InputModel { Name = "title", Id = "title", Label = L["Common_Title"], Required = true })" />
+    <div>
+        <label class="mb-1 block text-sm font-medium text-slate-700">@L["Common_Text"]</label>
+        <textarea id="body" rows="3" class="block w-full rounded-lg border border-slate-300 bg-slate-50 p-2.5 text-sm"></textarea>
+    </div>
+    <partial name="Ui/_FileUpload" model="@(new FileUploadModel { Name = "image", Id = "image", Label = L["Common_Image"], Accept = "image/*", Hint = "jpg/png, max 5MB" })" />
+    <partial name="Ui/_Switch" model="@(new SwitchModel { Name = "all", Id = "all", Label = L["Notification_SendToAll"], Checked = true })" />
+    <div id="studentsBlock" class="hidden">
+        <label class="mb-1 block text-sm font-medium text-slate-700">@L["Notification_StudentsHint"]</label>
+        <select id="student_ids" multiple size="6" class="block w-full rounded-lg border border-slate-300 bg-slate-50 p-2 text-sm">
+            @foreach (var s in students.Data)
+            {
+                <option value="@s.Id">@s.FullName (@s.Email)</option>
+            }
+        </select>
+    </div>
+    <div class="flex justify-end gap-3 pt-2">
+        <partial name="Ui/_Button" model="@(new ButtonModel { Text = L["Common_Cancel"], Variant = "secondary", OnClick = "AdminUI.closeModal('modal')" })" />
+        <partial name="Ui/_Button" model="@(new ButtonModel { Text = L["Common_Send"], Type = "submit" })" />
+    </div>
+</form>

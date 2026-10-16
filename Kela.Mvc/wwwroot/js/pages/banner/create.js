@@ -2,15 +2,6 @@
     const form = document.getElementById('entityForm');
     const errBox = document.getElementById('formError');
 
-    window.showModal = function () {
-        document.getElementById('modal').classList.remove('hidden');
-        document.getElementById('modal').classList.add('flex');
-    };
-    window.closeModal = function () {
-        document.getElementById('modal').classList.add('hidden');
-        document.getElementById('modal').classList.remove('flex');
-        errBox.classList.add('hidden');
-    };
 
     window.openCreate = function () {
         document.getElementById('modalTitle').textContent = 'Yeni banner';
@@ -20,7 +11,7 @@
         document.getElementById('image_preview').classList.add('hidden');
         document.getElementById('image_x').classList.add('hidden');
         document.getElementById('image_remove').value = 'false';
-        window.showModal();
+        AdminUI.openModal('modal');
     };
 
     form.addEventListener('submit', async (e) => {
@@ -33,7 +24,7 @@
         if (file) fd.append('Image', file);
 
         const res = await AdminUI.postForm('/banner', fd);
-        if (res.ok) { AdminUI.notify(L["Js_Added"]); window.closeModal(); loadList(1); return; }
+        if (res.ok) { AdminUI.notify(L["Js_Added"]); AdminUI.closeModal('modal'); loadList(1); return; }
 
         errBox.textContent = AdminUI.errText(res);
         errBox.classList.remove('hidden');

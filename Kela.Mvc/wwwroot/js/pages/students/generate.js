@@ -7,12 +7,10 @@
     }
 
     window.openGenerate = function () {
-        document.getElementById('generateModal').classList.remove('hidden');
-        document.getElementById('generateModal').classList.add('flex');
+        AdminUI.openModal('generateModal');
     };
     window.closeGenerate = function () {
-        document.getElementById('generateModal').classList.add('hidden');
-        document.getElementById('generateModal').classList.remove('flex');
+        AdminUI.closeModal('generateModal');
     };
 
     document.getElementById('generateForm').addEventListener('submit', async (e) => {

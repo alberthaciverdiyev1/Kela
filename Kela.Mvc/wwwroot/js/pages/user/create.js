@@ -2,15 +2,6 @@
     const form = document.getElementById('entityForm');
     const errBox = document.getElementById('formError');
 
-    window.showModal = function () {
-        document.getElementById('modal').classList.remove('hidden');
-        document.getElementById('modal').classList.add('flex');
-    };
-    window.closeModal = function () {
-        document.getElementById('modal').classList.add('hidden');
-        document.getElementById('modal').classList.remove('flex');
-        errBox.classList.add('hidden');
-    };
 
     window.buildUserForm = function () {
         const fd = new FormData();
@@ -29,7 +20,7 @@
         ['name', 'surname', 'email', 'phoneNumber', 'password'].forEach(id => document.getElementById(id).value = '');
         document.getElementById('type').value = 'teacher';
         document.getElementById('passwordHint').classList.add('hidden');
-        window.showModal();
+        AdminUI.openModal('modal');
     };
 
     form.addEventListener('submit', async (e) => {
@@ -37,7 +28,7 @@
         if (document.getElementById('entityId').value) return; // update.js
 
         const res = await AdminUI.postForm('/user', window.buildUserForm());
-        if (res.ok) { AdminUI.notify(L["Js_Added"]); window.closeModal(); loadList(1); return; }
+        if (res.ok) { AdminUI.notify(L["Js_Added"]); AdminUI.closeModal('modal'); loadList(1); return; }
 
         errBox.textContent = AdminUI.errText(res);
         errBox.classList.remove('hidden');

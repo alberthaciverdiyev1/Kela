@@ -74,7 +74,19 @@
     WidthClass = "max-w-lg",
     Body = modalBody
 })" />
-<partial name="_SettingsModal" />
+@{
+    var settingsModalBody = await Html.PartialAsync("_SettingsModalFields");
+}
+
+<partial name="Ui/_Modal" model="@(new ModalModel
+{
+    Id = "settingsModal",
+    TitleId = "settingsTitle",
+    Title = L["Lesson_SettingsTitle"],
+    WidthClass = "max-w-lg",
+    ErrorId = "settingsError",
+    Body = settingsModalBody
+})" />
 <partial name="Ui/_SortModal" />
 
 <form id="antiforgery">@Html.AntiForgeryToken()</form>

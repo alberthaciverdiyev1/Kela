@@ -54,14 +54,12 @@ async function openManage(id) {
     fillSelect('quizzesSelect', mgOptions.quizzes);
 
     await refreshManage();
-    document.getElementById('manageModal').classList.remove('hidden');
-    document.getElementById('manageModal').classList.add('flex');
+    AdminUI.openModal('manageModal');
     switchTab('students');
 }
 
 function closeManage() {
-    document.getElementById('manageModal').classList.add('hidden');
-    document.getElementById('manageModal').classList.remove('flex');
+    AdminUI.closeModal('manageModal');
 }
 
 async function refreshManage() {

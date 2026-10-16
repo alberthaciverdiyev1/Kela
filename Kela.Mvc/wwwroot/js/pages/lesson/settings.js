@@ -20,13 +20,11 @@ async function openSettings(id) {
     SETTINGS_FIELDS.forEach(([key, elId]) => {
         document.getElementById(elId).checked = !!settings[key];
     });
-    document.getElementById('settingsModal').classList.remove('hidden');
-    document.getElementById('settingsModal').classList.add('flex');
+    AdminUI.openModal('settingsModal');
 }
 
 function closeSettings() {
-    document.getElementById('settingsModal').classList.add('hidden');
-    document.getElementById('settingsModal').classList.remove('flex');
+    AdminUI.closeModal('settingsModal');
 }
 
 async function saveSettings() {

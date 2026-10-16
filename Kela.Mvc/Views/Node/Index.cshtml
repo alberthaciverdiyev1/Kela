@@ -124,22 +124,18 @@
     </div>
 </section>
 
-<div id="codeModal" class="fixed inset-0 z-40 hidden items-center justify-center bg-slate-950/40 p-4">
-    <div class="w-full max-w-md rounded-2xl border border-border bg-white p-5 shadow-xl">
-        <h3 class="mb-4 text-lg font-bold text-slate-900">@L["Node_GenerateCode"]</h3>
-        <form id="codeForm">
-            <label class="admin-label">@L["Node_Note"]</label>
-            <input type="text" name="note" maxlength="190" class="admin-input" placeholder="@L["Node_NotePlaceholder"]" />
+@{
+    var codeModalBody = await Html.PartialAsync("_CodeModalFields");
+}
 
-            <label class="admin-label mt-3">@L["Node_ExpiresHours"]</label>
-            <input type="number" name="expires_hours" value="24" min="0" max="720" class="admin-input" />
-
-            <div class="mt-5 flex justify-end gap-2">
-                <button type="button" onclick="CodesPage.close()" class="admin-button admin-button-secondary">@L["Common_Cancel"]</button>
-                <button type="submit" class="admin-button admin-button-primary">@L["Common_Save"]</button>
-            </div>
-        </form>
-    </div>
-</div>
+<partial name="Ui/_Modal" model="@(new ModalModel
+{
+    Id = "codeModal",
+    TitleId = null,
+    Title = L["Node_GenerateCode"],
+    WidthClass = "max-w-md",
+    ShowError = false,
+    Body = codeModalBody
+})" />
 
 <form id="antiforgery">@Html.AntiForgeryToken()</form>

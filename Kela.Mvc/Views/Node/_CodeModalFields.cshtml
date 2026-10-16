@@ -1,0 +1,15 @@
+@* _Input qismi maxlength/min/max dəstəkləmir, ona görə eyni markup burada əl ilə yazılıb. *@
+<form id="codeForm" class="space-y-4 p-6">
+    <div>
+        <label for="code_note" class="mb-1 block text-sm font-semibold text-slate-600">@L["Node_Note"]</label>
+        <input type="text" name="note" id="code_note" maxlength="190" placeholder="@L["Node_NotePlaceholder"]" class="admin-field" />
+    </div>
+    <div>
+        <label for="code_expires" class="mb-1 block text-sm font-semibold text-slate-600">@L["Node_ExpiresHours"]</label>
+        <input type="number" name="expires_hours" id="code_expires" value="24" min="0" max="720" class="admin-field" />
+    </div>
+    <div class="flex justify-end gap-3 pt-2">
+        <partial name="Ui/_Button" model="@(new ButtonModel { Text = L["Common_Cancel"], Variant = "secondary", OnClick = "CodesPage.close()" })" />
+        <partial name="Ui/_Button" model="@(new ButtonModel { Text = L["Common_Save"], Type = "submit" })" />
+    </div>
+</form>

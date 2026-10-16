@@ -12,15 +12,6 @@
         });
     };
 
-    window.showModal = function () {
-        document.getElementById('modal').classList.remove('hidden');
-        document.getElementById('modal').classList.add('flex');
-    };
-    window.closeModal = function () {
-        document.getElementById('modal').classList.add('hidden');
-        document.getElementById('modal').classList.remove('flex');
-        errBox.classList.add('hidden');
-    };
 
     window.openCreate = function () {
         document.getElementById('modalTitle').textContent = 'Yeni sertifikat';
@@ -32,7 +23,7 @@
         document.getElementById('signature_preview').classList.add('hidden');
         document.getElementById('signature_x').classList.add('hidden');
         document.getElementById('signature_remove').value = 'false';
-        window.showModal();
+        AdminUI.openModal('modal');
     };
 
     form.addEventListener('submit', async (e) => {
@@ -47,7 +38,7 @@
         if (file) fd.append('Signature', file);
 
         const res = await AdminUI.postForm('/certificate', fd);
-        if (res.ok) { AdminUI.notify(L["Js_Added"]); window.closeModal(); loadList(1); return; }
+        if (res.ok) { AdminUI.notify(L["Js_Added"]); AdminUI.closeModal('modal'); loadList(1); return; }
 
         errBox.textContent = AdminUI.errText(res);
         errBox.classList.remove('hidden');

@@ -2,22 +2,13 @@
     const form = document.getElementById('entityForm');
     const errBox = document.getElementById('formError');
 
-    window.showModal = function () {
-        document.getElementById('modal').classList.remove('hidden');
-        document.getElementById('modal').classList.add('flex');
-    };
-    window.closeModal = function () {
-        document.getElementById('modal').classList.add('hidden');
-        document.getElementById('modal').classList.remove('flex');
-        errBox.classList.add('hidden');
-    };
 
     window.openCreate = function () {
         document.getElementById('modalTitle').textContent = L["Privacy_Create"];
         document.getElementById('type').value = '';
         document.getElementById('type').disabled = false;
         document.getElementById('content').value = '';
-        window.showModal();
+        AdminUI.openModal('modal');
     };
 
     window.openEdit = function (type) {
@@ -26,7 +17,7 @@
         document.getElementById('type').value = type;
         document.getElementById('type').disabled = true;
         document.getElementById('content').value = p ? p.content : '';
-        window.showModal();
+        AdminUI.openModal('modal');
     };
 
     form.addEventListener('submit', async (e) => {
@@ -36,7 +27,7 @@
         fd.append('content', document.getElementById('content').value);
 
         const res = await AdminUI.putForm('/privacy-policy', fd);
-        if (res.ok) { AdminUI.notify(L["Js_Saved"]); window.closeModal(); loadList(); return; }
+        if (res.ok) { AdminUI.notify(L["Js_Saved"]); AdminUI.closeModal('modal'); loadList(); return; }
 
         errBox.textContent = AdminUI.errText(res);
         errBox.classList.remove('hidden');

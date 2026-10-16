@@ -5,13 +5,11 @@ async function openDevices(id) {
     const s = await AdminUI.get('/students/' + id);
     document.getElementById('devicesTitle').textContent = s.fullName + ' — cihazlar';
     await refreshDevices();
-    document.getElementById('devicesModal').classList.remove('hidden');
-    document.getElementById('devicesModal').classList.add('flex');
+    AdminUI.openModal('devicesModal');
 }
 
 function closeDevices() {
-    document.getElementById('devicesModal').classList.add('hidden');
-    document.getElementById('devicesModal').classList.remove('flex');
+    AdminUI.closeModal('devicesModal');
 }
 
 async function refreshDevices() {

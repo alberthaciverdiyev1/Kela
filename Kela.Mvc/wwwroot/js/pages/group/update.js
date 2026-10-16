@@ -13,7 +13,7 @@
         errBox.classList.add('hidden');
 
         window.setWizardMode(false);
-        window.showModal();
+        AdminUI.openModal('modal');
     };
 
     form.addEventListener('submit', async (e) => {
@@ -22,7 +22,7 @@
         if (!id) return; // create.js
 
         const res = await AdminUI.putForm(`/group/${id}`, window.buildGroupForm());
-        if (res.ok) { AdminUI.notify(L["Js_Updated"]); window.closeModal(); loadList(currentPage); return; }
+        if (res.ok) { AdminUI.notify(L["Js_Updated"]); AdminUI.closeModal('modal'); loadList(currentPage); return; }
 
         errBox.textContent = AdminUI.errText(res);
         errBox.classList.remove('hidden');

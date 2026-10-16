@@ -6,22 +6,13 @@
         document.getElementById('studentsBlock').classList.toggle('hidden', document.getElementById('all').checked);
     }
 
-    window.showModal = function () {
-        document.getElementById('modal').classList.remove('hidden');
-        document.getElementById('modal').classList.add('flex');
-    };
-    window.closeModal = function () {
-        document.getElementById('modal').classList.add('hidden');
-        document.getElementById('modal').classList.remove('flex');
-        errBox.classList.add('hidden');
-    };
 
     window.openCreate = function () {
         document.getElementById('title').value = '';
         document.getElementById('body').value = '';
         document.getElementById('all').checked = true;
         toggleStudents();
-        window.showModal();
+        AdminUI.openModal('modal');
     };
 
     document.getElementById('all').addEventListener('change', toggleStudents);
@@ -42,7 +33,7 @@
         }
 
         const res = await AdminUI.postForm('/notification', fd);
-        if (res.ok) { AdminUI.notify(L["Js_Sent"]); window.closeModal(); loadList(1); return; }
+        if (res.ok) { AdminUI.notify(L["Js_Sent"]); AdminUI.closeModal('modal'); loadList(1); return; }
 
         errBox.textContent = AdminUI.errText(res);
         errBox.classList.remove('hidden');

@@ -15,13 +15,11 @@ async function openQuestions(id) {
     fillQuestionSelect(qzOptions);
 
     await refreshQuestions();
-    document.getElementById('questionsModal').classList.remove('hidden');
-    document.getElementById('questionsModal').classList.add('flex');
+    AdminUI.openModal('questionsModal');
 }
 
 function closeQuestions() {
-    document.getElementById('questionsModal').classList.add('hidden');
-    document.getElementById('questionsModal').classList.remove('flex');
+    AdminUI.closeModal('questionsModal');
 }
 
 async function refreshQuestions() {

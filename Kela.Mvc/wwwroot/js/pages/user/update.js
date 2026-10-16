@@ -13,7 +13,7 @@
         document.getElementById('type').value = u.type;
         document.getElementById('password').value = '';
         document.getElementById('passwordHint').classList.remove('hidden');
-        window.showModal();
+        AdminUI.openModal('modal');
     };
 
     form.addEventListener('submit', async (e) => {
@@ -22,7 +22,7 @@
         if (!id) return; // create.js
 
         const res = await AdminUI.putForm(`/user/${id}`, window.buildUserForm());
-        if (res.ok) { AdminUI.notify(L["Js_Updated"]); window.closeModal(); loadList(currentPage); return; }
+        if (res.ok) { AdminUI.notify(L["Js_Updated"]); AdminUI.closeModal('modal'); loadList(currentPage); return; }
 
         errBox.textContent = AdminUI.errText(res);
         errBox.classList.remove('hidden');

@@ -80,6 +80,9 @@ public class ModalModel
     public bool ShowError { get; set; } = true;
 
     public string ErrorId { get; set; } = "formError";
+
+    /// <summary>Başlıqda bağlama düyməsindən əvvəl göstərilən əlavə düymələr (məs. fullscreen).</summary>
+    public Microsoft.AspNetCore.Html.IHtmlContent? HeaderExtra { get; set; }
 }
 
 public class PageHeaderModel

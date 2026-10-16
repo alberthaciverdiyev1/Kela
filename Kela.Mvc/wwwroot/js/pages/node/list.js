@@ -53,7 +53,7 @@ window.NodesPage = (function () {
 
             const actions = [
                 `<button type="button" class="inline-flex items-center rounded-lg px-2.5 py-1.5 text-sm font-semibold text-slate-600 hover:bg-surface-secondary" onclick="NodesPage.toggle(${node.id}, ${!node.enabled})">${node.enabled ? L["Node_Disable"] : L["Node_Enable"]}</button>`,
-                `<button type="button" class="inline-flex items-center rounded-lg px-2.5 py-1.5 text-sm font-semibold text-danger hover:bg-danger-light" onclick="NodesPage.revoke(${node.id})">${L["Node_Revoke"]}</button>`
+                `<button type="button" class="inline-flex items-center rounded-lg px-2.5 py-1.5 text-sm font-semibold text-danger hover:bg-danger-bg" onclick="NodesPage.revoke(${node.id})">${L["Node_Revoke"]}</button>`
             ].join('');
 
             return [

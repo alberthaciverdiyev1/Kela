@@ -45,7 +45,30 @@
     </div>
 </section>
 
-<partial name="_Modal" />
-<partial name="_ManageModal" />
+@{
+    var modalBody = await Html.PartialAsync("_ModalFields");
+}
+
+<partial name="Ui/_Modal" model="@(new ModalModel
+{
+    Id = "modal",
+    TitleId = "modalTitle",
+    Title = L["Group_Create"],
+    WidthClass = "max-w-lg",
+    Body = modalBody
+})" />
+@{
+    var manageModalBody = await Html.PartialAsync("_ManageModalFields");
+}
+
+<partial name="Ui/_Modal" model="@(new ModalModel
+{
+    Id = "manageModal",
+    TitleId = "manageTitle",
+    Title = L["Common_Manage"],
+    WidthClass = "max-w-2xl",
+    ShowError = false,
+    Body = manageModalBody
+})" />
 
 <form id="antiforgery">@Html.AntiForgeryToken()</form>

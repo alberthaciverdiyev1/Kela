@@ -61,7 +61,31 @@
     </div>
 </section>
 
-<partial name="_GenerateModal" />
-<partial name="_DevicesModal" />
+@{
+    var generateModalBody = await Html.PartialAsync("_GenerateModalFields");
+}
+
+<partial name="Ui/_Modal" model="@(new ModalModel
+{
+    Id = "generateModal",
+    TitleId = null,
+    Title = L["Students_GenerateTitle"],
+    WidthClass = "max-w-md",
+    ShowError = false,
+    Body = generateModalBody
+})" />
+@{
+    var devicesModalBody = await Html.PartialAsync("_DevicesModalFields");
+}
+
+<partial name="Ui/_Modal" model="@(new ModalModel
+{
+    Id = "devicesModal",
+    TitleId = "devicesTitle",
+    Title = L["Students_Devices"],
+    WidthClass = "max-w-md",
+    ShowError = false,
+    Body = devicesModalBody
+})" />
 
 <form id="antiforgery">@Html.AntiForgeryToken()</form>
