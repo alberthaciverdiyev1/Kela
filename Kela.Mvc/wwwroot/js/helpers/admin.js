@@ -306,10 +306,24 @@ window.AdminUI = (function () {
         modal.classList.add('hidden');
         modal.classList.remove('flex');
 
+        // Bağlanan modalın forması təmizlənir — növbəti açılış köhnə məlumatla başlamasın.
+        modal.querySelectorAll('form').forEach(resetForm);
+
         const err = modal.querySelector('[data-modal-error]');
         if (err) err.classList.add('hidden');
 
         modal.dispatchEvent(new CustomEvent('modal:closed'));
+    }
+
+    // Formanı ilkin vəziyyətinə qaytarır: sahələr + fayl önizləmələri.
+    function resetForm(formOrId) {
+        const form = typeof formOrId === 'string' ? document.getElementById(formOrId) : formOrId;
+        if (!form || !form.reset) return;
+        form.reset();
+        // Gizli sahələri JS doldurur və onların default dəyəri yoxdur —
+        // reset() onları boşaltmır, ona görə əl ilə sıfırlanır.
+        form.querySelectorAll('input[type=hidden]').forEach(input => { input.value = ''; });
+        form.querySelectorAll('input[type=file]').forEach(input => { if (input.id) fileReset(input.id); });
     }
 
     function openModals() {
@@ -545,5 +559,5 @@ window.AdminUI = (function () {
         _filterTimer = setTimeout(filterReload, 350);
     });
 
-    return { notify, error, errText, openModal, closeModal, badge, chip, statCard, actions, actionButton, actionLink, rowActions, confirmDelete, confirmRestore, restoreItem, restoreButton, syncTrashButton, get, post, postForm, putForm, postJson, putJson, del, table, setInfo, addSort, selectedIds, bulkDo, sortToggle, openSort, closeSort, persistSort, loader, pagination, filePreview, fileSet, fileRemove, fileReset, rowNo, token, reloadAfter, downloadCsv };
+    return { notify, error, errText, openModal, closeModal, resetForm, badge, chip, statCard, actions, actionButton, actionLink, rowActions, confirmDelete, confirmRestore, restoreItem, restoreButton, syncTrashButton, get, post, postForm, putForm, postJson, putJson, del, table, setInfo, addSort, selectedIds, bulkDo, sortToggle, openSort, closeSort, persistSort, loader, pagination, filePreview, fileSet, fileRemove, fileReset, rowNo, token, reloadAfter, downloadCsv };
 })();
