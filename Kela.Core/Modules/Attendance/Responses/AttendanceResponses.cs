@@ -1,6 +1,8 @@
 namespace Kela.Core.Modules.Attendance.Responses;
 
-public record AttendanceStudentItem(long StudentId, string FullName, string Email, bool IsPresent);
+/// <summary>IsRecorded: bu gün üçün qeyd varmı. IsPresent yalnız qeyd varsa mənalıdır —
+/// beləcə "qayıb" ilə "qeyd olunmayıb" bir-birindən ayrılır.</summary>
+public record AttendanceStudentItem(long StudentId, string FullName, string Email, bool IsPresent, bool IsRecorded);
 
 public record AttendanceDayResponse(
     long GroupId,

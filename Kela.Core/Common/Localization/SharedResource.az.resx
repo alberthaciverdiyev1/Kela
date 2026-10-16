@@ -240,6 +240,14 @@
   <data name="Attendance_MyMonthSummary" xml:space="preserve">
     <value>Bu ay: {0} / {1}</value>
   </data>
+
+
+  <data name="Attendance_Saved" xml:space="preserve">
+    <value>Qeydə alınıb</value>
+  </data>
+  <data name="Attendance_NoGroups" xml:space="preserve">
+    <value>Qrup yoxdur</value>
+  </data>
   <data name="Attendance_MyTitle" xml:space="preserve">
     <value>Dərslərə iştirak</value>
   </data>

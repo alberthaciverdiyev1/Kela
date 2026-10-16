@@ -20,8 +20,11 @@ public sealed class AttendanceService(AppDbContext db) : IAttendanceService
             .ToDictionaryAsync(x => x.StudentId, x => x.IsPresent, ct);
 
         var students = members
-            .Select(m => new AttendanceStudentItem(m.StudentId, m.FullName, m.Email,
-                saved.TryGetValue(m.StudentId, out var present) && present))
+            .Select(m =>
+            {
+                var recorded = saved.TryGetValue(m.StudentId, out var present);
+                return new AttendanceStudentItem(m.StudentId, m.FullName, m.Email, recorded && present, recorded);
+            })
             .ToList();
 
         return new AttendanceDayResponse(groupId, date, students.Count(s => s.IsPresent), students.Count, students);

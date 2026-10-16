@@ -332,13 +332,18 @@
   }
 }
 
+/* Gün panelindəki şagird sətri: işarə "qayıb" deməkdir, ona görə vəziyyət
+   hər an görünür — qeyd olunmamış günlə qarışmasın. */
+.att-row.att-present { border-color: #a7f3d0; background-color: #ecfdf5; }
+.att-row.att-absent  { border-color: #fecaca; background-color: #fef2f2; }
+.att-row.att-present .att-state { color: #047857; }
+.att-row.att-absent  .att-state { color: #b91c1c; }
+
 /* --- Yoklama təqvimi ---
-   Gün hüceyrələrinin rəngi həmin günün iştirak faizini göstərir.
-   Rənglər flowbite-datepicker-in öz siniflərinin üzərinə yazılır. */
-.attendance-calendar .datepicker-cell.att-full { background-color: #d1fae5; color: #065f46; font-weight: 600; }
-.attendance-calendar .datepicker-cell.att-part { background-color: #fef3c7; color: #92400e; font-weight: 600; }
-.attendance-calendar .datepicker-cell.att-low  { background-color: #fee2e2; color: #991b1b; font-weight: 600; }
-.attendance-calendar .datepicker-cell.selected { outline: 2px solid #004aad; outline-offset: 1px; }
+   Gün hüceyrəsinin rəngi həmin günün iştirak faizini göstərir. */
+#calendar .att-full { background-color: #d1fae5; color: #065f46; }
+#calendar .att-part { background-color: #fef3c7; color: #92400e; }
+#calendar .att-low  { background-color: #fee2e2; color: #991b1b; }
 
 .att-dot { display: inline-block; width: 10px; height: 10px; border-radius: 9999px; }
 .att-dot.att-full { background-color: #10b981; }

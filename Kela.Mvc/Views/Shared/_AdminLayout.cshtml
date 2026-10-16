@@ -25,7 +25,7 @@
     var currentLangItem = langs.FirstOrDefault(l => l.Code == currentLang);
     var displayName = User.Identity?.Name ?? L["Common_User"];
     var initial = string.IsNullOrWhiteSpace(displayName) ? "?" : displayName.Trim()[..1].ToUpperInvariant();
-    var jsKeys = new[] { "Js_ConfirmDeleteBanner", "Js_ConfirmDeleteNotification", "Js_ConfirmDeleteLesson", "Js_ConfirmDeleteSubject", "Js_ConfirmDeleteQuiz", "Js_ConfirmDeleteUser", "Js_ConfirmDeleteMaterial", "Js_ConfirmDeleteGroup", "Js_NoStudents", "Attendance_PickDay", "Attendance_AllAbsent", "Attendance_AllPresent", "Attendance_MonthSummary", "Js_ConfirmDeleteStudent", "Js_ConfirmDeleteCertificate", "Js_ConfirmDeleteQuestion", "Js_Irreversible", "Js_AreYouSure", "Js_ConfirmResetDevice", "Js_ConfirmRemove", "Js_ConfirmRestore", "Js_NothingSelected", "Js_Added", "Js_Updated", "Js_Created", "Js_Restored", "Js_StatusChanged", "Js_Sent", "Js_Removed", "Js_Unlocked", "Js_CacheCleared", "Js_Saved", "Js_Applied", "Js_OrderUpdated", "Js_ErrorOccured", "Js_AdjustSearch", "Js_EditBanner", "Js_EditLesson", "Js_EditSubject", "Js_EditQuiz", "Js_EditUser", "Js_EditMaterial", "Js_EditGroup", "Js_EditCertificate", "Js_EditQuestion", "Js_SortLessons", "Js_SortLessonsSubject", "Js_SortQuizzes", "Js_SortMaterials", "Js_SelectLessonFirst", "Js_Edit", "Js_Old", "Js_Selected", "Js_All", "Js_EditPrefix", "Js_ManageSuffix", "Js_ContentKeysSuffix", "Js_StudentsCreated", "Js_Empty", "Js_NothingToSort", "Js_Voice", "Js_View", "Js_EditDelete", "Js_QuizCount", "Js_StudentCount", "Js_TotalQuestions", "Common_Cancel", "Common_Delete", "Common_ChooseFile", "Common_SelectGroup", "Common_Lesson", "Role_Teacher", "Common_General", "Common_Archived", "Lesson_SettingsTitle", "Sort_Title", "Common_Save", "Common_Active", "Common_Restore", "Subject_Create", "User_Create", "Lesson_Create", "Privacy_Create" };
+    var jsKeys = new[] { "Js_ConfirmDeleteBanner", "Js_ConfirmDeleteNotification", "Js_ConfirmDeleteLesson", "Js_ConfirmDeleteSubject", "Js_ConfirmDeleteQuiz", "Js_ConfirmDeleteUser", "Js_ConfirmDeleteMaterial", "Js_ConfirmDeleteGroup", "Attendance_LegendNone", "Attendance_Absent", "Attendance_Present", "Attendance_Saved", "Js_NoStudents", "Attendance_PickDay", "Attendance_AllAbsent", "Attendance_AllPresent", "Attendance_MonthSummary", "Js_ConfirmDeleteStudent", "Js_ConfirmDeleteCertificate", "Js_ConfirmDeleteQuestion", "Js_Irreversible", "Js_AreYouSure", "Js_ConfirmResetDevice", "Js_ConfirmRemove", "Js_ConfirmRestore", "Js_NothingSelected", "Js_Added", "Js_Updated", "Js_Created", "Js_Restored", "Js_StatusChanged", "Js_Sent", "Js_Removed", "Js_Unlocked", "Js_CacheCleared", "Js_Saved", "Js_Applied", "Js_OrderUpdated", "Js_ErrorOccured", "Js_AdjustSearch", "Js_EditBanner", "Js_EditLesson", "Js_EditSubject", "Js_EditQuiz", "Js_EditUser", "Js_EditMaterial", "Js_EditGroup", "Js_EditCertificate", "Js_EditQuestion", "Js_SortLessons", "Js_SortLessonsSubject", "Js_SortQuizzes", "Js_SortMaterials", "Js_SelectLessonFirst", "Js_Edit", "Js_Old", "Js_Selected", "Js_All", "Js_EditPrefix", "Js_ManageSuffix", "Js_ContentKeysSuffix", "Js_StudentsCreated", "Js_Empty", "Js_NothingToSort", "Js_Voice", "Js_View", "Js_EditDelete", "Js_QuizCount", "Js_StudentCount", "Js_TotalQuestions", "Common_Cancel", "Common_Delete", "Common_ChooseFile", "Common_SelectGroup", "Common_Lesson", "Role_Teacher", "Common_General", "Common_Archived", "Lesson_SettingsTitle", "Sort_Title", "Common_Save", "Common_Active", "Common_Restore", "Subject_Create", "User_Create", "Lesson_Create", "Privacy_Create" };
     var jsStrings = jsKeys.ToDictionary(k => k, k => L[k].Value);
 
     // Brend loqosu: cari tenant-ın loqosu varsa o, yoxsa platforma loqosu, yoxsa default ikon.
@@ -44,7 +44,6 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="~/css/sweetalert2.min.css" />
     <link rel="stylesheet" href="~/css/app.css" asp-append-version="true" />
-    <link rel="stylesheet" href="~/css/datepicker.css" asp-append-version="true" />
 </head>
 <body class="h-dvh overflow-hidden bg-background text-text-primary">
     <div class="flex h-full overflow-hidden">
@@ -142,7 +141,6 @@
     <script>window.L = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(jsStrings));</script>
     <script src="~/js/library/sweetalert2.min.js"></script>
     <script src="~/js/library/flowbite.min.js"></script>
-    <script src="~/js/library/flowbite-datepicker.min.js"></script>
     <script src="~/js/helpers/admin.js" asp-append-version="true"></script>
     @if (ViewData["Scripts"] is string[] pageScripts)
     {

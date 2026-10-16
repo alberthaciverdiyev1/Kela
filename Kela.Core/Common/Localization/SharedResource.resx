@@ -240,6 +240,14 @@
   <data name="Attendance_MyMonthSummary" xml:space="preserve">
     <value>This month: {0} / {1}</value>
   </data>
+
+
+  <data name="Attendance_Saved" xml:space="preserve">
+    <value>Recorded</value>
+  </data>
+  <data name="Attendance_NoGroups" xml:space="preserve">
+    <value>No groups</value>
+  </data>
   <data name="Attendance_MyTitle" xml:space="preserve">
     <value>Attendance</value>
   </data>

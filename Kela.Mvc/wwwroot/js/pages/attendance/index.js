@@ -1,10 +1,12 @@
-let dp = null;
 let monthMap = {};
-let current = new Date();
-let ready = false;
+let current = new Date(new Date().getFullYear(), new Date().getMonth(), 1);
+let groupId = null;
 let selected = null;
 
-function gid() { return document.getElementById('group_id').value; }
+function esc(v) {
+    return String(v ?? '').replace(/[&<>"']/g, c =>
+        ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+}
 
 function ymd(d) {
     return d.getFullYear() + '-' +
@@ -12,106 +14,135 @@ function ymd(d) {
         String(d.getDate()).padStart(2, '0');
 }
 
-function esc(v) {
-    return String(v ?? '').replace(/[&<>"']/g, c =>
-        ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+/* --- dil dəstəyi (ICU yoxdursa fallback) --- */
+function fmt(options, fallback) {
+    try { return new Intl.DateTimeFormat(window.ATT_LOCALE || undefined, options); }
+    catch (e) { return null; }
 }
 
-/* --- ay takvimi --- */
-
-function dayClass(date) {
-    const row = monthMap[ymd(date)];
-    if (!row || !row.totalCount) return {};
-
-    const ratio = row.presentCount / row.totalCount;
-    return { classes: ratio >= 1 ? 'att-full' : ratio >= 0.5 ? 'att-part' : 'att-low' };
+function monthLabel() {
+    const f = fmt({ month: 'long', year: 'numeric' });
+    return f ? f.format(current) : (current.getMonth() + 1) + '/' + current.getFullYear();
 }
 
-function renderMonthSummary(data) {
-    const el = document.getElementById('monthSummary');
-    if (!data) { el.textContent = ''; return; }
+function weekdayNames() {
+    const f = fmt({ weekday: 'short' });
+    if (!f) return ['B.e', 'Ç.a', 'Ç', 'C.a', 'C', 'Ş', 'B'];
 
-    const days = data.days || [];
-    const present = days.reduce((s, d) => s + d.presentCount, 0);
-    const total = days.reduce((s, d) => s + d.totalCount, 0);
-
-    el.textContent = total
-        ? L["Attendance_MonthSummary"].replace('{0}', present).replace('{1}', total)
-        : '';
+    // Bazar ertəsi birinci: 2024-01-01 bazar ertəsidir.
+    return Array.from({ length: 7 }, (_, i) => f.format(new Date(2024, 0, 1 + i)));
 }
 
-async function loadMonth() {
-    const id = gid();
-    if (!id) {
-        monthMap = {};
-        renderMonthSummary(null);
-        if (dp) dp.update();
+/* --- qrup çipləri --- */
+function renderChips() {
+    const el = document.getElementById('groupChips');
+    const groups = window.ATT_GROUPS || [];
+
+    if (!groups.length) {
+        el.innerHTML = `<span class="px-1 text-sm text-slate-400">${esc(L["Attendance_NoGroups"])}</span>`;
         return;
     }
 
-    const year = current.getFullYear();
-    const month = current.getMonth() + 1;
+    el.innerHTML = groups.map(g => `
+        <button type="button" data-id="${g.id}"
+                class="att-chip shrink-0 rounded-full border px-4 py-1.5 text-[13px] font-semibold transition
+                       ${g.id === groupId
+                            ? 'border-primary bg-primary-light text-primary'
+                            : 'border-slate-200 bg-white text-slate-500 hover:bg-slate-50'}">
+            ${esc(g.name)}
+        </button>`).join('');
 
-    const data = await AdminUI.get(`/attendance/month?group_id=${id}&year=${year}&month=${month}`);
+    el.querySelectorAll('.att-chip').forEach(btn => {
+        btn.addEventListener('click', () => {
+            groupId = Number(btn.dataset.id);
+            selected = null;
+            document.getElementById('dayPanel').className = 'admin-empty';
+            document.getElementById('dayPanel').textContent = L["Attendance_PickDay"];
+            renderChips();
+            loadMonth();
+        });
+    });
+}
+
+/* --- ay təqvimi --- */
+function dayClass(day) {
+    const row = monthMap[ymd(new Date(current.getFullYear(), current.getMonth(), day))];
+    const today = new Date();
+    const isToday = current.getFullYear() === today.getFullYear()
+        && current.getMonth() === today.getMonth() && day === today.getDate();
+    const ring = isToday ? ' ring-2 ring-primary/40 ring-offset-1' : '';
+    const base = 'flex aspect-square items-center justify-center rounded-xl text-sm font-semibold cursor-pointer select-none ';
+
+    if (!row || !row.totalCount) return base + 'text-slate-400 hover:bg-slate-100' + ring;
+
+    const ratio = row.presentCount / row.totalCount;
+    return base + (ratio >= 1 ? 'att-full' : ratio >= 0.5 ? 'att-part' : 'att-low') + ring;
+}
+
+function renderCalendar() {
+    const first = new Date(current.getFullYear(), current.getMonth(), 1);
+    const lead = (first.getDay() + 6) % 7;
+    const days = new Date(current.getFullYear(), current.getMonth() + 1, 0).getDate();
+
+    let cells = '';
+    for (let i = 0; i < lead; i++) cells += '<span></span>';
+    for (let d = 1; d <= days; d++) {
+        cells += `<div class="${dayClass(d)}" data-day="${d}">${d}</div>`;
+    }
+
+    document.getElementById('calendar').innerHTML = `
+        <div class="flex items-center justify-between">
+            <button type="button" id="prevMonth" class="rounded-xl p-2 text-slate-400 hover:bg-slate-100" aria-label="previous">‹</button>
+            <p class="font-bold capitalize text-slate-800">${esc(monthLabel())}</p>
+            <button type="button" id="nextMonth" class="rounded-xl p-2 text-slate-400 hover:bg-slate-100" aria-label="next">›</button>
+        </div>
+        <div class="mt-3 grid grid-cols-7 gap-1">
+            ${weekdayNames().map(w => `<span class="text-center text-[10px] font-bold uppercase tracking-wide text-slate-400">${esc(w)}</span>`).join('')}
+        </div>
+        <div class="mt-1 grid grid-cols-7 gap-1">${cells}</div>`;
+
+    document.getElementById('prevMonth').onclick = () => { current = new Date(current.getFullYear(), current.getMonth() - 1, 1); loadMonth(); };
+    document.getElementById('nextMonth').onclick = () => { current = new Date(current.getFullYear(), current.getMonth() + 1, 1); loadMonth(); };
+
+    document.querySelectorAll('#calendar [data-day]').forEach(cell => {
+        cell.addEventListener('click', () => {
+            selected = ymd(new Date(current.getFullYear(), current.getMonth(), Number(cell.dataset.day)));
+            loadDay();
+        });
+    });
+}
+
+function renderSummary(data) {
+    const el = document.getElementById('monthSummary');
+    if (!data || !data.days || !data.days.length) { el.textContent = ''; return; }
+
+    const present = data.days.reduce((s, d) => s + d.presentCount, 0);
+    const total = data.days.reduce((s, d) => s + d.totalCount, 0);
+    el.textContent = L["Attendance_MonthSummary"].replace('{0}', present).replace('{1}', total);
+}
+
+async function loadMonth() {
     monthMap = {};
+
+    if (!groupId) { renderCalendar(); renderSummary(null); return; }
+
+    const y = current.getFullYear(), m = current.getMonth() + 1;
+    const data = await AdminUI.get(`/attendance/month?group_id=${groupId}&year=${y}&month=${m}`);
+
     (data.days || []).forEach(d => { monthMap[d.date] = d; });
-
-    renderMonthSummary(data);
-    if (dp) dp.update();
-}
-
-function afterMonthSwitch() {
-    if (!dp) return;
-    const v = dp.viewDate;
-    if (v) current = new Date(v.getFullYear(), v.getMonth(), 1);
-    loadMonth();
-}
-
-function initCalendar() {
-    const el = document.getElementById('calendar');
-    el.innerHTML = '';
-    monthMap = {};
-    ready = false;
-
-    dp = new Datepicker(el, {
-        inline: true,
-        language: 'az',
-        todayHighlight: true,
-        beforeShowDay: dayClass,
-        changeMonth: afterMonthSwitch,
-        changeYear: afterMonthSwitch
-    });
-
-    // Gün seçimi: kitabxananın callback-inə güvənmək yerinə klikləri özümüz tuturuq.
-    el.addEventListener('click', ev => {
-        const cell = ev.target.closest('.datepicker-cell');
-        if (!cell || !cell.dataset.date) return;
-
-        const grid = cell.closest('.datepicker-grid');
-        if (grid && (grid.classList.contains('months') || grid.classList.contains('years'))) return;
-
-        const date = new Date(cell.dataset.date);
-        if (isNaN(date)) return;
-
-        selected = ymd(date);
-        loadDay(selected);
-    });
-
-    dp.setDate(current);
-    ready = true;
+    renderCalendar();
+    renderSummary(data);
 }
 
 /* --- gün paneli --- */
-
-async function loadDay(date) {
-    const id = gid();
-    if (!id) { AdminUI.error(L["Common_SelectGroup"]); return; }
+async function loadDay() {
+    if (!groupId || !selected) return;
 
     const panel = document.getElementById('dayPanel');
     panel.className = 'admin-empty';
     panel.textContent = '…';
 
-    const data = await AdminUI.get(`/attendance/day?group_id=${id}&date=${date}`);
+    const data = await AdminUI.get(`/attendance/day?group_id=${groupId}&date=${selected}`);
 
     if (!data.students || !data.students.length) {
         panel.className = 'admin-empty';
@@ -120,28 +151,58 @@ async function loadDay(date) {
     }
 
     panel.className = '';
+    const recorded = data.students.some(s => s.isRecorded);
+
     panel.innerHTML = `
         <div class="flex flex-wrap items-center justify-between gap-3 border-b border-border pb-4">
             <div>
-                <div class="font-bold text-slate-800">${esc(date)}</div>
-                <div id="dayCount" class="text-sm text-slate-500">${data.presentCount} / ${data.totalCount}</div>
+                <div class="font-bold text-slate-800">${esc(selected)}</div>
+                <div class="mt-0.5 flex items-center gap-2 text-sm">
+                    <span id="dayCount" class="text-slate-500">${data.presentCount} / ${data.totalCount}</span>
+                    ${recorded
+                        ? `<span class="rounded-full bg-emerald-50 px-2 py-0.5 text-xs font-semibold text-emerald-700">${esc(L["Attendance_Saved"])}</span>`
+                        : `<span class="rounded-full bg-slate-100 px-2 py-0.5 text-xs font-semibold text-slate-500">${esc(L["Attendance_LegendNone"])}</span>`}
+                </div>
             </div>
             <div class="flex gap-2">
-                <button type="button" class="admin-button-secondary" onclick="markAll(true)">${L["Attendance_AllPresent"]}</button>
-                <button type="button" class="admin-button-secondary" onclick="markAll(false)">${L["Attendance_AllAbsent"]}</button>
-                <button type="button" id="saveBtn" class="admin-button-primary" onclick="saveDay()">${L["Common_Save"]}</button>
+                <button type="button" class="admin-button-secondary" onclick="markAll(true)">${esc(L["Attendance_AllPresent"])}</button>
+                <button type="button" class="admin-button-secondary" onclick="markAll(false)">${esc(L["Attendance_AllAbsent"])}</button>
+                <button type="button" id="saveBtn" class="admin-button-primary" onclick="saveDay()">${esc(L["Common_Save"])}</button>
             </div>
         </div>
         <div class="mt-4 space-y-2">
             ${data.students.map(s => `
-                <label class="flex items-center gap-3 rounded-xl border border-border px-3 py-2 hover:bg-slate-50">
+                <label class="att-row flex items-center gap-3 rounded-xl border px-3 py-2 transition"
+                       data-student="${s.studentId}">
                     <input type="checkbox" class="att-check size-4" data-student="${s.studentId}" ${s.isPresent ? 'checked' : ''} />
                     <span class="min-w-0 flex-1">
                         <span class="block truncate text-sm font-medium text-slate-800">${esc(s.fullName)}</span>
                         <span class="block truncate text-xs text-slate-400">${esc(s.email)}</span>
                     </span>
+                    <span class="att-state shrink-0 text-xs font-semibold"></span>
                 </label>`).join('')}
         </div>`;
+
+    // İşarə "qayıb" deməkdir, ona görə vəziyyət canlı göstərilir ki,
+    // "qayıb" ilə "qeyd olunmayıb" qarışmasın.
+    panel.querySelectorAll('.att-row').forEach(row => {
+        const box = row.querySelector('.att-check');
+        const paint = () => {
+            row.classList.toggle('att-present', box.checked);
+            row.classList.toggle('att-absent', !box.checked);
+            row.querySelector('.att-state').textContent =
+                box.checked ? L["Attendance_Present"] : L["Attendance_Absent"];
+
+            const el = document.getElementById('dayCount');
+            if (el) {
+                const checked = panel.querySelectorAll('.att-check:checked').length;
+                const total = panel.querySelectorAll('.att-check').length;
+                el.textContent = checked + ' / ' + total;
+            }
+        };
+        box.addEventListener('change', paint);
+        paint();
+    });
 }
 
 function markAll(present) {
@@ -149,8 +210,7 @@ function markAll(present) {
 }
 
 async function saveDay() {
-    const id = gid();
-    if (!id || !selected) return;
+    if (!groupId || !selected) return;
 
     const students = Array.from(document.querySelectorAll('.att-check')).map(c => ({
         studentId: Number(c.dataset.student),
@@ -160,7 +220,9 @@ async function saveDay() {
     const btn = document.getElementById('saveBtn');
     if (btn) btn.disabled = true;
 
-    const res = await AdminUI.postJson('/attendance/save', { groupId: Number(id), date: selected, students });
+    const res = await AdminUI.postJson('/attendance/save', {
+        groupId: Number(groupId), date: selected, students
+    });
 
     if (btn) btn.disabled = false;
 
@@ -168,20 +230,16 @@ async function saveDay() {
 
     AdminUI.notify(L["Js_Saved"]);
     await loadMonth();
-    loadDay(selected);
+    await loadDay();
 }
 
-/* --- başlanğıc --- */
+document.addEventListener('DOMContentLoaded', () => {
+    const groups = window.ATT_GROUPS || [];
+    if (groups.length) groupId = groups[0].id;
 
-document.addEventListener('DOMContentLoaded', async () => {
-    initCalendar();
-    document.getElementById('group_id').addEventListener('change', async () => {
-        document.getElementById('dayPanel').className = 'admin-empty';
-        document.getElementById('dayPanel').textContent = L["Attendance_PickDay"];
-        await loadMonth();
-    });
+    renderChips();
+    loadMonth();
 });
 
-// Səhifə JS-dən çağırılan funksiyalar qlobal olmalıdır (onclick).
 window.markAll = markAll;
 window.saveDay = saveDay;
