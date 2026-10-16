@@ -18,7 +18,7 @@ window.JobsPage = (function () {
         const status = document.getElementById('jobStatus').value;
         const data = await AdminUI.get(`/node/jobs?page=${page}&perPage=25${status ? `&status=${status}` : ''}`);
 
-        AdminUI.table('jobRows', (data.items || []).map((job, i) => {
+        AdminUI.table('jobRows', (data.data || []).map((job, i) => {
             const percent = Math.round((job.progress || 0) * 100);
             const bar = `<div class="flex items-center gap-2"><div class="h-1.5 w-20 overflow-hidden rounded-full bg-slate-200">
                     <div class="h-full rounded-full bg-primary" style="width:${percent}%"></div></div>
@@ -27,7 +27,7 @@ window.JobsPage = (function () {
             const canRequeue = ['failed', 'cancelled'].includes(job.status);
 
             return [
-                { html: AdminUI.rowNo(job, i, data.page, data.perPage), cls: 'text-slate-400' },
+                { html: AdminUI.rowNo(job, i, data.currentPage, data.perPage), cls: 'text-slate-400' },
                 { html: `<span class="font-medium text-slate-800">${job.videoTitle || '#' + job.videoId}</span>` },
                 { html: `<span class="text-sm font-semibold text-slate-600">${job.resolution}</span>` },
                 { html: AdminUI.badge(job.status, statusVariant(job.status)) + (job.skipped ? ' <span class="text-xs text-slate-400">(atlanıb)</span>' : '') },
@@ -43,7 +43,7 @@ window.JobsPage = (function () {
             ];
         }), 8, { empty: L["Js_AdjustSearch"] });
 
-        AdminUI.pagination('jobPagination', data.page, data.lastPage, (p) => reload(p));
+        AdminUI.pagination('jobPagination', data.currentPage, data.lastPage, (p) => reload(p));
     }
 
     async function requeue(id) {

@@ -42,9 +42,11 @@ window.NodesPage = (function () {
     async function load() {
         AdminUI.loader(true);
         const data = await AdminUI.get('/node/list?perPage=500');
-        AdminUI.setInfo((data.items || []).length);
+        // API "data" qaytarır (PagedResponse) — əvvəl "items" oxunduğu üçün cədvəl boş qalırdı.
+        const nodes = data.data || [];
+        AdminUI.setInfo(nodes.length);
 
-        AdminUI.table('rows', (data.items || []).map((node, index) => {
+        AdminUI.table('rows', nodes.map((node, index) => {
             const device = node.device || {};
             const benchmark = node.benchmark;
             const encoders = (device.encoders || []).join(', ') || '—';
