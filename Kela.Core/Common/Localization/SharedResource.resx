@@ -441,6 +441,9 @@
   <data name="Common_Cancel" xml:space="preserve">
     <value>Cancel</value>
   </data>
+  <data name="Common_CurrentFile" xml:space="preserve">
+    <value>Current file</value>
+  </data>
   <data name="Common_Fullscreen" xml:space="preserve">
     <value>Fullscreen</value>
   </data>

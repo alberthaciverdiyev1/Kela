@@ -30,6 +30,7 @@
         // videonun kadrı modalda qalır.
         if (AdminUI.fileReset) AdminUI.fileReset('file');
         document.getElementById('fileBlock').classList.remove('hidden');
+        document.getElementById('currentFile').classList.add('hidden');
         document.getElementById('lesson_id').disabled = false;
         document.getElementById('type').disabled = false;
         window.showModal();

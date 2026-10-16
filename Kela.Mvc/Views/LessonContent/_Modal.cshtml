@@ -24,6 +24,7 @@
             })" />
             <partial name="Ui/_Input" model="@(new InputModel { Name = "title", Id = "title", Label = L["Common_Title"], Required = true })" />
             <partial name="Ui/_Select" model="@(new SelectModel { Name = "type", Id = "type", Label = L["Common_Type"], Options = typeOptions })" />
+            <div id="currentFile" class="hidden"></div>
             <div id="fileBlock">
                 <partial name="Ui/_FileUpload" model="@(new FileUploadModel { Name = "file", Id = "file", Label = L["Common_File"], Hint = "Video böyükdürsə birbaşa R2-yə yüklənir" })" />
             </div>

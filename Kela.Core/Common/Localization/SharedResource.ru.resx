@@ -441,6 +441,9 @@
   <data name="Common_Cancel" xml:space="preserve">
     <value>Отмена</value>
   </data>
+  <data name="Common_CurrentFile" xml:space="preserve">
+    <value>Текущий файл</value>
+  </data>
   <data name="Common_Fullscreen" xml:space="preserve">
     <value>На весь экран</value>
   </data>

@@ -441,6 +441,9 @@
   <data name="Common_Cancel" xml:space="preserve">
     <value>İmtina</value>
   </data>
+  <data name="Common_CurrentFile" xml:space="preserve">
+    <value>Mövcud fayl</value>
+  </data>
   <data name="Common_Fullscreen" xml:space="preserve">
     <value>Tam ekran</value>
   </data>

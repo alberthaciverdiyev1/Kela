@@ -15,8 +15,36 @@
         document.getElementById('fileBlock').classList.add('hidden');
         document.getElementById('lesson_id').disabled = true;
         document.getElementById('type').disabled = true;
+        renderCurrentFile(data);
         window.showModal();
     };
+
+    // Redaktədə fayl dəyişdirilə bilmir — mövcud material göstərilir ki,
+    // istifadəçi nə olduğunu görsün.
+    function renderCurrentFile(data) {
+        const box = document.getElementById('currentFile');
+        const url = data.playbackUrl || data.url;
+        if (!url) { box.innerHTML = ''; box.classList.add('hidden'); return; }
+
+        let inner;
+        if (data.type === 'video') {
+            inner = data.conversionStatus && data.conversionStatus !== 'ready'
+                ? `<div class="rounded-xl bg-slate-100 p-4 text-center text-sm text-slate-500">${statusBadge(data)}</div>`
+                : `<video controls playsinline preload="metadata" data-src="${url}"
+                       class="preview-video mx-auto block max-h-[40vh] max-w-full rounded-xl bg-black"></video>`;
+        } else if (data.type === 'voice') {
+            inner = `<audio controls data-src="${url}" class="w-full"></audio>`;
+        } else if (/\.(png|jpe?g|gif|webp|svg)($|\?)/i.test(url)) {
+            inner = `<img src="${url}" alt="" class="mx-auto max-h-[40vh] rounded-xl" />`;
+        } else {
+            inner = `<iframe src="${url}" class="h-[40vh] w-full rounded-xl" title=""></iframe>`;
+        }
+
+        box.innerHTML = `<div class="mb-1.5 text-xs font-semibold text-slate-500">${L["Common_CurrentFile"]}</div>` +
+            `<div class="rounded-xl border border-border bg-surface-secondary p-2">${inner}</div>`;
+        box.classList.remove('hidden');
+        AdminMedia.hydrate(box);
+    }
 
     form.addEventListener('submit', async (e) => {
         e.preventDefault();
