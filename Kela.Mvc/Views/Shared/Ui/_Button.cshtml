@@ -1,11 +1,13 @@
 @model ButtonModel
 @{
+    // Bütün variantlar input.css-dəki .admin-button-* komponentlərindən gəlir —
+    // eyni görünüş həm Razor, həm JS tərəfdə paylaşılsın.
     var variants = new Dictionary<string, string>
     {
         ["primary"] = "admin-button-primary",
-        ["secondary"] = "inline-flex min-h-[44px] items-center justify-center gap-2 rounded-[10px] border border-border bg-surface px-4 text-sm font-bold text-slate-600 transition hover:bg-surface-secondary",
-        ["danger"] = "inline-flex min-h-[44px] items-center justify-center gap-2 rounded-[10px] bg-danger px-4 text-sm font-bold text-white transition hover:brightness-95",
-        ["ghost"] = "px-2 py-1 text-primary rounded-lg hover:bg-primary-light",
+        ["secondary"] = "admin-button-secondary",
+        ["danger"] = "admin-button-danger",
+        ["ghost"] = "admin-button-ghost",
     };
     var cls = variants.GetValueOrDefault(Model.Variant, variants["primary"]);
 }

@@ -160,8 +160,8 @@ async function loadDay() {
                 <div class="mt-0.5 flex items-center gap-2 text-sm">
                     <span id="dayCount" class="text-slate-500">${data.presentCount} / ${data.totalCount}</span>
                     ${recorded
-                        ? `<span class="rounded-full bg-emerald-50 px-2 py-0.5 text-xs font-semibold text-emerald-700">${esc(L["Attendance_Saved"])}</span>`
-                        : `<span class="rounded-full bg-slate-100 px-2 py-0.5 text-xs font-semibold text-slate-500">${esc(L["Attendance_LegendNone"])}</span>`}
+                        ? AdminUI.badge(esc(L["Attendance_Saved"]), 'success')
+                        : AdminUI.badge(esc(L["Attendance_LegendNone"]), 'neutral')}
                 </div>
             </div>
             <div class="flex gap-2">

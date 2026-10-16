@@ -35,10 +35,10 @@ window.JobsPage = (function () {
                 { html: `<span class="text-sm text-slate-500">${job.nodeName || '—'}</span>` },
                 { html: `<span class="text-sm text-slate-500">${job.attempts}/${job.maxAttempts}</span>` },
                 {
-                    html: `<div class="flex justify-end gap-1">
-                        ${canRequeue ? `<button type="button" class="inline-flex items-center rounded-lg px-2.5 py-1.5 text-sm font-semibold text-primary hover:bg-primary-light" onclick="JobsPage.requeue(${job.id})">${L["Node_Requeue"]}</button>` : ''}
-                        ${job.errorMessage ? `<button type="button" class="inline-flex items-center rounded-lg px-2.5 py-1.5 text-sm font-semibold text-slate-500 hover:bg-surface-secondary" onclick="JobsPage.error('${encodeURIComponent(job.errorMessage)}')">${L["Job_Error"]}</button>` : ''}
-                    </div>`, cls: 'text-right'
+                    html: AdminUI.rowActions([
+                        canRequeue ? AdminUI.actionButton(L["Node_Requeue"], `JobsPage.requeue(${job.id})`, { tone: 'primary' }) : '',
+                        job.errorMessage ? AdminUI.actionButton(L["Job_Error"], `JobsPage.error('${encodeURIComponent(job.errorMessage)}')`) : ''
+                    ]), cls: 'text-right'
                 }
             ];
         }), 8, { empty: L["Js_AdjustSearch"] });

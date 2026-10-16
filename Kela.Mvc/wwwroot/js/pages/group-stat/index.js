@@ -24,9 +24,9 @@ async function load() {
         { html: `<div class="font-medium text-slate-800">${s.fullName}</div><div class="text-xs text-slate-400">${s.email}</div>` },
         { html: `${s.attemptedQuizCount} / ${s.quizCount}`, cls: 'text-slate-500' },
         { html: s.completedQuestions, cls: 'text-slate-500' },
-        { html: `<span class="text-emerald-600 font-medium">${s.correct}</span>` },
-        { html: `<span class="text-red-600 font-medium">${s.wrong}</span>` },
-        { html: `<span class="font-semibold ${s.scorePercent >= 50 ? 'text-emerald-600' : 'text-red-600'}">${s.scorePercent}%</span>` }
+        { html: AdminUI.badge(s.correct, 'success') },
+        { html: AdminUI.badge(s.wrong, 'danger') },
+        { html: AdminUI.badge(s.scorePercent + '%', s.scorePercent >= 50 ? 'success' : 'danger') }
     ]), 6);
 }
 

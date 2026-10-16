@@ -8,8 +8,8 @@
     <div id="tab-students" class="manage-tab space-y-3">
         <div class="flex gap-2">
             <select id="studentsSelect" class="flex-1 rounded-lg border border-slate-300 bg-slate-50 p-2.5 text-sm"></select>
-            <button type="button" onclick="assignMember('students')" class="rounded-lg bg-primary px-4 py-2 text-sm text-white hover:bg-primary-600">@L["Common_Add"]</button>
-            <button type="button" onclick="toggleGroupGen()" class="rounded-lg border border-border bg-white px-4 py-2 text-sm font-semibold text-primary hover:bg-surface-secondary">@L["Common_Generate"]</button>
+            <button type="button" onclick="assignMember('students')" class="admin-button-primary !min-h-0 !py-2">@L["Common_Add"]</button>
+            <button type="button" onclick="toggleGroupGen()" class="admin-button-secondary !min-h-0 !py-2">@L["Common_Generate"]</button>
         </div>
 
         <div id="groupGenPanel" class="hidden space-y-3 rounded-xl border border-border p-3">
@@ -30,14 +30,14 @@
     <div id="tab-subjects" class="manage-tab hidden space-y-3">
         <div class="flex gap-2">
             <select id="subjectsSelect" class="flex-1 rounded-lg border border-slate-300 bg-slate-50 p-2.5 text-sm"></select>
-            <button type="button" onclick="assignMember('subjects')" class="rounded-lg bg-primary px-4 py-2 text-sm text-white hover:bg-primary-600">@L["Common_Add"]</button>
+            <button type="button" onclick="assignMember('subjects')" class="admin-button-primary !min-h-0 !py-2">@L["Common_Add"]</button>
         </div>
         <div id="subjectsList" class="space-y-2"></div>
     </div>
     <div id="tab-quizzes" class="manage-tab hidden space-y-3">
         <div class="flex gap-2">
             <select id="quizzesSelect" class="flex-1 rounded-lg border border-slate-300 bg-slate-50 p-2.5 text-sm"></select>
-            <button type="button" onclick="assignMember('quizzes')" class="rounded-lg bg-primary px-4 py-2 text-sm text-white hover:bg-primary-600">@L["Common_Add"]</button>
+            <button type="button" onclick="assignMember('quizzes')" class="admin-button-primary !min-h-0 !py-2">@L["Common_Add"]</button>
         </div>
         <div id="quizzesList" class="space-y-2"></div>
     </div>

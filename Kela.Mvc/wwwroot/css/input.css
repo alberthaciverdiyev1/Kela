@@ -304,32 +304,60 @@
     to { transform: rotate(360deg); }
   }
 
-  .admin-icon-button {
-    display: inline-flex;
-    height: 38px;
-    width: 38px;
+  /* ---------- Sətir əməliyyatları ---------- */
+  /* Bütün cədvəllərdə eyni ölçü, aralıq və rəng — JS AdminUI.rowActions istifadə edir. */
+  .admin-row-actions {
+    display: flex;
     align-items: center;
-    justify-content: center;
-    border-radius: 12px;
-    background: #f8fafc;
-    color: #334155;
-    transition: background-color 140ms ease, color 140ms ease;
+    justify-content: flex-end;
+    gap: 2px;
   }
 
-  .admin-icon-button:hover {
-    background: var(--primary-light);
-    color: var(--primary);
-  }
-
-  .status-badge {
+  .admin-row-action {
     display: inline-flex;
     align-items: center;
     gap: 6px;
+    border-radius: 8px;
+    padding: 6px 10px;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text-secondary);
+    transition: background-color 140ms ease, color 140ms ease;
+    white-space: nowrap;
+  }
+  .admin-row-action:hover {
+    background: var(--surface-secondary);
+    color: #334155;
+  }
+  .admin-row-action.is-primary { color: var(--primary); }
+  .admin-row-action.is-primary:hover { background: var(--primary-light); }
+  .admin-row-action.is-danger { color: var(--danger); }
+  .admin-row-action.is-danger:hover { background: var(--danger-bg); }
+
+  /* Status nişanındakı nöqtə — rəngi badge-in mətn rəngindən gəlir. */
+  .badge-dot {
+    width: 6px;
+    height: 6px;
     border-radius: 999px;
-    padding: 5px 12px;
+    background: currentColor;
+  }
+
+  /* Kateqoriya/növ etiketi — status deyil, sadəcə qruplaşdırma (məs. fənn adı). */
+  .chip {
+    display: inline-flex;
+    align-items: center;
+    border-radius: 999px;
+    padding: 4px 12px;
     font-size: 13px;
     font-weight: 700;
+    white-space: nowrap;
   }
+  .chip-neutral { background: #f1f5f9; color: #64748b; }
+  .chip-primary { background: var(--primary-light); color: var(--primary); }
+  .chip-info    { background: #e0f2fe; color: #0369a1; }
+  .chip-warning { background: var(--warning-bg); color: #b45309; }
+  .chip-danger  { background: var(--danger-bg); color: var(--danger); }
+  .chip-violet  { background: #ede9fe; color: #6d28d9; }
 }
 
 /* Gün panelindəki şagird sətri: işarə "qayıb" deməkdir, ona görə vəziyyət

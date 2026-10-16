@@ -16,7 +16,7 @@ window.CodesPage = (function () {
                     : code.isExpired ? AdminUI.badge(L["Node_Expired"], 'danger')
                         : AdminUI.badge(L["Node_Unused"], 'success')
             },
-            { html: `<div class="flex justify-end"><button type="button" class="inline-flex items-center rounded-lg px-2.5 py-1.5 text-sm font-semibold text-danger hover:bg-danger-bg" onclick="CodesPage.remove(${code.id})">${L["Common_Delete"]}</button></div>`, cls: 'text-right' }
+            { html: AdminUI.rowActions([AdminUI.actionButton(L["Common_Delete"], `CodesPage.remove(${code.id})`, { tone: 'danger' })]), cls: 'text-right' }
         ]), 5, { empty: L["Node_NoCodes"] });
     }
 

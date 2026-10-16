@@ -13,11 +13,11 @@ async function restoreRow(id) {
 }
 
 function quizActions(q) {
-    return `<div class="flex items-center justify-end gap-2">
-        <button type="button" class="px-2 py-1 text-navy hover:bg-slate-100 rounded-lg" onclick="openQuestions(${q.id})">Suallar</button>
-        <button type="button" class="px-2 py-1 text-primary hover:bg-primary/10 rounded-lg" onclick="openEdit(${q.id})">Redaktə</button>
-        <button type="button" class="px-2 py-1 text-red-600 hover:bg-red-50 rounded-lg" onclick="removeItem(${q.id})">Sil</button>
-    </div>`;
+    return AdminUI.rowActions([
+        AdminUI.actionButton(L["Common_Questions"], `openQuestions(${q.id})`),
+        AdminUI.actionButton(L["Js_Edit"], `openEdit(${q.id})`, { tone: 'primary' }),
+        AdminUI.actionButton(L["Common_Delete"], `removeItem(${q.id})`, { tone: 'danger' })
+    ]);
 }
 
 async function loadList(page) {

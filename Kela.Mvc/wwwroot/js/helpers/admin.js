@@ -107,9 +107,7 @@ window.AdminUI = (function () {
 
     // Silinənlər rejimində sətir üçün "Bərpa et" düyməsi.
     function restoreButton(id) {
-        return `<div class="flex items-center justify-end gap-1">
-            <button type="button" class="inline-flex items-center gap-1.5 rounded-lg px-2.5 py-1.5 text-sm font-semibold text-primary hover:bg-primary-light" onclick="restoreRow(${id})">${L["Common_Restore"]}</button>
-        </div>`;
+        return rowActions([actionButton(L["Common_Restore"], `restoreRow(${id})`, { tone: 'primary' })]);
     }
 
     // Silinənlər rejimi düyməsinin görünüşünü yeniləyir.
@@ -120,8 +118,14 @@ window.AdminUI = (function () {
         btn.classList.toggle('admin-button-primary', on);
     }
 
-    function badge(text, variant) {
-        return `<span class="badge badge-${variant || 'neutral'}">${text}</span>`;
+    function badge(text, variant, opts) {
+        const dot = (opts && opts.dot) ? '<span class="badge-dot"></span>' : '';
+        return `<span class="badge badge-${variant || 'neutral'}">${dot}${text}</span>`;
+    }
+
+    // Status deyil, sadəcə etiket (məs. fənn adı).
+    function chip(text, tone) {
+        return `<span class="chip chip-${tone || 'neutral'}">${text}</span>`;
     }
 
     function pagination(containerId, currentPage, lastPage, onSelect) {
@@ -140,14 +144,30 @@ window.AdminUI = (function () {
         }
     }
 
-    // cədvəl sətri üçün standart L["Js_EditDelete"] düymələri
+    const TONE_CLASS = { primary: 'is-primary', danger: 'is-danger' };
+    const toneOf = (opts) => TONE_CLASS[(opts && opts.tone) || ''] || '';
+
+    // Sətir əməliyyatı — bütün cədvəllər eyni görünüşü paylaşır (bax: .admin-row-action).
+    function actionButton(label, onclick, opts) {
+        return `<button type="button" class="admin-row-action ${toneOf(opts)}" onclick="${onclick}">${label}</button>`;
+    }
+
+    function actionLink(label, href, opts) {
+        return `<a href="${href}" class="admin-row-action ${toneOf(opts)}">${label}</a>`;
+    }
+
+    function rowActions(parts) {
+        return `<div class="admin-row-actions">${parts.filter(Boolean).join('')}</div>`;
+    }
+
+    // cədvəl sətri üçün standart redaktə/silmə düymələri
     function actions(id, opts) {
         opts = opts || {};
-        const parts = [];
-        if (opts.extra) parts.push(opts.extra);
-        parts.push(`<button type="button" class="inline-flex items-center gap-1.5 rounded-lg px-2.5 py-1.5 text-sm font-semibold text-primary hover:bg-primary-light" onclick="openEdit(${id})">Redaktə</button>`);
-        parts.push(`<button type="button" class="inline-flex items-center gap-1.5 rounded-lg px-2.5 py-1.5 text-sm font-semibold text-danger hover:bg-danger-bg" onclick="removeItem(${id})">Sil</button>`);
-        return `<div class="flex items-center justify-end gap-1">${parts.join('')}</div>`;
+        return rowActions([
+            opts.extra,
+            actionButton(L["Js_Edit"], `openEdit(${id})`, { tone: 'primary' }),
+            actionButton(L["Common_Delete"], `removeItem(${id})`, { tone: 'danger' })
+        ]);
     }
 
     // rows: hər sətir = [{ html, cls }] ; opts = { selectable, rowIds, empty }
@@ -499,5 +519,5 @@ window.AdminUI = (function () {
         _filterTimer = setTimeout(filterReload, 350);
     });
 
-    return { notify, error, errText, openModal, closeModal, confirmDelete, confirmRestore, restoreItem, restoreButton, syncTrashButton, get, post, postForm, putForm, postJson, putJson, del, badge, table, actions, selectedIds, bulkDo, sortToggle, openSort, closeSort, persistSort, loader, pagination, filePreview, fileSet, fileRemove, fileReset, rowNo, token, reloadAfter, downloadCsv };
+    return { notify, error, errText, openModal, closeModal, badge, chip, actions, actionButton, actionLink, rowActions, confirmDelete, confirmRestore, restoreItem, restoreButton, syncTrashButton, get, post, postForm, putForm, postJson, putJson, del, table, selectedIds, bulkDo, sortToggle, openSort, closeSort, persistSort, loader, pagination, filePreview, fileSet, fileRemove, fileReset, rowNo, token, reloadAfter, downloadCsv };
 })();

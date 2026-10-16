@@ -10,17 +10,14 @@ function toggleTrash() {
 
 function studentActions(s) {
     if (showDeleted) {
-        return `<div class="flex items-center justify-end gap-2">
-            <button type="button" class="px-2 py-1 text-primary hover:bg-primary/10 rounded-lg" onclick="restoreRow(${s.id})">Bərpa et</button>
-        </div>`;
+        return AdminUI.rowActions([AdminUI.actionButton(L["Common_Restore"], `restoreRow(${s.id})`, { tone: 'primary' })]);
     }
-    const toggle = s.isActive ? 'Deaktiv et' : 'Aktiv et';
-    return `<div class="flex items-center justify-end gap-2">
-        <a href="/students/${s.id}/detail" class="px-2 py-1 text-navy hover:bg-slate-100 rounded-lg">Detallar</a>
-        <button type="button" class="px-2 py-1 text-primary hover:bg-primary/10 rounded-lg" onclick="toggleStatus(${s.id}, ${!s.isActive})">${toggle}</button>
-        <button type="button" class="px-2 py-1 text-navy hover:bg-slate-100 rounded-lg" onclick="openDevices(${s.id})">Cihazlar</button>
-        <button type="button" class="px-2 py-1 text-red-600 hover:bg-red-50 rounded-lg" onclick="removeItem(${s.id})">Sil</button>
-    </div>`;
+    return AdminUI.rowActions([
+        AdminUI.actionLink(L["Js_Details"], `/students/${s.id}/detail`),
+        AdminUI.actionButton(s.isActive ? L["Js_Deactivate"] : L["Js_Activate"], `toggleStatus(${s.id}, ${!s.isActive})`, { tone: 'primary' }),
+        AdminUI.actionButton(L["Students_Devices"], `openDevices(${s.id})`),
+        AdminUI.actionButton(L["Common_Delete"], `removeItem(${s.id})`, { tone: 'danger' })
+    ]);
 }
 
 async function loadList(page) {

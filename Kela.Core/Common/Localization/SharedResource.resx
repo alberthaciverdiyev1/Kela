@@ -1122,6 +1122,15 @@
   <data name="Js_SelectLessonFirst" xml:space="preserve">
     <value>Select a lesson first</value>
   </data>
+  <data name="Js_Details" xml:space="preserve">
+    <value>Details</value>
+  </data>
+  <data name="Js_Activate" xml:space="preserve">
+    <value>Activate</value>
+  </data>
+  <data name="Js_Deactivate" xml:space="preserve">
+    <value>Deactivate</value>
+  </data>
   <data name="Js_Edit" xml:space="preserve">
     <value>Edit</value>
   </data>

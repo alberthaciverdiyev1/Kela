@@ -1122,6 +1122,15 @@
   <data name="Js_SelectLessonFirst" xml:space="preserve">
     <value>Əvvəlcə dərs seçin</value>
   </data>
+  <data name="Js_Details" xml:space="preserve">
+    <value>Təfərrüatlar</value>
+  </data>
+  <data name="Js_Activate" xml:space="preserve">
+    <value>Aktiv et</value>
+  </data>
+  <data name="Js_Deactivate" xml:space="preserve">
+    <value>Deaktiv et</value>
+  </data>
   <data name="Js_Edit" xml:space="preserve">
     <value>Redaktə</value>
   </data>
