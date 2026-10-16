@@ -54,6 +54,57 @@ public sealed class LessonContentController(
         }
     }
 
+    // ---- Böyük fayllar üçün çoxhissəli yükləmə ----
+    // Nazik presigned PUT bir neçə yüz MB-a qədər yararlıdır; GB-larla video üçün
+    // müştəri faylı hissələrə bölür, hər hissəni ayrıca göndərir və sonra birləşdiririk.
+
+    [HttpPost("upload/multipart/start")]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> MultipartStart([FromForm] LessonContentUploadUrlRequest request, CancellationToken ct)
+    {
+        var ticket = await service.StartMultipartAsync(request, ct);
+        return ticket is null
+            ? BadRequest(new { error = "Multipart upload is not supported by the current storage provider" })
+            : Json(ticket);
+    }
+
+    [HttpPost("upload/multipart/parts")]
+    [ValidateAntiForgeryToken]
+    public IActionResult MultipartParts([FromBody] MultipartPartsRequest request)
+    {
+        try
+        {
+            return Json(service.SignParts(request));
+        }
+        catch (ArgumentException ex)
+        {
+            return BadRequest(new { error = ex.Message });
+        }
+    }
+
+    [HttpPost("upload/multipart/complete")]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> MultipartComplete([FromBody] MultipartCompleteRequest request, CancellationToken ct)
+    {
+        try
+        {
+            await service.CompleteMultipartAsync(request, ct);
+            return Json(new { ok = true, path = request.Path });
+        }
+        catch (ArgumentException ex)
+        {
+            return BadRequest(new { error = ex.Message });
+        }
+    }
+
+    [HttpPost("upload/multipart/abort")]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> MultipartAbort([FromBody] MultipartAbortRequest request, CancellationToken ct)
+    {
+        await service.AbortMultipartAsync(request, ct);
+        return Json(new { ok = true });
+    }
+
     [HttpPost]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Create([FromForm] LessonContentCreateRequest request, CancellationToken ct)

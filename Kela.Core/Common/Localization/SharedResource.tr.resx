@@ -292,6 +292,10 @@
   <data name="Attendance_Absent" xml:space="preserve">
     <value>Katılmadı</value>
   </data>
+
+  <data name="Js_FileTooLarge" xml:space="preserve">
+    <value>Dosya doğrudan yüklenemedi ve sunucudan geçmek için çok büyük. Depolama bucket CORS yapılandırmasını kontrol edin.</value>
+  </data>
   <data name="Js_NoStudents" xml:space="preserve">
     <value>Bu grupta öğrenci yok</value>
   </data>

@@ -292,6 +292,10 @@
   <data name="Attendance_Absent" xml:space="preserve">
     <value>Отсутствовал</value>
   </data>
+
+  <data name="Js_FileTooLarge" xml:space="preserve">
+    <value>Файл не удалось загрузить напрямую, и он слишком велик для отправки через сервер. Проверьте настройки CORS бакета.</value>
+  </data>
   <data name="Js_NoStudents" xml:space="preserve">
     <value>В этой группе нет учеников</value>
   </data>

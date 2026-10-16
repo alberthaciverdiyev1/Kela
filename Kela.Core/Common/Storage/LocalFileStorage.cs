@@ -1,3 +1,4 @@
+using System.Text;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
@@ -19,12 +20,11 @@ public sealed class LocalFileStorage : IFileStorage
     public async Task<string> UploadAsync(IFormFile file, string folder, CancellationToken ct = default)
     {
         var path = await BuildUniquePathAsync(folder, file.FileName, ct);
-        var fileName = Path.GetFileName(path);
+        var fullPath = Resolve(path);
 
-        var directory = Path.Combine(_root, folder);
-        Directory.CreateDirectory(directory);
+        Directory.CreateDirectory(Path.GetDirectoryName(fullPath)!);
 
-        await using var stream = new FileStream(Path.Combine(directory, fileName), FileMode.Create);
+        await using var stream = new FileStream(fullPath, FileMode.Create);
         await file.CopyToAsync(stream, ct);
 
         return path;
@@ -34,11 +34,8 @@ public sealed class LocalFileStorage : IFileStorage
     {
         if (!string.IsNullOrWhiteSpace(path))
         {
-            var fullPath = Path.Combine(_root, path);
-            if (File.Exists(fullPath))
-            {
-                File.Delete(fullPath);
-            }
+            var fullPath = Resolve(path);
+            if (File.Exists(fullPath)) File.Delete(fullPath);
         }
 
         return Task.CompletedTask;
@@ -54,13 +51,49 @@ public sealed class LocalFileStorage : IFileStorage
 
     public string? CreatePresignedPutUrl(string path, string contentType, TimeSpan expiry) => null;
 
+    public string? CreatePresignedGetUrl(string path, TimeSpan expiry) => null;
+
+    public async Task UploadStreamAsync(string path, Stream stream, string contentType, CancellationToken ct = default)
+    {
+        var fullPath = Resolve(path);
+        Directory.CreateDirectory(Path.GetDirectoryName(fullPath)!);
+
+        await using var file = new FileStream(fullPath, FileMode.Create);
+        await stream.CopyToAsync(file, ct);
+    }
+
+    public async Task UploadTextAsync(string path, string content, string contentType = "application/octet-stream", CancellationToken ct = default)
+    {
+        var fullPath = Resolve(path);
+        Directory.CreateDirectory(Path.GetDirectoryName(fullPath)!);
+        await File.WriteAllTextAsync(fullPath, content, Encoding.UTF8, ct);
+    }
+
+    public async Task<string?> ReadTextAsync(string path, CancellationToken ct = default)
+    {
+        var fullPath = Resolve(path);
+        return File.Exists(fullPath) ? await File.ReadAllTextAsync(fullPath, Encoding.UTF8, ct) : null;
+    }
+
+    public Task<IReadOnlyList<string>> ListAsync(string prefix, CancellationToken ct = default)
+    {
+        var root = Resolve(prefix);
+        if (!Directory.Exists(root)) return Task.FromResult<IReadOnlyList<string>>([]);
+
+        var keys = Directory.EnumerateFiles(root, "*", SearchOption.AllDirectories)
+            .Select(f => Path.GetRelativePath(_root, f).Replace('\\', '/'))
+            .ToList();
+
+        return Task.FromResult<IReadOnlyList<string>>(keys);
+    }
+
     public Task<string> BuildUniquePathAsync(string folder, string fileName, CancellationToken ct = default)
     {
         var name = StorageNaming.Sanitize(fileName);
         var path = $"{folder}/{name}";
 
         var i = 1;
-        while (File.Exists(Path.Combine(_root, path)))
+        while (File.Exists(Resolve(path)))
         {
             var stem = Path.GetFileNameWithoutExtension(name);
             var ext = Path.GetExtension(name);
@@ -70,12 +103,42 @@ public sealed class LocalFileStorage : IFileStorage
         return Task.FromResult(path);
     }
 
+    // Lokal diskdə çoxhissəli yükləməyə ehtiyac yoxdur — provayder dəstəkləmir.
+    public Task<MultipartTicket?> StartMultipartAsync(string folder, string fileName, string contentType, CancellationToken ct = default)
+        => Task.FromResult<MultipartTicket?>(null);
+
+    public IReadOnlyList<MultipartPartUrl> SignParts(string path, string uploadId, IReadOnlyList<int> partNumbers, TimeSpan expiry)
+        => [];
+
+    public Task CompleteMultipartAsync(string path, string uploadId, IReadOnlyList<MultipartPartResult> parts, CancellationToken ct = default)
+        => throw new NotSupportedException("Multipart upload is not supported by local storage");
+
+    public Task AbortMultipartAsync(string path, string uploadId, CancellationToken ct = default)
+        => Task.CompletedTask;
+
     public Task<bool> ExistsAsync(string path, CancellationToken ct = default)
-        => Task.FromResult(File.Exists(Path.Combine(_root, path)));
+        => Task.FromResult(File.Exists(Resolve(path)));
 
     private static bool IsAbsolute(string url)
         => url.StartsWith("http://", StringComparison.OrdinalIgnoreCase)
            || url.StartsWith("https://", StringComparison.OrdinalIgnoreCase);
+
+    /// <summary>
+    /// Bucket açarını disk yoluna çevirir və kökdən kənara çıxmasının qarşısını alır
+    /// (açar xarici worker-dan gəlir → "../" ilə hüduddan çıxma cəhdi mümkündür).
+    /// </summary>
+    private string Resolve(string key)
+    {
+        var full = Path.GetFullPath(Path.Combine(_root, key.Replace('\\', '/').TrimStart('/')));
+        var root = Path.GetFullPath(_root);
+
+        if (full != root && !full.StartsWith(root + Path.DirectorySeparatorChar, StringComparison.Ordinal))
+        {
+            throw new ArgumentException($"Invalid storage key: {key}");
+        }
+
+        return full;
+    }
 
     /// <summary>Nisbi yolu cari sorğunun sxem+host-u ilə absolute edir (R2 ilə eyni davranış).</summary>
     private string Absolute(string relativePath)

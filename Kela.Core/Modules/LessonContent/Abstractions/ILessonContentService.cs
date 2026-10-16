@@ -1,3 +1,4 @@
+using Kela.Core.Common.Storage;
 using Kela.Core.Common.Bulk;
 using Kela.Core.Common.Responses;
 using Kela.Core.Common.Sorting;
@@ -14,6 +15,18 @@ public interface ILessonContentService
 
     /// <summary>Presigned PUT URL — client faylı birbaşa R2-yə yükləyir, sonra Path ilə CreateAsync çağırır.</summary>
     Task<UploadUrlResponse> CreateUploadUrlAsync(LessonContentUploadUrlRequest request, CancellationToken ct = default);
+
+    // ---- Böyük fayllar üçün çoxhissəli yükləmə ----
+
+    /// <summary>Çoxhissəli yükləməni başladır; provayder dəstəkləmirsə null.</summary>
+    Task<MultipartTicket?> StartMultipartAsync(LessonContentUploadUrlRequest request, CancellationToken ct = default);
+
+    /// <summary>Hissələr üçün presigned URL-lər.</summary>
+    IReadOnlyList<MultipartPartUrl> SignParts(MultipartPartsRequest request);
+
+    Task CompleteMultipartAsync(MultipartCompleteRequest request, CancellationToken ct = default);
+
+    Task AbortMultipartAsync(MultipartAbortRequest request, CancellationToken ct = default);
 
     Task<LessonContentResponse> CreateAsync(LessonContentCreateRequest request, CancellationToken ct = default);
 

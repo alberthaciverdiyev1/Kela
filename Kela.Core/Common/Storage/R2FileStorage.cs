@@ -1,4 +1,5 @@
 using System.Net;
+using System.Text;
 using Amazon.S3;
 using Amazon.S3.Model;
 using Microsoft.AspNetCore.Http;
@@ -77,6 +78,77 @@ public sealed class R2FileStorage : IFileStorage, IDisposable
             ContentType = contentType
         });
 
+    public string? CreatePresignedGetUrl(string path, TimeSpan expiry)
+        => _client.GetPreSignedURL(new GetPreSignedUrlRequest
+        {
+            BucketName = _options.BucketName,
+            Key = path,
+            Verb = HttpVerb.GET,
+            Expires = DateTime.UtcNow.Add(expiry)
+        });
+
+    public async Task UploadStreamAsync(string path, Stream stream, string contentType, CancellationToken ct = default)
+    {
+        await _client.PutObjectAsync(new PutObjectRequest
+        {
+            BucketName = _options.BucketName,
+            Key = path,
+            InputStream = stream,
+            ContentType = string.IsNullOrWhiteSpace(contentType) ? "application/octet-stream" : contentType,
+            DisablePayloadSigning = true
+        }, ct);
+    }
+
+    public async Task UploadTextAsync(string path, string content, string contentType = "application/octet-stream", CancellationToken ct = default)
+    {
+        var bytes = Encoding.UTF8.GetBytes(content);
+
+        await _client.PutObjectAsync(new PutObjectRequest
+        {
+            BucketName = _options.BucketName,
+            Key = path,
+            InputStream = new MemoryStream(bytes),
+            ContentType = contentType,
+            DisablePayloadSigning = true
+        }, ct);
+    }
+
+    public async Task<string?> ReadTextAsync(string path, CancellationToken ct = default)
+    {
+        try
+        {
+            using var response = await _client.GetObjectAsync(_options.BucketName, path, ct);
+            using var reader = new StreamReader(response.ResponseStream, Encoding.UTF8);
+            return await reader.ReadToEndAsync(ct);
+        }
+        catch (AmazonS3Exception ex) when (ex.StatusCode == HttpStatusCode.NotFound)
+        {
+            return null;
+        }
+    }
+
+    public async Task<IReadOnlyList<string>> ListAsync(string prefix, CancellationToken ct = default)
+    {
+        var keys = new List<string>();
+        string? token = null;
+
+        do
+        {
+            var response = await _client.ListObjectsV2Async(new ListObjectsV2Request
+            {
+                BucketName = _options.BucketName,
+                Prefix = prefix,
+                ContinuationToken = token
+            }, ct);
+
+            keys.AddRange(response.S3Objects.Select(o => o.Key));
+            token = response.IsTruncated == true ? response.NextContinuationToken : null;
+        }
+        while (token is not null);
+
+        return keys;
+    }
+
     public async Task<string> BuildUniquePathAsync(string folder, string fileName, CancellationToken ct = default)
     {
         var name = StorageNaming.Sanitize(fileName);
@@ -92,6 +164,58 @@ public sealed class R2FileStorage : IFileStorage, IDisposable
 
         return path;
     }
+
+    // R2 son hissə xaric bütün hissələrin bərabər olmasını tələb edir; ölçü sabitdir.
+    private const int MultipartPartSize = 16 * 1024 * 1024;
+
+    public async Task<MultipartTicket?> StartMultipartAsync(string folder, string fileName, string contentType, CancellationToken ct = default)
+    {
+        var path = await BuildUniquePathAsync(folder, fileName, ct);
+
+        var response = await _client.InitiateMultipartUploadAsync(new InitiateMultipartUploadRequest
+        {
+            BucketName = _options.BucketName,
+            Key = path,
+            ContentType = string.IsNullOrWhiteSpace(contentType) ? "application/octet-stream" : contentType
+        }, ct);
+
+        return new MultipartTicket(path, response.UploadId, MultipartPartSize);
+    }
+
+    public IReadOnlyList<MultipartPartUrl> SignParts(string path, string uploadId, IReadOnlyList<int> partNumbers, TimeSpan expiry)
+        => partNumbers
+            .Select(n => new MultipartPartUrl(n, _client.GetPreSignedURL(new GetPreSignedUrlRequest
+            {
+                BucketName = _options.BucketName,
+                Key = path,
+                Verb = HttpVerb.PUT,
+                UploadId = uploadId,
+                PartNumber = n,
+                Expires = DateTime.UtcNow.Add(expiry)
+            })))
+            .ToList();
+
+    public async Task CompleteMultipartAsync(string path, string uploadId, IReadOnlyList<MultipartPartResult> parts, CancellationToken ct = default)
+    {
+        await _client.CompleteMultipartUploadAsync(new CompleteMultipartUploadRequest
+        {
+            BucketName = _options.BucketName,
+            Key = path,
+            UploadId = uploadId,
+            PartETags = parts
+                .OrderBy(p => p.PartNumber)
+                .Select(p => new PartETag(p.PartNumber, p.ETag.Trim('"')))
+                .ToList()
+        }, ct);
+    }
+
+    public Task AbortMultipartAsync(string path, string uploadId, CancellationToken ct = default)
+        => _client.AbortMultipartUploadAsync(new AbortMultipartUploadRequest
+        {
+            BucketName = _options.BucketName,
+            Key = path,
+            UploadId = uploadId
+        }, ct);
 
     public async Task<bool> ExistsAsync(string path, CancellationToken ct = default)
     {

@@ -292,6 +292,10 @@
   <data name="Attendance_Absent" xml:space="preserve">
     <value>Absent</value>
   </data>
+
+  <data name="Js_FileTooLarge" xml:space="preserve">
+    <value>The file could not be uploaded directly and is too large to send through the server. Check the storage bucket CORS configuration.</value>
+  </data>
   <data name="Js_NoStudents" xml:space="preserve">
     <value>No students in this group</value>
   </data>

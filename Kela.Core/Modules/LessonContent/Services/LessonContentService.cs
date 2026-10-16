@@ -15,7 +15,11 @@ using MediaFile = Kela.Core.Modules.Media.Entities.MediaFile;
 using Video = Kela.Core.Modules.Media.Entities.Video;
 using VoiceRecord = Kela.Core.Modules.Media.Entities.VoiceRecord;
 
-public sealed class LessonContentService(AppDbContext db, IFileStorage storage, ITenantFolder folders)
+public sealed class LessonContentService(
+    AppDbContext db,
+    IFileStorage storage,
+    ITenantFolder folders,
+    Kela.Core.Modules.Nodes.Abstractions.IVideoJobScheduler jobs)
     : Abstractions.ILessonContentService
 {
     private static readonly TimeSpan UploadUrlExpiry = TimeSpan.FromMinutes(30);
@@ -79,6 +83,41 @@ public sealed class LessonContentService(AppDbContext db, IFileStorage storage, 
         return new UploadUrlResponse(uploadUrl, path);
     }
 
+    private static readonly TimeSpan MultipartUrlExpiry = TimeSpan.FromHours(6);
+
+    public async Task<MultipartTicket?> StartMultipartAsync(LessonContentUploadUrlRequest request, CancellationToken ct = default)
+    {
+        await EnsureLessonExistsAsync(request.LessonId, ct);
+
+        var folder = await FolderForAsync(request.Type, await LessonTenantAsync(request.LessonId, ct), ct);
+        return await storage.StartMultipartAsync(folder, request.FileName, request.ContentType, ct);
+    }
+
+    public IReadOnlyList<MultipartPartUrl> SignParts(MultipartPartsRequest request)
+    {
+        if (string.IsNullOrWhiteSpace(request.Path) || string.IsNullOrWhiteSpace(request.UploadId))
+            throw new ArgumentException("path and uploadId are required");
+
+        if (request.PartNumbers.Count == 0)
+            throw new ArgumentException("partNumbers is empty");
+
+        return storage.SignParts(request.Path, request.UploadId, request.PartNumbers, MultipartUrlExpiry);
+    }
+
+    public Task CompleteMultipartAsync(MultipartCompleteRequest request, CancellationToken ct = default)
+    {
+        if (string.IsNullOrWhiteSpace(request.Path) || string.IsNullOrWhiteSpace(request.UploadId))
+            throw new ArgumentException("path and uploadId are required");
+
+        if (request.Parts.Count == 0)
+            throw new ArgumentException("parts is empty");
+
+        return storage.CompleteMultipartAsync(request.Path, request.UploadId, request.Parts, ct);
+    }
+
+    public Task AbortMultipartAsync(MultipartAbortRequest request, CancellationToken ct = default)
+        => storage.AbortMultipartAsync(request.Path, request.UploadId, ct);
+
     public async Task<LessonContentResponse> CreateAsync(LessonContentCreateRequest request, CancellationToken ct = default)
     {
         await EnsureLessonExistsAsync(request.LessonId, ct);
@@ -109,6 +148,9 @@ public sealed class LessonContentService(AppDbContext db, IFileStorage storage, 
 
         db.LessonContents.Add(content);
         await db.SaveChangesAsync(ct);
+
+        // Video yüklənən kimi konversiya tapşırıqları yaranır — worker onları götürə bilər.
+        if (content.Video is not null) await jobs.EnsureJobsAsync(content.Video.Id, ct);
 
         return ToResponse(content);
     }
