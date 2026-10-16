@@ -360,6 +360,34 @@
   .chip-violet  { background: #ede9fe; color: #6d28d9; }
 }
 
+/* ---------- Status açarı ----------
+   Sətirdən aktiv/deaktiv etmək üçün kiçik switch (JS: AdminUI.statusSwitch). */
+.admin-switch {
+  display: inline-flex;
+  height: 24px;
+  width: 44px;
+  flex: none;
+  align-items: center;
+  border-radius: 999px;
+  background: #e2e8f0;
+  padding: 3px;
+  transition: background-color 160ms ease;
+}
+
+.admin-switch span {
+  display: block;
+  height: 18px;
+  width: 18px;
+  border-radius: 999px;
+  background: #ffffff;
+  box-shadow: 0 1px 3px rgba(15, 23, 42, 0.2);
+  transition: transform 160ms ease;
+}
+
+.admin-switch.is-on { background: var(--primary); }
+.admin-switch.is-on span { transform: translateX(20px); }
+.admin-switch:hover { filter: brightness(0.97); }
+
 /* ---------- Axtarışlı select ----------
    Native select gizlədilir; görünən hissə JS qurur (AdminUI.enhanceSelects). */
 .admin-select {

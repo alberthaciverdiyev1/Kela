@@ -386,6 +386,15 @@ window.AdminUI = (function () {
         }
     }, true);
 
+    // --- Status açarı ---
+    // Görünüşü ortaqdır; əməliyyatı səhifə özü edir (adi redaktə endpoint-i ilə),
+    // ona görə hər modul üçün ayrıca endpoint lazım deyil.
+    function statusSwitch(checked, onclick) {
+        return `<button type="button" class="admin-switch${checked ? ' is-on' : ''}" role="switch"
+                        aria-checked="${checked}" title="${checked ? L["Js_Deactivate"] : L["Js_Activate"]}"
+                        onclick="${onclick}"><span></span></button>`;
+    }
+
     // --- Axtarışlı select ---
     // Native <select> gizlədilir, yerinə dizayn sisteminə uyğun açılan siyahı qurulur.
     // Seçim yenə native select-də saxlanılır, ona görə formalar və səhifə JS-i
@@ -792,5 +801,5 @@ window.AdminUI = (function () {
         _filterTimer = setTimeout(filterReload, 350);
     });
 
-    return { notify, error, errText, openModal, closeModal, resetForm, validateForm, enhanceSelects, syncSelect, badge, chip, statCard, actions, actionButton, actionLink, rowActions, confirmDelete, confirmRestore, restoreItem, restoreButton, syncTrashButton, toggleHidden, get, post, postForm, putForm, postJson, putJson, del, table, setInfo, addSort, selectedIds, bulkDo, sortToggle, openSort, closeSort, persistSort, loader, pagination, filePreview, fileSet, fileRemove, fileReset, rowNo, token, reloadAfter, downloadCsv };
+    return { notify, error, errText, openModal, closeModal, resetForm, validateForm, enhanceSelects, syncSelect, badge, chip, statCard, statusSwitch, actions, actionButton, actionLink, rowActions, confirmDelete, confirmRestore, restoreItem, restoreButton, syncTrashButton, toggleHidden, get, post, postForm, putForm, postJson, putJson, del, table, setInfo, addSort, selectedIds, bulkDo, sortToggle, openSort, closeSort, persistSort, loader, pagination, filePreview, fileSet, fileRemove, fileReset, rowNo, token, reloadAfter, downloadCsv };
 })();

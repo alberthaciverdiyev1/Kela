@@ -68,7 +68,7 @@ async function loadList(page) {
         { html: TYPE_TEXT[c.type] ?? '-', cls: 'text-slate-500' },
         { html: statusBadge(c) },
         { html: c.url ? `<button type="button" class="text-primary hover:underline" onclick="previewContent(${c.id})">${L["Js_View"]}</button>` : '-' },
-        { html: c.isActive ? AdminUI.badge(L["Common_Active"], 'success') : AdminUI.badge(L["Common_Archived"], 'neutral') },
+        { html: AdminUI.statusSwitch(c.isActive, `setStatus(${c.id}, ${!c.isActive})`) },
         { html: showDeleted ? AdminUI.restoreButton(c.id) : AdminUI.actions(c.id), cls: 'text-right' }
     ]), 7, { rowIds: data.data.map(c => c.id), selectable: !showDeleted });
 
@@ -150,4 +150,16 @@ async function removeItem(id) {
     else AdminUI.error();
 }
 
+async function setStatus(id, isActive) {
+    const d = await AdminUI.get(`/lesson-content/${id}`);
+    const fd = new FormData();
+    fd.append('title', d.title);
+    fd.append('description', d.description ?? '');
+    fd.append('sort_order', d.sortOrder ?? 0);
+    fd.append('is_active', String(isActive));
+
+    const res = await AdminUI.putForm(`/lesson-content/${id}`, fd);
+    if (res.ok) { AdminUI.notify(L["Js_StatusChanged"]); loadList(currentPage); }
+    else AdminUI.error(AdminUI.errText(res));
+}
 document.addEventListener('DOMContentLoaded', () => loadList(1));

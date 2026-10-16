@@ -34,7 +34,9 @@ async function loadList(page) {
         { html: s.fullName, cls: 'font-medium text-slate-800' },
         { html: s.email, cls: 'text-slate-500' },
         { html: s.phone ?? '-', cls: 'text-slate-500' },
-        { html: showDeleted ? AdminUI.badge(L["Js_Deleted"], 'danger') : (s.isActive ? AdminUI.badge(L["Common_Active"], 'success') : AdminUI.badge(L["Common_Archived"], 'neutral')) },
+        { html: showDeleted
+            ? AdminUI.badge(L["Js_Deleted"], 'danger')
+            : AdminUI.statusSwitch(s.isActive, `toggleStatus(${s.id}, ${!s.isActive})`) },
         { html: studentActions(s), cls: 'text-right' }
     ]), 6, { rowIds: data.data.map(s => s.id), selectable: !showDeleted });
 

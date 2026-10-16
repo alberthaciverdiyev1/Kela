@@ -37,7 +37,7 @@ async function loadList(page) {
         { html: AdminUI.badge(q.type === 'general' ? L["Common_General"] : L["Common_Lesson"], 'neutral') },
         { html: q.durationMinutes, cls: 'text-slate-500' },
         { html: q.questionCount, cls: 'text-slate-500' },
-        { html: q.isActive ? AdminUI.badge(L["Common_Active"], 'success') : AdminUI.badge(L["Common_Archived"], 'neutral') },
+        { html: AdminUI.statusSwitch(q.isActive, `setStatus(${q.id}, ${!q.isActive})`) },
         { html: showDeleted ? AdminUI.restoreButton(q.id) : quizActions(q), cls: 'text-right' }
     ]), 8, { rowIds: data.data.map(q => q.id), selectable: !showDeleted });
 
@@ -52,4 +52,19 @@ async function removeItem(id) {
     else AdminUI.error();
 }
 
+async function setStatus(id, isActive) {
+    const d = await AdminUI.get(`/quiz/${id}`);
+    const fd = new FormData();
+    fd.append('lesson_id', d.lessonId ?? '');
+    fd.append('title', d.title);
+    fd.append('type', d.type);
+    fd.append('duration_minutes', d.durationMinutes ?? 0);
+    fd.append('sort_order', d.sortOrder ?? 0);
+    fd.append('is_repeat', String(!!d.isRepeat));
+    fd.append('is_active', String(isActive));
+
+    const res = await AdminUI.putForm(`/quiz/${id}`, fd);
+    if (res.ok) { AdminUI.notify(L["Js_StatusChanged"]); loadList(currentPage); }
+    else AdminUI.error(AdminUI.errText(res));
+}
 document.addEventListener('DOMContentLoaded', () => loadList(1));

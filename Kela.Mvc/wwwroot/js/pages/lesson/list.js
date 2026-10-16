@@ -124,9 +124,7 @@ async function loadList(page) {
             { html: subjectBadge(l.subjectId, subjectName) },
             { html: `<span class="inline-flex items-center gap-2 text-slate-700">${l.sortOrder ?? rowNumber}</span>` },
             {
-                html: l.isActive
-                    ? AdminUI.badge(L["Common_Active"], 'success', { dot: true })
-                    : AdminUI.badge(L["Common_Archived"], 'warning', { dot: true })
+                html: AdminUI.statusSwitch(l.isActive, `setStatus(${l.id}, ${!l.isActive})`)
             },
             { html: showDeleted ? AdminUI.restoreButton(l.id) : rowActions(l.id), cls: 'text-right' }
         ];
@@ -147,6 +145,19 @@ async function removeItem(id) {
     else AdminUI.error();
 }
 
+// Sətirdən status dəyişmə: adi redaktə endpoint-i (əlavə endpoint yoxdur).
+async function setStatus(id, isActive) {
+    const d = await AdminUI.get(`/lesson/${id}`);
+    const fd = new FormData();
+    fd.append('subject_id', d.subjectId);
+    fd.append('title', d.title);
+    fd.append('sort_order', d.sortOrder ?? 0);
+    fd.append('is_active', String(isActive));
+
+    const res = await AdminUI.putForm(`/lesson/${id}`, fd);
+    if (res.ok) { AdminUI.notify(L["Js_StatusChanged"]); loadList(currentPage); }
+    else AdminUI.error(AdminUI.errText(res));
+}
 document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('search')?.addEventListener('keydown', (event) => {
         if (event.key === 'Enter') loadList(1);
