@@ -4,4 +4,6 @@ public record BannerResponse(
     long Id,
     string Title,
     string Image,
-    bool IsNew);
+    bool IsNew,
+    bool IsActive = true,
+    DateOnly? ActiveUntil = null);

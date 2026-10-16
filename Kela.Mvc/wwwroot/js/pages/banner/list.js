@@ -29,12 +29,29 @@ async function loadList(page) {
             ? `<img src="${b.image}" class="h-10 w-16 rounded-lg border border-slate-200 object-cover" />`
             : '<span class="text-slate-400">—</span>' },
         { html: b.title, cls: 'font-semibold text-slate-800' },
-        { html: b.isNew ? AdminUI.badge('Yeni', 'primary') : AdminUI.badge(L["Js_Old"], 'neutral') },
+        { html: showDeleted ? AdminUI.badge(L["Js_Deleted"], 'danger')
+            : AdminUI.statusSwitch(b.isActive, `setStatus(${b.id}, ${!b.isActive})`) },
+        { html: b.activeUntil
+            ? `<span class="text-sm text-slate-500">${String(b.activeUntil).slice(0, 10)}</span>`
+            : `<span class="text-sm text-slate-400">${L["Banner_Always"]}</span>` },
         { html: showDeleted ? AdminUI.restoreButton(b.id) : AdminUI.actions(b.id), cls: 'text-right' }
     ]), 5, { rowIds: data.data.map(b => b.id), selectable: !showDeleted });
 
     AdminUI.pagination('pagination', currentPage, lastPage, loadList);
     AdminUI.loader(false);
+}
+
+// Sətirdən aktiv/deaktiv etmə — adi redaktə endpoint-i ilə.
+async function setStatus(id, isActive) {
+    const d = await AdminUI.get(`/banner/${id}`);
+    const fd = new FormData();
+    fd.append('title', d.title);
+    fd.append('is_active', String(isActive));
+    if (d.activeUntil) fd.append('active_until', String(d.activeUntil).slice(0, 10));
+
+    const res = await AdminUI.putForm(`/banner/${id}`, fd);
+    if (res.ok) { AdminUI.notify(L["Js_StatusChanged"]); loadList(currentPage); }
+    else AdminUI.error(AdminUI.errText(res));
 }
 
 async function removeItem(id) {

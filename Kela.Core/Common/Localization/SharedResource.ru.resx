@@ -753,6 +753,12 @@
   <data name="Notification_Subtitle" xml:space="preserve">
     <value>Управляйте уведомлениями для учеников.</value>
   </data>
+  <data name="Banner_ActiveUntil" xml:space="preserve">
+    <value>Активен до</value>
+  </data>
+  <data name="Banner_Always" xml:space="preserve">
+    <value>Без срока</value>
+  </data>
   <data name="Banner_Create" xml:space="preserve">
     <value>Новый баннер</value>
   </data>

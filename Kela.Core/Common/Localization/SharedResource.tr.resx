@@ -753,6 +753,12 @@
   <data name="Notification_Subtitle" xml:space="preserve">
     <value>Öğrencilere gönderilen bildirimleri yönetin.</value>
   </data>
+  <data name="Banner_ActiveUntil" xml:space="preserve">
+    <value>Şu tarihe kadar aktif</value>
+  </data>
+  <data name="Banner_Always" xml:space="preserve">
+    <value>Süresiz</value>
+  </data>
   <data name="Banner_Create" xml:space="preserve">
     <value>Yeni banner</value>
   </data>

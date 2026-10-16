@@ -24,6 +24,12 @@ public sealed class BannerService(AppDbContext db, IFileStorage storage, ITenant
 
         var query = db.Banners.AsNoTracking();
 
+        if (request.OnlyActive)
+        {
+            var today = DateOnly.FromDateTime(DateTime.UtcNow);
+            query = query.Where(x => x.IsActive && (x.ActiveUntil == null || x.ActiveUntil >= today));
+        }
+
         if (request.IsDeleted == 1)
         {
             query = query.IgnoreQueryFilters(new[] { "SoftDelete" }).Where(x => x.DeletedAt != null);
@@ -69,7 +75,9 @@ public sealed class BannerService(AppDbContext db, IFileStorage storage, ITenant
         var banner = new Banner
         {
             Title = request.Title,
-            Image = image
+            Image = image,
+            IsActive = request.IsActive,
+            ActiveUntil = request.ActiveUntil
         };
 
         db.Banners.Add(banner);
@@ -97,6 +105,8 @@ public sealed class BannerService(AppDbContext db, IFileStorage storage, ITenant
         }
 
         banner.Title = request.Title;
+        banner.IsActive = request.IsActive;
+        banner.ActiveUntil = request.ActiveUntil;
         await db.SaveChangesAsync(ct);
 
         return ToResponse(banner, DateTimeOffset.UtcNow);
@@ -116,7 +126,9 @@ public sealed class BannerService(AppDbContext db, IFileStorage storage, ITenant
             banner.Id,
             banner.Title,
             storage.GetUrl(banner.Image),
-            banner.CreatedAt > now.Subtract(NewThreshold));
+            banner.CreatedAt > now.Subtract(NewThreshold),
+            banner.IsActive,
+            banner.ActiveUntil);
 
     public Task BulkAsync(BulkRequest request, CancellationToken ct = default)
         => BulkHelper.ApplyAsync<Banner>(db, request, ct);

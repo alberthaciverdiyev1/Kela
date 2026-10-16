@@ -12,6 +12,8 @@
         document.getElementById('image_preview').classList.add('hidden');
         document.getElementById('image_x').classList.add('hidden');
         if (data.image) AdminUI.fileSet('image', data.image);
+        document.getElementById('is_active').checked = data.isActive;
+        document.getElementById('active_until').value = data.activeUntil ? String(data.activeUntil).slice(0, 10) : '';
         AdminUI.openModal('modal');
     };
 
@@ -20,11 +22,8 @@
         const id = document.getElementById('entityId').value;
         if (!id) return; // create.js idarə edir
 
-        const fd = new FormData();
-        fd.append('title', document.getElementById('title').value);
+        const fd = window.buildBannerForm();
         fd.append('removeImage', document.getElementById('image_remove').value);
-        const file = document.getElementById('image').files[0];
-        if (file) fd.append('Image', file);
 
         const res = await AdminUI.putForm(`/banner/${id}`, fd);
         if (res.ok) { AdminUI.notify(L["Js_Updated"]); AdminUI.closeModal('modal'); loadList(currentPage); return; }

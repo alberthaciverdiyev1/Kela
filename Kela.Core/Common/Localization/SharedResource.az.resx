@@ -753,6 +753,12 @@
   <data name="Notification_Subtitle" xml:space="preserve">
     <value>Şagirdlərə göndərilən bildirişləri idarə edin.</value>
   </data>
+  <data name="Banner_ActiveUntil" xml:space="preserve">
+    <value>Aktivdir (tarixə qədər)</value>
+  </data>
+  <data name="Banner_Always" xml:space="preserve">
+    <value>Müddətsiz</value>
+  </data>
   <data name="Banner_Create" xml:space="preserve">
     <value>Yeni banner</value>
   </data>

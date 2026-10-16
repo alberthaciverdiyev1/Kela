@@ -753,6 +753,12 @@
   <data name="Notification_Subtitle" xml:space="preserve">
     <value>Manage notifications sent to students.</value>
   </data>
+  <data name="Banner_ActiveUntil" xml:space="preserve">
+    <value>Active until</value>
+  </data>
+  <data name="Banner_Always" xml:space="preserve">
+    <value>No expiry</value>
+  </data>
   <data name="Banner_Create" xml:space="preserve">
     <value>New banner</value>
   </data>
