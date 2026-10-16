@@ -274,11 +274,36 @@
         try { localStorage.removeItem(UPLOAD_MARK); } catch (e) { }
     }
 
+    // Brauzerin öz xəbərdarlığı dizaynlaşdırıla bilmir; daxili keçidlərdə öz modalımızı
+    // göstəririk. beforeunload isə tab bağlama/yeniləmə üçün son qoruyucu olaraq qalır.
     window.addEventListener('beforeunload', function (e) {
         if (!uploadInFlight) return;
         e.preventDefault();
         e.returnValue = '';
     });
+
+    document.addEventListener('click', async function (e) {
+        if (!uploadInFlight) return;
+
+        const link = e.target.closest && e.target.closest('a[href]');
+        if (!link || link.target === '_blank') return;
+
+        const href = link.getAttribute('href') || '';
+        if (!href || href.startsWith('#') || link.origin !== location.origin) return;
+
+        e.preventDefault();
+        e.stopPropagation();
+
+        const res = await AdminUI.swal({
+            title: L["Upload_LeaveTitle"],
+            text: L["Upload_LeaveText"],
+            icon: 'info',
+            showCancelButton: true,
+            confirmButtonText: L["Upload_LeaveConfirm"],
+            cancelButtonText: L["Common_Cancel"]
+        });
+        if (res.isConfirmed) { uploadInFlight = false; location.href = link.href; }
+    }, true);
 
     // ---- Sağ alt künc: fon rejimində gedən yükləmə ----
     // İstifadəçi modalı bağlayır, material artıq yaranıb, video isə hələ yüklənir.

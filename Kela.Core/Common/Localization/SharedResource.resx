@@ -297,6 +297,15 @@
 
 
 
+  <data name="Upload_LeaveTitle" xml:space="preserve">
+    <value>Upload in progress</value>
+  </data>
+  <data name="Upload_LeaveText" xml:space="preserve">
+    <value>Leaving this page will stop the upload. Leave anyway?</value>
+  </data>
+  <data name="Upload_LeaveConfirm" xml:space="preserve">
+    <value>Leave</value>
+  </data>
   <data name="Upload_Interrupted" xml:space="preserve">
     <value>The upload was interrupted by leaving the page — pick the file again to finish it.</value>
   </data>

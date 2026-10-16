@@ -297,6 +297,15 @@
 
 
 
+  <data name="Upload_LeaveTitle" xml:space="preserve">
+    <value>Yükleme sürüyor</value>
+  </data>
+  <data name="Upload_LeaveText" xml:space="preserve">
+    <value>Sayfadan çıkarsanız yükleme duracak. Çıkmak istiyor musunuz?</value>
+  </data>
+  <data name="Upload_LeaveConfirm" xml:space="preserve">
+    <value>Evet, çık</value>
+  </data>
   <data name="Upload_Interrupted" xml:space="preserve">
     <value>Sayfadan ayrıldığınız için yükleme yarıda kaldı — dosyayı yeniden seçip tamamlayın.</value>
   </data>
