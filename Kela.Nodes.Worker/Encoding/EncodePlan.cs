@@ -138,10 +138,13 @@ public static class EncodePlan
     public static double EffectiveFps(double sourceFps)
         => sourceFps > MaxFps ? MaxFps : sourceFps;
 
-    private static string ScaleFilter(int height, EncoderChoice encoder)
-        => encoder.Name == "h264_vaapi"
-            ? $"scale=-2:{height},format=nv12,hwupload"
-            : $"scale=-2:{height}";
+    private static string ScaleFilter(int height, EncoderChoice encoder) => encoder.Name switch
+    {
+        // vaapi kadrları GPU-ya yükləməlidir; mediacodec isə yalnız nv12 qəbul edir.
+        "h264_vaapi" => $"scale=-2:{height},format=nv12,hwupload",
+        "h264_mediacodec" => $"scale=-2:{height},format=nv12",
+        _ => $"scale=-2:{height}"
+    };
 
     private static void AppendVideoEncoder(
         List<string> arguments, EncoderChoice encoder, EncodingProfile profile, string preset, int gpuIndex)
@@ -184,8 +187,10 @@ public static class EncodePlan
             "-bufsize", $"{profile.EffectiveBufSizeKbps}k"
         ]);
 
-        // Hər seqmentin ilk kadrı açar kadr olsun deyə səhnə dəyişikliyi açar kadrı söndürülür.
-        arguments.AddRange(["-pix_fmt", "yuv420p"]);
+        // MediaCodec yalnız nv12 qəbul edir; digər encoder-lər yuv420p işlədir.
+        var pixelFormat = encoder.Name == "h264_mediacodec" ? "nv12" : "yuv420p";
+
+        arguments.AddRange(["-pix_fmt", pixelFormat]);
     }
 
     private static string Fallback(string value, string fallback) => string.IsNullOrWhiteSpace(value) ? fallback : value;

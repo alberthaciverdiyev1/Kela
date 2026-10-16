@@ -138,6 +138,11 @@ public sealed class EncoderDetector(string ffmpegPath, WorkerLog log)
             arguments.AddRange(["-vaapi_device", device, "-vf", "format=nv12,hwupload"]);
         }
 
+        if (candidate.Name == "h264_mediacodec")
+        {
+            arguments.AddRange(["-pix_fmt", "nv12"]);
+        }
+
         arguments.AddRange(["-frames:v", "20", "-c:v", candidate.Name, "-f", "null", "-"]);
 
         try
