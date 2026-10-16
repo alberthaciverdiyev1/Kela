@@ -73,18 +73,41 @@
         step = n;
         document.querySelectorAll('[data-step-panel]').forEach(el =>
             el.classList.toggle('hidden', Number(el.dataset.stepPanel) !== n));
-        document.querySelectorAll('[data-step-dot]').forEach(el => {
-            const on = Number(el.dataset.stepDot) <= n;
-            el.classList.toggle('bg-primary', on);
-            el.classList.toggle('text-white', on);
-            el.classList.toggle('bg-slate-100', !on);
-            el.classList.toggle('text-slate-500', !on);
+        document.querySelectorAll('[data-step-item]').forEach(item => {
+            const num = Number(item.dataset.stepItem);
+            const dot = item.querySelector('[data-step-dot]');
+            const label = item.querySelector('[data-step-label]');
+            const done = num < n, active = num === n;
+            if (dot) {
+                dot.textContent = done ? '✓' : String(num);
+                dot.className = 'grid h-8 w-8 shrink-0 place-items-center rounded-full text-xs font-bold transition-colors ' +
+                    (active ? 'bg-primary text-white' : done ? 'bg-primary-light text-primary' : 'bg-slate-100 text-slate-500');
+            }
+            if (label) {
+                label.className = 'block text-sm font-semibold transition-colors ' +
+                    (active ? 'text-primary' : done ? 'text-slate-600' : 'text-slate-400');
+            }
         });
+        updateCounts();
         document.getElementById('prevBtn').classList.toggle('hidden', n === 1);
         document.getElementById('nextBtn').classList.toggle('hidden', !createMode || n === 4);
         document.getElementById('saveBtn').classList.toggle('hidden', createMode && n !== 4);
         document.querySelector('[data-step-panel="' + n + '"]')?.querySelector('input,select,textarea')?.focus();
     }
+
+    // Hər siyahıda neçə seçim olduğunu addım başlığında göstərir.
+    function updateCounts() {
+        [['subjects', 'count-subjects'], ['students', 'count-students'], ['quizzes', 'count-quizzes']].forEach(([id, elId]) => {
+            const el = document.getElementById(elId);
+            if (!el) return;
+            const count = document.querySelectorAll('#' + id + 'List input[type=checkbox]:checked').length;
+            el.textContent = count ? (L["Js_SelectedCount"] || '{0}').replace('{0}', count) : '';
+        });
+    }
+
+    document.addEventListener('change', (e) => {
+        if (e.target.matches && e.target.matches('#subjectsList input, #studentsList input, #quizzesList input')) updateCounts();
+    });
 
     function renderCheckList(containerId, items) {
         const box = document.getElementById(containerId);

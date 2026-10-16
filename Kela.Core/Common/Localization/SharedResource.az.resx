@@ -408,6 +408,18 @@
   <data name="Common_Back" xml:space="preserve">
     <value>Geri</value>
   </data>
+  <data name="Group_StepInfoHint" xml:space="preserve">
+    <value>Ad, müəllim və şəkil</value>
+  </data>
+  <data name="Group_StepSubjectsHint" xml:space="preserve">
+    <value>Qrupa aid fənlər</value>
+  </data>
+  <data name="Group_StepStudentsHint" xml:space="preserve">
+    <value>Şagird seçin və ya generasiya edin</value>
+  </data>
+  <data name="Group_StepQuizzesHint" xml:space="preserve">
+    <value>İmtahanları seçin</value>
+  </data>
   <data name="Group_StepInfo" xml:space="preserve">
     <value>Məlumat</value>
   </data>

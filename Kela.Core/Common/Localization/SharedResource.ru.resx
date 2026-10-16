@@ -408,6 +408,18 @@
   <data name="Common_Back" xml:space="preserve">
     <value>Назад</value>
   </data>
+  <data name="Group_StepInfoHint" xml:space="preserve">
+    <value>Название, преподаватель и фото</value>
+  </data>
+  <data name="Group_StepSubjectsHint" xml:space="preserve">
+    <value>Предметы группы</value>
+  </data>
+  <data name="Group_StepStudentsHint" xml:space="preserve">
+    <value>Выберите или сгенерируйте учеников</value>
+  </data>
+  <data name="Group_StepQuizzesHint" xml:space="preserve">
+    <value>Выберите экзамены</value>
+  </data>
   <data name="Group_StepInfo" xml:space="preserve">
     <value>Информация</value>
   </data>

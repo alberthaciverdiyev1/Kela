@@ -408,6 +408,18 @@
   <data name="Common_Back" xml:space="preserve">
     <value>Back</value>
   </data>
+  <data name="Group_StepInfoHint" xml:space="preserve">
+    <value>Name, teacher and image</value>
+  </data>
+  <data name="Group_StepSubjectsHint" xml:space="preserve">
+    <value>Subjects for this group</value>
+  </data>
+  <data name="Group_StepStudentsHint" xml:space="preserve">
+    <value>Pick or generate students</value>
+  </data>
+  <data name="Group_StepQuizzesHint" xml:space="preserve">
+    <value>Choose the exams</value>
+  </data>
   <data name="Group_StepInfo" xml:space="preserve">
     <value>Info</value>
   </data>
