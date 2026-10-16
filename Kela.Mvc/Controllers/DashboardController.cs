@@ -9,6 +9,8 @@ public sealed class DashboardController(IDashboardService dashboard) : Controlle
     [HttpGet]
     public async Task<IActionResult> Index(CancellationToken ct)
     {
+        ViewData["Scripts"] = new[] { "~/js/pages/dashboard/index.js" };
+
         return View(await dashboard.GetAsync(ct));
     }
 }
