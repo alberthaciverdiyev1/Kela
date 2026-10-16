@@ -362,6 +362,32 @@ window.AdminUI = (function () {
         document.getElementById(id + '_remove').value = 'false';
     }
 
+    // Formu sıfırlayır: önizləmə elementlərini də təmizləyir. fileRemove-dan fərqi —
+    // _remove bayrağını 'false' edir, çünki burada silinəcək server faylı yoxdur.
+    function fileReset(id) {
+        const img = document.getElementById(id + '_preview');
+        const vid = document.getElementById(id + '_preview_video');
+
+        if (img) { img.classList.add('hidden'); img.removeAttribute('src'); }
+        if (vid) {
+            try { vid.pause(); } catch (e) { /* əhəmiyyətsiz */ }
+            vid.classList.add('hidden');
+            vid.removeAttribute('src');
+        }
+
+        const x = document.getElementById(id + '_x');
+        if (x) x.classList.add('hidden');
+
+        const rm = document.getElementById(id + '_remove');
+        if (rm) rm.value = 'false';
+
+        const input = document.getElementById(id);
+        if (input) input.value = '';
+
+        const nameEl = document.getElementById(id + 'Name');
+        if (nameEl) nameEl.textContent = nameEl.dataset.hint || '';
+    }
+
     function filePreview(id) {
         const input = document.getElementById(id);
         if (!input || !input.files.length) return;
@@ -434,5 +460,5 @@ window.AdminUI = (function () {
         _filterTimer = setTimeout(filterReload, 350);
     });
 
-    return { notify, error, errText, confirmDelete, confirmRestore, restoreItem, restoreButton, syncTrashButton, get, post, postForm, putForm, postJson, putJson, del, badge, table, actions, selectedIds, bulkDo, sortToggle, openSort, closeSort, persistSort, loader, pagination, filePreview, fileSet, fileRemove, rowNo, token, reloadAfter, downloadCsv };
+    return { notify, error, errText, confirmDelete, confirmRestore, restoreItem, restoreButton, syncTrashButton, get, post, postForm, putForm, postJson, putJson, del, badge, table, actions, selectedIds, bulkDo, sortToggle, openSort, closeSort, persistSort, loader, pagination, filePreview, fileSet, fileRemove, fileReset, rowNo, token, reloadAfter, downloadCsv };
 })();

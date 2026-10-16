@@ -296,6 +296,10 @@
 
 
 
+
+  <data name="Upload_Interrupted" xml:space="preserve">
+    <value>The upload was interrupted by leaving the page — pick the file again to finish it.</value>
+  </data>
   <data name="Upload_Preparing" xml:space="preserve">
     <value>Uploading {0}</value>
   </data>

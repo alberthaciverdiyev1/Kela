@@ -26,7 +26,9 @@
         document.getElementById('title').value = '';
         document.getElementById('type').value = 'video';
         document.getElementById('is_active').checked = true;
-        document.getElementById('file').value = '';
+        // Fayl girdisi ilə yanaşı önizləmə də sıfırlanmalıdır, əks halda əvvəlki
+        // videonun kadrı modalda qalır.
+        if (AdminUI.fileReset) AdminUI.fileReset('file');
         document.getElementById('fileBlock').classList.remove('hidden');
         document.getElementById('lesson_id').disabled = false;
         document.getElementById('type').disabled = false;
@@ -256,6 +258,30 @@
         done();
     }
 
+    // ---- Yükləmə yarıda qalmasın deyə qoruma ----
+    // Səhifə yenilənəndə brauzer fayla girişi itirir, ona görə yükləməni kaldığı
+    // yerdən davam etdirmək mümkün deyil. Ən azı təsadüfən itməsinin qarşısını alırıq.
+    const UPLOAD_MARK = 'lms.upload.active';
+    let uploadInFlight = false;
+
+    function markUploadStart(contentId, fileName) {
+        try {
+            localStorage.setItem(UPLOAD_MARK, JSON.stringify({
+                contentId: contentId, fileName: fileName, at: Date.now()
+            }));
+        } catch (e) { /* localStorage bağlı ola bilər */ }
+    }
+
+    function clearUploadMark() {
+        try { localStorage.removeItem(UPLOAD_MARK); } catch (e) { }
+    }
+
+    window.addEventListener('beforeunload', function (e) {
+        if (!uploadInFlight) return;
+        e.preventDefault();
+        e.returnValue = '';
+    });
+
     // ---- Sağ alt künc: fon rejimində gedən yükləmə ----
     // İstifadəçi modalı bağlayır, material artıq yaranıb, video isə hələ yüklənir.
     function widgetShow(fileName) {
@@ -414,6 +440,8 @@
 
             widgetShow(file.name);
             resetSpeed(file.size);
+            uploadInFlight = true;
+            markUploadStart(contentId, file.name);
 
             let speed = 0;
             const path = await uploadVideo(file, lessonId, contentType, function (loaded, total) {
@@ -429,9 +457,15 @@
             const attached = await AdminUI.post(`/lesson-content/${contentId}/file`,
                 { path: path, type: type });
 
+            uploadInFlight = false;
+            clearUploadMark();
+
             if (attached.ok) { widgetDone(); loadList(1); }
             else { widgetFail(AdminUI.errText(attached)); }
         } catch (err) {
+            // Nişan qəsdən silinmir: bura həm xəta, həm də səhifədən çıxış düşür.
+            // Hər iki halda yükləmə tamamlanmayıb və növbəti açılışda istifadəçiyə demək lazımdır.
+            uploadInFlight = false;
             widgetFail(String(err && err.message ? err.message : err));
         } finally {
             lockModal(false);
@@ -439,4 +473,15 @@
             AdminUI.loader(false);
         }
     }
+
+    // Səhifə yeniləndikdən sonra yarımçıq qalmış yükləmə varsa xəbər ver.
+    (function warnInterrupted() {
+        let mark = null;
+        try { mark = JSON.parse(localStorage.getItem(UPLOAD_MARK) || 'null'); } catch (e) { }
+        if (!mark) return;
+
+        clearUploadMark();
+        widgetShow(mark.fileName || '');
+        widgetFail(L["Upload_Interrupted"]);
+    })();
 })();

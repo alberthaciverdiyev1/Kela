@@ -296,6 +296,10 @@
 
 
 
+
+  <data name="Upload_Interrupted" xml:space="preserve">
+    <value>Sayfadan ayrıldığınız için yükleme yarıda kaldı — dosyayı yeniden seçip tamamlayın.</value>
+  </data>
   <data name="Upload_Preparing" xml:space="preserve">
     <value>{0} yükleniyor</value>
   </data>
