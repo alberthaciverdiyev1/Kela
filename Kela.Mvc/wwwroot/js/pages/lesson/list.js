@@ -33,6 +33,18 @@ function lessonIcon(index) {
     return `<svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.9">${icons[index % icons.length]}</svg>`;
 }
 
+// Storage şəkil olmadıqda placeholder qaytarır (bax: IFileStorage.GetUrl) — onu real şəkil saymırıq.
+function hasImage(url) {
+    return !!url && !String(url).includes('noPhoto');
+}
+
+function lessonThumb(lesson, index) {
+    if (hasImage(lesson.image)) {
+        return `<img src="${lesson.image}" alt="" class="h-11 w-11 shrink-0 rounded-xl object-cover" />`;
+    }
+    return `<span class="grid h-11 w-11 shrink-0 place-items-center rounded-xl ${lessonPalette(index)}">${lessonIcon(index)}</span>`;
+}
+
 function lessonPalette(index) {
     return ['bg-success-bg text-success', 'bg-sky-100 text-sky-600', 'bg-warning-bg text-warning', 'bg-violet-100 text-violet-700', 'bg-danger-bg text-danger', 'bg-cyan-100 text-cyan-700'][index % 6];
 }
@@ -110,12 +122,11 @@ async function loadList(page) {
     const rows = items.map((l, index) => {
         const rowNumber = ((currentPage - 1) * perPage) + index + 1;
         const subjectName = window.SUBJECTS[l.subjectId] ?? '-';
-        const palette = lessonPalette(index);
         return [
             { html: rowNumber, cls: 'text-slate-700 font-semibold' },
             {
                 html: `<div class="flex items-center gap-4">
-                    <span class="grid h-11 w-11 shrink-0 place-items-center rounded-xl ${palette}">${lessonIcon(index)}</span>
+                    ${lessonThumb(l, index)}
                     <div>
                         <a href="/lesson-content?lesson_id=${l.id}" class="font-bold text-slate-950 hover:text-primary">${l.title}</a>
                         <p class="mt-0.5 text-sm text-slate-500">${subjectName} dərsi</p>
