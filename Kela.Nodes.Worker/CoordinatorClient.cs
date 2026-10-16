@@ -33,6 +33,13 @@ public sealed class CoordinatorClient(HttpClient http, WorkerSettings settings, 
         DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull
     };
 
+    /// <summary>
+    /// Nəzarət sorğuları kiçikdir; cavab gəlməzsə gözləmək mənasızdır. Timeout
+    /// olmasa server yenidən başlayanda köhnə TCP bağlantısı üzərində sorğu
+    /// saatlarla asılı qala bilər.
+    /// </summary>
+    private static readonly TimeSpan CallTimeout = TimeSpan.FromSeconds(60);
+
     private string _token = settings.AccessToken;
 
     public string Token => _token;
@@ -96,8 +103,11 @@ public sealed class CoordinatorClient(HttpClient http, WorkerSettings settings, 
                 request.Headers.Add("X-Node-Token", _token);
             }
 
-            using var response = await http.SendAsync(request, ct);
-            var payload = await response.Content.ReadAsStringAsync(ct);
+            using var timeout = CancellationTokenSource.CreateLinkedTokenSource(ct);
+            timeout.CancelAfter(CallTimeout);
+
+            using var response = await http.SendAsync(request, timeout.Token);
+            var payload = await response.Content.ReadAsStringAsync(timeout.Token);
 
             if (!response.IsSuccessStatusCode)
             {
@@ -111,7 +121,11 @@ public sealed class CoordinatorClient(HttpClient http, WorkerSettings settings, 
 
             return new CoordinatorResult<T>(response.StatusCode, envelope is null ? default : envelope.Data, envelope?.Message);
         }
-        catch (Exception ex) when (ex is HttpRequestException or TaskCanceledException or JsonException)
+        catch (OperationCanceledException) when (ct.IsCancellationRequested)
+        {
+            throw;
+        }
+        catch (Exception ex) when (ex is HttpRequestException or OperationCanceledException or JsonException)
         {
             log.Warn("api", $"{method} {path} alınmadı: {ex.Message}");
 

@@ -5,6 +5,16 @@ namespace Kela.Nodes.Worker;
 /// <summary>Mənbəni endirir və çıxışları imzalanmış URL-lərə yükləyir.</summary>
 public sealed class WorkerStorage(HttpClient http, WorkerLog log)
 {
+    /// <summary>
+    /// Transferdə bu müddət ərzində heç bir bayt gəlməzsə, əlaqə donmuş sayılır və
+    /// kəsilir. Ümumi timeout qoymaq olmaz — 5 GB-lıq fayl da qanuni ola bilər;
+    /// ölçü deyil, <b>hərəkətsizlik</b> problemdir.
+    /// </summary>
+    private static readonly TimeSpan StallTimeout = TimeSpan.FromSeconds(60);
+
+    /// <summary>Bir seqment/playlist üçün ümumi yükləmə müddəti — kiçik fayllardır.</summary>
+    private static readonly TimeSpan UploadTimeout = TimeSpan.FromMinutes(10);
+
     /// <summary>Endirmə — çıxış axını ilə, yaddaşa yığmadan.</summary>
     public async Task DownloadAsync(string url, string destination, IProgress<long>? progress = null, CancellationToken ct = default)
     {
@@ -21,9 +31,25 @@ public sealed class WorkerStorage(HttpClient http, WorkerLog log)
         await using var source = await response.Content.ReadAsStreamAsync(ct);
         await using var target = new FileStream(destination, FileMode.Create, FileAccess.Write, FileShare.None, buffer.Length, useAsync: true);
 
-        int read;
-        while ((read = await source.ReadAsync(buffer, ct)) > 0)
+        while (true)
         {
+            // Hər oxuma üçün ayrıca geri sayım: bayt gəldikcə sıfırlanır, susanda kəsilir.
+            using var stall = CancellationTokenSource.CreateLinkedTokenSource(ct);
+            stall.CancelAfter(StallTimeout);
+
+            int read;
+
+            try
+            {
+                read = await source.ReadAsync(buffer, stall.Token);
+            }
+            catch (OperationCanceledException) when (!ct.IsCancellationRequested)
+            {
+                throw new HttpRequestException($"Endirmə {StallTimeout.TotalSeconds:0} saniyə hərəkətsiz qaldı");
+            }
+
+            if (read <= 0) break;
+
             await target.WriteAsync(buffer.AsMemory(0, read), ct);
             written += read;
 
@@ -62,7 +88,11 @@ public sealed class WorkerStorage(HttpClient http, WorkerLog log)
             request.Headers.Add("X-Node-Token", token);
         }
 
-        using var response = await http.SendAsync(request, ct);
+        // Yükləmə də dona bilər — cavab gözləmə müddəti məhdudlaşdırılır.
+        using var stall = CancellationTokenSource.CreateLinkedTokenSource(ct);
+        stall.CancelAfter(UploadTimeout);
+
+        using var response = await http.SendAsync(request, stall.Token);
 
         if (!response.IsSuccessStatusCode)
         {

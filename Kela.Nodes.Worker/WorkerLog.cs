@@ -25,9 +25,20 @@ public sealed class WorkerLog(int capacity = 2000)
 
     public event Action<LogEntry>? Written;
 
+    /// <summary>
+    /// Xəbərdarlıq və xətaları həm də stderr-ə yazır. UI bağlı olanda (və ya worker
+    /// başlıqda işləyəndə) problemin səbəbi terminaldan görünsün.
+    /// </summary>
+    public bool MirrorToConsole { get; set; } = true;
+
     public void Write(LogLevel level, string source, string message)
     {
         var entry = new LogEntry(DateTimeOffset.Now, level, source, message);
+
+        if (MirrorToConsole && level >= LogLevel.Info)
+        {
+            Console.Error.WriteLine(entry.Line);
+        }
 
         _entries.Enqueue(entry);
 

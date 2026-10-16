@@ -59,8 +59,19 @@ public sealed class WorkerEngine : IAsyncDisposable
         _platform = platform ?? new NullPlatformStatus();
 
         // Böyük faylların endirilməsi/yüklənməsi üçün ümumi timeout qoyulmur —
-        // ləğv yalnız CancellationToken ilə idarə olunur.
-        _http = http ?? new HttpClient { Timeout = Timeout.InfiniteTimeSpan };
+        // ləğv yalnız CancellationToken ilə idarə olunur. Nəzarət sorğuları isə
+        // CoordinatorClient daxilində ayrıca timeout alır.
+        //
+        // ConnectTimeout + qısa hovuz ömrü: server yenidən başlayanda köhnə TCP
+        // bağlantısı üzərində sorğu asılı qalmasın.
+        _http = http ?? new HttpClient(new SocketsHttpHandler
+        {
+            ConnectTimeout = TimeSpan.FromSeconds(15),
+            PooledConnectionLifetime = TimeSpan.FromMinutes(2)
+        })
+        {
+            Timeout = Timeout.InfiniteTimeSpan
+        };
         _http.Timeout = Timeout.InfiniteTimeSpan;
         _http.DefaultRequestHeaders.UserAgent.ParseAdd("Kela-Nodes/1.0");
 
@@ -268,6 +279,27 @@ public sealed class WorkerEngine : IAsyncDisposable
 
     private async Task RunAsync(CancellationToken ct)
     {
+        try
+        {
+            await RunLoopAsync(ct);
+        }
+        catch (OperationCanceledException) when (ct.IsCancellationRequested)
+        {
+            // Normal dayandırma.
+        }
+        catch (Exception ex)
+        {
+            // Burada tutulmasa, fon tapşırığı sükutla ölür və worker "işləyir" görünüb
+            // heç nə etmir — vəziyyəti mütləq görünən et.
+            Connection = ConnectionState.Offline;
+            LastError = ex.Message;
+            Log.Error("worker", $"Worker dayandı: {ex}");
+            Notify();
+        }
+    }
+
+    private async Task RunLoopAsync(CancellationToken ct)
+    {
         Log.Info("worker", "Worker işə düşdü");
 
         if (!await PrepareAsync(ct)) return;
@@ -399,11 +431,13 @@ public sealed class WorkerEngine : IAsyncDisposable
 
         _sources.Trim();
 
+        // Boş yaddaş və disk dəyişdiyi üçün hər dövrədə yenidən oxunur — başlanğıcda
+        // götürülmüş ölçü köhnəlir və paralelliyi lazımsız yerə aşağı salır.
         CurrentAllowance = ConcurrencyPolicy.Allowance(
             Profile,
             [.. _jobs.Values],
-            Device.AvailableRamMb,
-            Device.DiskFreeMb,
+            SystemPressure.AvailableRamMb(),
+            SystemPressure.FreeDiskMb(Path.Combine(Settings.CacheDirectory, "jobs")),
             Settings.LightJobMultiplier);
 
         if (PausedReason is null)
