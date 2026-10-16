@@ -14,7 +14,6 @@ public sealed class GroupStatController(
     [HttpGet]
     public async Task<IActionResult> Index(CancellationToken ct)
     {
-        ViewData["Title"] = "Qrup statistikası";
         ViewData["Scripts"] = new[] { "~/js/pages/group-stat/index.js" };
         ViewData["Groups"] = await groups.ListAsync(new GroupListRequest { PerPage = 500 }, ct);
         return View();

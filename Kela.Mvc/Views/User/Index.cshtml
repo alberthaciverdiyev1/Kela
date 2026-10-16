@@ -1,5 +1,5 @@
 @{
-    ViewData["Title"] = "İstifadəçilər";
+    ViewData["Title"] = L["Nav_Users"];
     var typeFilter = new List<SelectOption>
     {
         new() { Value = "", Text = L["Common_All"] },
@@ -9,8 +9,6 @@
 }
 <section class="admin-page">
     <partial name="Ui/_PageHeader" model="@(new PageHeaderModel {
-        Title = L["Nav_Users"],
-        Subtitle = L["User_Subtitle"],
         CreateText = L["User_Create"] })" />
 
     <div class="admin-card">

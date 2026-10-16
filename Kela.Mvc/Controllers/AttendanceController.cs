@@ -16,7 +16,6 @@ public sealed class AttendanceController(
     [HttpGet]
     public async Task<IActionResult> Index(CancellationToken ct)
     {
-        ViewData["Title"] = "Yoxlama";
         ViewData["Scripts"] = new[] { "~/js/pages/attendance/index.js" };
         ViewData["Groups"] = await groups.ListAsync(new GroupListRequest { PerPage = 500 }, ct);
         return View();

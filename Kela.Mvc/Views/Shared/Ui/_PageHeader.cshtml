@@ -1,5 +1,5 @@
 @model PageHeaderModel
-@if (Model.StatCard != null || Model.Sortable || !string.IsNullOrEmpty(Model.CreateText))
+@if (Model.StatCard != null || Model.Sortable || !string.IsNullOrEmpty(Model.CreateText) || Model.Extra is not null)
 {
     <div class="flex flex-col gap-4 sm:flex-row sm:items-center @(Model.StatCard != null ? "sm:justify-between" : "sm:justify-end")">
         @if (Model.StatCard != null)
@@ -8,14 +8,15 @@
                 <partial name="Ui/_StatCard" model="Model.StatCard" />
             </div>
         }
-        @if (Model.Sortable || !string.IsNullOrEmpty(Model.CreateText))
+        @if (Model.Sortable || !string.IsNullOrEmpty(Model.CreateText) || Model.Extra is not null)
         {
             <div class="flex shrink-0 items-center gap-2">
+                @Model.Extra
                 @if (Model.Sortable)
                 {
                     <button type="button" id="sortBtn" onclick="sortClick()" class="admin-button-secondary">
                         <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.9"><path stroke-linecap="round" stroke-linejoin="round" d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01" /></svg>
-                        Sırala
+                        @L["Sort_Title"]
                     </button>
                 }
                 @if (!string.IsNullOrEmpty(Model.CreateText))

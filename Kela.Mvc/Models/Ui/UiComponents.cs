@@ -113,14 +113,16 @@ public class TableFooterModel
     public string PaginationId { get; set; } = "pagination";
 }
 
+/// <summary>Səhifə başlığı zolağı — başlıq özü topbar-dadır (ViewData["Title"]).</summary>
 public class PageHeaderModel
 {
-    public string Title { get; set; } = string.Empty;
-    public string? Subtitle { get; set; }
     public string? CreateText { get; set; }
     public string CreateOnClick { get; set; } = "openCreate()";
     public bool Sortable { get; set; }
     public StatCardModel? StatCard { get; set; }
+
+    /// <summary>Yaratma düyməsindən əvvəl göstərilən əlavə düymələr (məs. Excel, silinənlər).</summary>
+    public Microsoft.AspNetCore.Html.IHtmlContent? Extra { get; set; }
 }
 
 public class StatCardModel

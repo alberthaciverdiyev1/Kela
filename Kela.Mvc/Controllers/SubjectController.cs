@@ -14,7 +14,6 @@ public sealed class SubjectController(
     [HttpGet]
     public IActionResult Index()
     {
-        ViewData["Title"] = "Fənlər";
         ViewData["Scripts"] = new[] { "~/js/pages/subject/list.js", "~/js/pages/subject/create.js", "~/js/pages/subject/update.js" };
         return View();
     }

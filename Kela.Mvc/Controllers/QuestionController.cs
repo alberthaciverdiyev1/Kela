@@ -17,7 +17,6 @@ public sealed class QuestionController(
     [HttpGet]
     public async Task<IActionResult> Index(CancellationToken ct)
     {
-        ViewData["Title"] = "Suallar";
         ViewData["Scripts"] = new[] { "~/js/pages/question/list.js", "~/js/pages/question/create.js", "~/js/pages/question/update.js" };
         ViewData["Subjects"] = await subjects.ListAsync(new SubjectListRequest { PerPage = 500 }, ct);
         return View();

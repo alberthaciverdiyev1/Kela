@@ -16,7 +16,6 @@ public sealed class TenantController(ITenantService service) : Controller
     [HttpGet]
     public IActionResult Index()
     {
-        ViewData["Title"] = "Tenantlar";
         ViewData["Scripts"] = new[] { "~/js/pages/tenant/list.js", "~/js/pages/tenant/create.js" };
         return View();
     }

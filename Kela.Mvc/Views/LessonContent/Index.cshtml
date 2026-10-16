@@ -1,13 +1,11 @@
 @{
-    ViewData["Title"] = "Materiallar";
+    ViewData["Title"] = L["Nav_Materials"];
     var lessons = (PagedResponse<LessonResponse>)ViewData["Lessons"]!;
     var lessonFilter = new List<SelectOption> { new() { Value = "", Text = L["Common_All"] } };
     lessonFilter.AddRange(lessons.Data.Select(l => new SelectOption { Value = l.Id.ToString(), Text = l.Title }));
 }
 <section class="admin-page">
     <partial name="Ui/_PageHeader" model="@(new PageHeaderModel {
-        Title = L["Nav_Materials"],
-        Subtitle = L["LessonContent_Subtitle"],
         CreateText = L["Common_NewMaterial"],
         Sortable = true })" />
 

@@ -21,7 +21,6 @@ public sealed class QuizController(
     [HttpGet]
     public async Task<IActionResult> Index(CancellationToken ct)
     {
-        ViewData["Title"] = "İmtahanlar";
         ViewData["Scripts"] = new[]
         {
             "~/js/pages/quiz/list.js", "~/js/pages/quiz/create.js",

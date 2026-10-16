@@ -17,7 +17,6 @@ public sealed class SettingController(ISettingService service, ITenantService te
     [HttpGet]
     public async Task<IActionResult> Index(CancellationToken ct)
     {
-        ViewData["Title"] = "Parametrlər";
         ViewData["Scripts"] = new[] { "~/js/pages/setting/index.js" };
         return View(new SettingPageModel
         {

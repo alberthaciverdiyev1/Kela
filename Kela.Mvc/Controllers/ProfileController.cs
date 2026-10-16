@@ -18,7 +18,6 @@ public sealed class ProfileController(IUserService users) : Controller
     [HttpGet]
     public async Task<IActionResult> Index(CancellationToken ct)
     {
-        ViewData["Title"] = "Profil";
         ViewData["Scripts"] = new[] { "~/js/pages/profile/index.js" };
         return View(await users.GetAsync(UserId, ct));
     }

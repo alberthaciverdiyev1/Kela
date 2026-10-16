@@ -1,11 +1,13 @@
 @using Kela.Core.Modules.Nodes.Responses
 @{
+    ViewData["Title"] = L["Nav_Nodes"];
+}
+@{
     var summary = ViewData["Summary"] as NodeSummaryResponse;
 }
 <section class="admin-page">
     <partial name="Ui/_PageHeader" model="@(new PageHeaderModel {
-        Title = L["Node_Title"],
-        Subtitle = L["Node_Subtitle"] })" />
+        })" />
 
     @if (summary is not null)
     {

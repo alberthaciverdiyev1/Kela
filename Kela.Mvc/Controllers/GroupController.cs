@@ -27,7 +27,6 @@ public sealed class GroupController(
     [HttpGet]
     public async Task<IActionResult> Index(CancellationToken ct)
     {
-        ViewData["Title"] = "Qruplar";
         ViewData["Scripts"] = new[]
         {
             "~/js/pages/group/list.js", "~/js/pages/group/create.js",

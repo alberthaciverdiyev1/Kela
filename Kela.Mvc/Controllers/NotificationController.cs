@@ -16,7 +16,6 @@ public sealed class NotificationController(
     [HttpGet]
     public async Task<IActionResult> Index(CancellationToken ct)
     {
-        ViewData["Title"] = "Bildirişlər";
         ViewData["Scripts"] = new[] { "~/js/pages/notification/list.js", "~/js/pages/notification/create.js" };
         ViewData["Students"] = await students.ListAsync(new StudentListRequest { PerPage = 500 }, ct);
         return View();

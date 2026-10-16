@@ -18,7 +18,6 @@ public sealed class LessonController(
     [HttpGet]
     public async Task<IActionResult> Index([FromQuery(Name = "subject_id")] long? subjectId, CancellationToken ct)
     {
-        ViewData["Title"] = "Dərslər";
         ViewData["Scripts"] = new[] { "~/js/pages/lesson/list.js", "~/js/pages/lesson/create.js", "~/js/pages/lesson/update.js", "~/js/pages/lesson/settings.js", "~/js/pages/lesson/sort.js" };
         ViewData["Subjects"] = await subjects.ListAsync(new SubjectListRequest { PerPage = 200 }, ct);
         ViewData["SelectedSubjectId"] = subjectId?.ToString() ?? "";

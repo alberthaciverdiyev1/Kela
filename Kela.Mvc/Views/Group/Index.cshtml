@@ -1,13 +1,11 @@
 @{
-    ViewData["Title"] = "Qruplar";
+    ViewData["Title"] = L["Nav_Groups"];
     var teachers = (PagedResponse<UserResponse>)ViewData["Teachers"]!;
 }
 <script>window.TEACHERS = { @Html.Raw(string.Join(",", teachers.Data.Select(u => $"{u.Id}:\"{System.Text.Json.JsonEncodedText.Encode(($"{u.Name} {u.Surname}".Trim()))}\""))) }; </script>
 
 <section class="admin-page">
     <partial name="Ui/_PageHeader" model="@(new PageHeaderModel {
-        Title = L["Nav_Groups"],
-        Subtitle = L["Group_Subtitle"],
         CreateText = L["Group_Create"] })" />
 
     <div class="admin-card">

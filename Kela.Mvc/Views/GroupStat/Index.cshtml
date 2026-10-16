@@ -1,5 +1,5 @@
 @{
-    ViewData["Title"] = "Qrup statistikası";
+    ViewData["Title"] = L["Nav_GroupStats"];
     var groups = (PagedResponse<Kela.Core.Modules.Group.Responses.GroupResponse>)ViewData["Groups"]!;
     var groupOptions = new List<SelectOption> { new() { Value = "", Text = L["Common_SelectGroup"] } };
     groupOptions.AddRange(groups.Data.Select(g => new SelectOption { Value = g.Id.ToString(), Text = g.Name }));
@@ -11,13 +11,11 @@
     };
 }
 <section class="admin-page">
-    <div class="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
-        <div>
-            <h2 class="admin-page-title">@L["Nav_GroupStats"]</h2>
-            <p class="admin-page-subtitle">@L["GroupStat_Subtitle"]</p>
-        </div>
-        <a id="exportLink" href="#" class="admin-button-secondary">⬇ Excel</a>
-    </div>
+    @{
+        var groupStatHeaderExtra = new Microsoft.AspNetCore.Html.HtmlString(
+            $@"<a id=""exportLink"" href=""#"" class=""admin-button-secondary"">⬇ Excel</a>");
+    }
+    <partial name="Ui/_PageHeader" model="@(new PageHeaderModel { Extra = groupStatHeaderExtra })" />
 
     <div class="admin-card">
         <partial name="Ui/_FilterBar" model="@(new FilterBarModel {

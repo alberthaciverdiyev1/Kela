@@ -1,10 +1,8 @@
 @{
-    ViewData["Title"] = "Sertifikatlar";
+    ViewData["Title"] = L["Nav_Certificates"];
 }
 <section class="admin-page">
     <partial name="Ui/_PageHeader" model="@(new PageHeaderModel {
-        Title = L["Nav_Certificates"],
-        Subtitle = L["Certificate_Subtitle"],
         CreateText = L["Certificate_Create"],
         StatCard = new StatCardModel {
             Id = "stat_total",

@@ -1,10 +1,8 @@
 @{
-    ViewData["Title"] = "Bannerlər";
+    ViewData["Title"] = L["Nav_Banners"];
 }
 <section class="admin-page">
     <partial name="Ui/_PageHeader" model="@(new PageHeaderModel {
-        Title = L["Nav_Banners"],
-        Subtitle = L["Banner_Subtitle"],
         CreateText = L["Banner_Create"],
         StatCard = new StatCardModel {
             Id = "stat_total",

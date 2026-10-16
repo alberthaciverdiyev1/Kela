@@ -14,7 +14,6 @@ public sealed class BannerController(
     [HttpGet]
     public IActionResult Index()
     {
-        ViewData["Title"] = "Bannerlər";
         ViewData["Scripts"] = new[] { "~/js/pages/banner/list.js", "~/js/pages/banner/create.js", "~/js/pages/banner/update.js" };
         return View();
     }

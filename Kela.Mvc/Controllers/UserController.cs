@@ -18,7 +18,6 @@ public sealed class UserController(
     [HttpGet]
     public IActionResult Index()
     {
-        ViewData["Title"] = "İstifadəçilər";
         ViewData["Scripts"] = new[] { "~/js/pages/user/list.js", "~/js/pages/user/create.js", "~/js/pages/user/update.js" };
         return View();
     }

@@ -15,7 +15,6 @@ public sealed class CertificateController(
     [HttpGet]
     public IActionResult Index()
     {
-        ViewData["Title"] = "Sertifikatlar";
         ViewData["Templates"] = CertificateTemplates.All;
         ViewData["Scripts"] = new[]
         {

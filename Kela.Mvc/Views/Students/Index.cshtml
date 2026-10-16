@@ -1,5 +1,5 @@
 @{
-    ViewData["Title"] = "Şagirdlər";
+    ViewData["Title"] = L["Nav_Students"];
     var activeOptions = new List<SelectOption>
     {
         new() { Value = "", Text = L["Common_All"] },
@@ -8,20 +8,15 @@
     };
 }
 <section class="admin-page">
-    <div class="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
-        <div>
-            <h2 class="admin-page-title">@L["Nav_Students"]</h2>
-            <p class="admin-page-subtitle">@L["Students_Subtitle"]</p>
-        </div>
-        <div class="flex shrink-0 items-center gap-2">
-            <button type="button" id="trashBtn" class="admin-button-secondary" onclick="toggleTrash()">@L["Common_DeletedItems"]</button>
-            <a href="/students/export" class="admin-button-secondary">⬇ Excel</a>
-            <button type="button" onclick="openGenerate()" class="admin-button-primary">
-                <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 5v14M5 12h14" /></svg>
-                Şagird generasiya et
-            </button>
-        </div>
-    </div>
+    @{
+        var studentsHeaderExtra = new Microsoft.AspNetCore.Html.HtmlString($@"
+            <button type=""button"" id=""trashBtn"" class=""admin-button-secondary"" onclick=""toggleTrash()"">{L["Common_DeletedItems"]}</button>
+            <a href=""/students/export"" class=""admin-button-secondary"">⬇ Excel</a>");
+    }
+    <partial name="Ui/_PageHeader" model="@(new PageHeaderModel {
+        CreateText = L["Students_GenerateTitle"],
+        CreateOnClick = "openGenerate()",
+        Extra = studentsHeaderExtra })" />
 
     <div class="admin-card">
         <partial name="Ui/_FilterBar" model="@(new FilterBarModel {

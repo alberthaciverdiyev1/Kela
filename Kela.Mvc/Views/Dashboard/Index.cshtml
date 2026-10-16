@@ -1,6 +1,6 @@
 @model DashboardResponse
 @{
-    ViewData["Title"] = "Dashboard";
+    ViewData["Title"] = L["Nav_Dashboard"];
     var cards = new (string Label, string Value, string Accent, string Icon)[]
     {
         (L["Nav_Students"], Model.Students.Total.ToString(), "bg-primary-light text-primary", "<path stroke-linecap='round' stroke-linejoin='round' d='M16 7a4 4 0 1 1-8 0 4 4 0 0 1 8 0ZM12 14a7 7 0 0 0-7 7h14a7 7 0 0 0-7-7Z' />"),
@@ -21,7 +21,7 @@
     };
 }
 <section class="admin-page">
-    <partial name="Ui/_PageHeader" model="@(new PageHeaderModel { Title = L["Nav_Dashboard"], Subtitle = L["Dashboard_Subtitle"] })" />
+    <partial name="Ui/_PageHeader" model="@(new PageHeaderModel())" />
 
     <div class="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
         @foreach (var card in cards)

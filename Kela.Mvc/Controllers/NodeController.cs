@@ -12,7 +12,6 @@ public sealed class NodeController(INodeService nodes) : Controller
     [HttpGet]
     public async Task<IActionResult> Index(CancellationToken ct)
     {
-        ViewData["Title"] = "Konversiya cihazları";
         ViewData["Scripts"] = new[]
         {
             "~/js/pages/node/list.js",

@@ -14,7 +14,6 @@ public sealed class PlatformSettingController(ISettingService service) : Control
     [HttpGet]
     public async Task<IActionResult> Index(CancellationToken ct)
     {
-        ViewData["Title"] = "Platforma parametrləri";
         ViewData["Scripts"] = new[] { "~/js/pages/platform-setting/index.js" };
         return View(await service.GetPlatformAsync(ct));
     }

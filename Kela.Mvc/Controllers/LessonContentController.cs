@@ -19,7 +19,6 @@ public sealed class LessonContentController(
     [HttpGet]
     public async Task<IActionResult> Index([FromQuery(Name = "lesson_id")] long? lessonId, CancellationToken ct)
     {
-        ViewData["Title"] = "Materiallar";
         ViewData["Scripts"] = new[]
         {
             "~/js/pages/lesson-content/list.js",

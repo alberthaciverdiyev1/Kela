@@ -17,7 +17,6 @@ public sealed class LoginController(IUserAuthService service, ITenantService ten
     [HttpGet]
     public async Task<IActionResult> Index(CancellationToken ct)
     {
-        ViewData["Title"] = "Giriş";
         if (User.Identity?.IsAuthenticated == true) return RedirectToAction("Index", "Dashboard");
 
         ViewData["Tenants"] = await tenants.ListPublicAsync(ct);

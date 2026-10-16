@@ -18,7 +18,6 @@ public sealed class StudentsController(
     [HttpGet]
     public IActionResult Index()
     {
-        ViewData["Title"] = "Şagirdlər";
         ViewData["Scripts"] = new[] { "~/js/pages/students/list.js", "~/js/pages/students/generate.js", "~/js/pages/students/devices.js" };
         return View();
     }

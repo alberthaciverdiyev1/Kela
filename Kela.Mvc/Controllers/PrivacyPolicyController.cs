@@ -13,7 +13,6 @@ public sealed class PrivacyPolicyController(IPrivacyPolicyService service) : Con
     [HttpGet]
     public IActionResult Index()
     {
-        ViewData["Title"] = "Gizlilik";
         ViewData["Scripts"] = new[] { "~/js/pages/privacy-policy/list.js", "~/js/pages/privacy-policy/edit.js" };
         return View();
     }

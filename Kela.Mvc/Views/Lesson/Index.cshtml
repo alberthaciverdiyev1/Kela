@@ -1,5 +1,5 @@
 @{
-    ViewData["Title"] = "Dərslər";
+    ViewData["Title"] = L["Nav_Lessons"];
     var subjects = (PagedResponse<SubjectResponse>)ViewData["Subjects"]!;
     var subjectFilter = new List<SelectOption> { new() { Value = "", Text = L["Common_All"] } };
     subjectFilter.AddRange(subjects.Data.Select(s => new SelectOption { Value = s.Id.ToString(), Text = s.Name }));
@@ -13,8 +13,6 @@
 <script>window.SUBJECTS = { @Html.Raw(string.Join(",", subjects.Data.Select(s => $"{s.Id}:\"{System.Text.Json.JsonEncodedText.Encode(s.Name)}\""))) }; </script>
 <section class="admin-page">
     <partial name="Ui/_PageHeader" model="@(new PageHeaderModel {
-        Title = L["Nav_Lessons"],
-        Subtitle = L["Lesson_Subtitle"],
         CreateText = L["Lesson_Create"],
         Sortable = true,
         StatCard = new StatCardModel {

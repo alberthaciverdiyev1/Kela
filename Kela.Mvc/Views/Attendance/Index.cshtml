@@ -1,4 +1,5 @@
 @{
+    ViewData["Title"] = L["Nav_Attendance"];
     var groups = (PagedResponse<Kela.Core.Modules.Group.Responses.GroupResponse>)ViewData["Groups"]!;
 }
 <script>
@@ -8,8 +9,7 @@
         System.Globalization.CultureInfo.CurrentUICulture.Name));
 </script>
 <section class="admin-page">
-    <partial name="Ui/_PageHeader" model="@(new PageHeaderModel {
-        Title = L["Attendance_Title"], Subtitle = L["Attendance_Subtitle"] })" />
+    <partial name="Ui/_PageHeader" model="@(new PageHeaderModel())" />
 
     <div class="admin-card">
         <div class="border-b border-border p-5">
