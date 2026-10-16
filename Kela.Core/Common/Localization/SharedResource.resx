@@ -293,6 +293,10 @@
     <value>Absent</value>
   </data>
 
+
+  <data name="Common_Uploading" xml:space="preserve">
+    <value>Uploading…</value>
+  </data>
   <data name="Js_FileTooLarge" xml:space="preserve">
     <value>The file could not be uploaded directly and is too large to send through the server. Check the storage bucket CORS configuration.</value>
   </data>

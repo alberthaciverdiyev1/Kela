@@ -293,6 +293,10 @@
     <value>Katılmadı</value>
   </data>
 
+
+  <data name="Common_Uploading" xml:space="preserve">
+    <value>Yükleniyor…</value>
+  </data>
   <data name="Js_FileTooLarge" xml:space="preserve">
     <value>Dosya doğrudan yüklenemedi ve sunucudan geçmek için çok büyük. Depolama bucket CORS yapılandırmasını kontrol edin.</value>
   </data>

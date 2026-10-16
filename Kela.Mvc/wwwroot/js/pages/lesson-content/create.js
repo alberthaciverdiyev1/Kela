@@ -39,11 +39,52 @@
     // Serverdən keçən yol üçün Kestrel limiti ~30 MB-dır — ondan böyüyü qəbul edilmir.
     const SERVER_FALLBACK_MAX = 25 * 1024 * 1024;
 
-    function setProgress(text) {
+    function showProgress(percent) {
+        const box = document.getElementById('uploadProgress');
+        const bar = document.getElementById('uploadBar');
+        const label = document.getElementById('uploadPercent');
+        if (!box || !bar) return;
+
+        const value = Math.max(0, Math.min(100, Math.round(percent)));
+        box.classList.remove('hidden');
+        bar.style.width = value + '%';
+        if (label) label.textContent = value + '%';
+    }
+
+    function hideProgress() {
+        const box = document.getElementById('uploadProgress');
+        const bar = document.getElementById('uploadBar');
+        if (box) box.classList.add('hidden');
+        if (bar) bar.style.width = '0%';
+    }
+
+    function setBusy(busy) {
         const btn = document.getElementById('saveBtn');
-        if (!btn) return;
-        btn.disabled = !!text;
-        btn.textContent = text || L["Common_Save"];
+        if (btn) btn.disabled = busy;
+    }
+
+    // fetch yükləmə gedişatını bildirmir — irəliləyiş çubuğu üçün XHR lazımdır.
+    function putWithProgress(url, blob, contentType, onProgress) {
+        return new Promise((resolve, reject) => {
+            const xhr = new XMLHttpRequest();
+            xhr.open('PUT', url, true);
+            xhr.setRequestHeader('Content-Type', contentType);
+
+            if (xhr.upload) {
+                xhr.upload.onprogress = (e) => {
+                    if (e.lengthComputable) onProgress(e.loaded, e.total);
+                };
+            }
+
+            xhr.onload = () => resolve({
+                ok: xhr.status >= 200 && xhr.status < 300,
+                status: xhr.status,
+                etag: xhr.getResponseHeader('ETag')
+            });
+            xhr.onerror = () => reject(new Error('network'));
+            xhr.onabort = () => reject(new Error('aborted'));
+            xhr.send(blob);
+        });
     }
 
     async function uploadMultipart(file, lessonId, type, contentType) {
@@ -65,8 +106,10 @@
             if (!urlsRes.ok) throw new Error('parts');
 
             const parts = new Array(total);
-            let uploaded = 0;
+            const loaded = new Array(total).fill(0);
             let next = 0;
+
+            const overall = () => loaded.reduce((a, b) => a + b, 0) / file.size * 100;
 
             const worker = async () => {
                 while (true) {
@@ -76,12 +119,14 @@
                     const u = urlsRes.data[i];
                     const blob = file.slice((u.partNumber - 1) * partSize, u.partNumber * partSize);
 
-                    const put = await fetch(u.url, { method: 'PUT', body: blob });
+                    const put = await putWithProgress(u.url, blob, 'application/octet-stream',
+                        (sent) => { loaded[i] = sent; showProgress(overall()); });
+
                     if (!put.ok) throw new Error('part ' + u.partNumber + ': ' + put.status);
 
-                    parts[u.partNumber - 1] = { partNumber: u.partNumber, eTag: put.headers.get('ETag') };
-                    uploaded++;
-                    setProgress('Yüklənir… ' + Math.round(uploaded / total * 100) + '%');
+                    loaded[i] = blob.size;
+                    parts[u.partNumber - 1] = { partNumber: u.partNumber, eTag: put.etag };
+                    showProgress(overall());
                 }
             };
 
@@ -113,14 +158,14 @@
         const contentType = file.type || 'application/octet-stream';
 
         try {
-            setProgress('Yüklənir… 0%');
+            setBusy(true);
+            showProgress(0);
 
             // 1) Böyük fayl -> çoxhissəli yükləmə (paralel, hissə-hissə bərpa oluna bilən)
             if (file.size > MP_THRESHOLD) {
                 const path = await uploadMultipart(file, lessonId, type, contentType);
                 if (!path) { showError(L["Js_FileTooLarge"]); return; }
 
-                setProgress(L["Common_Save"] + '…');
                 const res = await AdminUI.post('/lesson-content',
                     { lesson_id: lessonId, title, type, path, is_active: isActive });
                 if (res.ok) { done(); return; }
@@ -132,8 +177,8 @@
             const urlRes = await AdminUI.post('/lesson-content/upload-url',
                 { lessonId, type, fileName: file.name, contentType });
             if (urlRes.ok && urlRes.data?.uploadUrl) {
-                const put = await fetch(urlRes.data.uploadUrl,
-                    { method: 'PUT', body: file, headers: { 'Content-Type': contentType } });
+                const put = await putWithProgress(urlRes.data.uploadUrl, file, contentType,
+                    (sent, totalBytes) => showProgress(sent / totalBytes * 100));
 
                 if (put.ok) {
                     const res = await AdminUI.post('/lesson-content',
@@ -160,7 +205,8 @@
         } catch (err) {
             showError(String(err && err.message ? err.message : err));
         } finally {
-            setProgress(null);
+            setBusy(false);
+            hideProgress();
             AdminUI.loader(false);
         }
     });

@@ -293,6 +293,10 @@
     <value>İştirak etməyib</value>
   </data>
 
+
+  <data name="Common_Uploading" xml:space="preserve">
+    <value>Yüklənir…</value>
+  </data>
   <data name="Js_FileTooLarge" xml:space="preserve">
     <value>Fayl birbaşa yüklənə bilmədi və serverdən keçmək üçün çox böyükdür. Storage bucket-ın CORS konfiqurasiyasını yoxlayın.</value>
   </data>

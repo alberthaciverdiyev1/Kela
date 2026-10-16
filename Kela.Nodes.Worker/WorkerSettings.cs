@@ -27,6 +27,15 @@ public sealed class WorkerSettings
     public bool AutoStart { get; set; }
 
     /// <summary>
+    /// Bu müddətdən qısa VƏ 480p-dən kiçik videolar "yüngül" sayılır: ağır iş
+    /// getmirsə, onlardan bir neçəsini paralel aparmaq olar.
+    /// </summary>
+    public int LightJobMaxSeconds { get; set; } = 300;
+
+    /// <summary>Yalnız yüngül işlər gedərkən paralelliyin neçə dəfə artırılacağı.</summary>
+    public int LightJobMultiplier { get; set; } = 2;
+
+    /// <summary>
     /// Son benchmark nəticəsi. Encoder dəyişməyibsə yenidən ölçülmür — sınaq
     /// hər açılışda 10-20 saniyə encoding vaxtı alır.
     /// </summary>

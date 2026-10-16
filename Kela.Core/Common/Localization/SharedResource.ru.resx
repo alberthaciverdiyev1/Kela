@@ -293,6 +293,10 @@
     <value>Отсутствовал</value>
   </data>
 
+
+  <data name="Common_Uploading" xml:space="preserve">
+    <value>Загрузка…</value>
+  </data>
   <data name="Js_FileTooLarge" xml:space="preserve">
     <value>Файл не удалось загрузить напрямую, и он слишком велик для отправки через сервер. Проверьте настройки CORS бакета.</value>
   </data>

@@ -28,6 +28,13 @@ public sealed class RunningJob(JobAssignment assignment)
 
     public int? EtaSeconds { get; set; }
 
+    /// <summary>Mənbə buraxıldıqdan sonra dəqiqləşir — yüngül iş paralel artırıla bilər.</summary>
+    public bool IsLight { get; set; }
+
+    public int SourceSeconds { get; set; }
+
+    public int TargetHeight { get; set; }
+
     public DateTimeOffset StartedAt { get; } = DateTimeOffset.Now;
 
     public NodeJobReport ToReport() => new()
@@ -60,6 +67,7 @@ public sealed class JobRunner(
     HlsEncoder encoder,
     MediaProbe probe,
     WorkerLog log,
+    SourceCache sources,
     ProfileSettings? profile = null)
 {
     private const string ThumbnailName = "thumb.jpg";
@@ -81,7 +89,15 @@ public sealed class JobRunner(
 
             state.Stage = JobStatus.Downloading;
 
-            var source = await AcquireSourceAsync(assignment, jobDirectory, state, ct);
+            var download = new Progress<long>(percent =>
+            {
+                state.Progress = percent / 100d;
+                state.Message = $"Endirilir: {percent}%";
+            });
+
+            var source = await sources.AcquireAsync(
+                assignment.VideoId, assignment.SourceKey, assignment.SourceUrl, download, ct);
+
             if (source is null) return Transient("Mənbə fayl endirilə bilmədi", state);
 
             var media = await probe.ProbeAsync(source, ct);
@@ -142,54 +158,6 @@ public sealed class JobRunner(
         finally
         {
             if (settings.CleanupAfterJob) TryDelete(jobDirectory);
-        }
-    }
-
-    /// <summary>
-    /// Mənbəni endirir. Eyni videonun digər pillələri üçün artıq endirilibsə keşdən götürülür —
-    /// eyni fayl təkrar-təkrar endirilmir.
-    /// </summary>
-    private async Task<string?> AcquireSourceAsync(JobAssignment assignment, string jobDirectory, RunningJob state, CancellationToken ct)
-    {
-        var extension = Path.GetExtension(assignment.SourceKey);
-        if (string.IsNullOrWhiteSpace(extension)) extension = ".mp4";
-
-        var cached = Path.Combine(settings.CacheDirectory, "sources", $"{assignment.VideoId}{extension}");
-
-        if (File.Exists(cached) && new FileInfo(cached).Length > 0)
-        {
-            log.Info("job", $"Mənbə keşdən götürüldü: video {assignment.VideoId}");
-            return cached;
-        }
-
-        var destination = Path.Combine(jobDirectory, $"source{extension}");
-
-        try
-        {
-            var progress = new Progress<long>(percent =>
-            {
-                state.Progress = percent / 100d;
-                state.Message = $"Endirilir: {percent}%";
-            });
-
-            await storage.DownloadAsync(assignment.SourceUrl, destination, progress, ct);
-
-            if (settings.Limits.MaxCacheMb > 0)
-            {
-                Directory.CreateDirectory(Path.GetDirectoryName(cached)!);
-                File.Copy(destination, cached, overwrite: true);
-            }
-            else
-            {
-                return destination;
-            }
-
-            return destination;
-        }
-        catch (Exception ex) when (ex is HttpRequestException or IOException)
-        {
-            log.Warn("job", $"Endirmə alınmadı: {ex.Message}");
-            return null;
         }
     }
 

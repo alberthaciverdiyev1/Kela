@@ -36,6 +36,7 @@ public sealed class WorkerEngine : IAsyncDisposable
     private readonly WorkerStorage _storage;
     private readonly FfmpegLocator _ffmpeg;
     private readonly DeviceProbe _device;
+    private readonly SourceCache _sources;
 
     // ffmpeg ikililəri yalnız yerini tapdıqdan sonra qurula bilər.
     private MediaProbe? _probe;
@@ -67,6 +68,7 @@ public sealed class WorkerEngine : IAsyncDisposable
         _storage = new WorkerStorage(_http, log);
         _ffmpeg = new FfmpegLocator(settings, log);
         _device = new DeviceProbe(_platform, log);
+        _sources = new SourceCache(_storage, settings, log);
     }
 
     public WorkerSettings Settings { get; }
@@ -89,6 +91,12 @@ public sealed class WorkerEngine : IAsyncDisposable
 
     /// <summary>Cihaz üçün seçilmiş resurs profili (auto seçilmişsə, həll olunmuş halı).</summary>
     public ProfileSettings? Profile { get; private set; }
+
+    /// <summary>
+    /// Hazırda icazə verilən paralel iş sayı. Profil həddidir, lakin yalnız qısa/kiçik
+    /// işlər gedirsə və yaddaş/disktə yer varsa, iki qatına qədər artırıla bilər.
+    /// </summary>
+    public int CurrentAllowance { get; private set; } = 1;
 
     /// <summary>Limitlər səbəbindən iş götürülmür (batareya, şarj, Wi-Fi, temperatur).</summary>
     public string? PausedReason { get; private set; }
@@ -128,10 +136,8 @@ public sealed class WorkerEngine : IAsyncDisposable
         _detector ??= new EncoderDetector(_ffmpeg.FfmpegPath!, Log);
         _benchmark ??= new BenchmarkRunner(_ffmpeg.FfmpegPath!, Log);
 
-        if (Device is null)
-        {
-            Device = await _device.CollectAsync(Settings.CacheDirectory, ct);
-        }
+        // Yaddaş və disk dəyişdiyi üçün hər hazırlıqda yenidən oxunur.
+        Device = await _device.CollectAsync(Settings.CacheDirectory, ct);
 
         if (Encoders is null)
         {
@@ -332,7 +338,7 @@ public sealed class WorkerEngine : IAsyncDisposable
         return new NodeRuntimeLimits
         {
             Profile = Profile.Profile,
-            MaxConcurrentJobs = Profile.MaxConcurrentJobs,
+            MaxConcurrentJobs = CurrentAllowance,
             MaxCpuThreads = Profile.CpuThreads,
             MaxCacheMb = limits.MaxCacheMb,
             WifiOnly = limits.WifiOnly,
@@ -391,6 +397,15 @@ public sealed class WorkerEngine : IAsyncDisposable
             CancelJob(jobId);
         }
 
+        _sources.Trim();
+
+        CurrentAllowance = ConcurrencyPolicy.Allowance(
+            Profile,
+            [.. _jobs.Values],
+            Device.AvailableRamMb,
+            Device.DiskFreeMb,
+            Settings.LightJobMultiplier);
+
         if (PausedReason is null)
         {
             await ClaimAsync(limits, ct);
@@ -431,7 +446,7 @@ public sealed class WorkerEngine : IAsyncDisposable
 
         try
         {
-            var outcome = await new JobRunner(Settings, _coordinator, _storage, _encoder!, _probe!, Log, Profile)
+            var outcome = await new JobRunner(Settings, _coordinator, _storage, _encoder!, _probe!, Log, _sources, Profile)
                 .RunAsync(assignment, capabilities, state, _coordinator.Token, ct);
 
             if (outcome.Success)
