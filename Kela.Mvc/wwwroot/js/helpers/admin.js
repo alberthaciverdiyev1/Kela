@@ -113,9 +113,19 @@ window.AdminUI = (function () {
     // Silinənlər rejimi düyməsinin görünüşünü yeniləyir.
     function syncTrashButton(btnId, on) {
         const btn = document.getElementById(btnId);
-        if (!btn) return;
-        btn.classList.toggle('admin-button-secondary', !on);
-        btn.classList.toggle('admin-button-primary', on);
+        if (btn) {
+            btn.classList.toggle('admin-button-secondary', !on);
+            btn.classList.toggle('admin-button-primary', on);
+        }
+        // Silinənlər rejimində yalnız bərpa mümkündür — aktiv/deaktiv mənasızdır.
+        toggleHidden('bulkRestore', !on);
+        toggleHidden('bulkActivate', on);
+        toggleHidden('bulkDeactivate', on);
+    }
+
+    function toggleHidden(id, hidden) {
+        const el = document.getElementById(id);
+        if (el) el.classList.toggle('hidden', hidden);
     }
 
     function badge(text, variant, opts) {
@@ -206,6 +216,10 @@ window.AdminUI = (function () {
         const cols = headRow ? headRow.cells.length : colspan + (selectable ? 1 : 0);
 
         tbody.innerHTML = '';
+
+        // Siyahı yenidən çəkilir — başlıqdaki seçim qutusu köhnə vəziyyətdə qalmasın.
+        const head = document.getElementById('checkAll');
+        if (head) head.checked = false;
 
         if (!rows.length) {
             tbody.innerHTML = `<tr><td colspan="${cols}">
@@ -559,5 +573,5 @@ window.AdminUI = (function () {
         _filterTimer = setTimeout(filterReload, 350);
     });
 
-    return { notify, error, errText, openModal, closeModal, resetForm, badge, chip, statCard, actions, actionButton, actionLink, rowActions, confirmDelete, confirmRestore, restoreItem, restoreButton, syncTrashButton, get, post, postForm, putForm, postJson, putJson, del, table, setInfo, addSort, selectedIds, bulkDo, sortToggle, openSort, closeSort, persistSort, loader, pagination, filePreview, fileSet, fileRemove, fileReset, rowNo, token, reloadAfter, downloadCsv };
+    return { notify, error, errText, openModal, closeModal, resetForm, badge, chip, statCard, actions, actionButton, actionLink, rowActions, confirmDelete, confirmRestore, restoreItem, restoreButton, syncTrashButton, toggleHidden, get, post, postForm, putForm, postJson, putJson, del, table, setInfo, addSort, selectedIds, bulkDo, sortToggle, openSort, closeSort, persistSort, loader, pagination, filePreview, fileSet, fileRemove, fileReset, rowNo, token, reloadAfter, downloadCsv };
 })();
