@@ -1,3 +1,4 @@
+using Kela.Core.Common.Sorting;
 using Kela.Core.Common.Responses;
 using Kela.Core.Common.Storage;
 using Kela.Core.Common.Bulk;
@@ -36,7 +37,7 @@ public sealed class BannerService(AppDbContext db, IFileStorage storage, ITenant
 
         var total = await query.CountAsync(ct);
         var items = await query
-            .OrderByDescending(x => x.Id)
+            .ApplyListSort(request, x => x.Title)
             .Skip((page - 1) * perPage)
             .Take(perPage)
             .ToListAsync(ct);

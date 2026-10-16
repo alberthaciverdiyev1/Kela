@@ -46,7 +46,7 @@ public sealed class QuizService(AppDbContext db, IFileStorage storage) : IQuizSe
         var total = await query.CountAsync(ct);
         var items = await query
             .Include(x => x.Questions)
-            .OrderBy(x => x.SortOrder).ThenBy(x => x.Id)
+            .ApplyListSort(request, x => x.Title, x => x.SortOrder)
             .Skip((page - 1) * perPage)
             .Take(perPage)
             .ToListAsync(ct);

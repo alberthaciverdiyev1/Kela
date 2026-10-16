@@ -1,3 +1,4 @@
+using Kela.Core.Common.Sorting;
 using System.Security.Cryptography;
 using ClosedXML.Excel;
 using Kela.Core.Common.Bulk;
@@ -21,7 +22,7 @@ public sealed class StudentManagementService(AppDbContext db) : Abstractions.ISt
         var query = Query(request);
         var total = await query.CountAsync(ct);
         var items = await query
-            .OrderByDescending(x => x.Id)
+            .ApplyListSort(request, x => x.FullName)
             .Skip((page - 1) * perPage)
             .Take(perPage)
             .ToListAsync(ct);
@@ -62,7 +63,7 @@ public sealed class StudentManagementService(AppDbContext db) : Abstractions.ISt
 
     public async Task<byte[]> ExportXlsxAsync(StudentListRequest request, CancellationToken ct = default)
     {
-        var students = await Query(request).OrderBy(x => x.Id).ToListAsync(ct);
+        var students = await Query(request).ApplyListSort(request, x => x.FullName).ToListAsync(ct);
 
         using var workbook = new XLWorkbook();
         var ws = workbook.Worksheets.Add("Students");

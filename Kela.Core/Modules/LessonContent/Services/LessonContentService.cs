@@ -52,7 +52,7 @@ public sealed class LessonContentService(
         var total = await query.CountAsync(ct);
         var items = await query
             .Include(x => x.Video).Include(x => x.MediaFile).Include(x => x.VoiceRecord)
-            .OrderBy(x => x.SortOrder).ThenBy(x => x.Id)
+            .ApplyListSort(request, x => x.Title, x => x.SortOrder)
             .Skip((page - 1) * perPage).Take(perPage)
             .ToListAsync(ct);
 

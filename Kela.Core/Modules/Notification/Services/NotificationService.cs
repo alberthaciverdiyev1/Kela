@@ -1,3 +1,5 @@
+using Kela.Core.Common.Requests;
+using Kela.Core.Common.Sorting;
 using Kela.Core.Common.Push;
 using Kela.Core.Common.Responses;
 using Kela.Core.Common.Storage;
@@ -77,7 +79,7 @@ public sealed class NotificationService(
             query = query.Where(x => EF.Functions.ILike(x.Title, $"%{search}%"));
         }
 
-        return await PageAsync(query, page, perPage, ct);
+        return await PageAsync(query, request, page, perPage, ct);
     }
 
     public async Task DeleteAsync(long id, CancellationToken ct = default)
@@ -104,7 +106,7 @@ public sealed class NotificationService(
         var query = db.Notifications.AsNoTracking()
             .Where(n => n.All || db.NotificationStudents.Any(ns => ns.NotificationId == n.Id && ns.StudentId == studentId));
 
-        return await PageAsync(query, page, perPage, ct);
+        return await PageAsync(query, request, page, perPage, ct);
     }
 
     public async Task SaveTokenAsync(long studentId, SaveNotificationTokenRequest request, CancellationToken ct = default)
@@ -170,11 +172,11 @@ public sealed class NotificationService(
     }
 
     private async Task<PagedResponse<NotificationResponse>> PageAsync(
-        IQueryable<Notification> query, int page, int perPage, CancellationToken ct)
+        IQueryable<Notification> query, ListRequestBase request, int page, int perPage, CancellationToken ct)
     {
         var total = await query.CountAsync(ct);
         var items = await query
-            .OrderByDescending(x => x.Id)
+            .ApplyListSort(request, x => x.Title)
             .Skip((page - 1) * perPage)
             .Take(perPage)
             .ToListAsync(ct);

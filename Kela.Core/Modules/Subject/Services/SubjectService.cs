@@ -1,3 +1,4 @@
+using Kela.Core.Common.Sorting;
 using Kela.Core.Common.Responses;
 using Kela.Core.Common.Bulk;
 using Kela.Core.Data;
@@ -31,7 +32,7 @@ public sealed class SubjectService(AppDbContext db) : ISubjectService
 
         var total = await query.CountAsync(ct);
         var items = await query
-            .OrderByDescending(x => x.Id)
+            .ApplyListSort(request, x => x.Name)
             .Skip((page - 1) * perPage)
             .Take(perPage)
             .ToListAsync(ct);

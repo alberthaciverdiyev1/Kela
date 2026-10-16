@@ -1,3 +1,4 @@
+using Kela.Core.Common.Sorting;
 using Kela.Core.Common.Responses;
 using Kela.Core.Common.Storage;
 using Kela.Core.Common.Bulk;
@@ -48,7 +49,7 @@ public sealed class GroupService(AppDbContext db, IFileStorage storage, ITenantF
         var total = await query.CountAsync(ct);
         var items = await query
             .Include(x => x.Memberships)
-            .OrderByDescending(x => x.Id)
+            .ApplyListSort(request, x => x.Name)
             .Skip((page - 1) * perPage)
             .Take(perPage)
             .ToListAsync(ct);

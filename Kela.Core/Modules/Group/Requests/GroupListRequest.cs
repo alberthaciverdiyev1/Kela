@@ -1,8 +1,10 @@
 using Microsoft.AspNetCore.Mvc;
 
+using Kela.Core.Common.Requests;
+
 namespace Kela.Core.Modules.Group.Requests;
 
-public class GroupListRequest
+public class GroupListRequest : ListRequestBase
 {
     public string? Search { get; set; }
 
@@ -11,8 +13,4 @@ public class GroupListRequest
 
     [FromQuery(Name = "user_id")]
     public long? UserId { get; set; }
-
-    public int Page { get; set; } = 1;
-
-    public int PerPage { get; set; } = 20;
 }

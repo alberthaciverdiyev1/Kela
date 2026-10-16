@@ -48,8 +48,7 @@ public sealed class LessonService(AppDbContext db, IFileStorage storage, ITenant
 
         var total = await query.CountAsync(ct);
         var items = await query
-            .OrderBy(x => x.SortOrder)
-            .ThenBy(x => x.Id)
+            .ApplyListSort(request, x => x.Title, x => x.SortOrder)
             .Skip((page - 1) * perPage)
             .Take(perPage)
             .ToListAsync(ct);

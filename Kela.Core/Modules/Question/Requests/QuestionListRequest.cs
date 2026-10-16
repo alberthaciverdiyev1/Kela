@@ -1,8 +1,10 @@
 using Microsoft.AspNetCore.Mvc;
 
+using Kela.Core.Common.Requests;
+
 namespace Kela.Core.Modules.Question.Requests;
 
-public class QuestionListRequest
+public class QuestionListRequest : ListRequestBase
 {
     public string? Search { get; set; }
 
@@ -11,8 +13,4 @@ public class QuestionListRequest
 
     [FromQuery(Name = "is_deleted")]
     public int IsDeleted { get; set; }
-
-    public int Page { get; set; } = 1;
-
-    public int PerPage { get; set; } = 20;
 }
