@@ -9,6 +9,9 @@
     }
     <div class="relative mb-2 inline-block">
         <img id="@(id)_preview" alt="" class="hidden h-24 w-24 rounded-lg border border-slate-200 object-cover" />
+        @* Video faylı <img>-də göstərilmir — ayrı element lazımdır. *@
+        <video id="@(id)_preview_video" muted playsinline preload="metadata"
+               class="hidden h-24 w-24 rounded-lg border border-slate-200 bg-black object-cover"></video>
         <button type="button" id="@(id)_x" onclick="AdminUI.fileRemove('@id')" title="Sil"
                 class="hidden absolute -right-2 -top-2 grid h-6 w-6 place-items-center rounded-full bg-red-600 text-xs font-bold text-white shadow hover:bg-red-700">✕</button>
     </div>

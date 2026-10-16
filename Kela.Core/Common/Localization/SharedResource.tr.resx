@@ -295,6 +295,19 @@
 
 
 
+
+  <data name="Upload_Preparing" xml:space="preserve">
+    <value>{0} yükleniyor</value>
+  </data>
+  <data name="Upload_Done" xml:space="preserve">
+    <value>Yükleme tamamlandı</value>
+  </data>
+  <data name="Upload_Failed" xml:space="preserve">
+    <value>Yükleme başarısız</value>
+  </data>
+  <data name="Upload_Remaining" xml:space="preserve">
+    <value>{0} kaldı</value>
+  </data>
   <data name="Common_UploadDone" xml:space="preserve">
     <value>Başarıyla yüklendi</value>
   </data>

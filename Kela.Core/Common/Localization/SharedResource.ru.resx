@@ -295,6 +295,19 @@
 
 
 
+
+  <data name="Upload_Preparing" xml:space="preserve">
+    <value>{0} загружается</value>
+  </data>
+  <data name="Upload_Done" xml:space="preserve">
+    <value>Загрузка завершена</value>
+  </data>
+  <data name="Upload_Failed" xml:space="preserve">
+    <value>Загрузка не удалась</value>
+  </data>
+  <data name="Upload_Remaining" xml:space="preserve">
+    <value>осталось {0}</value>
+  </data>
   <data name="Common_UploadDone" xml:space="preserve">
     <value>Успешно загружено</value>
   </data>

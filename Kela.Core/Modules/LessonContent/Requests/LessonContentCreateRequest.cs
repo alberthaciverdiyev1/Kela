@@ -26,4 +26,11 @@ public class LessonContentCreateRequest
 
     /// <summary>Birbaşa R2-yə (presigned) yüklənmiş faylın yolu. File verilməzsə istifadə olunur.</summary>
     public string? Path { get; set; }
+
+    /// <summary>
+    /// Fayl sonra bağlanacaq: material dərhal yaranır, böyük video fonda yüklənib
+    /// <c>attach</c> ucu ilə əlavə olunur. Bu halda fayl tələb olunmur.
+    /// </summary>
+    [FromForm(Name = "defer_file")]
+    public bool DeferFile { get; set; }
 }

@@ -339,10 +339,23 @@ window.AdminUI = (function () {
         }
     }
 
-    function setPreview(id, url) {        const img = document.getElementById(id + '_preview');
-        if (!img) return;
-        img.src = url;
-        img.classList.remove('hidden');
+    function isVideoUrl(url) { return /\.(mp4|mov|m4v|webm|m3u8|mkv|avi)(\?|$)/i.test(url || ''); }
+
+    function setPreview(id, url, video) {
+        const img = document.getElementById(id + '_preview');
+        const vid = document.getElementById(id + '_preview_video');
+        if (!img && !vid) return;
+
+        if (video && vid) {
+            vid.src = url;
+            vid.classList.remove('hidden');
+            if (img) { img.classList.add('hidden'); img.removeAttribute('src'); }
+        } else if (img) {
+            img.src = url;
+            img.classList.remove('hidden');
+            if (vid) { vid.classList.add('hidden'); vid.removeAttribute('src'); }
+        }
+
         document.getElementById(id + '_x').classList.remove('hidden');
         const nameEl = document.getElementById(id + 'Name');
         if (nameEl) nameEl.textContent = '';
@@ -352,13 +365,18 @@ window.AdminUI = (function () {
     function filePreview(id) {
         const input = document.getElementById(id);
         if (!input || !input.files.length) return;
-        setPreview(id, URL.createObjectURL(input.files[0]));
+
+        const file = input.files[0];
+        setPreview(id, URL.createObjectURL(file), (file.type || '').startsWith('video/'));
     }
 
-    function fileSet(id, url) { if (url) setPreview(id, url); }
+    function fileSet(id, url) { if (url) setPreview(id, url, isVideoUrl(url)); }
 
     function fileRemove(id) {
-        document.getElementById(id + '_preview').classList.add('hidden');
+        const img = document.getElementById(id + '_preview');
+        const vid = document.getElementById(id + '_preview_video');
+        if (img) { img.classList.add('hidden'); img.removeAttribute('src'); }
+        if (vid) { vid.classList.add('hidden'); vid.removeAttribute('src'); }
         document.getElementById(id + '_x').classList.add('hidden');
         document.getElementById(id + '_remove').value = 'true';
         const input = document.getElementById(id);

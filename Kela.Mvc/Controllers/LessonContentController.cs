@@ -115,6 +115,21 @@ public sealed class LessonContentController(
         return Json(await service.CreateAsync(request, ct));
     }
 
+    /// <summary>Fon rejimində yüklənmiş faylı materiala bağlayır (yükləmə bitəndə çağırılır).</summary>
+    [HttpPost("{id:long}/file")]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> AttachFile(long id, [FromForm] LessonContentAttachRequest request, CancellationToken ct)
+    {
+        try
+        {
+            return Json(await service.AttachFileAsync(id, request, ct));
+        }
+        catch (ArgumentException ex)
+        {
+            return BadRequest(new { error = ex.Message });
+        }
+    }
+
     [HttpPut("{id:long}")]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Update(long id, [FromForm] LessonContentUpdateRequest request, CancellationToken ct)

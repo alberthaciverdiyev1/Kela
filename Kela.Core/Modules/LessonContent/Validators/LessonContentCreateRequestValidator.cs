@@ -18,7 +18,7 @@ public sealed class LessonContentCreateRequestValidator : AbstractValidator<Less
         RuleFor(x => x.Description).MaximumLength(500);
 
         RuleFor(x => x)
-            .Must(x => x.File is not null || !string.IsNullOrWhiteSpace(x.Path))
+            .Must(x => x.DeferFile || x.File is not null || !string.IsNullOrWhiteSpace(x.Path))
             .WithMessage(L["Validation_FileOrPathRequired"]);
     }
 }

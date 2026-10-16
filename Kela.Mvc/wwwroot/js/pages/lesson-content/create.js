@@ -50,8 +50,12 @@
     // Sürət ani ölçmələrlə təlaşlı olur; son bir neçə nümunənin ortası götürülür.
     let speedTracker = null;
 
-    function startProgress(totalBytes) {
+    function resetSpeed(totalBytes) {
         speedTracker = { total: totalBytes, lastAt: performance.now(), lastBytes: 0, samples: [] };
+    }
+
+    function startProgress(totalBytes) {
+        resetSpeed(totalBytes);
 
         const box = document.getElementById('uploadProgress');
         if (box) box.classList.remove('hidden');
@@ -180,10 +184,10 @@
         });
     }
 
-    async function uploadMultipart(file, lessonId, type, contentType) {
+    async function uploadMultipart(file, lessonId, contentType, onProgress) {
         const fd = new FormData();
         fd.append('lessonId', lessonId);
-        fd.append('type', type);
+        fd.append('type', 'video');
         fd.append('fileName', file.name);
         fd.append('contentType', contentType);
 
@@ -215,14 +219,18 @@
                     const put = await putWithProgress(u.url, blob, 'application/octet-stream',
                         (sent) => {
                             loaded[i] = sent;
-                            showProgress(overall(), loaded.reduce((a, b) => a + b, 0), file.size);
+                            const done = loaded.reduce((a, b) => a + b, 0);
+                            showProgress(overall(), done, file.size);
+                            if (onProgress) onProgress(done, file.size);
                         });
 
                     if (!put.ok) throw new Error('part ' + u.partNumber + ': ' + put.status);
 
                     loaded[i] = blob.size;
                     parts[u.partNumber - 1] = { partNumber: u.partNumber, eTag: put.etag };
-                    showProgress(overall(), loaded.reduce((a, b) => a + b, 0), file.size);
+                    const totalDone = loaded.reduce((a, b) => a + b, 0);
+                    showProgress(overall(), totalDone, file.size);
+                    if (onProgress) onProgress(totalDone, file.size);
                 }
             };
 
@@ -248,6 +256,82 @@
         done();
     }
 
+    // ---- Sağ alt künc: fon rejimində gedən yükləmə ----
+    // İstifadəçi modalı bağlayır, material artıq yaranıb, video isə hələ yüklənir.
+    function widgetShow(fileName) {
+        const w = document.getElementById('uploadWidget');
+        if (!w) return;
+
+        const bar = document.getElementById('uwBar');
+        w.classList.remove('hidden');
+        document.getElementById('uwTitle').textContent = fileName;
+        document.getElementById('uwStatus').textContent = L["Upload_Preparing"].replace('{0}', '');
+        document.getElementById('uwPercent').textContent = '0%';
+        bar.style.width = '0%';
+        bar.classList.remove('bg-emerald-500', 'bg-red-600');
+        bar.classList.add('bg-primary');
+        document.getElementById('uwSpeed').textContent = '';
+        document.getElementById('uwRemaining').textContent = '';
+    }
+
+    function formatClock(seconds) {
+        const s = Math.max(0, Math.round(seconds));
+        const m = Math.floor(s / 60);
+        return m > 0 ? m + ':' + String(s % 60).padStart(2, '0') : s + ' san';
+    }
+
+    function widgetProgress(loaded, total, speed) {
+        const pct = total ? Math.round(loaded / total * 100) : 0;
+        document.getElementById('uwPercent').textContent = pct + '%';
+        document.getElementById('uwBar').style.width = pct + '%';
+        document.getElementById('uwSpeed').textContent = speed ? formatBytes(speed) + '/s' : '';
+
+        const remaining = document.getElementById('uwRemaining');
+        if (speed > 0 && total > loaded) {
+            remaining.textContent = L["Upload_Remaining"].replace('{0}', formatClock((total - loaded) / speed));
+        } else {
+            remaining.textContent = '';
+        }
+    }
+
+    function widgetDone() {
+        const bar = document.getElementById('uwBar');
+        bar.style.width = '100%';
+        bar.classList.remove('bg-primary');
+        bar.classList.add('bg-emerald-500');
+        document.getElementById('uwPercent').textContent = '100%';
+        document.getElementById('uwStatus').textContent = L["Upload_Done"];
+        document.getElementById('uwSpeed').textContent = '';
+        document.getElementById('uwRemaining').textContent = '';
+
+        setTimeout(function () {
+            document.getElementById('uploadWidget').classList.add('hidden');
+        }, 4000);
+    }
+
+    function widgetFail(message) {
+        const bar = document.getElementById('uwBar');
+        bar.classList.remove('bg-primary', 'bg-emerald-500');
+        bar.classList.add('bg-red-600');
+        document.getElementById('uwStatus').textContent = message || L["Upload_Failed"];
+        document.getElementById('uwSpeed').textContent = '';
+        document.getElementById('uwRemaining').textContent = '';
+    }
+
+    // ---- Yükləmə strategiyası ----
+    async function uploadVideo(file, lessonId, contentType, onProgress) {
+        if (file.size > MP_THRESHOLD) {
+            return await uploadMultipart(file, lessonId, contentType, onProgress);
+        }
+
+        const urlRes = await AdminUI.post('/lesson-content/upload-url',
+            { lessonId, type: 'video', fileName: file.name, contentType });
+        if (!urlRes.ok || !urlRes.data?.uploadUrl) return null;
+
+        const put = await putWithProgress(urlRes.data.uploadUrl, file, contentType, onProgress);
+        return put.ok ? urlRes.data.path : null;
+    }
+
     form.addEventListener('submit', async (e) => {
         e.preventDefault();
         if (document.getElementById('entityId').value) return; // update.js idarə edir
@@ -261,24 +345,18 @@
         const isActive = document.getElementById('is_active').checked ? 'true' : 'false';
         const contentType = file.type || 'application/octet-stream';
 
+        // Video: istifadəçi yükləməni gözləmir — material dərhal yaranır, fayl fonda
+        // yüklənib sonra bağlanır. Digər növlər kiçikdir: əvvəl yüklənir, sonra yaranır
+        // (serverdən keçən ehtiyat yol da yalnız o axında mümkündür).
+        if (type === 'video') {
+            await submitDeferredVideo(file, lessonId, type, title, isActive, contentType);
+            return;
+        }
+
         try {
             lockModal(true);
             startProgress(file.size);
 
-            // 1) Böyük fayl -> çoxhissəli yükləmə (paralel, hissə-hissə bərpa oluna bilən)
-            if (file.size > MP_THRESHOLD) {
-                const path = await uploadMultipart(file, lessonId, type, contentType);
-                if (!path) { showError(L["Js_FileTooLarge"]); return; }
-
-                showSuccess(file.size);
-                const res = await AdminUI.post('/lesson-content',
-                    { lesson_id: lessonId, title, type, path, is_active: isActive });
-                if (res.ok) { await finishSuccess(file.size); return; }
-                showError(AdminUI.errText(res));
-                return;
-            }
-
-            // 2) Kiçik/orta fayl -> nazik presigned PUT (birbaşa R2)
             const urlRes = await AdminUI.post('/lesson-content/upload-url',
                 { lessonId, type, fileName: file.name, contentType });
             if (urlRes.ok && urlRes.data?.uploadUrl) {
@@ -295,7 +373,7 @@
                 }
             }
 
-            // 3) Ehtiyat: faylı serverə göndər — yalnız limitə sığan fayllar üçün
+            // Ehtiyat: faylı serverə göndər — yalnız limitə sığan fayllar üçün
             if (file.size > SERVER_FALLBACK_MAX) { showError(L["Js_FileTooLarge"]); return; }
 
             const fd = new FormData();
@@ -316,4 +394,49 @@
             AdminUI.loader(false);
         }
     });
+
+    // Materialı dərhal yaradır, modalı bağlayır və yükləməni fonda davam etdirir.
+    async function submitDeferredVideo(file, lessonId, type, title, isActive, contentType) {
+        try {
+            lockModal(true);
+
+            const created = await AdminUI.post('/lesson-content',
+                { lesson_id: lessonId, title, type, is_active: isActive, defer_file: 'true' });
+
+            if (!created.ok) { showError(AdminUI.errText(created)); return; }
+
+            const contentId = created.data?.id;
+            if (!contentId) { showError(L["Js_ErrorOccured"]); return; }
+
+            lockModal(false);
+            window.closeModal();
+            loadList(1);
+
+            widgetShow(file.name);
+            resetSpeed(file.size);
+
+            let speed = 0;
+            const path = await uploadVideo(file, lessonId, contentType, function (loaded, total) {
+                speed = measureSpeed(loaded) || speed;
+                widgetProgress(loaded, total, speed);
+            });
+
+            if (!path) { widgetFail(L["Js_FileTooLarge"]); return; }
+
+            // Yükləmə bitdi — faylı materiala bağlayırıq.
+            // Form göndərilir: 'type' enum-dur və form binder onu adından çözür,
+            // JSON binder isə yalnız rəqəm qəbul edərdi.
+            const attached = await AdminUI.post(`/lesson-content/${contentId}/file`,
+                { path: path, type: type });
+
+            if (attached.ok) { widgetDone(); loadList(1); }
+            else { widgetFail(AdminUI.errText(attached)); }
+        } catch (err) {
+            widgetFail(String(err && err.message ? err.message : err));
+        } finally {
+            lockModal(false);
+            hideProgress();
+            AdminUI.loader(false);
+        }
+    }
 })();
