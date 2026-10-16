@@ -100,11 +100,13 @@ public class WorkerEndToEndTests(ApiFactory factory) : IDisposable
 
         var videoId = await SeedRealVideoAsync();
 
+        // Test öz ayar faylını işlədir — istifadəçinin real konfiqurasiyası toxunulmaz qalır.
         var settings = new WorkerSettings
         {
             ApiUrl = factory.Server.BaseAddress.ToString().TrimEnd('/'),
             NodeName = NodeTestHarness.Unique("e2e-node"),
-            CacheDirectory = _cache
+            CacheDirectory = _cache,
+            SettingsPath = Path.Combine(_cache, "settings.json")
         };
 
         settings.Limits.MaxConcurrentJobs = 2;

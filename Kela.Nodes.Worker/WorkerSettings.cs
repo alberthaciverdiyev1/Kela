@@ -55,7 +55,14 @@ public sealed class WorkerSettings
     public static string DefaultCacheDirectory()
         => Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "KelaNodes", "cache");
 
-    private static string SettingsPath
+    /// <summary>
+    /// Ayar faylının yeri. Testlər öz müvəqqəti faylını verir — əks halda test
+    /// işə düşəndə istifadəçinin real konfiqurasiyasını (və tokenini) üzərinə yazır.
+    /// </summary>
+    [JsonIgnore]
+    public string SettingsPath { get; set; } = DefaultSettingsPath();
+
+    public static string DefaultSettingsPath()
         => Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "KelaNodes", "settings.json");
 
     private static readonly JsonSerializerOptions Options = new()
@@ -65,15 +72,22 @@ public sealed class WorkerSettings
         PropertyNameCaseInsensitive = true
     };
 
-    public static WorkerSettings Load()
+    public static WorkerSettings Load(string? path = null)
     {
+        var target = path ?? DefaultSettingsPath();
+
         try
         {
-            if (File.Exists(SettingsPath))
+            if (File.Exists(target))
             {
-                var json = File.ReadAllText(SettingsPath);
+                var json = File.ReadAllText(target);
                 var loaded = JsonSerializer.Deserialize<WorkerSettings>(json, Options);
-                if (loaded is not null) return loaded;
+
+                if (loaded is not null)
+                {
+                    loaded.SettingsPath = target;
+                    return loaded;
+                }
             }
         }
         catch (Exception ex) when (ex is IOException or JsonException or UnauthorizedAccessException)
@@ -81,12 +95,14 @@ public sealed class WorkerSettings
             // Konfiqurasiya oxunmasa default-larla davam edilir — worker yenə işə düşsün.
         }
 
-        return new WorkerSettings();
+        return new WorkerSettings { SettingsPath = target };
     }
 
     public void Save()
     {
-        var directory = Path.GetDirectoryName(SettingsPath)!;
+        var directory = Path.GetDirectoryName(SettingsPath);
+        if (string.IsNullOrEmpty(directory)) return;
+
         Directory.CreateDirectory(directory);
 
         File.WriteAllText(SettingsPath, JsonSerializer.Serialize(this, Options));
