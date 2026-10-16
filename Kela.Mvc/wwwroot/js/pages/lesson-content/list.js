@@ -4,6 +4,39 @@ let showDeleted = false;
 const TYPE_TEXT = { video: 'Video', file: 'Fayl', voice: L["Js_Voice"] };
 const CONTENT = {};
 
+const TYPE_TONE = {
+    video: 'bg-violet-100 text-violet-700',
+    file:  'bg-sky-100 text-sky-600',
+    voice: 'bg-warning-bg text-warning'
+};
+
+const TYPE_ICON = {
+    video: '<path stroke-linecap="round" stroke-linejoin="round" d="m10 9 5 3-5 3V9ZM4 6.5A2.5 2.5 0 0 1 6.5 4h11A2.5 2.5 0 0 1 20 6.5v11a2.5 2.5 0 0 1-2.5 2.5h-11A2.5 2.5 0 0 1 4 17.5v-11Z" />',
+    file:  '<path stroke-linecap="round" stroke-linejoin="round" d="M7 3h7l5 5v13H7V3Zm7 0v5h5M10 13h6M10 17h4" />',
+    voice: '<path stroke-linecap="round" stroke-linejoin="round" d="M12 3a3 3 0 0 1 3 3v5a3 3 0 0 1-6 0V6a3 3 0 0 1 3-3Zm-7 8a7 7 0 0 0 14 0M12 18v3" />'
+};
+
+// Şəkil kimi göstərilə bilən material: video üçün konversiyadan çıxan thumbnail,
+// qalan hallarda (şəkil faylı, şəkil URL-i) materialın özü.
+function previewImage(c) {
+    if (c.thumbnailUrl) return c.thumbnailUrl;
+    if (/^data:image\//i.test(c.url || '')) return c.url;
+    if (/\.(png|jpe?g|gif|webp|svg|avif)($|\?)/i.test(c.url || '')) return c.url;
+    return null;
+}
+
+function contentThumb(c) {
+    const src = previewImage(c);
+    if (src) {
+        return `<img src="${src}" alt="" class="h-11 w-11 shrink-0 rounded-xl bg-slate-100 object-cover" />`;
+    }
+    const tone = TYPE_TONE[c.type] ?? 'bg-slate-100 text-slate-500';
+    const icon = TYPE_ICON[c.type] ?? '';
+    return `<span class="grid h-11 w-11 shrink-0 place-items-center rounded-xl ${tone}">
+        <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.9">${icon}</svg>
+    </span>`;
+}
+
 function toggleTrash() {
     showDeleted = !showDeleted;
     AdminUI.syncTrashButton('trashBtn', showDeleted);
@@ -27,7 +60,7 @@ async function loadList(page) {
 
     AdminUI.table('rows', data.data.map((c, i) => [
         { html: AdminUI.rowNo(c, i, currentPage, data.perPage), cls: 'text-slate-400' },
-        { html: c.title, cls: 'font-medium text-slate-800' },
+        { html: `<div class="flex items-center gap-4">${contentThumb(c)}<span class="font-medium text-slate-800">${c.title}</span></div>` },
         { html: TYPE_TEXT[c.type] ?? '-', cls: 'text-slate-500' },
         { html: statusBadge(c) },
         { html: c.url ? `<button type="button" class="text-primary hover:underline" onclick="previewContent(${c.id})">${L["Js_View"]}</button>` : '-' },
