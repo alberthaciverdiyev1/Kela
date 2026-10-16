@@ -7,6 +7,8 @@ public class Quiz : BaseEntity, ISortable
 {
     public long? LessonId { get; set; }
 
+    public Kela.Core.Modules.Lesson.Entities.Lesson? Lesson { get; set; }
+
     public string Title { get; set; } = string.Empty;
 
     public int DurationMinutes { get; set; }

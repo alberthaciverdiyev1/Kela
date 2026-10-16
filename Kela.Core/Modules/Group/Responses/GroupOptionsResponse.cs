@@ -1,6 +1,7 @@
 namespace Kela.Core.Modules.Group.Responses;
 
-public record OptionItem(long Id, string Text);
+/// <summary>Group — siyahıda başlıq altında qruplaşdırmaq üçün (məs. imtahanın dərsi).</summary>
+public record OptionItem(long Id, string Text, string? Group = null);
 
 public record GroupOptionsResponse(
     IReadOnlyList<OptionItem> Students,

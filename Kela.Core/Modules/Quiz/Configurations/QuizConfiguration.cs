@@ -22,7 +22,7 @@ public sealed class QuizConfiguration : IEntityTypeConfiguration<Quiz>
         builder.Property(x => x.SortOrder).HasColumnName("sort_order");
         builder.Property(x => x.UserId).HasColumnName("user_id");
 
-        builder.HasOne<Lesson>().WithMany().HasForeignKey(x => x.LessonId).OnDelete(DeleteBehavior.SetNull).IsRequired(false);
+        builder.HasOne(x => x.Lesson).WithMany().HasForeignKey(x => x.LessonId).OnDelete(DeleteBehavior.SetNull).IsRequired(false);
 
         builder.Property(x => x.CreatedAt).HasColumnName("created_at");
         builder.Property(x => x.UpdatedAt).HasColumnName("updated_at");

@@ -88,7 +88,7 @@ public sealed class GroupController(
         return Json(new GroupOptionsResponse(
             studentList.Data.Select(s => new OptionItem(s.Id, s.FullName)).ToList(),
             subjectList.Data.Select(s => new OptionItem(s.Id, s.Name)).ToList(),
-            quizList.Data.Select(q => new OptionItem(q.Id, q.Title)).ToList()));
+            quizList.Data.Select(q => new OptionItem(q.Id, q.Title, q.LessonTitle)).ToList()));
     }
 
     [HttpGet("{id:long}/students")]

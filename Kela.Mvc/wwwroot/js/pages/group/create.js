@@ -109,14 +109,25 @@
         if (e.target.matches && e.target.matches('#subjectsList input, #studentsList input, #quizzesList input')) updateCounts();
     });
 
-    function renderCheckList(containerId, items) {
+    function renderCheckList(containerId, items, checked) {
         const box = document.getElementById(containerId);
         if (!items.length) { box.innerHTML = '<div class="p-3 text-sm text-slate-400">' + L["Js_Empty"] + '</div>'; return; }
-        box.innerHTML = items.map(o =>
-            `<label class="flex cursor-pointer items-center gap-3 rounded-lg px-3 py-2 hover:bg-surface-secondary" data-name="${(o.text || '').toLowerCase()}">
-                <input type="checkbox" value="${o.id}" class="h-4 w-4 rounded border-slate-300 text-primary focus:ring-primary" />
+
+        // Elementlərin "group" sahəsi varsa (məs. imtahanın dərsi) başlıqlar altında yığılır.
+        let lastGroup = null;
+        box.innerHTML = items.map(o => {
+            let header = '';
+            const group = o.group || '';
+            if (group !== lastGroup) {
+                lastGroup = group;
+                header = `<div class="px-3 pt-3 pb-1 text-xs font-bold uppercase tracking-wide text-slate-400">${group || L["Common_General"]}</div>`;
+            }
+            return header + `
+            <label class="flex cursor-pointer items-center gap-3 rounded-lg px-3 py-2 hover:bg-surface-secondary" data-name="${(o.text || '').toLowerCase()}">
+                <input type="checkbox" value="${o.id}" ${checked ? 'checked' : ''} class="h-4 w-4 rounded border-slate-300 text-primary focus:ring-primary" />
                 <span class="text-sm text-slate-700">${o.text}</span>
-            </label>`).join('');
+            </label>`;
+        }).join('');
     }
 
     function collect(containerId) {
@@ -129,7 +140,9 @@
         options = await AdminUI.get('/group/options');
         renderCheckList('subjectsList', options.subjects || []);
         renderCheckList('studentsList', options.students || []);
-        renderCheckList('quizzesList', options.quizzes || []);
+        // İmtahanlar qrupa əvvəlcədən hamısı seçilmiş gəlir.
+        renderCheckList('quizzesList', options.quizzes || [], true);
+        updateCounts();
     }
 
     window.filterCheckList = function (containerId, q) {

@@ -45,7 +45,7 @@ public sealed class QuizService(AppDbContext db, IFileStorage storage) : IQuizSe
 
         var total = await query.CountAsync(ct);
         var items = await query
-            .Include(x => x.Questions)
+            .Include(x => x.Questions).Include(x => x.Lesson)
             .ApplyListSort(request, x => x.Title, x => x.SortOrder)
             .Skip((page - 1) * perPage)
             .Take(perPage)
@@ -60,7 +60,7 @@ public sealed class QuizService(AppDbContext db, IFileStorage storage) : IQuizSe
     public async Task<QuizResponse> GetAsync(long id, CancellationToken ct = default)
     {
         var quiz = await db.Quizzes.IgnoreQueryFilters(new[] { "SoftDelete" }).AsNoTracking()
-            .Include(x => x.Questions)
+            .Include(x => x.Questions).Include(x => x.Lesson)
             .FirstOrDefaultAsync(x => x.Id == id, ct)
             ?? throw new KeyNotFoundException($"Quiz not found: {id}");
 
@@ -91,7 +91,7 @@ public sealed class QuizService(AppDbContext db, IFileStorage storage) : IQuizSe
     public async Task<QuizResponse> UpdateAsync(long id, QuizUpsertRequest request, CancellationToken ct = default)
     {
         var quiz = await db.Quizzes.IgnoreQueryFilters(new[] { "SoftDelete" })
-            .Include(x => x.Questions)
+            .Include(x => x.Questions).Include(x => x.Lesson)
             .FirstOrDefaultAsync(x => x.Id == id, ct)
             ?? throw new KeyNotFoundException($"Quiz not found: {id}");
 
@@ -206,7 +206,8 @@ public sealed class QuizService(AppDbContext db, IFileStorage storage) : IQuizSe
         => type == "image" && !string.IsNullOrWhiteSpace(value) ? storage.GetUrl(value) : null;
 
     private static QuizResponse ToResponse(Quiz quiz) =>
-        new(quiz.Id, quiz.LessonId, quiz.Title, quiz.DurationMinutes, quiz.Type, quiz.IsActive, quiz.IsRepeat, quiz.SortOrder, quiz.Questions.Count);
+        new(quiz.Id, quiz.LessonId, quiz.Title, quiz.DurationMinutes, quiz.Type, quiz.IsActive, quiz.IsRepeat,
+            quiz.SortOrder, quiz.Questions.Count, quiz.Lesson?.Title);
 
     public Task BulkAsync(BulkRequest request, CancellationToken ct = default)
         => BulkHelper.ApplyAsync<Quiz>(db, request, ct);
