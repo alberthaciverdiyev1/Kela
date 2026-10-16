@@ -508,6 +508,7 @@ window.AdminUI = (function () {
         }
 
         document.getElementById(id + '_x').classList.remove('hidden');
+        toggleHidden(id + '_upload', true);   // fayl varsa yükləmə sahəsi görünməsin
         const nameEl = document.getElementById(id + 'Name');
         if (nameEl) nameEl.textContent = '';
         document.getElementById(id + '_remove').value = 'false';
@@ -528,6 +529,8 @@ window.AdminUI = (function () {
 
         const x = document.getElementById(id + '_x');
         if (x) x.classList.add('hidden');
+
+        toggleHidden(id + '_upload', false);   // fayl götürüldü — yükləmə sahəsi geri gəlir
 
         const rm = document.getElementById(id + '_remove');
         if (rm) rm.value = 'false';
@@ -555,6 +558,7 @@ window.AdminUI = (function () {
         if (img) { img.classList.add('hidden'); img.removeAttribute('src'); }
         if (vid) { vid.classList.add('hidden'); vid.removeAttribute('src'); }
         document.getElementById(id + '_x').classList.add('hidden');
+        toggleHidden(id + '_upload', false);
         document.getElementById(id + '_remove').value = 'true';
         const input = document.getElementById(id);
         if (input) input.value = '';
