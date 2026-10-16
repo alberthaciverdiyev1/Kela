@@ -1,0 +1,25 @@
+@model EditorModel
+@{
+    var id = Model.Id ?? Model.Name;
+}
+@* Sadə rich editor: HTML yenə gizli textarea-ya yazılır, ona görə formanın
+   göndərilməsi dəyişmir (JS: AdminUI.initEditors). *@
+<div>
+    <label class="mb-1 block text-sm font-semibold text-slate-600">@Model.Label</label>
+    <div class="admin-editor" data-for="@id">
+        <div class="admin-editor-toolbar">
+            <button type="button" data-cmd="bold" title="Qalın"><b>B</b></button>
+            <button type="button" data-cmd="italic" title="Kursiv"><i>I</i></button>
+            <button type="button" data-cmd="underline" title="Altıxətli"><u>U</u></button>
+            <button type="button" data-cmd="formatBlock" data-value="h2" title="Başlıq 2">H2</button>
+            <button type="button" data-cmd="formatBlock" data-value="h3" title="Başlıq 3">H3</button>
+            <button type="button" data-cmd="formatBlock" data-value="p" title="Abzas">¶</button>
+            <button type="button" data-cmd="insertUnorderedList" title="İşarəli siyahı">•</button>
+            <button type="button" data-cmd="insertOrderedList" title="Nömrəli siyahı">1.</button>
+            <button type="button" data-cmd="createLink" title="Keçid">🔗</button>
+            <button type="button" data-cmd="removeFormat" title="Formatı təmizlə">✕</button>
+        </div>
+        <div class="admin-editor-body" contenteditable="true"></div>
+    </div>
+    <textarea id="@id" name="@Model.Name" class="hidden"></textarea>
+</div>

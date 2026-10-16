@@ -344,6 +344,7 @@ window.AdminUI = (function () {
         if (!modal) return;
         // Sahələr JS ilə doldurulub — açılan siyahıların etiketi təzələnsin.
         modal.querySelectorAll('select[data-enhanced]').forEach(syncSelect);
+        syncEditors(modal);
         modal.dispatchEvent(new CustomEvent('modal:open'));
         modal.classList.remove('hidden');
         modal.classList.add('flex');
@@ -404,6 +405,51 @@ window.AdminUI = (function () {
             e.stopImmediatePropagation();
         }
     }, true);
+
+    // --- Rich editor ---
+    // contenteditable + sadə alətlər paneli; HTML gizli textarea-ya yazılır ki,
+    // formaların göndərilməsi dəyişməsin.
+    function initEditors(root) {
+        (root || document).querySelectorAll('.admin-editor[data-for]').forEach(editor => {
+            if (editor.dataset.ready === '1') return;
+            editor.dataset.ready = '1';
+
+            const field = document.getElementById(editor.dataset.for);
+            const body = editor.querySelector('.admin-editor-body');
+            if (!field || !body) return;
+
+            const sync = () => { field.value = body.innerHTML.trim(); };
+            body.addEventListener('input', sync);
+            body.addEventListener('blur', sync);
+
+            editor.querySelectorAll('[data-cmd]').forEach(btn => {
+                // Klik zamanı seçim itməsin.
+                btn.addEventListener('mousedown', (e) => e.preventDefault());
+                btn.addEventListener('click', async () => {
+                    const cmd = btn.dataset.cmd;
+                    body.focus();
+                    if (cmd === 'createLink') {
+                        const url = await swal({ input: 'url', title: 'Keçid', inputPlaceholder: 'https://' });
+                        if (url.value) document.execCommand('createLink', false, url.value);
+                    } else {
+                        document.execCommand(cmd, false, btn.dataset.value || null);
+                    }
+                    sync();
+                });
+            });
+        });
+    }
+
+    // Redaktə açılanda editor məzmunu sahədən təzələnir (JS dəyəri yazır).
+    function syncEditors(root) {
+        (root || document).querySelectorAll('.admin-editor[data-for]').forEach(editor => {
+            const field = document.getElementById(editor.dataset.for);
+            const body = editor.querySelector('.admin-editor-body');
+            if (field && body) body.innerHTML = field.value || '';
+        });
+    }
+
+    document.addEventListener('DOMContentLoaded', () => initEditors());
 
     // --- Status açarı ---
     // Görünüşü ortaqdır; əməliyyatı səhifə özü edir (adi redaktə endpoint-i ilə),
@@ -581,6 +627,7 @@ window.AdminUI = (function () {
         // reset() onları boşaltmır, ona görə əl ilə sıfırlanır.
         form.querySelectorAll('input[type=hidden]').forEach(input => { input.value = ''; });
         form.querySelectorAll('input[type=file]').forEach(input => { if (input.id) fileReset(input.id); });
+        form.querySelectorAll('.admin-editor-body').forEach(el => { el.innerHTML = ''; });
     }
 
     function openModals() {
@@ -820,5 +867,5 @@ window.AdminUI = (function () {
         _filterTimer = setTimeout(filterReload, 350);
     });
 
-    return { notify, error, errText, openModal, closeModal, swal, resetForm, validateForm, enhanceSelects, syncSelect, badge, chip, statCard, statusSwitch, actions, actionButton, actionLink, rowActions, confirmDelete, confirmRestore, restoreItem, restoreButton, syncTrashButton, toggleHidden, get, post, postForm, putForm, postJson, putJson, del, table, setInfo, addSort, selectedIds, bulkDo, sortToggle, openSort, closeSort, persistSort, loader, pagination, filePreview, fileSet, fileRemove, fileReset, rowNo, token, reloadAfter, downloadCsv };
+    return { notify, error, errText, openModal, closeModal, swal, resetForm, validateForm, enhanceSelects, syncSelect, initEditors, syncEditors, badge, chip, statCard, statusSwitch, actions, actionButton, actionLink, rowActions, confirmDelete, confirmRestore, restoreItem, restoreButton, syncTrashButton, toggleHidden, get, post, postForm, putForm, postJson, putJson, del, table, setInfo, addSort, selectedIds, bulkDo, sortToggle, openSort, closeSort, persistSort, loader, pagination, filePreview, fileSet, fileRemove, fileReset, rowNo, token, reloadAfter, downloadCsv };
 })();

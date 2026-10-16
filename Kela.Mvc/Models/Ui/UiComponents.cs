@@ -71,6 +71,15 @@ public class BulkBarModel
     public bool CanDeactivate { get; set; }
 }
 
+public class EditorModel
+{
+    public string Name { get; set; } = "content";
+
+    public string? Id { get; set; }
+
+    public string Label { get; set; } = string.Empty;
+}
+
 public class ModalModel
 {
     public string Id { get; set; } = "modal";
