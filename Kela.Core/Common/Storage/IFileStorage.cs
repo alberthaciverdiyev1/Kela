@@ -31,6 +31,9 @@ public interface IFileStorage
     /// <summary>Yüklənən faylın həqiqətən mövcud olduğunu yoxlayır.</summary>
     Task<bool> ExistsAsync(string path, CancellationToken ct = default);
 
+    /// <summary>Obyektin ölçüsü (bayt). Yoxdursa null. Büyük videonu tanımaq üçün.</summary>
+    Task<long?> GetSizeAsync(string path, CancellationToken ct = default);
+
     /// <summary>
     /// Orijinal fayl adını saxlayaraq boş açar qurur; ad tutulubsa "-1", "-2" artırılır.
     /// İstifadəçi verdiyi adı görmək istədiyi üçün GUID əvəzinə həmin ad saxlanılır.

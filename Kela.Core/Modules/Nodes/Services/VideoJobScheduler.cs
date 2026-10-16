@@ -156,7 +156,8 @@ public sealed class VideoJobScheduler(
             .ToListAsync(ct);
     }
 
-    public async Task<IReadOnlyList<JobAssignment>> ClaimAsync(WorkerNode node, int max, CancellationToken ct = default)
+    public async Task<IReadOnlyList<JobAssignment>> ClaimAsync(
+        WorkerNode node, int max, long? preferVideoId = null, CancellationToken ct = default)
     {
         var capacity = Math.Min(node.MaxConcurrentJobs, Settings.MaxConcurrentJobsPerNode) - node.ActiveJobs;
         var take = Math.Min(max, capacity);
@@ -179,7 +180,11 @@ public sealed class VideoJobScheduler(
                     -- bir videonun bütün pillələri paralel paylanır və video tam
                     -- hazır olur; əvvəlki sıralamada bütün 1080p-lər əvvəl
                     -- götürüldüyü üçün heç bir video tamamlanmırdı.
-                    ORDER BY video_id, priority DESC, id
+                    ORDER BY
+                        CASE WHEN {preferVideoId}::bigint IS NOT NULL AND video_id = {preferVideoId} THEN 0 ELSE 1 END,
+                        video_id,
+                        priority DESC,
+                        id
                     LIMIT {take}
                     FOR UPDATE SKIP LOCKED
                     """)
@@ -225,6 +230,14 @@ public sealed class VideoJobScheduler(
             .Select(v => new { v.Id, v.Path, v.DurationSeconds })
             .ToListAsync(ct);
 
+        // HEAD sorğusu ilə ölçü öyrənilir: böyük videonu tanımaq üçün lazımdır.
+        var sizes = new Dictionary<long, long>();
+
+        foreach (var video in videos)
+        {
+            if (await storage.GetSizeAsync(video.Path, ct) is { } size) sizes[video.Id] = size;
+        }
+
         // Merdiven bu versiyanın qardaş tapşırıqlarından qurulur — koordinator master
         // playlist-i yalnız həqiqətən mövcud olan variantlardan yazır.
         var siblings = await db.VideoJobs.IgnoreQueryFilters()
@@ -263,6 +276,7 @@ public sealed class VideoJobScheduler(
                 OutputPrefix = job.OutputPrefix,
                 MasterKey = NodePaths.MasterKey(job.OutputPrefix),
                 DurationSeconds = video.DurationSeconds,
+                SourceBytes = sizes.TryGetValue(video.Id, out var size) ? size : null,
                 SourceHeight = job.SourceHeight,
                 SourceWidth = job.SourceWidth,
                 SourceFps = job.SourceFps,

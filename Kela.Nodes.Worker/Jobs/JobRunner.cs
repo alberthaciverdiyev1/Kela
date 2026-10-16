@@ -28,6 +28,33 @@ public sealed class RunningJob(JobAssignment assignment)
 
     public int? EtaSeconds { get; set; }
 
+    /// <summary>Hansı kodlaşdırma zolağında işləyir (məs. "GPU 0 · nvenc").</summary>
+    public string Lane { get; set; } = "—";
+
+    /// <summary>Oxunaqlı mənbə adı (məs. ScreenRecording_08-08-2025.mp4).</summary>
+    public string SourceName { get; set; } = "—";
+
+    public long DownloadedBytes { get; set; }
+
+    public long TotalBytes { get; set; }
+
+    /// <summary>Mənbənin elan olunmuş ölçüsü (koordinatordan) — böyük videonu tanımaq üçün.</summary>
+    public long SourceBytes { get; } = assignment.SourceBytes ?? 0;
+
+    /// <summary>Ölçüsünə görə böyük video sayılır.</summary>
+    public bool IsBigVideo(long threshold) => SourceBytes >= threshold;
+
+    public double DownloadMegabytesPerSecond { get; set; }
+
+    /// <summary>Endirmə mətnı: "12.4 / 320.0 MB · 8.3 MB/s".</summary>
+    public string TransferText => TotalBytes > 0
+        ? $"{DownloadedBytes / 1024d / 1024d:0.#} / {TotalBytes / 1024d / 1024d:0.#} MB"
+        : DownloadedBytes > 0 ? $"{DownloadedBytes / 1024d / 1024d:0.#} MB" : "—";
+
+    public string TransferSpeedText => DownloadMegabytesPerSecond > 0
+        ? $"{DownloadMegabytesPerSecond:0.#} MB/s"
+        : "—";
+
     /// <summary>Mənbə buraxıldıqdan sonra dəqiqləşir — yüngül iş paralel artırıla bilər.</summary>
     public bool IsLight { get; set; }
 
@@ -77,6 +104,7 @@ public sealed class JobRunner(
     public async Task<JobOutcome> RunAsync(
         JobAssignment assignment,
         EncoderCapabilities capabilities,
+        EncoderLane lane,
         RunningJob state,
         string nodeToken,
         CancellationToken ct = default)
@@ -89,10 +117,15 @@ public sealed class JobRunner(
 
             state.Stage = JobStatus.Downloading;
 
-            var download = new Progress<long>(percent =>
+            state.SourceName = Path.GetFileName(assignment.SourceKey);
+
+            var download = new Progress<TransferProgress>(transfer =>
             {
-                state.Progress = percent / 100d;
-                state.Message = $"Endirilir: {percent}%";
+                state.DownloadedBytes = transfer.Bytes;
+                state.TotalBytes = transfer.TotalBytes;
+                state.DownloadMegabytesPerSecond = transfer.MegabytesPerSecond;
+                state.Progress = transfer.TotalBytes > 0 ? (double)transfer.Bytes / transfer.TotalBytes : 0;
+                state.Message = $"{state.SourceName}: {state.TransferText} · {state.TransferSpeedText}";
             });
 
             var source = await sources.AcquireAsync(
@@ -115,7 +148,7 @@ public sealed class JobRunner(
                 Media = media.ToSourceMediaInfo()
             }, ct);
 
-            var failure = await EncodeAsync(assignment, media, capabilities, jobDirectory, source, state, ct);
+            var failure = await EncodeAsync(assignment, media, lane, jobDirectory, source, state, ct);
             if (failure is not null) return failure;
 
             failure = await UploadAsync(assignment, jobDirectory, state, nodeToken, ct);
@@ -129,7 +162,7 @@ public sealed class JobRunner(
                 VariantKey = $"{assignment.Resolution}/index.m3u8",
                 Objects = [.. CollectFiles(assignment, jobDirectory).Select(f => f.Key)],
                 Fps = state.Fps > 0 ? state.Fps : null,
-                Encoder = capabilities.Chosen.Name
+                Encoder = lane.Name
             }, ct);
 
             if (complete.IsOk)
@@ -162,7 +195,7 @@ public sealed class JobRunner(
     }
 
     private async Task<JobOutcome?> EncodeAsync(
-        JobAssignment assignment, MediaInfo media, EncoderCapabilities capabilities,
+        JobAssignment assignment, MediaInfo media, EncoderLane lane,
         string jobDirectory, string source, RunningJob state, CancellationToken ct)
     {
         state.Stage = JobStatus.Processing;
@@ -199,26 +232,26 @@ public sealed class JobRunner(
             Input = source,
             OutputDirectory = Path.Combine(jobDirectory, assignment.Resolution),
             Profile = assignment.Profile,
-            Encoder = capabilities.Chosen,
+            Encoder = new EncoderChoice(lane.Name, lane.HwAccel, lane.Hardware),
+            GpuIndex = lane.Hardware ? lane.GpuIndex : -1,
             SourceHeight = media.Height,
             SourceFps = media.Fps,
             DurationSeconds = media.DurationSeconds,
             VideoStreamIndex = media.VideoStreamIndex,
             AudioStreamIndex = media.HasAudio ? media.AudioStreamIndex : -1,
             SegmentSeconds = 8,
-            Threads = profile?.CpuThreads ?? settings.Limits.MaxCpuThreads,
+            Threads = lane.Hardware ? 0 : Math.Max(1, profile?.CpuThreads ?? settings.Limits.MaxCpuThreads),
             // Aparat encoder-i öz preset adlarını işlədir (p1..p7), CPU isə veryfast/fast.
-            Preset = capabilities.Chosen.Name == "h264_nvenc"
-                ? profile?.NvencPreset ?? string.Empty
-                : profile?.Libx264Preset ?? string.Empty,
-            BelowNormalPriority = profile?.BelowNormalPriority ?? false
+            // Zolağın öz preset-i: GPU zolağı p1/p4/p6, CPU zolağı veryfast.
+            Preset = lane.Preset,
+            BelowNormalPriority = lane.BelowNormalPriority
         };
 
         var outcome = await encoder.EncodeAsync(request, progress, request.BelowNormalPriority, ct);
 
         if (!outcome.Success)
         {
-            log.Error("job", $"İş {assignment.JobId} kodlaşdırıla bilmədi: {outcome.Error}");
+            log.Error("job", $"İş {assignment.JobId} ({lane.Name}) kodlaşdırıla bilmədi: {outcome.Error}");
 
             return new JobOutcome(false, outcome.Error, ClassifyEncodeError(outcome.Error));
         }

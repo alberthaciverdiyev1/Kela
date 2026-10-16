@@ -73,8 +73,10 @@ public sealed class CoordinatorClient(HttpClient http, WorkerSettings settings, 
     public Task<CoordinatorResult<NodeRotateTokenResponse>> RotateTokenAsync(CancellationToken ct = default)
         => SendAsync<NodeRotateTokenResponse>(HttpMethod.Post, "token/rotate", new { }, authenticated: true, ct);
 
-    public Task<CoordinatorResult<IReadOnlyList<JobAssignment>>> ClaimAsync(int max, CancellationToken ct = default)
-        => SendAsync<IReadOnlyList<JobAssignment>>(HttpMethod.Post, "jobs/claim", new JobClaimRequest { Max = max }, authenticated: true, ct);
+    public Task<CoordinatorResult<IReadOnlyList<JobAssignment>>> ClaimAsync(
+        int max, long? preferVideoId = null, CancellationToken ct = default)
+        => SendAsync<IReadOnlyList<JobAssignment>>(HttpMethod.Post, "jobs/claim",
+            new JobClaimRequest { Max = max, PreferVideoId = preferVideoId }, authenticated: true, ct);
 
     public Task<CoordinatorResult<object>> ProgressAsync(long jobId, JobProgressRequest request, CancellationToken ct = default)
         => SendAsync<object>(HttpMethod.Post, $"jobs/{jobId}/progress", request, authenticated: true, ct);

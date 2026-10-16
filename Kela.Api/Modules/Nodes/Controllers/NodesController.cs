@@ -78,7 +78,7 @@ public sealed class NodesController(
         [FromBody] JobClaimRequest request, CancellationToken ct)
     {
         var max = Math.Clamp(request.Max <= 0 ? 1 : request.Max, 1, 8);
-        return Success(await scheduler.ClaimAsync(Node, max, ct));
+        return Success(await scheduler.ClaimAsync(Node, max, request.PreferVideoId, ct));
     }
 
     [Authorize(AuthenticationSchemes = NodeTokenAuthenticationOptions.Scheme)]

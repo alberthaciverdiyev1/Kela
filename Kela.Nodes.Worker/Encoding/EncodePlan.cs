@@ -13,6 +13,9 @@ public sealed record EncodeRequest
 
     public EncoderChoice Encoder { get; init; } = new("libx264", "cpu", false);
 
+    /// <summary>NVENC üçün hansı GPU işlədilsin; -1 = ffmpeg özü seçir.</summary>
+    public int GpuIndex { get; init; } = -1;
+
     /// <summary>Mənbə ölçüləri — upscale etməmək üçün.</summary>
     public int SourceHeight { get; init; }
 
@@ -76,7 +79,7 @@ public static class EncodePlan
 
         if (request.Threads > 0) arguments.AddRange(["-threads", request.Threads.ToString(CultureInfo.InvariantCulture)]);
 
-        AppendVideoEncoder(arguments, request.Encoder, profile, request.Preset);
+        AppendVideoEncoder(arguments, request.Encoder, profile, request.Preset, request.GpuIndex);
 
         if (request.AudioStreamIndex >= 0)
         {
@@ -140,7 +143,8 @@ public static class EncodePlan
             ? $"scale=-2:{height},format=nv12,hwupload"
             : $"scale=-2:{height}";
 
-    private static void AppendVideoEncoder(List<string> arguments, EncoderChoice encoder, EncodingProfile profile, string preset)
+    private static void AppendVideoEncoder(
+        List<string> arguments, EncoderChoice encoder, EncodingProfile profile, string preset, int gpuIndex)
     {
         arguments.AddRange(["-c:v", encoder.Name]);
 
@@ -151,6 +155,8 @@ public static class EncodePlan
                 break;
 
             case "h264_nvenc":
+                if (gpuIndex >= 0) arguments.AddRange(["-gpu", gpuIndex.ToString(CultureInfo.InvariantCulture)]);
+
                 arguments.AddRange(["-preset", Fallback(preset, "p4"), "-rc", "vbr", "-profile:v", "high"]);
                 break;
 

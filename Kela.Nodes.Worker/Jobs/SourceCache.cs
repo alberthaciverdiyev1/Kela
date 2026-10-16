@@ -16,7 +16,7 @@ public sealed class SourceCache(WorkerStorage storage, WorkerSettings settings, 
 
     /// <summary>Keşlənmiş mənbənin yolu; endirmə mümkün olmasa null.</summary>
     public async Task<string?> AcquireAsync(
-        long videoId, string sourceKey, string sourceUrl, IProgress<long>? progress, CancellationToken ct)
+        long videoId, string sourceKey, string sourceUrl, IProgress<TransferProgress>? progress, CancellationToken ct)
     {
         var extension = Path.GetExtension(sourceKey);
         if (string.IsNullOrWhiteSpace(extension)) extension = ".mp4";

@@ -48,6 +48,14 @@ public sealed class WorkerEngine : IAsyncDisposable
     private readonly ConcurrentDictionary<long, CancellationTokenSource> _cancellations = new();
     private readonly ConcurrentQueue<JobHistoryEntry> _history = new();
 
+    /// <summary>Kodlaşdırma zolaqları: hər GPU üçün bir NVENC, üstəgəl CPU zolaqları.</summary>
+    private readonly List<EncoderLane> _lanes = [];
+
+    /// <summary>Hansı iş hansı zolaqda işləyir.</summary>
+    private readonly ConcurrentDictionary<long, EncoderLane> _jobLanes = new();
+
+    private readonly Lock _laneGate = new();
+
     private CancellationTokenSource? _engineCancellation;
     private Task? _loop;
     private int _consecutiveFailures;
@@ -114,6 +122,55 @@ public sealed class WorkerEngine : IAsyncDisposable
 
     public IReadOnlyCollection<RunningJob> Jobs => [.. _jobs.Values.OrderBy(j => j.JobId)];
 
+    /// <summary>Mövcud kodlaşdırma zolaqları (GPU + CPU) — UI göstərir.</summary>
+    public IReadOnlyList<EncoderLane> Lanes
+    {
+        get
+        {
+            lock (_laneGate)
+            {
+                return [.. _lanes];
+            }
+        }
+    }
+
+    /// <summary>
+    /// Bu ölçüdən böyük videolar "böyük" sayılır: onlar üçün bütün zolaqlar həmin
+    /// videonun qalan pillələrinə yönəldilir ki, maşının gücü bir işə toplansın.
+    /// </summary>
+    public long BigVideoBytes { get; set; } = 500L * 1024 * 1024;
+
+    /// <summary>Hazırda böyük videosu işlənirsə onun ID-si.</summary>
+    private long? FocusVideoId()
+    {
+        foreach (var job in _jobs.Values)
+        {
+            if (job.SourceBytes >= BigVideoBytes) return job.VideoId;
+        }
+
+        return null;
+    }
+
+    private int FreeLaneCount()
+    {
+        lock (_laneGate)
+        {
+            var busy = _jobLanes.Values.ToHashSet();
+
+            return _lanes.Count(lane => !busy.Contains(lane));
+        }
+    }
+
+    private EncoderLane? TakeLane()
+    {
+        lock (_laneGate)
+        {
+            var busy = _jobLanes.Values.ToHashSet();
+
+            return _lanes.FirstOrDefault(lane => !busy.Contains(lane));
+        }
+    }
+
     /// <summary>Son 100 bitmiş iş (ən yenisi əvvəldə).</summary>
     public IReadOnlyList<JobHistoryEntry> History => [.. _history.Reverse()];
 
@@ -163,6 +220,16 @@ public sealed class WorkerEngine : IAsyncDisposable
 
         Profile = ProfileAdvisor.Resolve(Settings.Limits.Profile, Device, Encoders, Settings.Limits);
         Log.Info("worker", $"Resurs profili: {Profile.Profile} — {Profile.Description}");
+
+        var gpuCount = Encoders.Chosen.Hardware ? await _detector!.GpuCountAsync(ct) : 0;
+
+        lock (_laneGate)
+        {
+            _lanes.Clear();
+            _lanes.AddRange(LanePlanner.Plan(Profile, Encoders, gpuCount, Device.CpuCores));
+        }
+
+        Log.Info("worker", $"Kodlaşdırma zolaqları: {string.Join(", ", Lanes.Select(l => l.Label))}");
 
         // Cihaz ilk dəfə qoşulanda (və ya encoder dəyişəndə) real encoding sürəti ölçülür —
         // koordinator cihazları bu balla müqayisə edir.
@@ -438,7 +505,8 @@ public sealed class WorkerEngine : IAsyncDisposable
             [.. _jobs.Values],
             SystemPressure.AvailableRamMb(),
             SystemPressure.FreeDiskMb(Path.Combine(Settings.CacheDirectory, "jobs")),
-            Settings.LightJobMultiplier);
+            Settings.LightJobMultiplier,
+            Lanes.Count);
 
         if (PausedReason is null)
         {
@@ -452,36 +520,43 @@ public sealed class WorkerEngine : IAsyncDisposable
 
     private async Task ClaimAsync(NodeRuntimeLimits limits, CancellationToken ct)
     {
-        var free = limits.MaxConcurrentJobs - _jobs.Count;
+        // Paralellik həm profil, həm də boş kodlaşdırma zolağı ilə məhdudlaşır.
+        var free = Math.Min(limits.MaxConcurrentJobs - _jobs.Count, FreeLaneCount());
         if (free <= 0) return;
 
-        var claimed = await _coordinator.ClaimAsync(free, ct);
+        var claimed = await _coordinator.ClaimAsync(free, FocusVideoId(), ct);
         if (!claimed.IsOk || claimed.Data is null || claimed.Data.Count == 0) return;
 
         foreach (var assignment in claimed.Data)
         {
+            var lane = TakeLane();
+            if (lane is null) break;
+
             var state = new RunningJob(assignment);
             var cancellation = CancellationTokenSource.CreateLinkedTokenSource(ct);
 
             _jobs[assignment.JobId] = state;
+            _jobLanes[assignment.JobId] = lane;
             _cancellations[assignment.JobId] = cancellation;
 
-            Log.Info("worker", $"İş götürüldü: #{assignment.JobId} ({assignment.Resolution}, video {assignment.VideoId})");
+            state.Lane = lane.Label;
 
-            _ = Task.Run(() => ExecuteAsync(assignment, state, cancellation.Token), CancellationToken.None);
+            Log.Info("worker", $"İş götürüldü: #{assignment.JobId} ({assignment.Resolution}, video {assignment.VideoId}) → {lane.Label}");
+
+            _ = Task.Run(() => ExecuteAsync(assignment, state, lane, cancellation.Token), CancellationToken.None);
         }
 
         Notify();
     }
 
-    private async Task ExecuteAsync(JobAssignment assignment, RunningJob state, CancellationToken ct)
+    private async Task ExecuteAsync(JobAssignment assignment, RunningJob state, EncoderLane lane, CancellationToken ct)
     {
         var capabilities = Encoders ?? await _detector!.DetectAsync(Settings.PreferredEncoder, ct);
 
         try
         {
             var outcome = await new JobRunner(Settings, _coordinator, _storage, _encoder!, _probe!, Log, _sources, Profile)
-                .RunAsync(assignment, capabilities, state, _coordinator.Token, ct);
+                .RunAsync(assignment, capabilities, lane, state, _coordinator.Token, ct);
 
             if (outcome.Success)
             {
@@ -536,6 +611,7 @@ public sealed class WorkerEngine : IAsyncDisposable
         finally
         {
             _jobs.TryRemove(assignment.JobId, out _);
+            _jobLanes.TryRemove(assignment.JobId, out _);
 
             if (_cancellations.TryRemove(assignment.JobId, out var source)) source.Dispose();
 

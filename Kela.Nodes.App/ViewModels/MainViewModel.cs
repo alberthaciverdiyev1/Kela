@@ -189,6 +189,10 @@ public sealed class DashboardViewModel(MainViewModel main) : ObservableObject
     private string _deviceSummary = "—";
     private string _encoder = "—";
     private string _concurrency = "—";
+    private string _sourceName = "—";
+    private string _transfer = "—";
+    private string _transferSpeed = "—";
+    private string _lanes = "—";
 
     public string WorkerState { get => _workerState; private set => Set(ref _workerState, value); }
 
@@ -196,6 +200,17 @@ public sealed class DashboardViewModel(MainViewModel main) : ObservableObject
 
     /// <summary>"3 / 8" — icra olunan / icazə verilən paralel iş sayı.</summary>
     public string Concurrency { get => _concurrency; private set => Set(ref _concurrency, value); }
+
+    /// <summary>İşlənən videonun fayl adı.</summary>
+    public string SourceName { get => _sourceName; private set => Set(ref _sourceName, value); }
+
+    /// <summary>"12.4 / 320.0 MB".</summary>
+    public string Transfer { get => _transfer; private set => Set(ref _transfer, value); }
+
+    public string TransferSpeed { get => _transferSpeed; private set => Set(ref _transferSpeed, value); }
+
+    /// <summary>Mövcud kodlaşdırma zolaqları: GPU(lar) və CPU.</summary>
+    public string Lanes { get => _lanes; private set => Set(ref _lanes, value); }
 
     public string CurrentJob { get => _currentJob; private set => Set(ref _currentJob, value); }
 
@@ -229,6 +244,9 @@ public sealed class DashboardViewModel(MainViewModel main) : ObservableObject
         ActiveJobs = engine.Jobs.Count;
         Concurrency = engine.IsRunning ? $"{ActiveJobs} / {engine.CurrentAllowance}" : "—";
 
+        var lanes = engine.Lanes;
+        Lanes = lanes.Count == 0 ? "—" : string.Join("  ·  ", lanes.Select(l => l.Label));
+
         var light = engine.Jobs.Count(j => j.IsLight);
         if (engine.IsRunning && light > 0) Concurrency += $"  ({light} yüngül)";
 
@@ -256,10 +274,20 @@ public sealed class DashboardViewModel(MainViewModel main) : ObservableObject
             Progress = "0%";
             ProgressValue = 0;
             Fps = Speed = Eta = Downloaded = Uploaded = "—";
+            SourceName = Transfer = TransferSpeed = "—";
             return;
         }
 
-        CurrentJob = $"#{current.JobId} · video {current.VideoId} · {current.Resolution} · {current.Stage}";
+        var size = current.SourceBytes > 0
+            ? $" ({current.SourceBytes / 1024d / 1024d:0} MB{(current.IsBigVideo(main.Engine.BigVideoBytes) ? " · böyük" : string.Empty)})"
+            : string.Empty;
+
+        SourceName = current.SourceName + size;
+        Transfer = current.TransferText;
+        TransferSpeed = current.TransferSpeedText;
+
+        CurrentJob = $"#{current.JobId} · video {current.VideoId} · {current.Resolution} · {current.Stage}"
+                   + $" · {current.Lane}";
         ProgressValue = current.Progress * 100;
         Progress = $"{ProgressValue:0}% {current.Message}";
         Fps = current.Fps > 0 ? $"{current.Fps:0.#} fps" : "—";

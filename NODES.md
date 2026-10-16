@@ -89,6 +89,28 @@ Açıq limitlər (`Maks. CPU axını`, `Maks. eşzamanlı görev`) profili **üs
 `0` qoyulsa profil özü qərar verir. Profilin həll olunmuş dəyərləri heartbeat ilə
 serverə göndərilir, koordinator cihazın həqiqi tutumunu ona görə hesablayır.
 
+## Kodlaşdırma zolaqları (GPU + CPU)
+
+Hər paralel iş bir **zolaq** tutur; hər zolaq müstəqil kodlaşdırma qurğusudur:
+
+```
+Kodlaşdırma zolaqları: GPU 0·1 nvenc, GPU 0·2 nvenc, … GPU 0·6 nvenc, CPU 1 x264, CPU 2 x264
+```
+
+- Hər NVIDIA kartı üçün bir neçə NVENC zolağı açılır (kart eyni vaxtda bir neçə
+  sessiya apara bilir), `-gpu N` ilə kart seçilir — çoxkartlı maşında hamısı işlənir.
+- CPU zolaqları (`libx264`) **eyni vaxtda** qaçır: GPU sürətli, CPU isə maşının boş
+  qalan gücünü işlədir. Nüvə sayına görə 1–4 zolaq.
+- Zolaqların sayı paralelliyin fiziki tavanıdır; profil və yaddaş/disk onu yalnız
+  aşağı sala bilər.
+
+### Böyük videolar
+
+Mənbə faylın ölçüsü koordinatorun HEAD sorğusu ilə tapşırığa əlavə olunur.
+500 MB-dan böyük video işlənərkən worker bütün zolaqları **həmin videonun** qalan
+pillələrinə yönəldir (`PreferVideoId`) — maşının gücü bir işə toplanır, digər
+videolara dağılmır.
+
 ## Təhlükəsizlik
 
 - Cihaz **birdəfəlik qeydiyyat kodu** ilə qoşulur, sonra öz access tokeni ilə işləyir.

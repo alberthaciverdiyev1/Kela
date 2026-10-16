@@ -119,6 +119,14 @@ public sealed class LocalFileStorage : IFileStorage
     public Task<bool> ExistsAsync(string path, CancellationToken ct = default)
         => Task.FromResult(File.Exists(Resolve(path)));
 
+    public Task<long?> GetSizeAsync(string path, CancellationToken ct = default)
+    {
+        var full = Resolve(path);
+        var info = new FileInfo(full);
+
+        return Task.FromResult(info.Exists ? (long?)info.Length : null);
+    }
+
     private static bool IsAbsolute(string url)
         => url.StartsWith("http://", StringComparison.OrdinalIgnoreCase)
            || url.StartsWith("https://", StringComparison.OrdinalIgnoreCase);

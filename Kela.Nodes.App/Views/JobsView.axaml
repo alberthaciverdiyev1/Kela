@@ -14,16 +14,17 @@
         <ItemsControl ItemsSource="{Binding Active}">
           <ItemsControl.ItemTemplate>
             <DataTemplate>
-              <Grid ColumnDefinitions="80,90,120,*,80,90" Margin="0,5">
+              <Grid ColumnDefinitions="60,60,110,110,*,70,80" Margin="0,5">
                 <TextBlock Grid.Column="0" Text="{Binding JobId, StringFormat='#{0}'}" Classes="value" />
                 <TextBlock Grid.Column="1" Text="{Binding Resolution}" Classes="value" FontWeight="SemiBold" />
-                <TextBlock Grid.Column="2" Text="{Binding Stage}" Classes="value" />
-                <StackPanel Grid.Column="3" Orientation="Horizontal" Spacing="8">
+                <TextBlock Grid.Column="2" Text="{Binding Lane}" Classes="value" TextTrimming="CharacterEllipsis" />
+                <TextBlock Grid.Column="3" Text="{Binding SourceName}" Classes="value" TextTrimming="CharacterEllipsis" />
+                <StackPanel Grid.Column="4" Orientation="Horizontal" Spacing="8">
                   <ProgressBar Width="160" Height="6" Minimum="0" Maximum="1" Value="{Binding Progress}" VerticalAlignment="Center" />
                   <TextBlock Text="{Binding Progress, StringFormat='{}{0:P0}'}" Classes="value" />
                 </StackPanel>
-                <TextBlock Grid.Column="4" Text="{Binding Fps, StringFormat='{}{0:0.#} fps'}" Classes="value" />
-                <Button Grid.Column="5" Classes="ghost" Content="Ləğv et"
+                <TextBlock Grid.Column="5" Text="{Binding Fps, StringFormat='{}{0:0.#} fps'}" Classes="value" />
+                <Button Grid.Column="6" Classes="ghost" Content="Ləğv et"
                         Click="OnCancel" Tag="{Binding JobId}" />
               </Grid>
             </DataTemplate>

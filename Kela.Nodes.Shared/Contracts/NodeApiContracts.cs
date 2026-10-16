@@ -72,6 +72,12 @@ public sealed class JobClaimRequest
 {
     /// <summary>Bu çağırışda maksimum neçə tapşırıq istənilir.</summary>
     public int Max { get; set; } = 1;
+
+    /// <summary>
+    /// Böyük bir video işlənirsə, bütün gücü ona yönəltmək üçün: verilərsə,
+    /// koordinator əvvəlcə həmin videonun qalan pillələrini qaytarır.
+    /// </summary>
+    public long? PreferVideoId { get; set; }
 }
 
 /// <summary>Worker-a verilən tapşırıq təsviri.</summary>
@@ -97,6 +103,10 @@ public sealed class JobAssignment
     public string MasterKey { get; set; } = string.Empty;
 
     public int? DurationSeconds { get; set; }
+
+    /// <summary>Mənbə faylın ölçüsü (bayt). Böyük videonu tanımaq üçün.</summary>
+    public long? SourceBytes { get; set; }
+
     public int? SourceHeight { get; set; }
     public int? SourceWidth { get; set; }
     public double? SourceFps { get; set; }

@@ -2,6 +2,18 @@ using System.Net.Http.Headers;
 
 namespace Kela.Nodes.Worker;
 
+/// <summary>Endirmə gedişatı: nə qədər gəldi, nə qədər qalıb, hansı sürətlə.</summary>
+public sealed record TransferProgress(long Bytes, long TotalBytes, double BytesPerSecond)
+{
+    public int Percent => TotalBytes > 0 ? (int)Math.Clamp(Bytes * 100 / TotalBytes, 0, 100) : 0;
+
+    public double Megabytes => Bytes / 1024d / 1024d;
+
+    public double TotalMegabytes => TotalBytes / 1024d / 1024d;
+
+    public double MegabytesPerSecond => BytesPerSecond / 1024d / 1024d;
+}
+
 /// <summary>Mənbəni endirir və çıxışları imzalanmış URL-lərə yükləyir.</summary>
 public sealed class WorkerStorage(HttpClient http, WorkerLog log)
 {
@@ -16,7 +28,7 @@ public sealed class WorkerStorage(HttpClient http, WorkerLog log)
     private static readonly TimeSpan UploadTimeout = TimeSpan.FromMinutes(10);
 
     /// <summary>Endirmə — çıxış axını ilə, yaddaşa yığmadan.</summary>
-    public async Task DownloadAsync(string url, string destination, IProgress<long>? progress = null, CancellationToken ct = default)
+    public async Task DownloadAsync(string url, string destination, IProgress<TransferProgress>? progress = null, CancellationToken ct = default)
     {
         Directory.CreateDirectory(Path.GetDirectoryName(destination)!);
 
@@ -27,6 +39,7 @@ public sealed class WorkerStorage(HttpClient http, WorkerLog log)
         var buffer = new byte[81920];
         long written = 0;
         var lastReport = 0L;
+        var clock = System.Diagnostics.Stopwatch.StartNew();
 
         await using var source = await response.Content.ReadAsStreamAsync(ct);
         await using var target = new FileStream(destination, FileMode.Create, FileAccess.Write, FileShare.None, buffer.Length, useAsync: true);
@@ -57,11 +70,15 @@ public sealed class WorkerStorage(HttpClient http, WorkerLog log)
             if (progress is not null && written - lastReport >= 4 * 1024 * 1024)
             {
                 lastReport = written;
-                progress.Report(total > 0 ? written * 100 / total : written);
+                var seconds = clock.Elapsed.TotalSeconds;
+                progress.Report(new TransferProgress(written, total, seconds > 0 ? written / seconds : 0));
             }
         }
 
-        progress?.Report(100);
+        clock.Stop();
+        progress?.Report(new TransferProgress(written, total, clock.Elapsed.TotalSeconds > 0
+            ? written / clock.Elapsed.TotalSeconds
+            : 0));
         log.Debug("storage", $"Endirildi: {Path.GetFileName(destination)} ({written / 1024 / 1024} MB)");
     }
 

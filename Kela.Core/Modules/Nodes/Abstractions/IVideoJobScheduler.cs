@@ -19,5 +19,10 @@ public interface IVideoJobScheduler
     Task<IReadOnlyList<long>> ReconcileAsync(CancellationToken ct = default);
 
     /// <summary>Cihaza uyğun tapşırıqları kilidləyib (lease) qaytarır.</summary>
-    Task<IReadOnlyList<JobAssignment>> ClaimAsync(WorkerNode node, int max, CancellationToken ct = default);
+    /// <param name="preferVideoId">
+    /// Verilərsə, əvvəlcə həmin videonun tapşırıqları verilir — böyük bir videonu
+    /// bitirmək üçün bütün cihaz gücü ona yönəldilir.
+    /// </param>
+    Task<IReadOnlyList<JobAssignment>> ClaimAsync(
+        WorkerNode node, int max, long? preferVideoId = null, CancellationToken ct = default);
 }

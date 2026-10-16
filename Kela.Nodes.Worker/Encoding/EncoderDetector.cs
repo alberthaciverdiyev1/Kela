@@ -37,7 +37,12 @@ public sealed class EncoderDetector(string ffmpegPath, WorkerLog log)
 
         foreach (var candidate in Candidates)
         {
-            if (available.Count > 0 && !candidate.Hardware) break;
+            // Bir aparat encoder-i kifayətdir — qalan aparat namizədləri eyni işi görür.
+            // CPU encoder-i isə ayrıca yoxlanılır: hibrid rejimdə ona da ehtiyac var.
+            if (candidate.Hardware && available.Any(a => a.Hardware))
+            {
+                continue;
+            }
 
             if (candidate.Hardware && !await ListedAsync(candidate.Name, ct))
             {
@@ -73,6 +78,28 @@ public sealed class EncoderDetector(string ffmpegPath, WorkerLog log)
         }
 
         return new EncoderCapabilities(chosen, available, accelerated);
+    }
+
+    /// <summary>NVENC üçün istifadə oluna biləcək NVIDIA kartlarının sayı.</summary>
+    public async Task<int> GpuCountAsync(CancellationToken ct = default)
+    {
+        try
+        {
+            var result = await ProcessRunner.RunAsync("nvidia-smi", ["--list-gpus"], timeout: TimeSpan.FromSeconds(10), ct: ct);
+
+            if (!result.Success) return 1;
+
+            var count = result.Output
+                .Split('\n', StringSplitOptions.RemoveEmptyEntries)
+                .Count(line => line.StartsWith("GPU ", StringComparison.Ordinal));
+
+            return Math.Max(1, count);
+        }
+        catch (Exception ex) when (ex is IOException or System.ComponentModel.Win32Exception or InvalidOperationException)
+        {
+            // nvidia-smi yoxdur — NVENC də seçilməyəcək, amma CPU zolaqları qalır.
+            return 1;
+        }
     }
 
     private async Task<IReadOnlyList<string>> HardwareAccelerationAsync(CancellationToken ct)

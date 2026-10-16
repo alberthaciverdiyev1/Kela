@@ -230,5 +230,20 @@ public sealed class R2FileStorage : IFileStorage, IDisposable
         }
     }
 
+    public async Task<long?> GetSizeAsync(string path, CancellationToken ct = default)
+    {
+        try
+        {
+            // HEAD sorğusu — faylın gövdəsi endirilmir, yalnız ölçüsü oxunur.
+            var metadata = await _client.GetObjectMetadataAsync(_options.BucketName, path, ct);
+
+            return metadata.ContentLength;
+        }
+        catch (AmazonS3Exception ex) when (ex.StatusCode == HttpStatusCode.NotFound)
+        {
+            return null;
+        }
+    }
+
     public void Dispose() => _client.Dispose();
 }

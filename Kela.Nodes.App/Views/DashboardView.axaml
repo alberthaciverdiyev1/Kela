@@ -19,6 +19,8 @@
           <TextBlock Text="Paralel iş (icra / icazə)" Classes="label" />
           <TextBlock Text="{Binding Concurrency}" Classes="metric" />
           <TextBlock Text="{Binding DeviceSummary}" Classes="value" />
+          <TextBlock Text="Kodlaşdırma zolaqları" Classes="label" Margin="0,8,0,0" />
+          <TextBlock Text="{Binding Lanes}" Classes="value" TextWrapping="Wrap" />
         </StackPanel>
       </Border>
 
@@ -30,22 +32,34 @@
           <ProgressBar Value="{Binding ProgressValue}" Minimum="0" Maximum="100" Height="8" />
           <TextBlock Text="{Binding Progress}" Classes="value" />
 
-          <Grid ColumnDefinitions="*,*,*,*" Margin="0,4,0,0">
+          <Border Background="{DynamicResource PageBackground}" CornerRadius="8" Padding="10">
+            <Grid ColumnDefinitions="*,Auto">
+              <StackPanel Grid.Column="0">
+                <TextBlock Text="Mənbə fayl" Classes="label" />
+                <TextBlock Text="{Binding SourceName}" Classes="value" FontWeight="SemiBold"
+                           TextTrimming="CharacterEllipsis" />
+              </StackPanel>
+              <StackPanel Grid.Column="1" HorizontalAlignment="Right">
+                <TextBlock Text="Endirmə" Classes="label" HorizontalAlignment="Right" />
+                <TextBlock Classes="value" HorizontalAlignment="Right">
+                  <Run Text="{Binding Transfer}" /><Run Text="  ·  " /><Run Text="{Binding TransferSpeed}" />
+                </TextBlock>
+              </StackPanel>
+            </Grid>
+          </Border>
+
+          <Grid ColumnDefinitions="*,*,*" Margin="0,4,0,0">
             <StackPanel Grid.Column="0">
-              <TextBlock Text="Sürət" Classes="label" />
+              <TextBlock Text="Kodlama sürəti" Classes="label" />
               <TextBlock Text="{Binding Fps}" Classes="value" />
             </StackPanel>
             <StackPanel Grid.Column="1">
-              <TextBlock Text="Speed" Classes="label" />
+              <TextBlock Text="Sürət (realtime)" Classes="label" />
               <TextBlock Text="{Binding Speed}" Classes="value" />
             </StackPanel>
             <StackPanel Grid.Column="2">
               <TextBlock Text="Qalan vaxt" Classes="label" />
               <TextBlock Text="{Binding Eta}" Classes="value" />
-            </StackPanel>
-            <StackPanel Grid.Column="3">
-              <TextBlock Text="Endirmə / yükləmə" Classes="label" />
-              <TextBlock Text="{Binding Downloaded}" Classes="value" />
             </StackPanel>
           </Grid>
         </StackPanel>

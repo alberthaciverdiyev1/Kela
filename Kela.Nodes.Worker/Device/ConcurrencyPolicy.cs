@@ -23,7 +23,8 @@ public static class ConcurrencyPolicy
         IReadOnlyCollection<RunningJob> jobs,
         int availableRamMb,
         int freeDiskMb,
-        int lightJobMultiplier)
+        int lightJobMultiplier,
+        int encoderLanes = 0)
     {
         if (profile is null) return 1;
 
@@ -33,6 +34,9 @@ public static class ConcurrencyPolicy
 
         // Ağır iş gedirsə profil həddi aşılmır.
         var allowed = heavy > 0 ? baseLimit : baseLimit * Math.Max(1, lightJobMultiplier);
+
+        // Hər paralel iş bir kodlaşdırma zolağı tutur (GPU və ya CPU).
+        if (encoderLanes > 0) allowed = Math.Min(allowed, encoderLanes);
 
         // Yaddaş və disk də sözünü deyir — həddi yalnız aşağı sala bilərlər.
         if (availableRamMb > 0) allowed = Math.Min(allowed, Math.Max(1, availableRamMb / RamPerJobMb));
