@@ -8,12 +8,18 @@
         const titleType = document.getElementById('title_type').value;
         document.getElementById('titleTextBlock').classList.toggle('hidden', titleType === 'image');
         document.getElementById('titleImageBlock').classList.toggle('hidden', titleType !== 'image');
-        // Gizli required sahə brauzerin formu submit etməsinə mane olur — rejimə görə söndür
-        document.getElementById('title').required = titleType === 'text';
+        // Başlıq sahəsi rejimə görə zəruridir: şəkil rejimində gizli qalan başlıq
+        // yoxlanılmasın (əks halda forma saxlana bilmir).
+        document.getElementById('title').setAttribute('data-required', titleType === 'text' ? 'true' : 'false');
 
         const variantType = document.getElementById('variant_type').value;
         document.getElementById('variantsTextBlock').classList.toggle('hidden', variantType === 'image');
         document.getElementById('variantsImageBlock').classList.toggle('hidden', variantType !== 'image');
+        // Server A–D variantlarını yalnız mətn rejimində tələb edir (E sərbəstdir).
+        ['a', 'b', 'c', 'd'].forEach(v => {
+            const el = document.getElementById('variant_' + v);
+            if (el) el.setAttribute('data-required', variantType === 'text' ? 'true' : 'false');
+        });
     };
 
     window.buildQuestionForm = function () {

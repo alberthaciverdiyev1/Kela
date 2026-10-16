@@ -337,7 +337,7 @@ window.AdminUI = (function () {
         if (!form) return true;
 
         form.querySelectorAll('.is-invalid').forEach(el => el.classList.remove('is-invalid'));
-        const empty = [...form.querySelectorAll('[data-required]')]
+        const empty = [...form.querySelectorAll('[data-required="true"]')]
             .filter(el => !el.disabled && !String(el.value ?? '').trim());
 
         if (!empty.length) return true;
@@ -360,7 +360,7 @@ window.AdminUI = (function () {
 
     // Göndərmədən əvvəl yoxla — səhifələrin öz submit handler-i işə düşməsin.
     document.addEventListener('submit', (e) => {
-        if (!e.target.querySelector || !e.target.querySelector('[data-required]')) return;
+        if (!e.target.querySelector || !e.target.querySelector('[data-required="true"]')) return;
         if (!validateForm(e.target)) {
             e.preventDefault();
             e.stopImmediatePropagation();
