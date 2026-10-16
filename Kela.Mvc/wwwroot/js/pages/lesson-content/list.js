@@ -52,13 +52,11 @@ function statusBadge(c) {
     return b ? AdminUI.badge(b.text(), b.tone) : '<span class="text-slate-300">—</span>';
 }
 
-let previewHls = null;
-
 function previewContent(id) {
     const c = CONTENT[id];
     if (!c || !c.url) return;
 
-    if (previewHls) { try { previewHls.destroy(); } catch (e) {} previewHls = null; }
+    AdminMedia.destroy();
 
     document.getElementById('previewTitle').textContent = c.title || '';
     const body = document.getElementById('previewBody');
@@ -70,24 +68,14 @@ function previewContent(id) {
             body.innerHTML = `<div class="rounded-xl bg-slate-100 p-6 text-center text-sm text-slate-500">
                 ${statusBadge(c)}<p class="mt-3">${L["Video_NotReady"]}</p></div>`;
         } else {
-            body.innerHTML = `<video id="previewVideo" controls autoplay playsinline class="w-full rounded-xl bg-black"></video>`;
-            const v = document.getElementById('previewVideo');
-            if (/\.m3u8(\?|$)/i.test(url)) {
-                if (v.canPlayType('application/vnd.apple.mpegurl')) {
-                    v.src = url;
-                } else if (window.Hls && window.Hls.isSupported()) {
-                    previewHls = new window.Hls();
-                    previewHls.loadSource(url);
-                    previewHls.attachMedia(v);
-                } else {
-                    v.src = url;
-                }
-            } else {
-                v.src = url;
-            }
+            // Şaquli videolar modal-ı ekrandan uzun edirdi — hündürlük məhdudlaşdırılır,
+            // tam ölçü üçün fullscreen düyməsi var.
+            body.innerHTML = `<video id="previewVideo" controls autoplay playsinline data-src="${url}"
+                class="preview-video mx-auto block max-h-[55vh] max-w-full rounded-xl bg-black"></video>`;
+            AdminMedia.hydrate(body);
         }
     } else if (c.type === 'voice') {
-        body.innerHTML = `<audio src="${c.url}" controls autoplay class="w-full"></audio>`;
+        body.innerHTML = `<audio src="${c.url}" controls autoplay class="mx-auto block w-full"></audio>`;
     } else if (/\.(png|jpe?g|gif|webp|svg)($|\?)/i.test(c.url)) {
         body.innerHTML = `<img src="${c.url}" alt="" class="mx-auto max-h-[70vh] rounded-xl" />`;
     } else if (/\.pdf($|\?)/i.test(c.url)) {
@@ -96,14 +84,23 @@ function previewContent(id) {
         body.innerHTML = `<iframe src="${c.url}" class="h-[70vh] w-full rounded-xl" title="${c.title || ''}"></iframe>`;
     }
 
+    document.getElementById('previewFullscreenBtn')
+        .classList.toggle('hidden', !document.getElementById('previewVideo'));
+
     const modal = document.getElementById('previewModal');
     modal.classList.remove('hidden');
     modal.classList.add('flex');
 }
 
+function togglePreviewFullscreen() {
+    AdminMedia.toggleFullscreen(document.getElementById('previewVideo'));
+}
+
 function closePreview() {
     const body = document.getElementById('previewBody');
     body.innerHTML = '';
+    AdminMedia.destroy();
+    document.getElementById('previewFullscreenBtn').classList.add('hidden');
     const modal = document.getElementById('previewModal');
     modal.classList.add('hidden');
     modal.classList.remove('flex');

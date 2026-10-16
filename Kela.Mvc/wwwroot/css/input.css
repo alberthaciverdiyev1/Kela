@@ -350,3 +350,14 @@
 .att-dot.att-part { background-color: #f59e0b; }
 .att-dot.att-low  { background-color: #ef4444; }
 .att-dot.att-none { background-color: #cbd5e1; }
+
+/* --- Media oynadıcısı ---
+   Video hündürlüyü modal daxilində məhduddur; fullscreen-də həmin məhdudiyyət
+   ləğv olunur ki, ekran tam dolsun. (UA stilləri author stilindən zəifdir,
+   ona görə max-height ayrıca sıfırlanır.) */
+video:fullscreen {
+  width: 100%;
+  height: 100%;
+  max-height: none;
+  object-fit: contain;
+}
