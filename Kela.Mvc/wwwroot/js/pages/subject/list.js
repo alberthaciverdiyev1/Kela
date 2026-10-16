@@ -25,8 +25,8 @@ async function loadList(page) {
 
     AdminUI.table('rows', data.data.map((s, i) => [
         { html: AdminUI.rowNo(s, i, currentPage, data.perPage), cls: 'text-slate-400' },
-        { html: `<a href="/subject/${s.id}" class="font-semibold text-primary hover:underline">${s.name}</a>` },
-        { html: showDeleted ? AdminUI.restoreButton(s.id) : AdminUI.actions(s.id, { extra: `<a href="/subject/${s.id}" class="inline-flex items-center rounded-lg px-2.5 py-1.5 text-sm font-semibold text-slate-600 hover:bg-surface-secondary">Dərslər</a>` }), cls: 'text-right' }
+        { html: `<a href="/lesson?subject_id=${s.id}" class="font-semibold text-primary hover:underline">${s.name}</a>` },
+        { html: showDeleted ? AdminUI.restoreButton(s.id) : AdminUI.actions(s.id, { extra: `<a href="/lesson?subject_id=${s.id}" class="inline-flex items-center rounded-lg px-2.5 py-1.5 text-sm font-semibold text-slate-600 hover:bg-surface-secondary">Dərslər</a>` }), cls: 'text-right' }
     ]), 4, { rowIds: data.data.map(s => s.id), selectable: !showDeleted });
 
     AdminUI.pagination('pagination', currentPage, lastPage, loadList);

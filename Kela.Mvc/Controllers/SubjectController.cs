@@ -1,7 +1,5 @@
 using FluentValidation;
 using Kela.Core.Common.Bulk;
-using Kela.Core.Modules.Lesson.Abstractions;
-using Kela.Core.Modules.Lesson.Requests;
 using Kela.Core.Modules.Subject.Abstractions;
 using Kela.Core.Modules.Subject.Requests;
 using Microsoft.AspNetCore.Mvc;
@@ -11,7 +9,6 @@ namespace Kela.Mvc.Controllers;
 [Route("[controller]")]
 public sealed class SubjectController(
     ISubjectService service,
-    ILessonService lessons,
     IValidator<SubjectUpsertRequest> validator) : Controller
 {
     [HttpGet]
@@ -26,17 +23,11 @@ public sealed class SubjectController(
     public async Task<IActionResult> List([FromQuery] SubjectListRequest request, CancellationToken ct)
         => Json(await service.ListAsync(request, ct));
 
-    // Fənn səhifəsi: fənnin dərsləri
+    // Fənnin dərsləri ayrıca səhifə deyil: /lesson səhifəsi artıq fənnə görə
+    // filtrlənir, ona görə köhnə ünvanları oraya yönləndiririk.
     [HttpGet("{id:long}")]
-    public async Task<IActionResult> Details(long id, CancellationToken ct)
-    {
-        var subject = await service.GetAsync(id, ct);
-        ViewData["Title"] = subject.Name;
-        ViewData["Subject"] = subject;
-        ViewData["Lessons"] = await lessons.ListAsync(new LessonListRequest { SubjectId = id, PerPage = 200 }, ct);
-        ViewData["Scripts"] = new[] { "~/js/pages/subject/details.js" };
-        return View();
-    }
+    public IActionResult Details(long id)
+        => Redirect($"/lesson?subject_id={id}");
 
     // Redaktə modalı üçün JSON
     [HttpGet("{id:long}/edit")]
