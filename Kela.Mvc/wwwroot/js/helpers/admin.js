@@ -301,12 +301,30 @@ window.AdminUI = (function () {
 
     function sortToggle() { /* səhifə xüsusi tətbiq edə bilər */ }
 
+    // Açılan siyahının etiketini native select-dən yenidən oxuyur.
+    function syncSelect(select) {
+        const wrap = document.querySelector(`.admin-select[data-for="${select.id}"]`);
+        const trigger = wrap && wrap.querySelector('.admin-select-trigger');
+        if (!trigger) return;
+        const opts = [...select.options];
+        const multiple = !!select.multiple;
+        const text = multiple
+            ? (opts.filter(o => o.selected).length
+                ? (L["Js_SelectedCount"] || '{0}').replace('{0}', opts.filter(o => o.selected).length)
+                : '')
+            : ((opts[select.selectedIndex] || {}).text || '');
+        trigger.textContent = text;
+        trigger.classList.toggle('is-empty', !text);
+    }
+
     // --- Modallar ---
     // Bütün modallar üçün ortaq aç/bağla. Bağlanmanı dayandırmaq lazımdırsa,
     // səhifə "modal:before-close" hadisəsini preventDefault edir (məs. yükləmə gedərkən).
     function openModal(id) {
         const modal = typeof id === 'string' ? document.getElementById(id) : id;
         if (!modal) return;
+        // Sahələr JS ilə doldurulub — açılan siyahıların etiketi təzələnsin.
+        modal.querySelectorAll('select[data-enhanced]').forEach(syncSelect);
         modal.dispatchEvent(new CustomEvent('modal:open'));
         modal.classList.remove('hidden');
         modal.classList.add('flex');
@@ -322,6 +340,7 @@ window.AdminUI = (function () {
 
         // Bağlanan modalın forması təmizlənir — növbəti açılış köhnə məlumatla başlamasın.
         modal.querySelectorAll('form').forEach(resetForm);
+        closeSelects();
 
         const err = modal.querySelector('[data-modal-error]');
         if (err) err.classList.add('hidden');
@@ -366,6 +385,164 @@ window.AdminUI = (function () {
             e.stopImmediatePropagation();
         }
     }, true);
+
+    // --- Axtarışlı select ---
+    // Native <select> gizlədilir, yerinə dizayn sisteminə uyğun açılan siyahı qurulur.
+    // Seçim yenə native select-də saxlanılır, ona görə formalar və səhifə JS-i
+    // dəyişmədən işləyir.
+    let openSelectWrap = null;
+
+    function closeSelects() {
+        document.querySelectorAll('.admin-select.is-open').forEach(w => w.classList.remove('is-open'));
+        openSelectWrap = null;
+    }
+
+    function enhanceSelect(select) {
+        if (!select || select.dataset.enhanced === '1' || select.dataset.native === '1') return;
+        select.dataset.enhanced = '1';
+
+        const multiple = !!select.multiple;
+        const wrap = document.createElement('div');
+        wrap.className = 'admin-select';
+        wrap.dataset.for = select.id;
+
+        const trigger = document.createElement('button');
+        trigger.type = 'button';
+        trigger.className = 'admin-select-trigger';
+        wrap.appendChild(trigger);
+
+        const menu = document.createElement('div');
+        menu.className = 'admin-select-menu hidden';
+        menu.innerHTML = `
+            <div class="admin-select-search">
+                <input type="search" class="admin-field" placeholder="${L["Common_SearchPlaceholder"] || ''}" />
+            </div>
+            <div class="admin-select-options"></div>`;
+        wrap.appendChild(menu);
+
+        select.classList.add('hidden');
+        select.parentNode.insertBefore(wrap, select.nextSibling);
+
+        const search = menu.querySelector('input');
+        const list = menu.querySelector('.admin-select-options');
+
+        const label = () => {
+            const opts = [...select.options];
+            if (multiple) {
+                const picked = opts.filter(o => o.selected);
+                return picked.length
+                    ? (L["Js_SelectedCount"] || '{0}').replace('{0}', picked.length)
+                    : (select.dataset.placeholder || '');
+            }
+            const sel = opts[select.selectedIndex];
+            return sel ? sel.text : '';
+        };
+
+        // "İ" hərfi: AZ/TR mətnlərində toLowerCase gözlənilən nəticəni vermir,
+        // ona görə hər iki tərəf normallaşdırılır ("İngilis dili" ≈ "ingilis").
+        const norm = (v) => String(v).normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().replace(/ı/g, 'i');
+
+        function renderOptions() {
+            const q = norm(search.value || '').trim();
+            const opts = [...select.options].filter(o => !q || norm(o.text).includes(q));
+            if (!opts.length) {
+                list.innerHTML = `<div class="admin-select-empty">${L["Js_NoResults"]}</div>`;
+                return;
+            }
+            list.innerHTML = opts.map(o => `
+                <button type="button" class="admin-select-option${(multiple ? o.selected : o.index === select.selectedIndex) ? ' is-selected' : ''}"
+                        data-value="${o.value.replace(/"/g, '&quot;')}">
+                    ${multiple ? '<span class="admin-select-box"></span>' : ''}
+                    <span class="truncate">${o.text}</span>
+                </button>`).join('');
+        }
+
+        function sync() {
+            trigger.textContent = label();
+            trigger.classList.toggle('is-empty', !label());
+        }
+
+        // Modal gövdəsi scroll olunur və açılan siyahını kəsir — ona görə siyahı
+        // düymənin koordinatlarına görə fixed yerləşdirilir.
+        function place() {
+            const r = trigger.getBoundingClientRect();
+            const below = window.innerHeight - r.bottom;
+            const height = Math.min(280, menu.scrollHeight || 280);
+            menu.style.position = 'fixed';
+            menu.style.width = r.width + 'px';
+            menu.style.left = r.left + 'px';
+            menu.style.top = (below < height + 16 && r.top > height
+                ? r.top - height - 6
+                : r.bottom + 6) + 'px';
+        }
+
+        function open() {
+            closeSelects();
+            search.value = '';
+            renderOptions();
+            menu.classList.remove('hidden');
+            wrap.classList.add('is-open');
+            openSelectWrap = wrap;
+            place();
+            search.focus();
+        }
+
+        trigger.addEventListener('click', () => {
+            if (select.disabled) return;
+            wrap.classList.contains('is-open') ? closeSelects() : open();
+        });
+
+        search.addEventListener('input', renderOptions);
+
+        // ESC yalnız siyahını bağlayır — modal bağlanmasın.
+        wrap.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') { e.stopPropagation(); closeSelects(); trigger.focus(); }
+        });
+        search.addEventListener('keydown', (e) => { if (e.key === 'Enter') e.preventDefault(); });
+
+        list.addEventListener('click', (e) => {
+            const btn = e.target.closest('.admin-select-option');
+            if (!btn) return;
+            const option = [...select.options].find(o => o.value === btn.dataset.value);
+            if (!option) return;
+
+            if (multiple) {
+                option.selected = !option.selected;
+                btn.classList.toggle('is-selected', option.selected);
+            } else {
+                select.value = option.value;
+                closeSelects();
+            }
+            sync();
+            select.dispatchEvent(new Event('change', { bubbles: true }));
+        });
+
+        select.addEventListener('change', sync);
+        document.addEventListener('click', (e) => {
+            if (!wrap.contains(e.target)) wrap.classList.remove('is-open');
+        });
+
+        sync();
+    }
+
+    document.addEventListener('DOMContentLoaded', () => enhanceSelects());
+
+    window.addEventListener('scroll', () => {
+        const wrap = document.querySelector('.admin-select.is-open');
+        if (!wrap) return;
+        const trigger = wrap.querySelector('.admin-select-trigger');
+        const menu = wrap.querySelector('.admin-select-menu');
+        const r = trigger.getBoundingClientRect();
+        menu.style.left = r.left + 'px';
+        menu.style.top = (r.bottom + 6) + 'px';
+    }, true);
+
+    function enhanceSelects(root) {
+        (root || document).querySelectorAll('select:not([data-enhanced]):not([data-native])').forEach(select => {
+            if (select.closest('.admin-select')) return;
+            enhanceSelect(select);
+        });
+    }
 
     // Formanı ilkin vəziyyətinə qaytarır: sahələr + fayl önizləmələri.
     function resetForm(formOrId) {
@@ -615,5 +792,5 @@ window.AdminUI = (function () {
         _filterTimer = setTimeout(filterReload, 350);
     });
 
-    return { notify, error, errText, openModal, closeModal, resetForm, validateForm, badge, chip, statCard, actions, actionButton, actionLink, rowActions, confirmDelete, confirmRestore, restoreItem, restoreButton, syncTrashButton, toggleHidden, get, post, postForm, putForm, postJson, putJson, del, table, setInfo, addSort, selectedIds, bulkDo, sortToggle, openSort, closeSort, persistSort, loader, pagination, filePreview, fileSet, fileRemove, fileReset, rowNo, token, reloadAfter, downloadCsv };
+    return { notify, error, errText, openModal, closeModal, resetForm, validateForm, enhanceSelects, syncSelect, badge, chip, statCard, actions, actionButton, actionLink, rowActions, confirmDelete, confirmRestore, restoreItem, restoreButton, syncTrashButton, toggleHidden, get, post, postForm, putForm, postJson, putJson, del, table, setInfo, addSort, selectedIds, bulkDo, sortToggle, openSort, closeSort, persistSort, loader, pagination, filePreview, fileSet, fileRemove, fileReset, rowNo, token, reloadAfter, downloadCsv };
 })();

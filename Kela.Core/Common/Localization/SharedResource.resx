@@ -898,7 +898,7 @@
     <value>Send to all</value>
   </data>
   <data name="Notification_StudentsHint" xml:space="preserve">
-    <value>Students (Ctrl to select multiple)</value>
+    <value>Students</value>
   </data>
   <data name="Certificate_SignaturePng" xml:space="preserve">
     <value>Signature (PNG)</value>

@@ -898,7 +898,7 @@
     <value>Herkese gönder</value>
   </data>
   <data name="Notification_StudentsHint" xml:space="preserve">
-    <value>Öğrenciler (birden fazla için Ctrl)</value>
+    <value>Öğrenciler</value>
   </data>
   <data name="Certificate_SignaturePng" xml:space="preserve">
     <value>İmza (PNG)</value>

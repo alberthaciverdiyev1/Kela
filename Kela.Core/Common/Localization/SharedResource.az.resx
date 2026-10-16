@@ -898,7 +898,7 @@
     <value>Hamıya göndər</value>
   </data>
   <data name="Notification_StudentsHint" xml:space="preserve">
-    <value>Şagirdlər (bir neçə seçmək üçün Ctrl)</value>
+    <value>Şagirdlər</value>
   </data>
   <data name="Certificate_SignaturePng" xml:space="preserve">
     <value>İmza (PNG)</value>

@@ -360,6 +360,96 @@
   .chip-violet  { background: #ede9fe; color: #6d28d9; }
 }
 
+/* ---------- Axtarışlı select ----------
+   Native select gizlədilir; görünən hissə JS qurur (AdminUI.enhanceSelects). */
+.admin-select {
+  position: relative;
+}
+
+.admin-select-trigger {
+  display: flex;
+  width: 100%;
+  min-height: 46px;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  background: var(--surface-secondary);
+  padding: 10px 14px;
+  font-size: 14px;
+  font-weight: 600;
+  color: #334155;
+  text-align: left;
+  transition: border-color 140ms ease, background-color 140ms ease;
+}
+
+.admin-select-trigger::after {
+  content: "";
+  flex: none;
+  width: 8px;
+  height: 8px;
+  border-right: 2px solid #94a3b8;
+  border-bottom: 2px solid #94a3b8;
+  transform: rotate(45deg) translateY(-2px);
+}
+
+.admin-select-trigger.is-empty { color: #94a3b8; font-weight: 500; }
+.admin-select.is-open .admin-select-trigger { border-color: var(--primary); background: #ffffff; }
+
+.admin-select-menu {
+  position: absolute;
+  z-index: 60;
+  top: calc(100% + 6px);
+  left: 0;
+  right: 0;
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  background: #ffffff;
+  padding: 8px;
+  box-shadow: 0 16px 40px rgba(15, 23, 42, 0.12);
+}
+
+.admin-select-search { margin-bottom: 6px; }
+
+.admin-select-options {
+  max-height: 260px;
+  overflow-y: auto;
+}
+
+.admin-select-option {
+  display: flex;
+  width: 100%;
+  align-items: center;
+  gap: 10px;
+  border-radius: 8px;
+  padding: 8px 10px;
+  font-size: 14px;
+  font-weight: 500;
+  color: #334155;
+  text-align: left;
+  transition: background-color 120ms ease;
+}
+
+.admin-select-option:hover { background: var(--surface-secondary); }
+.admin-select-option.is-selected { color: var(--primary); font-weight: 700; background: var(--primary-light); }
+
+.admin-select-box {
+  flex: none;
+  width: 18px;
+  height: 18px;
+  border-radius: 5px;
+  border: 1.5px solid #cbd5e1;
+  background: #ffffff;
+}
+
+.admin-select-option.is-selected .admin-select-box {
+  border-color: var(--primary);
+  background: var(--primary);
+}
+
+.admin-select-empty { padding: 10px; font-size: 13px; color: #94a3b8; }
+
 /* Zəruri sahə boş qalıbsa — JS yoxlaması bu sinfi qoyur. */
 .admin-field.is-invalid {
   border-color: var(--danger);

@@ -898,7 +898,7 @@
     <value>Отправить всем</value>
   </data>
   <data name="Notification_StudentsHint" xml:space="preserve">
-    <value>Ученики (Ctrl для выбора нескольких)</value>
+    <value>Ученики</value>
   </data>
   <data name="Certificate_SignaturePng" xml:space="preserve">
     <value>Подпись (PNG)</value>
