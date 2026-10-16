@@ -1,0 +1,83 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             x:Class="Kela.Nodes.App.Views.SettingsView">
+
+  <StackPanel Spacing="16" MaxWidth="640" HorizontalAlignment="Left">
+    <TextBlock Text="Tənzimləmələr" Classes="h1" />
+
+    <Border Classes="card">
+      <StackPanel Spacing="10">
+        <TextBlock Text="API" Classes="label" />
+        <TextBox Text="{Binding ApiUrl}" Watermark="https://api.example.com" />
+        <TextBox Text="{Binding NodeName}" Watermark="Cihaz adı" />
+        <TextBlock Text="{Binding TokenState}" Classes="value" />
+      </StackPanel>
+    </Border>
+
+    <Border Classes="card">
+      <StackPanel Spacing="10">
+        <TextBlock Text="Cihaz qeydiyyatı" Classes="label" />
+        <TextBlock Text="İdarəçidən aldığınız birdəfəlik kodu daxil edin." Classes="value" />
+        <TextBox Text="{Binding RegistrationCode}" Watermark="XXXX-XXXX-XXXX-XXXX" />
+        <Button Classes="primary" Content="Qeydiyyatdan keç" HorizontalAlignment="Left"
+                Command="{Binding RegisterCommand}" />
+      </StackPanel>
+    </Border>
+
+    <Border Classes="card">
+      <StackPanel Spacing="10">
+        <TextBlock Text="Resurs profili" Classes="label" />
+        <ComboBox ItemsSource="{Binding Profiles}" SelectedValue="{Binding SelectedProfile}"
+                  HorizontalAlignment="Stretch">
+          <ComboBox.ItemTemplate>
+            <DataTemplate>
+              <TextBlock Text="{Binding Label}" />
+            </DataTemplate>
+          </ComboBox.ItemTemplate>
+        </ComboBox>
+        <TextBlock Text="{Binding ProfileHint}" Classes="value" />
+      </StackPanel>
+    </Border>
+
+    <Border Classes="card">
+      <StackPanel Spacing="10">
+        <TextBlock Text="Resurs limitləri" Classes="label" />
+        <Grid ColumnDefinitions="220,*" RowDefinitions="Auto,Auto,Auto" >
+          <TextBlock Grid.Row="0" Grid.Column="0" Text="Maks. eşzamanlı görev (0 = profil)" Classes="value" VerticalAlignment="Center" />
+          <NumericUpDown Grid.Row="0" Grid.Column="1" Value="{Binding MaxConcurrentJobs}" Minimum="0" Maximum="8" Increment="1" />
+
+          <TextBlock Grid.Row="1" Grid.Column="0" Text="Maks. CPU axını (0 = profil)" Classes="value" VerticalAlignment="Center" />
+          <NumericUpDown Grid.Row="1" Grid.Column="1" Value="{Binding MaxCpuThreads}" Minimum="0" Maximum="128" Increment="1" />
+
+          <TextBlock Grid.Row="2" Grid.Column="0" Text="Maks. keş (MB)" Classes="value" VerticalAlignment="Center" />
+          <NumericUpDown Grid.Row="2" Grid.Column="1" Value="{Binding MaxCacheMb}" Minimum="0" Maximum="1048576" Increment="1024" />
+        </Grid>
+      </StackPanel>
+    </Border>
+
+    <Border Classes="card">
+      <StackPanel Spacing="8">
+        <TextBlock Text="Şəbəkə və enerji" Classes="label" />
+        <CheckBox Content="Yalnız Wi-Fi bağlantısında işlə" IsChecked="{Binding WifiOnly}" />
+        <CheckBox Content="Yalnız şarj olarkən işlə" IsChecked="{Binding ChargingOnly}" />
+        <CheckBox Content="Batareya azalanda dayandır" IsChecked="{Binding PauseOnLowBattery}" />
+        <CheckBox Content="Cihaz qızanda dayandır" IsChecked="{Binding PauseOnHighTemperature}" />
+        <CheckBox Content="İş bitəndən sonra keşi təmizlə" IsChecked="{Binding CleanupAfterJob}" />
+        <CheckBox Content="Tətbiq açılanda worker özü işə düşsün" IsChecked="{Binding AutoStart}" />
+      </StackPanel>
+    </Border>
+
+    <Border Classes="card">
+      <StackPanel Spacing="10">
+        <TextBlock Text="Keş və encoder" Classes="label" />
+        <TextBox Text="{Binding CacheDirectory}" Watermark="Keş qovluğu" />
+        <TextBox Text="{Binding PreferredEncoder}" Watermark="Encoder (boş = avtomatik)" />
+      </StackPanel>
+    </Border>
+
+    <StackPanel Orientation="Horizontal" Spacing="12">
+      <Button Classes="primary" Content="Yadda saxla" Command="{Binding SaveCommand}" />
+      <TextBlock Text="{Binding Message}" Classes="value" VerticalAlignment="Center" />
+    </StackPanel>
+  </StackPanel>
+</UserControl>

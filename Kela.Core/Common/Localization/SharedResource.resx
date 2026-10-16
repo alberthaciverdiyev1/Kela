@@ -1139,4 +1139,169 @@
   <data name="Js_TotalQuestions" xml:space="preserve">
     <value>Total questions</value>
   </data>
+  <data name="Nav_Nodes" xml:space="preserve">
+    <value>Nodes</value>
+  </data>
+  <data name="Node_Title" xml:space="preserve">
+    <value>Conversion nodes</value>
+  </data>
+  <data name="Node_Devices" xml:space="preserve">
+    <value>Devices</value>
+  </data>
+  <data name="Node_Codes" xml:space="preserve">
+    <value>Registration codes</value>
+  </data>
+  <data name="Node_Jobs" xml:space="preserve">
+    <value>Jobs</value>
+  </data>
+  <data name="Node_Name" xml:space="preserve">
+    <value>Name</value>
+  </data>
+  <data name="Node_Status" xml:space="preserve">
+    <value>Status</value>
+  </data>
+  <data name="Node_Platform" xml:space="preserve">
+    <value>Platform</value>
+  </data>
+  <data name="Node_Cpu" xml:space="preserve">
+    <value>CPU</value>
+  </data>
+  <data name="Node_Ram" xml:space="preserve">
+    <value>RAM</value>
+  </data>
+  <data name="Node_Disk" xml:space="preserve">
+    <value>Disk</value>
+  </data>
+  <data name="Node_Encoders" xml:space="preserve">
+    <value>Encoders</value>
+  </data>
+  <data name="Node_Gpu" xml:space="preserve">
+    <value>GPU</value>
+  </data>
+  <data name="Node_Benchmark" xml:space="preserve">
+    <value>Benchmark</value>
+  </data>
+  <data name="Node_Score" xml:space="preserve">
+    <value>Score</value>
+  </data>
+  <data name="Node_LastSeen" xml:space="preserve">
+    <value>Last seen</value>
+  </data>
+  <data name="Node_Registered" xml:space="preserve">
+    <value>Registered</value>
+  </data>
+  <data name="Node_Online" xml:space="preserve">
+    <value>Online</value>
+  </data>
+  <data name="Node_Offline" xml:space="preserve">
+    <value>Offline</value>
+  </data>
+  <data name="Node_Disabled" xml:space="preserve">
+    <value>Disabled</value>
+  </data>
+  <data name="Node_GenerateCode" xml:space="preserve">
+    <value>New code</value>
+  </data>
+  <data name="Node_Code" xml:space="preserve">
+    <value>Code</value>
+  </data>
+  <data name="Node_Note" xml:space="preserve">
+    <value>Note</value>
+  </data>
+  <data name="Node_Expires" xml:space="preserve">
+    <value>Expires</value>
+  </data>
+  <data name="Node_NoExpiry" xml:space="preserve">
+    <value>No expiry</value>
+  </data>
+  <data name="Node_Used" xml:space="preserve">
+    <value>Used</value>
+  </data>
+  <data name="Node_Unused" xml:space="preserve">
+    <value>Unused</value>
+  </data>
+  <data name="Node_ExpiresHours" xml:space="preserve">
+    <value>Valid for (hours)</value>
+  </data>
+  <data name="Node_Revoke" xml:space="preserve">
+    <value>Revoke access</value>
+  </data>
+  <data name="Node_Enable" xml:space="preserve">
+    <value>Enable</value>
+  </data>
+  <data name="Node_Disable" xml:space="preserve">
+    <value>Disable</value>
+  </data>
+  <data name="Node_NoDevices" xml:space="preserve">
+    <value>No devices connected yet</value>
+  </data>
+  <data name="Node_NoCodes" xml:space="preserve">
+    <value>No registration codes</value>
+  </data>
+  <data name="Node_ConfirmRevoke" xml:space="preserve">
+    <value>Revoke this device's access? It will need a new registration code.</value>
+  </data>
+  <data name="Node_Total" xml:space="preserve">
+    <value>Devices</value>
+  </data>
+  <data name="Node_ActiveJobs" xml:space="preserve">
+    <value>Running jobs</value>
+  </data>
+  <data name="Node_PendingJobs" xml:space="preserve">
+    <value>Queued jobs</value>
+  </data>
+  <data name="Node_CompletedJobs" xml:space="preserve">
+    <value>Completed jobs</value>
+  </data>
+  <data name="Node_FailedJobs" xml:space="preserve">
+    <value>Failed jobs</value>
+  </data>
+  <data name="Node_VideosProcessing" xml:space="preserve">
+    <value>Videos in progress</value>
+  </data>
+  <data name="Node_Requeue" xml:space="preserve">
+    <value>Requeue</value>
+  </data>
+  <data name="Node_ConfirmRequeue" xml:space="preserve">
+    <value>Requeue this job? The video will be converted again from scratch.</value>
+  </data>
+  <data name="Job_Resolution" xml:space="preserve">
+    <value>Resolution</value>
+  </data>
+  <data name="Job_Progress" xml:space="preserve">
+    <value>Progress</value>
+  </data>
+  <data name="Job_Attempts" xml:space="preserve">
+    <value>Attempts</value>
+  </data>
+  <data name="Job_Node" xml:space="preserve">
+    <value>Device</value>
+  </data>
+  <data name="Job_Video" xml:space="preserve">
+    <value>Video</value>
+  </data>
+  <data name="Job_Created" xml:space="preserve">
+    <value>Created</value>
+  </data>
+  <data name="Job_Error" xml:space="preserve">
+    <value>Error</value>
+  </data>
+  <data name="Node_All" xml:space="preserve">
+    <value>All</value>
+  </data>
+  <data name="Node_Copied" xml:space="preserve">
+    <value>Code copied</value>
+  </data>
+  <data name="Node_Subtitle" xml:space="preserve">
+    <value>Devices that convert uploaded videos into HLS</value>
+  </data>
+  <data name="Node_NotePlaceholder" xml:space="preserve">
+    <value>e.g. Office PC</value>
+  </data>
+  <data name="Node_Expired" xml:space="preserve">
+    <value>Expired</value>
+  </data>
+  <data name="Node_AutoRefresh" xml:space="preserve">
+    <value>Auto refresh</value>
+  </data>
 </root>

@@ -1,0 +1,105 @@
+<Styles xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+  <Styles.Resources>
+    <ResourceDictionary>
+      <ResourceDictionary.ThemeDictionaries>
+        <ResourceDictionary x:Key="Light">
+          <SolidColorBrush x:Key="PageBackground" Color="#F6F7F9" />
+          <SolidColorBrush x:Key="CardBackground" Color="#FFFFFF" />
+          <SolidColorBrush x:Key="CardBorder" Color="#E4E7EC" />
+          <SolidColorBrush x:Key="SidebarBackground" Color="#FFFFFF" />
+          <SolidColorBrush x:Key="MutedText" Color="#667085" />
+          <SolidColorBrush x:Key="StrongText" Color="#101828" />
+          <SolidColorBrush x:Key="Accent" Color="#004AAD" />
+        </ResourceDictionary>
+        <ResourceDictionary x:Key="Dark">
+          <SolidColorBrush x:Key="PageBackground" Color="#14161A" />
+          <SolidColorBrush x:Key="CardBackground" Color="#1C1F24" />
+          <SolidColorBrush x:Key="CardBorder" Color="#2A2F36" />
+          <SolidColorBrush x:Key="SidebarBackground" Color="#1C1F24" />
+          <SolidColorBrush x:Key="MutedText" Color="#98A2B3" />
+          <SolidColorBrush x:Key="StrongText" Color="#F2F4F7" />
+          <SolidColorBrush x:Key="Accent" Color="#5B9BFF" />
+        </ResourceDictionary>
+      </ResourceDictionary.ThemeDictionaries>
+    </ResourceDictionary>
+  </Styles.Resources>
+
+  <!-- Kəskin, yüngül görünüş: kölgə və animasiya yoxdur. -->
+  <Style Selector="Window">
+    <Setter Property="Background" Value="{DynamicResource PageBackground}" />
+    <Setter Property="FontSize" Value="13" />
+  </Style>
+
+  <Style Selector="Border.card">
+    <Setter Property="Background" Value="{DynamicResource CardBackground}" />
+    <Setter Property="BorderBrush" Value="{DynamicResource CardBorder}" />
+    <Setter Property="BorderThickness" Value="1" />
+    <Setter Property="CornerRadius" Value="10" />
+    <Setter Property="Padding" Value="16" />
+  </Style>
+
+  <Style Selector="TextBlock.label">
+    <Setter Property="Foreground" Value="{DynamicResource MutedText}" />
+    <Setter Property="FontSize" Value="11" />
+    <Setter Property="FontWeight" Value="SemiBold" />
+  </Style>
+
+  <Style Selector="TextBlock.value">
+    <Setter Property="Foreground" Value="{DynamicResource StrongText}" />
+    <Setter Property="FontSize" Value="14" />
+    <Setter Property="TextWrapping" Value="Wrap" />
+  </Style>
+
+  <Style Selector="TextBlock.h1">
+    <Setter Property="Foreground" Value="{DynamicResource StrongText}" />
+    <Setter Property="FontSize" Value="20" />
+    <Setter Property="FontWeight" Value="Bold" />
+  </Style>
+
+  <Style Selector="TextBlock.metric">
+    <Setter Property="Foreground" Value="{DynamicResource StrongText}" />
+    <Setter Property="FontSize" Value="22" />
+    <Setter Property="FontWeight" Value="Bold" />
+  </Style>
+
+  <Style Selector="Button.nav">
+    <Setter Property="HorizontalAlignment" Value="Stretch" />
+    <Setter Property="HorizontalContentAlignment" Value="Left" />
+    <Setter Property="Background" Value="Transparent" />
+    <Setter Property="BorderThickness" Value="0" />
+    <Setter Property="Padding" Value="12,10" />
+    <Setter Property="CornerRadius" Value="8" />
+    <Setter Property="Foreground" Value="{DynamicResource StrongText}" />
+  </Style>
+
+  <Style Selector="Button.nav:pointerover /template/ ContentPresenter">
+    <Setter Property="Background" Value="{DynamicResource CardBorder}" />
+  </Style>
+
+  <Style Selector="Button.nav.active /template/ ContentPresenter">
+    <Setter Property="Background" Value="{DynamicResource Accent}" />
+  </Style>
+
+  <Style Selector="Button.nav.active">
+    <Setter Property="Foreground" Value="White" />
+  </Style>
+
+  <Style Selector="Button.primary">
+    <Setter Property="Background" Value="{DynamicResource Accent}" />
+    <Setter Property="Foreground" Value="White" />
+    <Setter Property="CornerRadius" Value="8" />
+    <Setter Property="Padding" Value="14,8" />
+    <Setter Property="FontWeight" Value="SemiBold" />
+  </Style>
+
+  <Style Selector="Button.ghost">
+    <Setter Property="Background" Value="Transparent" />
+    <Setter Property="BorderBrush" Value="{DynamicResource CardBorder}" />
+    <Setter Property="BorderThickness" Value="1" />
+    <Setter Property="CornerRadius" Value="8" />
+    <Setter Property="Padding" Value="12,7" />
+  </Style>
+
+</Styles>

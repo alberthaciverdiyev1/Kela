@@ -96,6 +96,12 @@ public sealed class AppDbContext : DbContext
 
     public DbSet<Modules.Attendance.Entities.AttendanceRecord> AttendanceRecords => Set<Modules.Attendance.Entities.AttendanceRecord>();
 
+    public DbSet<Modules.Nodes.Entities.WorkerNode> WorkerNodes => Set<Modules.Nodes.Entities.WorkerNode>();
+
+    public DbSet<Modules.Nodes.Entities.WorkerRegistrationCode> WorkerRegistrationCodes => Set<Modules.Nodes.Entities.WorkerRegistrationCode>();
+
+    public DbSet<Modules.Nodes.Entities.VideoJob> VideoJobs => Set<Modules.Nodes.Entities.VideoJob>();
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);

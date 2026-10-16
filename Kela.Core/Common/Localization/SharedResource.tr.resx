@@ -1139,4 +1139,169 @@
   <data name="Js_TotalQuestions" xml:space="preserve">
     <value>Toplam soru</value>
   </data>
+  <data name="Nav_Nodes" xml:space="preserve">
+    <value>Устройства конвертации</value>
+  </data>
+  <data name="Node_Title" xml:space="preserve">
+    <value>Узлы конвертации</value>
+  </data>
+  <data name="Node_Devices" xml:space="preserve">
+    <value>Устройства</value>
+  </data>
+  <data name="Node_Codes" xml:space="preserve">
+    <value>Коды регистрации</value>
+  </data>
+  <data name="Node_Jobs" xml:space="preserve">
+    <value>Задания</value>
+  </data>
+  <data name="Node_Name" xml:space="preserve">
+    <value>Имя</value>
+  </data>
+  <data name="Node_Status" xml:space="preserve">
+    <value>Статус</value>
+  </data>
+  <data name="Node_Platform" xml:space="preserve">
+    <value>Платформа</value>
+  </data>
+  <data name="Node_Cpu" xml:space="preserve">
+    <value>CPU</value>
+  </data>
+  <data name="Node_Ram" xml:space="preserve">
+    <value>RAM</value>
+  </data>
+  <data name="Node_Disk" xml:space="preserve">
+    <value>Диск</value>
+  </data>
+  <data name="Node_Encoders" xml:space="preserve">
+    <value>Кодеки</value>
+  </data>
+  <data name="Node_Gpu" xml:space="preserve">
+    <value>GPU</value>
+  </data>
+  <data name="Node_Benchmark" xml:space="preserve">
+    <value>Бенчмарк</value>
+  </data>
+  <data name="Node_Score" xml:space="preserve">
+    <value>Балл</value>
+  </data>
+  <data name="Node_LastSeen" xml:space="preserve">
+    <value>Последняя связь</value>
+  </data>
+  <data name="Node_Registered" xml:space="preserve">
+    <value>Регистрация</value>
+  </data>
+  <data name="Node_Online" xml:space="preserve">
+    <value>Онлайн</value>
+  </data>
+  <data name="Node_Offline" xml:space="preserve">
+    <value>Офлайн</value>
+  </data>
+  <data name="Node_Disabled" xml:space="preserve">
+    <value>Отключено</value>
+  </data>
+  <data name="Node_GenerateCode" xml:space="preserve">
+    <value>Новый код</value>
+  </data>
+  <data name="Node_Code" xml:space="preserve">
+    <value>Код</value>
+  </data>
+  <data name="Node_Note" xml:space="preserve">
+    <value>Заметка</value>
+  </data>
+  <data name="Node_Expires" xml:space="preserve">
+    <value>Истекает</value>
+  </data>
+  <data name="Node_NoExpiry" xml:space="preserve">
+    <value>Без срока</value>
+  </data>
+  <data name="Node_Used" xml:space="preserve">
+    <value>Использован</value>
+  </data>
+  <data name="Node_Unused" xml:space="preserve">
+    <value>Не использован</value>
+  </data>
+  <data name="Node_ExpiresHours" xml:space="preserve">
+    <value>Действует (часов)</value>
+  </data>
+  <data name="Node_Revoke" xml:space="preserve">
+    <value>Отозвать доступ</value>
+  </data>
+  <data name="Node_Enable" xml:space="preserve">
+    <value>Включить</value>
+  </data>
+  <data name="Node_Disable" xml:space="preserve">
+    <value>Отключить</value>
+  </data>
+  <data name="Node_NoDevices" xml:space="preserve">
+    <value>Устройства ещё не подключены</value>
+  </data>
+  <data name="Node_NoCodes" xml:space="preserve">
+    <value>Нет кодов регистрации</value>
+  </data>
+  <data name="Node_ConfirmRevoke" xml:space="preserve">
+    <value>Отозвать доступ устройства? Потребуется новый код регистрации.</value>
+  </data>
+  <data name="Node_Total" xml:space="preserve">
+    <value>Устройства</value>
+  </data>
+  <data name="Node_ActiveJobs" xml:space="preserve">
+    <value>Активные задания</value>
+  </data>
+  <data name="Node_PendingJobs" xml:space="preserve">
+    <value>В очереди</value>
+  </data>
+  <data name="Node_CompletedJobs" xml:space="preserve">
+    <value>Завершено</value>
+  </data>
+  <data name="Node_FailedJobs" xml:space="preserve">
+    <value>Ошибки</value>
+  </data>
+  <data name="Node_VideosProcessing" xml:space="preserve">
+    <value>Видео в работе</value>
+  </data>
+  <data name="Node_Requeue" xml:space="preserve">
+    <value>Повторить</value>
+  </data>
+  <data name="Node_ConfirmRequeue" xml:space="preserve">
+    <value>Повторить задание? Видео будет сконвертировано заново.</value>
+  </data>
+  <data name="Job_Resolution" xml:space="preserve">
+    <value>Разрешение</value>
+  </data>
+  <data name="Job_Progress" xml:space="preserve">
+    <value>Прогресс</value>
+  </data>
+  <data name="Job_Attempts" xml:space="preserve">
+    <value>Попытки</value>
+  </data>
+  <data name="Job_Node" xml:space="preserve">
+    <value>Устройство</value>
+  </data>
+  <data name="Job_Video" xml:space="preserve">
+    <value>Видео</value>
+  </data>
+  <data name="Job_Created" xml:space="preserve">
+    <value>Создано</value>
+  </data>
+  <data name="Job_Error" xml:space="preserve">
+    <value>Ошибка</value>
+  </data>
+  <data name="Node_All" xml:space="preserve">
+    <value>Все</value>
+  </data>
+  <data name="Node_Copied" xml:space="preserve">
+    <value>Код скопирован</value>
+  </data>
+  <data name="Node_Subtitle" xml:space="preserve">
+    <value>Устройства, конвертирующие видео в HLS</value>
+  </data>
+  <data name="Node_NotePlaceholder" xml:space="preserve">
+    <value>напр. Офисный ПК</value>
+  </data>
+  <data name="Node_Expired" xml:space="preserve">
+    <value>Истёк</value>
+  </data>
+  <data name="Node_AutoRefresh" xml:space="preserve">
+    <value>Автообновление</value>
+  </data>
 </root>

@@ -1,0 +1,64 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             x:Class="Kela.Nodes.App.Views.DevicesView">
+
+  <StackPanel Spacing="16">
+    <Grid ColumnDefinitions="*,Auto">
+      <TextBlock Grid.Column="0" Text="Cihaz" Classes="h1" />
+      <Button Grid.Column="1" Classes="ghost" Content="Benchmark keçir"
+              Command="{Binding BenchmarkCommand}" IsEnabled="{Binding !IsBenchmarking}" />
+    </Grid>
+
+    <TextBlock Text="{Binding Status}" Classes="value" />
+
+    <Border Classes="card">
+      <ItemsControl ItemsSource="{Binding Facts}">
+        <ItemsControl.ItemTemplate>
+          <DataTemplate>
+            <Grid ColumnDefinitions="170,*" Margin="0,4">
+              <TextBlock Grid.Column="0" Text="{Binding Key}" Classes="label" />
+              <TextBlock Grid.Column="1" Text="{Binding Value}" Classes="value" />
+            </Grid>
+          </DataTemplate>
+        </ItemsControl.ItemTemplate>
+      </ItemsControl>
+    </Border>
+
+    <Grid ColumnDefinitions="*,*">
+      <Border Grid.Column="0" Classes="card" Margin="0,0,8,0">
+        <StackPanel Spacing="6">
+          <TextBlock Text="Təsdiqlənmiş encoder-lər" Classes="label" />
+          <ItemsControl ItemsSource="{Binding Encoders}">
+            <ItemsControl.ItemTemplate>
+              <DataTemplate>
+                <TextBlock Text="{Binding}" Classes="value" />
+              </DataTemplate>
+            </ItemsControl.ItemTemplate>
+          </ItemsControl>
+        </StackPanel>
+      </Border>
+
+      <Border Grid.Column="1" Classes="card" Margin="8,0,0,0">
+        <StackPanel Spacing="6">
+          <TextBlock Text="Aparat dəstəyi" Classes="label" />
+          <ItemsControl ItemsSource="{Binding HardwareAcceleration}">
+            <ItemsControl.ItemTemplate>
+              <DataTemplate>
+                <TextBlock Text="{Binding}" Classes="value" />
+              </DataTemplate>
+            </ItemsControl.ItemTemplate>
+          </ItemsControl>
+
+          <TextBlock Text="GPU" Classes="label" Margin="0,8,0,0" />
+          <ItemsControl ItemsSource="{Binding Gpus}">
+            <ItemsControl.ItemTemplate>
+              <DataTemplate>
+                <TextBlock Text="{Binding}" Classes="value" />
+              </DataTemplate>
+            </ItemsControl.ItemTemplate>
+          </ItemsControl>
+        </StackPanel>
+      </Border>
+    </Grid>
+  </StackPanel>
+</UserControl>

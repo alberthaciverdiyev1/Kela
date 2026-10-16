@@ -1,0 +1,75 @@
+using System.Net.Http.Headers;
+
+namespace Kela.Nodes.Worker;
+
+/// <summary>Mənbəni endirir və çıxışları imzalanmış URL-lərə yükləyir.</summary>
+public sealed class WorkerStorage(HttpClient http, WorkerLog log)
+{
+    /// <summary>Endirmə — çıxış axını ilə, yaddaşa yığmadan.</summary>
+    public async Task DownloadAsync(string url, string destination, IProgress<long>? progress = null, CancellationToken ct = default)
+    {
+        Directory.CreateDirectory(Path.GetDirectoryName(destination)!);
+
+        using var response = await http.GetAsync(url, HttpCompletionOption.ResponseHeadersRead, ct);
+        response.EnsureSuccessStatusCode();
+
+        var total = response.Content.Headers.ContentLength ?? -1;
+        var buffer = new byte[81920];
+        long written = 0;
+        var lastReport = 0L;
+
+        await using var source = await response.Content.ReadAsStreamAsync(ct);
+        await using var target = new FileStream(destination, FileMode.Create, FileAccess.Write, FileShare.None, buffer.Length, useAsync: true);
+
+        int read;
+        while ((read = await source.ReadAsync(buffer, ct)) > 0)
+        {
+            await target.WriteAsync(buffer.AsMemory(0, read), ct);
+            written += read;
+
+            // Hər 4 MB-dan bir bildiriş — UI-ı yormamaq üçün.
+            if (progress is not null && written - lastReport >= 4 * 1024 * 1024)
+            {
+                lastReport = written;
+                progress.Report(total > 0 ? written * 100 / total : written);
+            }
+        }
+
+        progress?.Report(100);
+        log.Debug("storage", $"Endirildi: {Path.GetFileName(destination)} ({written / 1024 / 1024} MB)");
+    }
+
+    /// <summary>
+    /// Faylı imzalanmış PUT URL-inə göndərir. Presigned URL üçün Content-Type imzalanarkən
+    /// istifadə olunan dəyərlə eyni olmalıdır.
+    /// </summary>
+    /// <param name="authenticated">
+    /// true = URL API-nin öz proxy-sidir (presigned PUT dəstəklənməyəndə) və cihaz
+    /// tokeni tələb edir. Presigned URL-lərə başlıq əlavə olunmur.
+    /// </param>
+    public async Task UploadAsync(string url, string file, string contentType, bool authenticated,
+        string? token = null, CancellationToken ct = default)
+    {
+        await using var stream = new FileStream(file, FileMode.Open, FileAccess.Read, FileShare.Read, 81920, useAsync: true);
+
+        using var content = new StreamContent(stream);
+        content.Headers.ContentType = new MediaTypeHeaderValue(contentType);
+
+        using var request = new HttpRequestMessage(HttpMethod.Put, url) { Content = content };
+
+        if (authenticated && !string.IsNullOrEmpty(token))
+        {
+            request.Headers.Add("X-Node-Token", token);
+        }
+
+        using var response = await http.SendAsync(request, ct);
+
+        if (!response.IsSuccessStatusCode)
+        {
+            var body = await response.Content.ReadAsStringAsync(ct);
+            throw new HttpRequestException($"Upload failed ({(int)response.StatusCode}) for {Path.GetFileName(file)}: {Trim(body)}");
+        }
+    }
+
+    private static string Trim(string value) => value.Length <= 200 ? value : value[..200];
+}

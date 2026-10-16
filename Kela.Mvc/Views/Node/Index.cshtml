@@ -1,0 +1,145 @@
+@using Kela.Core.Modules.Nodes.Responses
+@{
+    var summary = ViewData["Summary"] as NodeSummaryResponse;
+}
+<section class="admin-page">
+    <partial name="Ui/_PageHeader" model="@(new PageHeaderModel {
+        Title = L["Node_Title"],
+        Subtitle = L["Node_Subtitle"] })" />
+
+    @if (summary is not null)
+    {
+        <div class="mb-5 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-6">
+            @foreach (var card in new (string Label, int Value, string Tone)[]
+            {
+                (L["Node_Online"], summary.OnlineNodes, "text-emerald-600"),
+                (L["Node_Offline"], summary.OfflineNodes, "text-slate-500"),
+                (L["Node_Disabled"], summary.DisabledNodes, "text-slate-400"),
+                (L["Node_ActiveJobs"], summary.ActiveJobs, "text-primary"),
+                (L["Node_PendingJobs"], summary.PendingJobs, "text-amber-600"),
+                (L["Node_VideosProcessing"], summary.RunningVideos, "text-primary")
+            })
+            {
+                <div class="admin-card !p-4">
+                    <p class="text-xs font-semibold uppercase tracking-wide text-slate-400">@card.Label</p>
+                    <p class="mt-1 text-2xl font-extrabold @card.Tone">@card.Value</p>
+                </div>
+            }
+        </div>
+    }
+
+    <div class="admin-card">
+        <div class="mb-4 flex flex-wrap items-center gap-2 border-b border-border pb-3">
+            @foreach (var tab in new[] { "devices", "jobs", "codes" })
+            {
+                var label = tab switch
+                {
+                    "devices" => L["Node_Devices"],
+                    "jobs" => L["Node_Jobs"],
+                    _ => L["Node_Codes"]
+                };
+
+                <button type="button" data-tab="@tab" onclick="NodesPage.tab('@tab')"
+                        class="node-tab rounded-xl px-4 py-2 text-sm font-semibold transition">
+                    @label
+                </button>
+            }
+
+            <div class="ms-auto flex items-center gap-2">
+                <div id="refreshNote" class="hidden text-sm font-semibold text-slate-400">@L["Node_AutoRefresh"]</div>
+                <button type="button" id="createCodeBtn" onclick="CodesPage.create()"
+                        class="admin-button admin-button-primary hidden">
+                    @L["Node_GenerateCode"]
+                </button>
+            </div>
+        </div>
+
+        <div id="tab-devices" class="relative">
+            <div id="listLoader" class="admin-loader"><div class="spinner"></div></div>
+            <div class="overflow-x-auto">
+                <table class="admin-table">
+                    <thead>
+                        <tr>
+                            <th>@L["Node_Name"]</th>
+                            <th>@L["Node_Status"]</th>
+                            <th>@L["Node_Platform"]</th>
+                            <th>@L["Node_Encoders"]</th>
+                            <th>@L["Node_Benchmark"]</th>
+                            <th>@L["Node_ActiveJobs"]</th>
+                            <th>@L["Node_LastSeen"]</th>
+                            <th class="text-right">@L["Common_Actions"]</th>
+                        </tr>
+                    </thead>
+                    <tbody id="rows"></tbody>
+                </table>
+            </div>
+        </div>
+
+        <div id="tab-jobs" class="relative hidden">
+            <div class="mb-3 flex flex-wrap items-center gap-2">
+                <select id="jobStatus" onchange="JobsPage.reload()" class="admin-input !w-auto">
+                    <option value="">@L["Node_All"]</option>
+                    @foreach (var status in Kela.Nodes.Shared.Contracts.JobStatus.All)
+                    {
+                        <option value="@status">@status</option>
+                    }
+                </select>
+            </div>
+            <div class="overflow-x-auto">
+                <table class="admin-table">
+                    <thead>
+                        <tr>
+                            <th class="w-16">#</th>
+                            <th>@L["Job_Video"]</th>
+                            <th>@L["Job_Resolution"]</th>
+                            <th>@L["Node_Status"]</th>
+                            <th>@L["Job_Progress"]</th>
+                            <th>@L["Job_Node"]</th>
+                            <th>@L["Job_Attempts"]</th>
+                            <th class="text-right">@L["Common_Actions"]</th>
+                        </tr>
+                    </thead>
+                    <tbody id="jobRows"></tbody>
+                </table>
+            </div>
+            <div id="jobPagination" class="mt-4 flex flex-wrap justify-center gap-2"></div>
+        </div>
+
+        <div id="tab-codes" class="relative hidden">
+            <div class="overflow-x-auto">
+                <table class="admin-table">
+                    <thead>
+                        <tr>
+                            <th>@L["Node_Code"]</th>
+                            <th>@L["Node_Note"]</th>
+                            <th>@L["Node_Expires"]</th>
+                            <th>@L["Node_Status"]</th>
+                            <th class="text-right">@L["Common_Actions"]</th>
+                        </tr>
+                    </thead>
+                    <tbody id="codeRows"></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</section>
+
+<div id="codeModal" class="fixed inset-0 z-40 hidden items-center justify-center bg-slate-950/40 p-4">
+    <div class="w-full max-w-md rounded-2xl border border-border bg-white p-5 shadow-xl">
+        <h3 class="mb-4 text-lg font-bold text-slate-900">@L["Node_GenerateCode"]</h3>
+        <form id="codeForm">
+            <label class="admin-label">@L["Node_Note"]</label>
+            <input type="text" name="note" maxlength="190" class="admin-input" placeholder="@L["Node_NotePlaceholder"]" />
+
+            <label class="admin-label mt-3">@L["Node_ExpiresHours"]</label>
+            <input type="number" name="expires_hours" value="24" min="0" max="720" class="admin-input" />
+
+            <div class="mt-5 flex justify-end gap-2">
+                <button type="button" onclick="CodesPage.close()" class="admin-button admin-button-secondary">@L["Common_Cancel"]</button>
+                <button type="submit" class="admin-button admin-button-primary">@L["Common_Save"]</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<form id="antiforgery">@Html.AntiForgeryToken()</form>

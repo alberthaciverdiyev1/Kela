@@ -1,5 +1,6 @@
 using System.Net.Http.Headers;
 using Kela.Core.Common.MultiTenancy;
+using Kela.Core.Common.Storage;
 using Kela.Core.Data;
 using Kela.Core.Modules.Auth.Abstractions;
 using UserTypes = Kela.Core.Modules.User.Entities.UserTypes;
@@ -15,6 +16,12 @@ namespace Kela.Tests;
 public sealed class ApiFactory : WebApplicationFactory<Program>, IAsyncLifetime
 {
     private readonly PostgreSqlContainer _db = new PostgreSqlBuilder("postgres:17-alpine").Build();
+
+    /// <summary>Lokal storage bu qovluğa yazır — repo içindəki uploads/ qarışmasın.</summary>
+    private readonly string _storageRoot = Path.Combine(Path.GetTempPath(), $"kela-tests-{Guid.NewGuid():N}");
+
+    /// <summary>Test storage-ının disk üzərindəki kökü (gerçək fayl qoymaq üçün).</summary>
+    public string StorageRoot => _storageRoot;
 
     public string AdminToken { get; private set; } = string.Empty;
 
@@ -32,6 +39,24 @@ public sealed class ApiFactory : WebApplicationFactory<Program>, IAsyncLifetime
         await using (var db = new AppDbContext(options, new NullTenantProvider(), new ConfigurationBuilder().Build()))
         {
             await db.Database.MigrateAsync();
+        }
+
+        // Təhlükəsizlik qapısı: testlər real R2 bucket-ına və ya inkişaf bazasına
+        // qoşulmamalıdır. Konfiqurasiya səhv yerə baxırsa dərhal dayan.
+        using (var guard = Services.CreateScope())
+        {
+            var storage = guard.ServiceProvider.GetRequiredService<IFileStorage>();
+            if (storage is not LocalFileStorage)
+            {
+                throw new InvalidOperationException(
+                    $"Testlər '{storage.GetType().Name}' istifadə edir — real bucket-a yazmağın qarşısı alındı.");
+            }
+
+            var connection = guard.ServiceProvider.GetRequiredService<IConfiguration>().GetConnectionString("Postgres");
+            if (connection is null || !connection.Contains(_db.GetConnectionString().Split(';')[0], StringComparison.Ordinal))
+            {
+                throw new InvalidOperationException($"Testlər gözlənilən test bazasına qoşulmur: {connection}");
+            }
         }
 
         // Host-ı işə sal (Program admin + icazələri seed edir) və admin tokeni yarat.
@@ -60,7 +85,14 @@ public sealed class ApiFactory : WebApplicationFactory<Program>, IAsyncLifetime
             {
                 ["ConnectionStrings:Postgres"] = _db.GetConnectionString(),
                 ["RateLimit:AuthPermitLimit"] = "1000000",
-                ["Tenancy:Strict"] = "false"
+                ["Tenancy:Strict"] = "false",
+                ["Storage:Provider"] = "Local",
+                ["Storage:RootPath"] = _storageRoot,
+                // Lease/reconciliation dövrü testlərdə determinist olmalıdır.
+                ["Nodes:BackgroundEnabled"] = "false",
+                // Test bazası bütün testlərin videolarını saxlayır — claim süzgəci
+                // işləyə bilsin deyə bir dəfədə çoxlu tapşırıq götürməyə icazə verilir.
+                ["Nodes:MaxConcurrentJobsPerNode"] = "64"
             });
         });
     }

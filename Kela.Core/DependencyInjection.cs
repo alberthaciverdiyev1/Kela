@@ -26,7 +26,11 @@ using Kela.Core.Common.Push;
 using Kela.Core.Modules.User.Services;
 using Kela.Core.Modules.Group.Services;
 using Kela.Core.Modules.Attendance.Services;
+using Kela.Core.Modules.Nodes;
+using Kela.Core.Modules.Nodes.Abstractions;
+using Kela.Core.Modules.Nodes.Services;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -46,22 +50,31 @@ public static class DependencyInjection
 
         services.AddValidatorsFromAssembly(typeof(DependencyInjection).Assembly);
 
-        services.AddDbContext<AppDbContext>(options =>
-            options.UseNpgsql(configuration.GetConnectionString("Postgres")));
-
+        // Konfiqurasiya DİNLƏMƏ ZAMANI oxunur, qeydiyyat zamanı yox: host qurularkən
+        // sonradan əlavə olunan mənbələr (testlər, env dəyişənləri) də nəzərə alınsın.
+        services.AddDbContext<AppDbContext>((provider, options) =>
+            options.UseNpgsql(provider.GetRequiredService<IConfiguration>().GetConnectionString("Postgres")));
 
         // Depolama sağlayıcısı: Storage:Provider = "Local" | "R2"
-        var storageProvider = configuration["Storage:Provider"] ?? "Local";
-        if (string.Equals(storageProvider, "R2", StringComparison.OrdinalIgnoreCase))
+        services.AddSingleton<IFileStorage>(provider =>
         {
-            services.Configure<WorkerOptions>(configuration.GetSection(WorkerOptions.SectionName));
+            var config = provider.GetRequiredService<IConfiguration>();
+
+            var options = new R2Options();
+            config.GetSection(R2Options.SectionName).Bind(options);
+
+            var storageProvider = config["Storage:Provider"] ?? "Local";
+
+            return string.Equals(storageProvider, "R2", StringComparison.OrdinalIgnoreCase)
+                ? new R2FileStorage(Microsoft.Extensions.Options.Options.Create(options))
+                : new LocalFileStorage(
+                    provider.GetRequiredService<IWebHostEnvironment>(),
+                    config,
+                    provider.GetRequiredService<IHttpContextAccessor>());
+        });
+
+        services.Configure<WorkerOptions>(configuration.GetSection(WorkerOptions.SectionName));
         services.Configure<R2Options>(configuration.GetSection(R2Options.SectionName));
-            services.AddSingleton<IFileStorage, R2FileStorage>();
-        }
-        else
-        {
-            services.AddSingleton<IFileStorage, LocalFileStorage>();
-        }
 
         services.AddScoped<IBannerService, BannerService>();
         services.AddScoped<Kela.Core.Modules.Certificate.Abstractions.ICertificateService, Kela.Core.Modules.Certificate.Services.CertificateService>();
@@ -101,6 +114,11 @@ public static class DependencyInjection
         services.AddScoped<IAttendanceService, AttendanceService>();
         services.AddScoped<IVideoProcessingService, VideoProcessingService>();
         services.AddScoped<ITenantFolder, TenantFolder>();
+
+        services.Configure<NodeOptions>(configuration.GetSection(NodeOptions.SectionName));
+        services.AddScoped<INodeService, NodeService>();
+        services.AddScoped<IVideoJobScheduler, VideoJobScheduler>();
+        services.AddScoped<IVideoJobLifecycle, VideoJobLifecycle>();
 
         return services;
     }

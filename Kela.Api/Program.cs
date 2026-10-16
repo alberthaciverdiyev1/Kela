@@ -6,6 +6,8 @@ using Kela.Api.Common.Middleware;
 using Kela.Api.Common.Routing;
 using Kela.Api.Common.Responses;
 using Kela.Api.Common.Validation;
+using Kela.Api.Modules.Nodes.Auth;
+using Kela.Api.Modules.Nodes.Services;
 using Kela.Core;
 using Kela.Core.Common.Localization;
 using Kela.Core.Modules.Auth;
@@ -71,6 +73,9 @@ builder.Services.AddRateLimiter(options =>
 
 var jwt = builder.Configuration.GetSection(JwtOptions.SectionName).Get<JwtOptions>() ?? new JwtOptions();
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+    // Konversiya worker-ları JWT deyil, öz cihaz tokeni ilə autentifikasiya olunur.
+    .AddScheme<NodeTokenAuthenticationOptions, NodeTokenAuthenticationHandler>(
+        NodeTokenAuthenticationOptions.Scheme, _ => { })
     .AddJwtBearer(options =>
     {
         options.TokenValidationParameters = new TokenValidationParameters
@@ -98,6 +103,9 @@ builder.Services.AddAuthorization(options =>
         .RequireAuthenticatedUser()
         .Build();
 });
+
+// Worker tapşırıqlarının lease/reconciliation dövrü — yalnız API hostunda işləyir.
+builder.Services.AddHostedService<NodesBackgroundService>();
 
 var app = builder.Build();
 

@@ -23,4 +23,10 @@ public class Video : BaseEntity
 
     /// <summary>Konversiya xətası (yalnız failed olduqda).</summary>
     public string? ConversionError { get; set; }
+
+    /// <summary>
+    /// Konversiya versiyası. Yenidən konversiya başladıqda artırılır ki, yeni çıxışlar
+    /// ayrı qovluğa düşsün və hazır olana qədər köhnə versiya yayımda qalsın.
+    /// </summary>
+    public int ConversionVersion { get; set; } = 1;
 }

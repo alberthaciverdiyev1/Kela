@@ -1139,4 +1139,169 @@
   <data name="Js_TotalQuestions" xml:space="preserve">
     <value>Ümumi sual</value>
   </data>
+  <data name="Nav_Nodes" xml:space="preserve">
+    <value>Konversiya cihazları</value>
+  </data>
+  <data name="Node_Title" xml:space="preserve">
+    <value>Konversiya cihazları</value>
+  </data>
+  <data name="Node_Devices" xml:space="preserve">
+    <value>Cihazlar</value>
+  </data>
+  <data name="Node_Codes" xml:space="preserve">
+    <value>Qeydiyyat kodları</value>
+  </data>
+  <data name="Node_Jobs" xml:space="preserve">
+    <value>Tapşırıqlar</value>
+  </data>
+  <data name="Node_Name" xml:space="preserve">
+    <value>Ad</value>
+  </data>
+  <data name="Node_Status" xml:space="preserve">
+    <value>Vəziyyət</value>
+  </data>
+  <data name="Node_Platform" xml:space="preserve">
+    <value>Platforma</value>
+  </data>
+  <data name="Node_Cpu" xml:space="preserve">
+    <value>CPU</value>
+  </data>
+  <data name="Node_Ram" xml:space="preserve">
+    <value>RAM</value>
+  </data>
+  <data name="Node_Disk" xml:space="preserve">
+    <value>Disk</value>
+  </data>
+  <data name="Node_Encoders" xml:space="preserve">
+    <value>Encoder-lər</value>
+  </data>
+  <data name="Node_Gpu" xml:space="preserve">
+    <value>GPU</value>
+  </data>
+  <data name="Node_Benchmark" xml:space="preserve">
+    <value>Benchmark</value>
+  </data>
+  <data name="Node_Score" xml:space="preserve">
+    <value>Bal</value>
+  </data>
+  <data name="Node_LastSeen" xml:space="preserve">
+    <value>Son əlaqə</value>
+  </data>
+  <data name="Node_Registered" xml:space="preserve">
+    <value>Qeydiyyat</value>
+  </data>
+  <data name="Node_Online" xml:space="preserve">
+    <value>Onlayn</value>
+  </data>
+  <data name="Node_Offline" xml:space="preserve">
+    <value>Oflayn</value>
+  </data>
+  <data name="Node_Disabled" xml:space="preserve">
+    <value>Söndürülmüş</value>
+  </data>
+  <data name="Node_GenerateCode" xml:space="preserve">
+    <value>Yeni kod</value>
+  </data>
+  <data name="Node_Code" xml:space="preserve">
+    <value>Kod</value>
+  </data>
+  <data name="Node_Note" xml:space="preserve">
+    <value>Qeyd</value>
+  </data>
+  <data name="Node_Expires" xml:space="preserve">
+    <value>Bitmə tarixi</value>
+  </data>
+  <data name="Node_NoExpiry" xml:space="preserve">
+    <value>Müddətsiz</value>
+  </data>
+  <data name="Node_Used" xml:space="preserve">
+    <value>İstifadə olunub</value>
+  </data>
+  <data name="Node_Unused" xml:space="preserve">
+    <value>İstifadə olunmayıb</value>
+  </data>
+  <data name="Node_ExpiresHours" xml:space="preserve">
+    <value>Etibarlıdır (saat)</value>
+  </data>
+  <data name="Node_Revoke" xml:space="preserve">
+    <value>Girişi ləğv et</value>
+  </data>
+  <data name="Node_Enable" xml:space="preserve">
+    <value>İşə sal</value>
+  </data>
+  <data name="Node_Disable" xml:space="preserve">
+    <value>Söndür</value>
+  </data>
+  <data name="Node_NoDevices" xml:space="preserve">
+    <value>Hələ cihaz qoşulmayıb</value>
+  </data>
+  <data name="Node_NoCodes" xml:space="preserve">
+    <value>Qeydiyyat kodu yoxdur</value>
+  </data>
+  <data name="Node_ConfirmRevoke" xml:space="preserve">
+    <value>Bu cihazın girişi ləğv edilsin? Yenidən qoşulmaq üçün yeni kod lazım olacaq.</value>
+  </data>
+  <data name="Node_Total" xml:space="preserve">
+    <value>Cihazlar</value>
+  </data>
+  <data name="Node_ActiveJobs" xml:space="preserve">
+    <value>İcra olunan tapşırıqlar</value>
+  </data>
+  <data name="Node_PendingJobs" xml:space="preserve">
+    <value>Növbədə</value>
+  </data>
+  <data name="Node_CompletedJobs" xml:space="preserve">
+    <value>Tamamlanan</value>
+  </data>
+  <data name="Node_FailedJobs" xml:space="preserve">
+    <value>Alınmayan</value>
+  </data>
+  <data name="Node_VideosProcessing" xml:space="preserve">
+    <value>İşlənən videolar</value>
+  </data>
+  <data name="Node_Requeue" xml:space="preserve">
+    <value>Yenidən növbəyə</value>
+  </data>
+  <data name="Node_ConfirmRequeue" xml:space="preserve">
+    <value>Tapşırıq yenidən növbəyə salınsın? Video sıfırdan konvertasiya olunacaq.</value>
+  </data>
+  <data name="Job_Resolution" xml:space="preserve">
+    <value>Keyfiyyət</value>
+  </data>
+  <data name="Job_Progress" xml:space="preserve">
+    <value>İrəliləyiş</value>
+  </data>
+  <data name="Job_Attempts" xml:space="preserve">
+    <value>Cəhdlər</value>
+  </data>
+  <data name="Job_Node" xml:space="preserve">
+    <value>Cihaz</value>
+  </data>
+  <data name="Job_Video" xml:space="preserve">
+    <value>Video</value>
+  </data>
+  <data name="Job_Created" xml:space="preserve">
+    <value>Yaradılıb</value>
+  </data>
+  <data name="Job_Error" xml:space="preserve">
+    <value>Xəta</value>
+  </data>
+  <data name="Node_All" xml:space="preserve">
+    <value>Hamısı</value>
+  </data>
+  <data name="Node_Copied" xml:space="preserve">
+    <value>Kod kopyalandı</value>
+  </data>
+  <data name="Node_Subtitle" xml:space="preserve">
+    <value>Yüklənən videoları HLS-ə çevirən cihazlar</value>
+  </data>
+  <data name="Node_NotePlaceholder" xml:space="preserve">
+    <value>məs. Ofis kompüteri</value>
+  </data>
+  <data name="Node_Expired" xml:space="preserve">
+    <value>Vaxtı keçib</value>
+  </data>
+  <data name="Node_AutoRefresh" xml:space="preserve">
+    <value>Avtomatik yenilənir</value>
+  </data>
 </root>

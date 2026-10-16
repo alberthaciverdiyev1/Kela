@@ -1,8 +1,12 @@
 <Solution>
   <Project Path="Kela.Api/Kela.Api.csproj" />
+  <Project Path="Kela.App/Kela.App.csproj" />
   <Project Path="Kela.App.Shared/Kela.App.Shared.csproj" />
   <Project Path="Kela.App.Web/Kela.App.Web.csproj" />
   <Project Path="Kela.Core/Kela.Core.csproj" />
   <Project Path="Kela.Mvc/Kela.Mvc.csproj" />
+  <Project Path="Kela.Nodes.App/Kela.Nodes.App.csproj" />
+  <Project Path="Kela.Nodes.Shared/Kela.Nodes.Shared.csproj" />
+  <Project Path="Kela.Nodes.Worker/Kela.Nodes.Worker.csproj" />
   <Project Path="Kela.Tests/Kela.Tests.csproj" />
 </Solution>

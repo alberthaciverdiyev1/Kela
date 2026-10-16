@@ -797,6 +797,12 @@ namespace Kela.Core.Data.Migrations
                         .HasDefaultValue("pending")
                         .HasColumnName("conversion_status");
 
+                    b.Property<int>("ConversionVersion")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasDefaultValue(1)
+                        .HasColumnName("conversion_version");
+
                     b.Property<DateTimeOffset>("CreatedAt")
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("created_at");
@@ -898,6 +904,341 @@ namespace Kela.Core.Data.Migrations
                     b.HasIndex("DeletedAt");
 
                     b.ToTable("voice_records", (string)null);
+                });
+
+            modelBuilder.Entity("Kela.Core.Modules.Nodes.Entities.VideoJob", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint")
+                        .HasColumnName("id");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
+
+                    b.Property<string>("AttemptToken")
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)")
+                        .HasColumnName("attempt_token");
+
+                    b.Property<int>("Attempts")
+                        .HasColumnType("integer")
+                        .HasColumnName("attempts");
+
+                    b.Property<DateTimeOffset?>("CompletedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("completed_at");
+
+                    b.Property<DateTimeOffset>("CreatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_at");
+
+                    b.Property<DateTimeOffset?>("DeletedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("deleted_at");
+
+                    b.Property<string>("Encoder")
+                        .HasMaxLength(60)
+                        .HasColumnType("character varying(60)")
+                        .HasColumnName("encoder");
+
+                    b.Property<double?>("EncodingFps")
+                        .HasColumnType("double precision")
+                        .HasColumnName("encoding_fps");
+
+                    b.Property<string>("ErrorKind")
+                        .HasMaxLength(20)
+                        .HasColumnType("character varying(20)")
+                        .HasColumnName("error_kind");
+
+                    b.Property<string>("ErrorMessage")
+                        .HasMaxLength(1000)
+                        .HasColumnType("character varying(1000)")
+                        .HasColumnName("error_message");
+
+                    b.Property<bool>("HasAudio")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("boolean")
+                        .HasDefaultValue(true)
+                        .HasColumnName("has_audio");
+
+                    b.Property<DateTimeOffset?>("LeaseExpiresAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("lease_expires_at");
+
+                    b.Property<int>("MaxAttempts")
+                        .HasColumnType("integer")
+                        .HasColumnName("max_attempts");
+
+                    b.Property<DateTimeOffset?>("NextAttemptAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("next_attempt_at");
+
+                    b.Property<string>("OutputPrefix")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("character varying(500)")
+                        .HasColumnName("output_prefix");
+
+                    b.Property<int>("Priority")
+                        .HasColumnType("integer")
+                        .HasColumnName("priority");
+
+                    b.Property<double>("Progress")
+                        .HasColumnType("double precision")
+                        .HasColumnName("progress");
+
+                    b.Property<string>("Resolution")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("character varying(20)")
+                        .HasColumnName("resolution");
+
+                    b.Property<bool>("Skipped")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("boolean")
+                        .HasDefaultValue(false)
+                        .HasColumnName("skipped");
+
+                    b.Property<double?>("SourceFps")
+                        .HasColumnType("double precision")
+                        .HasColumnName("source_fps");
+
+                    b.Property<int?>("SourceHeight")
+                        .HasColumnType("integer")
+                        .HasColumnName("source_height");
+
+                    b.Property<int?>("SourceWidth")
+                        .HasColumnType("integer")
+                        .HasColumnName("source_width");
+
+                    b.Property<DateTimeOffset?>("StartedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("started_at");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("character varying(20)")
+                        .HasColumnName("status");
+
+                    b.Property<int>("TargetBitrateKbps")
+                        .HasColumnType("integer")
+                        .HasColumnName("target_bitrate_kbps");
+
+                    b.Property<int>("TargetHeight")
+                        .HasColumnType("integer")
+                        .HasColumnName("target_height");
+
+                    b.Property<long>("TenantId")
+                        .HasColumnType("bigint")
+                        .HasColumnName("tenant_id");
+
+                    b.Property<DateTimeOffset?>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("updated_at");
+
+                    b.Property<string>("VariantKey")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)")
+                        .HasColumnName("variant_key");
+
+                    b.Property<long>("VideoId")
+                        .HasColumnType("bigint")
+                        .HasColumnName("video_id");
+
+                    b.Property<long?>("WorkerNodeId")
+                        .HasColumnType("bigint")
+                        .HasColumnName("worker_node_id");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("DeletedAt");
+
+                    b.HasIndex("LeaseExpiresAt");
+
+                    b.HasIndex("WorkerNodeId");
+
+                    b.HasIndex("Status", "Priority");
+
+                    b.HasIndex("VideoId", "Resolution")
+                        .IsUnique()
+                        .HasFilter("deleted_at IS NULL");
+
+                    b.ToTable("video_jobs", (string)null);
+                });
+
+            modelBuilder.Entity("Kela.Core.Modules.Nodes.Entities.WorkerNode", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint")
+                        .HasColumnName("id");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
+
+                    b.Property<int>("ActiveJobs")
+                        .HasColumnType("integer")
+                        .HasColumnName("active_jobs");
+
+                    b.Property<string>("BenchmarkJson")
+                        .HasColumnType("jsonb")
+                        .HasColumnName("benchmark_json");
+
+                    b.Property<long>("CompletedJobs")
+                        .HasColumnType("bigint")
+                        .HasColumnName("completed_jobs");
+
+                    b.Property<DateTimeOffset>("CreatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_at");
+
+                    b.Property<DateTimeOffset?>("DeletedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("deleted_at");
+
+                    b.Property<string>("DeviceJson")
+                        .IsRequired()
+                        .HasColumnType("jsonb")
+                        .HasColumnName("device_json");
+
+                    b.Property<bool>("Enabled")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("boolean")
+                        .HasDefaultValue(true)
+                        .HasColumnName("enabled");
+
+                    b.Property<long>("FailedJobs")
+                        .HasColumnType("bigint")
+                        .HasColumnName("failed_jobs");
+
+                    b.Property<DateTimeOffset?>("LastSeenAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("last_seen_at");
+
+                    b.Property<string>("LimitsJson")
+                        .IsRequired()
+                        .HasColumnType("jsonb")
+                        .HasColumnName("limits_json");
+
+                    b.Property<int>("MaxConcurrentJobs")
+                        .HasColumnType("integer")
+                        .HasColumnName("max_concurrent_jobs");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(120)
+                        .HasColumnType("character varying(120)")
+                        .HasColumnName("name");
+
+                    b.Property<int>("PerformanceScore")
+                        .HasColumnType("integer")
+                        .HasColumnName("performance_score");
+
+                    b.Property<DateTimeOffset>("RegisteredAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("registered_at");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("character varying(20)")
+                        .HasColumnName("status");
+
+                    b.Property<long>("TenantId")
+                        .HasColumnType("bigint")
+                        .HasColumnName("tenant_id");
+
+                    b.Property<string>("TokenHash")
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)")
+                        .HasColumnName("token_hash");
+
+                    b.Property<DateTimeOffset?>("TokenIssuedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("token_issued_at");
+
+                    b.Property<DateTimeOffset?>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("updated_at");
+
+                    b.Property<string>("Version")
+                        .HasMaxLength(40)
+                        .HasColumnType("character varying(40)")
+                        .HasColumnName("version");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("DeletedAt");
+
+                    b.HasIndex("LastSeenAt");
+
+                    b.HasIndex("Status");
+
+                    b.HasIndex("TokenHash")
+                        .IsUnique()
+                        .HasFilter("token_hash IS NOT NULL");
+
+                    b.ToTable("worker_nodes", (string)null);
+                });
+
+            modelBuilder.Entity("Kela.Core.Modules.Nodes.Entities.WorkerRegistrationCode", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint")
+                        .HasColumnName("id");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
+
+                    b.Property<string>("Code")
+                        .IsRequired()
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)")
+                        .HasColumnName("code");
+
+                    b.Property<DateTimeOffset>("CreatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_at");
+
+                    b.Property<DateTimeOffset?>("DeletedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("deleted_at");
+
+                    b.Property<DateTimeOffset?>("ExpiresAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("expires_at");
+
+                    b.Property<string>("Note")
+                        .HasMaxLength(190)
+                        .HasColumnType("character varying(190)")
+                        .HasColumnName("note");
+
+                    b.Property<long>("TenantId")
+                        .HasColumnType("bigint")
+                        .HasColumnName("tenant_id");
+
+                    b.Property<DateTimeOffset?>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("updated_at");
+
+                    b.Property<DateTimeOffset?>("UsedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("used_at");
+
+                    b.Property<long?>("UsedByNodeId")
+                        .HasColumnType("bigint")
+                        .HasColumnName("used_by_node_id");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Code")
+                        .IsUnique()
+                        .HasFilter("deleted_at IS NULL");
+
+                    b.HasIndex("DeletedAt");
+
+                    b.ToTable("worker_registration_codes", (string)null);
                 });
 
             modelBuilder.Entity("Kela.Core.Modules.Notification.Entities.Notification", b =>
@@ -1959,6 +2300,24 @@ namespace Kela.Core.Data.Migrations
                     b.Navigation("Video");
 
                     b.Navigation("VoiceRecord");
+                });
+
+            modelBuilder.Entity("Kela.Core.Modules.Nodes.Entities.VideoJob", b =>
+                {
+                    b.HasOne("Kela.Core.Modules.Media.Entities.Video", "Video")
+                        .WithMany()
+                        .HasForeignKey("VideoId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Kela.Core.Modules.Nodes.Entities.WorkerNode", "WorkerNode")
+                        .WithMany()
+                        .HasForeignKey("WorkerNodeId")
+                        .OnDelete(DeleteBehavior.SetNull);
+
+                    b.Navigation("Video");
+
+                    b.Navigation("WorkerNode");
                 });
 
             modelBuilder.Entity("Kela.Core.Modules.Notification.Entities.NotificationStudent", b =>

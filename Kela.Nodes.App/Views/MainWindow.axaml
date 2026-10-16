@@ -1,0 +1,62 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="using:Kela.Nodes.App.ViewModels"
+        xmlns:views="using:Kela.Nodes.App.Views"
+        x:Class="Kela.Nodes.App.Views.MainWindow"
+        Title="Kela Nodes" Width="1080" Height="720" MinWidth="760" MinHeight="520">
+
+  <Window.DataTemplates>
+    <DataTemplate DataType="vm:DashboardViewModel"><views:DashboardView /></DataTemplate>
+    <DataTemplate DataType="vm:JobsViewModel"><views:JobsView /></DataTemplate>
+    <DataTemplate DataType="vm:DevicesViewModel"><views:DevicesView /></DataTemplate>
+    <DataTemplate DataType="vm:SettingsViewModel"><views:SettingsView /></DataTemplate>
+    <DataTemplate DataType="vm:LogsViewModel"><views:LogsView /></DataTemplate>
+  </Window.DataTemplates>
+
+  <Grid ColumnDefinitions="216,*">
+    <!-- Yan panel -->
+    <Border Grid.Column="0" Background="{DynamicResource SidebarBackground}"
+            BorderBrush="{DynamicResource CardBorder}" BorderThickness="0,0,1,0">
+      <DockPanel Margin="12">
+        <StackPanel DockPanel.Dock="Top" Margin="4,8,4,20">
+          <TextBlock Text="Kela Nodes" Classes="h1" />
+          <TextBlock Text="Video konversiya worker-i" Classes="label" Margin="0,2,0,0" />
+        </StackPanel>
+
+        <StackPanel DockPanel.Dock="Top" Spacing="4">
+          <Button Classes="nav" Content="Dashboard" Click="OnNav" Tag="dashboard" />
+          <Button Classes="nav" Content="Tapşırıqlar" Click="OnNav" Tag="jobs" />
+          <Button Classes="nav" Content="Cihaz" Click="OnNav" Tag="devices" />
+          <Button Classes="nav" Content="Tənzimləmələr" Click="OnNav" Tag="settings" />
+          <Button Classes="nav" Content="Jurnallar" Click="OnNav" Tag="logs" />
+        </StackPanel>
+
+        <StackPanel DockPanel.Dock="Bottom" Spacing="8">
+          <ToggleSwitch IsChecked="{Binding IsDark}" OnContent="Tünd" OffContent="İşıqlı" />
+        </StackPanel>
+      </DockPanel>
+    </Border>
+
+    <DockPanel Grid.Column="1">
+      <!-- Başlıq -->
+      <Border DockPanel.Dock="Top" Background="{DynamicResource CardBackground}"
+              BorderBrush="{DynamicResource CardBorder}" BorderThickness="0,0,0,1" Padding="16,12">
+        <Grid ColumnDefinitions="Auto,Auto,*,Auto">
+          <Ellipse Grid.Column="0" Width="10" Height="10" VerticalAlignment="Center" Margin="0,0,8,0"
+                   Fill="{Binding ConnectionTone, Converter={StaticResource ToneBrush}}" />
+          <TextBlock Grid.Column="1" Text="{Binding ConnectionText}" VerticalAlignment="Center"
+                     FontWeight="SemiBold" Foreground="{DynamicResource StrongText}" />
+          <TextBlock Grid.Column="2" Text="{Binding PausedReason}" Margin="16,0,0,0" VerticalAlignment="Center"
+                     IsVisible="{Binding HasPausedReason}" Foreground="#B54708" TextWrapping="NoWrap" />
+          <StackPanel Grid.Column="3" Orientation="Horizontal" Spacing="8">
+            <Button Classes="primary" Content="{Binding StartButtonText}" Command="{Binding StartCommand}" />
+          </StackPanel>
+        </Grid>
+      </Border>
+
+      <ScrollViewer Padding="16">
+        <ContentControl Content="{Binding CurrentPage}" />
+      </ScrollViewer>
+    </DockPanel>
+  </Grid>
+</Window>
