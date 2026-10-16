@@ -27,9 +27,9 @@ window.AdminUI = (function () {
     async function get(url) { return (await fetch(url)).json(); }
 
     // "#" sütunu üçün sıra nömrəsi: order (sortOrder) varsa onu, yoxsa səhifə üzrə ardıcıl indeksi qaytarır.
+    // # sütunu — sıralama dəyəri deyil, cədvəldəki sıra nömrəsi
+    // (səhifələmə nəzərə alınmaqla), bütün cədvəllərdə eyni.
     function rowNo(item, index, page, perPage) {
-        const order = item && (item.sortOrder ?? item.SortOrder);
-        if (order !== undefined && order !== null && order !== '') return order;
         return ((page || 1) - 1) * (perPage || 20) + index + 1;
     }
 
@@ -128,6 +128,13 @@ window.AdminUI = (function () {
         return `<span class="chip chip-${tone || 'neutral'}">${text}</span>`;
     }
 
+    // Cədvəl altlığındaki "Cəmi N nəticə" mətni.
+    function setInfo(total) {
+        const el = document.getElementById('tableInfo');
+        if (!el) return;
+        el.textContent = (L["Common_ResultCount"] || '{0}').replace('{0}', total ?? 0);
+    }
+
     function pagination(containerId, currentPage, lastPage, onSelect) {
         const box = document.getElementById(containerId);
         if (!box) return;
@@ -177,7 +184,10 @@ window.AdminUI = (function () {
         opts = opts || {};
         const selectable = !!opts.selectable;
         const rowIds = opts.rowIds || [];
-        const cols = colspan + (selectable ? 1 : 0);
+        // Boş nəticə sətrinin colspan-ı başlıqdan götürülür: səhifələr sayı əl ilə
+        // yazmadıqda da uyğun gəlir. (colspan parametri yalnız ehtiyat variantdır.)
+        const headRow = tbody.closest('table')?.tHead?.rows?.[0];
+        const cols = headRow ? headRow.cells.length : colspan + (selectable ? 1 : 0);
 
         tbody.innerHTML = '';
 
@@ -519,5 +529,5 @@ window.AdminUI = (function () {
         _filterTimer = setTimeout(filterReload, 350);
     });
 
-    return { notify, error, errText, openModal, closeModal, badge, chip, actions, actionButton, actionLink, rowActions, confirmDelete, confirmRestore, restoreItem, restoreButton, syncTrashButton, get, post, postForm, putForm, postJson, putJson, del, table, selectedIds, bulkDo, sortToggle, openSort, closeSort, persistSort, loader, pagination, filePreview, fileSet, fileRemove, fileReset, rowNo, token, reloadAfter, downloadCsv };
+    return { notify, error, errText, openModal, closeModal, badge, chip, actions, actionButton, actionLink, rowActions, confirmDelete, confirmRestore, restoreItem, restoreButton, syncTrashButton, get, post, postForm, putForm, postJson, putJson, del, table, setInfo, selectedIds, bulkDo, sortToggle, openSort, closeSort, persistSort, loader, pagination, filePreview, fileSet, fileRemove, fileReset, rowNo, token, reloadAfter, downloadCsv };
 })();

@@ -27,6 +27,7 @@ async function loadList(page) {
     AdminUI.loader(true);
     const data = await AdminUI.get(`/students/list?page=${currentPage}&search=${encodeURIComponent(search)}&is_active=${active}&is_deleted=${showDeleted ? 1 : 0}`);
     lastPage = data.lastPage;
+    AdminUI.setInfo(data.total);
 
     AdminUI.table('rows', data.data.map((s, i) => [
         { html: AdminUI.rowNo(s, i, currentPage, data.perPage), cls: 'text-slate-400' },

@@ -28,26 +28,23 @@
             <div id="listLoader" class="admin-loader"><div class="spinner"></div></div>
             <div class="overflow-x-auto">
                 <table class="admin-table">
-                    <thead>
-                        <tr>
-                            <th class="w-12"><input type="checkbox" id="checkAll" class="h-5 w-5 rounded-md border-slate-300 text-primary focus:ring-primary" /></th>
-                            <th class="w-16">#</th>
-                            <th class="w-44">@L["Common_Subject"]</th>
-                            <th>@L["Common_Question"]</th>
-                            <th class="w-28">@L["Question_Correct"]</th>
-                            <th class="text-right">@L["Common_Actions"]</th>
-                        </tr>
-                    </thead>
+                    <partial name="Ui/_TableHead" model="@(new TableHeadModel
+                        {
+                            Selectable = true,
+                            Columns = new List<TableColumnModel>
+                            {
+                                    new() { Label = L["Common_Subject"], WidthClass = "w-44" },
+                                    new() { Label = L["Common_Question"] },
+                                    new() { Label = L["Question_Correct"], WidthClass = "w-28" },
+                                    new() { Label = L["Common_Actions"], Right = true },
+                            }
+                        })" />
                     <tbody id="rows"></tbody>
                 </table>
             </div>
         </div>
 
-        <div class="admin-table-footer">
-            <span></span>
-            <div id="pagination" class="flex flex-wrap justify-end gap-2"></div>
-        </div>
-    </div>
+        <partial name="Ui/_TableFooter" model="@(new TableFooterModel())" />
 </section>
 
 @{

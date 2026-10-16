@@ -85,6 +85,34 @@ public class ModalModel
     public Microsoft.AspNetCore.Html.IHtmlContent? HeaderExtra { get; set; }
 }
 
+public class TableColumnModel
+{
+    public string Label { get; set; } = string.Empty;
+
+    /// <summary>Tailwind en sinfi (məs. "w-24").</summary>
+    public string? WidthClass { get; set; }
+
+    public bool Right { get; set; }
+}
+
+/// <summary>Cədvəl başlığı: seçim qutusu + # sütunu bütün səhifələrdə eyni qaydada.</summary>
+public class TableHeadModel
+{
+    /// <summary>Seçim qutusu sütunu — yalnız toplu əməliyyatı olan cədvəllərdə.</summary>
+    public bool Selectable { get; set; }
+
+    public bool RowNumber { get; set; } = true;
+
+    public List<TableColumnModel> Columns { get; set; } = new();
+}
+
+public class TableFooterModel
+{
+    public string InfoId { get; set; } = "tableInfo";
+
+    public string PaginationId { get; set; } = "pagination";
+}
+
 public class PageHeaderModel
 {
     public string Title { get; set; } = string.Empty;

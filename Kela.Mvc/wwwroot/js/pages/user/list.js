@@ -8,6 +8,7 @@ async function loadList(page) {
     AdminUI.loader(true);
     const data = await AdminUI.get(`/user/list?page=${currentPage}&search=${encodeURIComponent(search)}&type=${type}`);
     lastPage = data.lastPage;
+    AdminUI.setInfo(data.total);
 
     AdminUI.table('rows', data.data.map((u, i) => [
         { html: AdminUI.rowNo(u, i, currentPage, data.perPage), cls: 'text-slate-400' },

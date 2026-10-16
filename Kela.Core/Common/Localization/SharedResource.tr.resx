@@ -1131,6 +1131,15 @@
   <data name="Js_Deactivate" xml:space="preserve">
     <value>Devre dışı bırak</value>
   </data>
+  <data name="Common_ResultCount" xml:space="preserve">
+    <value>Toplam {0} sonuç</value>
+  </data>
+  <data name="GroupStat_Completed" xml:space="preserve">
+    <value>Tamamlanan soru</value>
+  </data>
+  <data name="GroupStat_Score" xml:space="preserve">
+    <value>Puan %</value>
+  </data>
   <data name="Js_Edit" xml:space="preserve">
     <value>Düzenle</value>
   </data>

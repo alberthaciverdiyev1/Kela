@@ -5,6 +5,7 @@ async function loadList() {
     const q = (document.getElementById('search')?.value ?? '').trim().toLowerCase();
     const items = q ? data.filter(t => (t.name + ' ' + t.slug).toLowerCase().includes(q)) : data;
 
+    AdminUI.setInfo(items.length);
     AdminUI.table('rows', items.map((t, i) => [
         { html: AdminUI.rowNo(t, i, 1, items.length), cls: 'text-slate-400' },
         { html: t.name, cls: 'font-medium text-slate-800' },

@@ -109,10 +109,9 @@ async function loadList(page) {
     updateStats(data);
 
     const rows = items.map((l, index) => {
-        const rowNumber = ((currentPage - 1) * perPage) + index + 1;
         const subjectName = window.SUBJECTS[l.subjectId] ?? '-';
         return [
-            { html: rowNumber, cls: 'text-slate-700 font-semibold' },
+            { html: AdminUI.rowNo(l, index, currentPage, perPage), cls: 'text-slate-400' },
             {
                 html: `<div class="flex items-center gap-4">
                     ${lessonThumb(l, index)}
@@ -136,13 +135,7 @@ async function loadList(page) {
     AdminUI.table('rows', rows, 6, { rowIds: items.map(l => l.id), selectable: !showDeleted });
     renderPagination('pagination', currentPage, lastPage, loadList);
 
-    const info = document.getElementById('tableInfo');
-    if (info) {
-        const total = data.total ?? data.Total ?? rows.length;
-        const from = rows.length ? ((currentPage - 1) * perPage) + 1 : 0;
-        const to = rows.length ? from + rows.length - 1 : 0;
-        info.textContent = `${total} nəticədən ${from}–${to} göstərilir`;
-    }
+    AdminUI.setInfo(data.total ?? rows.length);
 
     AdminUI.loader(false);
 }

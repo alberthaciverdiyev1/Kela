@@ -21,7 +21,7 @@ async function loadList(page) {
 
     const total = document.getElementById('stat_total');
     if (total) total.textContent = data.total;
-    document.getElementById('tableInfo').textContent = `Cəmi ${data.total} nəticə`;
+    AdminUI.setInfo(data.total);
 
     AdminUI.table('rows', data.data.map((c, i) => [
         { html: AdminUI.rowNo(c, i, currentPage, data.perPage), cls: 'text-slate-400' },

@@ -17,27 +17,24 @@
             <div id="listLoader" class="admin-loader"><div class="spinner"></div></div>
             <div class="overflow-x-auto">
                 <table class="admin-table">
-                    <thead>
-                        <tr>
-                            <th class="w-16">#</th>
-                            <th>@L["Common_Title"]</th>
-                            <th>@L["Common_Body"]</th>
-                            <th class="w-32">@L["Notification_Target"]</th>
-                            <th class="w-24">@L["Common_Image"]</th>
-                            <th class="w-44">Tarix</th>
-                            <th class="text-right">@L["Common_Actions"]</th>
-                        </tr>
-                    </thead>
+                    <partial name="Ui/_TableHead" model="@(new TableHeadModel
+                        {
+                            Columns = new List<TableColumnModel>
+                            {
+                                    new() { Label = L["Common_Title"] },
+                                    new() { Label = L["Common_Body"] },
+                                    new() { Label = L["Notification_Target"], WidthClass = "w-32" },
+                                    new() { Label = L["Common_Image"], WidthClass = "w-24" },
+                                    new() { Label = L["Common_Date"], WidthClass = "w-44" },
+                                    new() { Label = L["Common_Actions"], Right = true },
+                            }
+                        })" />
                     <tbody id="rows"></tbody>
                 </table>
             </div>
         </div>
 
-        <div class="admin-table-footer">
-            <span></span>
-            <div id="pagination" class="flex flex-wrap justify-end gap-2"></div>
-        </div>
-    </div>
+        <partial name="Ui/_TableFooter" model="@(new TableFooterModel())" />
 </section>
 
 @{

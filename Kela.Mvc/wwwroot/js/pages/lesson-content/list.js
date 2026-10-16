@@ -59,6 +59,7 @@ async function loadList(page) {
     const data = await AdminUI.get(`/lesson-content/list?${params.toString()}`);
 
     lastPage = data.lastPage;
+    AdminUI.setInfo(data.total);
     data.data.forEach(c => { CONTENT[c.id] = c; });
 
     AdminUI.table('rows', data.data.map((c, i) => [

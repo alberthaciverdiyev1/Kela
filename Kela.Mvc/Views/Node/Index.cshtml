@@ -58,18 +58,20 @@
             <div id="listLoader" class="admin-loader"><div class="spinner"></div></div>
             <div class="overflow-x-auto">
                 <table class="admin-table">
-                    <thead>
-                        <tr>
-                            <th>@L["Node_Name"]</th>
-                            <th>@L["Node_Status"]</th>
-                            <th>@L["Node_Platform"]</th>
-                            <th>@L["Node_Encoders"]</th>
-                            <th>@L["Node_Benchmark"]</th>
-                            <th>@L["Node_ActiveJobs"]</th>
-                            <th>@L["Node_LastSeen"]</th>
-                            <th class="text-right">@L["Common_Actions"]</th>
-                        </tr>
-                    </thead>
+                    <partial name="Ui/_TableHead" model="@(new TableHeadModel
+                        {
+                            Columns = new List<TableColumnModel>
+                            {
+                                    new() { Label = L["Node_Name"] },
+                                    new() { Label = L["Node_Status"] },
+                                    new() { Label = L["Node_Platform"] },
+                                    new() { Label = L["Node_Encoders"] },
+                                    new() { Label = L["Node_Benchmark"] },
+                                    new() { Label = L["Node_ActiveJobs"] },
+                                    new() { Label = L["Node_LastSeen"] },
+                                    new() { Label = L["Common_Actions"], Right = true },
+                            }
+                        })" />
                     <tbody id="rows"></tbody>
                 </table>
             </div>
@@ -87,18 +89,19 @@
             </div>
             <div class="overflow-x-auto">
                 <table class="admin-table">
-                    <thead>
-                        <tr>
-                            <th class="w-16">#</th>
-                            <th>@L["Job_Video"]</th>
-                            <th>@L["Job_Resolution"]</th>
-                            <th>@L["Node_Status"]</th>
-                            <th>@L["Job_Progress"]</th>
-                            <th>@L["Job_Node"]</th>
-                            <th>@L["Job_Attempts"]</th>
-                            <th class="text-right">@L["Common_Actions"]</th>
-                        </tr>
-                    </thead>
+                    <partial name="Ui/_TableHead" model="@(new TableHeadModel
+                        {
+                            Columns = new List<TableColumnModel>
+                            {
+                                    new() { Label = L["Job_Video"] },
+                                    new() { Label = L["Job_Resolution"] },
+                                    new() { Label = L["Node_Status"] },
+                                    new() { Label = L["Job_Progress"] },
+                                    new() { Label = L["Job_Node"] },
+                                    new() { Label = L["Job_Attempts"] },
+                                    new() { Label = L["Common_Actions"], Right = true },
+                            }
+                        })" />
                     <tbody id="jobRows"></tbody>
                 </table>
             </div>
@@ -108,15 +111,17 @@
         <div id="tab-codes" class="relative hidden">
             <div class="overflow-x-auto">
                 <table class="admin-table">
-                    <thead>
-                        <tr>
-                            <th>@L["Node_Code"]</th>
-                            <th>@L["Node_Note"]</th>
-                            <th>@L["Node_Expires"]</th>
-                            <th>@L["Node_Status"]</th>
-                            <th class="text-right">@L["Common_Actions"]</th>
-                        </tr>
-                    </thead>
+                    <partial name="Ui/_TableHead" model="@(new TableHeadModel
+                        {
+                            Columns = new List<TableColumnModel>
+                            {
+                                    new() { Label = L["Node_Code"] },
+                                    new() { Label = L["Node_Note"] },
+                                    new() { Label = L["Node_Expires"] },
+                                    new() { Label = L["Node_Status"] },
+                                    new() { Label = L["Common_Actions"], Right = true },
+                            }
+                        })" />
                     <tbody id="codeRows"></tbody>
                 </table>
             </div>

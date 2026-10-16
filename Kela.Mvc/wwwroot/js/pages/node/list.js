@@ -42,8 +42,9 @@ window.NodesPage = (function () {
     async function load() {
         AdminUI.loader(true);
         const data = await AdminUI.get('/node/list?perPage=500');
+        AdminUI.setInfo((data.items || []).length);
 
-        AdminUI.table('rows', (data.items || []).map(node => {
+        AdminUI.table('rows', (data.items || []).map((node, index) => {
             const device = node.device || {};
             const benchmark = node.benchmark;
             const encoders = (device.encoders || []).join(', ') || '—';
@@ -57,6 +58,7 @@ window.NodesPage = (function () {
             ]);
 
             return [
+                { html: AdminUI.rowNo(node, index), cls: 'text-slate-400' },
                 { html: `<span class="font-semibold text-slate-800">${node.name}</span>` },
                 { html: statusBadge(node.status) },
                 { html: `<span class="text-sm text-slate-500">${platform || '—'}</span>` },
@@ -66,7 +68,7 @@ window.NodesPage = (function () {
                     : '<span class="text-sm text-slate-400">—</span>' },
                 { html: `<span class="text-sm font-semibold text-slate-700">${node.activeJobs} / ${node.maxConcurrentJobs}</span>` },
                 { html: `<span class="text-sm text-slate-500" title="${node.lastSeenAt || ''}">${secondsAgo(node.lastSeenAt)}</span>` },
-                { html: `<div class="flex justify-end gap-1">${actions}</div>`, cls: 'text-right' }
+                { html: actions, cls: 'text-right' }
             ];
         }), 8, { empty: L["Node_NoDevices"] });
 

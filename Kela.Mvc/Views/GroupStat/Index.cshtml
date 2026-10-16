@@ -36,18 +36,24 @@
             <div id="listLoader" class="admin-loader"><div class="spinner"></div></div>
             <div class="overflow-x-auto">
                 <table class="admin-table">
-                    <thead>
-                        <tr>
-                            <th>@L["Common_Student"]</th>
-                            <th class="w-32">@L["GroupStat_Attempt"]</th>
-                            <th class="w-40">Tamamlanan sual</th>
-                            <th class="w-24">@L["Question_Correct"]</th>
-                            <th class="w-24">@L["GroupStat_Wrong"]</th>
-                            <th class="w-24">Bal %</th>
-                        </tr>
-                    </thead>
+                    <partial name="Ui/_TableHead" model="@(new TableHeadModel
+                        {
+                            Columns = new List<TableColumnModel>
+                            {
+                                    new() { Label = L["Common_Student"] },
+                                    new() { Label = L["GroupStat_Attempt"], WidthClass = "w-32" },
+                                    new() { Label = L["GroupStat_Completed"], WidthClass = "w-40" },
+                                    new() { Label = L["Question_Correct"], WidthClass = "w-24" },
+                                    new() { Label = L["GroupStat_Wrong"], WidthClass = "w-24" },
+                                    new() { Label = L["GroupStat_Score"], WidthClass = "w-24" },
+                            }
+                        })" />
                     <tbody id="rows"></tbody>
-                </table>
+                
+
+        </table>
+
+        <partial name="Ui/_TableFooter" model="@(new TableFooterModel())" />
             </div>
         </div>
     </div>

@@ -1,0 +1,19 @@
+@model TableHeadModel
+@* Sütun sayı JS-də əl ilə təkrarlanmır: AdminUI.table boş nəticə sətrinin
+   colspan-ını bu başlıqdan hesablayır. *@
+<thead>
+    <tr>
+        @if (Model.Selectable)
+        {
+            <th class="w-12"><input type="checkbox" id="checkAll" class="h-5 w-5 rounded-md border-slate-300 text-primary focus:ring-primary" /></th>
+        }
+        @if (Model.RowNumber)
+        {
+            <th class="w-16">#</th>
+        }
+        @foreach (var column in Model.Columns)
+        {
+            <th class="@(column.Right ? "text-right " : "")@column.WidthClass">@column.Label</th>
+        }
+    </tr>
+</thead>

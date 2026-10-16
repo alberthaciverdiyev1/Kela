@@ -17,15 +17,21 @@
             <div id="listLoader" class="admin-loader"><div class="spinner"></div></div>
             <div class="overflow-x-auto">
                 <table class="admin-table">
-                    <thead>
-                        <tr>
-                            <th class="w-40">@L["Common_Type"]</th>
-                            <th>@L["Common_Content"]</th>
-                            <th class="text-right">@L["Common_Actions"]</th>
-                        </tr>
-                    </thead>
+                    <partial name="Ui/_TableHead" model="@(new TableHeadModel
+                        {
+                            Columns = new List<TableColumnModel>
+                            {
+                                    new() { Label = L["Common_Type"], WidthClass = "w-40" },
+                                    new() { Label = L["Common_Content"] },
+                                    new() { Label = L["Common_Actions"], Right = true },
+                            }
+                        })" />
                     <tbody id="rows"></tbody>
-                </table>
+                
+
+        </table>
+
+        <partial name="Ui/_TableFooter" model="@(new TableFooterModel())" />
             </div>
         </div>
     </div>

@@ -28,6 +28,7 @@ async function loadList(page) {
     AdminUI.loader(true);
     const data = await AdminUI.get(`/quiz/list?${params.toString()}`);
     lastPage = data.lastPage;
+    AdminUI.setInfo(data.total);
 
     AdminUI.table('rows', data.data.map((q, i) => [
         { html: AdminUI.rowNo(q, i, currentPage, data.perPage), cls: 'text-slate-400' },

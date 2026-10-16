@@ -1131,6 +1131,15 @@
   <data name="Js_Deactivate" xml:space="preserve">
     <value>Деактивировать</value>
   </data>
+  <data name="Common_ResultCount" xml:space="preserve">
+    <value>Всего {0} результатов</value>
+  </data>
+  <data name="GroupStat_Completed" xml:space="preserve">
+    <value>Пройдено вопросов</value>
+  </data>
+  <data name="GroupStat_Score" xml:space="preserve">
+    <value>Балл %</value>
+  </data>
   <data name="Js_Edit" xml:space="preserve">
     <value>Редактировать</value>
   </data>

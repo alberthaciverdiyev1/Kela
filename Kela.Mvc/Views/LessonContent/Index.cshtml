@@ -28,28 +28,25 @@
             <div id="listLoader" class="admin-loader"><div class="spinner"></div></div>
             <div class="overflow-x-auto">
                 <table class="admin-table">
-                    <thead>
-                        <tr>
-                            <th class="w-12"><input type="checkbox" id="checkAll" class="h-5 w-5 rounded-md border-slate-300 text-primary focus:ring-primary" /></th>
-                            <th class="w-16">#</th>
-                            <th>@L["Common_Title"]</th>
-                            <th class="w-28">@L["Common_Type"]</th>
-                            <th class="w-32">@L["Video_Status"]</th>
-                            <th class="w-24">Fayl</th>
-                            <th class="w-24">Aktiv</th>
-                            <th class="text-right">@L["Common_Actions"]</th>
-                        </tr>
-                    </thead>
+                    <partial name="Ui/_TableHead" model="@(new TableHeadModel
+                        {
+                            Selectable = true,
+                            Columns = new List<TableColumnModel>
+                            {
+                                    new() { Label = L["Common_Title"] },
+                                    new() { Label = L["Common_Type"], WidthClass = "w-28" },
+                                    new() { Label = L["Video_Status"], WidthClass = "w-32" },
+                                    new() { Label = L["Common_File"], WidthClass = "w-24" },
+                                    new() { Label = L["Common_Active"], WidthClass = "w-24" },
+                                    new() { Label = L["Common_Actions"], Right = true },
+                            }
+                        })" />
                     <tbody id="rows"></tbody>
                 </table>
             </div>
         </div>
 
-        <div class="admin-table-footer">
-            <span></span>
-            <div id="pagination" class="flex flex-wrap justify-end gap-2"></div>
-        </div>
-    </div>
+        <partial name="Ui/_TableFooter" model="@(new TableFooterModel())" />
 </section>
 
 @{
