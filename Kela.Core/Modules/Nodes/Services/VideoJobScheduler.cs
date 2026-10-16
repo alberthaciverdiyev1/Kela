@@ -157,6 +157,27 @@ public sealed class VideoJobScheduler(
             await EnsureJobsAsync(videoId, ct);
         }
 
+        // 1b) Əvvəl uğursuz olmuş, amma xətası keçici olan və büdcəsi qalan videolar.
+        // Bunlar başqa heç bir yolla geri qaytarılmır — əvvəlki uğursuzluqdan sonra
+        // heç nə onlara baxmırdı və video əbədi "failed" qalırdı.
+        var recoverable = await db.Videos.IgnoreQueryFilters()
+            .Where(v => v.DeletedAt == null)
+            .Where(v => v.ConversionStatus == VideoStatus.Failed)
+            .Where(v => v.ConversionAttempts < Settings.MaxVideoAttempts)
+            .Where(v => db.VideoJobs.IgnoreQueryFilters().Any(j => j.VideoId == v.Id))
+            .Where(v => !db.VideoJobs.IgnoreQueryFilters()
+                .Any(j => j.VideoId == v.Id && j.Status == JobStatus.Failed && j.ErrorKind == JobErrorKind.Permanent))
+            .Where(v => !db.VideoJobs.IgnoreQueryFilters().Any(j => j.VideoId == v.Id && active.Contains(j.Status)))
+            .OrderBy(v => v.Id)
+            .Select(v => v.Id)
+            .Take(50)
+            .ToListAsync(ct);
+
+        foreach (var videoId in recoverable)
+        {
+            await RequeueVideoAsync(videoId, "Avtomatik bərpa: əvvəlki xəta keçici idi", ct);
+        }
+
         // 2) Bütün tapşırıqları bitmiş videolar — master playlist yazılmalıdır.
         return await db.Videos.IgnoreQueryFilters()
             .Where(v => v.DeletedAt == null)
@@ -167,6 +188,56 @@ public sealed class VideoJobScheduler(
             .Select(v => v.Id)
             .Take(50)
             .ToListAsync(ct);
+    }
+
+    public async Task<bool> RequeueVideoAsync(long videoId, string reason, CancellationToken ct = default)
+    {
+        var video = await db.Videos.IgnoreQueryFilters()
+            .FirstOrDefaultAsync(v => v.Id == videoId && v.DeletedAt == null, ct);
+
+        if (video is null) return false;
+        if (video.ConversionAttempts >= Settings.MaxVideoAttempts) return false;
+
+        var jobs = await db.VideoJobs.IgnoreQueryFilters()
+            .Where(j => j.VideoId == videoId)
+            .ToListAsync(ct);
+
+        var failed = jobs.Where(j => j.Status == JobStatus.Failed).ToList();
+
+        // Qalıcı xəta (məsələn mənbə fayl korlanıb) təkrar cəhddə düzəlmir.
+        if (failed.Count > 0 && failed.Any(j => j.ErrorKind == JobErrorKind.Permanent)) return false;
+
+        var resettable = failed.Count > 0
+            ? failed
+            : [.. jobs.Where(j => JobStatus.IsTerminal(j.Status) && !j.Skipped)];
+
+        if (resettable.Count == 0) return false;
+
+        var delay = TimeSpan.FromMinutes(Math.Pow(2, video.ConversionAttempts + 1));
+        var due = DateTimeOffset.UtcNow.Add(delay);
+
+        foreach (var job in resettable)
+        {
+            job.Status = JobStatus.Pending;
+            job.Attempts = 0;
+            job.Progress = 0;
+            job.ErrorMessage = null;
+            job.ErrorKind = null;
+            job.CompletedAt = null;
+            job.NextAttemptAt = due;
+            job.Skipped = false;
+        }
+
+        video.ConversionAttempts += 1;
+        video.ConversionStatus = VideoStatus.Processing;
+        video.ConversionError = Truncate(reason, 500);
+
+        await db.SaveChangesAsync(ct);
+
+        logger.LogWarning("Video {VideoId} yenidən növbəyə salındı ({Count} pillə, {Delay} sonra): {Reason}",
+            videoId, resettable.Count, delay, reason);
+
+        return true;
     }
 
     public async Task<IReadOnlyList<JobAssignment>> ClaimAsync(
@@ -314,6 +385,9 @@ public sealed class VideoJobScheduler(
         }
         return result;
     }
+
+    private static string? Truncate(string? value, int max)
+        => string.IsNullOrWhiteSpace(value) ? null : value.Length <= max ? value : value[..max];
 
     private static bool IsUniqueViolation(DbUpdateException ex)
         => ex.InnerException is PostgresException { SqlState: "23505" };

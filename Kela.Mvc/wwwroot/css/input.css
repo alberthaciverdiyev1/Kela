@@ -360,6 +360,12 @@
   .chip-violet  { background: #ede9fe; color: #6d28d9; }
 }
 
+/* Zəruri sahə boş qalıbsa — JS yoxlaması bu sinfi qoyur. */
+.admin-field.is-invalid {
+  border-color: var(--danger);
+  box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.15);
+}
+
 /* Seçilmiş günün işarəsi — qrup dəyişsə də qalır. */
 #calendar .att-selected { outline: 2px solid var(--primary); outline-offset: 1px; }
 

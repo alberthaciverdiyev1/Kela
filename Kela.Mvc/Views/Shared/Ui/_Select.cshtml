@@ -7,7 +7,7 @@
     {
         <label for="@id" class="mb-1 block text-sm font-semibold text-slate-600">@Model.Label</label>
     }
-    <select id="@id" name="@Model.Name" required="@Model.Required" class="admin-field">
+    <select id="@id" name="@Model.Name" @(Model.NativeRequired ? "required" : null) data-required="@(Model.Required ? "true" : null)" class="admin-field">
         @foreach (var o in Model.Options)
         {
             <option value="@o.Value" selected="@(o.Value == Model.Value)">@o.Text</option>

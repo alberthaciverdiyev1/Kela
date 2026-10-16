@@ -329,6 +329,44 @@ window.AdminUI = (function () {
         modal.dispatchEvent(new CustomEvent('modal:closed'));
     }
 
+    // --- Forma yoxlaması ---
+    // Zəruri sahələr HTML `required` ilə deyil, burada yoxlanılır ki, xəbərdarlıq
+    // brauzerin öz baloncuğu yerinə panelin dizaynında görünsün.
+    function validateForm(formOrId) {
+        const form = typeof formOrId === 'string' ? document.getElementById(formOrId) : formOrId;
+        if (!form) return true;
+
+        form.querySelectorAll('.is-invalid').forEach(el => el.classList.remove('is-invalid'));
+        const empty = [...form.querySelectorAll('[data-required]')]
+            .filter(el => !el.disabled && !String(el.value ?? '').trim());
+
+        if (!empty.length) return true;
+
+        empty.forEach(el => el.classList.add('is-invalid'));
+        const box = form.closest('[data-modal]')?.querySelector('[data-modal-error]')
+            || form.querySelector('[data-modal-error]');
+        if (box) {
+            box.textContent = L["Common_RequiredFields"];
+            box.classList.remove('hidden');
+        }
+        empty[0].focus();
+        return false;
+    }
+
+    // Sahə doldurulan kimi qırmızı işarə götürülür.
+    document.addEventListener('input', (e) => {
+        if (e.target.classList) e.target.classList.remove('is-invalid');
+    });
+
+    // Göndərmədən əvvəl yoxla — səhifələrin öz submit handler-i işə düşməsin.
+    document.addEventListener('submit', (e) => {
+        if (!e.target.querySelector || !e.target.querySelector('[data-required]')) return;
+        if (!validateForm(e.target)) {
+            e.preventDefault();
+            e.stopImmediatePropagation();
+        }
+    }, true);
+
     // Formanı ilkin vəziyyətinə qaytarır: sahələr + fayl önizləmələri.
     function resetForm(formOrId) {
         const form = typeof formOrId === 'string' ? document.getElementById(formOrId) : formOrId;
@@ -573,5 +611,5 @@ window.AdminUI = (function () {
         _filterTimer = setTimeout(filterReload, 350);
     });
 
-    return { notify, error, errText, openModal, closeModal, resetForm, badge, chip, statCard, actions, actionButton, actionLink, rowActions, confirmDelete, confirmRestore, restoreItem, restoreButton, syncTrashButton, toggleHidden, get, post, postForm, putForm, postJson, putJson, del, table, setInfo, addSort, selectedIds, bulkDo, sortToggle, openSort, closeSort, persistSort, loader, pagination, filePreview, fileSet, fileRemove, fileReset, rowNo, token, reloadAfter, downloadCsv };
+    return { notify, error, errText, openModal, closeModal, resetForm, validateForm, badge, chip, statCard, actions, actionButton, actionLink, rowActions, confirmDelete, confirmRestore, restoreItem, restoreButton, syncTrashButton, toggleHidden, get, post, postForm, putForm, postJson, putJson, del, table, setInfo, addSort, selectedIds, bulkDo, sortToggle, openSort, closeSort, persistSort, loader, pagination, filePreview, fileSet, fileRemove, fileReset, rowNo, token, reloadAfter, downloadCsv };
 })();

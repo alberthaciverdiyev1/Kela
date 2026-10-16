@@ -18,6 +18,13 @@ public interface IVideoJobScheduler
     /// <summary>İşsiz qalmış videoları tapıb tapşırıq yaradır. Finalizasiya tələb edən video ID-lərini qaytarır.</summary>
     Task<IReadOnlyList<long>> ReconcileAsync(CancellationToken ct = default);
 
+    /// <summary>
+    /// Uğursuz olmuş videonu yenidən növbəyə salır: bütün uğursuz pillələr sıfırlanır,
+    /// cəhd büdcəsi artırılır. Yalnız keçici xətalarda çağırılmalıdır.
+    /// </summary>
+    /// <returns>Yenidən sınanacaqsa true; büdcə bitibsə və ya qalıcı xəta varsa false.</returns>
+    Task<bool> RequeueVideoAsync(long videoId, string reason, CancellationToken ct = default);
+
     /// <summary>Cihaza uyğun tapşırıqları kilidləyib (lease) qaytarır.</summary>
     /// <param name="preferVideoId">
     /// Verilərsə, əvvəlcə həmin videonun tapşırıqları verilir — böyük bir videonu

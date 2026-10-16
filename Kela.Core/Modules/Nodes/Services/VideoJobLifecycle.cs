@@ -19,6 +19,7 @@ using WorkerNode = Kela.Core.Modules.Nodes.Entities.WorkerNode;
 
 public sealed class VideoJobLifecycle(
     AppDbContext db,
+    IVideoJobScheduler scheduler,
     IFileStorage storage,
     ITenantFolder folders,
     IVideoProcessingService videoProcessing,
@@ -396,36 +397,8 @@ public sealed class VideoJobLifecycle(
             // "failed" olmamalıdır: bütün pillələr yenidən növbəyə salınır və bir neçə
             // dövr təkrar sınanır. Əks halda bir anlıq nasazlıq videonu əbədi
             // "bozulmuş" vəziyyətdə qoyurdu.
-            var retryable = failures.Count > 0
-                            && failures.All(f => f.ErrorKind != JobErrorKind.Permanent)
-                            && video.ConversionAttempts < Settings.MaxVideoAttempts;
-
-            if (retryable)
+            if (failures.Count > 0 && await scheduler.RequeueVideoAsync(videoId, error, ct))
             {
-                var delay = TimeSpan.FromMinutes(Math.Pow(2, video.ConversionAttempts + 1));
-                var due = DateTimeOffset.UtcNow.Add(delay);
-
-                foreach (var failure in failures)
-                {
-                    failure.Status = JobStatus.Pending;
-                    failure.Attempts = 0;
-                    failure.Progress = 0;
-                    failure.ErrorMessage = null;
-                    failure.ErrorKind = null;
-                    failure.CompletedAt = null;
-                    failure.NextAttemptAt = due;
-                }
-
-                video.ConversionAttempts += 1;
-                video.ConversionStatus = VideoStatus.Processing;
-                video.ConversionError = Truncate(error, 500);
-
-                await db.SaveChangesAsync(ct);
-
-                logger.LogWarning(
-                    "Video {VideoId}: {Count} tapşırıq uğursuz oldu (keçici) — {Delay} sonra yenidən sınanacaq (cəhd {Attempt}/{Max})",
-                    videoId, failures.Count, delay, video.ConversionAttempts, Settings.MaxVideoAttempts);
-
                 return JobOperationResult.Invalid(error);
             }
 

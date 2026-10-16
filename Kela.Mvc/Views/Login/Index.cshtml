@@ -23,9 +23,9 @@
 
     <form method="post" action="/login" class="space-y-4">
         @Html.AntiForgeryToken()
-        <partial name="Ui/_Select" model="@(new SelectModel { Name = "TenantId", Id = "tenantId", Label = L["Common_Tenant"], Required = true, Options = tenantOptions })" />
-        <partial name="Ui/_Input" model="@(new InputModel { Name = "Email", Id = "email", Label = L["Common_Email"], Type = "email", Required = true })" />
-        <partial name="Ui/_Input" model="@(new InputModel { Name = "Password", Id = "password", Label = L["Common_Password"], Type = "password", Required = true })" />
+        <partial name="Ui/_Select" model="@(new SelectModel { NativeRequired = true, Name = "TenantId", Id = "tenantId", Label = L["Common_Tenant"], Required = true, Options = tenantOptions })" />
+        <partial name="Ui/_Input" model="@(new InputModel { NativeRequired = true, Name = "Email", Id = "email", Label = L["Common_Email"], Type = "email", Required = true })" />
+        <partial name="Ui/_Input" model="@(new InputModel { NativeRequired = true, Name = "Password", Id = "password", Label = L["Common_Password"], Type = "password", Required = true })" />
         <button type="submit" class="admin-button-primary w-full">@L["Common_SignIn"]</button>
     </form>
 </div>

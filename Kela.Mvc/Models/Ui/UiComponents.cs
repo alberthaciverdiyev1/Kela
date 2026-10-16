@@ -18,6 +18,10 @@ public class InputModel
     public string? Value { get; set; }
     public string? Placeholder { get; set; }
     public bool Required { get; set; }
+
+    /// <summary>JS yoxlaması olmayan səhifələr üçün (məs. giriş) brauzerin öz required-ı.</summary>
+    public bool NativeRequired { get; set; }
+
     public string? Id { get; set; }
 }
 
@@ -34,6 +38,10 @@ public class SelectModel
     public string? Value { get; set; }
     public List<SelectOption> Options { get; set; } = new();
     public bool Required { get; set; }
+
+    /// <summary>JS yoxlaması olmayan səhifələr üçün (məs. giriş) brauzerin öz required-ı.</summary>
+    public bool NativeRequired { get; set; }
+
     public string? Id { get; set; }
 }
 

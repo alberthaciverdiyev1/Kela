@@ -233,6 +233,75 @@ public class RecoveryTests(ApiFactory factory)
     }
 
     [Fact]
+    public async Task A_transiently_failed_video_is_picked_up_again()
+    {
+        var (videoId, _) = await _h.CreateVideoAsync();
+        var node = await _h.RegisterNodeAsync(NodeTestHarness.Unique("node"), maxConcurrentJobs: 64);
+
+        // Tapşırıq öz cəhdlərini tükədir → video uğursuz olur (keçici səbəbdən).
+        await _h.DbAsync(async db =>
+        {
+            foreach (var job in await db.VideoJobs.IgnoreQueryFilters().Where(j => j.VideoId == videoId).ToListAsync())
+            {
+                job.Status = JobStatus.Failed;
+                job.ErrorKind = JobErrorKind.Transient;
+                job.ErrorMessage = "şəbəkə kəsildi";
+                job.WorkerNodeId = null;
+                job.AttemptToken = null;
+                job.LeaseExpiresAt = null;
+            }
+
+            var video = await db.Videos.IgnoreQueryFilters().FirstAsync(v => v.Id == videoId);
+            video.ConversionStatus = VideoStatus.Failed;
+            video.ConversionError = "şəbəkə kəsildi";
+
+            await db.SaveChangesAsync();
+        });
+
+        // Heç bir şey onlara baxmırdı — indi reconciliation özü bərpa edir.
+        var pending = await _h.ServiceAsync<IVideoJobScheduler, IReadOnlyList<long>>(s => s.ReconcileAsync());
+        _ = pending;
+
+        var video = await _h.VideoAsync(videoId);
+
+        Assert.NotEqual(VideoStatus.Failed, video!.ConversionStatus);
+        Assert.Equal(1, video.ConversionAttempts);
+
+        var jobs = await _h.JobsAsync(videoId);
+        Assert.All(jobs, job => Assert.Equal(JobStatus.Pending, job.Status));
+    }
+
+    [Fact]
+    public async Task A_permanently_failed_video_is_left_alone()
+    {
+        var (videoId, _) = await _h.CreateVideoAsync();
+        await _h.RegisterNodeAsync(NodeTestHarness.Unique("node"), maxConcurrentJobs: 64);
+
+        await _h.DbAsync(async db =>
+        {
+            foreach (var job in await db.VideoJobs.IgnoreQueryFilters().Where(j => j.VideoId == videoId).ToListAsync())
+            {
+                job.Status = JobStatus.Failed;
+                job.ErrorKind = JobErrorKind.Permanent;
+                job.ErrorMessage = "moov atom not found";
+                job.WorkerNodeId = null;
+                job.AttemptToken = null;
+                job.LeaseExpiresAt = null;
+            }
+
+            var video = await db.Videos.IgnoreQueryFilters().FirstAsync(v => v.Id == videoId);
+            video.ConversionStatus = VideoStatus.Failed;
+
+            await db.SaveChangesAsync();
+        });
+
+        await _h.ServiceAsync<IVideoJobScheduler, IReadOnlyList<long>>(s => s.ReconcileAsync());
+
+        // Qalıcı xəta sonsuz dövrəyə çevrilməməlidir.
+        Assert.Equal(VideoStatus.Failed, (await _h.VideoAsync(videoId))!.ConversionStatus);
+    }
+
+    [Fact]
     public async Task The_retry_budget_is_finite()
     {
         var (videoId, _) = await _h.CreateVideoAsync();
