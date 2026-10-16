@@ -123,6 +123,14 @@ window.AdminUI = (function () {
         return `<span class="badge badge-${variant || 'neutral'}">${dot}${text}</span>`;
     }
 
+    // JS tərəfdən göstərici kartı — Razor-daki Ui/_StatCard (Compact) ilə eyni görünüş.
+    function statCard(label, value, tone) {
+        return `<article class="admin-card p-4">
+            <p class="text-xs font-semibold uppercase tracking-wide text-slate-400">${label}</p>
+            <p class="mt-1 text-2xl font-extrabold ${tone || 'text-slate-950'}">${value}</p>
+        </article>`;
+    }
+
     // Status deyil, sadəcə etiket (məs. fənn adı).
     function chip(text, tone) {
         return `<span class="chip chip-${tone || 'neutral'}">${text}</span>`;
@@ -537,5 +545,5 @@ window.AdminUI = (function () {
         _filterTimer = setTimeout(filterReload, 350);
     });
 
-    return { notify, error, errText, openModal, closeModal, badge, chip, actions, actionButton, actionLink, rowActions, confirmDelete, confirmRestore, restoreItem, restoreButton, syncTrashButton, get, post, postForm, putForm, postJson, putJson, del, table, setInfo, addSort, selectedIds, bulkDo, sortToggle, openSort, closeSort, persistSort, loader, pagination, filePreview, fileSet, fileRemove, fileReset, rowNo, token, reloadAfter, downloadCsv };
+    return { notify, error, errText, openModal, closeModal, badge, chip, statCard, actions, actionButton, actionLink, rowActions, confirmDelete, confirmRestore, restoreItem, restoreButton, syncTrashButton, get, post, postForm, putForm, postJson, putJson, del, table, setInfo, addSort, selectedIds, bulkDo, sortToggle, openSort, closeSort, persistSort, loader, pagination, filePreview, fileSet, fileRemove, fileReset, rowNo, token, reloadAfter, downloadCsv };
 })();

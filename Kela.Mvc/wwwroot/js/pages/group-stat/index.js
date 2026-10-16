@@ -12,10 +12,11 @@ async function load() {
     const summary = document.getElementById('summary');
     summary.classList.remove('hidden');
     summary.classList.add('grid');
-    summary.innerHTML = `
-        <div class="rounded-xl border border-slate-200 bg-white p-5"><div class="text-sm text-slate-500">${L["Js_QuizCount"]}</div><div class="text-2xl font-bold text-primary">${data.quizCount}</div></div>
-        <div class="rounded-xl border border-slate-200 bg-white p-5"><div class="text-sm text-slate-500">${L["Js_TotalQuestions"]}</div><div class="text-2xl font-bold text-primary">${data.totalQuestions}</div></div>
-        <div class="rounded-xl border border-slate-200 bg-white p-5"><div class="text-sm text-slate-500">${L["Js_StudentCount"]}</div><div class="text-2xl font-bold text-primary">${data.students.length}</div></div>`;
+    summary.innerHTML = [
+        AdminUI.statCard(L["Js_QuizCount"], data.quizCount, 'text-primary'),
+        AdminUI.statCard(L["Js_TotalQuestions"], data.totalQuestions, 'text-primary'),
+        AdminUI.statCard(L["Js_StudentCount"], data.students.length, 'text-primary')
+    ].join('');
 
     const q = (document.getElementById('search')?.value ?? '').trim().toLowerCase();
     const students = q ? data.students.filter(s => (s.fullName + ' ' + s.email).toLowerCase().includes(q)) : data.students;

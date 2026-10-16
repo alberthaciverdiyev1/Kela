@@ -511,7 +511,7 @@ public sealed class WorkerEngine : IAsyncDisposable
             Profile,
             [.. _jobs.Values],
             SystemPressure.AvailableRamMb(),
-            SystemPressure.FreeDiskMb(Path.Combine(Settings.CacheDirectory, "jobs")),
+            _platform.FreeDiskMb ?? SystemPressure.FreeDiskMb(Path.Combine(Settings.CacheDirectory, "jobs")),
             Settings.LightJobMultiplier,
             Lanes.Count);
 

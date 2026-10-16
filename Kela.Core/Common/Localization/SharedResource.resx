@@ -522,6 +522,21 @@
   <data name="Common_Order" xml:space="preserve">
     <value>Order</value>
   </data>
+  <data name="Dashboard_Videos" xml:space="preserve">
+    <value>Videos</value>
+  </data>
+  <data name="Dashboard_Files" xml:space="preserve">
+    <value>Files</value>
+  </data>
+  <data name="Dashboard_Voices" xml:space="preserve">
+    <value>Voice notes</value>
+  </data>
+  <data name="Dashboard_New7d" xml:space="preserve">
+    <value>New (7 days)</value>
+  </data>
+  <data name="Dashboard_ActiveStudentCount" xml:space="preserve">
+    <value>Active students</value>
+  </data>
   <data name="Dashboard_Subtitle" xml:space="preserve">
     <value>An overview of the platform.</value>
   </data>

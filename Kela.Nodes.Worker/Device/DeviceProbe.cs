@@ -18,6 +18,15 @@ public interface IPlatformStatus
 
     /// <summary>Ölçmə mümkün deyilsə true — limitlər tətbiq olunmamalıdır.</summary>
     bool SupportsPowerLimits { get; }
+
+    /// <summary>
+    /// Keş qovluğunun yerləşdiyi bölmədə boş yer (MB). <c>null</c> = platforma
+    /// ölçə bilmir və ümumi üsulla hesablanır.
+    ///
+    /// Android-də bu vacibdir: <c>DriveInfo("/")</c> orada salt-oxunaqlı sistem
+    /// bölməsini ölçür və faktiki olaraq yer olmadığını göstərir.
+    /// </summary>
+    int? FreeDiskMb => null;
 }
 
 public sealed class NullPlatformStatus : IPlatformStatus

@@ -125,8 +125,20 @@ public class PageHeaderModel
 
 public class StatCardModel
 {
+    /// <summary>JS dəyəri doldurursa element id-si.</summary>
     public string Id { get; set; } = string.Empty;
+
     public string Label { get; set; } = string.Empty;
+
     public string Icon { get; set; } = string.Empty;
+
     public string Accent { get; set; } = "bg-primary-light text-primary";
+
+    /// <summary>Server tərəfdən hazır dəyər (boşdursa JS doldurur).</summary>
+    public string? Value { get; set; }
+
+    public string ValueClass { get; set; } = "text-slate-950";
+
+    /// <summary>İkonsuz, yığcam kart — çoxlu göstərici sıralandıqda.</summary>
+    public bool Compact { get; set; }
 }

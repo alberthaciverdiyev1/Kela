@@ -522,6 +522,21 @@
   <data name="Common_Order" xml:space="preserve">
     <value>Sıra</value>
   </data>
+  <data name="Dashboard_Videos" xml:space="preserve">
+    <value>Videolar</value>
+  </data>
+  <data name="Dashboard_Files" xml:space="preserve">
+    <value>Fayllar</value>
+  </data>
+  <data name="Dashboard_Voices" xml:space="preserve">
+    <value>Səs yazıları</value>
+  </data>
+  <data name="Dashboard_New7d" xml:space="preserve">
+    <value>Yeni (7 gün)</value>
+  </data>
+  <data name="Dashboard_ActiveStudentCount" xml:space="preserve">
+    <value>Aktiv şagirdlər</value>
+  </data>
   <data name="Dashboard_Subtitle" xml:space="preserve">
     <value>Platformanın ümumi vəziyyətinə bir baxış.</value>
   </data>

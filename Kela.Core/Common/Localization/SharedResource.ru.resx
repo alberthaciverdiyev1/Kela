@@ -522,6 +522,21 @@
   <data name="Common_Order" xml:space="preserve">
     <value>Порядок</value>
   </data>
+  <data name="Dashboard_Videos" xml:space="preserve">
+    <value>Видео</value>
+  </data>
+  <data name="Dashboard_Files" xml:space="preserve">
+    <value>Файлы</value>
+  </data>
+  <data name="Dashboard_Voices" xml:space="preserve">
+    <value>Аудиозаписи</value>
+  </data>
+  <data name="Dashboard_New7d" xml:space="preserve">
+    <value>Новые (7 дней)</value>
+  </data>
+  <data name="Dashboard_ActiveStudentCount" xml:space="preserve">
+    <value>Активные ученики</value>
+  </data>
   <data name="Dashboard_Subtitle" xml:space="preserve">
     <value>Обзор состояния платформы.</value>
   </data>

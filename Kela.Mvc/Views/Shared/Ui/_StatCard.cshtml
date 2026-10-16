@@ -1,12 +1,23 @@
 @model StatCardModel
-<article class="admin-card flex h-[92px] items-center px-5">
-    <div class="flex items-center gap-4">
-        <span class="grid h-14 w-14 place-items-center rounded-2xl @Model.Accent">
-            <svg class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.9">@Html.Raw(Model.Icon)</svg>
-        </span>
-        <div>
-            <p class="text-sm font-semibold text-slate-500">@Model.Label</p>
-            <p id="@Model.Id" class="mt-1 text-3xl font-extrabold text-slate-950">—</p>
+@* Bütün panel üçün vahid göstərici kartı. JS qarşılığı: AdminUI.statCard. *@
+@if (Model.Compact)
+{
+    <article class="admin-card p-4">
+        <p class="text-xs font-semibold uppercase tracking-wide text-slate-400">@Model.Label</p>
+        <p id="@Model.Id" class="mt-1 text-2xl font-extrabold @Model.ValueClass">@(Model.Value ?? "—")</p>
+    </article>
+}
+else
+{
+    <article class="admin-card flex h-[92px] items-center px-5">
+        <div class="flex items-center gap-4">
+            <span class="grid h-14 w-14 place-items-center rounded-2xl @Model.Accent">
+                <svg class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.9">@Html.Raw(Model.Icon)</svg>
+            </span>
+            <div>
+                <p class="text-sm font-semibold text-slate-500">@Model.Label</p>
+                <p id="@Model.Id" class="mt-1 text-3xl font-extrabold @Model.ValueClass">@(Model.Value ?? "—")</p>
+            </div>
         </div>
-    </div>
-</article>
+    </article>
+}

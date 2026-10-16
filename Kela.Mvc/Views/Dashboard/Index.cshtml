@@ -3,21 +3,21 @@
     ViewData["Title"] = "Dashboard";
     var cards = new (string Label, string Value, string Accent, string Icon)[]
     {
-        ("Şagirdlər", Model.Students.Total.ToString(), "bg-primary-light text-primary", "<path stroke-linecap='round' stroke-linejoin='round' d='M16 7a4 4 0 1 1-8 0 4 4 0 0 1 8 0ZM12 14a7 7 0 0 0-7 7h14a7 7 0 0 0-7-7Z' />"),
-        ("Aktiv şagirdlər", Model.Students.Active.ToString(), "bg-success-bg text-success", "<path stroke-linecap='round' stroke-linejoin='round' d='m5 13 4 4L19 7' />"),
-        ("Yeni (7 gün)", Model.Students.New7d.ToString(), "bg-sky-100 text-sky-600", "<path stroke-linecap='round' stroke-linejoin='round' d='M12 8v4l3 2M21 12A9 9 0 1 1 3 12a9 9 0 0 1 18 0Z' />"),
-        ("Qruplar", Model.Students.Groups.ToString(), "bg-violet-100 text-violet-600", "<path stroke-linecap='round' stroke-linejoin='round' d='M17 20v-2a4 4 0 0 0-4-4H7a4 4 0 0 0-4 4v2M10 10a4 4 0 1 0 0-8 4 4 0 0 0 0 8Zm11 10v-2a4 4 0 0 0-3-3.87' />"),
+        (L["Nav_Students"], Model.Students.Total.ToString(), "bg-primary-light text-primary", "<path stroke-linecap='round' stroke-linejoin='round' d='M16 7a4 4 0 1 1-8 0 4 4 0 0 1 8 0ZM12 14a7 7 0 0 0-7 7h14a7 7 0 0 0-7-7Z' />"),
+        (L["Dashboard_ActiveStudentCount"], Model.Students.Active.ToString(), "bg-success-bg text-success", "<path stroke-linecap='round' stroke-linejoin='round' d='m5 13 4 4L19 7' />"),
+        (L["Dashboard_New7d"], Model.Students.New7d.ToString(), "bg-sky-100 text-sky-600", "<path stroke-linecap='round' stroke-linejoin='round' d='M12 8v4l3 2M21 12A9 9 0 1 1 3 12a9 9 0 0 1 18 0Z' />"),
+        (L["Nav_Groups"], Model.Students.Groups.ToString(), "bg-violet-100 text-violet-600", "<path stroke-linecap='round' stroke-linejoin='round' d='M17 20v-2a4 4 0 0 0-4-4H7a4 4 0 0 0-4 4v2M10 10a4 4 0 1 0 0-8 4 4 0 0 0 0 8Zm11 10v-2a4 4 0 0 0-3-3.87' />"),
     };
     var content = new (string Label, int Value)[]
     {
-        ("Fənlər", Model.Content.Subjects),
-        ("Dərslər", Model.Content.Lessons),
-        ("Materiallar", Model.Content.Contents),
-        ("Videolar", Model.Content.Videos),
-        ("Fayllar", Model.Content.Files),
-        ("Səs yazıları", Model.Content.Voices),
-        ("İmtahanlar", Model.Content.Quizzes),
-        ("Suallar", Model.Content.Questions),
+        (L["Nav_Subjects"], Model.Content.Subjects),
+        (L["Nav_Lessons"], Model.Content.Lessons),
+        (L["Nav_Materials"], Model.Content.Contents),
+        (L["Dashboard_Videos"], Model.Content.Videos),
+        (L["Dashboard_Files"], Model.Content.Files),
+        (L["Dashboard_Voices"], Model.Content.Voices),
+        (L["Nav_Exams"], Model.Content.Quizzes),
+        (L["Common_Questions"], Model.Content.Questions),
     };
 }
 <section class="admin-page">
@@ -26,27 +26,16 @@
     <div class="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
         @foreach (var card in cards)
         {
-            <article class="admin-card flex items-center gap-4 p-5">
-                <span class="grid h-14 w-14 shrink-0 place-items-center rounded-2xl @card.Accent">
-                    <svg class="h-7 w-7" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.9">@Html.Raw(card.Icon)</svg>
-                </span>
-                <div>
-                    <p class="text-sm font-semibold text-slate-500">@card.Label</p>
-                    <p class="mt-0.5 text-3xl font-extrabold text-slate-950">@card.Value</p>
-                </div>
-            </article>
+            <partial name="Ui/_StatCard" model="@(new StatCardModel {
+                Label = card.Label, Value = card.Value, Accent = card.Accent, Icon = card.Icon })" />
         }
     </div>
 
     <div class="grid gap-4 sm:grid-cols-2">
-        <div class="admin-card p-5">
-            <p class="text-sm font-semibold text-slate-500">@L["Dashboard_QuizAttempts"]</p>
-            <p class="mt-1 text-3xl font-extrabold text-primary">@Model.Activity.QuizAttempts30d</p>
-        </div>
-        <div class="admin-card p-5">
-            <p class="text-sm font-semibold text-slate-500">@L["Dashboard_ActiveStudents"]</p>
-            <p class="mt-1 text-3xl font-extrabold text-primary">@Model.Activity.StudentsAttempted30d</p>
-        </div>
+        <partial name="Ui/_StatCard" model="@(new StatCardModel {
+            Label = L["Dashboard_QuizAttempts"], Value = Model.Activity.QuizAttempts30d.ToString(), ValueClass = "text-primary", Compact = true })" />
+        <partial name="Ui/_StatCard" model="@(new StatCardModel {
+            Label = L["Dashboard_ActiveStudents"], Value = Model.Activity.StudentsAttempted30d.ToString(), ValueClass = "text-primary", Compact = true })" />
     </div>
 
     <div class="grid gap-4 lg:grid-cols-3">

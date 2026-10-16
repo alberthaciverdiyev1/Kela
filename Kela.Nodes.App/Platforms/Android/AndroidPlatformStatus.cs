@@ -1,5 +1,6 @@
 using Android.Content;
 using Android.OS;
+using Android.OS.Storage;
 using Kela.Nodes.Worker.Device;
 
 namespace Kela.Nodes.App.Platforms.Android;
@@ -51,4 +52,28 @@ public sealed class AndroidPlatformStatus(Context context) : IPlatformStatus
 
     /// <summary>Android-də batareya və istilik ölçülə bilir, ona görə limitlər tətbiq olunur.</summary>
     public bool SupportsPowerLimits => true;
+
+    /// <summary>
+    /// Tətbiqin məlumat bölməsindəki boş yer. <c>DriveInfo("/")</c> burada sistem
+    /// bölməsini göstərdiyi üçün StatFs ilə düzgün bölmə ölçülür.
+    /// </summary>
+    public int? FreeDiskMb
+    {
+        get
+        {
+            try
+            {
+                var path = global::Android.OS.Environment.DataDirectory?.AbsolutePath;
+                if (string.IsNullOrEmpty(path)) return null;
+
+                var stat = new StatFs(path);
+
+                return (int)Math.Clamp(stat.AvailableBytes / (1024 * 1024), 0, int.MaxValue);
+            }
+            catch (Exception ex) when (ex is Java.Lang.IllegalArgumentException or Java.Lang.SecurityException)
+            {
+                return null;
+            }
+        }
+    }
 }
