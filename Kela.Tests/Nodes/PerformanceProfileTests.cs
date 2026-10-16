@@ -78,13 +78,37 @@ public class PerformanceProfileTests
     }
 
     [Fact]
-    public void An_explicit_limit_is_never_exceeded_by_the_profile()
+    public void An_explicit_limit_replaces_the_profile_choice()
     {
-        var limits = new NodeRuntimeLimits { MaxCpuThreads = 2, MaxConcurrentJobs = 1 };
-        var profile = ProfileAdvisor.Resolve(NodePerformanceProfile.Max, Device(32), HardwareEncoder, limits);
+        var limits = new NodeRuntimeLimits { MaxCpuThreads = 2, MaxConcurrentJobs = 12 };
+        var profile = ProfileAdvisor.Resolve(NodePerformanceProfile.Balanced, Device(32), CpuEncoder, limits);
 
+        // İstifadəçi maşını özü tanıyır — açıq limit profili üstələyir (yuxarı da, aşağı da).
         Assert.Equal(2, profile.CpuThreads);
-        Assert.Equal(1, profile.MaxConcurrentJobs);
+        Assert.Equal(12, profile.MaxConcurrentJobs);
+    }
+
+    [Fact]
+    public void Nvenc_concurrency_is_capped_at_the_driver_session_limit()
+    {
+        var limits = new NodeRuntimeLimits { MaxConcurrentJobs = 40 };
+
+        var hardware = ProfileAdvisor.Resolve(NodePerformanceProfile.Max, Device(32), HardwareEncoder, limits);
+        var cpu = ProfileAdvisor.Resolve(NodePerformanceProfile.Max, Device(32), CpuEncoder, limits);
+
+        // NVIDIA sürücüsü sessiya limitini aşsa ffmpeg donur — ona görə kəsilir.
+        Assert.Equal(HardwareLimits.MaxConcurrentNvencSessions, hardware.MaxConcurrentJobs);
+
+        // CPU kodlaşdırmasında belə limit yoxdur.
+        Assert.Equal(40, cpu.MaxConcurrentJobs);
+    }
+
+    [Fact]
+    public void The_maximum_profile_uses_half_of_the_cores_in_parallel()
+    {
+        var profile = ProfileAdvisor.Resolve(NodePerformanceProfile.Max, Device(16), HardwareEncoder, new NodeRuntimeLimits());
+
+        Assert.Equal(8, profile.MaxConcurrentJobs);
     }
 
     [Fact]

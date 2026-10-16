@@ -16,8 +16,8 @@
 
       <Border Grid.Row="0" Grid.Column="1" Classes="card" Margin="8,0,0,8">
         <StackPanel Spacing="6">
-          <TextBlock Text="Aktiv tapşırıq" Classes="label" />
-          <TextBlock Text="{Binding ActiveJobs}" Classes="metric" />
+          <TextBlock Text="Paralel iş (icra / icazə)" Classes="label" />
+          <TextBlock Text="{Binding Concurrency}" Classes="metric" />
           <TextBlock Text="{Binding DeviceSummary}" Classes="value" />
         </StackPanel>
       </Border>

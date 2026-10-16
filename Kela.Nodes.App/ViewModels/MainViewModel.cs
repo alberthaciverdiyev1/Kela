@@ -188,10 +188,14 @@ public sealed class DashboardViewModel(MainViewModel main) : ObservableObject
     private string _uploaded = "—";
     private string _deviceSummary = "—";
     private string _encoder = "—";
+    private string _concurrency = "—";
 
     public string WorkerState { get => _workerState; private set => Set(ref _workerState, value); }
 
     public int ActiveJobs { get => _activeJobs; private set => Set(ref _activeJobs, value); }
+
+    /// <summary>"3 / 8" — icra olunan / icazə verilən paralel iş sayı.</summary>
+    public string Concurrency { get => _concurrency; private set => Set(ref _concurrency, value); }
 
     public string CurrentJob { get => _currentJob; private set => Set(ref _currentJob, value); }
 
@@ -223,6 +227,10 @@ public sealed class DashboardViewModel(MainViewModel main) : ObservableObject
 
         WorkerState = engine.IsRunning ? (engine.PausedReason ?? "İşləyir") : "Dayanıb";
         ActiveJobs = engine.Jobs.Count;
+        Concurrency = engine.IsRunning ? $"{ActiveJobs} / {engine.CurrentAllowance}" : "—";
+
+        var light = engine.Jobs.Count(j => j.IsLight);
+        if (engine.IsRunning && light > 0) Concurrency += $"  ({light} yüngül)";
 
         var device = engine.Device;
         DeviceSummary = device is null

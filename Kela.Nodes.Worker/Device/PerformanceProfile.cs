@@ -16,6 +16,16 @@ public sealed record ProfileSettings(
     string Description);
 
 /// <summary>
+/// NVIDIA-nın istehlakçı sürücüləri eyni vaxtda açıla bilən NVENC sessiyalarını
+/// məhdudlaşdırır. Həddi aşsaq ffmpeg sessiya gözləyib donur — ona görə paralellik
+/// bu rəqəmlə kəsilir.
+/// </summary>
+public static class HardwareLimits
+{
+    public const int MaxConcurrentNvencSessions = 8;
+}
+
+/// <summary>
 /// Cihazın ölçülmüş gücünə uyğun resurs profilini seçir və konkret parametrlərə çevirir.
 /// Məqsəd: güclü masaüstü tam gücü ilə işləsin, zəif/telefon cihaz istifadəçini
 /// narahat etməsin.
@@ -40,11 +50,11 @@ public static class ProfileAdvisor
             NodePerformanceProfile.Max => new ProfileSettings(
                 profile,
                 CpuThreads: cores,
-                MaxConcurrentJobs: Math.Max(1, cores / 4),
+                MaxConcurrentJobs: Math.Max(1, cores / 2),
                 Libx264Preset: "veryfast",
                 NvencPreset: "p1",
                 BelowNormalPriority: false,
-                Description: $"{cores} nüvənin hamısı, ən sürətli preset"),
+                Description: $"{cores} nüvənin hamısı, {Math.Max(1, cores / 2)} paralel iş"),
 
             NodePerformanceProfile.Low => new ProfileSettings(
                 profile,
@@ -58,22 +68,32 @@ public static class ProfileAdvisor
             _ => new ProfileSettings(
                 profile,
                 CpuThreads: Math.Max(1, cores - 1),
-                MaxConcurrentJobs: Math.Max(1, cores / 6),
+                MaxConcurrentJobs: Math.Max(1, cores / 4),
                 Libx264Preset: "veryfast",
                 NvencPreset: "p4",
                 BelowNormalPriority: false,
-                Description: $"{Math.Max(1, cores - 1)} nüvə, bir nüvə tətbiqə saxlanılır")
+                Description: $"{Math.Max(1, cores - 1)} nüvə, {Math.Max(1, cores / 4)} paralel iş")
         };
 
-        // İstifadəçi açıq limit qoyubsa, profil onu üstələmir.
         if (limits.MaxCpuThreads > 0)
         {
             settings = settings with { CpuThreads = Math.Min(settings.CpuThreads, limits.MaxCpuThreads) };
         }
 
+        // İstifadəçi açıq limit veribsə o, profili əvəz edir — maşını özü tanıyır.
         if (limits.MaxConcurrentJobs > 0)
         {
-            settings = settings with { MaxConcurrentJobs = Math.Min(settings.MaxConcurrentJobs, limits.MaxConcurrentJobs) };
+            settings = settings with
+            {
+                MaxConcurrentJobs = limits.MaxConcurrentJobs,
+                Description = $"{settings.Description}, istifadəçi limiti {limits.MaxConcurrentJobs}"
+            };
+        }
+
+        // Aparat encoder-ində sürücü sessiya limiti var — ondan yuxarı getmək ffmpeg-i dondura bilər.
+        if (encoders?.Chosen.Name == "h264_nvenc" && settings.MaxConcurrentJobs > HardwareLimits.MaxConcurrentNvencSessions)
+        {
+            settings = settings with { MaxConcurrentJobs = HardwareLimits.MaxConcurrentNvencSessions };
         }
 
         return hardware
