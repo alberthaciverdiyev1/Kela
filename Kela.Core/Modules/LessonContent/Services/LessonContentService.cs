@@ -149,6 +149,11 @@ public sealed class LessonContentService(AppDbContext db, IFileStorage storage) 
 
         if (!string.IsNullOrWhiteSpace(request.Path))
         {
+            // İstemci birbaşa R2-yə yükləyir; yolun həqiqətən orada olduğunu yoxlamasaq,
+            // yükləmə yarımçıq qalsa DB-də mövcud olmayan fayl qeyd olunardı.
+            if (!await storage.ExistsAsync(request.Path, ct))
+                throw new ArgumentException("Uploaded file was not found in storage");
+
             return request.Path;
         }
 
@@ -178,7 +183,10 @@ public sealed class LessonContentService(AppDbContext db, IFileStorage storage) 
     {
         if (content.Video is not null)
         {
-            return Row(content, "video", storage.GetUrl(content.Video.Path), content.Video.PlaybackUrl, content.Video.DurationSeconds);
+            return Row(content, "video", storage.GetUrl(content.Video.Path), content.Video.PlaybackUrl,
+            content.Video.DurationSeconds,
+            string.IsNullOrWhiteSpace(content.Video.Thumbnail) ? null : storage.GetUrl(content.Video.Thumbnail),
+            content.Video.ConversionStatus);
         }
 
         if (content.MediaFile is not null)
@@ -194,8 +202,10 @@ public sealed class LessonContentService(AppDbContext db, IFileStorage storage) 
         return Row(content, null, null, null, null);
     }
 
-    private static LessonContentResponse Row(LessonContent c, string? type, string? url, string? playbackUrl, int? duration) =>
-        new(c.Id, c.LessonId, c.Title, c.Description, type, url, playbackUrl, c.SortOrder, c.IsActive, duration);
+    private static LessonContentResponse Row(LessonContent c, string? type, string? url, string? playbackUrl,
+        int? duration, string? thumbnailUrl = null, string? conversionStatus = null) =>
+        new(c.Id, c.LessonId, c.Title, c.Description, type, url, playbackUrl, c.SortOrder, c.IsActive,
+            duration, thumbnailUrl, conversionStatus);
 
     public Task BulkAsync(BulkRequest request, CancellationToken ct = default)
         => BulkHelper.ApplyAsync<LessonContent>(db, request, ct);

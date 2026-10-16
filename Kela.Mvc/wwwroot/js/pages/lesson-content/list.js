@@ -29,25 +29,63 @@ async function loadList(page) {
         { html: AdminUI.rowNo(c, i, currentPage, data.perPage), cls: 'text-slate-400' },
         { html: c.title, cls: 'font-medium text-slate-800' },
         { html: TYPE_TEXT[c.type] ?? '-', cls: 'text-slate-500' },
+        { html: statusBadge(c) },
         { html: c.url ? `<button type="button" class="text-primary hover:underline" onclick="previewContent(${c.id})">${L["Js_View"]}</button>` : '-' },
         { html: c.isActive ? AdminUI.badge('Aktiv', 'success') : AdminUI.badge('Deaktiv', 'neutral') },
         { html: showDeleted ? AdminUI.restoreButton(c.id) : AdminUI.actions(c.id), cls: 'text-right' }
-    ]), 6, { rowIds: data.data.map(c => c.id), selectable: !showDeleted });
+    ]), 7, { rowIds: data.data.map(c => c.id), selectable: !showDeleted });
 
     AdminUI.pagination('pagination', currentPage, lastPage, loadList);
     AdminUI.loader(false);
 }
 
+const STATUS_BADGE = {
+    pending:    { text: () => L["Video_Pending"],    tone: 'neutral' },
+    processing: { text: () => L["Video_Processing"], tone: 'warning' },
+    ready:      { text: () => L["Video_Ready"],      tone: 'success' },
+    failed:     { text: () => L["Video_Failed"],     tone: 'danger'  }
+};
+
+function statusBadge(c) {
+    if (c.type !== 'video') return '<span class="text-slate-300">—</span>';
+    const b = STATUS_BADGE[c.conversionStatus];
+    return b ? AdminUI.badge(b.text(), b.tone) : '<span class="text-slate-300">—</span>';
+}
+
+let previewHls = null;
+
 function previewContent(id) {
     const c = CONTENT[id];
     if (!c || !c.url) return;
+
+    if (previewHls) { try { previewHls.destroy(); } catch (e) {} previewHls = null; }
 
     document.getElementById('previewTitle').textContent = c.title || '';
     const body = document.getElementById('previewBody');
     const url = c.playbackUrl || c.url;
 
     if (c.type === 'video') {
-        body.innerHTML = `<video src="${url}" controls autoplay playsinline class="w-full rounded-xl bg-black"></video>`;
+        // m3u8-i yalnız <video src> ilə oynatmaq olmur (Safari xaric) — hls.js lazımdır.
+        if (c.conversionStatus && c.conversionStatus !== 'ready') {
+            body.innerHTML = `<div class="rounded-xl bg-slate-100 p-6 text-center text-sm text-slate-500">
+                ${statusBadge(c)}<p class="mt-3">${L["Video_NotReady"]}</p></div>`;
+        } else {
+            body.innerHTML = `<video id="previewVideo" controls autoplay playsinline class="w-full rounded-xl bg-black"></video>`;
+            const v = document.getElementById('previewVideo');
+            if (/\.m3u8(\?|$)/i.test(url)) {
+                if (v.canPlayType('application/vnd.apple.mpegurl')) {
+                    v.src = url;
+                } else if (window.Hls && window.Hls.isSupported()) {
+                    previewHls = new window.Hls();
+                    previewHls.loadSource(url);
+                    previewHls.attachMedia(v);
+                } else {
+                    v.src = url;
+                }
+            } else {
+                v.src = url;
+            }
+        }
     } else if (c.type === 'voice') {
         body.innerHTML = `<audio src="${c.url}" controls autoplay class="w-full"></audio>`;
     } else if (/\.(png|jpe?g|gif|webp|svg)($|\?)/i.test(c.url)) {

@@ -1,7 +1,7 @@
 namespace Kela.App.Shared.Dtos;
 
 public record ContentItemDto(long Id, string Title, string? Description, string? Type, string? Url,
-    string? PlaybackUrl, int? DurationSeconds, string? ThumbnailUrl = null)
+    string? PlaybackUrl, int? DurationSeconds, string? ThumbnailUrl = null, string? ConversionStatus = null)
 {
     public string TypeLabel => Type switch
     {
@@ -10,6 +10,13 @@ public record ContentItemDto(long Id, string Title, string? Description, string?
         "voice" => "Səs yazısı",
         _ => "Material"
     };
+
+    /// <summary>Video konversiyası hələ bitməyibsə oynatmaq mənasızdır.</summary>
+    public bool IsProcessing => Type == "video"
+        && ConversionStatus is "pending" or "processing";
+
+    /// <summary>Konversiya alınmadı.</summary>
+    public bool IsFailed => Type == "video" && ConversionStatus == "failed";
 
     /// <summary>Müddət: saat:dəqiqə:saniyə (məs. 1:06:27) və ya dəqiqə:saniyə (6:27).</summary>
     public string DurationLabel

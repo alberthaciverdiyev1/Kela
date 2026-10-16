@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Http;
 using Kela.Core.Modules.Group.Abstractions;
 using Kela.Core.Modules.Group.Requests;
 using Kela.Core.Modules.Lesson.Abstractions;
@@ -71,8 +72,27 @@ public static class TestData
                 Title = title,
                 Type = type,
                 IsActive = true,
-                Path = $"test/{Guid.NewGuid():N}.mp4"
+                // Real fayl yükləyirik: servis istemcinin verdiyi path-i storage-də
+                // yoxlayır, ona görə uydurma yol qəbul olunmur.
+                File = FakeFile(type)
             })).Id);
+
+    private static IFormFile FakeFile(LessonContentType type)
+    {
+        var name = type switch
+        {
+            LessonContentType.Voice => "test.mp3",
+            LessonContentType.File => "test.pdf",
+            _ => "test.mp4"
+        };
+
+        var bytes = new byte[16];
+        return new FormFile(new MemoryStream(bytes), 0, bytes.Length, "File", name)
+        {
+            Headers = new HeaderDictionary(),
+            ContentType = "application/octet-stream"
+        };
+    }
 
     public static Task<long> QuestionAsync(ApiFactory factory, long subjectId, string title, string correct = "A")
         => UseAsync<IQuestionService, long>(factory,

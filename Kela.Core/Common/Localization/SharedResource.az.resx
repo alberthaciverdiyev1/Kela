@@ -52,6 +52,32 @@
   <data name="Api_TokenRemoved" xml:space="preserve">
     <value>Token silindi</value>
   </data>
+
+  <data name="Api_WorkerUnauthorized" xml:space="preserve">
+    <value>Worker açarı yanlışdır</value>
+  </data>
+
+  <data name="Video_Status" xml:space="preserve">
+    <value>Vəziyyət</value>
+  </data>
+  <data name="Video_Pending" xml:space="preserve">
+    <value>Gözləyir</value>
+  </data>
+  <data name="Video_Processing" xml:space="preserve">
+    <value>İşlənir</value>
+  </data>
+  <data name="Video_Ready" xml:space="preserve">
+    <value>Hazırdır</value>
+  </data>
+  <data name="Video_Failed" xml:space="preserve">
+    <value>Xəta</value>
+  </data>
+  <data name="Video_NotReady" xml:space="preserve">
+    <value>Video hələ hazır deyil — konversiya davam edir.</value>
+  </data>
+  <data name="Api_VideoNotFound" xml:space="preserve">
+    <value>Bu mənbə yolu ilə video tapılmadı</value>
+  </data>
   <data name="Api_ProgressSaved" xml:space="preserve">
     <value>İrəliləyiş yadda saxlanıldı</value>
   </data>

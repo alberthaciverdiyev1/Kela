@@ -17,4 +17,10 @@ public class Video : BaseEntity
 
     /// <summary>Kadr önizləməsi (thumbnail) yolu — xarici worker tərəfindən yaradılır.</summary>
     public string? Thumbnail { get; set; }
+
+    /// <summary>Konversiya vəziyyəti — bax: <see cref="VideoStatus"/>.</summary>
+    public string ConversionStatus { get; set; } = VideoStatus.Pending;
+
+    /// <summary>Konversiya xətası (yalnız failed olduqda).</summary>
+    public string? ConversionError { get; set; }
 }

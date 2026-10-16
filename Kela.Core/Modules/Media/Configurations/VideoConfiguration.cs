@@ -1,3 +1,4 @@
+using Kela.Core.Modules.Media.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -18,6 +19,10 @@ public sealed class VideoConfiguration : IEntityTypeConfiguration<Video>
         builder.Property(x => x.DurationSeconds).HasColumnName("duration_seconds");
         builder.Property(x => x.PlaybackUrl).HasColumnName("playback_url").HasMaxLength(500);
         builder.Property(x => x.Thumbnail).HasColumnName("thumbnail").HasMaxLength(500);
+        builder.Property(x => x.ConversionStatus).HasColumnName("conversion_status")
+            .HasMaxLength(20).IsRequired().HasDefaultValue(VideoStatus.Pending);
+        builder.Property(x => x.ConversionError).HasColumnName("conversion_error").HasMaxLength(500);
+        builder.HasIndex(x => x.ConversionStatus);
         builder.Property(x => x.CreatedAt).HasColumnName("created_at");
         builder.Property(x => x.UpdatedAt).HasColumnName("updated_at");
         builder.Property(x => x.DeletedAt).HasColumnName("deleted_at");

@@ -52,6 +52,32 @@
   <data name="Api_TokenRemoved" xml:space="preserve">
     <value>Token removed</value>
   </data>
+
+  <data name="Api_WorkerUnauthorized" xml:space="preserve">
+    <value>Invalid worker key</value>
+  </data>
+
+  <data name="Video_Status" xml:space="preserve">
+    <value>Status</value>
+  </data>
+  <data name="Video_Pending" xml:space="preserve">
+    <value>Pending</value>
+  </data>
+  <data name="Video_Processing" xml:space="preserve">
+    <value>Processing</value>
+  </data>
+  <data name="Video_Ready" xml:space="preserve">
+    <value>Ready</value>
+  </data>
+  <data name="Video_Failed" xml:space="preserve">
+    <value>Failed</value>
+  </data>
+  <data name="Video_NotReady" xml:space="preserve">
+    <value>Video is not ready yet — conversion is still running.</value>
+  </data>
+  <data name="Api_VideoNotFound" xml:space="preserve">
+    <value>No video matches the given source path</value>
+  </data>
   <data name="Api_ProgressSaved" xml:space="preserve">
     <value>Progress saved</value>
   </data>

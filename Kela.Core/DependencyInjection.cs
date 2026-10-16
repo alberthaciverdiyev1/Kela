@@ -54,7 +54,8 @@ public static class DependencyInjection
         var storageProvider = configuration["Storage:Provider"] ?? "Local";
         if (string.Equals(storageProvider, "R2", StringComparison.OrdinalIgnoreCase))
         {
-            services.Configure<R2Options>(configuration.GetSection(R2Options.SectionName));
+            services.Configure<WorkerOptions>(configuration.GetSection(WorkerOptions.SectionName));
+        services.Configure<R2Options>(configuration.GetSection(R2Options.SectionName));
             services.AddSingleton<IFileStorage, R2FileStorage>();
         }
         else
@@ -98,14 +99,20 @@ public static class DependencyInjection
         services.AddScoped<IUserAuthService, UserAuthService>();
         services.AddScoped<IGroupService, GroupService>();
         services.AddScoped<IAttendanceService, AttendanceService>();
+        services.AddScoped<IVideoProcessingService, VideoProcessingService>();
 
         return services;
     }
 
     public static void UseCoreStorage(this IApplicationBuilder app)
     {
-        var env = app.ApplicationServices.GetRequiredService<IWebHostEnvironment>();
         var config = app.ApplicationServices.GetRequiredService<IConfiguration>();
+
+        // R2 rejimində fayllar bucket-dan gəlir — lokal qovluq və /uploads mount lazımsızdır.
+        var provider = config["Storage:Provider"] ?? "Local";
+        if (!string.Equals(provider, "Local", StringComparison.OrdinalIgnoreCase)) return;
+
+        var env = app.ApplicationServices.GetRequiredService<IWebHostEnvironment>();
         var root = StoragePaths.ResolveRoot(env, config);
 
         Directory.CreateDirectory(root);

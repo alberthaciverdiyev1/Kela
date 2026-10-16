@@ -276,7 +276,7 @@ public sealed class StudentAppService(
     {
         if (content.Video is not null)
             return Row(content, "video", storage.GetUrl(content.Video.Path), content.Video.PlaybackUrl,
-                content.Video.DurationSeconds, ThumbnailUrl(content.Video.Thumbnail));
+                content.Video.DurationSeconds, ThumbnailUrl(content.Video.Thumbnail), content.Video.ConversionStatus);
         if (content.MediaFile is not null)
             return Row(content, "file", storage.GetUrl(content.MediaFile.Path), null, null, null);
         if (content.VoiceRecord is not null)
@@ -288,6 +288,7 @@ public sealed class StudentAppService(
         => string.IsNullOrWhiteSpace(thumbnail) ? null : storage.GetUrl(thumbnail);
 
     private static LessonContentResponse Row(LessonContent c, string? type, string? url, string? playbackUrl,
-        int? duration, string? thumbnailUrl) =>
-        new(c.Id, c.LessonId, c.Title, c.Description, type, url, playbackUrl, c.SortOrder, c.IsActive, duration, thumbnailUrl);
+        int? duration, string? thumbnailUrl, string? conversionStatus = null) =>
+        new(c.Id, c.LessonId, c.Title, c.Description, type, url, playbackUrl, c.SortOrder, c.IsActive,
+            duration, thumbnailUrl, conversionStatus);
 }

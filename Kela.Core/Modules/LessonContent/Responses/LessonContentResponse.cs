@@ -11,4 +11,6 @@ public record LessonContentResponse(
     int SortOrder,
     bool IsActive,
     int? DurationSeconds,
-    string? ThumbnailUrl = null);
+    string? ThumbnailUrl = null,
+    /// <summary>Video konversiya vəziyyəti (pending/processing/ready/failed). Video deyilsə null.</summary>
+    string? ConversionStatus = null);
