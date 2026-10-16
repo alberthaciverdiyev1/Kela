@@ -193,6 +193,10 @@ public sealed class DashboardViewModel(MainViewModel main) : ObservableObject
     private string _transfer = "—";
     private string _transferSpeed = "—";
     private string _lanes = "—";
+    private string _cpu = "—";
+    private string _gpu = "—";
+    private string _ram = "—";
+    private string _disk = "—";
 
     public string WorkerState { get => _workerState; private set => Set(ref _workerState, value); }
 
@@ -211,6 +215,15 @@ public sealed class DashboardViewModel(MainViewModel main) : ObservableObject
 
     /// <summary>Mövcud kodlaşdırma zolaqları: GPU(lar) və CPU.</summary>
     public string Lanes { get => _lanes; private set => Set(ref _lanes, value); }
+
+    /// <summary>Worker prosesinin CPU payı (bütün nüvələrə nisbətdə).</summary>
+    public string Cpu { get => _cpu; private set => Set(ref _cpu, value); }
+
+    public string Gpu { get => _gpu; private set => Set(ref _gpu, value); }
+
+    public string Ram { get => _ram; private set => Set(ref _ram, value); }
+
+    public string Disk { get => _disk; private set => Set(ref _disk, value); }
 
     public string CurrentJob { get => _currentJob; private set => Set(ref _currentJob, value); }
 
@@ -246,6 +259,17 @@ public sealed class DashboardViewModel(MainViewModel main) : ObservableObject
 
         var lanes = engine.Lanes;
         Lanes = lanes.Count == 0 ? "—" : string.Join("  ·  ", lanes.Select(l => l.Label));
+
+        var r = engine.Resources;
+
+        Cpu = $"{r.WorkerCpuPercent:0.#}%  (sistem {r.SystemCpuPercent:0.#}%)";
+        Gpu = r.GpuPercent is { } gpu
+            ? $"{gpu:0}%  (encoder {r.GpuEncoderPercent ?? 0:0}%)"
+            : "yoxdur";
+        Ram = r.RamTotalMb > 0
+            ? $"{r.RamUsedMb / 1024.0:0.#} / {r.RamTotalMb / 1024.0:0.#} GB  ({r.RamUsedPercent:0}%)"
+            : "—";
+        Disk = r.DiskFreeMb > 0 ? $"{r.DiskFreeMb / 1024.0:0.#} GB boş" : "—";
 
         var light = engine.Jobs.Count(j => j.IsLight);
         if (engine.IsRunning && light > 0) Concurrency += $"  ({light} yüngül)";

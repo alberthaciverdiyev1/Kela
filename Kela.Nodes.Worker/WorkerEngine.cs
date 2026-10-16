@@ -37,6 +37,7 @@ public sealed class WorkerEngine : IAsyncDisposable
     private readonly FfmpegLocator _ffmpeg;
     private readonly DeviceProbe _device;
     private readonly SourceCache _sources;
+    private readonly ResourceMonitor _resources;
 
     // ffmpeg ikililəri yalnız yerini tapdıqdan sonra qurula bilər.
     private MediaProbe? _probe;
@@ -88,6 +89,7 @@ public sealed class WorkerEngine : IAsyncDisposable
         _ffmpeg = new FfmpegLocator(settings, log);
         _device = new DeviceProbe(_platform, log);
         _sources = new SourceCache(_storage, settings, log);
+        _resources = new ResourceMonitor(settings.CacheDirectory, log);
     }
 
     public WorkerSettings Settings { get; }
@@ -121,6 +123,9 @@ public sealed class WorkerEngine : IAsyncDisposable
     public string? PausedReason { get; private set; }
 
     public IReadOnlyCollection<RunningJob> Jobs => [.. _jobs.Values.OrderBy(j => j.JobId)];
+
+    /// <summary>CPU / GPU / RAM / disk göstəriciləri.</summary>
+    public ResourceSnapshot Resources => _resources.Current;
 
     /// <summary>Mövcud kodlaşdırma zolaqları (GPU + CPU) — UI göstərir.</summary>
     public IReadOnlyList<EncoderLane> Lanes
@@ -368,6 +373,9 @@ public sealed class WorkerEngine : IAsyncDisposable
     private async Task RunLoopAsync(CancellationToken ct)
     {
         Log.Info("worker", "Worker işə düşdü");
+
+        // Resurs ölçmə ayrı axında, encoding-ə mane olmadan aparılır.
+        _resources.Start(ct);
 
         if (!await PrepareAsync(ct)) return;
 

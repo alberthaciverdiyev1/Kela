@@ -1,3 +1,4 @@
+using Kela.Core.Modules.Media.Entities;
 using Kela.Core.Common.Responses;
 using Kela.Core.Common.Storage;
 using Kela.Core.Common.Bulk;
@@ -138,23 +139,26 @@ public sealed class LessonContentService(
             IsActive = request.IsActive
         };
 
-        switch (request.Type)
+        if (path is not null)
         {
-            case LessonContentType.Video:
-                content.Video = new Video { TenantId = tenantId, Title = request.Title, Path = path };
-                break;
-            case LessonContentType.Voice:
-                content.VoiceRecord = new VoiceRecord { TenantId = tenantId, Title = request.Title, Path = path };
-                break;
-            default:
-                content.MediaFile = new MediaFile
-                {
-                    TenantId = tenantId,
-                    Name = request.File?.FileName,
-                    Path = path,
-                    SizeBytes = request.File?.Length
-                };
-                break;
+            switch (request.Type)
+            {
+                case LessonContentType.Video:
+                    content.Video = new Video { TenantId = tenantId, Title = request.Title, Path = path };
+                    break;
+                case LessonContentType.Voice:
+                    content.VoiceRecord = new VoiceRecord { TenantId = tenantId, Title = request.Title, Path = path };
+                    break;
+                default:
+                    content.MediaFile = new MediaFile
+                    {
+                        TenantId = tenantId,
+                        Name = request.File?.FileName,
+                        Path = path,
+                        SizeBytes = request.File?.Length
+                    };
+                    break;
+            }
         }
 
         db.LessonContents.Add(content);
@@ -164,6 +168,48 @@ public sealed class LessonContentService(
         if (content.Video is not null) await jobs.EnsureJobsAsync(content.Video.Id, ct);
 
         return ToResponse(content);
+    }
+
+    /// <summary>
+    /// Fon rejimində yüklənmiş faylı mövcud materiala bağlayır. Böyük videoda istifadəçi
+    /// yükləməni gözləmir: material dərhal yaranır, fayl bitəndə bura gəlir.
+    /// </summary>
+    public async Task<LessonContentResponse> AttachFileAsync(
+        long id, LessonContentAttachRequest request, CancellationToken ct = default)
+    {
+        if (string.IsNullOrWhiteSpace(request.Path))
+            throw new ArgumentException("path is required");
+
+        var content = await db.LessonContents
+            .Include(x => x.Video).Include(x => x.MediaFile).Include(x => x.VoiceRecord)
+            .FirstOrDefaultAsync(x => x.Id == id, ct)
+            ?? throw new KeyNotFoundException($"Lesson content not found: {id}");
+
+        switch (request.Type)
+        {
+            case LessonContentType.Video:
+                content.Video ??= new Video { TenantId = content.TenantId, Title = content.Title };
+                content.Video.Path = request.Path;
+                content.Video.ConversionStatus = VideoStatus.Pending;
+                break;
+
+            case LessonContentType.Voice:
+                content.VoiceRecord ??= new VoiceRecord { TenantId = content.TenantId, Title = content.Title };
+                content.VoiceRecord.Path = request.Path;
+                break;
+
+            default:
+                content.MediaFile ??= new MediaFile { TenantId = content.TenantId, Name = content.Title };
+                content.MediaFile.Path = request.Path;
+                break;
+        }
+
+        await db.SaveChangesAsync(ct);
+
+        // Video bağlanan kimi konversiya tapşırıqları yaranmalıdır — worker onları gözləyir.
+        if (content.Video is not null) await jobs.EnsureJobsAsync(content.Video.Id, ct);
+
+        return await GetAsync(id, ct);
     }
 
     public async Task<LessonContentResponse> UpdateAsync(
@@ -192,7 +238,7 @@ public sealed class LessonContentService(
         await db.SaveChangesAsync(ct);
     }
 
-    private async Task<string> ResolvePathAsync(LessonContentCreateRequest request, CancellationToken ct)
+    private async Task<string?> ResolvePathAsync(LessonContentCreateRequest request, CancellationToken ct)
     {
         // birbaşa R2-yə yüklənibsə path verilir; əks halda API-dən keçərək yükləyirik
         if (request.File is not null)
@@ -211,7 +257,9 @@ public sealed class LessonContentService(
             return request.Path;
         }
 
-        throw new ArgumentException("File or Path is required");
+        // Nə fayl, nə yol verilməyibsə material mediasız yaranır: böyük video fonda
+        // yüklənir və bitəndə AttachFileAsync ilə bağlanır.
+        return null;
     }
 
     /// <summary>

@@ -67,6 +67,30 @@
     </Grid>
 
     <Border Classes="card">
+      <StackPanel Spacing="10">
+        <TextBlock Text="Resurs istifadəsi" Classes="label" />
+        <Grid ColumnDefinitions="*,*,*,*">
+          <StackPanel Grid.Column="0">
+            <TextBlock Text="CPU (worker)" Classes="label" />
+            <TextBlock Text="{Binding Cpu}" Classes="value" FontWeight="SemiBold" />
+          </StackPanel>
+          <StackPanel Grid.Column="1">
+            <TextBlock Text="GPU" Classes="label" />
+            <TextBlock Text="{Binding Gpu}" Classes="value" FontWeight="SemiBold" />
+          </StackPanel>
+          <StackPanel Grid.Column="2">
+            <TextBlock Text="Yaddaş" Classes="label" />
+            <TextBlock Text="{Binding Ram}" Classes="value" FontWeight="SemiBold" />
+          </StackPanel>
+          <StackPanel Grid.Column="3">
+            <TextBlock Text="Disk" Classes="label" />
+            <TextBlock Text="{Binding Disk}" Classes="value" FontWeight="SemiBold" />
+          </StackPanel>
+        </Grid>
+      </StackPanel>
+    </Border>
+
+    <Border Classes="card">
       <StackPanel Spacing="8">
         <TextBlock Text="İcra olunan işlər" Classes="label" />
 

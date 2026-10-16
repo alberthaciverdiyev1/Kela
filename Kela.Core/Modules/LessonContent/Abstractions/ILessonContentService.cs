@@ -30,6 +30,9 @@ public interface ILessonContentService
 
     Task<LessonContentResponse> CreateAsync(LessonContentCreateRequest request, CancellationToken ct = default);
 
+    /// <summary>Fon rejimində yüklənmiş faylı mövcud materiala bağlayır.</summary>
+    Task<LessonContentResponse> AttachFileAsync(long id, LessonContentAttachRequest request, CancellationToken ct = default);
+
     Task<LessonContentResponse> UpdateAsync(long id, LessonContentUpdateRequest request, CancellationToken ct = default);
 
     Task DeleteAsync(long id, CancellationToken ct = default);
