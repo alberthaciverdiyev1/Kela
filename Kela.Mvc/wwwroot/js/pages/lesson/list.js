@@ -39,10 +39,12 @@ function hasImage(url) {
 }
 
 function lessonThumb(lesson, index) {
-    if (hasImage(lesson.image)) {
-        return `<img src="${lesson.image}" alt="" class="h-11 w-11 shrink-0 rounded-xl object-cover" />`;
-    }
-    return `<span class="grid h-11 w-11 shrink-0 place-items-center rounded-xl ${lessonPalette(index)}">${lessonIcon(index)}</span>`;
+    // İkon həmişə altdadır: şəkil yüklənməzsə (obyekt silinmiş ola bilər) sınıq şəkil
+    // işarəsi yerinə ikon görünür.
+    const img = hasImage(lesson.image)
+        ? `<img src="${lesson.image}" alt="" class="absolute inset-0 h-full w-full object-cover" onerror="this.remove()" />`
+        : '';
+    return `<span class="relative grid h-11 w-11 shrink-0 place-items-center overflow-hidden rounded-xl ${lessonPalette(index)}">${lessonIcon(index)}${img}</span>`;
 }
 
 function lessonPalette(index) {

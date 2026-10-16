@@ -13,7 +13,8 @@ const TYPE_TONE = {
 const TYPE_ICON = {
     video: '<path stroke-linecap="round" stroke-linejoin="round" d="m10 9 5 3-5 3V9ZM4 6.5A2.5 2.5 0 0 1 6.5 4h11A2.5 2.5 0 0 1 20 6.5v11a2.5 2.5 0 0 1-2.5 2.5h-11A2.5 2.5 0 0 1 4 17.5v-11Z" />',
     file:  '<path stroke-linecap="round" stroke-linejoin="round" d="M7 3h7l5 5v13H7V3Zm7 0v5h5M10 13h6M10 17h4" />',
-    voice: '<path stroke-linecap="round" stroke-linejoin="round" d="M12 3a3 3 0 0 1 3 3v5a3 3 0 0 1-6 0V6a3 3 0 0 1 3-3Zm-7 8a7 7 0 0 0 14 0M12 18v3" />'
+    voice: '<path stroke-linecap="round" stroke-linejoin="round" d="M12 3a3 3 0 0 1 3 3v5a3 3 0 0 1-6 0V6a3 3 0 0 1 3-3Zm-7 8a7 7 0 0 0 14 0M12 18v3" />',
+    other: '<path stroke-linecap="round" stroke-linejoin="round" d="M12 8v5m0 3h.01M10.3 3.9 2.4 17.5A2 2 0 0 0 4.1 20.5h15.8a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0Z" />'
 };
 
 // Şəkil kimi göstərilə bilən material: video üçün konversiyadan çıxan thumbnail,
@@ -26,14 +27,16 @@ function previewImage(c) {
 }
 
 function contentThumb(c) {
-    const src = previewImage(c);
-    if (src) {
-        return `<img src="${src}" alt="" class="h-11 w-11 shrink-0 rounded-xl bg-slate-100 object-cover" />`;
-    }
     const tone = TYPE_TONE[c.type] ?? 'bg-slate-100 text-slate-500';
-    const icon = TYPE_ICON[c.type] ?? '';
-    return `<span class="grid h-11 w-11 shrink-0 place-items-center rounded-xl ${tone}">
-        <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.9">${icon}</svg>
+    const icon = TYPE_ICON[c.type] ?? TYPE_ICON.other;
+    const src = previewImage(c);
+    // İkon həmişə altdadır: şəkil yüklənməzsə (obyekt silinmiş ola bilər) sınıq şəkil
+    // işarəsi yerinə növ ikonu görünür.
+    const img = src
+        ? `<img src="${src}" alt="" class="absolute inset-0 h-full w-full object-cover" onerror="this.remove()" />`
+        : '';
+    return `<span class="relative grid h-11 w-11 shrink-0 place-items-center overflow-hidden rounded-xl ${tone}">
+        <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.9">${icon}</svg>${img}
     </span>`;
 }
 
