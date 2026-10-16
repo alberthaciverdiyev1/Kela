@@ -17,6 +17,7 @@ public sealed class AuthService(
     IOtpService otp,
     IStudentDeviceService devices,
     IFileStorage storage,
+    ITenantFolder folders,
     ITenantProvider tenantProvider,
     IConfiguration config) : IAuthService
 {

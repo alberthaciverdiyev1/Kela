@@ -9,9 +9,10 @@ namespace Kela.Core.Modules.Setting.Services;
 
 using Setting = Kela.Core.Modules.Setting.Entities.Setting;
 
-public sealed class SettingService(AppDbContext db, IFileStorage storage, IConfiguration config) : ISettingService
+public sealed class SettingService(AppDbContext db, IFileStorage storage, ITenantFolder folders, IConfiguration config) : ISettingService
 {
-    private const string LogoFolder = "setting";
+    private async Task<string> FolderAsync(CancellationToken ct)
+        => $"{await folders.ResolveAsync(ct: ct)}/settings";
 
     public async Task<SettingResponse> GetAsync(CancellationToken ct = default)
     {
@@ -90,7 +91,7 @@ public sealed class SettingService(AppDbContext db, IFileStorage storage, IConfi
         else if (request.Logo is not null)
         {
             await storage.DeleteAsync(setting.Logo, ct);
-            setting.Logo = await storage.UploadAsync(request.Logo, LogoFolder, ct);
+            setting.Logo = await storage.UploadAsync(request.Logo, await FolderAsync(ct), ct);
         }
 
         setting.Description = request.Description;

@@ -15,15 +15,17 @@ using NotificationToken = Kela.Core.Modules.Notification.Entities.NotificationTo
 public sealed class NotificationService(
     AppDbContext db,
     IFileStorage storage,
+    ITenantFolder folders,
     IPushSender push) : INotificationService
 {
-    private const string ImageFolder = "notification";
+    private async Task<string> FolderAsync(CancellationToken ct)
+        => $"{await folders.ResolveAsync(ct: ct)}/notifications";
 
     public async Task<NotificationResponse> CreateAsync(
         CreateNotificationRequest request, long? userId, CancellationToken ct = default)
     {
         var image = request.Image is not null
-            ? await storage.UploadAsync(request.Image, ImageFolder, ct)
+            ? await storage.UploadAsync(request.Image, await FolderAsync(ct), ct)
             : null;
 
         var notification = new Notification

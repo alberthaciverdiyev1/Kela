@@ -100,6 +100,7 @@ public static class DependencyInjection
         services.AddScoped<IGroupService, GroupService>();
         services.AddScoped<IAttendanceService, AttendanceService>();
         services.AddScoped<IVideoProcessingService, VideoProcessingService>();
+        services.AddScoped<ITenantFolder, TenantFolder>();
 
         return services;
     }

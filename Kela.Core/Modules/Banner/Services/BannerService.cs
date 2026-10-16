@@ -10,9 +10,10 @@ namespace Kela.Core.Modules.Banner.Services;
 
 using Banner = Kela.Core.Modules.Banner.Entities.Banner;
 
-public sealed class BannerService(AppDbContext db, IFileStorage storage) : IBannerService
+public sealed class BannerService(AppDbContext db, IFileStorage storage, ITenantFolder folders) : IBannerService
 {
-    private const string ImageFolder = "banner";
+    private async Task<string> FolderAsync(CancellationToken ct)
+        => $"{await folders.ResolveAsync(ct: ct)}/banners";
     private static readonly TimeSpan NewThreshold = TimeSpan.FromDays(3);
 
     public async Task<PagedResponse<BannerResponse>> ListAsync(BannerListRequest request, CancellationToken ct = default)
@@ -61,7 +62,7 @@ public sealed class BannerService(AppDbContext db, IFileStorage storage) : IBann
     public async Task<BannerResponse> CreateAsync(BannerUpsertRequest request, CancellationToken ct = default)
     {
         var image = request.Image is not null
-            ? await storage.UploadAsync(request.Image, ImageFolder, ct)
+            ? await storage.UploadAsync(request.Image, await FolderAsync(ct), ct)
             : null;
 
         var banner = new Banner
@@ -91,7 +92,7 @@ public sealed class BannerService(AppDbContext db, IFileStorage storage) : IBann
         else if (request.Image is not null)
         {
             await storage.DeleteAsync(banner.Image, ct);
-            banner.Image = await storage.UploadAsync(request.Image, ImageFolder, ct);
+            banner.Image = await storage.UploadAsync(request.Image, await FolderAsync(ct), ct);
         }
 
         banner.Title = request.Title;

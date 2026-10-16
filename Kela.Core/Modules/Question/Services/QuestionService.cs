@@ -11,9 +11,10 @@ namespace Kela.Core.Modules.Question.Services;
 
 using Question = Kela.Core.Modules.Question.Entities.Question;
 
-public sealed class QuestionService(AppDbContext db, IFileStorage storage) : IQuestionService
+public sealed class QuestionService(AppDbContext db, IFileStorage storage, ITenantFolder folders) : IQuestionService
 {
-    private const string ImageFolder = "question";
+    private async Task<string> FolderAsync(CancellationToken ct)
+        => $"{await folders.ResolveAsync(ct: ct)}/questions";
 
     public async Task<PagedResponse<QuestionResponse>> ListAsync(QuestionListRequest request, CancellationToken ct = default)
     {
@@ -124,7 +125,7 @@ public sealed class QuestionService(AppDbContext db, IFileStorage storage) : IQu
     {
         if (request.TitleImage is not null)
         {
-            question.Title = await storage.UploadAsync(request.TitleImage, ImageFolder, ct);
+            question.Title = await storage.UploadAsync(request.TitleImage, await FolderAsync(ct), ct);
             question.TitleType = "image";
         }
 
@@ -138,7 +139,7 @@ public sealed class QuestionService(AppDbContext db, IFileStorage storage) : IQu
     private async Task<string> UploadVariantAsync(Question question, IFormFile file, CancellationToken ct)
     {
         question.VariantType = "image";
-        return await storage.UploadAsync(file, ImageFolder, ct);
+        return await storage.UploadAsync(file, await FolderAsync(ct), ct);
     }
 
     private async Task EnsureSubjectExistsAsync(long subjectId, CancellationToken ct)

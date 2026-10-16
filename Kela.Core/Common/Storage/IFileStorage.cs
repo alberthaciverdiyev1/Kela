@@ -15,4 +15,10 @@ public interface IFileStorage
 
     /// <summary>Yüklənən faylın həqiqətən mövcud olduğunu yoxlayır.</summary>
     Task<bool> ExistsAsync(string path, CancellationToken ct = default);
+
+    /// <summary>
+    /// Orijinal fayl adını saxlayaraq boş açar qurur; ad tutulubsa "-1", "-2" artırılır.
+    /// İstifadəçi verdiyi adı görmək istədiyi üçün GUID əvəzinə həmin ad saxlanılır.
+    /// </summary>
+    Task<string> BuildUniquePathAsync(string folder, string fileName, CancellationToken ct = default);
 }

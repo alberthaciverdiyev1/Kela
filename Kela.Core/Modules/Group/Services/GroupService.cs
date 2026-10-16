@@ -17,9 +17,10 @@ using GroupSubject = Kela.Core.Modules.Group.Entities.GroupSubject;
 using StudentGroup = Kela.Core.Modules.Group.Entities.StudentGroup;
 using Subject = Kela.Core.Modules.Subject.Entities.Subject;
 
-public sealed class GroupService(AppDbContext db, IFileStorage storage) : IGroupService
+public sealed class GroupService(AppDbContext db, IFileStorage storage, ITenantFolder folders) : IGroupService
 {
-    private const string ImageFolder = "group";
+    private async Task<string> FolderAsync(CancellationToken ct)
+        => $"{await folders.ResolveAsync(ct: ct)}/groups";
 
     public async Task<PagedResponse<GroupResponse>> ListAsync(GroupListRequest request, CancellationToken ct = default)
     {
@@ -73,7 +74,7 @@ public sealed class GroupService(AppDbContext db, IFileStorage storage) : IGroup
     public async Task<GroupResponse> CreateAsync(GroupUpsertRequest request, CancellationToken ct = default)
     {
         var image = request.Image is not null
-            ? await storage.UploadAsync(request.Image, ImageFolder, ct)
+            ? await storage.UploadAsync(request.Image, await FolderAsync(ct), ct)
             : null;
 
         var group = new Group
@@ -106,7 +107,7 @@ public sealed class GroupService(AppDbContext db, IFileStorage storage) : IGroup
         else if (request.Image is not null)
         {
             await storage.DeleteAsync(group.Image, ct);
-            group.Image = await storage.UploadAsync(request.Image, ImageFolder, ct);
+            group.Image = await storage.UploadAsync(request.Image, await FolderAsync(ct), ct);
         }
 
         group.Name = request.Name;

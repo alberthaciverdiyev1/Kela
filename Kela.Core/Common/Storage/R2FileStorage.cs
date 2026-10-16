@@ -28,13 +28,7 @@ public sealed class R2FileStorage : IFileStorage, IDisposable
 
     public async Task<string> UploadAsync(IFormFile file, string folder, CancellationToken ct = default)
     {
-        var extension = Path.GetExtension(file.FileName).ToLowerInvariant();
-
-        // Qovluq çoxseqmentli ola bilər (məs. "kela/videos/raw"); fayl adı üçün yalnız
-        // son seqmenti götürürük, əks halda yol ikilənir.
-        var prefix = folder.Split('/', StringSplitOptions.RemoveEmptyEntries).LastOrDefault() ?? "file";
-        var fileName = $"{prefix}-{Guid.NewGuid():N}{extension}";
-        var path = $"{folder}/{fileName}";
+        var path = await BuildUniquePathAsync(folder, file.FileName, ct);
 
         await using var stream = file.OpenReadStream();
 
@@ -82,6 +76,22 @@ public sealed class R2FileStorage : IFileStorage, IDisposable
             Expires = DateTime.UtcNow.Add(expiry),
             ContentType = contentType
         });
+
+    public async Task<string> BuildUniquePathAsync(string folder, string fileName, CancellationToken ct = default)
+    {
+        var name = StorageNaming.Sanitize(fileName);
+        var path = $"{folder}/{name}";
+
+        var i = 1;
+        while (await ExistsAsync(path, ct))
+        {
+            var stem = Path.GetFileNameWithoutExtension(name);
+            var ext = Path.GetExtension(name);
+            path = $"{folder}/{stem}-{i++}{ext}";
+        }
+
+        return path;
+    }
 
     public async Task<bool> ExistsAsync(string path, CancellationToken ct = default)
     {

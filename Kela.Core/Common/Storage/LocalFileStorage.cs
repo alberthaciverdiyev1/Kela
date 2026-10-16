@@ -18,12 +18,8 @@ public sealed class LocalFileStorage : IFileStorage
 
     public async Task<string> UploadAsync(IFormFile file, string folder, CancellationToken ct = default)
     {
-        var extension = Path.GetExtension(file.FileName).ToLowerInvariant();
-
-        // Qovluq çoxseqmentli ola bilər (məs. "kela/videos/raw"); fayl adı üçün yalnız
-        // son seqmenti götürürük, əks halda yol ikilənir.
-        var prefix = folder.Split('/', StringSplitOptions.RemoveEmptyEntries).LastOrDefault() ?? "file";
-        var fileName = $"{prefix}-{Guid.NewGuid():N}{extension}";
+        var path = await BuildUniquePathAsync(folder, file.FileName, ct);
+        var fileName = Path.GetFileName(path);
 
         var directory = Path.Combine(_root, folder);
         Directory.CreateDirectory(directory);
@@ -31,7 +27,7 @@ public sealed class LocalFileStorage : IFileStorage
         await using var stream = new FileStream(Path.Combine(directory, fileName), FileMode.Create);
         await file.CopyToAsync(stream, ct);
 
-        return $"{folder}/{fileName}";
+        return path;
     }
 
     public Task DeleteAsync(string? path, CancellationToken ct = default)
@@ -57,6 +53,22 @@ public sealed class LocalFileStorage : IFileStorage
     }
 
     public string? CreatePresignedPutUrl(string path, string contentType, TimeSpan expiry) => null;
+
+    public Task<string> BuildUniquePathAsync(string folder, string fileName, CancellationToken ct = default)
+    {
+        var name = StorageNaming.Sanitize(fileName);
+        var path = $"{folder}/{name}";
+
+        var i = 1;
+        while (File.Exists(Path.Combine(_root, path)))
+        {
+            var stem = Path.GetFileNameWithoutExtension(name);
+            var ext = Path.GetExtension(name);
+            path = $"{folder}/{stem}-{i++}{ext}";
+        }
+
+        return Task.FromResult(path);
+    }
 
     public Task<bool> ExistsAsync(string path, CancellationToken ct = default)
         => Task.FromResult(File.Exists(Path.Combine(_root, path)));

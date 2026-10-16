@@ -1,5 +1,4 @@
 using Kela.Core.Common.Responses;
-using Kela.Core.Common.MultiTenancy;
 using Kela.Core.Common.Storage;
 using Kela.Core.Common.Bulk;
 using Kela.Core.Common.Sorting;
@@ -16,7 +15,7 @@ using MediaFile = Kela.Core.Modules.Media.Entities.MediaFile;
 using Video = Kela.Core.Modules.Media.Entities.Video;
 using VoiceRecord = Kela.Core.Modules.Media.Entities.VoiceRecord;
 
-public sealed class LessonContentService(AppDbContext db, IFileStorage storage, ITenantProvider tenants)
+public sealed class LessonContentService(AppDbContext db, IFileStorage storage, ITenantFolder folders)
     : Abstractions.ILessonContentService
 {
     private static readonly TimeSpan UploadUrlExpiry = TimeSpan.FromMinutes(30);
@@ -71,9 +70,8 @@ public sealed class LessonContentService(AppDbContext db, IFileStorage storage, 
     {
         await EnsureLessonExistsAsync(request.LessonId, ct);
 
-        var extension = Path.GetExtension(request.FileName).ToLowerInvariant();
         var folder = await FolderForAsync(request.Type, await LessonTenantAsync(request.LessonId, ct), ct);
-        var path = $"{folder}/{Guid.NewGuid():N}{extension}";
+        var path = await storage.BuildUniquePathAsync(folder, request.FileName, ct);
 
         var uploadUrl = storage.CreatePresignedPutUrl(path, request.ContentType, UploadUrlExpiry)
             ?? throw new ArgumentException("Presigned upload is not supported by the current storage provider");
@@ -171,7 +169,7 @@ public sealed class LessonContentService(AppDbContext db, IFileStorage storage, 
     /// </summary>
     private async Task<string> FolderForAsync(LessonContentType type, long? fallbackTenantId, CancellationToken ct)
     {
-        var prefix = await TenantFolderAsync(fallbackTenantId, ct);
+        var prefix = await folders.ResolveAsync(fallbackTenantId, ct);
 
         return type switch
         {
@@ -181,43 +179,6 @@ public sealed class LessonContentService(AppDbContext db, IFileStorage storage, 
         };
     }
 
-    /// <summary>
-    /// Qovluq adı kimi tenant-ın slug-ı işlədilir (ad boşluq və Azərbaycan hərfləri
-    /// daşıya bilər, slug isə URL-təhlükəsizdir). Slug boşdursa ad sadələşdirilir.
-    /// </summary>
-    private async Task<string> TenantFolderAsync(long? fallbackTenantId, CancellationToken ct)
-    {
-        // Superadmin tenant-a keçməyibsə sorğuda tenant olmur; o halda məzmunun aid
-        // olduğu dərsin tenant-ını götürürük — fayl "shared" qovluğuna düşməsin.
-        var id = tenants.TenantId is > 0 ? tenants.TenantId : fallbackTenantId;
-        if (id is not > 0) return "shared";
-
-        var tenant = await db.Tenants.AsNoTracking()
-            .Where(t => t.Id == id)
-            .Select(t => new { t.Name, t.Slug })
-            .FirstOrDefaultAsync(ct);
-
-        if (tenant is null) return $"tenant-{id}";
-        if (!string.IsNullOrWhiteSpace(tenant.Slug)) return Sanitize(tenant.Slug);
-
-        var fromName = Sanitize(tenant.Name);
-        return fromName.Length > 0 ? fromName : $"tenant-{id}";
-    }
-
-    private static string Sanitize(string value)
-    {
-        var lowered = value.Trim().ToLowerInvariant();
-        var sb = new System.Text.StringBuilder(lowered.Length);
-
-        foreach (var ch in lowered)
-        {
-            sb.Append(ch is >= 'a' and <= 'z' or >= '0' and <= '9' ? ch : '-');
-        }
-
-        var result = sb.ToString().Trim('-');
-        while (result.Contains("--")) result = result.Replace("--", "-");
-        return result;
-    }
 
     private IQueryable<LessonContent> WithMedia() =>
         db.LessonContents.AsNoTracking()

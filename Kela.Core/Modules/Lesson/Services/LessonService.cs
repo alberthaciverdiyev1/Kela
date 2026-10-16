@@ -13,9 +13,10 @@ namespace Kela.Core.Modules.Lesson.Services;
 
 using Lesson = Kela.Core.Modules.Lesson.Entities.Lesson;
 
-public sealed class LessonService(AppDbContext db, IFileStorage storage) : ILessonService
+public sealed class LessonService(AppDbContext db, IFileStorage storage, ITenantFolder folders) : ILessonService
 {
-    private const string ImageFolder = "lesson";
+    private async Task<string> FolderAsync(CancellationToken ct)
+        => $"{await folders.ResolveAsync(ct: ct)}/lessons";
 
     public async Task<PagedResponse<LessonResponse>> ListAsync(LessonListRequest request, CancellationToken ct = default)
     {
@@ -73,7 +74,7 @@ public sealed class LessonService(AppDbContext db, IFileStorage storage) : ILess
         await EnsureSubjectExistsAsync(request.SubjectId, ct);
 
         var image = request.Image is not null
-            ? await storage.UploadAsync(request.Image, ImageFolder, ct)
+            ? await storage.UploadAsync(request.Image, await FolderAsync(ct), ct)
             : null;
 
         var lesson = new Lesson
@@ -108,7 +109,7 @@ public sealed class LessonService(AppDbContext db, IFileStorage storage) : ILess
         else if (request.Image is not null)
         {
             await storage.DeleteAsync(lesson.Image, ct);
-            lesson.Image = await storage.UploadAsync(request.Image, ImageFolder, ct);
+            lesson.Image = await storage.UploadAsync(request.Image, await FolderAsync(ct), ct);
         }
 
         lesson.SubjectId = request.SubjectId;

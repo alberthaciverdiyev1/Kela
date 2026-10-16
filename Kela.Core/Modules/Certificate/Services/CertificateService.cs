@@ -11,9 +11,10 @@ namespace Kela.Core.Modules.Certificate.Services;
 
 using Certificate = Kela.Core.Modules.Certificate.Entities.Certificate;
 
-public sealed class CertificateService(AppDbContext db, IFileStorage storage) : ICertificateService
+public sealed class CertificateService(AppDbContext db, IFileStorage storage, ITenantFolder folders) : ICertificateService
 {
-    private const string SignatureFolder = "certificate";
+    private async Task<string> FolderAsync(CancellationToken ct)
+        => $"{await folders.ResolveAsync(ct: ct)}/certificates";
 
     public async Task<PagedResponse<CertificateResponse>> ListAsync(CertificateListRequest request, CancellationToken ct = default)
     {
@@ -60,7 +61,7 @@ public sealed class CertificateService(AppDbContext db, IFileStorage storage) : 
     public async Task<CertificateResponse> CreateAsync(CertificateUpsertRequest request, CancellationToken ct = default)
     {
         var signature = request.Signature is not null
-            ? await storage.UploadAsync(request.Signature, SignatureFolder, ct)
+            ? await storage.UploadAsync(request.Signature, await FolderAsync(ct), ct)
             : null;
 
         var certificate = new Certificate
@@ -92,7 +93,7 @@ public sealed class CertificateService(AppDbContext db, IFileStorage storage) : 
         else if (request.Signature is not null)
         {
             await storage.DeleteAsync(certificate.Signature, ct);
-            certificate.Signature = await storage.UploadAsync(request.Signature, SignatureFolder, ct);
+            certificate.Signature = await storage.UploadAsync(request.Signature, await FolderAsync(ct), ct);
         }
 
         certificate.Title = request.Title;
