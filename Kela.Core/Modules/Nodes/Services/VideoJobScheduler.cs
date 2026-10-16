@@ -100,8 +100,18 @@ public sealed class VideoJobScheduler(
             WHERE deleted_at IS NULL
               AND status = ANY({0})
               AND lease_expires_at IS NOT NULL
-              AND lease_expires_at < now()
-            """, [JobStatus.Reclaimable]);
+              AND (
+                    lease_expires_at < now()
+                    -- Cihaz offline sayılıbsa heç nə icra etmir; tam lease müddətini
+                    -- gözləmək videonu lazımsız yerə yarım saat gecikdirir.
+                    OR EXISTS (
+                        SELECT 1 FROM worker_nodes n
+                        WHERE n.id = video_jobs.worker_node_id
+                          AND n.deleted_at IS NULL
+                          AND (n.status = 'offline' OR n.last_seen_at < now() - make_interval(secs => {1}))
+                    )
+                  )
+            """, [JobStatus.Reclaimable, Settings.OfflineAfterSeconds]);
 
         if (reaped > 0) logger.LogWarning("Reclaimed {Count} expired video jobs", reaped);
 

@@ -119,7 +119,7 @@ public sealed class JobRunner(
 
             state.SourceName = Path.GetFileName(assignment.SourceKey);
 
-            var download = new Progress<TransferProgress>(transfer =>
+            var progress = new Progress<TransferProgress>(transfer =>
             {
                 state.DownloadedBytes = transfer.Bytes;
                 state.TotalBytes = transfer.TotalBytes;
@@ -128,10 +128,19 @@ public sealed class JobRunner(
                 state.Message = $"{state.SourceName}: {state.TransferText} · {state.TransferSpeedText}";
             });
 
-            var source = await sources.AcquireAsync(
-                assignment.VideoId, assignment.SourceKey, assignment.SourceUrl, download, ct);
+            var download = await sources.AcquireAsync(
+                assignment.VideoId, assignment.SourceKey, assignment.SourceUrl, progress, ct);
 
-            if (source is null) return Transient("Mənbə fayl endirilə bilmədi", state);
+            if (download.Path is null)
+            {
+                var message = download.Error ?? "Mənbə fayl endirilə bilmədi";
+
+                // Mənbə storage-da yoxdursa təkrar cəhd mənasızdır.
+                return new JobOutcome(false, message,
+                    download.Permanent ? JobErrorKind.Permanent : JobErrorKind.Transient);
+            }
+
+            var source = download.Path;
 
             var media = await probe.ProbeAsync(source, ct);
             if (media is null || media.Width <= 0 || media.Height <= 0)

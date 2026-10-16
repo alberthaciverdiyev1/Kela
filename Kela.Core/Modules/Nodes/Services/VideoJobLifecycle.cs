@@ -386,11 +386,48 @@ public sealed class VideoJobLifecycle(
             .OrderBy(j => j.TargetHeight)
             .ToList();
 
-        var failed = jobs.FirstOrDefault(j => j.Status == JobStatus.Failed);
+        var failures = jobs.Where(j => j.Status == JobStatus.Failed).ToList();
 
-        if (failed is not null || completed.Count == 0)
+        if (failures.Count > 0 || completed.Count == 0)
         {
-            var error = failed?.ErrorMessage ?? "Konversiya tamamlanmadı";
+            var error = failures.FirstOrDefault()?.ErrorMessage ?? "Konversiya tamamlanmadı";
+
+            // Xəta keçicidirsə (şəbəkə kəsilməsi, disk, cihazın sönməsi) video dərhal
+            // "failed" olmamalıdır: bütün pillələr yenidən növbəyə salınır və bir neçə
+            // dövr təkrar sınanır. Əks halda bir anlıq nasazlıq videonu əbədi
+            // "bozulmuş" vəziyyətdə qoyurdu.
+            var retryable = failures.Count > 0
+                            && failures.All(f => f.ErrorKind != JobErrorKind.Permanent)
+                            && video.ConversionAttempts < Settings.MaxVideoAttempts;
+
+            if (retryable)
+            {
+                var delay = TimeSpan.FromMinutes(Math.Pow(2, video.ConversionAttempts + 1));
+                var due = DateTimeOffset.UtcNow.Add(delay);
+
+                foreach (var failure in failures)
+                {
+                    failure.Status = JobStatus.Pending;
+                    failure.Attempts = 0;
+                    failure.Progress = 0;
+                    failure.ErrorMessage = null;
+                    failure.ErrorKind = null;
+                    failure.CompletedAt = null;
+                    failure.NextAttemptAt = due;
+                }
+
+                video.ConversionAttempts += 1;
+                video.ConversionStatus = VideoStatus.Processing;
+                video.ConversionError = Truncate(error, 500);
+
+                await db.SaveChangesAsync(ct);
+
+                logger.LogWarning(
+                    "Video {VideoId}: {Count} tapşırıq uğursuz oldu (keçici) — {Delay} sonra yenidən sınanacaq (cəhd {Attempt}/{Max})",
+                    videoId, failures.Count, delay, video.ConversionAttempts, Settings.MaxVideoAttempts);
+
+                return JobOperationResult.Invalid(error);
+            }
 
             // Köhnə uğurlu versiya silinmir — istifadəçi əvvəlki m3u8-i oynatmağa davam edir.
             await videoProcessing.MarkProcessedAsync(new VideoProcessedRequest
@@ -436,6 +473,12 @@ public sealed class VideoJobLifecycle(
         await storage.UploadTextAsync(masterKey, master, "application/vnd.apple.mpegurl", ct);
 
         var thumbnail = await storage.ExistsAsync(thumbnailKey, ct) ? thumbnailKey : null;
+
+        // Uğurlu konversiyadan sonra cəhd büdcəsi yenidən dolsun — gələcək
+        // yenidən konversiya yenidən tam cəhd haqqı əldə etsin.
+        video.ConversionAttempts = 0;
+        video.ConversionError = null;
+        await db.SaveChangesAsync(ct);
 
         await videoProcessing.MarkProcessedAsync(new VideoProcessedRequest
         {

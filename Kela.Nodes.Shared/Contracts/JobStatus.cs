@@ -31,8 +31,12 @@ public static class JobStatus
         Pending, Queued, Assigned, Downloading, Processing, Uploading, Validating, Completed, Failed, Cancelled
     ];
 
-    /// <summary>Lease bitəndə yenidən kuyruğa alına bilən mərhələlər.</summary>
-    public static readonly string[] Reclaimable = [Assigned, Downloading, Processing, Uploading];
+    /// <summary>
+    /// Lease bitəndə yenidən kuyruğa alına bilən mərhələlər. <see cref="Validating"/>
+    /// da buradadır: koordinator doğrulama zamanı çöksə və ya worker cavabı ala bilməsə,
+    /// tapşırıq əbədi "validating" vəziyyətində qalıb videonu bloklayardı.
+    /// </summary>
+    public static readonly string[] Reclaimable = [Assigned, Downloading, Processing, Uploading, Validating];
 
     /// <summary>Hələ iş görülən mərhələlər (reconciliation bunları "aktiv" sayır).</summary>
     public static readonly string[] Active = [Pending, Queued, Assigned, Downloading, Processing, Uploading, Validating];

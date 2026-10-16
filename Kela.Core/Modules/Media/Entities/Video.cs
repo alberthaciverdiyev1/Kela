@@ -25,6 +25,12 @@ public class Video : BaseEntity
     public string? ConversionError { get; set; }
 
     /// <summary>
+    /// Neçə dəfə tam konversiya cəhdi edilib. Keçici xəta bütün tapşırıqları
+    /// uğursuz etsə, video dərhal "failed" olmur — bir neçə dəfə yenidən sınanır.
+    /// </summary>
+    public int ConversionAttempts { get; set; }
+
+    /// <summary>
     /// Konversiya versiyası. Yenidən konversiya başladıqda artırılır ki, yeni çıxışlar
     /// ayrı qovluğa düşsün və hazır olana qədər köhnə versiya yayımda qalsın.
     /// </summary>

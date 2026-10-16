@@ -784,6 +784,12 @@ namespace Kela.Core.Data.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
 
+                    b.Property<int>("ConversionAttempts")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasDefaultValue(0)
+                        .HasColumnName("conversion_attempts");
+
                     b.Property<string>("ConversionError")
                         .HasMaxLength(500)
                         .HasColumnType("character varying(500)")

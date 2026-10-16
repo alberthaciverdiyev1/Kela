@@ -45,7 +45,15 @@ public sealed class NodesBackgroundService(
 
                 foreach (var videoId in await scheduler.ReconcileAsync(stoppingToken))
                 {
-                    await lifecycle.FinalizeAsync(videoId, stoppingToken);
+                    // Bir video xəta versə, qalan videolar emal olunmalıdır.
+                    try
+                    {
+                        await lifecycle.FinalizeAsync(videoId, stoppingToken);
+                    }
+                    catch (Exception ex) when (ex is not OperationCanceledException)
+                    {
+                        logger.LogError(ex, "Video {VideoId} yayına hazırlana bilmədi", videoId);
+                    }
                 }
             }
             catch (OperationCanceledException) when (stoppingToken.IsCancellationRequested)

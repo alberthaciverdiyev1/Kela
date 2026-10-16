@@ -14,10 +14,14 @@ public sealed class SourceCache(WorkerStorage storage, WorkerSettings settings, 
 {
     private readonly ConcurrentDictionary<long, SemaphoreSlim> _locks = new();
 
-    /// <summary>Keşlənmiş mənbənin yolu; endirmə mümkün olmasa null.</summary>
-    public async Task<string?> AcquireAsync(
+    /// <summary>Endirmənin nəticəsi. <see cref="Permanent"/> true olsa təkrar cəhd mənasızdır.</summary>
+    public sealed record SourceResult(string? Path, bool Permanent, string? Error);
+
+    /// <summary>Keşlənmiş mənbənin yolu; endirmə mümkün olmasa səbəbi ilə birlikdə null.</summary>
+    public async Task<SourceResult> AcquireAsync(
         long videoId, string sourceKey, string sourceUrl, IProgress<TransferProgress>? progress, CancellationToken ct)
     {
+        CleanupStalePartials();
         var extension = Path.GetExtension(sourceKey);
         if (string.IsNullOrWhiteSpace(extension)) extension = ".mp4";
 
@@ -27,7 +31,7 @@ public sealed class SourceCache(WorkerStorage storage, WorkerSettings settings, 
         if (File.Exists(cached) && new FileInfo(cached).Length > 0)
         {
             log.Debug("cache", $"Mənbə keşdən: video {videoId}");
-            return cached;
+            return new SourceResult(cached, false, null);
         }
 
         var gate = _locks.GetOrAdd(videoId, _ => new SemaphoreSlim(1, 1));
@@ -37,7 +41,7 @@ public sealed class SourceCache(WorkerStorage storage, WorkerSettings settings, 
         try
         {
             // Kilidi gözləyərkən başqa pillə endirib bitirmiş ola bilər.
-            if (File.Exists(cached) && new FileInfo(cached).Length > 0) return cached;
+            if (File.Exists(cached) && new FileInfo(cached).Length > 0) return new SourceResult(cached, false, null);
 
             Directory.CreateDirectory(directory);
             var partial = cached + ".part";
@@ -47,14 +51,22 @@ public sealed class SourceCache(WorkerStorage storage, WorkerSettings settings, 
             File.Move(partial, cached, overwrite: true);
             log.Info("cache", $"Mənbə endirildi: video {videoId} ({new FileInfo(cached).Length / 1024 / 1024} MB)");
 
-            return cached;
+            return new SourceResult(cached, false, null);
+        }
+        catch (SourceUnavailableException ex)
+        {
+            // Fayl storage-da yoxdur — təkrar cəhd kömək etməz.
+            log.Error("cache", $"Video {videoId}: {ex.Message}");
+
+            TryDelete(cached + ".part");
+            return new SourceResult(null, true, ex.Message);
         }
         catch (Exception ex) when (ex is HttpRequestException or IOException)
         {
             log.Warn("cache", $"Mənbə endirilə bilmədi (video {videoId}): {ex.Message}");
 
             TryDelete(cached + ".part");
-            return null;
+            return new SourceResult(null, false, ex.Message);
         }
         finally
         {
@@ -103,6 +115,33 @@ public sealed class SourceCache(WorkerStorage storage, WorkerSettings settings, 
         catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
         {
             // Keş təmizliyi alınmasa konversiya dayanmır.
+        }
+    }
+
+    /// <summary>
+    /// Yarımçıq qalmış endirmələri silir. Cihaz konversiya zamanı sönsə
+    /// ".part" faylı qalır və heç vaxt təmizlənmirdi.
+    /// </summary>
+    private void CleanupStalePartials()
+    {
+        try
+        {
+            var directory = Path.Combine(settings.CacheDirectory, "sources");
+            if (!Directory.Exists(directory)) return;
+
+            var cutoff = DateTime.UtcNow.AddHours(-2);
+
+            foreach (var file in Directory.EnumerateFiles(directory, "*.part"))
+            {
+                if (File.GetLastWriteTimeUtc(file) > cutoff) continue;
+
+                TryDelete(file);
+                log.Debug("cache", $"Yarımçıq endirmə silindi: {Path.GetFileName(file)}");
+            }
+        }
+        catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
+        {
+            // Təmizlik alınmasa konversiya dayanmır.
         }
     }
 

@@ -19,6 +19,13 @@ public class NodeOptions
 
     public int MaxAttempts { get; set; } = 5;
 
+    /// <summary>
+    /// Bir video üçün tam konversiya dövrünün maksimum təkrarı. Keçici şəbəkə xətası
+    /// bütün pillələri uğursuz etsə, video dərhal "failed" olmur; bu qədər dövr
+    /// yenidən sınanır. Qalıcı xətada təkrar edilmir.
+    /// </summary>
+    public int MaxVideoAttempts { get; set; } = 3;
+
     /// <summary>Yarımçıq videoları yoxlayan fon xidmətinin intervalı.</summary>
     public int ReconcileSeconds { get; set; } = 60;
 

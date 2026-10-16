@@ -23,6 +23,7 @@ public sealed class VideoConfiguration : IEntityTypeConfiguration<Video>
             .HasMaxLength(20).IsRequired().HasDefaultValue(VideoStatus.Pending);
         builder.Property(x => x.ConversionError).HasColumnName("conversion_error").HasMaxLength(500);
         builder.Property(x => x.ConversionVersion).HasColumnName("conversion_version").HasDefaultValue(1);
+        builder.Property(x => x.ConversionAttempts).HasColumnName("conversion_attempts").HasDefaultValue(0);
         builder.HasIndex(x => x.ConversionStatus);
         builder.Property(x => x.CreatedAt).HasColumnName("created_at");
         builder.Property(x => x.UpdatedAt).HasColumnName("updated_at");

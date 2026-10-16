@@ -1,3 +1,4 @@
+using Kela.Core.Modules.User.Entities;
 using Kela.Core.Common.Sorting;
 using Kela.Core.Common.Responses;
 using Kela.Core.Data;
@@ -16,7 +17,8 @@ public sealed class UserService(AppDbContext db) : IUserService
         var page = request.Page < 1 ? 1 : request.Page;
         var perPage = request.PerPage < 1 ? 20 : Math.Min(request.PerPage, 500);
 
-        var query = db.Users.AsNoTracking();
+        // Superadmin qlobal hesabdır — istifadəçi siyahısında göstərilmir.
+        var query = db.Users.AsNoTracking().Where(x => x.Type != UserTypes.SuperAdmin);
 
         if (request.IsDeleted == 1)
         {

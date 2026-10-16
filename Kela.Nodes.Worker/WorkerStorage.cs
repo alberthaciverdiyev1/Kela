@@ -2,6 +2,12 @@ using System.Net.Http.Headers;
 
 namespace Kela.Nodes.Worker;
 
+/// <summary>
+/// Mənbə storage-da yoxdur (404). Bu, keçici deyil — təkrar cəhd heç nəyi
+/// dəyişməz, ona görə tapşırıq dərhal qalıcı uğursuz sayılır.
+/// </summary>
+public sealed class SourceUnavailableException(string message) : Exception(message);
+
 /// <summary>Endirmə gedişatı: nə qədər gəldi, nə qədər qalıb, hansı sürətlə.</summary>
 public sealed record TransferProgress(long Bytes, long TotalBytes, double BytesPerSecond)
 {
@@ -33,6 +39,12 @@ public sealed class WorkerStorage(HttpClient http, WorkerLog log)
         Directory.CreateDirectory(Path.GetDirectoryName(destination)!);
 
         using var response = await http.GetAsync(url, HttpCompletionOption.ResponseHeadersRead, ct);
+
+        if (response.StatusCode == System.Net.HttpStatusCode.NotFound)
+        {
+            throw new SourceUnavailableException("Mənbə fayl storage-da tapılmadı");
+        }
+
         response.EnsureSuccessStatusCode();
 
         var total = response.Content.Headers.ContentLength ?? -1;
