@@ -8,7 +8,7 @@
             <div class="flex items-center gap-1">
                 @Model.HeaderExtra
                 <button type="button" data-modal-close onclick="AdminUI.closeModal('@Model.Id')" aria-label="@L["Common_Close"]"
-                        class="rounded-xl p-2 text-slate-400 hover:bg-slate-100">✕</button>
+                        class="grid h-9 w-9 place-items-center rounded-lg border border-danger/25 bg-danger-bg text-danger transition hover:bg-danger hover:text-white">✕</button>
             </div>
         </div>
         @if (Model.ShowError)
