@@ -168,12 +168,15 @@ public sealed class VideoJobScheduler(
 
         await using (var tx = await db.Database.BeginTransactionAsync(ct))
         {
+            // Cihaz konkret bir tenant-a bağlanmır: registrasiya kodu tenant-scoped olsa da,
+            // worker sadəcə icra qurğusudur və hansı tenant-ın videosu olsa da işləyə bilər.
+            // İzolyasiya iş səviyyəsindədir — hər cihaz yalnız özünə verilmiş tapşırığı görür.
+            //
             // FOR UPDATE SKIP LOCKED: paralel işləyən API nüsxələri eyni tapşırığı götürə bilməz.
             jobs = await db.VideoJobs
                 .FromSql($"""
                     SELECT * FROM video_jobs
                     WHERE deleted_at IS NULL
-                      AND tenant_id = {node.TenantId}
                       AND status = ANY({new[] { JobStatus.Pending, JobStatus.Queued }})
                       AND (next_attempt_at IS NULL OR next_attempt_at <= now())
                     -- Əvvəlcə ən köhnə video bitirilir, sonra növbəti. Beləliklə

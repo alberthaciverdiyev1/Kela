@@ -120,13 +120,18 @@ public sealed class LessonContentService(
 
     public async Task<LessonContentResponse> CreateAsync(LessonContentCreateRequest request, CancellationToken ct = default)
     {
-        await EnsureLessonExistsAsync(request.LessonId, ct);
+        // Tenant dərsdən götürülür. Superadmin tenant seçmədən yükləyə bilər — o halda
+        // sorğu kontekstində tenant olmur və material səhvən tenant 0-a düşərdi; nəticədə
+        // həmin videonun konversiya tapşırıqlarını heç bir cihaz görməzdi.
+        var tenantId = await LessonTenantAsync(request.LessonId, ct)
+            ?? throw new ArgumentException($"Lesson not found: {request.LessonId}");
 
         var path = await ResolvePathAsync(request, ct);
 
         var content = new LessonContent
         {
             LessonId = request.LessonId,
+            TenantId = tenantId,
             Title = request.Title,
             Description = request.Description,
             SortOrder = request.SortOrder,
@@ -136,13 +141,19 @@ public sealed class LessonContentService(
         switch (request.Type)
         {
             case LessonContentType.Video:
-                content.Video = new Video { Title = request.Title, Path = path };
+                content.Video = new Video { TenantId = tenantId, Title = request.Title, Path = path };
                 break;
             case LessonContentType.Voice:
-                content.VoiceRecord = new VoiceRecord { Title = request.Title, Path = path };
+                content.VoiceRecord = new VoiceRecord { TenantId = tenantId, Title = request.Title, Path = path };
                 break;
             default:
-                content.MediaFile = new MediaFile { Name = request.File?.FileName, Path = path, SizeBytes = request.File?.Length };
+                content.MediaFile = new MediaFile
+                {
+                    TenantId = tenantId,
+                    Name = request.File?.FileName,
+                    Path = path,
+                    SizeBytes = request.File?.Length
+                };
                 break;
         }
 
@@ -226,6 +237,7 @@ public sealed class LessonContentService(
         db.LessonContents.AsNoTracking()
             .Include(x => x.Video).Include(x => x.MediaFile).Include(x => x.VoiceRecord);
 
+    /// <summary>Dərsin tenant-ı — materialın tenant-ı da ondan götürülür.</summary>
     private Task<long?> LessonTenantAsync(long lessonId, CancellationToken ct)
         => db.Lessons.AsNoTracking().Where(x => x.Id == lessonId)
             .Select(x => (long?)x.TenantId).FirstOrDefaultAsync(ct);
