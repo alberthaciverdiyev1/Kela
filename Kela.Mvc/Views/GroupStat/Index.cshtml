@@ -1,8 +1,8 @@
 @{
     ViewData["Title"] = L["Nav_GroupStats"];
     var groups = (PagedResponse<Kela.Core.Modules.Group.Responses.GroupResponse>)ViewData["Groups"]!;
-    var groupOptions = new List<SelectOption> { new() { Value = "", Text = L["Common_SelectGroup"] } };
-    groupOptions.AddRange(groups.Data.Select(g => new SelectOption { Value = g.Id.ToString(), Text = g.Name }));
+    // Boş variant yoxdur — səhifə açılan kimi ilk qrup seçili gəlir.
+    var groupOptions = groups.Data.Select(g => new SelectOption { Value = g.Id.ToString(), Text = g.Name }).ToList();
     var typeOptions = new List<SelectOption>
     {
         new() { Value = "", Text = L["Common_All"] },
