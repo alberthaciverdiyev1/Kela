@@ -17,6 +17,8 @@
             Selects = new List<FilterSelectModel> {
                 new() { WidthClass = "w-44", Select = new SelectModel { Name = "filter_lesson", Id = "filter_lesson", Label = L["Common_Lesson"], Options = lessonFilter, Value = (string?)ViewData["SelectedLessonId"] } }
             },
+            Sort = new FilterSortModel {
+                    Extra = new List<SelectOption> { new() { Value = "order_asc", Text = L["Sort_Manual"] } } },
             Trash = true,
             TrashText = L["Common_DeletedItems"],
             ButtonText = L["Common_Show"]

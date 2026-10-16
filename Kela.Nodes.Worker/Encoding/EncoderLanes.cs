@@ -21,10 +21,10 @@ public sealed record EncoderLane(
     /// </summary>
     public int Slot { get; init; }
 
-    /// <summary>UI-da göstərmək üçün qısa ad.</summary>
+    /// <summary>UI-da göstərmək üçün qısa ad: "GPU 0·1 nvenc" / "GPU·1 mediacodec" / "CPU 1 x264".</summary>
     public string Label => Hardware
-        ? $"GPU {GpuIndex}·{Slot} nvenc"
-        : $"CPU {Slot} x264";
+        ? $"{(GpuIndex >= 0 ? $"GPU {GpuIndex}" : "GPU")}·{Slot} {Name}"
+        : $"CPU {Slot} {Name}";
 }
 
 /// <summary>
@@ -47,25 +47,32 @@ public static class LanePlanner
             ? Math.Clamp(cores / 8, 1, 4)
             : 0;
 
-        // CPU-ya ayrılan pay çıxıldıqdan sonra qalan büdcə GPU-lara paylanır —
+        // CPU-ya ayrılan pay çıxıldıqdan sonra qalan büdcə aparat encoder-inə verilir —
         // beləliklə hər iki qurğu eyni vaxtda işləyir.
-        var hardware = capabilities.Chosen.Name == "h264_nvenc";
-        var gpuLanes = 0;
+        var chosen = capabilities.Chosen;
+        var hardware = chosen.Hardware;
+        var slotNumber = 0;
 
         if (hardware)
         {
-            var usableGpus = Math.Clamp(gpuCount, 1, 4);
-            gpuLanes = Math.Max(usableGpus, budget - cpuLanes);
-            gpuLanes = Math.Min(gpuLanes, usableGpus * HardwareLimits.MaxConcurrentNvencSessions);
+            // NVENC bir kartda bir neçə sessiya aça bilir; MediaCodec isə bir encoder-dir.
+            var nvenc = chosen.Name == "h264_nvenc";
+            var usableDevices = nvenc ? Math.Clamp(gpuCount, 1, 4) : 1;
 
-            var perGpu = Math.Max(1, gpuLanes / usableGpus);
-            var slotNumber = 0;
+            var hardwareLanes = nvenc
+                ? Math.Min(Math.Max(usableDevices, budget - cpuLanes), usableDevices * HardwareLimits.MaxConcurrentNvencSessions)
+                : 1;
 
-            for (var index = 0; index < usableGpus; index++)
+            var perDevice = Math.Max(1, hardwareLanes / usableDevices);
+
+            // Preset yalnız NVENC-də məna daşıyır; digər aparat encoder-ləri öz default-unu işlədir.
+            var preset = nvenc ? profile.NvencPreset : string.Empty;
+
+            for (var index = 0; index < usableDevices; index++)
             {
-                for (var slot = 0; slot < perGpu && lanes.Count(l => l.Hardware) < gpuLanes; slot++)
+                for (var slot = 0; slot < perDevice && lanes.Count(l => l.Hardware) < hardwareLanes; slot++)
                 {
-                    lanes.Add(new EncoderLane("h264_nvenc", "cuda", true, index, profile.NvencPreset, false)
+                    lanes.Add(new EncoderLane(chosen.Name, chosen.HwAccel, true, nvenc ? index : -1, preset, false)
                     {
                         Slot = ++slotNumber
                     });

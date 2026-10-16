@@ -16,7 +16,7 @@ async function loadList(page) {
     currentPage = page || 1;
     const search = document.getElementById('search').value;
     AdminUI.loader(true);
-    const data = await AdminUI.get(`/group/list?page=${currentPage}&search=${encodeURIComponent(search)}&is_deleted=${showDeleted ? 1 : 0}`);
+    const data = await AdminUI.get(AdminUI.addSort(`/group/list?page=${currentPage}&search=${encodeURIComponent(search)}&is_deleted=${showDeleted ? 1 : 0}`));
     lastPage = data.lastPage;
     AdminUI.setInfo(data.total);
 

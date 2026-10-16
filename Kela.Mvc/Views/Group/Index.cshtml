@@ -3,6 +3,7 @@
     var teachers = (PagedResponse<UserResponse>)ViewData["Teachers"]!;
 }
 <script>window.TEACHERS = { @Html.Raw(string.Join(",", teachers.Data.Select(u => $"{u.Id}:\"{System.Text.Json.JsonEncodedText.Encode(($"{u.Name} {u.Surname}".Trim()))}\""))) }; </script>
+
 <section class="admin-page">
     <partial name="Ui/_PageHeader" model="@(new PageHeaderModel {
         Title = L["Nav_Groups"],
@@ -12,6 +13,7 @@
     <div class="admin-card">
         <partial name="Ui/_FilterBar" model="@(new FilterBarModel {
             SearchPlaceholder = L["Group_Search"],
+            Sort = new FilterSortModel { },
             Trash = true,
             TrashText = L["Common_DeletedItems"],
             ButtonText = L["Common_Search"]

@@ -212,16 +212,15 @@ public sealed class WorkerEngine : IAsyncDisposable
         // Yaddaş və disk dəyişdiyi üçün hər hazırlıqda yenidən oxunur.
         Device = await _device.CollectAsync(Settings.CacheDirectory, ct);
 
-        if (Encoders is null)
-        {
-            Encoders = await _detector!.DetectAsync(Settings.PreferredEncoder, ct);
+        Encoders ??= await _detector!.DetectAsync(Settings.PreferredEncoder, ct);
 
-            Device.Encoders = [.. Encoders.Names];
-            Device.HardwareAcceleration = [.. Encoders.HardwareAcceleration];
-            Device.HardwareEncoding = Encoders.Chosen.Hardware;
-            Device.FfmpegVersion = Path.GetFileName(_ffmpeg.FfmpegPath);
-            Device.FfprobeVersion = Path.GetFileName(_ffmpeg.FfprobePath);
-        }
+        // Cihaz məlumatı hər dəfə yenidən yığılır, ona görə encoder sahələri də
+        // hər dəfə doldurulur — əks halda ikinci başlanğıcda boş qalır.
+        Device.Encoders = [.. Encoders.Names];
+        Device.HardwareAcceleration = [.. Encoders.HardwareAcceleration];
+        Device.HardwareEncoding = Encoders.Chosen.Hardware;
+        Device.FfmpegVersion = Path.GetFileName(_ffmpeg.FfmpegPath);
+        Device.FfprobeVersion = Path.GetFileName(_ffmpeg.FfprobePath);
 
         Profile = ProfileAdvisor.Resolve(Settings.Limits.Profile, Device, Encoders, Settings.Limits);
         Log.Info("worker", $"Resurs profili: {Profile.Profile} — {Profile.Description}");

@@ -45,9 +45,11 @@ public sealed class FfmpegLocator(WorkerSettings settings, WorkerLog log)
         if (!string.IsNullOrWhiteSpace(configured)) yield return configured;
 
         // Platformanın verdiyi qovluq (Android: native lib dir) ən etibarlı yerdir.
+        // Android ikililəri "lib<ad>.so" kimi paketlənir — ona görə hər iki ad yoxlanılır.
         if (!string.IsNullOrWhiteSpace(settings.PlatformBinaryDirectory))
         {
-            yield return Path.Combine(settings.PlatformBinaryDirectory, name + ".so");
+            yield return Path.Combine(settings.PlatformBinaryDirectory, $"lib{name}.so");
+            yield return Path.Combine(settings.PlatformBinaryDirectory, $"{name}.so");
             yield return Path.Combine(settings.PlatformBinaryDirectory, name);
         }
 

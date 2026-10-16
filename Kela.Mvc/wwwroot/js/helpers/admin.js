@@ -128,6 +128,14 @@ window.AdminUI = (function () {
         return `<span class="chip chip-${tone || 'neutral'}">${text}</span>`;
     }
 
+    // Cari sıralama seçimini siyahı sorğusuna əlavə edir ("field_dir" formatı).
+    function addSort(url) {
+        const el = document.getElementById('sort');
+        if (!el || !el.value) return url;
+        const [field, dir] = el.value.split('_');
+        return `${url}${url.includes('?') ? '&' : '?'}sort_by=${field}&sort_dir=${dir}`;
+    }
+
     // Cədvəl altlığındaki "Cəmi N nəticə" mətni.
     function setInfo(total) {
         const el = document.getElementById('tableInfo');
@@ -529,5 +537,5 @@ window.AdminUI = (function () {
         _filterTimer = setTimeout(filterReload, 350);
     });
 
-    return { notify, error, errText, openModal, closeModal, badge, chip, actions, actionButton, actionLink, rowActions, confirmDelete, confirmRestore, restoreItem, restoreButton, syncTrashButton, get, post, postForm, putForm, postJson, putJson, del, table, setInfo, selectedIds, bulkDo, sortToggle, openSort, closeSort, persistSort, loader, pagination, filePreview, fileSet, fileRemove, fileReset, rowNo, token, reloadAfter, downloadCsv };
+    return { notify, error, errText, openModal, closeModal, badge, chip, actions, actionButton, actionLink, rowActions, confirmDelete, confirmRestore, restoreItem, restoreButton, syncTrashButton, get, post, postForm, putForm, postJson, putJson, del, table, setInfo, addSort, selectedIds, bulkDo, sortToggle, openSort, closeSort, persistSort, loader, pagination, filePreview, fileSet, fileRemove, fileReset, rowNo, token, reloadAfter, downloadCsv };
 })();

@@ -176,7 +176,7 @@ public static class EncodePlan
                 break;
 
             case "h264_mediacodec":
-                arguments.AddRange(["-profile:v", "high"]);
+                // MediaCodec profil seçimini özü edir; -profile verilsə konfiqurasiya düşür.
                 break;
         }
 

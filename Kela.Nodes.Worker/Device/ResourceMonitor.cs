@@ -35,6 +35,9 @@ public sealed class ResourceMonitor(string cacheDirectory, WorkerLog log)
     private long _lastTotalTicks;
     private long _lastIdleTicks;
 
+    /// <summary>Android də Linux nüvəsi işlədir, amma IsLinux() orada false qaytarır.</summary>
+    private static bool IsUnix => OperatingSystem.IsLinux() || OperatingSystem.IsAndroid();
+
     public ResourceSnapshot Current => _current;
 
     public bool GpuAvailable { get; private set; }
@@ -112,9 +115,9 @@ public sealed class ResourceMonitor(string cacheDirectory, WorkerLog log)
     /// <summary>Sistemin ümumi CPU yükü (/proc/stat). Digər platformalarda 0 qaytarır.</summary>
     private (double Percent, long Total, long Idle) SystemCpu()
     {
-        if (!OperatingSystem.IsLinux() || _lastTotalTicks == 0)
+        if (!IsUnix || _lastTotalTicks == 0)
         {
-            if (!OperatingSystem.IsLinux()) return (0, 0, 0);
+            if (!IsUnix) return (0, 0, 0);
 
             var (t0, i0) = ReadProcStat();
             return (0, t0, i0);
@@ -156,7 +159,7 @@ public sealed class ResourceMonitor(string cacheDirectory, WorkerLog log)
     {
         try
         {
-            if (OperatingSystem.IsLinux())
+            if (IsUnix)
             {
                 long totalKb = 0, availableKb = 0;
 

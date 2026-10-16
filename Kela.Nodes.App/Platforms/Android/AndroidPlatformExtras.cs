@@ -5,6 +5,7 @@ using Android.OS;
 using Android.Provider;
 using AndroidX.Core.App;
 using AndroidX.Core.Content;
+using Kela.Nodes.Worker.Device;
 
 namespace Kela.Nodes.App.Platforms.Android;
 
@@ -17,6 +18,8 @@ public sealed class AndroidPlatformExtras(Activity activity) : IPlatformExtras
     private const int NotificationRequestCode = 4001;
 
     public bool IsSupported => true;
+
+    public IPlatformStatus? PowerStatus { get; } = new AndroidPlatformStatus(activity);
 
     public string? NativeBinaryDirectory => activity.ApplicationInfo?.NativeLibraryDir;
 

@@ -30,7 +30,8 @@ public sealed partial class MainViewModel : ObservableObject
             Settings.PlatformBinaryDirectory = binaries;
         }
         Log = new WorkerLog();
-        Engine = new WorkerEngine(Settings, Log);
+        // Batareya və temperatur yalnız Android-də ölçülür; masaüstündə null qalır.
+        Engine = new WorkerEngine(Settings, Log, PlatformExtras.Current.PowerStatus);
 
         Dashboard = new DashboardViewModel(this);
         Jobs = new JobsViewModel(this);

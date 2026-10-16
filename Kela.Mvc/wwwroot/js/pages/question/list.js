@@ -17,7 +17,7 @@ async function loadList(page) {
     const subjectId = document.getElementById('filter_subject').value;
     const search = document.getElementById('search').value;
     AdminUI.loader(true);
-    const data = await AdminUI.get(`/question/list?page=${currentPage}&subject_id=${subjectId}&search=${encodeURIComponent(search)}&is_deleted=${showDeleted ? 1 : 0}`);
+    const data = await AdminUI.get(AdminUI.addSort(`/question/list?page=${currentPage}&subject_id=${subjectId}&search=${encodeURIComponent(search)}&is_deleted=${showDeleted ? 1 : 0}`));
     lastPage = data.lastPage;
     AdminUI.setInfo(data.total);
 

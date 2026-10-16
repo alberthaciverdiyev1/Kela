@@ -9,7 +9,8 @@ public static class SystemPressure
     {
         try
         {
-            if (OperatingSystem.IsLinux())
+            // Android Linux nüvəsidir — IsLinux() orada false qaytarır, ona görə ayrıca yoxlanılır.
+            if (OperatingSystem.IsLinux() || OperatingSystem.IsAndroid())
             {
                 foreach (var line in File.ReadLines("/proc/meminfo"))
                 {

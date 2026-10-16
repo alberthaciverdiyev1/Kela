@@ -12,11 +12,16 @@ namespace Kela.Nodes.Worker.Device;
 /// </summary>
 public static class ConcurrencyPolicy
 {
-    /// <summary>Bir kodlaşdırma prosesi üçün təxmini RAM ehtiyatı (MB).</summary>
-    private const int RamPerJobMb = 700;
+    /// <summary>
+    /// Bir kodlaşdırma prosesi üçün təxmini RAM ehtiyatı (MB). Real istehlak ölçüdən
+    /// asılıdır; bu rəqəm ehtiyat məqsədi daşıyır və paralelliyə aşağı hədd qoymasın
+    /// deyə ölçülüb — 360p/480p çıxışlar adətən 100-200 MB işlədir, telefonda isə
+    /// boş yaddaş az olur və yüksək rəqəm paralelliyi süni şəkildə 1-ə salırdı.
+    /// </summary>
+    private const int RamPerJobMb = 250;
 
     /// <summary>Diskdə hər iş üçün təxmini boş yer tələbi (MB) — mənbə + seqmentlər.</summary>
-    private const int DiskPerJobMb = 2 * 1024;
+    private const int DiskPerJobMb = 1024;
 
     public static int Allowance(
         ProfileSettings? profile,

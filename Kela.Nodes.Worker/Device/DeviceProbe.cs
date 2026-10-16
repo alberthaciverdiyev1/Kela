@@ -84,7 +84,7 @@ public sealed class DeviceProbe(IPlatformStatus platform, WorkerLog log)
     {
         try
         {
-            if (OperatingSystem.IsLinux())
+            if (OperatingSystem.IsLinux() || OperatingSystem.IsAndroid())
             {
                 foreach (var line in await File.ReadAllLinesAsync("/proc/cpuinfo", ct))
                 {
@@ -122,7 +122,7 @@ public sealed class DeviceProbe(IPlatformStatus platform, WorkerLog log)
     /// GPU adları ən yaxşı səylə toplanır. Əsl həlledici məlumat ffmpeg-in təsdiqlənmiş
     /// encoder siyahısıdır — buradakı ad yalnız panelə məlumat üçündür.
     /// </summary>
-    private static async Task<List<string>> GpusAsync(CancellationToken ct)
+    private async Task<List<string>> GpusAsync(CancellationToken ct)
     {
         var gpus = new List<string>();
 
@@ -146,7 +146,15 @@ public sealed class DeviceProbe(IPlatformStatus platform, WorkerLog log)
 
         if (gpus.Count == 0 && OperatingSystem.IsLinux())
         {
-            gpus.AddRange(LinuxDrmDevices());
+            try
+            {
+                gpus.AddRange(LinuxDrmDevices());
+            }
+            catch (Exception ex) when (ex is UnauthorizedAccessException or IOException)
+            {
+                // Bəzi sistemlərdə /sys/class/drm mövcuddur, amma oxunmur — bu, ölümcül deyil.
+                log.Debug("device", "DRM məlumatı oxunmadı");
+            }
         }
 
         return gpus.Distinct().ToList();
@@ -198,7 +206,7 @@ public sealed class DeviceProbe(IPlatformStatus platform, WorkerLog log)
         {
             var total = GC.GetGCMemoryInfo().TotalAvailableMemoryBytes;
 
-            if (OperatingSystem.IsLinux())
+            if (OperatingSystem.IsLinux() || OperatingSystem.IsAndroid())
             {
                 var lines = File.ReadAllLines("/proc/meminfo");
                 var totalKb = ReadMemValue(lines, "MemTotal:");

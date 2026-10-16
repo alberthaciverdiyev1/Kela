@@ -56,15 +56,17 @@ public class ConcurrencyPolicyTests
     {
         var jobs = new List<RunningJob>();
 
-        // 1.4 GB boş → 700 MB/iş → yalnız 2 iş.
+        // 1.4 GB boş → 250 MB/iş → 5 iş, amma profil həddi 8 və yüngül çarpan 2 → 8;
+        // yaddaş onu 5-ə endirir.
         var allowance = ConcurrencyPolicy.Allowance(Profile(8), jobs, availableRamMb: 1_400, freeDiskMb: PlentyDisk, lightJobMultiplier: 2);
 
-        Assert.Equal(2, allowance);
+        Assert.Equal(5, allowance);
     }
 
     [Fact]
     public void A_full_disk_stops_new_work()
     {
+        // 1.5 GB boş disk → yalnız 1 iş (disk hər iş üçün 1 GB tələb edir).
         var allowance = ConcurrencyPolicy.Allowance(Profile(8), [], PlentyRam, freeDiskMb: 1_500, lightJobMultiplier: 2);
 
         Assert.Equal(1, allowance);
@@ -75,7 +77,7 @@ public class ConcurrencyPolicyTests
     {
         var jobs = new List<RunningJob> { Job(false, 1), Job(false, 2), Job(false, 3) };
 
-        var allowance = ConcurrencyPolicy.Allowance(Profile(4), jobs, availableRamMb: 800, freeDiskMb: 500, lightJobMultiplier: 2);
+        var allowance = ConcurrencyPolicy.Allowance(Profile(4), jobs, availableRamMb: 300, freeDiskMb: 400, lightJobMultiplier: 2);
 
         Assert.Equal(3, allowance);
     }

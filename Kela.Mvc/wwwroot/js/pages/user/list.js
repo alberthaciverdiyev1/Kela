@@ -6,7 +6,7 @@ async function loadList(page) {
     const search = document.getElementById('search').value;
     const type = document.getElementById('filter_type').value;
     AdminUI.loader(true);
-    const data = await AdminUI.get(`/user/list?page=${currentPage}&search=${encodeURIComponent(search)}&type=${type}`);
+    const data = await AdminUI.get(AdminUI.addSort(`/user/list?page=${currentPage}&search=${encodeURIComponent(search)}&type=${type}`));
     lastPage = data.lastPage;
     AdminUI.setInfo(data.total);
 

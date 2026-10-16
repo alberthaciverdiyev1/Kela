@@ -471,6 +471,21 @@
   <data name="Login_Title" xml:space="preserve">
     <value>Giriş</value>
   </data>
+  <data name="Sort_Newest" xml:space="preserve">
+    <value>Ən yenilər əvvəldə</value>
+  </data>
+  <data name="Sort_Oldest" xml:space="preserve">
+    <value>Ən köhnələr əvvəldə</value>
+  </data>
+  <data name="Sort_NameAsc" xml:space="preserve">
+    <value>Ad (A–Z)</value>
+  </data>
+  <data name="Sort_NameDesc" xml:space="preserve">
+    <value>Ad (Z–A)</value>
+  </data>
+  <data name="Sort_Manual" xml:space="preserve">
+    <value>Əl ilə sıra</value>
+  </data>
   <data name="Sort_Title" xml:space="preserve">
     <value>Sırala</value>
   </data>

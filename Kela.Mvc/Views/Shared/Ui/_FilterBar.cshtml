@@ -18,6 +18,24 @@
             <partial name="Ui/_Select" model="s.Select" />
         </div>
     }
+    @if (Model.Sort is not null)
+    {
+        @{
+            var sortOptions = new List<SelectOption>
+            {
+                new() { Value = "created_desc", Text = L["Sort_Newest"] },
+                new() { Value = "created_asc", Text = L["Sort_Oldest"] },
+                new() { Value = "name_asc", Text = L["Sort_NameAsc"] },
+                new() { Value = "name_desc", Text = L["Sort_NameDesc"] }
+            };
+            sortOptions.AddRange(Model.Sort.Extra);
+        }
+        <div class="w-48">
+            <partial name="Ui/_Select" model="@(new SelectModel {
+                Id = Model.Sort.Id, Name = "sort", Value = Model.Sort.Value, Options = sortOptions
+            })" />
+        </div>
+    }
     @if (Model.Trash)
     {
         <button type="button" id="@Model.TrashId" class="admin-button-secondary h-[46px] px-4" onclick="@Model.TrashOnClick">@Model.TrashText</button>

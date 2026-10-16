@@ -16,6 +16,7 @@
     <div class="admin-card">
         <partial name="Ui/_FilterBar" model="@(new FilterBarModel {
             SearchPlaceholder = L["Subject_Search"],
+            Sort = new FilterSortModel { },
             Trash = true,
             TrashText = L["Common_DeletedItems"],
             ButtonText = L["Common_Search"]

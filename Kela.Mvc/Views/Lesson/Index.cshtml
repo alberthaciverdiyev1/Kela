@@ -31,6 +31,8 @@
                 new() { WidthClass = "w-44", Select = new SelectModel { Name = "filter_subject", Id = "filter_subject", Label = L["Common_Subject"], Options = subjectFilter, Value = (string?)ViewData["SelectedSubjectId"] } },
                 new() { WidthClass = "w-36", Select = new SelectModel { Name = "filter_status", Id = "filter_status", Label = L["Common_Status"], Options = statusFilter } }
             },
+            Sort = new FilterSortModel {
+                    Extra = new List<SelectOption> { new() { Value = "order_asc", Text = L["Sort_Manual"] } } },
             Trash = true,
             TrashText = L["Common_DeletedItems"],
             ButtonText = L["Common_Search"]
