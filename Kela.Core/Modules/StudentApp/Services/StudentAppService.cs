@@ -275,7 +275,7 @@ public sealed class StudentAppService(
     private LessonContentResponse ToResponse(LessonContent content)
     {
         if (content.Video is not null)
-            return Row(content, "video", storage.GetUrl(content.Video.Path), content.Video.PlaybackUrl,
+            return Row(content, "video", storage.GetUrl(content.Video.Path), ResolvePlayback(content.Video.PlaybackUrl),
                 content.Video.DurationSeconds, ThumbnailUrl(content.Video.Thumbnail), content.Video.ConversionStatus);
         if (content.MediaFile is not null)
             return Row(content, "file", storage.GetUrl(content.MediaFile.Path), null, null, null);
@@ -283,6 +283,13 @@ public sealed class StudentAppService(
             return Row(content, "voice", storage.GetUrl(content.VoiceRecord.Path), null, content.VoiceRecord.DurationSeconds, null);
         return Row(content, null, null, null, null, null);
     }
+
+    /// <summary>
+    /// Worker m3u8 açarını (nisbi yol) bildirə bilər — o halda URL-ə çeviririk.
+    /// Artıq tam URL-dirsə storage onu olduğu kimi qaytarır.
+    /// </summary>
+    private string? ResolvePlayback(string? playbackUrl)
+        => string.IsNullOrWhiteSpace(playbackUrl) ? null : storage.GetUrl(playbackUrl);
 
     private string? ThumbnailUrl(string? thumbnail)
         => string.IsNullOrWhiteSpace(thumbnail) ? null : storage.GetUrl(thumbnail);

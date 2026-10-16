@@ -1,4 +1,5 @@
 using Kela.Core.Common.Responses;
+using Kela.Core.Common.MultiTenancy;
 using Kela.Core.Common.Storage;
 using Kela.Core.Common.Bulk;
 using Kela.Core.Common.Sorting;
@@ -15,9 +16,10 @@ using MediaFile = Kela.Core.Modules.Media.Entities.MediaFile;
 using Video = Kela.Core.Modules.Media.Entities.Video;
 using VoiceRecord = Kela.Core.Modules.Media.Entities.VoiceRecord;
 
-public sealed class LessonContentService(AppDbContext db, IFileStorage storage) : Abstractions.ILessonContentService
+public sealed class LessonContentService(AppDbContext db, IFileStorage storage, ITenantProvider tenants)
+    : Abstractions.ILessonContentService
 {
-    private static readonly TimeSpan UploadUrlExpiry = TimeSpan.FromMinutes(15);
+    private static readonly TimeSpan UploadUrlExpiry = TimeSpan.FromMinutes(30);
 
     public async Task<PagedResponse<LessonContentResponse>> ListAsync(
         LessonContentListRequest request, CancellationToken ct = default)
@@ -70,8 +72,8 @@ public sealed class LessonContentService(AppDbContext db, IFileStorage storage) 
         await EnsureLessonExistsAsync(request.LessonId, ct);
 
         var extension = Path.GetExtension(request.FileName).ToLowerInvariant();
-        var folder = FolderFor(request.Type);
-        var path = $"{folder}/{folder}-{Guid.NewGuid():N}{extension}";
+        var folder = await FolderForAsync(request.Type, ct);
+        var path = $"{folder}/{Guid.NewGuid():N}{extension}";
 
         var uploadUrl = storage.CreatePresignedPutUrl(path, request.ContentType, UploadUrlExpiry)
             ?? throw new ArgumentException("Presigned upload is not supported by the current storage provider");
@@ -144,7 +146,7 @@ public sealed class LessonContentService(AppDbContext db, IFileStorage storage) 
         // birbaşa R2-yə yüklənibsə path verilir; əks halda API-dən keçərək yükləyirik
         if (request.File is not null)
         {
-            return await storage.UploadAsync(request.File, FolderFor(request.Type), ct);
+            return await storage.UploadAsync(request.File, await FolderForAsync(request.Type, ct), ct);
         }
 
         if (!string.IsNullOrWhiteSpace(request.Path))
@@ -160,12 +162,59 @@ public sealed class LessonContentService(AppDbContext db, IFileStorage storage) 
         throw new ArgumentException("File or Path is required");
     }
 
-    private static string FolderFor(LessonContentType type) => type switch
+    /// <summary>
+    /// Bucket quruluşu tenant üzrə ayrılır:
+    /// <c>{tenant}/videos/raw</c>, <c>{tenant}/videos/m3u8</c>, <c>{tenant}/voices</c>, <c>{tenant}/files</c>.
+    /// Konversiyadan sonra worker m3u8-i <c>{tenant}/videos/m3u8</c> altına yazır və həmin
+    /// açarı callback ilə bildirir.
+    /// </summary>
+    private async Task<string> FolderForAsync(LessonContentType type, CancellationToken ct)
     {
-        LessonContentType.Video => "video",
-        LessonContentType.Voice => "voice",
-        _ => "file"
-    };
+        var prefix = await TenantFolderAsync(ct);
+
+        return type switch
+        {
+            LessonContentType.Video => $"{prefix}/videos/raw",
+            LessonContentType.Voice => $"{prefix}/voices",
+            _ => $"{prefix}/files"
+        };
+    }
+
+    /// <summary>
+    /// Qovluq adı kimi tenant-ın slug-ı işlədilir (ad boşluq və Azərbaycan hərfləri
+    /// daşıya bilər, slug isə URL-təhlükəsizdir). Slug boşdursa ad sadələşdirilir.
+    /// </summary>
+    private async Task<string> TenantFolderAsync(CancellationToken ct)
+    {
+        var id = tenants.TenantId;
+        if (id is not > 0) return "shared";
+
+        var tenant = await db.Tenants.AsNoTracking()
+            .Where(t => t.Id == id)
+            .Select(t => new { t.Name, t.Slug })
+            .FirstOrDefaultAsync(ct);
+
+        if (tenant is null) return $"tenant-{id}";
+        if (!string.IsNullOrWhiteSpace(tenant.Slug)) return Sanitize(tenant.Slug);
+
+        var fromName = Sanitize(tenant.Name);
+        return fromName.Length > 0 ? fromName : $"tenant-{id}";
+    }
+
+    private static string Sanitize(string value)
+    {
+        var lowered = value.Trim().ToLowerInvariant();
+        var sb = new System.Text.StringBuilder(lowered.Length);
+
+        foreach (var ch in lowered)
+        {
+            sb.Append(ch is >= 'a' and <= 'z' or >= '0' and <= '9' ? ch : '-');
+        }
+
+        var result = sb.ToString().Trim('-');
+        while (result.Contains("--")) result = result.Replace("--", "-");
+        return result;
+    }
 
     private IQueryable<LessonContent> WithMedia() =>
         db.LessonContents.AsNoTracking()
@@ -183,7 +232,7 @@ public sealed class LessonContentService(AppDbContext db, IFileStorage storage) 
     {
         if (content.Video is not null)
         {
-            return Row(content, "video", storage.GetUrl(content.Video.Path), content.Video.PlaybackUrl,
+            return Row(content, "video", storage.GetUrl(content.Video.Path), ResolvePlayback(content.Video.PlaybackUrl),
             content.Video.DurationSeconds,
             string.IsNullOrWhiteSpace(content.Video.Thumbnail) ? null : storage.GetUrl(content.Video.Thumbnail),
             content.Video.ConversionStatus);
@@ -201,6 +250,13 @@ public sealed class LessonContentService(AppDbContext db, IFileStorage storage) 
 
         return Row(content, null, null, null, null);
     }
+
+    /// <summary>
+    /// Worker m3u8 açarını (nisbi yol) bildirə bilər — o halda URL-ə çeviririk.
+    /// Artıq tam URL-dirsə storage onu olduğu kimi qaytarır.
+    /// </summary>
+    private string? ResolvePlayback(string? playbackUrl)
+        => string.IsNullOrWhiteSpace(playbackUrl) ? null : storage.GetUrl(playbackUrl);
 
     private static LessonContentResponse Row(LessonContent c, string? type, string? url, string? playbackUrl,
         int? duration, string? thumbnailUrl = null, string? conversionStatus = null) =>
