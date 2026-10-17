@@ -3,7 +3,7 @@
 @* Geri bildiriş düyməsi — şagird ↔ admin söhbəti. *@
 <div class="pointer-events-none fixed inset-x-0 bottom-24 z-40 mx-auto flex max-w-[430px] justify-end px-5 md:max-w-none md:px-8">
     <button type="button" @onclick="OpenAsync" aria-label="@L["Feedback_Title"]"
-            class="pointer-events-none pointer-events-auto relative grid size-12 place-items-center rounded-full bg-brand-671 text-white shadow-[0_8px_24px_rgba(23,77,58,0.28)] active:scale-95 transition">
+            class="pointer-events-auto relative grid size-12 place-items-center rounded-full bg-brand-671 text-white shadow-[0_8px_24px_rgba(23,77,58,0.28)] active:scale-95 transition">
         <Icon Name="mail" Class="size-5" />
         @if (_hasReply)
         {
