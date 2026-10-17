@@ -44,8 +44,8 @@ Servis interfeysləri (`I<Feature>Service`) **`Abstractions/`** folderində, tə
 Core və Api-də `GlobalUsings.cs` ilə bütün abstraksiya namespace-ləri qlobal `using` edilir.
 
 ### Controller yerleşimi (sunum)
-- Api: `Kela.Api/Modules/<Feature>/Controllers/<Feature>Controller.cs`
-- Admin: `Kela.Admin/Controllers/<Feature>Controller.cs`
+- Api: `api/Kela.Api/Modules/<Feature>/Controllers/<Feature>Controller.cs`
+- Admin: `admin/Kela.Admin/Controllers/<Feature>Controller.cs`
 - **Tek controller kuralı:** public + admin uçları **aynı controller'da** toplanır; `admin` route prefix'i yoktur.
 - **Routing konvansiyonu:** controller sınıfına `[Route("api/[controller]")]`; action'lara yalnızca fiil yazılır:
   `[HttpGet]`, `[HttpGet("{id:long}")]`, `[HttpPost]`, `[HttpPut("{id:long}")]`, `[HttpDelete("{id:long}")]`.
