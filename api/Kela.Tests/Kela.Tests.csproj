@@ -27,7 +27,7 @@
   <ItemGroup>
     <ProjectReference Include="..\Kela.Api\Kela.Api.csproj" />
     <ProjectReference Include="..\Kela.Core\Kela.Core.csproj" />
-    <ProjectReference Include="..\Kela.Nodes.Worker\Kela.Nodes.Worker.csproj" />
+    <ProjectReference Include="..\..\Worker\Kela.Nodes.Worker\Kela.Nodes.Worker.csproj" />
   </ItemGroup>
 
 </Project>

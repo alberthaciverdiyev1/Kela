@@ -27,7 +27,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Kela.Nodes.Shared\Kela.Nodes.Shared.csproj" />
+    <ProjectReference Include="..\..\Worker\Kela.Nodes.Shared\Kela.Nodes.Shared.csproj" />
   </ItemGroup>
 
 </Project>
