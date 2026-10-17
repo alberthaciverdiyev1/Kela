@@ -187,8 +187,9 @@
     async function uploadMultipart(file, lessonId, contentType, onProgress, session) {
         let path, uploadId, partSize;
 
-        if (session) {
-            // Davam: mövcud yükləmə sessiyası təkrar istifadə olunur.
+        // Yalnız tam sessiya "davam" sayılır: yeni yükləmədə də sessiya obyekti
+        // ötürülür, amma onda hələ uploadId/path olmur.
+        if (session && session.uploadId && session.path) {
             ({ path, uploadId, partSize } = session);
         } else {
             const fd = new FormData();
@@ -265,7 +266,10 @@
             return path;
         } catch (err) {
             // Yarımçıq yükləmə R2-də yer tutur və 7 gün saxlanılır — ləğv edirik.
-            AdminUI.postJson('/lesson-content/upload/multipart/abort', { path, uploadId });
+            // path/uploadId olmadan abort R2-də xəta verir.
+            if (path && uploadId) {
+                AdminUI.postJson('/lesson-content/upload/multipart/abort', { path, uploadId });
+            }
             throw err;
         }
     }
