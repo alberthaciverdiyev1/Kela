@@ -17,13 +17,13 @@ Bu dosya projede uyulacak kuralları tanımlar. Yeni kural eklendikçe buraya ya
 |---|---|
 | `Kela.Core` | domain + uygulama + altyapı: entity, EF config, DbContext, servis, DTO, validator, storage |
 | `Kela.Api` | sunum — JSON API (controller, `ApiResponse` zarfı, middleware) |
-| `Kela.Mvc` | sunum — Razor MVC + Tailwind (admin paneli) |
+| `Kela.Admin` | sunum — Razor MVC + Tailwind (admin paneli) |
 
-- **İş mantığı yalnızca Core'da yaşar.** Api ve Mvc ince host'lardır; Core'u referans alır.
+- **İş mantığı yalnızca Core'da yaşar.** Api ve Admin ince host'lardır; Core'u referans alır.
   Aynı mantık iki yerde **yazılmaz** (hem app hem admin için ayrı sorgu/mantık kopyalanmaz).
 - MVC, Core servislerini **DI ile direkt inject eder** (server-side render). Yalnızca gerçekten
   dinamik yerlerde (satır içi arama, anlık liste vb.) JS→API kullanılabilir.
-- Api ve Mvc, servisleri `AddCore(builder.Configuration)` ile tek noktadan kaydeder.
+- Api ve Admin, servisleri `AddCore(builder.Configuration)` ile tek noktadan kaydeder.
 - Storage paylaşımlıdır (`Storage:RootPath`); her iki host da `/uploads` yolundan servis eder.
 
 ### Core modül yerleşimi
@@ -45,7 +45,7 @@ Core və Api-də `GlobalUsings.cs` ilə bütün abstraksiya namespace-ləri qlob
 
 ### Controller yerleşimi (sunum)
 - Api: `Kela.Api/Modules/<Feature>/Controllers/<Feature>Controller.cs`
-- Mvc: `Kela.Mvc/Controllers/<Feature>Controller.cs`
+- Admin: `Kela.Admin/Controllers/<Feature>Controller.cs`
 - **Tek controller kuralı:** public + admin uçları **aynı controller'da** toplanır; `admin` route prefix'i yoktur.
 - **Routing konvansiyonu:** controller sınıfına `[Route("api/[controller]")]`; action'lara yalnızca fiil yazılır:
   `[HttpGet]`, `[HttpGet("{id:long}")]`, `[HttpPost]`, `[HttpPut("{id:long}")]`, `[HttpDelete("{id:long}")]`.

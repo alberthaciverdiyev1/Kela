@@ -10,7 +10,7 @@ Kela — dil öğrenme (LMS) uygulaması. İki istemci, bir çekirdek:
 |---|---|
 | `Kela.Core` | domain + uygulama + altyapı (entity, EF, servis, DTO, validator, storage) |
 | `Kela.Api` | REST API (mobil/web istemcileri) |
-| `Kela.Mvc` | Admin / web paneli (Tailwind CSS) |
+| `Kela.Admin` | Admin / web paneli (Tailwind CSS) |
 
 **Mantık kaynağı:** Laravel `BPA-Backend` (`/home/albert/Downloads/BPA-Backend-main/`). Yalnızca iş mantığı taşınır.
 
@@ -38,7 +38,7 @@ Kela.Core/
 ├── Modules/<Feature>/{Entities,Configurations,Services,Requests,Responses,Validators}
 └── DependencyInjection.cs   (AddCore + UseCoreStorage)
 Kela.Api/     (Program.cs, Common/{Controllers,Middleware,Validation,Responses}, Modules/<F>/Controllers)
-Kela.Mvc/     (Program.cs, Controllers, Models, Views)
+Kela.Admin/     (Program.cs, Controllers, Models, Views)
 ```
 
 - API yanıtları **tek envelope**: `{ success, statusCode, message, data, errors }` (`Common/Responses/ApiResponse`).
@@ -49,7 +49,7 @@ Kela.Mvc/     (Program.cs, Controllers, Models, Views)
 |---|---|
 | `app/Models/*` | `Core/Modules/<F>/Entities/*` |
 | `database/migrations/*` | EF Core Migration (`Core/Data/Migrations`) |
-| `app/Http/Controllers/**` | `Api` veya `Mvc` controller |
+| `app/Http/Controllers/**` | `Api` veya `Admin` controller |
 | `app/Http/Requests/**` | `Core/Modules/<F>/Requests` (+`Validators`) |
 | `app/Http/Resources/**` | `Core/Modules/<F>/Responses` |
 | `app/Services/**` | `Core/Modules/<F>/Services` |
@@ -58,7 +58,7 @@ Kela.Mvc/     (Program.cs, Controllers, Models, Views)
 
 ## 4. İlerleme
 
-- ✅ Adım 1 — Solution (`slnx`) + Api & Mvc projeleri.
+- ✅ Adım 1 — Solution (`slnx`) + Api & Admin projeleri.
 - ✅ Adım 2 — API iskeleti (FluentValidation, OpenAPI).
 - ✅ Adım 3 — ORM: EF Core + Npgsql, `AppDbContext`.
 - ✅ Adım 4 — MVC Tailwind kurulumu, Bootstrap kaldırıldı.
@@ -67,7 +67,7 @@ Kela.Mvc/     (Program.cs, Controllers, Models, Views)
 - ✅ Adım 7 — **Banner** modülü: entity/config/soft delete/migration, requests+validator, responses, service (cache + CRUD), API controller.
 - ✅ Adım 8 — Birleşik API envelope (tüm yanıtlar tek format).
 - ✅ Adım 9 — Modül içi düzen + tek controller.
-- ✅ Adım 10 — **`Kela.Core`** ayrıldı; Api & Mvc ince host oldu; paylaşımlı storage.
+- ✅ Adım 10 — **`Kela.Core`** ayrıldı; Api & Admin ince host oldu; paylaşımlı storage.
 - ✅ Adım 11 — **MVC Banner CRUD** (index/create/edit/update/delete/details), `IBannerService` direkt inject.
 - ✅ Adım 12 — Migration uygulandı, uçtan uca doğrulandı (API CRUD + MVC CRUD, gerçek DB).
 - ✅ Adım 13 — **Profession** modülü (2 seviyeli hiyerarşi, benzersiz ad, çocuklu kayıt silinemez) + testler.

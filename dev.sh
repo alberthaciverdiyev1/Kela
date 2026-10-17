@@ -17,8 +17,8 @@ HEALTH_URL="${HEALTH_URL:-$API_URL/openapi/v1.json}"
 
 ARTIFACTS="$ROOT/.dev-artifacts"
 
-TAILWIND="$ROOT/Kela.Mvc/node_modules/.bin/tailwindcss"
-MVC_CSS="Kela.Mvc/wwwroot/css/app.css"
+TAILWIND="$ROOT/Kela.Admin/node_modules/.bin/tailwindcss"
+MVC_CSS="Kela.Admin/wwwroot/css/app.css"
 APP_CSS="Kela.App.Shared/wwwroot/css/app.css"
 
 pids=()
@@ -62,7 +62,7 @@ wait_for() {
 
 _own_pids() {
   local pat
-  for pat in "Kela.Api" "Kela.Mvc" "Kela.App.Web" "Kela.App.Shared" "tailwindcss"; do
+  for pat in "Kela.Api" "Kela.Admin" "Kela.App.Web" "Kela.App.Shared" "tailwindcss"; do
     pgrep -f -- "$pat" 2>/dev/null || true
   done | sort -u | grep -vx -e "$$" -e "$PPID" || true
 }
@@ -97,7 +97,7 @@ kill_existing
 # ------------------------------------------------------------------
 if [ ! -x "$TAILWIND" ] && { [ "$ENABLE_WEB" = "1" ] || [ "$ENABLE_APP" = "1" ]; }; then
   echo "==> node_modules / Tailwind CLI yoxdur — 'npm install' çalışdırılır..."
-  ( cd Kela.Mvc && npm install )
+  ( cd Kela.Admin && npm install )
 fi
 
 build_css() { # $1 = input, $2 = output, $3 = ad
@@ -110,10 +110,10 @@ build_css() { # $1 = input, $2 = output, $3 = ad
 # ------------------------------------------------------------------
 if [ "$ENABLE_WEB" = "1" ]; then
   echo "==> [WEB] Tailwind CSS (MVC)"
-  build_css "Kela.Mvc/wwwroot/css/input.css" "$MVC_CSS" "app.css"
+  build_css "Kela.Admin/wwwroot/css/input.css" "$MVC_CSS" "app.css"
 
   echo "==> [WEB] Tailwind (watch, nəzarətçi)"
-  start bash -c "cd '$ROOT/Kela.Mvc' || exit 1
+  start bash -c "cd '$ROOT/Kela.Admin' || exit 1
 while true; do
   '$TAILWIND' -i ./wwwroot/css/input.css -o ./wwwroot/css/app.css --watch
   [ -s wwwroot/css/app.css ] || '$TAILWIND' -i ./wwwroot/css/input.css -o ./wwwroot/css/app.css --minify
@@ -124,7 +124,7 @@ done"
   DOTNET_WATCH_SUPPRESS_BROWSER_REFRESH=1 ASPNETCORE_URLS="$API_URL" start dotnet watch --project Kela.Api --artifacts-path "$ARTIFACTS/api" run --no-launch-profile
 
   echo "==> [WEB] MVC (watch): $MVC_URL"
-  DOTNET_WATCH_SUPPRESS_BROWSER_REFRESH=1 ASPNETCORE_URLS="$MVC_URL" start dotnet watch --project Kela.Mvc --artifacts-path "$ARTIFACTS/mvc" run --no-launch-profile
+  DOTNET_WATCH_SUPPRESS_BROWSER_REFRESH=1 ASPNETCORE_URLS="$MVC_URL" start dotnet watch --project Kela.Admin --artifacts-path "$ARTIFACTS/mvc" run --no-launch-profile
 else
   echo "==> [WEB] atlanır (ENABLE_WEB=0)"
 fi

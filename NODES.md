@@ -20,7 +20,7 @@ Kela.Api ──► Nodes modulu (koordinator)          Kela.Nodes.App (Avalonia 
 | `Kela.Nodes.Shared` | worker ↔ API arasında ortaq DTO-lar (yalnız BCL) |
 | `Kela.Nodes.Worker` | encoding motoru: ffmpeg, probe, encoder tespiti, benchmark |
 | `Kela.Nodes.App` | Avalonia UI (masaüstü + Android başlığı) |
-| `Kela.Mvc` (`/node`) | admin: cihazlar, qeydiyyat kodları, tapşırıqlar |
+| `Kela.Admin` (`/node`) | admin: cihazlar, qeydiyyat kodları, tapşırıqlar |
 
 ## Necə işləyir
 
@@ -142,7 +142,7 @@ dotnet run --project Kela.Nodes.App --framework net10.0
 3. Kodu **Tənzimləmələr → Cihaz qeydiyyatı** sahəsinə yaz, "Qeydiyyatdan keç".
 4. Dashboard → **İşə sal**.
 
-Android: `dotnet build Kela.Nodes.App -p:BuildAndroid=true` (bax: aşağıdaki qeyd).
+Android: `dotnet build Kela.Nodes.App -p:BuildAndroid=true -f net10.0-android`
 
 ## Testlər
 
@@ -160,13 +160,25 @@ dotnet test Kela.Tests --filter "FullyQualifiedName~Nodes"
 > ⚠️ Testlər `Local` storage və Testcontainers bazası ilə işləyir. `ApiFactory`
 > real bucket-a və ya inkişaf bazasına qoşulmağa cəhd olsa **dərhal dayanır**.
 
+## Dəstəklənən platformalar
+
+| Platforma | Status |
+|---|---|
+| Linux x64 | ✅ sınaqdan keçirilib (NVENC + libx264) |
+| Windows x64 | ✅ kod platformadan asılı deyil; ffmpeg PATH-dən tapılır |
+| **Android arm64** | ✅ sınaqdan keçirilib (MediaCodec + libx264) |
+| macOS | ❌ dəstəklənmir (tələb olunmur) |
+| Android armv7 / x86 | ❌ dəstəklənmir — APK yalnız `arm64-v8a` üçün qurulur |
+
+Android paketi qəsdən yalnız `arm64-v8a` üçündür: ffmpeg ikililəri də yalnız o ABI
+üçün derlənib. Başqa ABI-ləri paketləsək tətbiq həmin cihazlara qurular, sonra isə
+heç nə edə bilməzdi.
+
 ## Məlum məhdudiyyətlər
 
-- **Android** başlığı yazılıb (foreground service, batareya/istilik, manifest) lakin
-  **cihazda sınaqdan keçirilməyib**. Android-də ffmpeg sistemdə olmadığı üçün
-  operator onu app-ın qovluğuna (`…/files/bin/ffmpeg`) qoymalıdır; tapılmasa
-  UI "ffmpeg tapılmadı" göstərir və iş götürülmür. Saxta dəstək göstərilmir.
-- **macOS** kodu platformadan asılı deyil və `h264_videotoolbox` yoxlanılır, lakin
-  macOS-da **qurulub sınaqdan keçirilməyib** (bu mühitdə macOS yoxdur).
-- Seqment səviyyəsində paylama (bir videonu bir neçə cihaza bölmək) üçün model
-  genişlənə bilər, lakin hələ tətbiq olunmayıb — ilk mərhələdə lazım deyil.
+- **Segment səviyyəsində paylama yoxdur.** Bir video üçün ən çoxu dörd paralel iş
+  açılır (hər çözünürlük üçün bir), ona görə 8 zolağı olan maşında belə tək video
+  üzərində 4-dən çox iş getmir. Model genişlənməyə hazırdır, amma tətbiq olunmayıb.
+- **Yük testi aparılmayıb.** İki cihaz və ~200 iş ilə sınaqdan keçirilib; yüzlərlə
+  eyni vaxtlı cihazda davranış ölçülməyib.
+- Android paketi **Debug** quruluşudur — paylama üçün Release/AOT tövsiyə olunur.
