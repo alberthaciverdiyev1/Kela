@@ -61,6 +61,12 @@
       assembly-lər həmişə APK-ya gömülür.
     -->
     <EmbedAssembliesIntoApk>true</EmbedAssembliesIntoApk>
+
+    <!--
+      Yalnız arm64: ffmpeg ikililəri bu ABI üçün derlənib. Başqa ABI-ləri paketləsək
+      tətbiq həmin cihazlara qurular, sonra isə "ffmpeg tapılmadı" deyərdi.
+    -->
+    <RuntimeIdentifiers>android-arm64</RuntimeIdentifiers>
   </PropertyGroup>
 
 </Project>
