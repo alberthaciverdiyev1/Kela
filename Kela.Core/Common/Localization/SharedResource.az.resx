@@ -306,6 +306,18 @@
   <data name="Upload_LeaveConfirm" xml:space="preserve">
     <value>Bəli, çıx</value>
   </data>
+  <data name="Upload_ResumeTitle" xml:space="preserve">
+    <value>Yarımçıq yükləmə</value>
+  </data>
+  <data name="Upload_ResumeHint" xml:space="preserve">
+    <value>{0} — davam etmək üçün eyni faylı seçin</value>
+  </data>
+  <data name="Upload_ResumePick" xml:space="preserve">
+    <value>Davam et</value>
+  </data>
+  <data name="Upload_ResumeMismatch" xml:space="preserve">
+    <value>Fayl uyğun gəlmir — eyni faylı seçin</value>
+  </data>
   <data name="Upload_Interrupted" xml:space="preserve">
     <value>Səhifədən çıxdığınız üçün yükləmə yarımçıq qaldı — faylı yenidən seçib tamamlayın.</value>
   </data>

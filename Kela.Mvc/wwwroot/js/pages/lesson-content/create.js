@@ -184,26 +184,46 @@
         });
     }
 
-    async function uploadMultipart(file, lessonId, contentType, onProgress) {
-        const fd = new FormData();
-        fd.append('lessonId', lessonId);
-        fd.append('type', 'video');
-        fd.append('fileName', file.name);
-        fd.append('contentType', contentType);
+    async function uploadMultipart(file, lessonId, contentType, onProgress, session) {
+        let path, uploadId, partSize;
 
-        const startRes = await AdminUI.postForm('/lesson-content/upload/multipart/start', fd);
-        if (!startRes.ok || !startRes.data?.uploadId) return null;
+        if (session) {
+            // Davam: mövcud yükləmə sessiyası təkrar istifadə olunur.
+            ({ path, uploadId, partSize } = session);
+        } else {
+            const fd = new FormData();
+            fd.append('lessonId', lessonId);
+            fd.append('type', 'video');
+            fd.append('fileName', file.name);
+            fd.append('contentType', contentType);
 
-        const { path, uploadId, partSize } = startRes.data;
+            const startRes = await AdminUI.postForm('/lesson-content/upload/multipart/start', fd);
+            if (!startRes.ok || !startRes.data?.uploadId) return null;
+
+            ({ path, uploadId, partSize } = startRes.data);
+        }
+
         const total = Math.ceil(file.size / partSize);
 
         try {
-            const urlsRes = await AdminUI.postJson('/lesson-content/upload/multipart/parts',
-                { path, uploadId, partNumbers: Array.from({ length: total }, (_, i) => i + 1) });
+            // Artıq yüklənmiş hissələr təkrar göndərilmir.
+            const doneParts = session?.parts || [];
+            const doneNumbers = new Set(doneParts.map(p => p.partNumber));
+            const missing = Array.from({ length: total }, (_, i) => i + 1).filter(n => !doneNumbers.has(n));
+
+            const urlsRes = missing.length
+                ? await AdminUI.postJson('/lesson-content/upload/multipart/parts', { path, uploadId, partNumbers: missing })
+                : { ok: true, data: [] };
             if (!urlsRes.ok) throw new Error('parts');
 
             const parts = new Array(total);
+            doneParts.forEach(p => { parts[p.partNumber - 1] = p; });
             const loaded = new Array(total).fill(0);
+            doneParts.forEach(p => { loaded[p.partNumber - 1] = partSize; });
+            if (doneParts.length) {
+                const already = Math.min(file.size, doneParts.length * partSize);
+                if (onProgress) onProgress(already, file.size);
+            }
             let next = 0;
 
             const overall = () => loaded.reduce((a, b) => a + b, 0) / file.size * 100;
@@ -211,7 +231,7 @@
             const worker = async () => {
                 while (true) {
                     const i = next++;
-                    if (i >= total) return;
+                    if (i >= urlsRes.data.length) return;
 
                     const u = urlsRes.data[i];
                     const blob = file.slice((u.partNumber - 1) * partSize, u.partNumber * partSize);
@@ -228,6 +248,8 @@
 
                     loaded[i] = blob.size;
                     parts[u.partNumber - 1] = { partNumber: u.partNumber, eTag: put.etag };
+                    // Sessiya yenilənir: səhifə bağlansa, qayıdanda davam etmək mümkün olsun.
+                    saveSession({ ...session, path, uploadId, partSize, parts: parts.filter(Boolean) });
                     const totalDone = loaded.reduce((a, b) => a + b, 0);
                     showProgress(overall(), totalDone, file.size);
                     if (onProgress) onProgress(totalDone, file.size);
@@ -256,22 +278,24 @@
         done();
     }
 
-    // ---- Yükləmə yarıda qalmasın deyə qoruma ----
-    // Səhifə yenilənəndə brauzer fayla girişi itirir, ona görə yükləməni kaldığı
-    // yerdən davam etdirmək mümkün deyil. Ən azı təsadüfən itməsinin qarşısını alırıq.
-    const UPLOAD_MARK = 'lms.upload.active';
     let uploadInFlight = false;
+    let uploadSession = null;
 
-    function markUploadStart(contentId, fileName) {
-        try {
-            localStorage.setItem(UPLOAD_MARK, JSON.stringify({
-                contentId: contentId, fileName: fileName, at: Date.now()
-            }));
-        } catch (e) { /* localStorage bağlı ola bilər */ }
+    // ---- Yarımçıq yükləmə sessiyası ----
+    // Səhifə dəyişəndə brauzer faylı itirir; uploadId və tamamlanmış hissələr
+    // yadda saxlanılır ki, istifadəçi qayıtdıqda yalnız qalan hissələr yüklənsin.
+    const UPLOAD_SESSION = 'lms.upload.session';
+
+    function saveSession(session) {
+        try { localStorage.setItem(UPLOAD_SESSION, JSON.stringify(session)); } catch (e) { /* localStorage bağlı ola bilər */ }
     }
 
-    function clearUploadMark() {
-        try { localStorage.removeItem(UPLOAD_MARK); } catch (e) { }
+    function readSession() {
+        try { return JSON.parse(localStorage.getItem(UPLOAD_SESSION) || 'null'); } catch (e) { return null; }
+    }
+
+    function clearSession() {
+        try { localStorage.removeItem(UPLOAD_SESSION); } catch (e) { }
     }
 
     // Brauzerin öz xəbərdarlığı dizaynlaşdırıla bilmir; daxili keçidlərdə öz modalımızı
@@ -368,9 +392,9 @@
     }
 
     // ---- Yükləmə strategiyası ----
-    async function uploadVideo(file, lessonId, contentType, onProgress) {
+    async function uploadVideo(file, lessonId, contentType, onProgress, session) {
         if (file.size > MP_THRESHOLD) {
-            return await uploadMultipart(file, lessonId, contentType, onProgress);
+            return await uploadMultipart(file, lessonId, contentType, onProgress, session);
         }
 
         const urlRes = await AdminUI.post('/lesson-content/upload-url',
@@ -464,13 +488,18 @@
             widgetShow(file.name);
             resetSpeed(file.size);
             uploadInFlight = true;
-            markUploadStart(contentId, file.name);
+            uploadSession = {
+                contentId, lessonId,
+                fileName: file.name, fileSize: file.size, fileLastModified: file.lastModified,
+                contentType, parts: []
+            };
+            saveSession(uploadSession);
 
             let speed = 0;
             const path = await uploadVideo(file, lessonId, contentType, function (loaded, total) {
                 speed = measureSpeed(loaded) || speed;
                 widgetProgress(loaded, total, speed);
-            });
+            }, uploadSession);
 
             if (!path) { widgetFail(L["Js_FileTooLarge"]); return; }
 
@@ -481,7 +510,8 @@
                 { path: path, type: type });
 
             uploadInFlight = false;
-            clearUploadMark();
+            uploadSession = null;
+            clearSession();
 
             if (attached.ok) { widgetDone(); loadList(1); }
             else { widgetFail(AdminUI.errText(attached)); }
@@ -497,14 +527,78 @@
         }
     }
 
-    // Səhifə yeniləndikdən sonra yarımçıq qalmış yükləmə varsa xəbər ver.
-    (function warnInterrupted() {
-        let mark = null;
-        try { mark = JSON.parse(localStorage.getItem(UPLOAD_MARK) || 'null'); } catch (e) { }
-        if (!mark) return;
+    // Səhifə açılanda yarımçıq yükləmə varsa panel göstərilir; istifadəçi eyni
+    // faylı seçəndə yalnız qalan hissələr göndərilir.
+    function showResume() {
+        const session = readSession();
+        const panel = document.getElementById('resumePanel');
+        if (!session || !panel) return;
+        const hint = document.getElementById('resumeHint');
+        if (hint) hint.textContent = (L["Upload_ResumeHint"] || '{0}').replace('{0}', session.fileName || '');
+        panel.classList.remove('hidden');
+        panel.classList.add('flex');
+    }
 
-        clearUploadMark();
-        widgetShow(mark.fileName || '');
-        widgetFail(L["Upload_Interrupted"]);
-    })();
+    function hideResume() {
+        const panel = document.getElementById('resumePanel');
+        if (!panel) return;
+        panel.classList.add('hidden');
+        panel.classList.remove('flex');
+    }
+
+    window.cancelResume = async function () {
+        const session = readSession();
+        if (session?.uploadId) {
+            // R2-də yer tutmasın.
+            await AdminUI.postJson('/lesson-content/upload/multipart/abort',
+                { path: session.path, uploadId: session.uploadId });
+        }
+        clearSession();
+        hideResume();
+    };
+
+    window.resumeUpload = async function (input) {
+        const session = readSession();
+        const file = input.files[0];
+        if (!session || !file) return;
+
+        if (file.name !== session.fileName || file.size !== session.fileSize) {
+            AdminUI.error(L["Upload_ResumeMismatch"]);
+            input.value = '';
+            return;
+        }
+
+        hideResume();
+        widgetShow(file.name);
+        resetSpeed(file.size);
+        uploadInFlight = true;
+
+        try {
+            let speed = 0;
+            const path = await uploadMultipart(file, session.lessonId, session.contentType, function (loaded, total) {
+                speed = measureSpeed(loaded) || speed;
+                widgetProgress(loaded, total, speed);
+            }, session);
+
+            if (!path) { widgetFail(L["Js_FileTooLarge"]); return; }
+
+            const attached = await AdminUI.post(`/lesson-content/${session.contentId}/file`,
+                { path, type: 'video' });
+
+            uploadInFlight = false;
+            clearSession();
+
+            if (attached.ok) { widgetDone(); loadList(1); }
+            else { widgetFail(AdminUI.errText(attached)); }
+        } catch (err) {
+            uploadInFlight = false;
+            widgetFail(String(err && err.message ? err.message : err));
+        } finally {
+            input.value = '';
+            if (readSession()) showResume();
+        }
+    };
+
+    document.addEventListener('DOMContentLoaded', showResume);
+
 })();

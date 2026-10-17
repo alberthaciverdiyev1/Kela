@@ -306,6 +306,18 @@
   <data name="Upload_LeaveConfirm" xml:space="preserve">
     <value>Да, выйти</value>
   </data>
+  <data name="Upload_ResumeTitle" xml:space="preserve">
+    <value>Незавершённая загрузка</value>
+  </data>
+  <data name="Upload_ResumeHint" xml:space="preserve">
+    <value>{0} — выберите тот же файл, чтобы продолжить</value>
+  </data>
+  <data name="Upload_ResumePick" xml:space="preserve">
+    <value>Продолжить</value>
+  </data>
+  <data name="Upload_ResumeMismatch" xml:space="preserve">
+    <value>Файл не совпадает — выберите тот же файл</value>
+  </data>
   <data name="Upload_Interrupted" xml:space="preserve">
     <value>Загрузка прервана из-за ухода со страницы — выберите файл заново.</value>
   </data>

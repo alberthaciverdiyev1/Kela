@@ -5,6 +5,20 @@
     lessonFilter.AddRange(lessons.Data.Select(l => new SelectOption { Value = l.Id.ToString(), Text = l.Title }));
 }
 <section class="admin-page">
+    @* Yarımçıq qalmış yükləmə: istifadəçi eyni faylı seçəndə yalnız qalan hissələr göndərilir. *@
+    <div id="resumePanel" class="admin-card mb-4 hidden items-center justify-between gap-3 p-4">
+        <div class="min-w-0">
+            <p class="text-sm font-bold text-slate-800">@L["Upload_ResumeTitle"]</p>
+            <p id="resumeHint" class="mt-0.5 truncate text-xs text-slate-500"></p>
+        </div>
+        <div class="flex shrink-0 items-center gap-2">
+            <label class="admin-button-primary cursor-pointer">
+                <input id="resumeFile" type="file" class="hidden" onchange="resumeUpload(this)" />
+                @L["Upload_ResumePick"]
+            </label>
+            <button type="button" class="admin-button-secondary" onclick="cancelResume()">@L["Common_Cancel"]</button>
+        </div>
+    </div>
     <partial name="Ui/_PageHeader" model="@(new PageHeaderModel {
         CreateText = L["Common_NewMaterial"],
         Sortable = true })" />

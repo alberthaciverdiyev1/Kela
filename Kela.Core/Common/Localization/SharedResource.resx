@@ -306,6 +306,18 @@
   <data name="Upload_LeaveConfirm" xml:space="preserve">
     <value>Leave</value>
   </data>
+  <data name="Upload_ResumeTitle" xml:space="preserve">
+    <value>Interrupted upload</value>
+  </data>
+  <data name="Upload_ResumeHint" xml:space="preserve">
+    <value>{0} — pick the same file to continue</value>
+  </data>
+  <data name="Upload_ResumePick" xml:space="preserve">
+    <value>Resume</value>
+  </data>
+  <data name="Upload_ResumeMismatch" xml:space="preserve">
+    <value>That file does not match the interrupted upload</value>
+  </data>
   <data name="Upload_Interrupted" xml:space="preserve">
     <value>The upload was interrupted by leaving the page — pick the file again to finish it.</value>
   </data>
