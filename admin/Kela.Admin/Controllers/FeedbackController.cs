@@ -1,12 +1,13 @@
 using Kela.Core.Modules.Auth;
 using Kela.Core.Modules.Feedback.Abstractions;
+using Kela.Core.Modules.Feedback.Entities;
 using Kela.Core.Modules.Feedback.Requests;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Kela.Admin.Controllers;
 
-/// <summary>Geri bildirişlər qutusu — yalnız superadmin.</summary>
+/// <summary>Geri bildiriş söhbətləri — yalnız superadmin.</summary>
 [Authorize(Policy = AuthPolicies.SuperAdmin)]
 [Route("[controller]")]
 public sealed class FeedbackController(IFeedbackService service) : Controller
@@ -19,6 +20,14 @@ public sealed class FeedbackController(IFeedbackService service) : Controller
     public async Task<IActionResult> Unread(CancellationToken ct)
         => Json(new { count = await service.UnreadCountAsync(ct) });
 
+    [HttpPost("{id:long}/read")]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> Read(long id, CancellationToken ct)
+    {
+        await service.MarkReadAsync(id, FeedbackRoles.Admin, ct);
+        return Json(new { ok = true });
+    }
+
     [HttpDelete("{id:long}")]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Delete(long id, CancellationToken ct)
@@ -26,17 +35,4 @@ public sealed class FeedbackController(IFeedbackService service) : Controller
         await service.DeleteAsync(id, ct);
         return Json(new { ok = true });
     }
-
-    [HttpPost("{id:long}/read")]
-    [ValidateAntiForgeryToken]
-    public async Task<IActionResult> Read(long id, [FromBody] ReadFeedbackRequest request, CancellationToken ct)
-    {
-        await service.MarkReadAsync(id, request.IsRead, ct);
-        return Json(new { ok = true });
-    }
-}
-
-public class ReadFeedbackRequest
-{
-    public bool IsRead { get; set; } = true;
 }

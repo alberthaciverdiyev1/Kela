@@ -64,6 +64,10 @@ public sealed class ApiClient(HttpClient http, AuthState auth, TokenStore store,
         return SendRequestAsync<T>(HttpMethod.Post, path, form);
     }
 
+    /// <summary>Söhbətə mesaj göndərmə (mətn + istəyə bağlı şəkil).</summary>
+    public Task<T> PostFeedbackMessageAsync<T>(string path, string message, Stream? image, string? fileName, string? contentType)
+        => PostFeedbackAsync<T>(path, message, image, fileName, contentType);
+
     private Task<T> SendAsync<T>(HttpMethod method, string path, object? body)
     {
         HttpContent? content = body is null ? null : JsonContent.Create(body, options: JsonOptions);

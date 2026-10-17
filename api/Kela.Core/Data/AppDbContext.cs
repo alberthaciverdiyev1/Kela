@@ -66,6 +66,8 @@ public sealed class AppDbContext : DbContext
 
     public DbSet<Modules.Feedback.Entities.Feedback> Feedbacks => Set<Modules.Feedback.Entities.Feedback>();
 
+    public DbSet<Modules.Feedback.Entities.FeedbackMessage> FeedbackMessages => Set<Modules.Feedback.Entities.FeedbackMessage>();
+
     public DbSet<Modules.User.Entities.User> Users => Set<Modules.User.Entities.User>();
 
     public DbSet<Modules.Group.Entities.Group> Groups => Set<Modules.Group.Entities.Group>();

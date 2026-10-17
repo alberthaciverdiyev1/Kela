@@ -10,18 +10,14 @@ using Microsoft.EntityFrameworkCore;
 namespace Kela.Core.Modules.Feedback.Services;
 
 using Feedback = Kela.Core.Modules.Feedback.Entities.Feedback;
+using FeedbackMessage = Kela.Core.Modules.Feedback.Entities.FeedbackMessage;
 
 public sealed class FeedbackService(AppDbContext db, IFileStorage storage) : IFeedbackService
 {
-    public async Task<FeedbackResponse> CreateAsync(CreateFeedbackRequest request, CancellationToken ct = default)
+    public async Task<FeedbackThreadResponse> CreateAsync(CreateFeedbackRequest request, CancellationToken ct = default)
     {
-        var message = (request.Message ?? string.Empty).Trim();
-        if (message.Length == 0) throw new ArgumentException("Message is required");
-        if (message.Length > 4000) message = message[..4000];
-
-        var image = request.Image is not null
-            ? await storage.UploadAsync(request.Image, "feedback", ct)
-            : null;
+        var body = Normalize(request.Message);
+        var image = request.Image is not null ? await storage.UploadAsync(request.Image, "feedback", ct) : null;
 
         var feedback = new Feedback
         {
@@ -29,46 +25,84 @@ public sealed class FeedbackService(AppDbContext db, IFileStorage storage) : IFe
             UserName = string.IsNullOrWhiteSpace(request.UserName) ? "—" : request.UserName.Trim(),
             UserEmail = request.UserEmail ?? string.Empty,
             Role = request.Role ?? string.Empty,
-            Message = message,
-            Image = image,
-            Status = FeedbackStatus.New
+            LastMessageAt = DateTimeOffset.UtcNow
         };
+
+        feedback.Messages.Add(new FeedbackMessage
+        {
+            SenderRole = FeedbackRoles.User,
+            SenderName = feedback.UserName,
+            Body = body,
+            Image = image
+        });
 
         db.Feedbacks.Add(feedback);
         await db.SaveChangesAsync(ct);
 
-        return ToResponse(feedback);
+        return ToResponse(await LoadAsync(feedback.Id, ct));
     }
 
-    public async Task<PagedResponse<FeedbackResponse>> ListAsync(FeedbackListRequest request, CancellationToken ct = default)
+    public async Task<FeedbackThreadResponse> AddMessageAsync(long id, AddFeedbackMessageRequest request, CancellationToken ct = default)
+    {
+        var feedback = await db.Feedbacks.FirstOrDefaultAsync(x => x.Id == id, ct)
+            ?? throw new KeyNotFoundException($"Feedback not found: {id}");
+
+        var body = Normalize(request.Message);
+        var image = request.Image is not null ? await storage.UploadAsync(request.Image, "feedback", ct) : null;
+        var isAdmin = request.SenderRole == FeedbackRoles.Admin;
+
+        // Admin cavab yazanda qarşı tərəfin (şagirdin) mesajları oxunmuş sayılır.
+        await MarkReadCoreAsync(feedback.Id, isAdmin ? FeedbackRoles.Admin : FeedbackRoles.User, ct);
+
+        db.FeedbackMessages.Add(new FeedbackMessage
+        {
+            FeedbackId = feedback.Id,
+            SenderRole = isAdmin ? FeedbackRoles.Admin : FeedbackRoles.User,
+            SenderName = string.IsNullOrWhiteSpace(request.SenderName) ? "—" : request.SenderName.Trim(),
+            Body = body,
+            Image = image
+        });
+
+        feedback.LastMessageAt = DateTimeOffset.UtcNow;
+        await db.SaveChangesAsync(ct);
+
+        return ToResponse(await LoadAsync(feedback.Id, ct));
+    }
+
+    public async Task<PagedResponse<FeedbackThreadResponse>> ListAsync(FeedbackListRequest request, CancellationToken ct = default)
     {
         var page = request.Page < 1 ? 1 : request.Page;
         var perPage = request.PerPage < 1 ? 20 : Math.Min(request.PerPage, 100);
 
         var query = db.Feedbacks.AsNoTracking();
-        if (request.OnlyNew) query = query.Where(x => x.Status == FeedbackStatus.New);
+        if (request.UserId is long userId) query = query.Where(x => x.UserId == userId);
+        if (request.OnlyUnread) query = query.Where(x => x.Messages.Any(m => m.SenderRole == FeedbackRoles.User && !m.IsRead));
 
         var total = await query.CountAsync(ct);
         var items = await query
-            .OrderByDescending(x => x.CreatedAt)
+            .Include(x => x.Messages.OrderBy(m => m.CreatedAt))
+            .OrderByDescending(x => x.LastMessageAt)
             .Skip((page - 1) * perPage)
             .Take(perPage)
             .ToListAsync(ct);
 
         var data = items.Select(ToResponse).ToList();
         var lastPage = (int)Math.Ceiling(total / (double)perPage);
-        return new PagedResponse<FeedbackResponse>(data, page, lastPage, perPage, total);
+        return new PagedResponse<FeedbackThreadResponse>(data, page, lastPage, perPage, total);
     }
 
+    public Task<long?> OwnerIdAsync(long id, CancellationToken ct = default) =>
+        db.Feedbacks.Where(x => x.Id == id).Select(x => x.UserId).FirstOrDefaultAsync(ct);
+
     public Task<int> UnreadCountAsync(CancellationToken ct = default) =>
-        db.Feedbacks.CountAsync(x => x.Status == FeedbackStatus.New, ct);
+        db.Feedbacks.CountAsync(x => x.Messages.Any(m => m.SenderRole == FeedbackRoles.User && !m.IsRead), ct);
 
-    public async Task MarkReadAsync(long id, bool isRead, CancellationToken ct = default)
+    public async Task MarkReadAsync(long id, string readerRole, CancellationToken ct = default)
     {
-        var feedback = await db.Feedbacks.FirstOrDefaultAsync(x => x.Id == id, ct)
-            ?? throw new KeyNotFoundException($"Feedback not found: {id}");
+        if (!await db.Feedbacks.AnyAsync(x => x.Id == id, ct))
+            throw new KeyNotFoundException($"Feedback not found: {id}");
 
-        feedback.Status = isRead ? FeedbackStatus.Read : FeedbackStatus.New;
+        await MarkReadCoreAsync(id, readerRole, ct);
         await db.SaveChangesAsync(ct);
     }
 
@@ -81,15 +115,51 @@ public sealed class FeedbackService(AppDbContext db, IFileStorage storage) : IFe
         await db.SaveChangesAsync(ct);
     }
 
-    private FeedbackResponse ToResponse(Feedback feedback) =>
-        new(
+    /// <summary>Oxuyan tərəf qarşı tərəfin mesajlarını oxunmuş edir.</summary>
+    private async Task MarkReadCoreAsync(long feedbackId, string readerRole, CancellationToken ct)
+    {
+        var otherRole = readerRole == FeedbackRoles.Admin ? FeedbackRoles.User : FeedbackRoles.Admin;
+        var unread = await db.FeedbackMessages
+            .Where(m => m.FeedbackId == feedbackId && m.SenderRole == otherRole && !m.IsRead)
+            .ToListAsync(ct);
+
+        foreach (var m in unread) m.IsRead = true;
+    }
+
+    private Task<Feedback> LoadAsync(long id, CancellationToken ct) =>
+        db.Feedbacks.AsNoTracking()
+            .Include(x => x.Messages.OrderBy(m => m.CreatedAt))
+            .FirstAsync(x => x.Id == id, ct);
+
+    private static string Normalize(string? message)
+    {
+        var body = (message ?? string.Empty).Trim();
+        if (body.Length == 0) throw new ArgumentException("Message is required");
+        return body.Length > 4000 ? body[..4000] : body;
+    }
+
+    private FeedbackThreadResponse ToResponse(Feedback feedback)
+    {
+        var messages = feedback.Messages
+            .OrderBy(m => m.CreatedAt)
+            .Select(m => new FeedbackMessageResponse(
+                m.Id,
+                m.SenderRole,
+                m.SenderName,
+                m.Body,
+                string.IsNullOrWhiteSpace(m.Image) ? null : storage.GetUrl(m.Image),
+                m.IsRead,
+                m.CreatedAt))
+            .ToList();
+
+        return new FeedbackThreadResponse(
             feedback.Id,
             feedback.UserId,
             feedback.UserName,
             feedback.UserEmail,
             feedback.Role,
-            feedback.Message,
-            string.IsNullOrWhiteSpace(feedback.Image) ? null : storage.GetUrl(feedback.Image),
-            feedback.Status,
-            feedback.CreatedAt);
+            feedback.LastMessageAt,
+            messages.Any(m => m.SenderRole == FeedbackRoles.User && !m.IsRead),
+            messages);
+    }
 }

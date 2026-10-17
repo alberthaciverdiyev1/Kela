@@ -1,3 +1,4 @@
+using Kela.Core.Modules.Feedback.Entities;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -18,12 +19,33 @@ public class CreateFeedbackRequest
     public string Role { get; set; } = string.Empty;
 }
 
+public class AddFeedbackMessageRequest
+{
+    public string Message { get; set; } = string.Empty;
+
+    public IFormFile? Image { get; set; }
+
+    /// <summary>Göndərənin rolu — "user" | "admin" (API claim-dən doldurur).</summary>
+    public string SenderRole { get; set; } = FeedbackRoles.User;
+
+    public string SenderName { get; set; } = string.Empty;
+}
+
 public class FeedbackListRequest
 {
     public int Page { get; set; } = 1;
 
     public int PerPage { get; set; } = 20;
 
-    [FromQuery(Name = "only_new")]
-    public bool OnlyNew { get; set; }
+    /// <summary>Yalnız oxunmamış mesajı olan söhbətlər.</summary>
+    [FromQuery(Name = "only_unread")]
+    public bool OnlyUnread { get; set; }
+
+    public long? UserId { get; set; }
+}
+
+public class ReadFeedbackRequest
+{
+    /// <summary>Oxuyan tərəf: "user" | "admin".</summary>
+    public string ReaderRole { get; set; } = FeedbackRoles.Admin;
 }

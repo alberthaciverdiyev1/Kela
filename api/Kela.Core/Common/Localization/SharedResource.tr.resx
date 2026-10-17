@@ -1251,6 +1251,12 @@
   <data name="Common_ChooseOne" xml:space="preserve">
     <value>Seçin</value>
   </data>
+  <data name="Feedback_ReplyPlaceholder" xml:space="preserve">
+    <value>Yanıt yazın…</value>
+  </data>
+  <data name="Feedback_Read" xml:space="preserve">
+    <value>Okundu</value>
+  </data>
   <data name="Js_Edit" xml:space="preserve">
     <value>Düzenle</value>
   </data>

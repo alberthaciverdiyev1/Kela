@@ -1251,6 +1251,12 @@
   <data name="Common_ChooseOne" xml:space="preserve">
     <value>Choose one</value>
   </data>
+  <data name="Feedback_ReplyPlaceholder" xml:space="preserve">
+    <value>Write a reply…</value>
+  </data>
+  <data name="Feedback_Read" xml:space="preserve">
+    <value>Read</value>
+  </data>
   <data name="Js_Edit" xml:space="preserve">
     <value>Edit</value>
   </data>

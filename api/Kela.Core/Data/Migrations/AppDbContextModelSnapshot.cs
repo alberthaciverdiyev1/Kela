@@ -369,28 +369,15 @@ namespace Kela.Core.Data.Migrations
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("deleted_at");
 
-                    b.Property<string>("Image")
-                        .HasMaxLength(500)
-                        .HasColumnType("character varying(500)")
-                        .HasColumnName("image");
-
-                    b.Property<string>("Message")
-                        .IsRequired()
-                        .HasMaxLength(4000)
-                        .HasColumnType("character varying(4000)")
-                        .HasColumnName("message");
+                    b.Property<DateTimeOffset>("LastMessageAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("last_message_at");
 
                     b.Property<string>("Role")
                         .IsRequired()
                         .HasMaxLength(32)
                         .HasColumnType("character varying(32)")
                         .HasColumnName("role");
-
-                    b.Property<string>("Status")
-                        .IsRequired()
-                        .HasMaxLength(16)
-                        .HasColumnType("character varying(16)")
-                        .HasColumnName("status");
 
                     b.Property<long>("TenantId")
                         .HasColumnType("bigint")
@@ -420,9 +407,72 @@ namespace Kela.Core.Data.Migrations
 
                     b.HasIndex("DeletedAt");
 
-                    b.HasIndex("Status");
+                    b.HasIndex("LastMessageAt");
 
                     b.ToTable("feedbacks", (string)null);
+                });
+
+            modelBuilder.Entity("Kela.Core.Modules.Feedback.Entities.FeedbackMessage", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint")
+                        .HasColumnName("id");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
+
+                    b.Property<string>("Body")
+                        .IsRequired()
+                        .HasMaxLength(4000)
+                        .HasColumnType("character varying(4000)")
+                        .HasColumnName("body");
+
+                    b.Property<DateTimeOffset>("CreatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_at");
+
+                    b.Property<DateTimeOffset?>("DeletedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("deleted_at");
+
+                    b.Property<long>("FeedbackId")
+                        .HasColumnType("bigint")
+                        .HasColumnName("feedback_id");
+
+                    b.Property<string>("Image")
+                        .HasMaxLength(500)
+                        .HasColumnType("character varying(500)")
+                        .HasColumnName("image");
+
+                    b.Property<bool>("IsRead")
+                        .HasColumnType("boolean")
+                        .HasColumnName("is_read");
+
+                    b.Property<string>("SenderName")
+                        .IsRequired()
+                        .HasMaxLength(190)
+                        .HasColumnType("character varying(190)")
+                        .HasColumnName("sender_name");
+
+                    b.Property<string>("SenderRole")
+                        .IsRequired()
+                        .HasMaxLength(16)
+                        .HasColumnType("character varying(16)")
+                        .HasColumnName("sender_role");
+
+                    b.Property<long>("TenantId")
+                        .HasColumnType("bigint")
+                        .HasColumnName("tenant_id");
+
+                    b.Property<DateTimeOffset?>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("updated_at");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("FeedbackId", "CreatedAt");
+
+                    b.ToTable("feedback_messages", (string)null);
                 });
 
             modelBuilder.Entity("Kela.Core.Modules.Group.Entities.Group", b =>
@@ -2283,6 +2333,15 @@ namespace Kela.Core.Data.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("Kela.Core.Modules.Feedback.Entities.FeedbackMessage", b =>
+                {
+                    b.HasOne("Kela.Core.Modules.Feedback.Entities.Feedback", null)
+                        .WithMany("Messages")
+                        .HasForeignKey("FeedbackId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("Kela.Core.Modules.Group.Entities.Group", b =>
                 {
                     b.HasOne("Kela.Core.Modules.User.Entities.User", "Teacher")
@@ -2534,6 +2593,11 @@ namespace Kela.Core.Data.Migrations
                         .HasForeignKey("RecipientId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("Kela.Core.Modules.Feedback.Entities.Feedback", b =>
+                {
+                    b.Navigation("Messages");
                 });
 
             modelBuilder.Entity("Kela.Core.Modules.Group.Entities.Group", b =>
