@@ -31,9 +31,23 @@ public sealed class GroupController(
         ViewData["Scripts"] = new[]
         {
             "~/js/pages/group/list.js", "~/js/pages/group/create.js",
-            "~/js/pages/group/update.js", "~/js/pages/group/manage.js"
+            "~/js/pages/group/update.js"
         };
         ViewData["Teachers"] = await users.ListAsync(new UserListRequest { PerPage = 200 }, ct);
+        return View();
+    }
+
+    [HttpGet("{id:long}/manage")]
+    public async Task<IActionResult> Manage(long id, CancellationToken ct)
+    {
+        ViewData["Scripts"] = new[] { "~/js/pages/group/manage-page.js" };
+
+        var group = await service.GetAsync(id, ct);
+        ViewData["Title"] = group.Name;
+        ViewData["Group"] = group;
+        ViewData["Teachers"] = await users.ListAsync(new UserListRequest { PerPage = 200 }, ct);
+        ViewData["SubjectCount"] = (await service.ListSubjectsAsync(id, ct)).Count;
+        ViewData["QuizCount"] = (await service.ListQuizzesAsync(id, ct)).Count;
         return View();
     }
 

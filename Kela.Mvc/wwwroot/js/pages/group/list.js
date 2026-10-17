@@ -26,7 +26,7 @@ async function loadList(page) {
         { html: window.TEACHERS[g.userId] ?? '-', cls: 'text-slate-500' },
         { html: g.studentCount, cls: 'text-slate-500' },
         { html: showDeleted ? AdminUI.restoreButton(g.id) : AdminUI.rowActions([
-            AdminUI.actionButton(L["Common_Manage"], `openManage(${g.id})`),
+            AdminUI.actionLink(L["Common_Manage"], `/group/${g.id}/manage`),
             AdminUI.actionButton(L["Js_Edit"], `openEdit(${g.id})`, { tone: 'primary' }),
             AdminUI.actionButton(L["Common_Delete"], `removeItem(${g.id})`, { tone: 'danger' })
         ]), cls: 'text-right' }
