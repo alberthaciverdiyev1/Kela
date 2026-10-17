@@ -3,6 +3,8 @@
 window.AdminUI = window.AdminUI || {};
 
 (function (UI) {
+    function isVideoUrl(url) { return /\.(mp4|mov|m4v|webm|m3u8|mkv|avi)(\?|$)/i.test(url || ''); }
+
     function setPreview(id, url, video) {
         const img = document.getElementById(id + '_preview');
         const vid = document.getElementById(id + '_preview_video');
@@ -113,7 +115,10 @@ window.AdminUI = window.AdminUI || {};
     }
 
     function closeSelects() {
-        document.querySelectorAll('.admin-select.is-open').forEach(w => w.classList.remove('is-open'));
+        document.querySelectorAll('.admin-select.is-open').forEach(w => {
+            w.classList.remove('is-open');
+            w.querySelector('.admin-select-menu')?.classList.add('hidden');
+        });
         openSelectWrap = null;
     }
 
@@ -122,6 +127,18 @@ window.AdminUI = window.AdminUI || {};
         select.dataset.enhanced = '1';
 
         const multiple = !!select.multiple;
+
+        // Boş seçim üçün disabled placeholder — istifadəçi təsadüfən ilk variantı
+        // seçməsin və heç bir seçim olmadığı görünsün.
+        if (!multiple && !select.querySelector('option[value=""]')) {
+            const placeholder = document.createElement('option');
+            placeholder.value = '';
+            placeholder.textContent = L["Common_ChooseOne"] || '—';
+            placeholder.disabled = true;
+            placeholder.selected = true;
+            select.insertBefore(placeholder, select.firstChild);
+        }
+
         const wrap = document.createElement('div');
         wrap.className = 'admin-select';
         wrap.dataset.for = select.id;
@@ -238,8 +255,10 @@ window.AdminUI = window.AdminUI || {};
         });
 
         select.addEventListener('change', sync);
+
+        // Kənara klik: yalnız sinfi götürmək kifayət etmir — menyu da gizlədilməlidir.
         document.addEventListener('click', (e) => {
-            if (!wrap.contains(e.target)) wrap.classList.remove('is-open');
+            if (wrap.classList.contains('is-open') && !wrap.contains(e.target)) UI.closeSelects();
         });
 
         sync();
@@ -270,5 +289,5 @@ window.AdminUI = window.AdminUI || {};
         menu.style.top = (r.bottom + 6) + 'px';
     }, true);
 
-    Object.assign(UI, { setPreview, filePreview, fileSet, fileRemove, fileReset, initEditors, syncEditors, closeSelects, enhanceSelect, enhanceSelects });
+    Object.assign(UI, { isVideoUrl, setPreview, filePreview, fileSet, fileRemove, fileReset, initEditors, syncEditors, closeSelects, enhanceSelect, enhanceSelects });
 })(window.AdminUI);

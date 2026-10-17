@@ -1248,6 +1248,9 @@
   <data name="Feedback_Error" xml:space="preserve">
     <value>Bildiriş göndərilə bilmədi</value>
   </data>
+  <data name="Common_ChooseOne" xml:space="preserve">
+    <value>Seçin</value>
+  </data>
   <data name="Js_Edit" xml:space="preserve">
     <value>Redaktə</value>
   </data>
