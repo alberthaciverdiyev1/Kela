@@ -17,7 +17,11 @@ public sealed class BannerController(IBannerService service) : ApiControllerBase
     [HttpGet]
     public async Task<ActionResult<ApiResponse<IReadOnlyList<BannerResponse>>>> List(
         [FromQuery] BannerListRequest request, CancellationToken ct)
-        => Success((await service.ListAsync(request, ct)).Data);
+    {
+        // Şagird tətbiqi yalnız aktiv və müddəti bitməmiş bannerləri görür.
+        request.OnlyActive = true;
+        return Success((await service.ListAsync(request, ct)).Data);
+    }
 
     [HttpGet("{id:long}")]
     public async Task<ActionResult<ApiResponse<BannerResponse>>> Show(long id, CancellationToken ct)
