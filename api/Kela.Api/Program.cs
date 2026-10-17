@@ -48,6 +48,8 @@ builder.Services.AddCore(builder.Configuration);
 builder.Services.AddKelaLocalization();
 
 var corsOrigins = builder.Configuration.GetSection("Cors:Origins").Get<string[]>() ?? [];
+builder.Services.AddSignalR();
+
 builder.Services.AddCors(options => options.AddDefaultPolicy(policy =>
 {
     if (corsOrigins.Length > 0)
@@ -88,6 +90,19 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwt.Key)),
             ValidateLifetime = true,
             ClockSkew = TimeSpan.Zero
+        };
+
+        // Brauzer SignalR bağlantısı Authorization header göndərə bilmir — token
+        // ?access_token= ilə gəlir (yalnız hub yolları üçün).
+        options.Events = new JwtBearerEvents
+        {
+            OnMessageReceived = context =>
+            {
+                var token = context.Request.Query["access_token"];
+                if (!string.IsNullOrEmpty(token) && context.HttpContext.Request.Path.StartsWithSegments("/hubs"))
+                    context.Token = token;
+                return Task.CompletedTask;
+            }
         };
     });
 builder.Services.AddAuthorization(options =>
@@ -149,6 +164,7 @@ app.UseCoreStorage();
 app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
+app.MapHub<Kela.Api.Modules.Feedback.Hubs.FeedbackHub>("/hubs/feedback");
 
 app.Run();
 

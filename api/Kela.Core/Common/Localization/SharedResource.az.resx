@@ -1224,6 +1224,30 @@
   <data name="Js_ConfirmBulkDelete" xml:space="preserve">
     <value>{0} element silinəcək.</value>
   </data>
+  <data name="Feedback_Title" xml:space="preserve">
+    <value>Geri bildirişlər</value>
+  </data>
+  <data name="Feedback_Empty" xml:space="preserve">
+    <value>Hələ geri bildiriş yoxdur</value>
+  </data>
+  <data name="Feedback_MarkRead" xml:space="preserve">
+    <value>Oxunmuş kimi işarələ</value>
+  </data>
+  <data name="Feedback_New" xml:space="preserve">
+    <value>Yeni geri bildiriş</value>
+  </data>
+  <data name="Feedback_Placeholder" xml:space="preserve">
+    <value>Problemi və ya təklifi yazın…</value>
+  </data>
+  <data name="Feedback_Send" xml:space="preserve">
+    <value>Göndər</value>
+  </data>
+  <data name="Feedback_Sent" xml:space="preserve">
+    <value>Təşəkkürlər! Bildirişiniz göndərildi</value>
+  </data>
+  <data name="Feedback_Error" xml:space="preserve">
+    <value>Bildiriş göndərilə bilmədi</value>
+  </data>
   <data name="Js_Edit" xml:space="preserve">
     <value>Redaktə</value>
   </data>

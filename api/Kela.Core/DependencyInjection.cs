@@ -77,6 +77,7 @@ public static class DependencyInjection
         services.Configure<R2Options>(configuration.GetSection(R2Options.SectionName));
 
         services.AddScoped<IBannerService, BannerService>();
+        services.AddScoped<Kela.Core.Modules.Feedback.Abstractions.IFeedbackService, Kela.Core.Modules.Feedback.Services.FeedbackService>();
         services.AddScoped<Kela.Core.Modules.Certificate.Abstractions.ICertificateService, Kela.Core.Modules.Certificate.Services.CertificateService>();
         services.AddScoped<ISettingService, SettingService>();
 

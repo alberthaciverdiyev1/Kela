@@ -1224,6 +1224,30 @@
   <data name="Js_ConfirmBulkDelete" xml:space="preserve">
     <value>{0} items will be deleted.</value>
   </data>
+  <data name="Feedback_Title" xml:space="preserve">
+    <value>Feedback</value>
+  </data>
+  <data name="Feedback_Empty" xml:space="preserve">
+    <value>No feedback yet</value>
+  </data>
+  <data name="Feedback_MarkRead" xml:space="preserve">
+    <value>Mark as read</value>
+  </data>
+  <data name="Feedback_New" xml:space="preserve">
+    <value>New feedback</value>
+  </data>
+  <data name="Feedback_Placeholder" xml:space="preserve">
+    <value>Describe the issue or suggestion…</value>
+  </data>
+  <data name="Feedback_Send" xml:space="preserve">
+    <value>Send</value>
+  </data>
+  <data name="Feedback_Sent" xml:space="preserve">
+    <value>Thanks! Your feedback was sent</value>
+  </data>
+  <data name="Feedback_Error" xml:space="preserve">
+    <value>Could not send the feedback</value>
+  </data>
   <data name="Js_Edit" xml:space="preserve">
     <value>Edit</value>
   </data>

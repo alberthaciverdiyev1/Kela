@@ -1,0 +1,37 @@
+@using Kela.App.Shared.Services.Localization
+@inject Localizer L
+@* Geri bildiriş düyməsi — hər səhifədə sağ aşağıda. *@
+<div class="pointer-events-none fixed inset-x-0 bottom-24 z-40 mx-auto flex max-w-[430px] justify-end px-5 md:max-w-none md:px-8">
+    <button type="button" @onclick="OpenAsync" aria-label="@L["Feedback_Title"]"
+            class="pointer-events-auto grid size-12 place-items-center rounded-full bg-brand-671 text-white shadow-[0_8px_24px_rgba(23,77,58,0.28)] active:scale-95 transition">
+        <Icon Name="mail" Class="size-5" />
+    </button>
+</div>
+
+<Modal Open="_open" Title="@L["Feedback_Title"]" OnClose="CloseAsync">
+    <div class="space-y-3">
+        <textarea @bind="_message" rows="5"
+                  class="w-full rounded-2xl border border-brand-090 bg-brand-102 p-3 text-[14px] text-brand-836 outline-none focus:border-brand-671"
+                  placeholder="@L["Feedback_Placeholder"]"></textarea>
+
+        <label class="flex cursor-pointer items-center gap-2 rounded-xl border border-dashed border-brand-090 px-3 py-2 text-[13px] text-sage-478">
+            <Icon Name="file" Class="size-4" />
+            <span class="truncate">@(_file?.Name ?? L["Common_ChooseFile"])</span>
+            <InputFile OnChange="OnFile" class="hidden" accept="image/*" />
+        </label>
+
+        @if (_sent)
+        {
+            <p class="text-[13px] font-semibold text-brand-671">@L["Feedback_Sent"]</p>
+        }
+        @if (_error)
+        {
+            <p class="text-[13px] font-semibold text-red-600">@(_errorMessage ?? L["Feedback_Error"])</p>
+        }
+
+        <button type="button" disabled="@_busy" @onclick="SendAsync"
+                class="w-full rounded-2xl bg-brand-671 py-3 text-[14px] font-bold text-white transition active:scale-[0.99] disabled:opacity-60">
+            @L["Feedback_Send"]
+        </button>
+    </div>
+</Modal>

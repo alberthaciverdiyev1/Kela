@@ -47,6 +47,23 @@ public sealed class ApiClient(HttpClient http, AuthState auth, TokenStore store,
         return SendRequestAsync<T>(HttpMethod.Post, path, form);
     }
 
+    /// <summary>Geri bildiriş: mətn + istəyə bağlı şəkil.</summary>
+    public Task<T> PostFeedbackAsync<T>(string path, string message, Stream? image, string? fileName, string? contentType)
+    {
+        var form = new MultipartFormDataContent();
+        form.Add(new StringContent(message), "message");
+
+        if (image is not null)
+        {
+            var content = new StreamContent(image);
+            content.Headers.ContentType = new MediaTypeHeaderValue(
+                string.IsNullOrWhiteSpace(contentType) ? "application/octet-stream" : contentType);
+            form.Add(content, "image", fileName ?? "image");
+        }
+
+        return SendRequestAsync<T>(HttpMethod.Post, path, form);
+    }
+
     private Task<T> SendAsync<T>(HttpMethod method, string path, object? body)
     {
         HttpContent? content = body is null ? null : JsonContent.Create(body, options: JsonOptions);
