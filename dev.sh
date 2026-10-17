@@ -134,6 +134,9 @@ fi
 # ------------------------------------------------------------------
 if [ "$ENABLE_APP" = "1" ]; then
   echo "==> [APP] Tailwind CSS (App.Shared)"
+  # App.Shared öz node_modules-unu saxlamır — Admin-in CLI-sinə keçid (eyni versiya).
+  [ -e "$ROOT/App/Kela.App.Shared/node_modules/tailwindcss" ] || \
+    ln -sfn "$ROOT/admin/Kela.Admin/node_modules" "$ROOT/App/Kela.App.Shared/node_modules"
   build_css "App/Kela.App.Shared/wwwroot/css/input.css" "$APP_CSS" "app.css"
 
   echo "==> [APP] Tailwind (watch, nəzarətçi)"
@@ -145,7 +148,8 @@ while true; do
 done"
 
   echo "==> [APP] Blazor WASM (Kela.App.Web, watch): $APP_URL"
-  DOTNET_WATCH_SUPPRESS_BROWSER_REFRESH=1 ASPNETCORE_URLS="$APP_URL" start dotnet watch --project App/Kela.App.Web --artifacts-path "$ARTIFACTS/app" run --no-launch-profile
+  DOTNET_WATCH_SUPPRESS_BROWSER_REFRESH=1 # Blazor WASM + dotnet watch artifacts-path ilə işə düşmür — default bin/obj istifadə olunur.
+  ASPNETCORE_URLS="$APP_URL" start dotnet watch --project App/Kela.App.Web run --no-launch-profile
 else
   echo "==> [APP] atlanır (ENABLE_APP=0)"
 fi
