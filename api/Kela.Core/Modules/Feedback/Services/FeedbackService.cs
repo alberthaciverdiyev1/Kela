@@ -30,6 +30,8 @@ public sealed class FeedbackService(AppDbContext db, IFileStorage storage) : IFe
 
         feedback.Messages.Add(new FeedbackMessage
         {
+            // Mesaj söhbətin tenant-ına bağlanır (superadmin-in tokenında tenant olmaya bilər).
+            TenantId = feedback.TenantId,
             SenderRole = FeedbackRoles.User,
             SenderName = feedback.UserName,
             Body = body,
@@ -57,6 +59,8 @@ public sealed class FeedbackService(AppDbContext db, IFileStorage storage) : IFe
         db.FeedbackMessages.Add(new FeedbackMessage
         {
             FeedbackId = feedback.Id,
+            // Superadmin başqa tenant kontekstindedirsə belə, mesaj söhbətin tenant-ına yazılır.
+            TenantId = feedback.TenantId,
             SenderRole = isAdmin ? FeedbackRoles.Admin : FeedbackRoles.User,
             SenderName = string.IsNullOrWhiteSpace(request.SenderName) ? "—" : request.SenderName.Trim(),
             Body = body,

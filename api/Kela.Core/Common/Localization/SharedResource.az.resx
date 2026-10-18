@@ -1251,6 +1251,9 @@
   <data name="Common_ChooseOne" xml:space="preserve">
     <value>Seçin</value>
   </data>
+  <data name="Feedback_PickThread" xml:space="preserve">
+    <value>Söhbət seçin</value>
+  </data>
   <data name="Feedback_ReplyPlaceholder" xml:space="preserve">
     <value>Cavab yazın…</value>
   </data>

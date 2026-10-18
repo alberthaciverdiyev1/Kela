@@ -12,6 +12,13 @@ namespace Kela.Admin.Controllers;
 [Route("[controller]")]
 public sealed class FeedbackController(IFeedbackService service) : Controller
 {
+    [HttpGet]
+    public IActionResult Index()
+    {
+        ViewData["Scripts"] = new[] { "~/js/pages/feedback/page.js" };
+        return View();
+    }
+
     [HttpGet("list")]
     public async Task<IActionResult> List([FromQuery] FeedbackListRequest request, CancellationToken ct)
         => Json(await service.ListAsync(request, ct));

@@ -1251,6 +1251,9 @@
   <data name="Common_ChooseOne" xml:space="preserve">
     <value>Choose one</value>
   </data>
+  <data name="Feedback_PickThread" xml:space="preserve">
+    <value>Pick a conversation</value>
+  </data>
   <data name="Feedback_ReplyPlaceholder" xml:space="preserve">
     <value>Write a reply…</value>
   </data>
