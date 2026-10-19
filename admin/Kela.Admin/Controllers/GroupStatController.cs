@@ -27,5 +27,21 @@ public sealed class GroupStatController(
 
     [HttpGet("data")]
     public async Task<IActionResult> Data([FromQuery] GroupQuizStatRequest request, [FromQuery(Name = "group_id")] long groupId, CancellationToken ct)
-        => Json(await stats.GetAsync(groupId, request, ct));
+        => await CanReadAsync(groupId, ct) ? Json(await stats.GetAsync(groupId, request, ct)) : Forbid();
+
+    /// <summary>Teacher yalnız öz qrupunun statistikasını görə bilər.</summary>
+    private async Task<bool> CanReadAsync(long groupId, CancellationToken ct)
+    {
+        if (User.IsAdmin()) return true;
+
+        try
+        {
+            var group = await groups.GetAsync(groupId, ct: ct);
+            return group.UserId == User.CurrentUserId();
+        }
+        catch (KeyNotFoundException)
+        {
+            return false;
+        }
+    }
 }
