@@ -20,4 +20,7 @@ public class Student : BaseEntity
 
     /// <summary>İlk girişdə şifrəni dəyişmək məcburiyyəti (təsadüfi şifrə ilə yaradılan şagirdlər).</summary>
     public bool MustChangePassword { get; set; }
+
+    /// <summary>Admin tərəfindən generasiya olunmuş şagird ilk girişdə ad-soyadını yazmalıdır.</summary>
+    public bool MustChangeName { get; set; }
 }

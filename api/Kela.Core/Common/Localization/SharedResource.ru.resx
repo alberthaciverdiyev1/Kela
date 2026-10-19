@@ -435,6 +435,9 @@
   <data name="Group_WillGenerate" xml:space="preserve">
     <value>После сохранения группы {0} учеников будут созданы в фоне</value>
   </data>
+  <data name="Group_PickSubjectsFirst" xml:space="preserve">
+    <value>Сначала выберите предметы</value>
+  </data>
   <data name="Group_StepInfo" xml:space="preserve">
     <value>Информация</value>
   </data>

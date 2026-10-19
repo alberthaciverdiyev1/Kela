@@ -19,6 +19,9 @@ public partial class Profile
         try { _attendance = await Api.MyAttendanceAsync(); }
         catch { /* profil qalan hissəsi işləməyə davam etsin */ }
         _attendanceLoading = false;
+
+        // Generasiya olunmuş hesab: ad-soyad dərhal yazılmalıdır.
+        if (Auth.User?.MustChangeName == true) OpenName();
     }
 
     private async Task ChangeLang(ChangeEventArgs e) => await L.SetAsync(e.Value?.ToString() ?? "az");

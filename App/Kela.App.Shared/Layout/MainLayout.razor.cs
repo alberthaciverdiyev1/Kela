@@ -115,8 +115,9 @@ public partial class MainLayout
     /// <summary>İlk girişdə (təsadüfi şifrə) profil səhifəsinə yönləndirir — şifrə dəyişmək üçün.</summary>
     private void EnforcePasswordChange()
     {
-        if (Auth.User?.MustChangePassword == true &&
-            !Nav.Uri.Contains("/profile", StringComparison.OrdinalIgnoreCase))
+        // İlk giriş: şifrə və/və ya generasiya olunmuş ad dəyişdirilməlidir.
+        var mustComplete = Auth.User?.MustChangePassword == true || Auth.User?.MustChangeName == true;
+        if (mustComplete && !Nav.Uri.Contains("/profile", StringComparison.OrdinalIgnoreCase))
         {
             Nav.NavigateTo("/profile");
         }

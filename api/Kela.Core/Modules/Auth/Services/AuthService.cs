@@ -191,7 +191,9 @@ public sealed class AuthService(
     public async Task<StudentResponse> ChangeFullNameAsync(long studentId, ChangeFullNameRequest request, CancellationToken ct = default)
     {
         var student = await GetStudentAsync(studentId, ct);
-        student.FullName = request.FullName;
+        student.FullName = request.FullName.Trim();
+        // Ad yazıldı — məcburi addım tamamlandı.
+        student.MustChangeName = false;
         await db.SaveChangesAsync(ct);
         return ToResponse(student);
     }
@@ -227,5 +229,5 @@ public sealed class AuthService(
     private static string Normalize(string email) => email.Trim().ToLowerInvariant();
 
     private StudentResponse ToResponse(Student student) =>
-        new(student.Id, student.FullName, student.Email, student.Phone, storage.GetUrl(student.Image), student.MustChangePassword);
+        new(student.Id, student.FullName, student.Email, student.Phone, storage.GetUrl(student.Image), student.MustChangePassword, student.MustChangeName);
 }

@@ -13,6 +13,13 @@
     <span class="rounded-lg p-2 text-sage-527"></span>
 </header>
 
+@if (Auth.User?.MustChangeName == true)
+{
+    <div class="mx-5 mt-4 rounded-2xl border border-[#f0d9a8] bg-[#fdf6e3] px-4 py-3 text-[13px] font-semibold text-[#8a6d1a]">
+        @L["Profile_MustChangeName"]
+    </div>
+}
+
 @if (Auth.User?.MustChangePassword == true)
 {
     <div class="mx-5 mt-4 rounded-2xl border border-[#f0d9a8] bg-[#fdf6e3] px-4 py-3 text-[13px] font-semibold text-[#8a6d1a]">

@@ -119,7 +119,9 @@ public sealed class StudentManagementService(AppDbContext db) : Abstractions.ISt
                 Email = email,
                 PasswordHash = BCrypt.Net.BCrypt.HashPassword(password),
                 IsActive = true,
-                MustChangePassword = true
+                MustChangePassword = true,
+                // Ad «Student 1» kimi generasiya olunur — ilk girişdə özü yazmalıdır.
+                MustChangeName = true
             };
             db.Students.Add(student);
             created.Add((student, password));
