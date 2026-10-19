@@ -120,6 +120,11 @@ public partial class Login
             {
                 await Store.SaveAsync(ApiClient.Token!);
                 await Store.SaveTenantAsync(_tenantId.Value);
+                await Store.SaveAccountAsync(new SavedAccount(
+                    _tenantId.Value,
+                    _tenants.FirstOrDefault(t => t.Id == _tenantId)?.Name ?? "",
+                    user.Email,
+                    ApiClient.Token!));
             }
         }
         catch (Exception ex)

@@ -4,6 +4,7 @@
 @inject AppApi Api
 @inject AuthState Auth
 @inject TokenStore Store
+@inject ApiClient ApiClient
 
 <PageTitle>@L["Nav_Profile"]</PageTitle>
 
@@ -175,6 +176,29 @@
             <span class="flex-1"><span class="block text-[13px] font-semibold text-danger-539">@L["Profile_DeleteAccount"]</span><span class="mt-0.5 block text-[10px] text-sage-410">@L["Profile_DeleteUnavailable"]</span></span>
         </div>
     </div>
+
+    @if (_accounts.Count > 0)
+    {
+        <p class="mb-2 mt-6 text-[10px] font-bold uppercase tracking-[0.18em] text-brand-671">@L["Profile_Accounts"]</p>
+        <div class="mb-2 space-y-2">
+            @foreach (var acc in _accounts)
+            {
+                var account = acc;
+                var isCurrent = account.TenantId == ApiClient.TenantId;
+                <button type="button" @onclick="() => SwitchAccountAsync(account)" disabled="@(isCurrent || _accountBusy)"
+                        class="flex w-full items-center gap-3 rounded-2xl border px-4 py-3 text-left @(isCurrent ? "border-brand-467 bg-brand-024" : "border-brand-104 bg-white")">
+                    <span class="grid size-8 shrink-0 place-items-center rounded-lg bg-brand-049 text-brand-639"><Icon Name="sliders" Class="size-4" /></span>
+                    <span class="min-w-0 flex-1">
+                        <span class="block truncate text-[13px] font-semibold">@account.TenantName</span>
+                        <span class="block truncate text-[10px] text-sage-410">@account.Email</span>
+                    </span>
+                    <span class="shrink-0 text-[11px] font-bold @(isCurrent ? "text-brand-671" : "text-sage-410")">
+                        @(isCurrent ? L["Profile_CurrentAccount"] : L["Profile_SwitchAccount"])
+                    </span>
+                </button>
+            }
+        </div>
+    }
 
     <button type="button" @onclick="() => _logoutOpen = true" class="mt-6 w-full rounded-2xl border border-danger-043 bg-danger-043/40 py-3.5 text-sm font-bold text-danger-539">
         @L["Profile_Logout"]

@@ -20,6 +20,8 @@ public partial class Profile
         catch { /* profil qalan hissəsi işləməyə davam etsin */ }
         _attendanceLoading = false;
 
+        try { _accounts = await Store.GetAccountsAsync(); } catch { /* səssiz */ }
+
         // İlk giriş məcburiyyətləri: şifrə və/və ya ad-soyad.
         if (Auth.User?.MustChangeName == true) OpenName();
         if (Auth.User?.MustChangePassword == true) _passwordOpen = true;
@@ -48,6 +50,8 @@ public partial class Profile
     private string? _nameError;
     private string? _passwordError;
     private List<PrivacyPolicyDto> _privacy = new();
+    private List<SavedAccount> _accounts = new();
+    private bool _accountBusy;
 
     private bool HasPhoto => !string.IsNullOrWhiteSpace(Auth.User?.Image)
                               && !Auth.User!.Image!.Contains("noPhoto", StringComparison.OrdinalIgnoreCase);
@@ -147,9 +151,48 @@ public partial class Profile
         _privacyLoading = false;
     }
 
+    private async Task SwitchAccountAsync(SavedAccount account)
+    {
+        if (_accountBusy || account.TenantId == ApiClient.TenantId) return;
+
+        _accountBusy = true;
+        var previousTenant = ApiClient.TenantId;
+        var previousToken = ApiClient.Token;
+
+        try
+        {
+            ApiClient.TenantId = account.TenantId;
+            ApiClient.Token = account.Token;
+
+            var user = await Api.MeAsync();
+            Auth.Set(account.Token, user);
+            await Store.SaveAsync(account.Token);
+            await Store.SaveTenantAsync(account.TenantId);
+            _accounts = await Store.GetAccountsAsync();
+        }
+        catch
+        {
+            // Token vaxtı bitib — hesabı siyahıdan çıxar və əvvəlki sessiyaya qaytar.
+            ApiClient.TenantId = previousTenant;
+            ApiClient.Token = previousToken;
+            await Store.RemoveAccountAsync(account.TenantId);
+            _accounts = await Store.GetAccountsAsync();
+        }
+        finally
+        {
+            _accountBusy = false;
+        }
+    }
+
     private async Task LogoutAsync()
     {
         try { await Api.LogoutAsync(); } catch { }
+
+        if (ApiClient.TenantId is long tenantId)
+        {
+            try { await Store.RemoveAccountAsync(tenantId); } catch { /* səssiz */ }
+        }
+
         try { await Store.RemoveAsync(); } catch { }
         Auth.Clear();
     }
