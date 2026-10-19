@@ -183,6 +183,30 @@
   <data name="Tenant_TermsFallback" xml:space="preserve">
     <value>The terms of use have not been published yet.</value>
   </data>
+  <data name="Group_CopyJoinLink" xml:space="preserve">
+    <value>Copy invite link</value>
+  </data>
+  <data name="Group_JoinRequests" xml:space="preserve">
+    <value>Join requests</value>
+  </data>
+  <data name="Group_JoinApprove" xml:space="preserve">
+    <value>Approve</value>
+  </data>
+  <data name="Group_JoinReject" xml:space="preserve">
+    <value>Reject</value>
+  </data>
+  <data name="Group_JoinPending" xml:space="preserve">
+    <value>Pending</value>
+  </data>
+  <data name="Group_JoinApproved" xml:space="preserve">
+    <value>Approved</value>
+  </data>
+  <data name="Group_JoinRejected" xml:space="preserve">
+    <value>Rejected</value>
+  </data>
+  <data name="Js_LinkCopied" xml:space="preserve">
+    <value>Link copied</value>
+  </data>
   <data name="Validation_EmailRequired" xml:space="preserve">
     <value>Email is required</value>
   </data>

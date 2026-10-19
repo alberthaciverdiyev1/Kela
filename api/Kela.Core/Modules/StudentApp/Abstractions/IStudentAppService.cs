@@ -13,6 +13,12 @@ public interface IStudentAppService
 {
     Task<IReadOnlyList<StudentGroupResponse>> ListGroupsAsync(long studentId, CancellationToken ct = default);
 
+    /// <summary>Dəvət linki ilə qrup məlumatı və şagirdin müraciət vəziyyəti.</summary>
+    Task<GroupJoinInfoResponse> GetGroupJoinInfoAsync(long studentId, string token, CancellationToken ct = default);
+
+    /// <summary>Dəvət linki ilə qrupa qoşulma müraciəti yaradır (teacher təsdiqi gözləyir).</summary>
+    Task<GroupJoinInfoResponse> RequestJoinGroupAsync(long studentId, string token, CancellationToken ct = default);
+
     Task<IReadOnlyList<SubjectResponse>> ListSubjectsAsync(long studentId, long groupId, CancellationToken ct = default);
 
     /// <summary>Şagirdin bütün qrupları üzrə əlçatan fənlər (filter üçün).</summary>

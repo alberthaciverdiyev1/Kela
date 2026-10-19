@@ -183,6 +183,30 @@
   <data name="Tenant_TermsFallback" xml:space="preserve">
     <value>Kullanım koşulları henüz yayımlanmadı.</value>
   </data>
+  <data name="Group_CopyJoinLink" xml:space="preserve">
+    <value>Davet bağlantısını kopyala</value>
+  </data>
+  <data name="Group_JoinRequests" xml:space="preserve">
+    <value>Katılma istekleri</value>
+  </data>
+  <data name="Group_JoinApprove" xml:space="preserve">
+    <value>Onayla</value>
+  </data>
+  <data name="Group_JoinReject" xml:space="preserve">
+    <value>Reddet</value>
+  </data>
+  <data name="Group_JoinPending" xml:space="preserve">
+    <value>Bekliyor</value>
+  </data>
+  <data name="Group_JoinApproved" xml:space="preserve">
+    <value>Onaylandı</value>
+  </data>
+  <data name="Group_JoinRejected" xml:space="preserve">
+    <value>Reddedildi</value>
+  </data>
+  <data name="Js_LinkCopied" xml:space="preserve">
+    <value>Bağlantı kopyalandı</value>
+  </data>
   <data name="Validation_EmailRequired" xml:space="preserve">
     <value>E-posta gereklidir</value>
   </data>

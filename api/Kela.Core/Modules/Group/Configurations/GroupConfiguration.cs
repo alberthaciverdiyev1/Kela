@@ -19,6 +19,7 @@ public sealed class GroupConfiguration : IEntityTypeConfiguration<Group>
         builder.Property(x => x.Description).HasColumnName("description").HasMaxLength(255);
         builder.Property(x => x.Image).HasColumnName("image").HasMaxLength(500);
         builder.Property(x => x.UserId).HasColumnName("user_id");
+        builder.Property(x => x.JoinToken).HasColumnName("join_token").HasMaxLength(64);
 
         builder.HasOne(x => x.Teacher).WithMany().HasForeignKey(x => x.UserId).OnDelete(DeleteBehavior.SetNull);
 
@@ -27,5 +28,6 @@ public sealed class GroupConfiguration : IEntityTypeConfiguration<Group>
         builder.Property(x => x.DeletedAt).HasColumnName("deleted_at");
         builder.HasIndex(x => x.DeletedAt);
         builder.HasIndex(x => x.UserId);
+        builder.HasIndex(x => x.JoinToken).IsUnique();
     }
 }

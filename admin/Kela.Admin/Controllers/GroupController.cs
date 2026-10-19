@@ -25,7 +25,8 @@ public sealed class GroupController(
     IStudentManagementService students,
     ISubjectService subjects,
     IQuizService quizzes,
-    IValidator<GroupUpsertRequest> validator) : Controller
+    IValidator<GroupUpsertRequest> validator,
+    IConfiguration config) : Controller
 {
     [HttpGet]
     public async Task<IActionResult> Index(CancellationToken ct)
@@ -36,6 +37,7 @@ public sealed class GroupController(
             "~/js/pages/group/update.js"
         };
         ViewData["Teachers"] = await users.ListAsync(new UserListRequest { PerPage = 200 }, ct);
+        ViewData["AppBaseUrl"] = config["App:BaseUrl"] ?? "";
         return View();
     }
 
@@ -192,6 +194,28 @@ public sealed class GroupController(
         // Bərpa yalnız adminin əməliyyatıdır — silinmişləri yalnız o görür.
         if (request.Action == BulkActions.Restore && !User.IsAdmin()) return Forbid();
         await service.BulkAsync(request, OwnerScope, ct);
+        return Json(new { ok = true });
+    }
+
+    // --- Linklə qoşulma müraciətləri ---
+
+    [HttpGet("{id:long}/join-requests")]
+    public async Task<IActionResult> JoinRequests(long id, CancellationToken ct)
+        => Json(await service.ListJoinRequestsAsync(id, OwnerScope, ct));
+
+    [HttpPost("{id:long}/join-requests/{requestId:long}/approve")]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> ApproveJoin(long id, long requestId, CancellationToken ct)
+    {
+        await service.DecideJoinRequestAsync(id, requestId, true, OwnerScope, ct);
+        return Json(new { ok = true });
+    }
+
+    [HttpPost("{id:long}/join-requests/{requestId:long}/reject")]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> RejectJoin(long id, long requestId, CancellationToken ct)
+    {
+        await service.DecideJoinRequestAsync(id, requestId, false, OwnerScope, ct);
         return Json(new { ok = true });
     }
 

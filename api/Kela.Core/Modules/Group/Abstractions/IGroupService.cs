@@ -41,4 +41,10 @@ public interface IGroupService
     Task BulkAsync(BulkRequest request, long? ownerId = null, CancellationToken ct = default);
 
     Task<IReadOnlyList<AssignmentLogResponse>> ListSubjectLogsAsync(long groupId, long? ownerId = null, CancellationToken ct = default);
+
+    /// <summary>Linklə qoşulma müraciətləri (teacher yalnız öz qrupu).</summary>
+    Task<IReadOnlyList<GroupJoinRequestResponse>> ListJoinRequestsAsync(long groupId, long? ownerId = null, CancellationToken ct = default);
+
+    /// <summary>Müraciəti təsdiqlə (üzvlük yaranır) və ya rədd et.</summary>
+    Task DecideJoinRequestAsync(long groupId, long requestId, bool approve, long? ownerId = null, CancellationToken ct = default);
 }

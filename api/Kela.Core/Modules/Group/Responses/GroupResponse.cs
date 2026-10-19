@@ -6,7 +6,17 @@ public record GroupResponse(
     string? Description,
     string? Image,
     long? UserId,
-    int StudentCount);
+    int StudentCount,
+    string? JoinToken = null);
+
+public record GroupJoinRequestResponse(
+    long Id,
+    long StudentId,
+    string FullName,
+    string Email,
+    string Status,
+    DateTimeOffset CreatedAt,
+    DateTimeOffset? DecidedAt);
 
 public record GroupMemberResponse(
     long StudentId,

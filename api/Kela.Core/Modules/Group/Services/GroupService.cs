@@ -90,15 +90,16 @@ public sealed class GroupService(AppDbContext db, IFileStorage storage, ITenantF
             Name = request.Name,
             Description = request.Description,
             Image = image,
-            UserId = request.UserId
+            UserId = request.UserId,
+            JoinToken = Guid.NewGuid().ToString("N")
         };
 
         db.Groups.Add(group);
         await db.SaveChangesAsync(ct);
 
-        // Şagird generasiyası baha başa gəlir (BCrypt) — sorğunu gözlətməmək üçün
-        // arxa plana atılır və nəticə birbaşa bu qrupa əlavə olunur.
-        if (request.GenerateCount > 0)
+        // Şagird generasiyası müvəqqəti söndürülüb — kod silinmir.
+        // Şagirdlər artıq dəvət linki ilə qrupа qoşulur.
+        if (false && request.GenerateCount > 0)
         {
             var tenantId = group.TenantId;
             var groupId = group.Id;
@@ -341,6 +342,60 @@ public sealed class GroupService(AppDbContext db, IFileStorage storage, ITenantF
         await db.SaveChangesAsync(ct);
     }
 
+    public async Task<IReadOnlyList<GroupJoinRequestResponse>> ListJoinRequestsAsync(
+        long groupId, long? ownerId = null, CancellationToken ct = default)
+    {
+        await EnsureGroupOwnedAsync(groupId, ownerId, ct);
+
+        return await db.GroupJoinRequests.AsNoTracking()
+            .Where(x => x.GroupId == groupId)
+            .OrderByDescending(x => x.CreatedAt)
+            .Select(x => new GroupJoinRequestResponse(
+                x.Id,
+                x.StudentId,
+                x.Student!.FullName,
+                x.Student!.Email,
+                x.Status,
+                x.CreatedAt,
+                x.DecidedAt))
+            .ToListAsync(ct);
+    }
+
+    public async Task DecideJoinRequestAsync(
+        long groupId, long requestId, bool approve, long? ownerId = null, CancellationToken ct = default)
+    {
+        await EnsureGroupOwnedAsync(groupId, ownerId, ct);
+
+        var request = await db.GroupJoinRequests
+            .FirstOrDefaultAsync(x => x.Id == requestId && x.GroupId == groupId, ct)
+            ?? throw new KeyNotFoundException($"Join request not found: {requestId}");
+
+        if (request.Status != "pending")
+        {
+            throw new ArgumentException("This join request has already been decided");
+        }
+
+        if (approve)
+        {
+            var exists = await db.StudentGroups
+                .IgnoreQueryFilters(new[] { "SoftDelete" })
+                .FirstOrDefaultAsync(x => x.GroupId == groupId && x.StudentId == request.StudentId, ct);
+
+            if (exists is null)
+            {
+                db.StudentGroups.Add(new StudentGroup { GroupId = groupId, StudentId = request.StudentId });
+            }
+            else
+            {
+                exists.DeletedAt = null;
+            }
+        }
+
+        request.Status = approve ? "approved" : "rejected";
+        request.DecidedAt = DateTimeOffset.UtcNow;
+        await db.SaveChangesAsync(ct);
+    }
+
     private async Task EnsureGroupAccessibleAsync(long groupId, long? ownerId, CancellationToken ct)
     {
         if (!ownerId.HasValue)
@@ -418,7 +473,8 @@ public sealed class GroupService(AppDbContext db, IFileStorage storage, ITenantF
             group.Description,
             storage.GetUrl(group.Image),
             group.UserId,
-            group.Memberships.Count);
+            group.Memberships.Count,
+            group.JoinToken);
 
     public async Task BulkAsync(BulkRequest request, long? ownerId = null, CancellationToken ct = default)
     {

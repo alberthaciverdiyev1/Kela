@@ -510,6 +510,12 @@ namespace Kela.Core.Data.Migrations
                         .HasColumnType("character varying(500)")
                         .HasColumnName("image");
 
+                    b.Property<string>("JoinToken")
+                        .IsRequired()
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)")
+                        .HasColumnName("join_token");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(190)
@@ -532,9 +538,67 @@ namespace Kela.Core.Data.Migrations
 
                     b.HasIndex("DeletedAt");
 
+                    b.HasIndex("JoinToken")
+                        .IsUnique();
+
                     b.HasIndex("UserId");
 
                     b.ToTable("groups", (string)null);
+                });
+
+            modelBuilder.Entity("Kela.Core.Modules.Group.Entities.GroupJoinRequest", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint")
+                        .HasColumnName("id");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
+
+                    b.Property<DateTimeOffset>("CreatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_at");
+
+                    b.Property<DateTimeOffset?>("DecidedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("decided_at");
+
+                    b.Property<DateTimeOffset?>("DeletedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("deleted_at");
+
+                    b.Property<long>("GroupId")
+                        .HasColumnType("bigint")
+                        .HasColumnName("group_id");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("character varying(20)")
+                        .HasColumnName("status");
+
+                    b.Property<long>("StudentId")
+                        .HasColumnType("bigint")
+                        .HasColumnName("student_id");
+
+                    b.Property<long>("TenantId")
+                        .HasColumnType("bigint")
+                        .HasColumnName("tenant_id");
+
+                    b.Property<DateTimeOffset?>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("updated_at");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("DeletedAt");
+
+                    b.HasIndex("StudentId");
+
+                    b.HasIndex("GroupId", "StudentId")
+                        .IsUnique();
+
+                    b.ToTable("group_join_requests", (string)null);
                 });
 
             modelBuilder.Entity("Kela.Core.Modules.Group.Entities.GroupQuiz", b =>
@@ -2411,6 +2475,25 @@ namespace Kela.Core.Data.Migrations
                         .OnDelete(DeleteBehavior.SetNull);
 
                     b.Navigation("Teacher");
+                });
+
+            modelBuilder.Entity("Kela.Core.Modules.Group.Entities.GroupJoinRequest", b =>
+                {
+                    b.HasOne("Kela.Core.Modules.Group.Entities.Group", "Group")
+                        .WithMany()
+                        .HasForeignKey("GroupId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Kela.Core.Modules.Auth.Entities.Student", "Student")
+                        .WithMany()
+                        .HasForeignKey("StudentId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Group");
+
+                    b.Navigation("Student");
                 });
 
             modelBuilder.Entity("Kela.Core.Modules.Group.Entities.GroupQuiz", b =>

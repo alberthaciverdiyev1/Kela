@@ -67,7 +67,63 @@
             : '<div class="text-sm text-slate-400">' + L["Js_Empty"] + '</div>';
     }
 
-    document.addEventListener('tab:change', (e) => { if (e.detail.tab === 'logs') loadLogs(); });
+    window.copyGroupLink = () => {
+        const token = document.getElementById('groupJoinToken')?.dataset.token;
+        if (!token) return;
+        const base = (window.GROUP_APP_BASE_URL || location.origin).replace(/\/$/, '');
+        AdminUI.copyText(base + '/join/' + token).then(ok => { if (ok) AdminUI.notify(L["Js_LinkCopied"]); });
+    };
+
+    function esc(v) {
+        return String(v ?? '').replace(/[&<>"']/g, c => ({
+            '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+        }[c]));
+    }
+
+    async function loadJoins() {
+        const box = document.getElementById('joinsList');
+        if (!box) return;
+
+        const items = await AdminUI.get(`/group/${groupId}/join-requests`);
+        const badge = (s) => s === 'pending'
+            ? AdminUI.badge(L["Group_JoinPending"], 'warning')
+            : s === 'approved'
+                ? AdminUI.badge(L["Group_JoinApproved"], 'success')
+                : AdminUI.badge(L["Group_JoinRejected"], 'danger');
+
+        box.innerHTML = items.length
+            ? items.map(j => `<div class="flex items-center justify-between gap-3 rounded-xl bg-surface-secondary px-4 py-2.5">
+                <div class="min-w-0">
+                    <p class="truncate text-sm font-semibold text-slate-700">${esc(j.fullName)}</p>
+                    <p class="truncate text-xs text-slate-400">${esc(j.email)}</p>
+                </div>
+                <div class="flex shrink-0 items-center gap-2">
+                    ${badge(j.status)}
+                    ${j.status === 'pending'
+                        ? `<button type="button" class="admin-row-action" onclick="decideJoin(${j.id}, true)">${L["Group_JoinApprove"]}</button>
+                           <button type="button" class="admin-row-action is-danger" onclick="decideJoin(${j.id}, false)">${L["Group_JoinReject"]}</button>`
+                        : ''}
+                </div>
+            </div>`).join('')
+            : '<div class="text-sm text-slate-400">' + L["Js_Empty"] + '</div>';
+    }
+
+    window.decideJoin = async (requestId, approve) => {
+        const action = approve ? 'approve' : 'reject';
+        const res = await AdminUI.postJson(`/group/${groupId}/join-requests/${requestId}/${action}`, {});
+        if (res.ok) {
+            AdminUI.notify(approve ? L["Group_JoinApproved"] : L["Group_JoinRejected"]);
+            loadJoins();
+            if (approve) refresh();
+        } else {
+            AdminUI.error(AdminUI.errText(res));
+        }
+    };
+
+    document.addEventListener('tab:change', (e) => {
+        if (e.detail.tab === 'logs') loadLogs();
+        if (e.detail.tab === 'joins') loadJoins();
+    });
 
     window.toggleGroupEdit = () => {
         document.getElementById('groupEdit').classList.toggle('hidden');

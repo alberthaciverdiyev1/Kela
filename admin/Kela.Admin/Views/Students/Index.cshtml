@@ -14,9 +14,13 @@
             <button type=""button"" id=""trashBtn"" class=""admin-button-secondary"" onclick=""toggleTrash()"">{L["Common_DeletedItems"]}</button>
             <a href=""/students/export"" class=""admin-button-secondary"">⬇ Excel</a>");
     }
+    @{
+        // Şagird generasiyası müvəqqəti söndürülüb — kod silinmir.
+        var studentGenerationEnabled = false;
+    }
     <partial name="Ui/_PageHeader" model="@(new PageHeaderModel {
-        CreateText = L["Students_GenerateTitle"],
-        CreateOnClick = "openGenerate()",
+        CreateText = studentGenerationEnabled ? L["Students_GenerateTitle"] : null,
+        CreateOnClick = studentGenerationEnabled ? "openGenerate()" : null,
         Extra = studentsHeaderExtra })" />
 
     <div class="admin-card">

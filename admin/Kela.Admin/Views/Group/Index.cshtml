@@ -2,6 +2,7 @@
     ViewData["Title"] = L["Nav_Groups"];
     var teachers = (PagedResponse<UserResponse>)ViewData["Teachers"]!;
 }
+<script>window.GROUP_APP_BASE_URL = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(ViewData["AppBaseUrl"] ?? ""));</script>
 <script>window.TEACHERS = { @Html.Raw(string.Join(",", teachers.Data.Select(u => $"{u.Id}:\"{System.Text.Json.JsonEncodedText.Encode(($"{u.Name} {u.Surname}".Trim()))}\""))) }; </script>
 
 <section class="admin-page">

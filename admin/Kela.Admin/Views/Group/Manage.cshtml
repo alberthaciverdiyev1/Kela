@@ -10,6 +10,7 @@
     @{
         var headerExtra = new Microsoft.AspNetCore.Html.HtmlString($@"
             <a href=""/group-stat?group_id={group.Id}"" class=""admin-button-secondary"">{L["Nav_GroupStats"]}</a>
+            <button type=""button"" class=""admin-button-secondary"" onclick=""copyGroupLink()"">{L["Group_CopyJoinLink"]}</button>
             <button type=""button"" class=""admin-button-secondary"" onclick=""toggleGroupEdit()"">{L["Js_Edit"]}</button>
             <button type=""button"" class=""admin-button-danger"" onclick=""deleteGroup()"">{L["Common_Delete"]}</button>");
     }
@@ -45,6 +46,8 @@
         </div>
     </div>
 
+    <div id="groupJoinToken" class="hidden" data-token="@group.JoinToken"></div>
+
     @* Qrupun özünü redaktə etmək (modalda olmayan imkan). *@
     <div id="groupEdit" class="admin-card mt-4 hidden p-5">
         <h3 class="mb-4 text-base font-bold text-slate-900">@L["Js_Edit"]</h3>
@@ -70,7 +73,7 @@
     <div class="admin-card mt-4">
         <div class="border-b border-border p-4">
             <div class="admin-tabs" id="manageTabs">
-                @foreach (var (tab, label) in new[] { ("students", L["Nav_Students"].Value), ("subjects", L["Nav_Subjects"].Value), ("quizzes", L["Nav_Exams"].Value), ("logs", L["Group_SubjectLogs"].Value) })
+                @foreach (var (tab, label) in new[] { ("students", L["Nav_Students"].Value), ("joins", L["Group_JoinRequests"].Value), ("subjects", L["Nav_Subjects"].Value), ("quizzes", L["Nav_Exams"].Value), ("logs", L["Group_SubjectLogs"].Value) })
                 {
                     <button type="button" data-tab="@tab" class="admin-tab@(tab == "students" ? " is-active" : "")">@label</button>
                 }
@@ -82,8 +85,13 @@
                 <div class="flex flex-wrap items-end gap-3">
                     <div class="min-w-56 flex-1"><partial name="Ui/_Select" model="@(new SelectModel { Name = "student_pick", Id = "studentPick", Label = L["Nav_Students"], Options = new List<SelectOption>() })" /></div>
                     <partial name="Ui/_Button" model="@(new ButtonModel { Text = L["Common_Add"], OnClick = "assignMember('students')" })" />
+                    @if (false)
+                    {
                     <partial name="Ui/_Button" model="@(new ButtonModel { Text = L["Common_Generate"], Variant = "secondary", OnClick = "toggleGroupGen()" })" />
+                    }
                 </div>
+                @if (false)
+                {
                 <div id="groupGenPanel" class="hidden rounded-xl border border-border p-4">
                     <div class="grid gap-3 sm:grid-cols-2">
                         <partial name="Ui/_Input" model="@(new InputModel { Name = "gg_count", Id = "gg_count", Label = L["Students_GenerateCount"], Type = "number", Value = "10" })" />
@@ -96,7 +104,12 @@
                         <partial name="Ui/_Button" model="@(new ButtonModel { Text = L["Common_Generate"], OnClick = "generateIntoGroup()" })" />
                     </div>
                 </div>
+                }
                 <div id="studentsList" class="space-y-2"></div>
+            </div>
+
+            <div id="tab-joins" data-tab-panel="joins" class="hidden space-y-2">
+                <div id="joinsList" class="space-y-2"></div>
             </div>
 
             <div id="tab-subjects" data-tab-panel="subjects" class="hidden space-y-4">

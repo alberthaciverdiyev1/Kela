@@ -27,6 +27,7 @@ async function loadList(page) {
         { html: g.studentCount, cls: 'text-slate-500' },
         { html: showDeleted ? AdminUI.restoreButton(g.id) : AdminUI.rowActions([
             AdminUI.actionLink(L["Common_Manage"], `/group/${g.id}/manage`),
+            AdminUI.actionButton(L["Group_CopyJoinLink"], `copyJoinLink('${g.joinToken}')`, { tone: 'neutral' }),
             AdminUI.actionButton(L["Js_Edit"], `openEdit(${g.id})`, { tone: 'primary' }),
             AdminUI.actionButton(L["Common_Delete"], `removeItem(${g.id})`, { tone: 'danger' })
         ]), cls: 'text-right' }
@@ -34,6 +35,16 @@ async function loadList(page) {
 
     AdminUI.pagination('pagination', currentPage, lastPage, loadList);
     AdminUI.loader(false);
+}
+
+function copyJoinLink(token) {
+    if (!token) return;
+    const base = (window.GROUP_APP_BASE_URL || location.origin).replace(/\/$/, '');
+    const url = base + '/join/' + token;
+
+    AdminUI.copyText(url).then(ok => {
+        if (ok) AdminUI.notify(L["Js_LinkCopied"]);
+    });
 }
 
 async function removeItem(id) {

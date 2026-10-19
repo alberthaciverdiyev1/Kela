@@ -16,6 +16,9 @@ public class Group : BaseEntity
 
     public User? Teacher { get; set; }
 
+    /// <summary>Dəvət linki üçün unikal token.</summary>
+    public string JoinToken { get; set; } = string.Empty;
+
     public ICollection<StudentGroup> Memberships { get; set; } = new List<StudentGroup>();
 
     public ICollection<GroupSubject> SubjectLinks { get; set; } = new List<GroupSubject>();

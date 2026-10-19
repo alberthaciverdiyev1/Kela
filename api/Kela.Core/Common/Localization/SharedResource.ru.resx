@@ -183,6 +183,30 @@
   <data name="Tenant_TermsFallback" xml:space="preserve">
     <value>Условия использования ещё не опубликованы.</value>
   </data>
+  <data name="Group_CopyJoinLink" xml:space="preserve">
+    <value>Скопировать ссылку-приглашение</value>
+  </data>
+  <data name="Group_JoinRequests" xml:space="preserve">
+    <value>Запросы на вступление</value>
+  </data>
+  <data name="Group_JoinApprove" xml:space="preserve">
+    <value>Одобрить</value>
+  </data>
+  <data name="Group_JoinReject" xml:space="preserve">
+    <value>Отклонить</value>
+  </data>
+  <data name="Group_JoinPending" xml:space="preserve">
+    <value>Ожидает</value>
+  </data>
+  <data name="Group_JoinApproved" xml:space="preserve">
+    <value>Одобрено</value>
+  </data>
+  <data name="Group_JoinRejected" xml:space="preserve">
+    <value>Отклонено</value>
+  </data>
+  <data name="Js_LinkCopied" xml:space="preserve">
+    <value>Ссылка скопирована</value>
+  </data>
   <data name="Validation_EmailRequired" xml:space="preserve">
     <value>Эл. почта обязательна</value>
   </data>

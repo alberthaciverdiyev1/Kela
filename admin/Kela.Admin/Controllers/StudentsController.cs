@@ -105,7 +105,15 @@ public sealed class StudentsController(
     [HttpPost("generate")]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Generate([FromBody] GenerateStudentsRequest request, CancellationToken ct)
-        => Json(await service.GenerateAsync(request, ct));
+    {
+        // Şagird generasiyası müvəqqəti söndürülüb — kod silinmir.
+        if (false)
+        {
+            return Json(await service.GenerateAsync(request, ct));
+        }
+
+        return BadRequest(new { error = "Student generation is disabled" });
+    }
 
     [HttpGet("export")]
     public async Task<IActionResult> Export([FromQuery] StudentListRequest request, CancellationToken ct)

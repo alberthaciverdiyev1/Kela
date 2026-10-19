@@ -95,6 +95,24 @@ window.AdminUI = window.AdminUI || {};
         return { ok: res.ok, status: res.status, data: body };
     }
 
+    async function copyText(text) {
+        try {
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+                await navigator.clipboard.writeText(text);
+                return true;
+            }
+            const ta = document.createElement('textarea');
+            ta.value = text;
+            document.body.appendChild(ta);
+            ta.select();
+            document.execCommand('copy');
+            ta.remove();
+            return true;
+        } catch (e) {
+            return false;
+        }
+    }
+
     async function postJson(url, obj) {
         const res = await fetch(url, {
             method: 'POST',
@@ -183,5 +201,5 @@ window.AdminUI = window.AdminUI || {};
         _filterTimer = setTimeout(filterReload, 350);
     });
 
-    Object.assign(UI, { token, SWAL_BASE, swal, lockSubmitButton, releaseSubmitButton, notify, error, confirmDelete, get, post, postForm, putForm, postJson, putJson, del, errText, loader, reloadAfter, downloadCsv });
+    Object.assign(UI, { token, copyText, SWAL_BASE, swal, lockSubmitButton, releaseSubmitButton, notify, error, confirmDelete, get, post, postForm, putForm, postJson, putJson, del, errText, loader, reloadAfter, downloadCsv });
 })(window.AdminUI);

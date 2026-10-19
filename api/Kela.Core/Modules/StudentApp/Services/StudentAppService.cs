@@ -13,6 +13,7 @@ using Microsoft.EntityFrameworkCore;
 namespace Kela.Core.Modules.StudentApp.Services;
 
 using LessonContent = Kela.Core.Modules.LessonContent.Entities.LessonContent;
+using GroupJoinRequest = Kela.Core.Modules.Group.Entities.GroupJoinRequest;
 
 public sealed class StudentAppService(
     AppDbContext db,
@@ -73,6 +74,85 @@ public sealed class StudentAppService(
                 done,
                 Percent(done, contentIdsOfGroup.Count));
         }).ToList();
+    }
+
+    public async Task<GroupJoinInfoResponse> GetGroupJoinInfoAsync(
+        long studentId, string token, CancellationToken ct = default)
+    {
+        var group = await db.Groups.AsNoTracking().FirstOrDefaultAsync(x => x.JoinToken == token, ct)
+            ?? throw new KeyNotFoundException("Group not found");
+
+        return await BuildJoinInfoAsync(studentId, group, ct);
+    }
+
+    public async Task<GroupJoinInfoResponse> RequestJoinGroupAsync(
+        long studentId, string token, CancellationToken ct = default)
+    {
+        var group = await db.Groups.FirstOrDefaultAsync(x => x.JoinToken == token, ct)
+            ?? throw new KeyNotFoundException("Group not found");
+
+        var isMember = await db.StudentGroups
+            .AnyAsync(x => x.GroupId == group.Id && x.StudentId == studentId, ct);
+
+        if (!isMember)
+        {
+            var request = await db.GroupJoinRequests.IgnoreQueryFilters(new[] { "SoftDelete" })
+                .FirstOrDefaultAsync(x => x.GroupId == group.Id && x.StudentId == studentId, ct);
+
+            if (request is null)
+            {
+                db.GroupJoinRequests.Add(new GroupJoinRequest
+                {
+                    GroupId = group.Id,
+                    StudentId = studentId,
+                    Status = "pending"
+                });
+            }
+            else if (request.Status == "rejected")
+            {
+                // Yenidən müraciət: rədd edilmiş sorğu yenidən gözləməyə keçir.
+                request.Status = "pending";
+                request.DecidedAt = null;
+                request.DeletedAt = null;
+            }
+
+            await db.SaveChangesAsync(ct);
+        }
+
+        return await BuildJoinInfoAsync(studentId, group, ct);
+    }
+
+    private async Task<GroupJoinInfoResponse> BuildJoinInfoAsync(
+        long studentId, Kela.Core.Modules.Group.Entities.Group group, CancellationToken ct)
+    {
+        var isMember = await db.StudentGroups
+            .AnyAsync(x => x.GroupId == group.Id && x.StudentId == studentId, ct);
+
+        var request = await db.GroupJoinRequests.AsNoTracking()
+            .Where(x => x.GroupId == group.Id && x.StudentId == studentId)
+            .OrderByDescending(x => x.CreatedAt)
+            .FirstOrDefaultAsync(ct);
+
+        var status = isMember ? "member" : request?.Status ?? "none";
+
+        string? teacherName = null;
+        if (group.UserId is long teacherId)
+        {
+            var teacher = await db.Users.AsNoTracking()
+                .Where(x => x.Id == teacherId)
+                .Select(x => new { x.Name, x.Surname })
+                .FirstOrDefaultAsync(ct);
+
+            teacherName = teacher is null ? null : $"{teacher.Name} {teacher.Surname}".Trim();
+        }
+
+        return new GroupJoinInfoResponse(
+            group.Id,
+            group.Name,
+            group.Description,
+            string.IsNullOrWhiteSpace(group.Image) ? null : storage.GetUrl(group.Image),
+            teacherName,
+            status);
     }
 
     public async Task<IReadOnlyList<SubjectResponse>> ListSubjectsAsync(

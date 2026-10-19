@@ -30,6 +30,14 @@ public sealed class StudentController(IStudentAppService service, INotificationS
     public async Task<ActionResult<ApiResponse<IReadOnlyList<StudentGroupResponse>>>> Groups(CancellationToken ct)
         => Success(await service.ListGroupsAsync(StudentId, ct));
 
+    [HttpGet("groups/join/{token}")]
+    public async Task<ActionResult<ApiResponse<GroupJoinInfoResponse>>> JoinInfo(string token, CancellationToken ct)
+        => Success(await service.GetGroupJoinInfoAsync(StudentId, token, ct));
+
+    [HttpPost("groups/join/{token}")]
+    public async Task<ActionResult<ApiResponse<GroupJoinInfoResponse>>> Join(string token, CancellationToken ct)
+        => Success(await service.RequestJoinGroupAsync(StudentId, token, ct));
+
     [HttpGet("groups/{groupId:long}/subjects")]
     public async Task<ActionResult<ApiResponse<IReadOnlyList<SubjectResponse>>>> Subjects(long groupId, CancellationToken ct)
         => Success(await service.ListSubjectsAsync(StudentId, groupId, ct));
