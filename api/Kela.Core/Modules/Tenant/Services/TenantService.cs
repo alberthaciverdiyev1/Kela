@@ -149,7 +149,7 @@ public sealed class TenantService(
         {
             TenantId = tenant.Id,
             Name = adminName,
-            Surname = request.AdminSurname.Trim(),
+            Surname = request.AdminSurname?.Trim(),
             Email = email,
             PhoneNumber = string.IsNullOrWhiteSpace(request.PhoneNumber) ? null : request.PhoneNumber.Trim(),
             PasswordHash = BCrypt.Net.BCrypt.HashPassword(request.Password),
