@@ -37,7 +37,7 @@ public sealed class GroupController(
             "~/js/pages/group/update.js"
         };
         ViewData["Teachers"] = await users.ListAsync(new UserListRequest { PerPage = 200 }, ct);
-        ViewData["AppBaseUrl"] = config["App:BaseUrl"] ?? "";
+        ViewData["AppBaseUrl"] = AppBaseUrl;
         return View();
     }
 
@@ -62,6 +62,21 @@ public sealed class GroupController(
     }
 
     private long? OwnerScope => User.IsAdmin() ? null : User.CurrentUserId();
+
+    /// <summary>Dəvət linkinin əsası: konfiqurasiya, yoxdursa ilk CORS mənbəyi.</summary>
+    private string AppBaseUrl
+    {
+        get
+        {
+            var configured = config["App:BaseUrl"];
+            if (!string.IsNullOrWhiteSpace(configured)) return configured.TrimEnd('/');
+
+            var origin = config.GetSection("Cors:Origins").Get<string[]>()?
+                .FirstOrDefault(x => !string.IsNullOrWhiteSpace(x));
+
+            return origin?.TrimEnd('/') ?? "";
+        }
+    }
 
     [HttpGet("list")]
     public async Task<IActionResult> List([FromQuery] GroupListRequest request, CancellationToken ct)
