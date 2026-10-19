@@ -100,7 +100,7 @@
     <value>Cari şifrə yanlışdır</value>
   </data>
   <data name="Login_SeeAll" xml:space="preserve">
-    <value>Hamısına bax</value>
+    <value>Daha çox</value>
   </data>
   <data name="Login_SearchCourse" xml:space="preserve">
     <value>Kursu axtar</value>
@@ -269,6 +269,18 @@
   </data>
   <data name="Tenant_RegisterLogoHint" xml:space="preserve">
     <value>Loqo yükləyin (PNG, JPG və ya WEBP)</value>
+  </data>
+  <data name="Login_HeroTitle" xml:space="preserve">
+    <value>Panelinizə xoş gəlmisiniz</value>
+  </data>
+  <data name="Login_Subtitle" xml:space="preserve">
+    <value>Davam etmək üçün müəssisənizi seçin və hesabınıza daxil olun.</value>
+  </data>
+  <data name="Login_NoAccount" xml:space="preserve">
+    <value>Hesabınız yoxdur?</value>
+  </data>
+  <data name="Login_HeroText" xml:space="preserve">
+    <value>Kursunuzu və ya dərslərinizi idarə etmək üçün panelinizə daxil olun.</value>
   </data>
   <data name="Validation_EmailRequired" xml:space="preserve">
     <value>E-poçt tələb olunur</value>

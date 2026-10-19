@@ -100,7 +100,7 @@
     <value>Текущий пароль неверен</value>
   </data>
   <data name="Login_SeeAll" xml:space="preserve">
-    <value>Показать все</value>
+    <value>Ещё</value>
   </data>
   <data name="Login_SearchCourse" xml:space="preserve">
     <value>Поиск курса</value>
@@ -269,6 +269,18 @@
   </data>
   <data name="Tenant_RegisterLogoHint" xml:space="preserve">
     <value>Загрузите логотип (PNG, JPG или WEBP)</value>
+  </data>
+  <data name="Login_HeroTitle" xml:space="preserve">
+    <value>С возвращением в панель</value>
+  </data>
+  <data name="Login_Subtitle" xml:space="preserve">
+    <value>Выберите организацию и войдите, чтобы продолжить.</value>
+  </data>
+  <data name="Login_NoAccount" xml:space="preserve">
+    <value>Ещё нет аккаунта?</value>
+  </data>
+  <data name="Login_HeroText" xml:space="preserve">
+    <value>Войдите, чтобы управлять курсом, занятиями, студентами и материалами.</value>
   </data>
   <data name="Validation_EmailRequired" xml:space="preserve">
     <value>Эл. почта обязательна</value>

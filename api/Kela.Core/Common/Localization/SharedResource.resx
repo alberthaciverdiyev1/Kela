@@ -100,7 +100,7 @@
     <value>Current password is incorrect</value>
   </data>
   <data name="Login_SeeAll" xml:space="preserve">
-    <value>See all</value>
+    <value>More</value>
   </data>
   <data name="Login_SearchCourse" xml:space="preserve">
     <value>Search course</value>
@@ -269,6 +269,18 @@
   </data>
   <data name="Tenant_RegisterLogoHint" xml:space="preserve">
     <value>Upload a logo (PNG, JPG or WEBP)</value>
+  </data>
+  <data name="Login_HeroTitle" xml:space="preserve">
+    <value>Welcome back to your panel</value>
+  </data>
+  <data name="Login_Subtitle" xml:space="preserve">
+    <value>Choose your tenant and sign in to continue.</value>
+  </data>
+  <data name="Login_NoAccount" xml:space="preserve">
+    <value>No account yet?</value>
+  </data>
+  <data name="Login_HeroText" xml:space="preserve">
+    <value>Sign in to manage your course, classes, students and materials.</value>
   </data>
   <data name="Validation_EmailRequired" xml:space="preserve">
     <value>Email is required</value>

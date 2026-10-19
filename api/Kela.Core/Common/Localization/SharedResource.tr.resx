@@ -100,7 +100,7 @@
     <value>Mevcut şifre yanlış</value>
   </data>
   <data name="Login_SeeAll" xml:space="preserve">
-    <value>Tümünü gör</value>
+    <value>Daha fazla</value>
   </data>
   <data name="Login_SearchCourse" xml:space="preserve">
     <value>Kurs ara</value>
@@ -269,6 +269,18 @@
   </data>
   <data name="Tenant_RegisterLogoHint" xml:space="preserve">
     <value>Logo yükleyin (PNG, JPG veya WEBP)</value>
+  </data>
+  <data name="Login_HeroTitle" xml:space="preserve">
+    <value>Panelinize hoş geldiniz</value>
+  </data>
+  <data name="Login_Subtitle" xml:space="preserve">
+    <value>Devam etmek için kurumunuzu seçin ve giriş yapın.</value>
+  </data>
+  <data name="Login_NoAccount" xml:space="preserve">
+    <value>Hesabınız yok mu?</value>
+  </data>
+  <data name="Login_HeroText" xml:space="preserve">
+    <value>Kursunuzu veya derslerinizi yönetmek için panelinize giriş yapın.</value>
   </data>
   <data name="Validation_EmailRequired" xml:space="preserve">
     <value>E-posta gereklidir</value>
