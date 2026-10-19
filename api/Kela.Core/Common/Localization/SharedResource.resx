@@ -112,7 +112,7 @@
     <value>Additional lessons</value>
   </data>
   <data name="Tenant_CourseName" xml:space="preserve">
-    <value>Course name</value>
+    <value>Name (course or teacher name)</value>
   </data>
   <data name="Tenant_SlugHint" xml:space="preserve">
     <value>Short URL name (generated automatically when empty)</value>
@@ -130,25 +130,25 @@
     <value>Confirm password</value>
   </data>
   <data name="Tenant_Register" xml:space="preserve">
-    <value>Register your course</value>
+    <value>Create an account</value>
   </data>
   <data name="Tenant_RegisterTitle" xml:space="preserve">
-    <value>Register your course</value>
+    <value>Create your account</value>
   </data>
   <data name="Tenant_RegisterSubtitle" xml:space="preserve">
-    <value>Create your course and start managing it right away.</value>
+    <value>Whether you run a course or teach on your own — set up your space and start managing right away.</value>
   </data>
   <data name="Tenant_RegisterSubmit" xml:space="preserve">
-    <value>Send application</value>
+    <value>Create account</value>
   </data>
   <data name="Tenant_RegisteredPending" xml:space="preserve">
-    <value>Your course is ready. You can sign in with your first admin account now.</value>
+    <value>Your account is ready. You can sign in now.</value>
   </data>
   <data name="Tenant_Pending" xml:space="preserve">
     <value>Pending</value>
   </data>
   <data name="Tenant_CourseNameRequired" xml:space="preserve">
-    <value>Course name is required</value>
+    <value>Name is required</value>
   </data>
   <data name="Tenant_SlugTaken" xml:space="preserve">
     <value>This slug is already in use</value>
@@ -223,13 +223,13 @@
     <value>Reject this application and delete the course? This cannot be undone.</value>
   </data>
   <data name="Tenant_RegisterHeroTitle" xml:space="preserve">
-    <value>Run your course with Kela</value>
+    <value>Run your course or classes with Kela</value>
   </data>
   <data name="Tenant_RegisterHeroText" xml:space="preserve">
-    <value>Create your course in minutes and start managing right away — teachers, students, lessons and materials in one panel.</value>
+    <value>Course centre or independent teacher — manage students, groups, lessons and materials from one panel.</value>
   </data>
   <data name="Tenant_RegisterBenefit1" xml:space="preserve">
-    <value>Manage teachers and students</value>
+    <value>Manage your students and groups</value>
   </data>
   <data name="Tenant_RegisterBenefit2" xml:space="preserve">
     <value>Lessons, materials and exams in one panel</value>
@@ -244,19 +244,19 @@
     <value>Send the application</value>
   </data>
   <data name="Tenant_RegisterStep2" xml:space="preserve">
-    <value>Your course is activated automatically</value>
+    <value>Your account is activated automatically</value>
   </data>
   <data name="Tenant_RegisterStep3" xml:space="preserve">
-    <value>Sign in to your course</value>
+    <value>Sign in to your panel</value>
   </data>
   <data name="Tenant_RegisterSectionCourse" xml:space="preserve">
-    <value>Course details</value>
+    <value>Profile details</value>
   </data>
   <data name="Tenant_RegisterSectionAdmin" xml:space="preserve">
-    <value>First admin account</value>
+    <value>Account details</value>
   </data>
   <data name="Tenant_RegisterSuccessTitle" xml:space="preserve">
-    <value>Your course is ready</value>
+    <value>Your account is ready</value>
   </data>
   <data name="Tenant_RegisterBackToLogin" xml:space="preserve">
     <value>Back to sign in</value>
@@ -265,7 +265,7 @@
     <value>Already have an account?</value>
   </data>
   <data name="Tenant_RegisterLogo" xml:space="preserve">
-    <value>Course logo (optional)</value>
+    <value>Logo (optional)</value>
   </data>
   <data name="Tenant_RegisterLogoHint" xml:space="preserve">
     <value>Upload a logo (PNG, JPG or WEBP)</value>

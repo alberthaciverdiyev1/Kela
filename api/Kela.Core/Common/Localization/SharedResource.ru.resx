@@ -112,7 +112,7 @@
     <value>Дополнительные уроки</value>
   </data>
   <data name="Tenant_CourseName" xml:space="preserve">
-    <value>Название курса</value>
+    <value>Название (курса или преподавателя)</value>
   </data>
   <data name="Tenant_SlugHint" xml:space="preserve">
     <value>Короткое имя в URL (создаётся автоматически, если пусто)</value>
@@ -130,25 +130,25 @@
     <value>Повторите пароль</value>
   </data>
   <data name="Tenant_Register" xml:space="preserve">
-    <value>Зарегистрировать курс</value>
+    <value>Зарегистрироваться</value>
   </data>
   <data name="Tenant_RegisterTitle" xml:space="preserve">
-    <value>Зарегистрируйте свой курс</value>
+    <value>Создайте аккаунт</value>
   </data>
   <data name="Tenant_RegisterSubtitle" xml:space="preserve">
-    <value>Создайте курс и сразу начните им управлять.</value>
+    <value>Курс или частный преподаватель — создайте своё пространство и сразу начните управлять.</value>
   </data>
   <data name="Tenant_RegisterSubmit" xml:space="preserve">
-    <value>Отправить заявку</value>
+    <value>Создать аккаунт</value>
   </data>
   <data name="Tenant_RegisteredPending" xml:space="preserve">
-    <value>Курс готов. Теперь можно войти с первым аккаунтом администратора.</value>
+    <value>Аккаунт готов. Теперь можно войти.</value>
   </data>
   <data name="Tenant_Pending" xml:space="preserve">
     <value>Ожидает</value>
   </data>
   <data name="Tenant_CourseNameRequired" xml:space="preserve">
-    <value>Укажите название курса</value>
+    <value>Укажите название</value>
   </data>
   <data name="Tenant_SlugTaken" xml:space="preserve">
     <value>Это короткое имя уже используется</value>
@@ -223,13 +223,13 @@
     <value>Отклонить заявку и удалить курс? Это действие необратимо.</value>
   </data>
   <data name="Tenant_RegisterHeroTitle" xml:space="preserve">
-    <value>Управляйте курсом вместе с Kela</value>
+    <value>Управляйте курсом или занятиями с Kela</value>
   </data>
   <data name="Tenant_RegisterHeroText" xml:space="preserve">
-    <value>Создайте курс за несколько минут и сразу начните управлять — преподаватели, студенты, уроки и материалы в одной панели.</value>
+    <value>Учебный центр или частный преподаватель — управляйте студентами, группами, уроками и материалами из одной панели.</value>
   </data>
   <data name="Tenant_RegisterBenefit1" xml:space="preserve">
-    <value>Управляйте преподавателями и студентами</value>
+    <value>Управляйте студентами и группами</value>
   </data>
   <data name="Tenant_RegisterBenefit2" xml:space="preserve">
     <value>Уроки, материалы и экзамены в одной панели</value>
@@ -244,19 +244,19 @@
     <value>Отправьте заявку</value>
   </data>
   <data name="Tenant_RegisterStep2" xml:space="preserve">
-    <value>Курс активируется автоматически</value>
+    <value>Аккаунт активируется автоматически</value>
   </data>
   <data name="Tenant_RegisterStep3" xml:space="preserve">
-    <value>Войдите в панель курса</value>
+    <value>Войдите в свою панель</value>
   </data>
   <data name="Tenant_RegisterSectionCourse" xml:space="preserve">
-    <value>Данные курса</value>
+    <value>Данные профиля</value>
   </data>
   <data name="Tenant_RegisterSectionAdmin" xml:space="preserve">
-    <value>Первый аккаунт администратора</value>
+    <value>Данные аккаунта</value>
   </data>
   <data name="Tenant_RegisterSuccessTitle" xml:space="preserve">
-    <value>Курс готов</value>
+    <value>Ваш аккаунт готов</value>
   </data>
   <data name="Tenant_RegisterBackToLogin" xml:space="preserve">
     <value>Вернуться к входу</value>
@@ -265,7 +265,7 @@
     <value>Уже есть аккаунт?</value>
   </data>
   <data name="Tenant_RegisterLogo" xml:space="preserve">
-    <value>Логотип курса (необязательно)</value>
+    <value>Логотип (необязательно)</value>
   </data>
   <data name="Tenant_RegisterLogoHint" xml:space="preserve">
     <value>Загрузите логотип (PNG, JPG или WEBP)</value>

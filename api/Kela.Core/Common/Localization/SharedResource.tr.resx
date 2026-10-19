@@ -112,7 +112,7 @@
     <value>Ek dersler</value>
   </data>
   <data name="Tenant_CourseName" xml:space="preserve">
-    <value>Kurs adı</value>
+    <value>Ad (kurs veya öğretmen adı)</value>
   </data>
   <data name="Tenant_SlugHint" xml:space="preserve">
     <value>URL için kısa ad (boş bırakılırsa otomatik oluşturulur)</value>
@@ -130,25 +130,25 @@
     <value>Şifre tekrarı</value>
   </data>
   <data name="Tenant_Register" xml:space="preserve">
-    <value>Kursunuzu kaydedin</value>
+    <value>Kayıt olun</value>
   </data>
   <data name="Tenant_RegisterTitle" xml:space="preserve">
-    <value>Kursunuzu kaydedin</value>
+    <value>Hesap oluşturun</value>
   </data>
   <data name="Tenant_RegisterSubtitle" xml:space="preserve">
-    <value>Kursunuzu hemen oluşturun ve yönetmeye başlayın.</value>
+    <value>İster kurs, ister bireysel öğretmen — kendi alanınızı oluşturun ve hemen yönetmeye başlayın.</value>
   </data>
   <data name="Tenant_RegisterSubmit" xml:space="preserve">
-    <value>Başvuru gönder</value>
+    <value>Hesap oluştur</value>
   </data>
   <data name="Tenant_RegisteredPending" xml:space="preserve">
-    <value>Kursunuz hazır. Artık ilk yönetici hesabınızla giriş yapabilirsiniz.</value>
+    <value>Hesabınız hazır. Artık giriş yapabilirsiniz.</value>
   </data>
   <data name="Tenant_Pending" xml:space="preserve">
     <value>Bekliyor</value>
   </data>
   <data name="Tenant_CourseNameRequired" xml:space="preserve">
-    <value>Kurs adı gereklidir</value>
+    <value>Ad gereklidir</value>
   </data>
   <data name="Tenant_SlugTaken" xml:space="preserve">
     <value>Bu kısa ad zaten kullanılıyor</value>
@@ -223,13 +223,13 @@
     <value>Bu başvuruyu reddedip kursu silmek istiyor musunuz? Bu işlem geri alınamaz.</value>
   </data>
   <data name="Tenant_RegisterHeroTitle" xml:space="preserve">
-    <value>Kursunuzu Kela ile yönetin</value>
+    <value>Kursunuzu veya derslerinizi Kela ile yönetin</value>
   </data>
   <data name="Tenant_RegisterHeroText" xml:space="preserve">
-    <value>Kursunuzu birkaç dakikada oluşturun ve hemen yönetin — öğretmenler, öğrenciler, dersler ve materyaller tek panelde.</value>
+    <value>İster kurs merkezi, ister bireysel öğretmen olun — öğrencileri, grupları, dersleri ve materyalleri tek panelde yönetin.</value>
   </data>
   <data name="Tenant_RegisterBenefit1" xml:space="preserve">
-    <value>Öğretmenleri ve öğrencileri yönetin</value>
+    <value>Öğrencilerinizi ve gruplarınızı yönetin</value>
   </data>
   <data name="Tenant_RegisterBenefit2" xml:space="preserve">
     <value>Dersler, materyaller ve sınavlar tek panelde</value>
@@ -244,19 +244,19 @@
     <value>Başvuruyu gönderin</value>
   </data>
   <data name="Tenant_RegisterStep2" xml:space="preserve">
-    <value>Kursunuz otomatik olarak etkinleşir</value>
+    <value>Hesabınız otomatik olarak etkinleşir</value>
   </data>
   <data name="Tenant_RegisterStep3" xml:space="preserve">
-    <value>Kurs panelinize giriş yapın</value>
+    <value>Panelinize giriş yapın</value>
   </data>
   <data name="Tenant_RegisterSectionCourse" xml:space="preserve">
-    <value>Kurs bilgileri</value>
+    <value>Profil bilgileri</value>
   </data>
   <data name="Tenant_RegisterSectionAdmin" xml:space="preserve">
-    <value>İlk yönetici hesabı</value>
+    <value>Hesap bilgileri</value>
   </data>
   <data name="Tenant_RegisterSuccessTitle" xml:space="preserve">
-    <value>Kursunuz hazır</value>
+    <value>Hesabınız hazır</value>
   </data>
   <data name="Tenant_RegisterBackToLogin" xml:space="preserve">
     <value>Giriş sayfasına dön</value>
@@ -265,7 +265,7 @@
     <value>Hesabınız var mı?</value>
   </data>
   <data name="Tenant_RegisterLogo" xml:space="preserve">
-    <value>Kurs logosu (isteğe bağlı)</value>
+    <value>Logo (isteğe bağlı)</value>
   </data>
   <data name="Tenant_RegisterLogoHint" xml:space="preserve">
     <value>Logo yükleyin (PNG, JPG veya WEBP)</value>

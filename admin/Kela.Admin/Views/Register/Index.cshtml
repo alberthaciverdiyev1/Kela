@@ -97,15 +97,15 @@
                                 <span class="grid h-5 w-5 place-items-center rounded-full bg-primary-light text-[10px] font-extrabold text-primary">1</span>
                                 @L["Tenant_RegisterSectionCourse"]
                             </p>
-                            <div class="space-y-4">
+                            <div class="grid items-end gap-4 sm:grid-cols-2">
                                 <partial name="Ui/_Input" model="@(new InputModel { NativeRequired = true, Name = "CourseName", Id = "courseName", Label = L["Tenant_CourseName"], Required = true })" />
                                 <div>
                                     <label for="logo" class="mb-1 block text-sm font-semibold text-slate-600">@L["Tenant_RegisterLogo"]</label>
-                                    <label for="logo" class="flex cursor-pointer items-center justify-center gap-2.5 rounded-xl border-2 border-dashed border-border bg-surface-secondary px-4 py-6 text-center text-sm font-medium text-slate-500 transition hover:border-primary hover:bg-primary-light hover:text-primary">
-                                        <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M12 16V4m0 0 4 4m-4-4L8 8M4 16v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2" /></svg>
-                                        <span id="logoName">@L["Tenant_RegisterLogoHint"]</span>
+                                    <label for="logo" class="flex h-[46px] cursor-pointer items-center justify-center gap-2 rounded-xl border border-dashed border-border bg-surface-secondary px-3 text-sm font-medium text-slate-500 transition hover:border-primary hover:bg-primary-light hover:text-primary">
+                                        <svg class="h-4 w-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M12 16V4m0 0 4 4m-4-4L8 8M4 16v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2" /></svg>
+                                        <span id="logoName" class="truncate">@L["Common_ChooseFile"]</span>
                                         <input id="logo" name="Logo" type="file" accept="image/png,image/jpeg,image/webp" class="hidden"
-                                               onchange="document.getElementById('logoName').textContent = this.files[0] ? this.files[0].name : '@L["Tenant_RegisterLogoHint"]'" />
+                                               onchange="document.getElementById('logoName').textContent = this.files[0] ? this.files[0].name : '@L["Common_ChooseFile"]'" />
                                     </label>
                                 </div>
                             </div>
