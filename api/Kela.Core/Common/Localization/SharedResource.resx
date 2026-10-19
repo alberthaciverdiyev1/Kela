@@ -136,13 +136,13 @@
     <value>Register your course</value>
   </data>
   <data name="Tenant_RegisterSubtitle" xml:space="preserve">
-    <value>You will be able to sign in after a platform admin approves your application.</value>
+    <value>Create your course and start managing it right away.</value>
   </data>
   <data name="Tenant_RegisterSubmit" xml:space="preserve">
     <value>Send application</value>
   </data>
   <data name="Tenant_RegisteredPending" xml:space="preserve">
-    <value>Your application has been received. The course will appear after approval.</value>
+    <value>Your course is ready. You can sign in with your first admin account now.</value>
   </data>
   <data name="Tenant_Pending" xml:space="preserve">
     <value>Pending</value>
@@ -226,7 +226,7 @@
     <value>Run your course with Kela</value>
   </data>
   <data name="Tenant_RegisterHeroText" xml:space="preserve">
-    <value>Send an application, get approved, and manage your whole teaching process from one place.</value>
+    <value>Create your course in minutes and start managing right away — teachers, students, lessons and materials in one panel.</value>
   </data>
   <data name="Tenant_RegisterBenefit1" xml:space="preserve">
     <value>Manage teachers and students</value>
@@ -244,7 +244,7 @@
     <value>Send the application</value>
   </data>
   <data name="Tenant_RegisterStep2" xml:space="preserve">
-    <value>Superadmin approval</value>
+    <value>Your course is activated automatically</value>
   </data>
   <data name="Tenant_RegisterStep3" xml:space="preserve">
     <value>Sign in to your course</value>
@@ -256,13 +256,19 @@
     <value>First admin account</value>
   </data>
   <data name="Tenant_RegisterSuccessTitle" xml:space="preserve">
-    <value>Your application was sent</value>
+    <value>Your course is ready</value>
   </data>
   <data name="Tenant_RegisterBackToLogin" xml:space="preserve">
     <value>Back to sign in</value>
   </data>
   <data name="Tenant_AlreadyHaveAccount" xml:space="preserve">
     <value>Already have an account?</value>
+  </data>
+  <data name="Tenant_RegisterLogo" xml:space="preserve">
+    <value>Course logo (optional)</value>
+  </data>
+  <data name="Tenant_RegisterLogoHint" xml:space="preserve">
+    <value>Upload a logo (PNG, JPG or WEBP)</value>
   </data>
   <data name="Validation_EmailRequired" xml:space="preserve">
     <value>Email is required</value>

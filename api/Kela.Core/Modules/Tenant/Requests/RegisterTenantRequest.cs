@@ -1,3 +1,5 @@
+using Microsoft.AspNetCore.Http;
+
 namespace Kela.Core.Modules.Tenant.Requests;
 
 /// <summary>Public müraciət: yeni kurs + onun ilk admini. Superadmin təsdiqinə qədər aktiv olmur.</summary>
@@ -5,8 +7,8 @@ public class RegisterTenantRequest
 {
     public string CourseName { get; set; } = string.Empty;
 
-    /// <summary>Boş buraxılarsa kurs adından yaradılır.</summary>
-    public string? Slug { get; set; }
+    /// <summary>İstəyə bağlı kurs loqosu.</summary>
+    public IFormFile? Logo { get; set; }
 
     public string AdminName { get; set; } = string.Empty;
 

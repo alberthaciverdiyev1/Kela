@@ -136,13 +136,13 @@
     <value>Kursunuzu kaydedin</value>
   </data>
   <data name="Tenant_RegisterSubtitle" xml:space="preserve">
-    <value>Platform yöneticisi başvurunuzu onayladıktan sonra giriş yapabilirsiniz.</value>
+    <value>Kursunuzu hemen oluşturun ve yönetmeye başlayın.</value>
   </data>
   <data name="Tenant_RegisterSubmit" xml:space="preserve">
     <value>Başvuru gönder</value>
   </data>
   <data name="Tenant_RegisteredPending" xml:space="preserve">
-    <value>Başvurunuz alındı. Onaydan sonra kurs listede görünecek.</value>
+    <value>Kursunuz hazır. Artık ilk yönetici hesabınızla giriş yapabilirsiniz.</value>
   </data>
   <data name="Tenant_Pending" xml:space="preserve">
     <value>Bekliyor</value>
@@ -226,7 +226,7 @@
     <value>Kursunuzu Kela ile yönetin</value>
   </data>
   <data name="Tenant_RegisterHeroText" xml:space="preserve">
-    <value>Başvuru gönderin, onaylandıktan sonra kurs panelinizi açın ve tüm eğitim sürecini tek yerden yönetin.</value>
+    <value>Kursunuzu birkaç dakikada oluşturun ve hemen yönetin — öğretmenler, öğrenciler, dersler ve materyaller tek panelde.</value>
   </data>
   <data name="Tenant_RegisterBenefit1" xml:space="preserve">
     <value>Öğretmenleri ve öğrencileri yönetin</value>
@@ -244,7 +244,7 @@
     <value>Başvuruyu gönderin</value>
   </data>
   <data name="Tenant_RegisterStep2" xml:space="preserve">
-    <value>Süper yönetici onayı</value>
+    <value>Kursunuz otomatik olarak etkinleşir</value>
   </data>
   <data name="Tenant_RegisterStep3" xml:space="preserve">
     <value>Kurs panelinize giriş yapın</value>
@@ -256,13 +256,19 @@
     <value>İlk yönetici hesabı</value>
   </data>
   <data name="Tenant_RegisterSuccessTitle" xml:space="preserve">
-    <value>Başvurunuz gönderildi</value>
+    <value>Kursunuz hazır</value>
   </data>
   <data name="Tenant_RegisterBackToLogin" xml:space="preserve">
     <value>Giriş sayfasına dön</value>
   </data>
   <data name="Tenant_AlreadyHaveAccount" xml:space="preserve">
     <value>Hesabınız var mı?</value>
+  </data>
+  <data name="Tenant_RegisterLogo" xml:space="preserve">
+    <value>Kurs logosu (isteğe bağlı)</value>
+  </data>
+  <data name="Tenant_RegisterLogoHint" xml:space="preserve">
+    <value>Logo yükleyin (PNG, JPG veya WEBP)</value>
   </data>
   <data name="Validation_EmailRequired" xml:space="preserve">
     <value>E-posta gereklidir</value>

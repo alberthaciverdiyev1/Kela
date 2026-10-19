@@ -136,13 +136,13 @@
     <value>Зарегистрируйте свой курс</value>
   </data>
   <data name="Tenant_RegisterSubtitle" xml:space="preserve">
-    <value>Вы сможете войти после одобрения заявки администратором платформы.</value>
+    <value>Создайте курс и сразу начните им управлять.</value>
   </data>
   <data name="Tenant_RegisterSubmit" xml:space="preserve">
     <value>Отправить заявку</value>
   </data>
   <data name="Tenant_RegisteredPending" xml:space="preserve">
-    <value>Заявка принята. Курс появится после одобрения.</value>
+    <value>Курс готов. Теперь можно войти с первым аккаунтом администратора.</value>
   </data>
   <data name="Tenant_Pending" xml:space="preserve">
     <value>Ожидает</value>
@@ -226,7 +226,7 @@
     <value>Управляйте курсом вместе с Kela</value>
   </data>
   <data name="Tenant_RegisterHeroText" xml:space="preserve">
-    <value>Отправьте заявку, после одобрения откройте панель курса и управляйте всем учебным процессом в одном месте.</value>
+    <value>Создайте курс за несколько минут и сразу начните управлять — преподаватели, студенты, уроки и материалы в одной панели.</value>
   </data>
   <data name="Tenant_RegisterBenefit1" xml:space="preserve">
     <value>Управляйте преподавателями и студентами</value>
@@ -244,7 +244,7 @@
     <value>Отправьте заявку</value>
   </data>
   <data name="Tenant_RegisterStep2" xml:space="preserve">
-    <value>Одобрение суперадминистратора</value>
+    <value>Курс активируется автоматически</value>
   </data>
   <data name="Tenant_RegisterStep3" xml:space="preserve">
     <value>Войдите в панель курса</value>
@@ -256,13 +256,19 @@
     <value>Первый аккаунт администратора</value>
   </data>
   <data name="Tenant_RegisterSuccessTitle" xml:space="preserve">
-    <value>Заявка отправлена</value>
+    <value>Курс готов</value>
   </data>
   <data name="Tenant_RegisterBackToLogin" xml:space="preserve">
     <value>Вернуться к входу</value>
   </data>
   <data name="Tenant_AlreadyHaveAccount" xml:space="preserve">
     <value>Уже есть аккаунт?</value>
+  </data>
+  <data name="Tenant_RegisterLogo" xml:space="preserve">
+    <value>Логотип курса (необязательно)</value>
+  </data>
+  <data name="Tenant_RegisterLogoHint" xml:space="preserve">
+    <value>Загрузите логотип (PNG, JPG или WEBP)</value>
   </data>
   <data name="Validation_EmailRequired" xml:space="preserve">
     <value>Эл. почта обязательна</value>

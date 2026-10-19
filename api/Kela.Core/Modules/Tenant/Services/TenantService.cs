@@ -12,12 +12,14 @@ using Microsoft.Extensions.Localization;
 namespace Kela.Core.Modules.Tenant.Services;
 
 using Tenant = Kela.Core.Modules.Tenant.Entities.Tenant;
+using Setting = Kela.Core.Modules.Setting.Entities.Setting;
 using User = Kela.Core.Modules.User.Entities.User;
 
 public sealed class TenantService(
     AppDbContext db,
     ITenantProvider tenantProvider,
     IFileStorage storage,
+    ITenantFolder folders,
     IStringLocalizer<SharedResource> L) : ITenantService
 {
     public async Task<IReadOnlyList<TenantResponse>> ListAsync(CancellationToken ct = default)
@@ -106,9 +108,9 @@ public sealed class TenantService(
         if (courseName.Length == 0) throw new ArgumentException(L["Tenant_CourseNameRequired"]);
         if (courseName.Length > 190) courseName = courseName[..190];
 
-        var slug = NormalizeSlug(string.IsNullOrWhiteSpace(request.Slug) ? courseName : request.Slug);
-        if (slug.Length == 0) throw new ArgumentException(L["Tenant_CourseNameRequired"]);
-        if (slug.Length > 100) slug = slug[..100];
+        var baseSlug = NormalizeSlug(courseName);
+        if (baseSlug.Length == 0) baseSlug = "kurs";
+        var slug = await UniqueSlugAsync(baseSlug, ct);
 
         var adminName = request.AdminName.Trim();
         if (adminName.Length == 0) throw new ArgumentException(L["Tenant_AdminNameRequired"]);
@@ -136,14 +138,10 @@ public sealed class TenantService(
             throw new ArgumentException(L["Tenant_TermsRequired"]);
         }
 
-        if (await db.Tenants.AnyAsync(x => x.Slug == slug, ct))
-        {
-            throw new ArgumentException(L["Tenant_SlugTaken"]);
-        }
-
         await using var tx = await db.Database.BeginTransactionAsync(ct);
 
-        var tenant = new Tenant { Name = courseName, Slug = slug, IsActive = false, IsPending = true };
+        // Təsdiq gözlənilmir — kurs dərhal aktiv yaradılır (subscription sonra əlavə olunacaq).
+        var tenant = new Tenant { Name = courseName, Slug = slug, IsActive = true, IsPending = false };
         db.Tenants.Add(tenant);
         await db.SaveChangesAsync(ct);
 
@@ -157,10 +155,24 @@ public sealed class TenantService(
             PasswordHash = BCrypt.Net.BCrypt.HashPassword(request.Password),
             Type = UserTypes.Admin
         });
+
+        if (request.Logo is not null)
+        {
+            var folder = $"{await folders.ResolveAsync(tenant.Id, ct)}/settings";
+            var logo = await storage.UploadAsync(request.Logo, folder, ct);
+
+            db.Settings.Add(new Setting
+            {
+                TenantId = tenant.Id,
+                Logo = logo,
+                Email = email
+            });
+        }
+
         await db.SaveChangesAsync(ct);
         await tx.CommitAsync(ct);
 
-        return new TenantResponse(tenant.Id, tenant.Name, tenant.Slug, tenant.IsActive, IsPending: tenant.IsPending);
+        return new TenantResponse(tenant.Id, tenant.Name, tenant.Slug, tenant.IsActive, IsPending: false);
     }
 
     public async Task<TenantResponse> SetActiveAsync(long id, bool isActive, CancellationToken ct = default)
@@ -198,6 +210,22 @@ public sealed class TenantService(
         await db.SaveChangesAsync(ct);
 
         await tx.CommitAsync(ct);
+    }
+
+    /// <summary>Ad əsasında unikal slug yaradır (mövcuddursa "-2", "-3" əlavə edir).</summary>
+    private async Task<string> UniqueSlugAsync(string baseSlug, CancellationToken ct)
+    {
+        var root = baseSlug.Length > 90 ? baseSlug[..90] : baseSlug;
+        var slug = root;
+        var suffix = 2;
+
+        while (await db.Tenants.AnyAsync(x => x.Slug == slug, ct))
+        {
+            var tail = "-" + suffix++;
+            slug = root[..Math.Min(root.Length, 100 - tail.Length)] + tail;
+        }
+
+        return slug;
     }
 
     /// <summary>URL üçün qısa ad: hərflər/rəqəmlər saxlanılır, digərləri tireyə çevrilir.</summary>
