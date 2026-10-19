@@ -865,6 +865,51 @@ namespace Kela.Core.Data.Migrations
                     b.ToTable("lesson_contents", (string)null);
                 });
 
+            modelBuilder.Entity("Kela.Core.Modules.LessonContent.Entities.LessonContentLesson", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint")
+                        .HasColumnName("id");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
+
+                    b.Property<DateTimeOffset>("CreatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_at");
+
+                    b.Property<DateTimeOffset?>("DeletedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("deleted_at");
+
+                    b.Property<long>("LessonContentId")
+                        .HasColumnType("bigint")
+                        .HasColumnName("lesson_content_id");
+
+                    b.Property<long>("LessonId")
+                        .HasColumnType("bigint")
+                        .HasColumnName("lesson_id");
+
+                    b.Property<long>("TenantId")
+                        .HasColumnType("bigint")
+                        .HasColumnName("tenant_id");
+
+                    b.Property<DateTimeOffset?>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("updated_at");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("DeletedAt");
+
+                    b.HasIndex("LessonId");
+
+                    b.HasIndex("LessonContentId", "LessonId")
+                        .IsUnique();
+
+                    b.ToTable("lesson_content_lessons", (string)null);
+                });
+
             modelBuilder.Entity("Kela.Core.Modules.Media.Entities.MediaFile", b =>
                 {
                     b.Property<long>("Id")
@@ -2454,6 +2499,25 @@ namespace Kela.Core.Data.Migrations
                     b.Navigation("VoiceRecord");
                 });
 
+            modelBuilder.Entity("Kela.Core.Modules.LessonContent.Entities.LessonContentLesson", b =>
+                {
+                    b.HasOne("Kela.Core.Modules.LessonContent.Entities.LessonContent", "Content")
+                        .WithMany("AdditionalLessons")
+                        .HasForeignKey("LessonContentId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Kela.Core.Modules.Lesson.Entities.Lesson", "Lesson")
+                        .WithMany()
+                        .HasForeignKey("LessonId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Content");
+
+                    b.Navigation("Lesson");
+                });
+
             modelBuilder.Entity("Kela.Core.Modules.Nodes.Entities.VideoJob", b =>
                 {
                     b.HasOne("Kela.Core.Modules.Media.Entities.Video", "Video")
@@ -2611,6 +2675,11 @@ namespace Kela.Core.Data.Migrations
                     b.Navigation("Quizzes");
 
                     b.Navigation("SubjectLinks");
+                });
+
+            modelBuilder.Entity("Kela.Core.Modules.LessonContent.Entities.LessonContent", b =>
+                {
+                    b.Navigation("AdditionalLessons");
                 });
 
             modelBuilder.Entity("Kela.Core.Modules.Notification.Entities.Notification", b =>

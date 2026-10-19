@@ -152,7 +152,8 @@ public sealed class StudentAppService(
 
         var contents = await db.LessonContents
             .AsNoTracking()
-            .Where(x => x.LessonId == lessonId && x.IsActive)
+            .Where(x => x.IsActive
+                        && (x.LessonId == lessonId || x.AdditionalLessons.Any(l => l.LessonId == lessonId)))
             .Include(x => x.Video).Include(x => x.MediaFile).Include(x => x.VoiceRecord)
             .OrderBy(x => x.SortOrder).ThenBy(x => x.Id)
             .ToListAsync(ct);

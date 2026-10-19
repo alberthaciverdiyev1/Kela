@@ -55,6 +55,8 @@ public sealed class AppDbContext : DbContext
 
     public DbSet<Modules.LessonContent.Entities.LessonContent> LessonContents => Set<Modules.LessonContent.Entities.LessonContent>();
 
+    public DbSet<Modules.LessonContent.Entities.LessonContentLesson> LessonContentLessons => Set<Modules.LessonContent.Entities.LessonContentLesson>();
+
     public DbSet<Modules.Progress.Entities.LessonProgress> LessonProgress => Set<Modules.Progress.Entities.LessonProgress>();
 
     public DbSet<Modules.Question.Entities.Question> Questions => Set<Modules.Question.Entities.Question>();

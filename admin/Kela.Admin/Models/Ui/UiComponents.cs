@@ -39,6 +39,10 @@ public class SelectModel
     public List<SelectOption> Options { get; set; } = new();
     public bool Required { get; set; }
 
+    /// <summary>Çoxseçimli select — seçilmiş variantlar <see cref="Values"/>-də verilir.</summary>
+    public bool Multiple { get; set; }
+    public List<string> Values { get; set; } = new();
+
     /// <summary>JS yoxlaması olmayan səhifələr üçün (məs. giriş) brauzerin öz required-ı.</summary>
     public bool NativeRequired { get; set; }
 

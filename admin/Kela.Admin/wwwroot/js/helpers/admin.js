@@ -73,7 +73,11 @@ window.AdminUI = window.AdminUI || {};
 
     async function post(url, data) {
         const fd = new FormData();
-        Object.entries(data || {}).forEach(([k, v]) => fd.append(k, v));
+        Object.entries(data || {}).forEach(([k, v]) => {
+            // Massiv → təkrar sahələr (məs. lesson_ids) kimi göndərilir.
+            if (Array.isArray(v)) v.forEach(item => fd.append(k, item));
+            else fd.append(k, v);
+        });
         return postForm(url, fd);
     }
 

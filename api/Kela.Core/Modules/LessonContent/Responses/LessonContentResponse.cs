@@ -13,4 +13,6 @@ public record LessonContentResponse(
     int? DurationSeconds,
     string? ThumbnailUrl = null,
     /// <summary>Video konversiya vəziyyəti (pending/processing/ready/failed). Video deyilsə null.</summary>
-    string? ConversionStatus = null);
+    string? ConversionStatus = null,
+    /// <summary>Əlavə dərslərin id-ləri (əsas dərs <see cref="LessonId"/>-dir).</summary>
+    IReadOnlyList<long>? LessonIds = null);

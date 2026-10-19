@@ -27,4 +27,7 @@ public class LessonContent : BaseEntity, ISortable
     public int SortOrder { get; set; }
 
     public bool IsActive { get; set; } = true;
+
+    /// <summary>Materialın paylaşıldığı əlavə dərslər (əsas dərs <see cref="LessonId"/>-dir).</summary>
+    public List<LessonContentLesson> AdditionalLessons { get; set; } = new();
 }

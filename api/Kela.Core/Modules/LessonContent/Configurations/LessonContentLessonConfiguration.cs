@@ -1,0 +1,34 @@
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
+
+namespace Kela.Core.Modules.LessonContent.Configurations;
+
+using LessonContent = Kela.Core.Modules.LessonContent.Entities.LessonContent;
+using LessonContentLesson = Kela.Core.Modules.LessonContent.Entities.LessonContentLesson;
+using Lesson = Kela.Core.Modules.Lesson.Entities.Lesson;
+
+public sealed class LessonContentLessonConfiguration : IEntityTypeConfiguration<LessonContentLesson>
+{
+    public void Configure(EntityTypeBuilder<LessonContentLesson> builder)
+    {
+        builder.ToTable("lesson_content_lessons");
+
+        builder.HasKey(x => x.Id);
+        builder.Property(x => x.Id).HasColumnName("id");
+        builder.Property(x => x.LessonContentId).HasColumnName("lesson_content_id");
+        builder.Property(x => x.LessonId).HasColumnName("lesson_id");
+
+        builder.HasOne(x => x.Content).WithMany(c => c.AdditionalLessons)
+            .HasForeignKey(x => x.LessonContentId).OnDelete(DeleteBehavior.Cascade);
+        builder.HasOne(x => x.Lesson).WithMany()
+            .HasForeignKey(x => x.LessonId).OnDelete(DeleteBehavior.Cascade);
+
+        builder.Property(x => x.CreatedAt).HasColumnName("created_at");
+        builder.Property(x => x.UpdatedAt).HasColumnName("updated_at");
+        builder.Property(x => x.DeletedAt).HasColumnName("deleted_at");
+
+        builder.HasIndex(x => new { x.LessonContentId, x.LessonId }).IsUnique();
+        builder.HasIndex(x => x.LessonId);
+        builder.HasIndex(x => x.DeletedAt);
+    }
+}

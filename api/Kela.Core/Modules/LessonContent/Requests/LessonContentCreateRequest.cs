@@ -33,4 +33,8 @@ public class LessonContentCreateRequest
     /// </summary>
     [FromForm(Name = "defer_file")]
     public bool DeferFile { get; set; }
+
+    /// <summary>Materialın görünəcəyi əlavə dərslər.</summary>
+    [FromForm(Name = "lesson_ids")]
+    public List<long> LessonIds { get; set; } = new();
 }

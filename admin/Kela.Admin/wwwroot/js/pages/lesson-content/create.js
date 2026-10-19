@@ -5,6 +5,10 @@
     function showError(message) { errBox.textContent = message; errBox.classList.remove('hidden'); }
     function done() { AdminUI.notify(L["Js_Added"]); AdminUI.closeModal('modal'); loadList(1); }
 
+    function selectedLessonIds() {
+        return [...document.getElementById('lesson_ids').selectedOptions].map(o => o.value);
+    }
+
 
     window.openCreate = function () {
         document.getElementById('modalTitle').textContent = L["Common_NewMaterial"];
@@ -12,6 +16,8 @@
         document.getElementById('sort_order').value = '';
         document.getElementById('description').value = '';
         document.getElementById('lesson_id').value = '';
+        [...document.getElementById('lesson_ids').options].forEach(o => { o.selected = false; });
+        document.getElementById('lesson_ids').dispatchEvent(new Event('change'));
         document.getElementById('title').value = '';
         document.getElementById('type').value = 'video';
         document.getElementById('is_active').checked = true;
@@ -443,7 +449,7 @@
                 if (put.ok) {
                     showSuccess(file.size);
                     const res = await AdminUI.post('/lesson-content',
-                        { lesson_id: lessonId, title, type, path: urlRes.data.path, is_active: isActive });
+                        { lesson_id: lessonId, lesson_ids: selectedLessonIds(), title, type, path: urlRes.data.path, is_active: isActive });
                     if (res.ok) { await finishSuccess(file.size); return; }
                     showError(AdminUI.errText(res));
                     return;
@@ -455,6 +461,7 @@
 
             const fd = new FormData();
             fd.append('lesson_id', lessonId);
+            selectedLessonIds().forEach(id => fd.append('lesson_ids', id));
             fd.append('title', title);
             fd.append('type', type);
             fd.append('is_active', isActive);
@@ -478,7 +485,7 @@
             lockModal(true);
 
             const created = await AdminUI.post('/lesson-content',
-                { lesson_id: lessonId, title, type, is_active: isActive, defer_file: 'true' });
+                { lesson_id: lessonId, lesson_ids: selectedLessonIds(), title, type, is_active: isActive, defer_file: 'true' });
 
             if (!created.ok) { showError(AdminUI.errText(created)); return; }
 

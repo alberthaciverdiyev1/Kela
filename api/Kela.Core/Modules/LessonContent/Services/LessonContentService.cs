@@ -11,6 +11,7 @@ using Microsoft.EntityFrameworkCore;
 namespace Kela.Core.Modules.LessonContent.Services;
 
 using LessonContent = Kela.Core.Modules.LessonContent.Entities.LessonContent;
+using LessonContentLesson = Kela.Core.Modules.LessonContent.Entities.LessonContentLesson;
 using LessonContentType = Kela.Core.Modules.LessonContent.Entities.LessonContentType;
 using MediaFile = Kela.Core.Modules.Media.Entities.MediaFile;
 using Video = Kela.Core.Modules.Media.Entities.Video;
@@ -40,14 +41,17 @@ public sealed class LessonContentService(
 
         if (request.LessonId.HasValue)
         {
-            query = query.Where(x => x.LessonId == request.LessonId);
+            var lessonId = request.LessonId.Value;
+            query = query.Where(x => x.LessonId == lessonId
+                                     || x.AdditionalLessons.Any(l => l.LessonId == lessonId));
         }
 
         if (request.UserId is long ownerId)
         {
-            // Materialın sahibi dərsin müəllimidir.
+            // Materialın sahibi dərsin müəllimidir; paylaşıldığı dərslərin müəllimi də görür.
             var lessonIds = db.Lessons.Where(l => l.UserId == ownerId).Select(l => l.Id);
-            query = query.Where(x => lessonIds.Contains(x.LessonId));
+            query = query.Where(x => lessonIds.Contains(x.LessonId)
+                                     || x.AdditionalLessons.Any(l => lessonIds.Contains(l.LessonId)));
         }
 
         if (!string.IsNullOrWhiteSpace(request.Search))
@@ -59,6 +63,7 @@ public sealed class LessonContentService(
         var total = await query.CountAsync(ct);
         var items = await query
             .Include(x => x.Video).Include(x => x.MediaFile).Include(x => x.VoiceRecord)
+            .Include(x => x.AdditionalLessons)
             .ApplyListSort(request, x => x.Title, x => x.SortOrder)
             .Skip((page - 1) * perPage).Take(perPage)
             .ToListAsync(ct);
@@ -136,6 +141,8 @@ public sealed class LessonContentService(
 
         var path = await ResolvePathAsync(request, ct);
 
+        var additionalLessons = await ResolveAdditionalLessonsAsync(request.LessonIds, request.LessonId, tenantId, ct);
+
         var content = new LessonContent
         {
             LessonId = request.LessonId,
@@ -145,6 +152,11 @@ public sealed class LessonContentService(
             SortOrder = request.SortOrder,
             IsActive = request.IsActive
         };
+
+        foreach (var lessonId in additionalLessons)
+        {
+            content.AdditionalLessons.Add(new LessonContentLesson { LessonId = lessonId, TenantId = tenantId });
+        }
 
         if (path is not null)
         {
@@ -224,8 +236,19 @@ public sealed class LessonContentService(
     {
         var content = await db.LessonContents.IgnoreQueryFilters(new[] { "SoftDelete" })
             .Include(x => x.Video).Include(x => x.MediaFile).Include(x => x.VoiceRecord)
+            .Include(x => x.AdditionalLessons)
             .FirstOrDefaultAsync(x => x.Id == id, ct)
             ?? throw new KeyNotFoundException($"Lesson content not found: {id}");
+
+        var additionalLessons = await ResolveAdditionalLessonsAsync(request.LessonIds, content.LessonId, content.TenantId, ct);
+        var previousLinks = content.AdditionalLessons.ToList();
+        content.AdditionalLessons.Clear();
+        db.LessonContentLessons.RemoveRange(previousLinks);
+
+        foreach (var lessonId in additionalLessons)
+        {
+            content.AdditionalLessons.Add(new LessonContentLesson { LessonId = lessonId, TenantId = content.TenantId });
+        }
 
         content.Title = request.Title;
         content.Description = request.Description;
@@ -290,7 +313,8 @@ public sealed class LessonContentService(
 
     private IQueryable<LessonContent> WithMedia() =>
         db.LessonContents.AsNoTracking()
-            .Include(x => x.Video).Include(x => x.MediaFile).Include(x => x.VoiceRecord);
+            .Include(x => x.Video).Include(x => x.MediaFile).Include(x => x.VoiceRecord)
+            .Include(x => x.AdditionalLessons);
 
     /// <summary>Dərsin tenant-ı — materialın tenant-ı da ondan götürülür.</summary>
     private Task<long?> LessonTenantAsync(long lessonId, CancellationToken ct)
@@ -338,7 +362,37 @@ public sealed class LessonContentService(
     private static LessonContentResponse Row(LessonContent c, string? type, string? url, string? playbackUrl,
         int? duration, string? thumbnailUrl = null, string? conversionStatus = null) =>
         new(c.Id, c.LessonId, c.Title, c.Description, type, url, playbackUrl, c.SortOrder, c.IsActive,
-            duration, thumbnailUrl, conversionStatus);
+            duration, thumbnailUrl, conversionStatus,
+            c.AdditionalLessons.Select(l => l.LessonId).ToList());
+
+    /// <summary>Əlavə dərsləri yoxlayır: mövcud olmalı və materialın tenant-ına aid olmalıdır.</summary>
+    private async Task<List<long>> ResolveAdditionalLessonsAsync(
+        IEnumerable<long>? lessonIds, long primaryLessonId, long? tenantId, CancellationToken ct)
+    {
+        var wanted = (lessonIds ?? Enumerable.Empty<long>())
+            .Where(id => id != primaryLessonId)
+            .Distinct()
+            .ToList();
+
+        if (wanted.Count == 0) return wanted;
+
+        var found = await db.Lessons.AsNoTracking()
+            .Where(x => wanted.Contains(x.Id))
+            .Select(x => new { x.Id, x.TenantId })
+            .ToListAsync(ct);
+
+        if (found.Count != wanted.Count)
+        {
+            throw new ArgumentException("Some of the selected lessons were not found");
+        }
+
+        if (tenantId.HasValue && found.Any(x => x.TenantId != tenantId))
+        {
+            throw new ArgumentException("Lesson content can only be shared with lessons from the same tenant");
+        }
+
+        return found.Select(x => x.Id).ToList();
+    }
 
     public Task BulkAsync(BulkRequest request, CancellationToken ct = default)
         => BulkHelper.ApplyAsync<LessonContent>(db, request, ct);

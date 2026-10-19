@@ -13,4 +13,8 @@ public class LessonContentUpdateRequest
 
     [FromForm(Name = "is_active")]
     public bool IsActive { get; set; } = true;
+
+    /// <summary>Materialın görünəcəyi əlavə dərslər (əsas dərs dəyişmir).</summary>
+    [FromForm(Name = "lesson_ids")]
+    public List<long> LessonIds { get; set; } = new();
 }

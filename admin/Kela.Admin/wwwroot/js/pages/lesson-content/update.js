@@ -9,6 +9,9 @@
         document.getElementById('sort_order').value = data.sortOrder ?? 0;
         document.getElementById('description').value = data.description ?? '';
         document.getElementById('lesson_id').value = data.lessonId;
+        const extra = new Set((data.lessonIds || []).map(String));
+        [...document.getElementById('lesson_ids').options].forEach(o => { o.selected = extra.has(o.value); });
+        document.getElementById('lesson_ids').dispatchEvent(new Event('change'));
         document.getElementById('title').value = data.title;
         document.getElementById('type').value = data.type ?? 'video';
         document.getElementById('is_active').checked = data.isActive;
@@ -56,6 +59,7 @@
         fd.append('sort_order', document.getElementById('sort_order').value || '0');
         fd.append('description', document.getElementById('description').value || '');
         fd.append('is_active', document.getElementById('is_active').checked ? 'true' : 'false');
+        [...document.getElementById('lesson_ids').selectedOptions].forEach(o => fd.append('lesson_ids', o.value));
 
         const res = await AdminUI.putForm(`/lesson-content/${id}`, fd);
         if (res.ok) { AdminUI.notify(L["Js_Updated"]); AdminUI.closeModal('modal'); loadList(currentPage); return; }
