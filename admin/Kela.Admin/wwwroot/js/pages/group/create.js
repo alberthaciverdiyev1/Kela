@@ -177,7 +177,9 @@
         document.getElementById('entityId').value = '';
         document.getElementById('name').value = '';
         document.getElementById('description').value = '';
-        document.getElementById('user_id').value = '';
+        // Müəllim seçimi yalnız admin üçün göstərilir.
+        const teacher = document.getElementById('user_id');
+        if (teacher) teacher.value = '';
         document.getElementById('image').value = '';
         genSpec = null;
         document.getElementById('wizGenInfo')?.classList.add('hidden');
@@ -195,7 +197,8 @@
         const fd = new FormData();
         fd.append('name', document.getElementById('name').value);
         fd.append('description', document.getElementById('description').value || '');
-        fd.append('user_id', document.getElementById('user_id').value || '');
+        const teacherField = document.getElementById('user_id');
+        if (teacherField) fd.append('user_id', teacherField.value || '');
         fd.append('RemoveImage', document.getElementById('image_remove').value === 'true' ? 'true' : 'false');
         const file = document.getElementById('image').files[0];
         if (file) fd.append('Image', file);

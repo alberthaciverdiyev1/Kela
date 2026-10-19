@@ -8,7 +8,8 @@
         document.getElementById('entityId').value = data.id;
         document.getElementById('name').value = data.name;
         document.getElementById('description').value = data.description ?? '';
-        document.getElementById('user_id').value = data.userId ?? '';
+        const teacher = document.getElementById('user_id');
+        if (teacher) teacher.value = data.userId ?? '';
         AdminUI.fileSet('image', data.image);
         errBox.classList.add('hidden');
 

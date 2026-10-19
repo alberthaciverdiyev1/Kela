@@ -131,7 +131,8 @@
         const fd = new FormData();
         fd.append('name', document.getElementById('g_name').value);
         fd.append('description', document.getElementById('g_description').value || '');
-        fd.append('user_id', document.getElementById('g_teacher').value || '');
+        const teacher = document.getElementById('g_teacher');
+        if (teacher) fd.append('user_id', teacher.value || '');
         fd.append('RemoveImage', 'false');
         const file = document.getElementById('g_image').files[0];
         if (file) fd.append('Image', file);
