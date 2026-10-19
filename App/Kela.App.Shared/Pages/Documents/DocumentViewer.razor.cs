@@ -31,7 +31,7 @@ public partial class DocumentViewer
         if (!string.IsNullOrEmpty(_url) && _attached != _url)
         {
             _attached = _url;
-            await JS.InvokeVoidAsync("lmsPdf.render", _pdfRef, _url);
+            await JS.InvokeVoidAsync("lmsPdf.render", _pdfRef, _url, L["Document_LoadFailed"]);
         }
     }
 

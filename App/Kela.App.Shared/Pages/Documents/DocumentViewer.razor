@@ -14,6 +14,8 @@
 }
 else
 {
-    <div @ref="_pdfRef" class="min-h-[60vh] select-none bg-white p-3 lg:mx-auto lg:max-w-[900px]"
-         @oncontextmenu="() => { }" @oncontextmenu:preventDefault="true"></div>
+    <div class="min-h-[60vh] bg-[#f0f2f1] pb-6 pt-3">
+        <div @ref="_pdfRef" class="mx-auto min-h-[60vh] w-full max-w-[900px] select-none"
+             @oncontextmenu="() => { }" @oncontextmenu:preventDefault="true"></div>
+    </div>
 }

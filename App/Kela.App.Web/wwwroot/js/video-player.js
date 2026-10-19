@@ -36,46 +36,59 @@ window.lmsVideoPlayer = {
     }
 };
 
-// In-app PDF görüntüləyici — pdf.js ilə (mobil brauzerlərdə iframe işləmədiyi üçün).
+// In-app PDF görüntüləyici — pdf.js ilə. Səhifələr canvas-a çəkilir, ona görə
+// native PDF pəncərəsi (endirmə/çap düymələri ilə) heç vaxt açılmır.
 window.lmsPdf = {
-    _worker: 'https://cdn.jsdelivr.net/npm/pdfjs-dist@3.11.174/build/pdf.worker.min.js',
+    _worker: new URL('_content/Kela.App.Shared/lib/pdfjs/pdf.worker.min.js', document.baseURI).href,
 
-    fallbackIframe: function (container, url) {
+    _message: function (container, text) {
         container.innerHTML = '';
-        var f = document.createElement('iframe');
-        f.src = url;
-        f.style.width = '100%';
-        f.style.height = '80vh';
-        f.style.border = '0';
-        container.appendChild(f);
+        var box = document.createElement('div');
+        box.className = 'mx-3 my-6 rounded-2xl bg-[#f6f8f7] px-4 py-6 text-center text-sm text-[#727c8d]';
+        box.textContent = text || 'PDF';
+        container.appendChild(box);
     },
 
-    render: async function (container, url) {
+    render: async function (container, url, errorText) {
         if (!container || !url) return;
         container.innerHTML = '';
+        container.classList.add('lms-pdf');
 
         var lib = window.pdfjsLib;
-        if (!lib) { this.fallbackIframe(container, url); return; }
+        if (!lib) { this._message(container, errorText); return; }
 
         try {
             lib.GlobalWorkerOptions.workerSrc = this._worker;
-            var pdf = await lib.getDocument(url).promise;
+            var pdf = await lib.getDocument({ url: url, isEvalSupported: false }).promise;
+            var width = container.clientWidth || window.innerWidth;
+
             for (var n = 1; n <= pdf.numPages; n++) {
                 var page = await pdf.getPage(n);
-                var viewport = page.getViewport({ scale: 1.5 });
+                var base = page.getViewport({ scale: 1 });
+                // Səhifə konteyner eninə sığdırılır; 2.5x-dən yuxarı böyütmə mənasızdır.
+                var scale = Math.min(2.5, Math.max(1, (width - 24) / base.width));
+                var viewport = page.getViewport({ scale: scale });
+
                 var canvas = document.createElement('canvas');
-                canvas.width = viewport.width;
-                canvas.height = viewport.height;
+                canvas.className = 'lms-pdf-page';
+                canvas.width = Math.floor(viewport.width);
+                canvas.height = Math.floor(viewport.height);
                 canvas.style.width = '100%';
                 canvas.style.height = 'auto';
                 canvas.style.display = 'block';
-                canvas.style.marginBottom = '10px';
-                canvas.style.borderRadius = '8px';
-                container.appendChild(canvas);
+                canvas.style.borderRadius = '14px';
+                canvas.style.background = '#fff';
+                canvas.style.boxShadow = '0 2px 14px rgba(15, 43, 30, .08)';
+
+                var wrap = document.createElement('div');
+                wrap.style.padding = '0 12px 14px';
+                wrap.appendChild(canvas);
+                container.appendChild(wrap);
+
                 await page.render({ canvasContext: canvas.getContext('2d'), viewport: viewport }).promise;
             }
         } catch (e) {
-            this.fallbackIframe(container, url);
+            this._message(container, errorText);
         }
     },
 
