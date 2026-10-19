@@ -20,13 +20,11 @@ public sealed class LessonController(
     public async Task<IActionResult> Index([FromQuery(Name = "subject_id")] long? subjectId, CancellationToken ct)
     {
         ViewData["Scripts"] = new[] { "~/js/pages/lesson/list.js", "~/js/pages/lesson/create.js", "~/js/pages/lesson/update.js", "~/js/pages/lesson/settings.js", "~/js/pages/lesson/sort.js" };
-        ViewData["Subjects"] = await subjects.ListAsync(new SubjectListRequest { PerPage = 200 }, ct);
+        ViewData["Subjects"] = await subjects.ListAsync(
+            new SubjectListRequest { PerPage = 200, UserId = User.IsAdmin() ? null : User.CurrentUserId() }, ct);
         ViewData["SelectedSubjectId"] = subjectId?.ToString() ?? "";
         return View();
     }
-
-    private long? CurrentUserId() =>
-        long.TryParse(User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value, out var id) ? id : null;
 
     [HttpGet("list")]
     public async Task<IActionResult> List([FromQuery] LessonListRequest request, CancellationToken ct)
@@ -35,7 +33,7 @@ public sealed class LessonController(
         {
             // Teacher yalnız öz dərslərini görür.
             request.IsDeleted = 0;
-            request.UserId = CurrentUserId();
+            request.UserId = User.CurrentUserId();
         }
         return Json(await service.ListAsync(request, ct));
     }
@@ -49,7 +47,7 @@ public sealed class LessonController(
     public async Task<IActionResult> Create([FromForm] LessonUpsertRequest request, CancellationToken ct)
     {
         // Teacher yaratdığı qeydin sahibi olur (özü görə bilsin).
-        if (!User.IsAdmin()) request.UserId = CurrentUserId();
+        if (!User.IsAdmin()) request.UserId = User.CurrentUserId();
 
         var result = await validator.ValidateAsync(request, ct);
         if (!result.IsValid) return BadRequest(Errors(result));

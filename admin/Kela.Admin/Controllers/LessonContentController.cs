@@ -28,22 +28,19 @@ public sealed class LessonContentController(
             "~/js/pages/lesson-content/sort.js"
         };
         ViewData["Lessons"] = await lessons.ListAsync(
-            new LessonListRequest { PerPage = 200, UserId = User.IsAdmin() ? null : CurrentUserId() }, ct);
+            new LessonListRequest { PerPage = 200, UserId = User.IsAdmin() ? null : User.CurrentUserId() }, ct);
         ViewData["SelectedLessonId"] = lessonId?.ToString() ?? "";
         return View();
     }
-
-    private long? CurrentUserId() =>
-        long.TryParse(User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value, out var id) ? id : null;
 
     [HttpGet("list")]
     public async Task<IActionResult> List([FromQuery] LessonContentListRequest request, CancellationToken ct)
     {
         if (!User.IsAdmin())
         {
-            // Teacher yalnız öz materiallarını görür (sahiblik dərsə görədir).
+            // Teacher yalnız öz yaratdığı materialları və admin materiallarını görür.
             request.IsDeleted = 0;
-            request.UserId = CurrentUserId();
+            request.UserId = User.CurrentUserId();
         }
         return Json(await service.ListAsync(request, ct));
     }
@@ -121,6 +118,9 @@ public sealed class LessonContentController(
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Create([FromForm] LessonContentCreateRequest request, CancellationToken ct)
     {
+        // Teacher yaratdığı materialın sahibi olur; admin materialı sahibsizdir.
+        if (!User.IsAdmin()) request.UserId = User.CurrentUserId();
+
         var result = await createValidator.ValidateAsync(request, ct);
         if (!result.IsValid) return BadRequest(Errors(result));
 

@@ -114,11 +114,12 @@ public sealed class GroupController(
     public async Task<IActionResult> Options(CancellationToken ct)
     {
         var studentList = await students.ListAsync(new StudentListRequest { PerPage = 500 }, ct);
-        var subjectList = await subjects.ListAsync(new SubjectListRequest { PerPage = 500 }, ct);
+        var ownerId = User.IsAdmin() ? null : User.CurrentUserId();
+        var subjectList = await subjects.ListAsync(new SubjectListRequest { PerPage = 500, UserId = ownerId }, ct);
         // Teacher üçün imtahan seçimi yalnız öz imtahanları ilə məhdudlaşır.
         var quizList = await quizzes.ListAsync(
-            new QuizListRequest { PerPage = 500, UserId = User.IsAdmin() ? null : CurrentUserId() }, ct);
-        var lessonList = await lessons.ListAsync(new LessonListRequest { PerPage = 500 }, ct);
+            new QuizListRequest { PerPage = 500, UserId = ownerId }, ct);
+        var lessonList = await lessons.ListAsync(new LessonListRequest { PerPage = 500, UserId = ownerId }, ct);
 
         // İmtahan → dərs → fənn: siyahıda imtahanları seçilmiş fənnlərə görə filtrləmək üçün.
         var lessonSubject = lessonList.Data.ToDictionary(l => l.Id, l => l.SubjectId);

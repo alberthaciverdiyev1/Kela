@@ -37,7 +37,8 @@ public sealed class LessonService(AppDbContext db, IFileStorage storage, ITenant
 
         if (request.UserId.HasValue)
         {
-            query = query.Where(x => x.UserId == request.UserId);
+            // Teacher yalnız özü yaratdığını görür; sahibi olmayan (admin) dərslər hamıya açıqdır.
+            query = query.Where(x => x.UserId == request.UserId || x.UserId == null);
         }
 
         if (request.IsActive.HasValue)

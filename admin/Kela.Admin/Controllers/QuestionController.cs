@@ -19,7 +19,8 @@ public sealed class QuestionController(
     public async Task<IActionResult> Index(CancellationToken ct)
     {
         ViewData["Scripts"] = new[] { "~/js/pages/question/list.js", "~/js/pages/question/create.js", "~/js/pages/question/update.js" };
-        ViewData["Subjects"] = await subjects.ListAsync(new SubjectListRequest { PerPage = 500 }, ct);
+        ViewData["Subjects"] = await subjects.ListAsync(
+            new SubjectListRequest { PerPage = 500, UserId = User.IsAdmin() ? null : User.CurrentUserId() }, ct);
         return View();
     }
 

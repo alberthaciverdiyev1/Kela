@@ -11,6 +11,9 @@ public class LessonContent : BaseEntity, ISortable
 {
     public long LessonId { get; set; }
 
+    /// <summary>Materialı yaradan istifadəçi. Null — admin tərəfindən yaradılıb (hamıya görünür).</summary>
+    public long? UserId { get; set; }
+
     public string Title { get; set; } = string.Empty;
 
     public string? Description { get; set; }

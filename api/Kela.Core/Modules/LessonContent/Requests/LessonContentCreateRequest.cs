@@ -6,6 +6,9 @@ namespace Kela.Core.Modules.LessonContent.Requests;
 
 public class LessonContentCreateRequest
 {
+    /// <summary>Yaradan istifadəçi — controller tərəfindən doldurulur (admin üçün null).</summary>
+    public long? UserId { get; set; }
+
     [FromForm(Name = "lesson_id")]
     public long LessonId { get; set; }
 

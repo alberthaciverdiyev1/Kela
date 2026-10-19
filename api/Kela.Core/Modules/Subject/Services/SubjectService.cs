@@ -24,6 +24,12 @@ public sealed class SubjectService(AppDbContext db) : ISubjectService
             query = query.IgnoreQueryFilters(new[] { "SoftDelete" }).Where(x => x.DeletedAt != null);
         }
 
+        if (request.UserId.HasValue)
+        {
+            // Teacher yalnız özü yaratdığını görür; sahibi olmayan (admin) fənnlər hamıya açıqdır.
+            query = query.Where(x => x.UserId == request.UserId || x.UserId == null);
+        }
+
         if (!string.IsNullOrWhiteSpace(request.Search))
         {
             var search = request.Search.Trim();
@@ -79,8 +85,8 @@ public sealed class SubjectService(AppDbContext db) : ISubjectService
 
         await EnsureNameAvailableAsync(request.Name, id, ct);
 
+        // Sahiblik yaratma anında qeyd olunur — redaktə onu dəyişmir.
         category.Name = request.Name;
-        category.UserId = request.UserId;
         await db.SaveChangesAsync(ct);
 
         return ToResponse(category);

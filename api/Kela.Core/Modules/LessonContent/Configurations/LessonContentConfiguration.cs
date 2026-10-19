@@ -19,6 +19,7 @@ public sealed class LessonContentConfiguration : IEntityTypeConfiguration<Lesson
         builder.Property(x => x.Id).HasColumnName("id");
 
         builder.Property(x => x.LessonId).HasColumnName("lesson_id");
+        builder.Property(x => x.UserId).HasColumnName("user_id");
         builder.Property(x => x.Title).HasColumnName("title").HasMaxLength(190).IsRequired();
         builder.Property(x => x.Description).HasColumnName("description").HasMaxLength(500);
         builder.Property(x => x.VideoId).HasColumnName("video_id");

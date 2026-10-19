@@ -48,10 +48,8 @@ public sealed class LessonContentService(
 
         if (request.UserId is long ownerId)
         {
-            // Materialın sahibi dərsin müəllimidir; paylaşıldığı dərslərin müəllimi də görür.
-            var lessonIds = db.Lessons.Where(l => l.UserId == ownerId).Select(l => l.Id);
-            query = query.Where(x => lessonIds.Contains(x.LessonId)
-                                     || x.AdditionalLessons.Any(l => lessonIds.Contains(l.LessonId)));
+            // Teacher yalnız öz yaratdığı materialları görür; admin materialları hamıya açıqdır.
+            query = query.Where(x => x.UserId == ownerId || x.UserId == null);
         }
 
         if (!string.IsNullOrWhiteSpace(request.Search))
@@ -146,6 +144,7 @@ public sealed class LessonContentService(
         var content = new LessonContent
         {
             LessonId = request.LessonId,
+            UserId = request.UserId,
             TenantId = tenantId,
             Title = request.Title,
             Description = request.Description,
