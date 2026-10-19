@@ -50,7 +50,10 @@
         <h3 class="mb-4 text-base font-bold text-slate-900">@L["Js_Edit"]</h3>
         <form id="groupEditForm" class="grid gap-4 sm:grid-cols-2">
             <partial name="Ui/_Input" model="@(new InputModel { Name = "name", Id = "g_name", Label = L["Common_Name"], Value = group.Name, Required = true })" />
-            <partial name="Ui/_Select" model="@(new SelectModel { Name = "user_id", Id = "g_teacher", Label = L["Common_Teacher"], Options = teacherOptions, Value = group.UserId?.ToString() ?? "" })" />
+            @if (User.IsAdmin())
+            {
+                <partial name="Ui/_Select" model="@(new SelectModel { Name = "user_id", Id = "g_teacher", Label = L["Common_Teacher"], Options = teacherOptions, Value = group.UserId?.ToString() ?? "" })" />
+            }
             <div class="sm:col-span-2">
                 <partial name="Ui/_Input" model="@(new InputModel { Name = "description", Id = "g_description", Label = L["Common_Description"], Value = group.Description })" />
             </div>

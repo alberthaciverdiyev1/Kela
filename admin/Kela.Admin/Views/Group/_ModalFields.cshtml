@@ -31,7 +31,11 @@
         <div data-step-panel="1" class="space-y-4">
             <partial name="Ui/_Input" model="@(new InputModel { Name = "name", Id = "name", Label = L["Common_Name"], Required = true })" />
             <partial name="Ui/_Input" model="@(new InputModel { Name = "description", Id = "description", Label = L["Common_Description"] })" />
-            <partial name="Ui/_Select" model="@(new SelectModel { Name = "user_id", Id = "user_id", Label = L["Common_Teacher"], Options = teacherOptions })" />
+            @* Teacher yaratdığı qrupun sahibi özüdür — seçim göstərilmir. *@
+            @if (User.IsAdmin())
+            {
+                <partial name="Ui/_Select" model="@(new SelectModel { Name = "user_id", Id = "user_id", Label = L["Common_Teacher"], Options = teacherOptions })" />
+            }
             <partial name="Ui/_FileUpload" model="@(new FileUploadModel { Name = "image", Id = "image", Label = L["Common_Image"], Accept = ".jpg,.jpeg,.png", Hint = "jpg/png, max 5MB" })" />
         </div>
 
