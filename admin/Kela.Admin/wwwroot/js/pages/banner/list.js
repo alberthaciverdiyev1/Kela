@@ -8,6 +8,18 @@ function canEdit(b) {
     return me.isAdmin || (b.userId != null && b.userId === me.userId);
 }
 
+function esc(v) {
+    return String(v ?? '').replace(/[&<>"']/g, c => ({
+        '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+    }[c]));
+}
+
+function ownerCell(b) {
+    if (b.userId == null) return AdminUI.badge(L["Banner_OwnerAdmin"], 'neutral');
+    if (b.userId === (window.ADMIN || {}).userId) return AdminUI.badge(L["Banner_OwnerYou"], 'success');
+    return `<span class="text-sm text-slate-600">${esc(b.ownerName || ('#' + b.userId))}</span>`;
+}
+
 function toggleTrash() {
     showDeleted = !showDeleted;
     AdminUI.syncTrashButton('trashBtn', showDeleted);
@@ -35,6 +47,7 @@ async function loadList(page) {
             ? `<img src="${b.image}" class="h-10 w-16 rounded-lg border border-slate-200 object-cover" />`
             : '<span class="text-slate-400">—</span>' },
         { html: b.title, cls: 'font-semibold text-slate-800' },
+        { html: ownerCell(b) },
         { html: showDeleted ? AdminUI.badge(L["Js_Deleted"], 'danger')
             : canEdit(b)
                 ? AdminUI.statusSwitch(b.isActive, `setStatus(${b.id}, ${!b.isActive})`)
@@ -43,7 +56,7 @@ async function loadList(page) {
             ? `<span class="text-sm text-slate-500">${String(b.activeUntil).slice(0, 10)}</span>`
             : `<span class="text-sm text-slate-400">${L["Banner_Always"]}</span>` },
         { html: showDeleted ? AdminUI.restoreButton(b.id) : (canEdit(b) ? AdminUI.actions(b.id) : ''), cls: 'text-right' }
-    ]), 5, { rowIds: data.data.map(b => b.id), selectable: !showDeleted });
+    ]), 6, { rowIds: data.data.map(b => b.id), selectable: !showDeleted, selectableIds: data.data.filter(canEdit).map(b => b.id) });
 
     AdminUI.pagination('pagination', currentPage, lastPage, loadList);
     AdminUI.loader(false);

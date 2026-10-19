@@ -19,6 +19,8 @@ window.AdminUI = window.AdminUI || {};
         opts = opts || {};
         const selectable = !!opts.selectable;
         const rowIds = opts.rowIds || [];
+        // Verilərsə yalnız bu id-lərin sətri seçilə bilər (məs. yalnız öz bannerləri).
+        const selectableIds = opts.selectableIds ? new Set(opts.selectableIds.map(String)) : null;
         // Boş nəticə sətrinin colspan-ı başlıqdan götürülür: səhifələr sayı əl ilə
         // yazmadıqda da uyğun gəlir. (colspan parametri yalnız ehtiyat variantdır.)
         const headRow = tbody.closest('table')?.tHead?.rows?.[0];
@@ -46,7 +48,10 @@ window.AdminUI = window.AdminUI || {};
             if (selectable) {
                 const td = document.createElement('td');
                 td.className = 'w-12';
-                td.innerHTML = `<input type="checkbox" class="row-check h-5 w-5 rounded-md border-slate-300 text-primary focus:ring-primary" value="${rowIds[idx] ?? ''}" />`;
+                const editable = !selectableIds || selectableIds.has(String(rowIds[idx]));
+                td.innerHTML = editable
+                    ? `<input type="checkbox" class="row-check h-5 w-5 rounded-md border-slate-300 text-primary focus:ring-primary" value="${rowIds[idx] ?? ''}" />`
+                    : `<input type="checkbox" class="h-5 w-5 cursor-not-allowed rounded-md border-slate-200 opacity-40" disabled title="" />`;
                 tr.appendChild(td);
             }
             cells.forEach(cell => {
@@ -92,7 +97,7 @@ window.AdminUI = window.AdminUI || {};
         if (all && !all.dataset.bound) {
             all.dataset.bound = '1';
             all.addEventListener('change', () => {
-                document.querySelectorAll('#rows .row-check').forEach(box => { box.checked = all.checked; });
+                document.querySelectorAll('#rows .row-check:not(:disabled)').forEach(box => { box.checked = all.checked; });
                 updateBulkBar();
             });
         }
@@ -101,7 +106,7 @@ window.AdminUI = window.AdminUI || {};
     function syncCheckAll() {
         const all = document.getElementById('checkAll');
         if (!all) return;
-        const boxes = [...document.querySelectorAll('#rows .row-check')];
+        const boxes = [...document.querySelectorAll('#rows .row-check:not(:disabled)')];
         all.checked = boxes.length > 0 && boxes.every(b => b.checked);
         all.indeterminate = !all.checked && boxes.some(b => b.checked);
     }

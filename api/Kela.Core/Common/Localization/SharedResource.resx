@@ -162,6 +162,15 @@
   <data name="Tenant_PasswordMismatch" xml:space="preserve">
     <value>Passwords do not match</value>
   </data>
+  <data name="Banner_Owner" xml:space="preserve">
+    <value>Owner</value>
+  </data>
+  <data name="Banner_OwnerYou" xml:space="preserve">
+    <value>You</value>
+  </data>
+  <data name="Banner_OwnerAdmin" xml:space="preserve">
+    <value>Admin</value>
+  </data>
   <data name="Validation_EmailRequired" xml:space="preserve">
     <value>Email is required</value>
   </data>

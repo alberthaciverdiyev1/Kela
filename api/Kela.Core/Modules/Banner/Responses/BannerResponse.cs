@@ -8,4 +8,5 @@ public record BannerResponse(
     bool IsActive = true,
     DateOnly? ActiveUntil = null,
     /// <summary>Bannerin sahibi. Null — admin tərəfindən yaradılıb.</summary>
-    long? UserId = null);
+    long? UserId = null,
+    string? OwnerName = null);

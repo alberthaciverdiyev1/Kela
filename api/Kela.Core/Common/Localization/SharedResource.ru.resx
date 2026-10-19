@@ -162,6 +162,15 @@
   <data name="Tenant_PasswordMismatch" xml:space="preserve">
     <value>Пароли не совпадают</value>
   </data>
+  <data name="Banner_Owner" xml:space="preserve">
+    <value>Владелец</value>
+  </data>
+  <data name="Banner_OwnerYou" xml:space="preserve">
+    <value>Вы</value>
+  </data>
+  <data name="Banner_OwnerAdmin" xml:space="preserve">
+    <value>Админ</value>
+  </data>
   <data name="Validation_EmailRequired" xml:space="preserve">
     <value>Эл. почта обязательна</value>
   </data>

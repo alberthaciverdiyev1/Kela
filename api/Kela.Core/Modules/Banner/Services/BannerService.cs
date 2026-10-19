@@ -50,7 +50,8 @@ public sealed class BannerService(AppDbContext db, IFileStorage storage, ITenant
             .ToListAsync(ct);
 
         var now = DateTimeOffset.UtcNow;
-        var data = items.Select(x => ToResponse(x, now)).ToList();
+        var ownerNames = await OwnerNameMapAsync(items.Select(x => x.UserId), ct);
+        var data = items.Select(x => ToResponse(x, now, ownerNames.GetValueOrDefault(x.UserId ?? 0))).ToList();
         var lastPage = (int)Math.Ceiling(total / (double)perPage);
 
         return new PagedResponse<BannerResponse>(data, page, lastPage, perPage, total);
@@ -64,7 +65,7 @@ public sealed class BannerService(AppDbContext db, IFileStorage storage, ITenant
             .FirstOrDefaultAsync(x => x.Id == id, ct)
             ?? throw new KeyNotFoundException($"Banner not found: {id}");
 
-        return ToResponse(banner, DateTimeOffset.UtcNow);
+        return ToResponse(banner, DateTimeOffset.UtcNow, await OwnerNameAsync(banner.UserId, ct));
     }
 
     public async Task<BannerResponse> CreateAsync(BannerUpsertRequest request, CancellationToken ct = default)
@@ -85,7 +86,7 @@ public sealed class BannerService(AppDbContext db, IFileStorage storage, ITenant
         db.Banners.Add(banner);
         await db.SaveChangesAsync(ct);
 
-        return ToResponse(banner, DateTimeOffset.UtcNow);
+        return ToResponse(banner, DateTimeOffset.UtcNow, await OwnerNameAsync(banner.UserId, ct));
     }
 
     public async Task<BannerResponse> UpdateAsync(long id, BannerUpsertRequest request, long? ownerId = null, CancellationToken ct = default)
@@ -113,7 +114,7 @@ public sealed class BannerService(AppDbContext db, IFileStorage storage, ITenant
         banner.ActiveUntil = request.ActiveUntil;
         await db.SaveChangesAsync(ct);
 
-        return ToResponse(banner, DateTimeOffset.UtcNow);
+        return ToResponse(banner, DateTimeOffset.UtcNow, await OwnerNameAsync(banner.UserId, ct));
     }
 
     public async Task DeleteAsync(long id, long? ownerId = null, CancellationToken ct = default)
@@ -127,7 +128,7 @@ public sealed class BannerService(AppDbContext db, IFileStorage storage, ITenant
         await db.SaveChangesAsync(ct);
     }
 
-    private BannerResponse ToResponse(Banner banner, DateTimeOffset now) =>
+    private BannerResponse ToResponse(Banner banner, DateTimeOffset now, string? ownerName = null) =>
         new(
             banner.Id,
             banner.Title,
@@ -135,7 +136,26 @@ public sealed class BannerService(AppDbContext db, IFileStorage storage, ITenant
             banner.CreatedAt > now.Subtract(NewThreshold),
             banner.IsActive,
             banner.ActiveUntil,
-            banner.UserId);
+            banner.UserId,
+            ownerName);
+
+    private async Task<Dictionary<long, string>> OwnerNameMapAsync(IEnumerable<long?> ids, CancellationToken ct)
+    {
+        var wanted = ids.Where(x => x.HasValue).Select(x => x!.Value).Distinct().ToList();
+        if (wanted.Count == 0) return new Dictionary<long, string>();
+
+        var users = await db.Users.IgnoreQueryFilters().AsNoTracking()
+            .Where(x => wanted.Contains(x.Id))
+            .Select(x => new { x.Id, x.Name, x.Surname })
+            .ToListAsync(ct);
+
+        return users.ToDictionary(x => x.Id, x => $"{x.Name} {x.Surname}".Trim());
+    }
+
+    private async Task<string?> OwnerNameAsync(long? ownerId, CancellationToken ct)
+        => ownerId is long id
+            ? (await OwnerNameMapAsync(new long?[] { id }, ct)).GetValueOrDefault(id)
+            : null;
 
     public async Task BulkAsync(BulkRequest request, long? ownerId = null, CancellationToken ct = default)
     {

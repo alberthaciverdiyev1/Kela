@@ -162,6 +162,15 @@
   <data name="Tenant_PasswordMismatch" xml:space="preserve">
     <value>Şifrələr uyğun gəlmir</value>
   </data>
+  <data name="Banner_Owner" xml:space="preserve">
+    <value>Sahibi</value>
+  </data>
+  <data name="Banner_OwnerYou" xml:space="preserve">
+    <value>Siz</value>
+  </data>
+  <data name="Banner_OwnerAdmin" xml:space="preserve">
+    <value>Admin</value>
+  </data>
   <data name="Validation_EmailRequired" xml:space="preserve">
     <value>E-poçt tələb olunur</value>
   </data>
