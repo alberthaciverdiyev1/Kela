@@ -25,13 +25,23 @@ public sealed class StudentsController(
             "~/js/pages/students/list.js", "~/js/pages/students/create.js",
             "~/js/pages/students/devices.js"
         };
-        ViewData["Groups"] = await groups.ListAsync(new Kela.Core.Modules.Group.Requests.GroupListRequest { PerPage = 500 }, ct);
+        ViewData["Groups"] = await groups.ListAsync(
+            new Kela.Core.Modules.Group.Requests.GroupListRequest
+            {
+                PerPage = 500,
+                UserId = User.IsAdmin() ? null : User.CurrentUserId()
+            }, ct);
         return View();
     }
+
+    private async Task<bool> CanManageAsync(long studentId, CancellationToken ct)
+        => User.IsAdmin() || await service.IsInTeacherGroupsAsync(studentId, User.CurrentUserId() ?? 0, ct);
 
     [HttpGet("{id:long}/detail")]
     public async Task<IActionResult> Details(long id, CancellationToken ct)
     {
+        if (!await CanManageAsync(id, ct)) return Forbid();
+
         var student = await service.GetAsync(id, ct);
         ViewData["Title"] = student.FullName;
         ViewData["Student"] = student;
@@ -45,23 +55,29 @@ public sealed class StudentsController(
     [HttpGet("list")]
     public async Task<IActionResult> List([FromQuery] StudentListRequest request, CancellationToken ct)
     {
-        if (!User.IsAdmin()) request.IsDeleted = 0;
+        if (!User.IsAdmin())
+        {
+            request.IsDeleted = 0;
+            request.OwnerId = User.CurrentUserId();
+        }
         return Json(await service.ListAsync(request, ct));
     }
 
     [HttpGet("{id:long}")]
     public async Task<IActionResult> Get(long id, CancellationToken ct)
-        => Json(await service.GetAsync(id, ct));
+        => await CanManageAsync(id, ct) ? Json(await service.GetAsync(id, ct)) : Forbid();
 
     [HttpPost("{id:long}/status")]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Status(long id, [FromBody] SetStudentStatusRequest request, CancellationToken ct)
-        => Json(await service.SetStatusAsync(id, request, ct));
+        => await CanManageAsync(id, ct) ? Json(await service.SetStatusAsync(id, request, ct)) : Forbid();
 
     [HttpDelete("{id:long}")]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Delete(long id, CancellationToken ct)
     {
+        if (!await CanManageAsync(id, ct)) return Forbid();
+
         await service.DeleteAsync(id, ct);
         return Json(new { ok = true });
     }
@@ -70,6 +86,9 @@ public sealed class StudentsController(
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Restore(long id, CancellationToken ct)
     {
+        // Bərpa yalnız adminin əməliyyatıdır.
+        if (!User.IsAdmin()) return Forbid();
+
         await service.RestoreAsync(id, ct);
         return Json(new { ok = true });
     }
@@ -78,6 +97,13 @@ public sealed class StudentsController(
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Create([FromForm] CreateStudentRequest request, CancellationToken ct)
     {
+        // Teacher yalnız öz qrupuna şagird əlavə edə bilər.
+        if (!User.IsAdmin() && request.GroupId is long groupId)
+        {
+            var group = await groups.GetAsync(groupId, ct: ct);
+            if (group.UserId != User.CurrentUserId()) return Forbid();
+        }
+
         try
         {
             return Json(await service.CreateAsync(request, ct));
@@ -92,6 +118,8 @@ public sealed class StudentsController(
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> ResetPassword(long id, [FromBody] ResetStudentPasswordRequest request, CancellationToken ct)
     {
+        if (!await CanManageAsync(id, ct)) return Forbid();
+
         try
         {
             return Json(await service.ResetPasswordAsync(id, request, ct));
@@ -104,7 +132,7 @@ public sealed class StudentsController(
 
     [HttpGet("{id:long}/devices")]
     public async Task<IActionResult> Devices(long id, CancellationToken ct)
-        => Json(await service.ListDevicesAsync(id, ct));
+        => await CanManageAsync(id, ct) ? Json(await service.ListDevicesAsync(id, ct)) : Forbid();
 
     [HttpPost("bulk")]
     [ValidateAntiForgeryToken]
@@ -112,6 +140,16 @@ public sealed class StudentsController(
     {
         // Bərpa yalnız adminin əməliyyatıdır — silinmişləri yalnız o görür.
         if (request.Action == BulkActions.Restore && !User.IsAdmin()) return Forbid();
+
+        if (!User.IsAdmin())
+        {
+            var teacherId = User.CurrentUserId() ?? 0;
+            foreach (var id in request.Ids.Distinct())
+            {
+                if (!await service.IsInTeacherGroupsAsync(id, teacherId, ct)) return Forbid();
+            }
+        }
+
         await service.BulkAsync(request, ct);
         return Json(new { ok = true });
     }
@@ -120,6 +158,8 @@ public sealed class StudentsController(
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> UnbindDevice(long id, CancellationToken ct)
     {
+        if (!await CanManageAsync(id, ct)) return Forbid();
+
         await service.UnbindDeviceAsync(id, ct);
         return Json(new { ok = true });
     }

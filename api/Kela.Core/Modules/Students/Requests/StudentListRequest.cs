@@ -16,6 +16,10 @@ public class StudentListRequest : ListRequestBase
 
     [FromQuery(Name = "is_deleted")]
     public int IsDeleted { get; set; }
+
+    /// <summary>Teacher scope: yalnız həmin müəllimin qruplarındaki şagirdlər.</summary>
+    [FromQuery(Name = "owner_id")]
+    public long? OwnerId { get; set; }
 }
 
 public class SetStudentStatusRequest

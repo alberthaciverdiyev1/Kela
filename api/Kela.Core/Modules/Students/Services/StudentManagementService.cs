@@ -136,6 +136,11 @@ public sealed class StudentManagementService(AppDbContext db) : Abstractions.ISt
     public Task BulkAsync(BulkRequest request, CancellationToken ct = default)
         => BulkHelper.ApplyAsync<Student>(db, request, ct);
 
+    public Task<bool> IsInTeacherGroupsAsync(long studentId, long teacherId, CancellationToken ct = default)
+        => db.StudentGroups.AnyAsync(
+            sg => sg.StudentId == studentId
+                  && db.Groups.Any(g => g.Id == sg.GroupId && g.UserId == teacherId), ct);
+
     private IQueryable<Student> Query(StudentListRequest request)
     {
         var query = db.Students.AsNoTracking();
@@ -143,6 +148,15 @@ public sealed class StudentManagementService(AppDbContext db) : Abstractions.ISt
         if (request.IsDeleted == 1)
         {
             query = query.IgnoreQueryFilters(new[] { "SoftDelete" }).Where(x => x.DeletedAt != null);
+        }
+
+        if (request.OwnerId is long ownerId)
+        {
+            var studentIds = db.StudentGroups
+                .Where(sg => db.Groups.Any(g => g.Id == sg.GroupId && g.UserId == ownerId))
+                .Select(sg => sg.StudentId);
+
+            query = query.Where(x => studentIds.Contains(x.Id));
         }
 
         if (request.IsActive.HasValue)

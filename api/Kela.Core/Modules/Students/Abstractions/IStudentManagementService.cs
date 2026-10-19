@@ -29,4 +29,7 @@ public interface IStudentManagementService
     Task UnbindDeviceAsync(long studentId, CancellationToken ct = default);
 
     Task BulkAsync(BulkRequest request, CancellationToken ct = default);
+
+    /// <summary>Şagird müəllimin qruplarından ən azı birindədir.</summary>
+    Task<bool> IsInTeacherGroupsAsync(long studentId, long teacherId, CancellationToken ct = default);
 }
