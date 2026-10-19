@@ -61,18 +61,47 @@ public sealed class LessonContentService(
         }
 
         var total = await query.CountAsync(ct);
-        var items = await query
-            .Include(x => x.Video).Include(x => x.MediaFile).Include(x => x.VoiceRecord)
-            .Include(x => x.AdditionalLessons)
-            .ApplyListSort(request, x => x.Title, x => x.SortOrder)
-            .Skip((page - 1) * perPage).Take(perPage)
-            .ToListAsync(ct);
+
+        List<LessonContent> items;
+
+        // Dərsə görə filtrləndikdə "əl ilə sıra" paylaşılan materiallar üçün link sırasını istifadə edir.
+        var useLessonOrder = request.LessonId is long lid
+                             && string.Equals(request.SortBy, ListSort.Order, StringComparison.OrdinalIgnoreCase);
+
+        if (useLessonOrder)
+        {
+            var all = await query
+                .Include(x => x.Video).Include(x => x.MediaFile).Include(x => x.VoiceRecord)
+                .Include(x => x.AdditionalLessons)
+                .ToListAsync(ct);
+
+            var lessonId = request.LessonId!.Value;
+            var ordered = ListSort.IsAscending(request)
+                ? all.OrderBy(x => EffectiveSort(x, lessonId)).ThenBy(x => x.Id)
+                : all.OrderByDescending(x => EffectiveSort(x, lessonId)).ThenBy(x => x.Id);
+
+            items = ordered.Skip((page - 1) * perPage).Take(perPage).ToList();
+        }
+        else
+        {
+            items = await query
+                .Include(x => x.Video).Include(x => x.MediaFile).Include(x => x.VoiceRecord)
+                .Include(x => x.AdditionalLessons)
+                .ApplyListSort(request, x => x.Title, x => x.SortOrder)
+                .Skip((page - 1) * perPage).Take(perPage)
+                .ToListAsync(ct);
+        }
 
         var data = items.Select(ToResponse).ToList();
         var lastPage = (int)Math.Ceiling(total / (double)perPage);
 
         return new PagedResponse<LessonContentResponse>(data, page, lastPage, perPage, total);
     }
+
+    private static int EffectiveSort(LessonContent content, long lessonId) =>
+        content.LessonId == lessonId
+            ? content.SortOrder
+            : content.AdditionalLessons.FirstOrDefault(l => l.LessonId == lessonId)?.SortOrder ?? content.SortOrder;
 
     public async Task<LessonContentResponse> GetAsync(long id, long? ownerId = null, CancellationToken ct = default)
     {
