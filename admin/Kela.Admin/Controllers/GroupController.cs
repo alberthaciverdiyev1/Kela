@@ -45,6 +45,11 @@ public sealed class GroupController(
         ViewData["Scripts"] = new[] { "~/js/pages/group/manage-page.js" };
 
         var group = await service.GetAsync(id, ct);
+
+        // Teacher başqasının qrupunu URL ilə də aça bilməsin.
+        if (!User.IsAdmin() && group.UserId != CurrentUserId())
+            return Forbid();
+
         ViewData["Title"] = group.Name;
         ViewData["Group"] = group;
         ViewData["Teachers"] = await users.ListAsync(new UserListRequest { PerPage = 200 }, ct);
@@ -53,10 +58,18 @@ public sealed class GroupController(
         return View();
     }
 
+    private long? CurrentUserId() =>
+        long.TryParse(User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value, out var id) ? id : null;
+
     [HttpGet("list")]
     public async Task<IActionResult> List([FromQuery] GroupListRequest request, CancellationToken ct)
     {
-        if (!User.IsAdmin()) request.IsDeleted = 0;
+        if (!User.IsAdmin())
+        {
+            // Teacher yalnız öz qruplarını görür; admin/superadmin hamısını.
+            request.IsDeleted = 0;
+            request.UserId = CurrentUserId();
+        }
         return Json(await service.ListAsync(request, ct));
     }
 
@@ -68,6 +81,9 @@ public sealed class GroupController(
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Create([FromForm] GroupUpsertRequest request, CancellationToken ct)
     {
+        // Teacher yalnız özünə qrup yaradır — müəllim seçimi məcburi özüdür.
+        if (!User.IsAdmin()) request.UserId = CurrentUserId();
+
         var result = await validator.ValidateAsync(request, ct);
         if (!result.IsValid) return BadRequest(Errors(result));
 

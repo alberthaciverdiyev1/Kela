@@ -43,6 +43,13 @@ public sealed class LessonContentService(
             query = query.Where(x => x.LessonId == request.LessonId);
         }
 
+        if (request.UserId is long ownerId)
+        {
+            // Materialın sahibi dərsin müəllimidir.
+            var lessonIds = db.Lessons.Where(l => l.UserId == ownerId).Select(l => l.Id);
+            query = query.Where(x => lessonIds.Contains(x.LessonId));
+        }
+
         if (!string.IsNullOrWhiteSpace(request.Search))
         {
             var term = $"%{request.Search.Trim()}%";

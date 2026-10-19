@@ -16,4 +16,8 @@ public class LessonListRequest : ListRequestBase
 
     [FromQuery(Name = "is_deleted")]
     public int IsDeleted { get; set; }
+
+    /// <summary>Sahibinə görə filtr (teacher yalnız öz dərslərini görür).</summary>
+    [FromQuery(Name = "user_id")]
+    public long? UserId { get; set; }
 }

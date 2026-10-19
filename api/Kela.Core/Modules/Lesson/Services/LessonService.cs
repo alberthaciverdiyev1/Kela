@@ -35,6 +35,11 @@ public sealed class LessonService(AppDbContext db, IFileStorage storage, ITenant
             query = query.Where(x => x.SubjectId == request.SubjectId);
         }
 
+        if (request.UserId.HasValue)
+        {
+            query = query.Where(x => x.UserId == request.UserId);
+        }
+
         if (request.IsActive.HasValue)
         {
             query = query.Where(x => x.IsActive == request.IsActive);

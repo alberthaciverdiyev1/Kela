@@ -25,10 +25,18 @@ public sealed class LessonController(
         return View();
     }
 
+    private long? CurrentUserId() =>
+        long.TryParse(User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value, out var id) ? id : null;
+
     [HttpGet("list")]
     public async Task<IActionResult> List([FromQuery] LessonListRequest request, CancellationToken ct)
     {
-        if (!User.IsAdmin()) request.IsDeleted = 0;
+        if (!User.IsAdmin())
+        {
+            // Teacher yalnız öz dərslərini görür.
+            request.IsDeleted = 0;
+            request.UserId = CurrentUserId();
+        }
         return Json(await service.ListAsync(request, ct));
     }
 
