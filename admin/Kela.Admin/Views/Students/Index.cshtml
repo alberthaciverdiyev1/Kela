@@ -10,6 +10,7 @@
 <section class="admin-page">
     @{
         var studentsHeaderExtra = new Microsoft.AspNetCore.Html.HtmlString($@"
+            <button type=""button"" class=""admin-button-primary"" onclick=""openStudentCreate()"">+ {L["Students_Create"]}</button>
             <button type=""button"" id=""trashBtn"" class=""admin-button-secondary"" onclick=""toggleTrash()"">{L["Common_DeletedItems"]}</button>
             <a href=""/students/export"" class=""admin-button-secondary"">⬇ Excel</a>");
     }
@@ -79,6 +80,20 @@
     WidthClass = "max-w-md",
     ShowError = false,
     Body = devicesModalBody
+})" />
+
+@{
+    var studentModalBody = await Html.PartialAsync("_CreateModalFields");
+}
+
+<partial name="Ui/_Modal" model="@(new ModalModel
+{
+    Id = "studentModal",
+    TitleId = "studentModalTitle",
+    Title = L["Students_Create"],
+    WidthClass = "max-w-lg",
+    ShowError = false,
+    Body = studentModalBody
 })" />
 
 <form id="antiforgery">@Html.AntiForgeryToken()</form>

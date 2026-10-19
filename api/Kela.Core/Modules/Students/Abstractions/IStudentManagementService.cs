@@ -21,6 +21,12 @@ public interface IStudentManagementService
 
     Task<GenerateStudentsResponse> GenerateAsync(GenerateStudentsRequest request, CancellationToken ct = default);
 
+    /// <summary>Tək şagird yaratma (teacher da istifadə edir).</summary>
+    Task<CreateStudentResponse> CreateAsync(CreateStudentRequest request, CancellationToken ct = default);
+
+    /// <summary>Şifrəni sıfırlamaq (teacher/admin) — yeni şifrə təyin edir və ya yaradır.</summary>
+    Task<ResetStudentPasswordResponse> ResetPasswordAsync(long id, ResetStudentPasswordRequest request, CancellationToken ct = default);
+
     Task<IReadOnlyList<StudentDeviceResponse>> ListDevicesAsync(long studentId, CancellationToken ct = default);
 
     Task UnbindDeviceAsync(long studentId, CancellationToken ct = default);

@@ -1263,6 +1263,27 @@
   <data name="Feedback_Read" xml:space="preserve">
     <value>Oxundu</value>
   </data>
+  <data name="Common_FullName" xml:space="preserve">
+    <value>Ad və soyad</value>
+  </data>
+  <data name="Common_None" xml:space="preserve">
+    <value>Yoxdur</value>
+  </data>
+  <data name="Students_Create" xml:space="preserve">
+    <value>Yeni şagird</value>
+  </data>
+  <data name="Students_ResetPassword" xml:space="preserve">
+    <value>Şifrəni sıfırla</value>
+  </data>
+  <data name="Students_NewPassword" xml:space="preserve">
+    <value>Yeni şifrə</value>
+  </data>
+  <data name="Students_NewPasswordHint" xml:space="preserve">
+    <value>Boş buraxın — təsadüfi şifrə yaradılsın</value>
+  </data>
+  <data name="Students_PasswordReset" xml:space="preserve">
+    <value>Şifrə yeniləndi</value>
+  </data>
   <data name="Js_Edit" xml:space="preserve">
     <value>Redaktə</value>
   </data>

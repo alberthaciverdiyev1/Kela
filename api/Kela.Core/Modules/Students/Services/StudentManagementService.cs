@@ -90,6 +90,64 @@ public sealed class StudentManagementService(AppDbContext db) : Abstractions.ISt
         return stream.ToArray();
     }
 
+    public async Task<ResetStudentPasswordResponse> ResetPasswordAsync(long id, ResetStudentPasswordRequest request, CancellationToken ct = default)
+    {
+        var student = await db.Students.FirstOrDefaultAsync(x => x.Id == id, ct)
+            ?? throw new KeyNotFoundException($"Student not found: {id}");
+
+        var generated = string.IsNullOrWhiteSpace(request.Password);
+        var password = generated ? GeneratePassword() : request.Password!.Trim();
+
+        student.PasswordHash = BCrypt.Net.BCrypt.HashPassword(password);
+        // Başqası tərəfindən verilən şifrə ilk girişdə dəyişdirilməlidir.
+        student.MustChangePassword = true;
+        await db.SaveChangesAsync(ct);
+
+        return new ResetStudentPasswordResponse(student.Id, student.Email, generated ? password : null);
+    }
+
+    public async Task<CreateStudentResponse> CreateAsync(CreateStudentRequest request, CancellationToken ct = default)
+    {
+        var fullName = (request.FullName ?? string.Empty).Trim();
+        var email = (request.Email ?? string.Empty).Trim().ToLowerInvariant();
+
+        if (fullName.Length == 0) throw new ArgumentException("Ad və soyad tələb olunur");
+        if (email.Length == 0) throw new ArgumentException("E-poçt tələb olunur");
+
+        var exists = await db.Students.IgnoreQueryFilters(new[] { "SoftDelete" })
+            .AnyAsync(s => s.Email == email, ct);
+        if (exists) throw new ArgumentException("Bu e-poçt ilə şagird artıq mövcuddur");
+
+        var generated = string.IsNullOrWhiteSpace(request.Password);
+        var password = generated ? GeneratePassword() : request.Password!.Trim();
+
+        var student = new Student
+        {
+            FullName = fullName,
+            Email = email,
+            Phone = string.IsNullOrWhiteSpace(request.Phone) ? null : request.Phone.Trim(),
+            PasswordHash = BCrypt.Net.BCrypt.HashPassword(password),
+            IsActive = request.IsActive,
+            // Təsadüfi şifrə verilibsə ilk girişdə dəyişməlidir; ad realdır.
+            MustChangePassword = generated
+        };
+
+        db.Students.Add(student);
+        await db.SaveChangesAsync(ct);
+
+        if (request.GroupId is long groupId)
+        {
+            db.StudentGroups.Add(new Modules.Group.Entities.StudentGroup
+            {
+                GroupId = groupId,
+                StudentId = student.Id
+            });
+            await db.SaveChangesAsync(ct);
+        }
+
+        return new CreateStudentResponse(student.Id, student.FullName, student.Email, generated ? password : null);
+    }
+
     public async Task<GenerateStudentsResponse> GenerateAsync(GenerateStudentsRequest request, CancellationToken ct = default)
     {
         var count = request.Count is < 1 or > 1000 ? 10 : request.Count;

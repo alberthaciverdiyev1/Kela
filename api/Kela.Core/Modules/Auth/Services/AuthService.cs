@@ -192,7 +192,7 @@ public sealed class AuthService(
     {
         var student = await GetStudentAsync(studentId, ct);
         student.FullName = request.FullName.Trim();
-        // Ad yazıldı — məcburi addım tamamlandı.
+        // Ad yazıldı — məcburi addım tamamlandı.   
         student.MustChangeName = false;
         await db.SaveChangesAsync(ct);
         return ToResponse(student);

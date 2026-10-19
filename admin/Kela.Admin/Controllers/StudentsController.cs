@@ -12,14 +12,20 @@ namespace Kela.Admin.Controllers;
 [Route("[controller]")]
 public sealed class StudentsController(
     IStudentManagementService service,
+    Kela.Core.Modules.Group.Abstractions.IGroupService groups,
     IProgressService progress,
     IStudentQuizService quizzes,
     IScreenGuardService screenGuard) : Controller
 {
     [HttpGet]
-    public IActionResult Index()
+    public async Task<IActionResult> Index(CancellationToken ct)
     {
-        ViewData["Scripts"] = new[] { "~/js/pages/students/list.js", "~/js/pages/students/generate.js", "~/js/pages/students/devices.js" };
+        ViewData["Scripts"] = new[]
+        {
+            "~/js/pages/students/list.js", "~/js/pages/students/create.js",
+            "~/js/pages/students/generate.js", "~/js/pages/students/devices.js"
+        };
+        ViewData["Groups"] = await groups.ListAsync(new Kela.Core.Modules.Group.Requests.GroupListRequest { PerPage = 500 }, ct);
         return View();
     }
 
@@ -66,6 +72,34 @@ public sealed class StudentsController(
     {
         await service.RestoreAsync(id, ct);
         return Json(new { ok = true });
+    }
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> Create([FromForm] CreateStudentRequest request, CancellationToken ct)
+    {
+        try
+        {
+            return Json(await service.CreateAsync(request, ct));
+        }
+        catch (ArgumentException ex)
+        {
+            return BadRequest(new { message = ex.Message });
+        }
+    }
+
+    [HttpPost("{id:long}/password")]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> ResetPassword(long id, [FromBody] ResetStudentPasswordRequest request, CancellationToken ct)
+    {
+        try
+        {
+            return Json(await service.ResetPasswordAsync(id, request, ct));
+        }
+        catch (KeyNotFoundException ex)
+        {
+            return NotFound(new { message = ex.Message });
+        }
     }
 
     [HttpPost("generate")]

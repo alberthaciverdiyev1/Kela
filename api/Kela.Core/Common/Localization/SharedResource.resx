@@ -1263,6 +1263,27 @@
   <data name="Feedback_Read" xml:space="preserve">
     <value>Read</value>
   </data>
+  <data name="Common_FullName" xml:space="preserve">
+    <value>Full name</value>
+  </data>
+  <data name="Common_None" xml:space="preserve">
+    <value>None</value>
+  </data>
+  <data name="Students_Create" xml:space="preserve">
+    <value>New student</value>
+  </data>
+  <data name="Students_ResetPassword" xml:space="preserve">
+    <value>Reset password</value>
+  </data>
+  <data name="Students_NewPassword" xml:space="preserve">
+    <value>New password</value>
+  </data>
+  <data name="Students_NewPasswordHint" xml:space="preserve">
+    <value>Leave empty to generate a random password</value>
+  </data>
+  <data name="Students_PasswordReset" xml:space="preserve">
+    <value>Password updated</value>
+  </data>
   <data name="Js_Edit" xml:space="preserve">
     <value>Edit</value>
   </data>
