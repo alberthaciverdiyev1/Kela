@@ -535,7 +535,7 @@
     <value>Bildirişlər</value>
   </data>
   <data name="Nav_Banners" xml:space="preserve">
-    <value>Bannerlər</value>
+    <value>Storylər</value>
   </data>
   <data name="Nav_Certificates" xml:space="preserve">
     <value>Sertifikatlar</value>
@@ -967,22 +967,22 @@
     <value>Şagirdlərə göndərilən bildirişləri idarə edin.</value>
   </data>
   <data name="Banner_ActiveUntil" xml:space="preserve">
-    <value>Aktivdir (tarixə qədər)</value>
+    <value>Bitmə tarixi</value>
   </data>
   <data name="Banner_Always" xml:space="preserve">
     <value>Müddətsiz</value>
   </data>
   <data name="Banner_Create" xml:space="preserve">
-    <value>Yeni banner</value>
+    <value>Yeni story</value>
   </data>
   <data name="Banner_Total" xml:space="preserve">
-    <value>Cəmi banner</value>
+    <value>Story sayı</value>
   </data>
   <data name="Banner_Search" xml:space="preserve">
-    <value>Banner başlığı üzrə axtar...</value>
+    <value>Story adı ilə axtar...</value>
   </data>
   <data name="Banner_Subtitle" xml:space="preserve">
-    <value>Tətbiqin açılış ekranında göstərilən bannerləri idarə edin.</value>
+    <value>Tətbiqin ana səhifəsində göstərilən story-ləri idarə edin.</value>
   </data>
   <data name="Certificate_Create" xml:space="preserve">
     <value>Yeni sertifikat</value>
@@ -1237,7 +1237,7 @@
     <value>Pozuntu qeydə alınmayıb</value>
   </data>
   <data name="Js_ConfirmDeleteBanner" xml:space="preserve">
-    <value>Bu banner silinəcək.</value>
+    <value>Bu story silinsin?</value>
   </data>
   <data name="Js_ConfirmDeleteNotification" xml:space="preserve">
     <value>Bu bildiriş silinəcək.</value>
@@ -1330,7 +1330,7 @@
     <value>Axtarış şərtlərini dəyişdirib yenidən yoxlayın</value>
   </data>
   <data name="Js_EditBanner" xml:space="preserve">
-    <value>Banner redaktəsi</value>
+    <value>Story redaktə et</value>
   </data>
   <data name="Js_EditLesson" xml:space="preserve">
     <value>Dərs redaktəsi</value>

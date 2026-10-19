@@ -535,7 +535,7 @@
     <value>Notifications</value>
   </data>
   <data name="Nav_Banners" xml:space="preserve">
-    <value>Banners</value>
+    <value>Stories</value>
   </data>
   <data name="Nav_Certificates" xml:space="preserve">
     <value>Certificates</value>
@@ -967,22 +967,22 @@
     <value>Manage notifications sent to students.</value>
   </data>
   <data name="Banner_ActiveUntil" xml:space="preserve">
-    <value>Active until</value>
+    <value>Expires on</value>
   </data>
   <data name="Banner_Always" xml:space="preserve">
     <value>No expiry</value>
   </data>
   <data name="Banner_Create" xml:space="preserve">
-    <value>New banner</value>
+    <value>New story</value>
   </data>
   <data name="Banner_Total" xml:space="preserve">
-    <value>Total banners</value>
+    <value>Total stories</value>
   </data>
   <data name="Banner_Search" xml:space="preserve">
-    <value>Search by banner title...</value>
+    <value>Search by story title...</value>
   </data>
   <data name="Banner_Subtitle" xml:space="preserve">
-    <value>Manage banners shown on the app splash screen.</value>
+    <value>Manage the stories shown on the app home screen.</value>
   </data>
   <data name="Certificate_Create" xml:space="preserve">
     <value>New certificate</value>
@@ -1237,7 +1237,7 @@
     <value>No violations recorded</value>
   </data>
   <data name="Js_ConfirmDeleteBanner" xml:space="preserve">
-    <value>Delete this banner?</value>
+    <value>Delete this story?</value>
   </data>
   <data name="Js_ConfirmDeleteNotification" xml:space="preserve">
     <value>Delete this notification?</value>
@@ -1330,7 +1330,7 @@
     <value>Adjust your search and try again</value>
   </data>
   <data name="Js_EditBanner" xml:space="preserve">
-    <value>Edit banner</value>
+    <value>Edit story</value>
   </data>
   <data name="Js_EditLesson" xml:space="preserve">
     <value>Edit lesson</value>

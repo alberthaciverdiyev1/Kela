@@ -535,7 +535,7 @@
     <value>Уведомления</value>
   </data>
   <data name="Nav_Banners" xml:space="preserve">
-    <value>Баннеры</value>
+    <value>Истории</value>
   </data>
   <data name="Nav_Certificates" xml:space="preserve">
     <value>Сертификаты</value>
@@ -967,22 +967,22 @@
     <value>Управляйте уведомлениями для учеников.</value>
   </data>
   <data name="Banner_ActiveUntil" xml:space="preserve">
-    <value>Активен до</value>
+    <value>Дата окончания</value>
   </data>
   <data name="Banner_Always" xml:space="preserve">
     <value>Без срока</value>
   </data>
   <data name="Banner_Create" xml:space="preserve">
-    <value>Новый баннер</value>
+    <value>Новая история</value>
   </data>
   <data name="Banner_Total" xml:space="preserve">
-    <value>Всего баннеров</value>
+    <value>Всего историй</value>
   </data>
   <data name="Banner_Search" xml:space="preserve">
-    <value>Поиск по заголовку баннера...</value>
+    <value>Поиск по названию истории...</value>
   </data>
   <data name="Banner_Subtitle" xml:space="preserve">
-    <value>Управляйте баннерами на стартовом экране приложения.</value>
+    <value>Управляйте историями на главном экране приложения.</value>
   </data>
   <data name="Certificate_Create" xml:space="preserve">
     <value>Новый сертификат</value>
@@ -1237,7 +1237,7 @@
     <value>Нарушения не зафиксированы</value>
   </data>
   <data name="Js_ConfirmDeleteBanner" xml:space="preserve">
-    <value>Удалить этот баннер?</value>
+    <value>Удалить эту историю?</value>
   </data>
   <data name="Js_ConfirmDeleteNotification" xml:space="preserve">
     <value>Удалить это уведомление?</value>
@@ -1330,7 +1330,7 @@
     <value>Измените условия поиска и попробуйте снова</value>
   </data>
   <data name="Js_EditBanner" xml:space="preserve">
-    <value>Редактирование баннера</value>
+    <value>Редактировать историю</value>
   </data>
   <data name="Js_EditLesson" xml:space="preserve">
     <value>Редактирование урока</value>
