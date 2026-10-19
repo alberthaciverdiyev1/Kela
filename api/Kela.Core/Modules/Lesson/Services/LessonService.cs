@@ -2,6 +2,7 @@ using System.Text.Json;
 using Kela.Core.Common.Responses;
 using Kela.Core.Common.Storage;
 using Kela.Core.Common.Bulk;
+using Kela.Core.Common.Exceptions;
 using Kela.Core.Common.Sorting;
 using Kela.Core.Data;
 using Kela.Core.Modules.Lesson.Entities;
@@ -65,18 +66,29 @@ public sealed class LessonService(AppDbContext db, IFileStorage storage, ITenant
         return new PagedResponse<LessonResponse>(data, page, lastPage, perPage, total);
     }
 
-    public async Task<LessonResponse> GetAsync(long id, CancellationToken ct = default)
+    public async Task<LessonResponse> GetAsync(long id, long? ownerId = null, CancellationToken ct = default)
     {
         var lesson = await db.Lessons.IgnoreQueryFilters(new[] { "SoftDelete" }).AsNoTracking()
             .FirstOrDefaultAsync(x => x.Id == id, ct)
             ?? throw new KeyNotFoundException($"Lesson not found: {id}");
 
+        EnsureAccessible(lesson, ownerId);
         return ToResponse(lesson);
     }
 
     public async Task<LessonResponse> CreateAsync(LessonUpsertRequest request, CancellationToken ct = default)
     {
         await EnsureSubjectExistsAsync(request.SubjectId, ct);
+
+        // Teacher yalnız öz və ya adminin fənninə dərs əlavə edə bilər.
+        if (request.UserId is long ownerId)
+        {
+            var subject = await db.Subjects.AsNoTracking().FirstOrDefaultAsync(x => x.Id == request.SubjectId, ct);
+            if (subject is null || (subject.UserId != ownerId && subject.UserId != null))
+            {
+                throw new ForbiddenException("You do not have access to this subject");
+            }
+        }
 
         var image = request.Image is not null
             ? await storage.UploadAsync(request.Image, await FolderAsync(ct), ct)
@@ -99,12 +111,13 @@ public sealed class LessonService(AppDbContext db, IFileStorage storage, ITenant
         return ToResponse(lesson);
     }
 
-    public async Task<LessonResponse> UpdateAsync(long id, LessonUpsertRequest request, CancellationToken ct = default)
+    public async Task<LessonResponse> UpdateAsync(long id, LessonUpsertRequest request, long? ownerId = null, CancellationToken ct = default)
     {
         var lesson = await db.Lessons.IgnoreQueryFilters(new[] { "SoftDelete" })
             .FirstOrDefaultAsync(x => x.Id == id, ct)
             ?? throw new KeyNotFoundException($"Lesson not found: {id}");
 
+        EnsureOwned(lesson, ownerId);
         await EnsureSubjectExistsAsync(request.SubjectId, ct);
 
         if (request.RemoveImage)
@@ -128,10 +141,12 @@ public sealed class LessonService(AppDbContext db, IFileStorage storage, ITenant
         return ToResponse(lesson);
     }
 
-    public async Task DeleteAsync(long id, CancellationToken ct = default)
+    public async Task DeleteAsync(long id, long? ownerId = null, CancellationToken ct = default)
     {
         var lesson = await db.Lessons.FirstOrDefaultAsync(x => x.Id == id, ct)
             ?? throw new KeyNotFoundException($"Lesson not found: {id}");
+
+        EnsureOwned(lesson, ownerId);
 
         lesson.DeletedAt = DateTimeOffset.UtcNow;
         await db.SaveChangesAsync(ct);
@@ -155,25 +170,60 @@ public sealed class LessonService(AppDbContext db, IFileStorage storage, ITenant
             lesson.IsActive,
             lesson.Settings);
 
-    public Task BulkAsync(BulkRequest request, CancellationToken ct = default)
-        => BulkHelper.ApplyAsync<Lesson>(db, request, ct);
+    public async Task BulkAsync(BulkRequest request, long? ownerId = null, CancellationToken ct = default)
+    {
+        if (ownerId.HasValue) await EnsureAllOwnedAsync(request.Ids, ownerId.Value, ct);
+        await BulkHelper.ApplyAsync<Lesson>(db, request, ct);
+    }
 
-    public Task ReorderAsync(SortRequest request, CancellationToken ct = default)
-        => SortHelper.ReorderAsync<Lesson>(db, request, ct);
+    public async Task ReorderAsync(SortRequest request, long? ownerId = null, CancellationToken ct = default)
+    {
+        if (ownerId.HasValue) await EnsureAllOwnedAsync(request.Ids, ownerId.Value, ct);
+        await SortHelper.ReorderAsync<Lesson>(db, request, ct);
+    }
 
-    public async Task<LessonSettingsResponse> GetSettingsAsync(long id, CancellationToken ct = default)
+    private async Task EnsureAllOwnedAsync(IEnumerable<long> ids, long ownerId, CancellationToken ct)
+    {
+        var wanted = ids.Distinct().ToList();
+        var owned = await db.Lessons.Where(x => wanted.Contains(x.Id) && x.UserId == ownerId)
+            .Select(x => x.Id).ToListAsync(ct);
+
+        if (owned.Count != wanted.Count) throw new ForbiddenException("You can only modify your own lessons");
+    }
+
+    /// <summary>Oxumaq üçün: öz dərsi və ya admin tərəfindən yaradılan (sahibsiz) dərs.</summary>
+    private static void EnsureAccessible(Lesson lesson, long? ownerId)
+    {
+        if (ownerId.HasValue && lesson.UserId != ownerId && lesson.UserId != null)
+        {
+            throw new ForbiddenException("You do not have access to this lesson");
+        }
+    }
+
+    /// <summary>Dəyişmək üçün yalnız sahibi olduğu dərs.</summary>
+    private static void EnsureOwned(Lesson lesson, long? ownerId)
+    {
+        if (ownerId.HasValue && lesson.UserId != ownerId)
+        {
+            throw new ForbiddenException("You can only modify your own lesson");
+        }
+    }
+
+    public async Task<LessonSettingsResponse> GetSettingsAsync(long id, long? ownerId = null, CancellationToken ct = default)
     {
         var lesson = await db.Lessons.AsNoTracking().FirstOrDefaultAsync(x => x.Id == id, ct)
             ?? throw new KeyNotFoundException($"Lesson not found: {id}");
 
+        EnsureAccessible(lesson, ownerId);
         return LessonSettings.Parse(lesson.Settings);
     }
 
-    public async Task<LessonSettingsResponse> SetSettingsAsync(long id, SetLessonSettingsRequest request, CancellationToken ct = default)
+    public async Task<LessonSettingsResponse> SetSettingsAsync(long id, SetLessonSettingsRequest request, long? ownerId = null, CancellationToken ct = default)
     {
         var lesson = await db.Lessons.IgnoreQueryFilters(new[] { "SoftDelete" }).FirstOrDefaultAsync(x => x.Id == id, ct)
             ?? throw new KeyNotFoundException($"Lesson not found: {id}");
 
+        EnsureOwned(lesson, ownerId);
         lesson.Settings = LessonSettings.Serialize(request);
         await db.SaveChangesAsync(ct);
         return LessonSettings.Parse(lesson.Settings);

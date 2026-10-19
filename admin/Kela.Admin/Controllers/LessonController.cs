@@ -26,6 +26,8 @@ public sealed class LessonController(
         return View();
     }
 
+    private long? OwnerScope => User.IsAdmin() ? null : User.CurrentUserId();
+
     [HttpGet("list")]
     public async Task<IActionResult> List([FromQuery] LessonListRequest request, CancellationToken ct)
     {
@@ -40,7 +42,7 @@ public sealed class LessonController(
 
     [HttpGet("{id:long}")]
     public async Task<IActionResult> Get(long id, CancellationToken ct)
-        => Json(await service.GetAsync(id, ct));
+        => Json(await service.GetAsync(id, OwnerScope, ct));
 
     [HttpPost]
     [ValidateAntiForgeryToken]
@@ -62,14 +64,14 @@ public sealed class LessonController(
         var result = await validator.ValidateAsync(request, ct);
         if (!result.IsValid) return BadRequest(Errors(result));
 
-        return Json(await service.UpdateAsync(id, request, ct));
+        return Json(await service.UpdateAsync(id, request, OwnerScope, ct));
     }
 
     [HttpDelete("{id:long}")]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Delete(long id, CancellationToken ct)
     {
-        await service.DeleteAsync(id, ct);
+        await service.DeleteAsync(id, OwnerScope, ct);
         return Json(new { ok = true });
     }
 
@@ -77,18 +79,18 @@ public sealed class LessonController(
 
     [HttpGet("{id:long}/settings")]
     public async Task<IActionResult> GetSettings(long id, CancellationToken ct)
-        => Json(await service.GetSettingsAsync(id, ct));
+        => Json(await service.GetSettingsAsync(id, OwnerScope, ct));
 
     [HttpPut("{id:long}/settings")]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> SetSettings(long id, [FromBody] SetLessonSettingsRequest request, CancellationToken ct)
-        => Json(await service.SetSettingsAsync(id, request, ct));
+        => Json(await service.SetSettingsAsync(id, request, OwnerScope, ct));
 
     [HttpPost("sort")]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Sort([FromBody] SortRequest request, CancellationToken ct)
     {
-        await service.ReorderAsync(request, ct);
+        await service.ReorderAsync(request, OwnerScope, ct);
         return Json(new { ok = true });
     }
 
@@ -98,7 +100,7 @@ public sealed class LessonController(
     {
         // Bərpa yalnız adminin əməliyyatıdır — silinmişləri yalnız o görür.
         if (request.Action == BulkActions.Restore && !User.IsAdmin()) return Forbid();
-        await service.BulkAsync(request, ct);
+        await service.BulkAsync(request, OwnerScope, ct);
         return Json(new { ok = true });
     }
 

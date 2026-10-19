@@ -1,5 +1,6 @@
 using Kela.Core.Modules.Media.Entities;
 using Kela.Core.Common.Responses;
+using Kela.Core.Common.Exceptions;
 using Kela.Core.Common.Storage;
 using Kela.Core.Common.Bulk;
 using Kela.Core.Common.Sorting;
@@ -72,18 +73,19 @@ public sealed class LessonContentService(
         return new PagedResponse<LessonContentResponse>(data, page, lastPage, perPage, total);
     }
 
-    public async Task<LessonContentResponse> GetAsync(long id, CancellationToken ct = default)
+    public async Task<LessonContentResponse> GetAsync(long id, long? ownerId = null, CancellationToken ct = default)
     {
         var content = await WithMedia().FirstOrDefaultAsync(x => x.Id == id, ct)
             ?? throw new KeyNotFoundException($"Lesson content not found: {id}");
 
+        EnsureAccessible(content, ownerId);
         return ToResponse(content);
     }
 
     public async Task<UploadUrlResponse> CreateUploadUrlAsync(
-        LessonContentUploadUrlRequest request, CancellationToken ct = default)
+        LessonContentUploadUrlRequest request, long? ownerId = null, CancellationToken ct = default)
     {
-        await EnsureLessonExistsAsync(request.LessonId, ct);
+        await EnsureLessonAccessibleAsync(request.LessonId, ownerId, ct);
 
         var folder = await FolderForAsync(request.Type, await LessonTenantAsync(request.LessonId, ct), ct);
         var path = await storage.BuildUniquePathAsync(folder, request.FileName, ct);
@@ -96,9 +98,9 @@ public sealed class LessonContentService(
 
     private static readonly TimeSpan MultipartUrlExpiry = TimeSpan.FromHours(6);
 
-    public async Task<MultipartTicket?> StartMultipartAsync(LessonContentUploadUrlRequest request, CancellationToken ct = default)
+    public async Task<MultipartTicket?> StartMultipartAsync(LessonContentUploadUrlRequest request, long? ownerId = null, CancellationToken ct = default)
     {
-        await EnsureLessonExistsAsync(request.LessonId, ct);
+        await EnsureLessonAccessibleAsync(request.LessonId, ownerId, ct);
 
         var folder = await FolderForAsync(request.Type, await LessonTenantAsync(request.LessonId, ct), ct);
         return await storage.StartMultipartAsync(folder, request.FileName, request.ContentType, ct);
@@ -137,9 +139,13 @@ public sealed class LessonContentService(
         var tenantId = await LessonTenantAsync(request.LessonId, ct)
             ?? throw new ArgumentException($"Lesson not found: {request.LessonId}");
 
+        // Teacher yalnız öz və ya adminin dərsinə material əlavə edə bilər.
+        if (request.UserId is long ownerId) await EnsureLessonAccessibleAsync(request.LessonId, ownerId, ct);
+
         var path = await ResolvePathAsync(request, ct);
 
-        var additionalLessons = await ResolveAdditionalLessonsAsync(request.LessonIds, request.LessonId, tenantId, ct);
+        var additionalLessons = await ResolveAdditionalLessonsAsync(
+            request.LessonIds, request.LessonId, tenantId, request.UserId, ct);
 
         var content = new LessonContent
         {
@@ -193,7 +199,7 @@ public sealed class LessonContentService(
     /// yükləməni gözləmir: material dərhal yaranır, fayl bitəndə bura gəlir.
     /// </summary>
     public async Task<LessonContentResponse> AttachFileAsync(
-        long id, LessonContentAttachRequest request, CancellationToken ct = default)
+        long id, LessonContentAttachRequest request, long? ownerId = null, CancellationToken ct = default)
     {
         if (string.IsNullOrWhiteSpace(request.Path))
             throw new ArgumentException("path is required");
@@ -202,6 +208,8 @@ public sealed class LessonContentService(
             .Include(x => x.Video).Include(x => x.MediaFile).Include(x => x.VoiceRecord)
             .FirstOrDefaultAsync(x => x.Id == id, ct)
             ?? throw new KeyNotFoundException($"Lesson content not found: {id}");
+
+        EnsureOwned(content, ownerId);
 
         switch (request.Type)
         {
@@ -227,11 +235,11 @@ public sealed class LessonContentService(
         // Video bağlanan kimi konversiya tapşırıqları yaranmalıdır — worker onları gözləyir.
         if (content.Video is not null) await jobs.EnsureJobsAsync(content.Video.Id, ct);
 
-        return await GetAsync(id, ct);
+        return await GetAsync(id, ownerId, ct);
     }
 
     public async Task<LessonContentResponse> UpdateAsync(
-        long id, LessonContentUpdateRequest request, CancellationToken ct = default)
+        long id, LessonContentUpdateRequest request, long? ownerId = null, CancellationToken ct = default)
     {
         var content = await db.LessonContents.IgnoreQueryFilters(new[] { "SoftDelete" })
             .Include(x => x.Video).Include(x => x.MediaFile).Include(x => x.VoiceRecord)
@@ -239,7 +247,10 @@ public sealed class LessonContentService(
             .FirstOrDefaultAsync(x => x.Id == id, ct)
             ?? throw new KeyNotFoundException($"Lesson content not found: {id}");
 
-        var additionalLessons = await ResolveAdditionalLessonsAsync(request.LessonIds, content.LessonId, content.TenantId, ct);
+        EnsureOwned(content, ownerId);
+
+        var additionalLessons = await ResolveAdditionalLessonsAsync(
+            request.LessonIds, content.LessonId, content.TenantId, content.UserId, ct);
         var previousLinks = content.AdditionalLessons.ToList();
         content.AdditionalLessons.Clear();
         db.LessonContentLessons.RemoveRange(previousLinks);
@@ -258,10 +269,12 @@ public sealed class LessonContentService(
         return ToResponse(content);
     }
 
-    public async Task DeleteAsync(long id, CancellationToken ct = default)
+    public async Task DeleteAsync(long id, long? ownerId = null, CancellationToken ct = default)
     {
         var content = await db.LessonContents.FirstOrDefaultAsync(x => x.Id == id, ct)
             ?? throw new KeyNotFoundException($"Lesson content not found: {id}");
+
+        EnsureOwned(content, ownerId);
 
         content.DeletedAt = DateTimeOffset.UtcNow;
         await db.SaveChangesAsync(ct);
@@ -320,11 +333,35 @@ public sealed class LessonContentService(
         => db.Lessons.AsNoTracking().Where(x => x.Id == lessonId)
             .Select(x => (long?)x.TenantId).FirstOrDefaultAsync(ct);
 
-    private async Task EnsureLessonExistsAsync(long lessonId, CancellationToken ct)
+    private async Task EnsureLessonAccessibleAsync(long lessonId, long? ownerId, CancellationToken ct)
     {
-        if (!await db.Lessons.AnyAsync(x => x.Id == lessonId, ct))
+        var lesson = await db.Lessons.AsNoTracking()
+            .Where(x => x.Id == lessonId)
+            .Select(x => new { x.UserId })
+            .FirstOrDefaultAsync(ct)
+            ?? throw new ArgumentException($"Lesson not found: {lessonId}");
+
+        if (ownerId.HasValue && lesson.UserId != ownerId && lesson.UserId != null)
         {
-            throw new ArgumentException($"Lesson not found: {lessonId}");
+            throw new ForbiddenException("You do not have access to this lesson");
+        }
+    }
+
+    /// <summary>Oxumaq üçün: öz materialı və ya admin tərəfindən yaradılan (sahibsiz) material.</summary>
+    private static void EnsureAccessible(LessonContent content, long? ownerId)
+    {
+        if (ownerId.HasValue && content.UserId != ownerId && content.UserId != null)
+        {
+            throw new ForbiddenException("You do not have access to this material");
+        }
+    }
+
+    /// <summary>Dəyişmək üçün yalnız sahibi olduğu material.</summary>
+    private static void EnsureOwned(LessonContent content, long? ownerId)
+    {
+        if (ownerId.HasValue && content.UserId != ownerId)
+        {
+            throw new ForbiddenException("You can only modify your own material");
         }
     }
 
@@ -366,7 +403,7 @@ public sealed class LessonContentService(
 
     /// <summary>Əlavə dərsləri yoxlayır: mövcud olmalı və materialın tenant-ına aid olmalıdır.</summary>
     private async Task<List<long>> ResolveAdditionalLessonsAsync(
-        IEnumerable<long>? lessonIds, long primaryLessonId, long? tenantId, CancellationToken ct)
+        IEnumerable<long>? lessonIds, long primaryLessonId, long? tenantId, long? ownerId, CancellationToken ct)
     {
         var wanted = (lessonIds ?? Enumerable.Empty<long>())
             .Where(id => id != primaryLessonId)
@@ -390,12 +427,40 @@ public sealed class LessonContentService(
             throw new ArgumentException("Lesson content can only be shared with lessons from the same tenant");
         }
 
+        if (ownerId.HasValue)
+        {
+            var accessible = await db.Lessons.AsNoTracking()
+                .Where(x => wanted.Contains(x.Id) && (x.UserId == ownerId || x.UserId == null))
+                .Select(x => x.Id)
+                .ToListAsync(ct);
+
+            if (accessible.Count != wanted.Count)
+            {
+                throw new ForbiddenException("You do not have access to some of the selected lessons");
+            }
+        }
+
         return found.Select(x => x.Id).ToList();
     }
 
-    public Task BulkAsync(BulkRequest request, CancellationToken ct = default)
-        => BulkHelper.ApplyAsync<LessonContent>(db, request, ct);
+    public async Task BulkAsync(BulkRequest request, long? ownerId = null, CancellationToken ct = default)
+    {
+        if (ownerId.HasValue) await EnsureAllOwnedAsync(request.Ids, ownerId.Value, ct);
+        await BulkHelper.ApplyAsync<LessonContent>(db, request, ct);
+    }
 
-    public Task ReorderAsync(SortRequest request, CancellationToken ct = default)
-        => SortHelper.ReorderAsync<LessonContent>(db, request, ct);
+    public async Task ReorderAsync(SortRequest request, long? ownerId = null, CancellationToken ct = default)
+    {
+        if (ownerId.HasValue) await EnsureAllOwnedAsync(request.Ids, ownerId.Value, ct);
+        await SortHelper.ReorderAsync<LessonContent>(db, request, ct);
+    }
+
+    private async Task EnsureAllOwnedAsync(IEnumerable<long> ids, long ownerId, CancellationToken ct)
+    {
+        var wanted = ids.Distinct().ToList();
+        var owned = await db.LessonContents.Where(x => wanted.Contains(x.Id) && x.UserId == ownerId)
+            .Select(x => x.Id).ToListAsync(ct);
+
+        if (owned.Count != wanted.Count) throw new ForbiddenException("You can only modify your own materials");
+    }
 }

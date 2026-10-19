@@ -1,3 +1,4 @@
+using Kela.Core.Common.Exceptions;
 using Kela.Core.Common.Sorting;
 using Kela.Core.Common.Responses;
 using Kela.Core.Common.Bulk;
@@ -49,7 +50,7 @@ public sealed class SubjectService(AppDbContext db) : ISubjectService
         return new PagedResponse<SubjectResponse>(data, page, lastPage, perPage, total);
     }
 
-    public async Task<SubjectResponse> GetAsync(long id, CancellationToken ct = default)
+    public async Task<SubjectResponse> GetAsync(long id, long? ownerId = null, CancellationToken ct = default)
     {
         var category = await db.Subjects
             .IgnoreQueryFilters(new[] { "SoftDelete" })
@@ -57,6 +58,7 @@ public sealed class SubjectService(AppDbContext db) : ISubjectService
             .FirstOrDefaultAsync(x => x.Id == id, ct)
             ?? throw new KeyNotFoundException($"Subject not found: {id}");
 
+        EnsureAccessible(category, ownerId);
         return ToResponse(category);
     }
 
@@ -76,13 +78,14 @@ public sealed class SubjectService(AppDbContext db) : ISubjectService
         return ToResponse(category);
     }
 
-    public async Task<SubjectResponse> UpdateAsync(long id, SubjectUpsertRequest request, CancellationToken ct = default)
+    public async Task<SubjectResponse> UpdateAsync(long id, SubjectUpsertRequest request, long? ownerId = null, CancellationToken ct = default)
     {
         var category = await db.Subjects
             .IgnoreQueryFilters(new[] { "SoftDelete" })
             .FirstOrDefaultAsync(x => x.Id == id, ct)
             ?? throw new KeyNotFoundException($"Subject not found: {id}");
 
+        EnsureOwned(category, ownerId);
         await EnsureNameAvailableAsync(request.Name, id, ct);
 
         // Sahiblik yaratma anında qeyd olunur — redaktə onu dəyişmir.
@@ -92,10 +95,12 @@ public sealed class SubjectService(AppDbContext db) : ISubjectService
         return ToResponse(category);
     }
 
-    public async Task DeleteAsync(long id, CancellationToken ct = default)
+    public async Task DeleteAsync(long id, long? ownerId = null, CancellationToken ct = default)
     {
         var category = await db.Subjects.FirstOrDefaultAsync(x => x.Id == id, ct)
             ?? throw new KeyNotFoundException($"Subject not found: {id}");
+
+        EnsureOwned(category, ownerId);
 
         category.DeletedAt = DateTimeOffset.UtcNow;
         await db.SaveChangesAsync(ct);
@@ -115,6 +120,39 @@ public sealed class SubjectService(AppDbContext db) : ISubjectService
     private static SubjectResponse ToResponse(Subject category) =>
         new(category.Id, category.Name, category.UserId);
 
-    public Task BulkAsync(BulkRequest request, CancellationToken ct = default)
-        => BulkHelper.ApplyAsync<Subject>(db, request, ct);
+    public async Task BulkAsync(BulkRequest request, long? ownerId = null, CancellationToken ct = default)
+    {
+        if (ownerId.HasValue)
+        {
+            var owned = await db.Subjects
+                .Where(x => request.Ids.Contains(x.Id) && x.UserId == ownerId)
+                .Select(x => x.Id)
+                .ToListAsync(ct);
+
+            if (owned.Count != request.Ids.Distinct().Count())
+            {
+                throw new ForbiddenException("You can only modify your own subjects");
+            }
+        }
+
+        await BulkHelper.ApplyAsync<Subject>(db, request, ct);
+    }
+
+    /// <summary>Oxumaq üçün: öz qeydi və ya admin tərəfindən yaradılan (sahibsiz) qeyd.</summary>
+    private static void EnsureAccessible(Subject subject, long? ownerId)
+    {
+        if (ownerId.HasValue && subject.UserId != ownerId && subject.UserId != null)
+        {
+            throw new ForbiddenException("You do not have access to this subject");
+        }
+    }
+
+    /// <summary>Dəyişmək üçün yalnız sahibi olduğu qeyd.</summary>
+    private static void EnsureOwned(Subject subject, long? ownerId)
+    {
+        if (ownerId.HasValue && subject.UserId != ownerId)
+        {
+            throw new ForbiddenException("You can only modify your own subject");
+        }
+    }
 }

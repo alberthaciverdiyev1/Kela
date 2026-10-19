@@ -10,19 +10,20 @@ public interface ILessonService
 {
     Task<PagedResponse<LessonResponse>> ListAsync(LessonListRequest request, CancellationToken ct = default);
 
-    Task<LessonResponse> GetAsync(long id, CancellationToken ct = default);
+    /// <summary><paramref name="ownerId"/> verilərsə yalnız öz/admin dərsinə giriş icazəsi verilir.</summary>
+    Task<LessonResponse> GetAsync(long id, long? ownerId = null, CancellationToken ct = default);
 
     Task<LessonResponse> CreateAsync(LessonUpsertRequest request, CancellationToken ct = default);
 
-    Task<LessonResponse> UpdateAsync(long id, LessonUpsertRequest request, CancellationToken ct = default);
+    Task<LessonResponse> UpdateAsync(long id, LessonUpsertRequest request, long? ownerId = null, CancellationToken ct = default);
 
-    Task DeleteAsync(long id, CancellationToken ct = default);
+    Task DeleteAsync(long id, long? ownerId = null, CancellationToken ct = default);
 
-    Task BulkAsync(BulkRequest request, CancellationToken ct = default);
+    Task BulkAsync(BulkRequest request, long? ownerId = null, CancellationToken ct = default);
 
-    Task ReorderAsync(SortRequest request, CancellationToken ct = default);
+    Task ReorderAsync(SortRequest request, long? ownerId = null, CancellationToken ct = default);
 
-    Task<LessonSettingsResponse> GetSettingsAsync(long id, CancellationToken ct = default);
+    Task<LessonSettingsResponse> GetSettingsAsync(long id, long? ownerId = null, CancellationToken ct = default);
 
-    Task<LessonSettingsResponse> SetSettingsAsync(long id, SetLessonSettingsRequest request, CancellationToken ct = default);
+    Task<LessonSettingsResponse> SetSettingsAsync(long id, SetLessonSettingsRequest request, long? ownerId = null, CancellationToken ct = default);
 }

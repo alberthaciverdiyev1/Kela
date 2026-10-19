@@ -33,6 +33,8 @@ public sealed class LessonContentController(
         return View();
     }
 
+    private long? OwnerScope => User.IsAdmin() ? null : User.CurrentUserId();
+
     [HttpGet("list")]
     public async Task<IActionResult> List([FromQuery] LessonContentListRequest request, CancellationToken ct)
     {
@@ -47,7 +49,7 @@ public sealed class LessonContentController(
 
     [HttpGet("{id:long}")]
     public async Task<IActionResult> Get(long id, CancellationToken ct)
-        => Json(await service.GetAsync(id, ct));
+        => Json(await service.GetAsync(id, OwnerScope, ct));
 
     [HttpPost("upload-url")]
     [ValidateAntiForgeryToken]
@@ -55,7 +57,7 @@ public sealed class LessonContentController(
     {
         try
         {
-            return Json(await service.CreateUploadUrlAsync(request, ct));
+            return Json(await service.CreateUploadUrlAsync(request, OwnerScope, ct));
         }
         catch (ArgumentException ex)
         {
@@ -71,7 +73,7 @@ public sealed class LessonContentController(
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> MultipartStart([FromForm] LessonContentUploadUrlRequest request, CancellationToken ct)
     {
-        var ticket = await service.StartMultipartAsync(request, ct);
+        var ticket = await service.StartMultipartAsync(request, OwnerScope, ct);
         return ticket is null
             ? BadRequest(new { error = "Multipart upload is not supported by the current storage provider" })
             : Json(ticket);
@@ -134,7 +136,7 @@ public sealed class LessonContentController(
     {
         try
         {
-            return Json(await service.AttachFileAsync(id, request, ct));
+            return Json(await service.AttachFileAsync(id, request, OwnerScope, ct));
         }
         catch (ArgumentException ex)
         {
@@ -149,14 +151,14 @@ public sealed class LessonContentController(
         var result = await updateValidator.ValidateAsync(request, ct);
         if (!result.IsValid) return BadRequest(Errors(result));
 
-        return Json(await service.UpdateAsync(id, request, ct));
+        return Json(await service.UpdateAsync(id, request, OwnerScope, ct));
     }
 
     [HttpDelete("{id:long}")]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Delete(long id, CancellationToken ct)
     {
-        await service.DeleteAsync(id, ct);
+        await service.DeleteAsync(id, OwnerScope, ct);
         return Json(new { ok = true });
     }
 
@@ -164,7 +166,7 @@ public sealed class LessonContentController(
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Sort([FromBody] SortRequest request, CancellationToken ct)
     {
-        await service.ReorderAsync(request, ct);
+        await service.ReorderAsync(request, OwnerScope, ct);
         return Json(new { ok = true });
     }
 
@@ -174,7 +176,7 @@ public sealed class LessonContentController(
     {
         // Bərpa yalnız adminin əməliyyatıdır — silinmişləri yalnız o görür.
         if (request.Action == BulkActions.Restore && !User.IsAdmin()) return Forbid();
-        await service.BulkAsync(request, ct);
+        await service.BulkAsync(request, OwnerScope, ct);
         return Json(new { ok = true });
     }
 
