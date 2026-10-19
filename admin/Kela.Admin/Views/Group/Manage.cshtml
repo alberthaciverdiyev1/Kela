@@ -91,6 +91,7 @@
                 <div class="flex flex-wrap items-end gap-3">
                     <div class="min-w-56 flex-1"><partial name="Ui/_Select" model="@(new SelectModel { Name = "student_pick", Id = "studentPick", Label = L["Nav_Students"], Options = new List<SelectOption>() })" /></div>
                     <partial name="Ui/_Button" model="@(new ButtonModel { Text = L["Common_Add"], OnClick = "assignMember('students')" })" />
+                </div>
                 <div id="studentsList" class="space-y-2"></div>
             </div>
 
