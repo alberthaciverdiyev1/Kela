@@ -16,6 +16,7 @@ public partial class StoryViewer
     [Parameter] public int StartIndex { get; set; }
     [Parameter] public int DurationSeconds { get; set; } = 5;
     [Parameter] public EventCallback OnClose { get; set; }
+    [Parameter] public EventCallback<long> OnViewed { get; set; }
 
     private int _index;
     private CancellationTokenSource? _cts;
@@ -24,8 +25,12 @@ public partial class StoryViewer
     protected override void OnInitialized()
     {
         _index = Math.Clamp(StartIndex, 0, Math.Max(0, Banners.Count - 1));
+        _ = MarkViewedAsync();
         RestartTimer();
     }
+
+    private Task MarkViewedAsync()
+        => Banners.Count == 0 ? Task.CompletedTask : OnViewed.InvokeAsync(Banners[_index].Id);
 
     private void RestartTimer()
     {
@@ -55,6 +60,7 @@ public partial class StoryViewer
         }
 
         _index++;
+        _ = MarkViewedAsync();
         RestartTimer();
         StateHasChanged();
     }
@@ -62,6 +68,7 @@ public partial class StoryViewer
     private void Prev()
     {
         if (_index > 0) _index--;
+        _ = MarkViewedAsync();
         RestartTimer();
         StateHasChanged();
     }

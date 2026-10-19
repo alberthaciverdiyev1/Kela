@@ -83,7 +83,7 @@ else
                     var b = _banners[i];
                     <button type="button" class="flex w-[66px] shrink-0 flex-col items-center gap-2 text-center pt-2"
                             @onclick="() => OpenStory(idx)">
-                        <span class="rounded-full p-[3px] ring-2 ring-offset-2 ring-offset-brand-022 @(b.IsNew ? "ring-brand-671" : "ring-brand-149")">
+                        <span class="rounded-full p-[3px] ring-2 ring-offset-2 ring-offset-brand-022 @(b.IsNew && !_seenStories.Contains(b.Id) ? "ring-brand-671" : "ring-brand-149")">
                             <img src="@b.Image" alt="" class="size-[54px] rounded-full object-cover" />
                         </span>
                         <span class="w-full truncate text-[10px] font-semibold text-sage-561">@b.Title</span>
@@ -165,6 +165,6 @@ else
 
     @if (_storyOpen && _banners.Count > 0)
     {
-        <StoryViewer Banners="_banners" StartIndex="_storyIndex" OnClose="CloseStory" />
+        <StoryViewer Banners="_banners" StartIndex="_storyIndex" OnViewed="MarkStorySeenAsync" OnClose="CloseStory" />
     }
 }

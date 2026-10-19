@@ -20,6 +20,10 @@ public partial class Home
     private int _completedContents;
     private int _totalContents;
     private List<BannerDto> _banners = [];
+    private readonly HashSet<long> _seenStories = new();
+    private const string SeenStoriesKey = "lms.story.seen";
+
+    [Inject] private IJSRuntime JS { get; set; } = default!;
     private List<GroupDto> _studentGroups = [];
     private List<ProgressItemDto> _continue = [];
 
@@ -29,12 +33,42 @@ public partial class Home
         _storyOpen = true;
     }
 
+    /// <summary>Baxılan story-lər yadda saxlanılır — yaşıl həlqə yalnız görülməmişdə qalır.</summary>
+    private async Task MarkStorySeenAsync(long id)
+    {
+        if (!_seenStories.Add(id)) return;
+
+        try
+        {
+            var json = System.Text.Json.JsonSerializer.Serialize(_seenStories.ToList());
+            await JS.InvokeVoidAsync("localStorage.setItem", SeenStoriesKey, json);
+        }
+        catch { /* localStorage əlçatmaz ola bilər */ }
+    }
+
+    private async Task LoadSeenStoriesAsync()
+    {
+        try
+        {
+            var json = await JS.InvokeAsync<string?>("localStorage.getItem", SeenStoriesKey);
+            if (string.IsNullOrWhiteSpace(json)) return;
+
+            var ids = System.Text.Json.JsonSerializer.Deserialize<List<long>>(json);
+            if (ids is not null)
+            {
+                foreach (var id in ids) _seenStories.Add(id);
+            }
+        }
+        catch { /* səssiz */ }
+    }
+
     private void CloseStory() => _storyOpen = false;
 
     protected override void OnInitialized() => OnRefresh(FetchAsync);
 
     protected override async Task OnInitializedAsync()
     {
+        await LoadSeenStoriesAsync();
         await FetchAsync();
         _loading = false;
     }
@@ -44,7 +78,11 @@ public partial class Home
         try
         {
             var quizzes = await Api.QuizzesAsync();
-            _banners = await Api.BannersAsync();
+            // Vaxtı keçmiş story-lər göstərilmir (API də filtr edir — burada əlavə qoruma).
+            var today = DateOnly.FromDateTime(DateTime.Now);
+            _banners = (await Api.BannersAsync())
+                .Where(b => b.ActiveUntil is null || b.ActiveUntil.Value >= today)
+                .ToList();
             _quizCount = quizzes.Count;
             // Qruplar — hər qrupun progressi backend-də hesablanıb gəlir
             _studentGroups = await Api.StudentGroupsAsync();
