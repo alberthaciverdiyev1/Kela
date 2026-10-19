@@ -171,6 +171,18 @@
   <data name="Banner_OwnerAdmin" xml:space="preserve">
     <value>Admin</value>
   </data>
+  <data name="Tenant_AcceptTerms" xml:space="preserve">
+    <value>Kullanım koşullarını ve gizlilik politikasını kabul ediyorum.</value>
+  </data>
+  <data name="Tenant_TermsLink" xml:space="preserve">
+    <value>Kullanım koşulları ve gizlilik politikası</value>
+  </data>
+  <data name="Tenant_TermsRequired" xml:space="preserve">
+    <value>Kullanım koşullarını kabul etmelisiniz</value>
+  </data>
+  <data name="Tenant_TermsFallback" xml:space="preserve">
+    <value>Kullanım koşulları henüz yayımlanmadı.</value>
+  </data>
   <data name="Validation_EmailRequired" xml:space="preserve">
     <value>E-posta gereklidir</value>
   </data>

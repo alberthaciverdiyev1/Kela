@@ -24,6 +24,19 @@ public sealed class PrivacyPolicyService(AppDbContext db) : IPrivacyPolicyServic
         return new PrivacyPolicyResponse(policy.Type, policy.Content);
     }
 
+    public async Task<PrivacyPolicyResponse?> GetPublicAsync(string type, CancellationToken ct = default)
+    {
+        var policy = await db.PrivacyPolicies
+            .IgnoreQueryFilters(new[] { "Tenant" })
+            .AsNoTracking()
+            .Where(x => x.Type == type)
+            .OrderBy(x => x.TenantId == 0 ? 0 : 1)
+            .ThenBy(x => x.TenantId)
+            .FirstOrDefaultAsync(ct);
+
+        return policy is null ? null : new PrivacyPolicyResponse(policy.Type, policy.Content);
+    }
+
     public async Task<PrivacyPolicyResponse> UpsertAsync(UpsertPrivacyPolicyRequest request, CancellationToken ct = default)
     {
         var policy = await db.PrivacyPolicies.FirstOrDefaultAsync(x => x.Type == request.Type, ct);

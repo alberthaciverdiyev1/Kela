@@ -171,6 +171,18 @@
   <data name="Banner_OwnerAdmin" xml:space="preserve">
     <value>Админ</value>
   </data>
+  <data name="Tenant_AcceptTerms" xml:space="preserve">
+    <value>Я принимаю условия использования и политику конфиденциальности.</value>
+  </data>
+  <data name="Tenant_TermsLink" xml:space="preserve">
+    <value>Условия использования и политика конфиденциальности</value>
+  </data>
+  <data name="Tenant_TermsRequired" xml:space="preserve">
+    <value>Необходимо принять условия использования</value>
+  </data>
+  <data name="Tenant_TermsFallback" xml:space="preserve">
+    <value>Условия использования ещё не опубликованы.</value>
+  </data>
   <data name="Validation_EmailRequired" xml:space="preserve">
     <value>Эл. почта обязательна</value>
   </data>

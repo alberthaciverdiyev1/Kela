@@ -1,0 +1,19 @@
+@{
+    Layout = "_AuthLayout";
+    ViewData["Title"] = L["Tenant_TermsLink"];
+    var content = ViewData["Content"] as string;
+}
+<div class="w-full max-w-2xl rounded-2xl bg-white p-8 shadow-lg">
+    <div class="mb-5 flex items-center justify-between gap-4">
+        <h1 class="text-xl font-extrabold tracking-tight text-slate-900">@L["Tenant_TermsLink"]</h1>
+        <a href="/register" class="text-sm font-semibold text-primary hover:underline">@L["Tenant_Register"]</a>
+    </div>
+    @if (!string.IsNullOrWhiteSpace(content))
+    {
+        <div class="text-sm leading-relaxed text-slate-700">@Html.Raw(content)</div>
+    }
+    else
+    {
+        <p class="text-sm text-slate-500">@L["Tenant_TermsFallback"]</p>
+    }
+</div>

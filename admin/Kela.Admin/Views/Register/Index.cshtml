@@ -36,6 +36,13 @@
             <partial name="Ui/_Input" model="@(new InputModel { NativeRequired = true, Name = "Password", Id = "password", Label = L["Common_Password"], Type = "password", Required = true })" />
             <partial name="Ui/_Input" model="@(new InputModel { NativeRequired = true, Name = "ConfirmPassword", Id = "confirmPassword", Label = L["Tenant_ConfirmPassword"], Type = "password", Required = true })" />
         </div>
+        <label class="flex items-start gap-2.5 text-sm text-slate-600">
+            <input type="checkbox" name="AcceptTerms" value="true" required class="mt-0.5 h-4 w-4 rounded border-slate-300 text-primary focus:ring-primary" />
+            <span>
+                @L["Tenant_AcceptTerms"]
+                <a href="/register/terms" target="_blank" class="font-semibold text-primary hover:underline">@L["Tenant_TermsLink"]</a>
+            </span>
+        </label>
         <button type="submit" class="admin-button-primary w-full">@L["Tenant_RegisterSubmit"]</button>
     </form>
 

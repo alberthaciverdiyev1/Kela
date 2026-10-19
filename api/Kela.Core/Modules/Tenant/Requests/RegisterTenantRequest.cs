@@ -19,4 +19,7 @@ public class RegisterTenantRequest
     public string Password { get; set; } = string.Empty;
 
     public string ConfirmPassword { get; set; } = string.Empty;
+
+    /// <summary>İstifadə şərtləri və məxfilik siyasəti qəbul edilib.</summary>
+    public bool AcceptTerms { get; set; }
 }

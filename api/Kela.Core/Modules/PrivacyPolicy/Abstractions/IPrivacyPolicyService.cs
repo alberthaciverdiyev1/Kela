@@ -9,5 +9,8 @@ public interface IPrivacyPolicyService
 
     Task<PrivacyPolicyResponse> GetAsync(string type, CancellationToken ct = default);
 
+    /// <summary>Tenant konteksti olmadan oxunur (public qeydiyyat səhifəsi üçün).</summary>
+    Task<PrivacyPolicyResponse?> GetPublicAsync(string type, CancellationToken ct = default);
+
     Task<PrivacyPolicyResponse> UpsertAsync(UpsertPrivacyPolicyRequest request, CancellationToken ct = default);
 }

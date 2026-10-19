@@ -131,6 +131,11 @@ public sealed class TenantService(
             throw new ArgumentException(L["Tenant_PasswordMismatch"]);
         }
 
+        if (!request.AcceptTerms)
+        {
+            throw new ArgumentException(L["Tenant_TermsRequired"]);
+        }
+
         if (await db.Tenants.AnyAsync(x => x.Slug == slug, ct))
         {
             throw new ArgumentException(L["Tenant_SlugTaken"]);

@@ -171,6 +171,18 @@
   <data name="Banner_OwnerAdmin" xml:space="preserve">
     <value>Admin</value>
   </data>
+  <data name="Tenant_AcceptTerms" xml:space="preserve">
+    <value>I agree to the terms of use and privacy policy.</value>
+  </data>
+  <data name="Tenant_TermsLink" xml:space="preserve">
+    <value>Terms of use and privacy policy</value>
+  </data>
+  <data name="Tenant_TermsRequired" xml:space="preserve">
+    <value>You must accept the terms of use</value>
+  </data>
+  <data name="Tenant_TermsFallback" xml:space="preserve">
+    <value>The terms of use have not been published yet.</value>
+  </data>
   <data name="Validation_EmailRequired" xml:space="preserve">
     <value>Email is required</value>
   </data>
