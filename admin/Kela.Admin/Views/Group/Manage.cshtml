@@ -79,7 +79,7 @@
                         @label
                         @if (tab == "joins")
                         {
-                            <span id="joinTabBadge" class="ml-1 inline-flex min-w-5 items-center justify-center rounded-full bg-danger px-1.5 py-0.5 text-[10px] font-bold leading-none text-white @(group.PendingJoins > 0 ? "" : "hidden")">@group.PendingJoins</span>
+                            <span id="joinTabBadge" class="ml-1 inline-flex min-w-5 items-center justify-center rounded-full bg-danger px-1.5 py-0.5 text-[10px] font-bold leading-none text-white" style="display:@(group.PendingJoins > 0 ? "inline-flex" : "none")">@group.PendingJoins</span>
                         }
                     </button>
                 }

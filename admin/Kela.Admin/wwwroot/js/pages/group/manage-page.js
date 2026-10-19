@@ -60,7 +60,7 @@
         const tabBadge = document.getElementById('joinTabBadge');
         if (tabBadge) {
             tabBadge.textContent = pending;
-            tabBadge.classList.toggle('hidden', pending === 0);
+            tabBadge.style.display = pending > 0 ? 'inline-flex' : 'none';
         }
         if (window.refreshGroupJoinBadge) window.refreshGroupJoinBadge();
 
@@ -103,7 +103,7 @@
         const tabBadge = document.getElementById('joinTabBadge');
         if (tabBadge) {
             tabBadge.textContent = pending;
-            tabBadge.classList.toggle('hidden', pending === 0);
+            tabBadge.style.display = pending > 0 ? 'inline-flex' : 'none';
         }
         if (window.refreshGroupJoinBadge) window.refreshGroupJoinBadge();
 

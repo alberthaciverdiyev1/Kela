@@ -153,7 +153,7 @@
                 const badge = document.getElementById('groupJoinBadge');
                 if (!badge) return;
                 badge.textContent = data.count;
-                badge.classList.toggle('hidden', !data.count);
+                badge.style.display = data.count > 0 ? 'inline-flex' : 'none';
             } catch (e) { /* səssiz */ }
         };
         window.refreshGroupJoinBadge();
