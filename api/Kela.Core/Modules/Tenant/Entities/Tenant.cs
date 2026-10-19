@@ -10,5 +10,8 @@ public class Tenant
 
     public bool IsActive { get; set; } = true;
 
+    /// <summary>Özünəqeydiyyatdan gəlib superadmin təsdiqini gözləyir.</summary>
+    public bool IsPending { get; set; }
+
     public DateTimeOffset CreatedAt { get; set; } = DateTimeOffset.UtcNow;
 }

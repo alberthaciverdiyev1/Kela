@@ -24,4 +24,10 @@ public interface ITenantService
 
     /// <summary>Superadmin təsdiqi — tenant-ı aktivləşdirir/söndürür.</summary>
     Task<TenantResponse> SetActiveAsync(long id, bool isActive, CancellationToken ct = default);
+
+    /// <summary>Gözləyən tenant müraciətlərinin sayı.</summary>
+    Task<int> CountPendingAsync(CancellationToken ct = default);
+
+    /// <summary>Gözləyən müraciəti rədd edib tenant-ı silir (yalnız pending/deaktiv).</summary>
+    Task DeleteAsync(long id, CancellationToken ct = default);
 }

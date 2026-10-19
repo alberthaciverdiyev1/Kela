@@ -213,6 +213,15 @@
   <data name="Group_JoinLinkExplain" xml:space="preserve">
     <value>Öğrenciler bu bağlantı ile gruba katılma isteği gönderebilir. İstekler grubun “Katılma istekleri” sekmesinde görünür ve onayınızdan sonra öğrenci gruba eklenir.</value>
   </data>
+  <data name="Tenant_Approve" xml:space="preserve">
+    <value>Onayla</value>
+  </data>
+  <data name="Tenant_Reject" xml:space="preserve">
+    <value>Reddet</value>
+  </data>
+  <data name="Tenant_RejectConfirm" xml:space="preserve">
+    <value>Bu başvuruyu reddedip kursu silmek istiyor musunuz? Bu işlem geri alınamaz.</value>
+  </data>
   <data name="Validation_EmailRequired" xml:space="preserve">
     <value>E-posta gereklidir</value>
   </data>

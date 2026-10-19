@@ -29,6 +29,19 @@ public sealed class TenantController(ITenantService service) : Controller
     public async Task<IActionResult> Create([FromBody] CreateTenantRequest request, CancellationToken ct)
         => Json(await service.CreateAsync(request, ct));
 
+    [HttpGet("pending-count")]
+    public async Task<IActionResult> PendingCount(CancellationToken ct)
+        => Json(new { count = await service.CountPendingAsync(ct) });
+
+    /// <summary>Superadmin müraciəti rədd edir — pending tenant silinir.</summary>
+    [HttpDelete("{id:long}")]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> Delete(long id, CancellationToken ct)
+    {
+        await service.DeleteAsync(id, ct);
+        return Json(new { ok = true });
+    }
+
     /// <summary>Superadmin müraciəti təsdiqləyir/deaktiv edir.</summary>
     [HttpPut("{id:long}/status")]
     [ValidateAntiForgeryToken]

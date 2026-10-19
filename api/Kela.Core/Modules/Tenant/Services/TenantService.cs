@@ -23,31 +23,31 @@ public sealed class TenantService(
     public async Task<IReadOnlyList<TenantResponse>> ListAsync(CancellationToken ct = default)
     {
         var tenants = await db.Tenants.AsNoTracking().OrderBy(x => x.Id)
-            .Select(x => new { x.Id, x.Name, x.Slug, x.IsActive })
+            .Select(x => new { x.Id, x.Name, x.Slug, x.IsActive, x.IsPending })
             .ToListAsync(ct);
 
         var logos = await LogoMapAsync(ct);
-        return tenants.Select(t => new TenantResponse(t.Id, t.Name, t.Slug, t.IsActive, Lookup(logos, t.Id))).ToList();
+        return tenants.Select(t => new TenantResponse(t.Id, t.Name, t.Slug, t.IsActive, Lookup(logos, t.Id), t.IsPending)).ToList();
     }
 
     public async Task<IReadOnlyList<TenantResponse>> ListPublicAsync(CancellationToken ct = default)
     {
         var tenants = await db.Tenants.AsNoTracking().Where(x => x.IsActive).OrderBy(x => x.Name)
-            .Select(x => new { x.Id, x.Name, x.Slug, x.IsActive })
+            .Select(x => new { x.Id, x.Name, x.Slug, x.IsActive, x.IsPending })
             .ToListAsync(ct);
 
         var logos = await LogoMapAsync(ct);
-        return tenants.Select(t => new TenantResponse(t.Id, t.Name, t.Slug, t.IsActive, Lookup(logos, t.Id))).ToList();
+        return tenants.Select(t => new TenantResponse(t.Id, t.Name, t.Slug, t.IsActive, Lookup(logos, t.Id), t.IsPending)).ToList();
     }
 
     public async Task<TenantResponse?> GetByIdAsync(long id, CancellationToken ct = default)
     {
         var t = await db.Tenants.AsNoTracking().Where(x => x.Id == id)
-            .Select(x => new { x.Id, x.Name, x.Slug, x.IsActive })
+            .Select(x => new { x.Id, x.Name, x.Slug, x.IsActive, x.IsPending })
             .FirstOrDefaultAsync(ct);
 
         if (t is null) return null;
-        return new TenantResponse(t.Id, t.Name, t.Slug, t.IsActive, await LogoAsync(t.Id, ct));
+        return new TenantResponse(t.Id, t.Name, t.Slug, t.IsActive, await LogoAsync(t.Id, ct), t.IsPending);
     }
 
     public async Task<TenantResponse?> GetCurrentAsync(CancellationToken ct = default)
@@ -55,11 +55,11 @@ public sealed class TenantService(
         if (tenantProvider.TenantId is not long id) return null;
 
         var t = await db.Tenants.AsNoTracking().Where(x => x.Id == id)
-            .Select(x => new { x.Id, x.Name, x.Slug, x.IsActive })
+            .Select(x => new { x.Id, x.Name, x.Slug, x.IsActive, x.IsPending })
             .FirstOrDefaultAsync(ct);
 
         if (t is null) return null;
-        return new TenantResponse(t.Id, t.Name, t.Slug, t.IsActive, await LogoAsync(t.Id, ct));
+        return new TenantResponse(t.Id, t.Name, t.Slug, t.IsActive, await LogoAsync(t.Id, ct), t.IsPending);
     }
 
     public async Task<TenantResponse> UpdateCurrentAsync(UpdateTenantProfileRequest request, CancellationToken ct = default)
@@ -81,7 +81,7 @@ public sealed class TenantService(
         tenant.Name = name;
         await db.SaveChangesAsync(ct);
 
-        return new TenantResponse(tenant.Id, tenant.Name, tenant.Slug, tenant.IsActive, await LogoAsync(tenant.Id, ct));
+        return new TenantResponse(tenant.Id, tenant.Name, tenant.Slug, tenant.IsActive, await LogoAsync(tenant.Id, ct), tenant.IsPending);
     }
 
     public async Task<TenantResponse> CreateAsync(CreateTenantRequest request, CancellationToken ct = default)
@@ -97,7 +97,7 @@ public sealed class TenantService(
         db.Tenants.Add(tenant);
         await db.SaveChangesAsync(ct);
 
-        return new TenantResponse(tenant.Id, tenant.Name, tenant.Slug, tenant.IsActive);
+        return new TenantResponse(tenant.Id, tenant.Name, tenant.Slug, tenant.IsActive, IsPending: tenant.IsPending);
     }
 
     public async Task<TenantResponse> RegisterAsync(RegisterTenantRequest request, CancellationToken ct = default)
@@ -143,7 +143,7 @@ public sealed class TenantService(
 
         await using var tx = await db.Database.BeginTransactionAsync(ct);
 
-        var tenant = new Tenant { Name = courseName, Slug = slug, IsActive = false };
+        var tenant = new Tenant { Name = courseName, Slug = slug, IsActive = false, IsPending = true };
         db.Tenants.Add(tenant);
         await db.SaveChangesAsync(ct);
 
@@ -160,7 +160,7 @@ public sealed class TenantService(
         await db.SaveChangesAsync(ct);
         await tx.CommitAsync(ct);
 
-        return new TenantResponse(tenant.Id, tenant.Name, tenant.Slug, tenant.IsActive);
+        return new TenantResponse(tenant.Id, tenant.Name, tenant.Slug, tenant.IsActive, IsPending: tenant.IsPending);
     }
 
     public async Task<TenantResponse> SetActiveAsync(long id, bool isActive, CancellationToken ct = default)
@@ -169,9 +169,35 @@ public sealed class TenantService(
             ?? throw new KeyNotFoundException($"Tenant not found: {id}");
 
         tenant.IsActive = isActive;
+        if (isActive) tenant.IsPending = false;
         await db.SaveChangesAsync(ct);
 
-        return new TenantResponse(tenant.Id, tenant.Name, tenant.Slug, tenant.IsActive, await LogoAsync(tenant.Id, ct));
+        return new TenantResponse(tenant.Id, tenant.Name, tenant.Slug, tenant.IsActive, await LogoAsync(tenant.Id, ct), tenant.IsPending);
+    }
+
+    public Task<int> CountPendingAsync(CancellationToken ct = default)
+        => db.Tenants.CountAsync(x => x.IsPending, ct);
+
+    public async Task DeleteAsync(long id, CancellationToken ct = default)
+    {
+        var tenant = await db.Tenants.FirstOrDefaultAsync(x => x.Id == id, ct)
+            ?? throw new KeyNotFoundException($"Tenant not found: {id}");
+
+        if (tenant.IsActive)
+        {
+            throw new ArgumentException("An active tenant cannot be deleted");
+        }
+
+        await using var tx = await db.Database.BeginTransactionAsync(ct);
+
+        // Müraciət heç bir real məlumat yaratmayıb — yalnız ilk admin hesabı var.
+        await db.Users.IgnoreQueryFilters().Where(x => x.TenantId == id).ExecuteDeleteAsync(ct);
+        await db.Settings.IgnoreQueryFilters().Where(x => x.TenantId == id).ExecuteDeleteAsync(ct);
+        await db.PrivacyPolicies.IgnoreQueryFilters().Where(x => x.TenantId == id).ExecuteDeleteAsync(ct);
+        db.Tenants.Remove(tenant);
+        await db.SaveChangesAsync(ct);
+
+        await tx.CommitAsync(ct);
     }
 
     /// <summary>URL üçün qısa ad: hərflər/rəqəmlər saxlanılır, digərləri tireyə çevrilir.</summary>

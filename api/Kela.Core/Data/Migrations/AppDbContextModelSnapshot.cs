@@ -2343,6 +2343,12 @@ namespace Kela.Core.Data.Migrations
                         .HasDefaultValue(true)
                         .HasColumnName("is_active");
 
+                    b.Property<bool>("IsPending")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("boolean")
+                        .HasDefaultValue(false)
+                        .HasColumnName("is_pending");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(190)
