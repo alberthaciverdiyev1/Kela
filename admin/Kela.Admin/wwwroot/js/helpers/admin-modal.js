@@ -101,23 +101,32 @@ window.AdminUI = window.AdminUI || {};
         if (e.target.classList) e.target.classList.remove('is-invalid');
     });
 
-    // Sürətli ikiqat klik eyni formu iki dəfə göndərməsin (yaratma əməliyyatları
-    // təkrarlanırdı). İlk göndərmə keçir, qısa müddət ərzində sonrakılar bloklanır.
+    // Form göndərməsi: validasiya → təkrar-göndərmə qoruyucusu → düymə kilidi.
     const _lastSubmit = new WeakMap();
-    document.addEventListener('submit', (e) => {
-        const now = Date.now();
-        const prev = _lastSubmit.get(e.target) || 0;
-        if (now - prev < 3000) { e.preventDefault(); e.stopImmediatePropagation(); return; }
-        _lastSubmit.set(e.target, now);
-    }, true);
 
-    // Göndərmədən əvvəl yoxla — səhifələrin öz submit handler-i işə düşməsin.
     document.addEventListener('submit', (e) => {
-        if (!e.target.querySelector || !e.target.querySelector('[data-required="true"]')) return;
-        if (!UI.validateForm(e.target)) {
+        const form = e.target;
+        if (!form || !form.querySelector) return;
+
+        // 1) Zəruri sahələr
+        if (form.querySelector('[data-required="true"]') && !UI.validateForm(form)) {
             e.preventDefault();
             e.stopImmediatePropagation();
+            return;
         }
+
+        // 2) Qısa müddət ərzində təkrar göndərmə (sürətli ikiqat klik)
+        const now = Date.now();
+        const prev = _lastSubmit.get(form) || 0;
+        if (now - prev < 3000) {
+            e.preventDefault();
+            e.stopImmediatePropagation();
+            return;
+        }
+        _lastSubmit.set(form, now);
+
+        // 3) Düyməni kilidlə — sorğu qatı cavab gələndə açır (AdminUI.lockSubmitButton).
+        UI.lockSubmitButton(e.submitter || form.querySelector('[type="submit"]'));
     }, true);
 
     Object.assign(UI, { openModal, closeModal, openModals, resetForm, validateForm, syncSelect });

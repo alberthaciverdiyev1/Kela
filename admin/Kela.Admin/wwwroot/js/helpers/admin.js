@@ -45,6 +45,30 @@ window.AdminUI = window.AdminUI || {};
         return result.isConfirmed;
     }
 
+    // --- Göndərmə düyməsinin kilidi ---
+    // Form göndəriləndə düymə deaktiv olur və üzərində spinner görünür;
+    // cavab gələndə (və ya 15 san sonra) yenidən aktivləşir.
+    let _pendingSubmitBtn = null;
+    let _pendingTimer = null;
+
+    function lockSubmitButton(btn) {
+        if (!btn) return;
+        _pendingSubmitBtn = btn;
+        btn.disabled = true;
+        btn.classList.add('is-loading');
+        clearTimeout(_pendingTimer);
+        _pendingTimer = setTimeout(releaseSubmitButton, 15000);
+    }
+
+    function releaseSubmitButton() {
+        clearTimeout(_pendingTimer);
+        const btn = _pendingSubmitBtn;
+        _pendingSubmitBtn = null;
+        if (!btn) return;
+        btn.disabled = false;
+        btn.classList.remove('is-loading');
+    }
+
     async function get(url) { return (await fetch(url)).json(); }
 
     async function post(url, data) {
@@ -55,12 +79,14 @@ window.AdminUI = window.AdminUI || {};
 
     async function postForm(url, formData) {
         const res = await fetch(url, { method: 'POST', body: formData, headers: { 'RequestVerificationToken': token() } });
+        releaseSubmitButton();
         let body = null; try { body = await res.json(); } catch (e) { /* boş */ }
         return { ok: res.ok, status: res.status, data: body };
     }
 
     async function putForm(url, formData) {
         const res = await fetch(url, { method: 'PUT', body: formData, headers: { 'RequestVerificationToken': token() } });
+        releaseSubmitButton();
         let body = null; try { body = await res.json(); } catch (e) { /* boş */ }
         return { ok: res.ok, status: res.status, data: body };
     }
@@ -71,6 +97,7 @@ window.AdminUI = window.AdminUI || {};
             headers: { 'Content-Type': 'application/json', 'RequestVerificationToken': token() },
             body: JSON.stringify(obj)
         });
+        releaseSubmitButton();
         let body = null; try { body = await res.json(); } catch (e) { /* boş */ }
         return { ok: res.ok, status: res.status, data: body };
     }
@@ -81,12 +108,14 @@ window.AdminUI = window.AdminUI || {};
             headers: { 'Content-Type': 'application/json', 'RequestVerificationToken': token() },
             body: JSON.stringify(obj)
         });
+        releaseSubmitButton();
         let body = null; try { body = await res.json(); } catch (e) { /* boş */ }
         return { ok: res.ok, status: res.status, data: body };
     }
 
     async function del(url) {
         const res = await fetch(url, { method: 'DELETE', headers: { 'RequestVerificationToken': token() } });
+        releaseSubmitButton();
         let body = null; try { body = await res.json(); } catch (e) { /* boş */ }
         return { ok: res.ok, status: res.status, data: body };
     }
@@ -150,5 +179,5 @@ window.AdminUI = window.AdminUI || {};
         _filterTimer = setTimeout(filterReload, 350);
     });
 
-    Object.assign(UI, { token, SWAL_BASE, swal, notify, error, confirmDelete, get, post, postForm, putForm, postJson, putJson, del, errText, loader, reloadAfter, downloadCsv });
+    Object.assign(UI, { token, SWAL_BASE, swal, lockSubmitButton, releaseSubmitButton, notify, error, confirmDelete, get, post, postForm, putForm, postJson, putJson, del, errText, loader, reloadAfter, downloadCsv });
 })(window.AdminUI);

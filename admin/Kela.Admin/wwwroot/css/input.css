@@ -398,6 +398,29 @@
   transition: width 300ms ease;
 }
 
+/* Form göndərilərkən düymə kilidlənir və üzərində spinner dönür
+   (JS: AdminUI.lockSubmitButton / releaseSubmitButton). */
+.admin-button-primary.is-loading,
+.admin-button-secondary.is-loading,
+.admin-button-danger.is-loading,
+.admin-button-ghost.is-loading {
+  pointer-events: none;
+  opacity: 0.75;
+}
+
+.admin-button-primary.is-loading::after,
+.admin-button-secondary.is-loading::after,
+.admin-button-danger.is-loading::after,
+.admin-button-ghost.is-loading::after {
+  content: "";
+  width: 14px;
+  height: 14px;
+  border-radius: 999px;
+  border: 2px solid currentColor;
+  border-top-color: transparent;
+  animation: admin-spin 0.7s linear infinite;
+}
+
 /* ---------- Tablar ----------
    JS: AdminUI.initTabs — .admin-tabs içindəki .admin-tab düymələri,
    panellər data-tab-panel ilə işarələnir. */
