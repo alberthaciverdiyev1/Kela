@@ -17,6 +17,7 @@ public sealed class AppDbContext : DbContext
     ];
 
     private readonly bool _strictTenant;
+    private readonly bool _onlyActive;
     private readonly ITenantProvider _tenantProvider;
 
     public AppDbContext(DbContextOptions<AppDbContext> options, ITenantProvider tenantProvider, IConfiguration configuration)
@@ -24,6 +25,8 @@ public sealed class AppDbContext : DbContext
     {
         _tenantProvider = tenantProvider;
         _strictTenant = configuration.GetValue<bool>("Tenancy:Strict");
+        // API hostu: yalnız aktiv qeydlər (şagird tətbiqi passiv məzmun görməsin).
+        _onlyActive = configuration.GetValue<bool>("Data:FilterActive");
     }
 
     /// <summary>Cari tenant — canlı oxunur ki, login zamanı təyin olunan tenant dərhal tətbiq olunsun.</summary>
@@ -128,6 +131,12 @@ public sealed class AppDbContext : DbContext
             if (isBase)
             {
                 modelBuilder.Entity(entityType.ClrType).HasQueryFilter("SoftDelete", BuildSoftDeleteFilter(entityType.ClrType));
+
+                // "Active" filtri yalnız aktiv sahəsi olan entity-lərə və yalnız API hostunda.
+                if (_onlyActive && entityType.FindProperty("IsActive") is not null)
+                {
+                    modelBuilder.Entity(entityType.ClrType).HasQueryFilter("Active", BuildActiveFilter(entityType.ClrType));
+                }
             }
         }
     }
@@ -159,6 +168,14 @@ public sealed class AppDbContext : DbContext
         var body = Expression.Equal(
             Expression.Property(parameter, nameof(BaseEntity.DeletedAt)),
             Expression.Constant(null, typeof(DateTimeOffset?)));
+        return Expression.Lambda(body, parameter);
+    }
+
+    /// <summary>Aktiv filtri: is_active = true.</summary>
+    private static LambdaExpression BuildActiveFilter(Type clrType)
+    {
+        var parameter = Expression.Parameter(clrType, "e");
+        var body = Expression.Property(parameter, "IsActive");
         return Expression.Lambda(body, parameter);
     }
 
