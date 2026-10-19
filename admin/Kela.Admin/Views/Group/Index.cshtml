@@ -45,6 +45,7 @@
 
 @{
     var modalBody = await Html.PartialAsync("_ModalFields");
+    var joinLinkBody = await Html.PartialAsync("_JoinLinkBody");
 }
 
 <partial name="Ui/_Modal" model="@(new ModalModel
@@ -54,6 +55,15 @@
     Title = L["Group_Create"],
     WidthClass = "max-w-5xl",
     Body = modalBody
+})" />
+
+<partial name="Ui/_Modal" model="@(new ModalModel
+{
+    Id = "joinLinkModal",
+    Title = L["Group_CreatedTitle"],
+    WidthClass = "max-w-lg",
+    ShowError = false,
+    Body = joinLinkBody
 })" />
 
 

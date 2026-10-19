@@ -207,6 +207,12 @@
   <data name="Js_LinkCopied" xml:space="preserve">
     <value>Link kopyalandı</value>
   </data>
+  <data name="Group_CreatedTitle" xml:space="preserve">
+    <value>Qrup yaradıldı</value>
+  </data>
+  <data name="Group_JoinLinkExplain" xml:space="preserve">
+    <value>Bu link vasitəsilə şagirdlər qrupa qoşulmaq üçün müraciət göndərə bilər. Müraciətlər qrupun «Qoşulma müraciətləri» bölməsində görünür və sizin təsdiqinizdən sonra şagird qrupa əlavə olunur.</value>
+  </data>
   <data name="Validation_EmailRequired" xml:space="preserve">
     <value>E-poçt tələb olunur</value>
   </data>

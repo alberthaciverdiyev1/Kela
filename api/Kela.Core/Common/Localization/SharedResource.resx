@@ -207,6 +207,12 @@
   <data name="Js_LinkCopied" xml:space="preserve">
     <value>Link copied</value>
   </data>
+  <data name="Group_CreatedTitle" xml:space="preserve">
+    <value>Group created</value>
+  </data>
+  <data name="Group_JoinLinkExplain" xml:space="preserve">
+    <value>Students can use this link to request access to the group. Requests appear in the group’s “Join requests” tab, and the student is added after you approve them.</value>
+  </data>
   <data name="Validation_EmailRequired" xml:space="preserve">
     <value>Email is required</value>
   </data>

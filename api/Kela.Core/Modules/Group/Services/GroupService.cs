@@ -60,7 +60,14 @@ public sealed class GroupService(AppDbContext db, IFileStorage storage, ITenantF
             .Take(perPage)
             .ToListAsync(ct);
 
-        var data = items.Select(ToResponse).ToList();
+        var ids = items.Select(x => x.Id).ToList();
+        var pending = await db.GroupJoinRequests.AsNoTracking()
+            .Where(x => ids.Contains(x.GroupId) && x.Status == "pending")
+            .GroupBy(x => x.GroupId)
+            .Select(g => new { GroupId = g.Key, Count = g.Count() })
+            .ToDictionaryAsync(x => x.GroupId, x => x.Count, ct);
+
+        var data = items.Select(x => ToResponse(x, pending.GetValueOrDefault(x.Id))).ToList();
         var lastPage = (int)Math.Ceiling(total / (double)perPage);
 
         return new PagedResponse<GroupResponse>(data, page, lastPage, perPage, total);
@@ -76,7 +83,11 @@ public sealed class GroupService(AppDbContext db, IFileStorage storage, ITenantF
             ?? throw new KeyNotFoundException($"Group not found: {id}");
 
         EnsureAccessible(group, ownerId);
-        return ToResponse(group);
+
+        var pending = await db.GroupJoinRequests.AsNoTracking()
+            .CountAsync(x => x.GroupId == group.Id && x.Status == "pending", ct);
+
+        return ToResponse(group, pending);
     }
 
     public async Task<GroupResponse> CreateAsync(GroupUpsertRequest request, CancellationToken ct = default)
@@ -396,6 +407,18 @@ public sealed class GroupService(AppDbContext db, IFileStorage storage, ITenantF
         await db.SaveChangesAsync(ct);
     }
 
+    public async Task<int> CountPendingJoinRequestsAsync(long? ownerId = null, CancellationToken ct = default)
+    {
+        var query = db.GroupJoinRequests.AsNoTracking().Where(x => x.Status == "pending");
+
+        if (ownerId.HasValue)
+        {
+            query = query.Where(x => db.Groups.Any(g => g.Id == x.GroupId && g.UserId == ownerId));
+        }
+
+        return await query.CountAsync(ct);
+    }
+
     private async Task EnsureGroupAccessibleAsync(long groupId, long? ownerId, CancellationToken ct)
     {
         if (!ownerId.HasValue)
@@ -466,7 +489,7 @@ public sealed class GroupService(AppDbContext db, IFileStorage storage, ITenantF
                 x.StartDate,
                 x.EndDate));
 
-    private GroupResponse ToResponse(Group group) =>
+    private GroupResponse ToResponse(Group group, int pendingJoins = 0) =>
         new(
             group.Id,
             group.Name,
@@ -474,7 +497,8 @@ public sealed class GroupService(AppDbContext db, IFileStorage storage, ITenantF
             storage.GetUrl(group.Image),
             group.UserId,
             group.Memberships.Count,
-            group.JoinToken);
+            group.JoinToken,
+            pendingJoins);
 
     public async Task BulkAsync(BulkRequest request, long? ownerId = null, CancellationToken ct = default)
     {

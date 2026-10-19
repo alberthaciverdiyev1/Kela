@@ -47,4 +47,7 @@ public interface IGroupService
 
     /// <summary>Müraciəti təsdiqlə (üzvlük yaranır) və ya rədd et.</summary>
     Task DecideJoinRequestAsync(long groupId, long requestId, bool approve, long? ownerId = null, CancellationToken ct = default);
+
+    /// <summary>Teacher üçün öz qruplarında, admin üçün bütün qruplarda gözləyən müraciət sayı.</summary>
+    Task<int> CountPendingJoinRequestsAsync(long? ownerId = null, CancellationToken ct = default);
 }

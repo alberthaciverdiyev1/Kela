@@ -56,6 +56,14 @@
             const s = (options?.subjects || []).find(x => x.id === id);
             return s ? s.text : ('#' + id);
         };
+        const pending = items.filter(x => x.status === 'pending').length;
+        const tabBadge = document.getElementById('joinTabBadge');
+        if (tabBadge) {
+            tabBadge.textContent = pending;
+            tabBadge.classList.toggle('hidden', pending === 0);
+        }
+        if (window.refreshGroupJoinBadge) window.refreshGroupJoinBadge();
+
         box.innerHTML = items.length
             ? items.map(l => {
                 const attach = l.action === 'attach';
@@ -90,6 +98,14 @@
             : s === 'approved'
                 ? AdminUI.badge(L["Group_JoinApproved"], 'success')
                 : AdminUI.badge(L["Group_JoinRejected"], 'danger');
+
+        const pending = items.filter(x => x.status === 'pending').length;
+        const tabBadge = document.getElementById('joinTabBadge');
+        if (tabBadge) {
+            tabBadge.textContent = pending;
+            tabBadge.classList.toggle('hidden', pending === 0);
+        }
+        if (window.refreshGroupJoinBadge) window.refreshGroupJoinBadge();
 
         box.innerHTML = items.length
             ? items.map(j => `<div class="flex items-center justify-between gap-3 rounded-xl bg-surface-secondary px-4 py-2.5">

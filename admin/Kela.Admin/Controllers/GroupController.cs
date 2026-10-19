@@ -199,6 +199,10 @@ public sealed class GroupController(
 
     // --- Linklə qoşulma müraciətləri ---
 
+    [HttpGet("join-request-count")]
+    public async Task<IActionResult> JoinRequestCount(CancellationToken ct)
+        => Json(new { count = await service.CountPendingJoinRequestsAsync(OwnerScope, ct) });
+
     [HttpGet("{id:long}/join-requests")]
     public async Task<IActionResult> JoinRequests(long id, CancellationToken ct)
         => Json(await service.ListJoinRequestsAsync(id, OwnerScope, ct));

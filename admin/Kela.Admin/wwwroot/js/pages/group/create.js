@@ -85,16 +85,16 @@
             }
         });
         updateCounts();
-        if (n === 4) renderQuizzes();
+        if (n === 3) renderQuizzes();
         document.getElementById('prevBtn').classList.toggle('hidden', n === 1);
-        document.getElementById('nextBtn').classList.toggle('hidden', !createMode || n === 4);
-        document.getElementById('saveBtn').classList.toggle('hidden', createMode && n !== 4);
+        document.getElementById('nextBtn').classList.toggle('hidden', !createMode || n === 3);
+        document.getElementById('saveBtn').classList.toggle('hidden', createMode && n !== 3);
         document.querySelector('[data-step-panel="' + n + '"]')?.querySelector('input,select,textarea')?.focus();
     }
 
     // Hər siyahıda neçə seçim olduğunu addım başlığında göstərir.
     function updateCounts() {
-        [['subjects', 'count-subjects'], ['students', 'count-students'], ['quizzes', 'count-quizzes']].forEach(([id, elId]) => {
+        [['subjects', 'count-subjects'], ['quizzes', 'count-quizzes']].forEach(([id, elId]) => {
             const el = document.getElementById(elId);
             if (!el) return;
             const count = document.querySelectorAll('#' + id + 'List input[type=checkbox]:checked').length;
@@ -103,7 +103,7 @@
     }
 
     document.addEventListener('change', (e) => {
-        if (e.target.matches && e.target.matches('#subjectsList input, #studentsList input, #quizzesList input')) updateCounts();
+        if (e.target.matches && e.target.matches('#subjectsList input, #quizzesList input')) updateCounts();
     });
 
     // İmtahanlar yalnız seçilmiş fənnlərin dərslərinə aid olanlar göstərilir.
@@ -153,7 +153,6 @@
         if (options) return;
         options = await AdminUI.get('/group/options');
         renderCheckList('subjectsList', options.subjects || []);
-        renderCheckList('studentsList', options.students || []);
         renderQuizzes();
     }
 
@@ -163,7 +162,7 @@
             el.classList.toggle('hidden', term.length > 0 && !el.dataset.name.includes(term)));
     };
 
-    window.wizardNext = function () { if (!validateRequired(step)) return; if (step < 4) setStep(step + 1); };
+    window.wizardNext = function () { if (!validateRequired(step)) return; if (step < 3) setStep(step + 1); };
     window.wizardPrev = function () { if (step > 1) setStep(step - 1); };
 
     window.setWizardMode = function (isCreate) {
@@ -212,6 +211,24 @@
         return fd;
     };
 
+    // Qrup yaradıldıqdan sonra dəvət linki ilə təsdiq modalı.
+    function showJoinLink(group) {
+        AdminUI.closeModal('modal');
+
+        const base = (window.GROUP_APP_BASE_URL || location.origin).replace(/\/$/, '');
+        const input = document.getElementById('joinLinkInput');
+        if (input) input.value = group?.joinToken ? base + '/join/' + group.joinToken : '';
+
+        AdminUI.openModal('joinLinkModal');
+        loadList(1);
+    }
+
+    window.copyJoinLinkValue = function () {
+        const value = document.getElementById('joinLinkInput')?.value;
+        if (!value) return;
+        AdminUI.copyText(value).then(ok => { if (ok) AdminUI.notify(L["Js_LinkCopied"]); });
+    };
+
     // Sürətli təkrar klik bir neçə qrup yaradırdı — göndərmə kilidlənir.
     let submitting = false;
 
@@ -235,14 +252,12 @@
 
             const id = res.data.id;
             const subjects = collect('subjectsList');
-            const students = collect('studentsList');
             const quizzes = collect('quizzesList');
 
             if (subjects.length) await AdminUI.postJson(`/group/${id}/subjects`, { subjectIds: subjects });
-            if (students.length) await AdminUI.postJson(`/group/${id}/students`, { studentIds: students });
             if (quizzes.length) await AdminUI.postJson(`/group/${id}/quizzes`, { quizIds: quizzes });
 
-            done();
+            showJoinLink(res.data);
         } finally {
             submitting = false;
             if (saveBtn) saveBtn.disabled = false;

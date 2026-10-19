@@ -75,7 +75,13 @@
             <div class="admin-tabs" id="manageTabs">
                 @foreach (var (tab, label) in new[] { ("students", L["Nav_Students"].Value), ("joins", L["Group_JoinRequests"].Value), ("subjects", L["Nav_Subjects"].Value), ("quizzes", L["Nav_Exams"].Value), ("logs", L["Group_SubjectLogs"].Value) })
                 {
-                    <button type="button" data-tab="@tab" class="admin-tab@(tab == "students" ? " is-active" : "")">@label</button>
+                    <button type="button" data-tab="@tab" class="admin-tab@(tab == "students" ? " is-active" : "")">
+                        @label
+                        @if (tab == "joins")
+                        {
+                            <span id="joinTabBadge" class="ml-1 inline-flex min-w-5 items-center justify-center rounded-full bg-danger px-1.5 py-0.5 text-[10px] font-bold leading-none text-white @(group.PendingJoins > 0 ? "" : "hidden")">@group.PendingJoins</span>
+                        }
+                    </button>
                 }
             </div>
         </div>

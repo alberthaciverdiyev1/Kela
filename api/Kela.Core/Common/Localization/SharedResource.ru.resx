@@ -207,6 +207,12 @@
   <data name="Js_LinkCopied" xml:space="preserve">
     <value>Ссылка скопирована</value>
   </data>
+  <data name="Group_CreatedTitle" xml:space="preserve">
+    <value>Группа создана</value>
+  </data>
+  <data name="Group_JoinLinkExplain" xml:space="preserve">
+    <value>По этой ссылке студенты могут запросить вступление в группу. Запросы отображаются во вкладке «Запросы на вступление», и после вашего одобрения студент добавляется в группу.</value>
+  </data>
   <data name="Validation_EmailRequired" xml:space="preserve">
     <value>Эл. почта обязательна</value>
   </data>

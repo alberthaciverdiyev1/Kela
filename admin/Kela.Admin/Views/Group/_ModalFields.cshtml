@@ -10,8 +10,7 @@
     {
         (1, L["Group_StepInfo"].Value, L["Group_StepInfoHint"].Value),
         (2, L["Group_StepSubjects"].Value, L["Group_StepSubjectsHint"].Value),
-        (3, L["Group_StepStudents"].Value, L["Group_StepStudentsHint"].Value),
-        (4, L["Group_StepQuizzes"].Value, L["Group_StepQuizzesHint"].Value)
+        (3, L["Group_StepQuizzes"].Value, L["Group_StepQuizzesHint"].Value)
     })
     {
         <div class="flex items-center gap-2" data-step-item="@n">
@@ -52,37 +51,6 @@
 
         @* Step 3 *@
         <div data-step-panel="3" class="hidden space-y-3">
-            <div class="flex items-center justify-between">
-                <p class="text-sm font-semibold text-slate-600">@L["Group_StepStudents"] <span id="count-students" class="ml-1 text-xs font-bold text-primary"></span></p>
-                <label class="flex items-center gap-2 text-xs font-bold text-primary"><input type="checkbox" onchange="toggleAllCheck('studentsList', this.checked)" class="h-4 w-4 rounded border-slate-300 text-primary focus:ring-primary" />@L["Group_SelectAll"]</label>
-            </div>
-            @if (false)
-            {
-            <div class="flex items-center justify-between">
-                <button type="button" onclick="wizToggleGen()" class="rounded-lg border border-border bg-white px-3 py-1.5 text-xs font-semibold text-primary hover:bg-surface-secondary">@L["Common_Generate"]</button>
-                <span id="wizGenInfo" class="hidden text-xs font-semibold text-primary"></span>
-            </div>
-            <div id="wizGenPanel" class="hidden space-y-3 rounded-xl border border-border p-3">
-                <div class="grid gap-3 sm:grid-cols-2">
-                    <partial name="Ui/_Input" model="@(new InputModel { Name = "wg_count", Id = "wg_count", Label = L["Students_GenerateCount"], Type = "number", Value = "100" })" />
-                    <partial name="Ui/_Input" model="@(new InputModel { Name = "wg_prefix", Id = "wg_prefix", Label = L["Students_GeneratePrefix"], Value = "Student" })" />
-                    <partial name="Ui/_Input" model="@(new InputModel { Name = "wg_domain", Id = "wg_domain", Label = L["Students_EmailDomain"], Value = "kela.az" })" />
-                    <partial name="Ui/_Input" model="@(new InputModel { Name = "wg_password", Id = "wg_password", Label = L["Common_Password"], Placeholder = L["Students_PasswordOptional"] })" />
-                </div>
-                <div class="flex justify-end gap-2">
-                    <button type="button" onclick="wizToggleGen()" class="admin-button-secondary">@L["Common_Cancel"]</button>
-                    <button type="button" onclick="wizGenerate()" class="admin-button-primary">@L["Common_Generate"]</button>
-                </div>
-            </div>
-            }
-            <input id="studentSearch" type="search" class="admin-field" placeholder="@L["Common_SearchPlaceholder"]" oninput="filterCheckList('studentsList', this.value)" />
-            <div id="studentsList" class="max-h-[40vh] space-y-1 overflow-y-auto rounded-xl border border-border p-2">
-                <div class="p-3 text-sm text-slate-400">@L["Common_LoadingResults"]</div>
-            </div>
-        </div>
-
-        @* Step 4 *@
-        <div data-step-panel="4" class="hidden space-y-3">
             <div class="flex items-center justify-between">
                 <p class="text-sm font-semibold text-slate-600">@L["Group_StepQuizzes"] <span id="count-quizzes" class="ml-1 text-xs font-bold text-primary"></span></p>
                 <label class="flex items-center gap-2 text-xs font-bold text-primary"><input type="checkbox" onchange="toggleAllCheck('quizzesList', this.checked)" class="h-4 w-4 rounded border-slate-300 text-primary focus:ring-primary" />@L["Group_SelectAll"]</label>

@@ -207,6 +207,12 @@
   <data name="Js_LinkCopied" xml:space="preserve">
     <value>Bağlantı kopyalandı</value>
   </data>
+  <data name="Group_CreatedTitle" xml:space="preserve">
+    <value>Grup oluşturuldu</value>
+  </data>
+  <data name="Group_JoinLinkExplain" xml:space="preserve">
+    <value>Öğrenciler bu bağlantı ile gruba katılma isteği gönderebilir. İstekler grubun “Katılma istekleri” sekmesinde görünür ve onayınızdan sonra öğrenci gruba eklenir.</value>
+  </data>
   <data name="Validation_EmailRequired" xml:space="preserve">
     <value>E-posta gereklidir</value>
   </data>

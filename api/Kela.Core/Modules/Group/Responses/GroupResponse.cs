@@ -7,7 +7,9 @@ public record GroupResponse(
     string? Image,
     long? UserId,
     int StudentCount,
-    string? JoinToken = null);
+    string? JoinToken = null,
+    /// <summary>Gözləyən qoşulma müraciətlərinin sayı.</summary>
+    int PendingJoins = 0);
 
 public record GroupJoinRequestResponse(
     long Id,
