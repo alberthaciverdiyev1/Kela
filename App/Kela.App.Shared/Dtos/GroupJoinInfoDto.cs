@@ -7,5 +7,6 @@ public record GroupJoinInfoDto(
     string? Description,
     string? Image,
     string? TeacherName,
-    /// <summary>none | pending | approved | rejected | member</summary>
-    string Status);
+    /// <summary>none | pending | approved | rejected | member | anonymous</summary>
+    string Status,
+    long TenantId = 0);

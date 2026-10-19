@@ -16,6 +16,9 @@ public interface IStudentAppService
     /// <summary>Dəvət linki ilə qrup məlumatı və şagirdin müraciət vəziyyəti.</summary>
     Task<GroupJoinInfoResponse> GetGroupJoinInfoAsync(long studentId, string token, CancellationToken ct = default);
 
+    /// <summary>Dəvət linki üçün public məlumat (giriş etməmiş şagird qeydiyyat üçün tenant-ı görsün).</summary>
+    Task<GroupJoinInfoResponse> GetPublicGroupJoinInfoAsync(string token, CancellationToken ct = default);
+
     /// <summary>Dəvət linki ilə qrupa qoşulma müraciəti yaradır (teacher təsdiqi gözləyir).</summary>
     Task<GroupJoinInfoResponse> RequestJoinGroupAsync(long studentId, string token, CancellationToken ct = default);
 

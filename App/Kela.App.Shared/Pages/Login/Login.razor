@@ -19,6 +19,14 @@
             <h1 class="m-0 text-center text-[31px] font-extrabold leading-[1.18] tracking-[-1.2px] lg:text-[34px]">@(_register ? L["Login_HeadingRegister"] : L["Login_HeadingLogin"])</h1>
             <p class="mt-2 mb-[23px] text-center text-sm text-[#727c8d]">@(_register ? L["Login_SubRegister"] : L["Login_SubLogin"])</p>
 
+            @if (_invite is not null)
+            {
+                <div class="mb-3 rounded-[14px] bg-[#effaf1] px-3 py-2.5 text-xs font-semibold text-[#087e42]">
+                    @L.Format("Login_InviteBanner", _invite.Name)
+                </div>
+            }
+            @if (_invite is null)
+            {
             <div class="flex items-center justify-between">
                 <h2 class="text-sm font-[750] tracking-[-.2px]">@L["Login_SelectCourse"]</h2>
                 <button type="button" class="flex items-center gap-1.5 border-0 bg-transparent p-0 text-xs font-semibold text-[#087e42]" @onclick="OpenModal">
@@ -53,6 +61,7 @@
                     }
                 }
             </div>
+            }
 
             <form class="mt-[17px]" @onsubmit="SubmitAsync" @onsubmit:preventDefault>
                 @if (_register)

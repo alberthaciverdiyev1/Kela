@@ -10,8 +10,12 @@ public partial class Login
     private static readonly string[] CourseEmojis =
         ["🎓", "🦉", "📚", "🇹🇷", "🐍", "📊", "🟣", "🇩🇪", "🇫🇷", "📐", "⚛️", "🧪"];
 
+    [Parameter] public string? InviteToken { get; set; }
+
     private bool _modalOpen;
     private string _search = "";
+    private GroupJoinInfoDto? _invite;
+    private string? _loadedInviteToken;
 
     private List<TenantDto> _tenants = new();
     private long? _tenantId;
@@ -35,6 +39,28 @@ public partial class Login
         catch
         {
             _tenants = new List<TenantDto>();
+        }
+    }
+
+    protected override async Task OnParametersSetAsync()
+    {
+        if (string.IsNullOrWhiteSpace(InviteToken) || InviteToken == _loadedInviteToken) return;
+        _loadedInviteToken = InviteToken;
+
+        try
+        {
+            _invite = await Api.JoinGroupPublicInfoAsync(InviteToken);
+            if (_invite.TenantId > 0) _tenantId = _invite.TenantId;
+
+            // Dəvət olunan kurs siyahıda olmasa da (məs. yalnız aktivlər gəlir) seçim saxlanılır.
+            if (_tenants.All(t => t.Id != _tenantId))
+            {
+                _tenants.Add(new TenantDto(_invite.TenantId, _invite.Name, "", true));
+            }
+        }
+        catch
+        {
+            _invite = null;
         }
     }
 

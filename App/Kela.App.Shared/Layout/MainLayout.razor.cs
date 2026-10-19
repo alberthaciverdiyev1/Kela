@@ -37,8 +37,21 @@ public partial class MainLayout
             ? "page-transition page-back"
             : "page-transition";
 
+    private string? _inviteToken;
+
+    /// <summary>/join/{token} marşrutundan dəvət tokenini çıxarır (login ekranı üçün).</summary>
+    private void UpdateInviteToken()
+    {
+        var path = Nav.ToBaseRelativePath(Nav.Uri).Split('?')[0].Trim('/');
+        var parts = path.Split('/');
+        _inviteToken = parts.Length == 2 && parts[0].Equals("join", StringComparison.OrdinalIgnoreCase)
+            ? Uri.UnescapeDataString(parts[1])
+            : null;
+    }
+
     protected override async Task OnInitializedAsync()
     {
+        UpdateInviteToken();
         Auth.Changed += OnAuthChanged;
         Lang.Changed += OnLangChanged;
         Nav.LocationChanged += OnLocationChanged;
@@ -127,6 +140,8 @@ public partial class MainLayout
 
     private void OnLocationChanged(object? sender, Microsoft.AspNetCore.Components.Routing.LocationChangedEventArgs e)
     {
+        UpdateInviteToken();
+
         // Növ render növbəsi işlənməmişdən əvvəl SINXRON təyin olunur.
         _kind = ResolveKind(Nav.ToBaseRelativePath(Nav.Uri), Intent.Take());
 

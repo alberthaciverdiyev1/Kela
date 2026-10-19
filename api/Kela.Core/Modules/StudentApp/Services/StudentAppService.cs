@@ -85,6 +85,34 @@ public sealed class StudentAppService(
         return await BuildJoinInfoAsync(studentId, group, ct);
     }
 
+    public async Task<GroupJoinInfoResponse> GetPublicGroupJoinInfoAsync(string token, CancellationToken ct = default)
+    {
+        // Giriş etməmiş istifadəçi üçün tenant filtri əl ilə söndürülür — token unikaldır.
+        var group = await db.Groups.IgnoreQueryFilters(new[] { "Tenant" }).AsNoTracking()
+            .FirstOrDefaultAsync(x => x.JoinToken == token && x.DeletedAt == null, ct)
+            ?? throw new KeyNotFoundException("Group not found");
+
+        string? teacherName = null;
+        if (group.UserId is long teacherId)
+        {
+            var teacher = await db.Users.IgnoreQueryFilters(new[] { "Tenant" }).AsNoTracking()
+                .Where(x => x.Id == teacherId)
+                .Select(x => new { x.Name, x.Surname })
+                .FirstOrDefaultAsync(ct);
+
+            teacherName = teacher is null ? null : $"{teacher.Name} {teacher.Surname}".Trim();
+        }
+
+        return new GroupJoinInfoResponse(
+            group.Id,
+            group.Name,
+            group.Description,
+            string.IsNullOrWhiteSpace(group.Image) ? null : storage.GetUrl(group.Image),
+            teacherName,
+            "anonymous",
+            group.TenantId);
+    }
+
     public async Task<GroupJoinInfoResponse> RequestJoinGroupAsync(
         long studentId, string token, CancellationToken ct = default)
     {
@@ -152,7 +180,8 @@ public sealed class StudentAppService(
             group.Description,
             string.IsNullOrWhiteSpace(group.Image) ? null : storage.GetUrl(group.Image),
             teacherName,
-            status);
+            status,
+            group.TenantId);
     }
 
     public async Task<IReadOnlyList<SubjectResponse>> ListSubjectsAsync(
