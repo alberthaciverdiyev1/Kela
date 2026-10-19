@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Http;
 using Kela.Core.Common.Exceptions;
+using Kela.Core.Common.Localization;
 using Kela.Core.Common.MultiTenancy;
 using Kela.Core.Common.Storage;
 using Kela.Core.Data;
@@ -8,6 +9,7 @@ using Kela.Core.Modules.Auth.Requests;
 using Kela.Core.Modules.Auth.Responses;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Localization;
 
 namespace Kela.Core.Modules.Auth.Services;
 
@@ -19,7 +21,8 @@ public sealed class AuthService(
     IFileStorage storage,
     ITenantFolder folders,
     ITenantProvider tenantProvider,
-    IConfiguration config) : IAuthService
+    IConfiguration config,
+    IStringLocalizer<SharedResource> L) : IAuthService
 {
     private bool StrictTenant => config.GetValue<bool>("Tenancy:Strict");
 
@@ -152,7 +155,7 @@ public sealed class AuthService(
 
         if (!BCrypt.Net.BCrypt.Verify(request.CurrentPassword, student.PasswordHash))
         {
-            throw new ArgumentException("Current password is incorrect");
+            throw new ArgumentException(L["Api_CurrentPasswordIncorrect"]);
         }
 
         student.PasswordHash = BCrypt.Net.BCrypt.HashPassword(request.NewPassword);

@@ -118,7 +118,11 @@ public sealed class ApiClient(HttpClient http, AuthState auth, TokenStore store,
             var message = root.ValueKind == JsonValueKind.Object && root.TryGetProperty("message", out var m)
                 ? m.GetString()
                 : null;
-            throw new ApiException(message ?? lang.Format("Error_Status", (int)response.StatusCode),
+
+            // Validasiya xətaları "errors" obyektində gəlir; ümumi mesaj ("doğrulama
+            // uğursuz oldu") istifadəçiyə nəyin səhv olduğunu demir.
+            var details = ReadValidationErrors(root);
+            throw new ApiException(details ?? message ?? lang.Format("Error_Status", (int)response.StatusCode),
                 (int)response.StatusCode);
         }
 
@@ -128,6 +132,26 @@ public sealed class ApiClient(HttpClient http, AuthState auth, TokenStore store,
         }
 
         return default!;
+    }
+
+    private static string? ReadValidationErrors(JsonElement root)
+    {
+        if (root.ValueKind != JsonValueKind.Object
+            || !root.TryGetProperty("errors", out var errors)
+            || errors.ValueKind != JsonValueKind.Object)
+        {
+            return null;
+        }
+
+        var messages = errors.EnumerateObject()
+            .SelectMany(prop => prop.Value.ValueKind == JsonValueKind.Array
+                ? prop.Value.EnumerateArray().Select(v => v.GetString())
+                : [prop.Value.GetString()])
+            .Where(m => !string.IsNullOrWhiteSpace(m))
+            .Distinct()
+            .ToList();
+
+        return messages.Count == 0 ? null : string.Join("\n", messages);
     }
 
     private async Task SignOutAsync()

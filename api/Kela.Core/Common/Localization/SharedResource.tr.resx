@@ -96,6 +96,21 @@
   <data name="Api_ValidationFailed" xml:space="preserve">
     <value>Doğrulama başarısız</value>
   </data>
+  <data name="Api_CurrentPasswordIncorrect" xml:space="preserve">
+    <value>Mevcut şifre yanlış</value>
+  </data>
+  <data name="Login_SeeAll" xml:space="preserve">
+    <value>Tümünü gör</value>
+  </data>
+  <data name="Login_SearchCourse" xml:space="preserve">
+    <value>Kurs ara</value>
+  </data>
+  <data name="Login_SelectCourse" xml:space="preserve">
+    <value>Kurs seç</value>
+  </data>
+  <data name="LessonContent_ExtraLessons" xml:space="preserve">
+    <value>Ek dersler</value>
+  </data>
   <data name="Validation_EmailRequired" xml:space="preserve">
     <value>E-posta gereklidir</value>
   </data>

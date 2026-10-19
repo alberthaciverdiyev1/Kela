@@ -96,6 +96,21 @@
   <data name="Api_ValidationFailed" xml:space="preserve">
     <value>Проверка не пройдена</value>
   </data>
+  <data name="Api_CurrentPasswordIncorrect" xml:space="preserve">
+    <value>Текущий пароль неверен</value>
+  </data>
+  <data name="Login_SeeAll" xml:space="preserve">
+    <value>Показать все</value>
+  </data>
+  <data name="Login_SearchCourse" xml:space="preserve">
+    <value>Поиск курса</value>
+  </data>
+  <data name="Login_SelectCourse" xml:space="preserve">
+    <value>Выберите курс</value>
+  </data>
+  <data name="LessonContent_ExtraLessons" xml:space="preserve">
+    <value>Дополнительные уроки</value>
+  </data>
   <data name="Validation_EmailRequired" xml:space="preserve">
     <value>Эл. почта обязательна</value>
   </data>

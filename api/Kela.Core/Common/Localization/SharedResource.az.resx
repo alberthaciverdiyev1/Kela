@@ -96,6 +96,21 @@
   <data name="Api_ValidationFailed" xml:space="preserve">
     <value>Doğrulama uğursuz oldu</value>
   </data>
+  <data name="Api_CurrentPasswordIncorrect" xml:space="preserve">
+    <value>Cari şifrə yanlışdır</value>
+  </data>
+  <data name="Login_SeeAll" xml:space="preserve">
+    <value>Hamısına bax</value>
+  </data>
+  <data name="Login_SearchCourse" xml:space="preserve">
+    <value>Kursu axtar</value>
+  </data>
+  <data name="Login_SelectCourse" xml:space="preserve">
+    <value>Kursu seç</value>
+  </data>
+  <data name="LessonContent_ExtraLessons" xml:space="preserve">
+    <value>Əlavə dərslər</value>
+  </data>
   <data name="Validation_EmailRequired" xml:space="preserve">
     <value>E-poçt tələb olunur</value>
   </data>

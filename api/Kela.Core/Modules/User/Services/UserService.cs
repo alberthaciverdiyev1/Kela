@@ -1,16 +1,18 @@
 using Kela.Core.Modules.User.Entities;
+using Kela.Core.Common.Localization;
 using Kela.Core.Common.Sorting;
 using Kela.Core.Common.Responses;
 using Kela.Core.Data;
 using Kela.Core.Modules.User.Requests;
 using Kela.Core.Modules.User.Responses;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Localization;
 
 namespace Kela.Core.Modules.User.Services;
 
 using User = Kela.Core.Modules.User.Entities.User;
 
-public sealed class UserService(AppDbContext db) : IUserService
+public sealed class UserService(AppDbContext db, IStringLocalizer<SharedResource> L) : IUserService
 {
     public async Task<PagedResponse<UserResponse>> ListAsync(UserListRequest request, CancellationToken ct = default)
     {
@@ -136,7 +138,7 @@ public sealed class UserService(AppDbContext db) : IUserService
 
         if (!BCrypt.Net.BCrypt.Verify(request.CurrentPassword, user.PasswordHash))
         {
-            throw new ArgumentException("Current password is incorrect");
+            throw new ArgumentException(L["Api_CurrentPasswordIncorrect"]);
         }
 
         user.PasswordHash = BCrypt.Net.BCrypt.HashPassword(request.NewPassword);

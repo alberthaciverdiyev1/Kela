@@ -96,6 +96,21 @@
   <data name="Api_ValidationFailed" xml:space="preserve">
     <value>Validation failed</value>
   </data>
+  <data name="Api_CurrentPasswordIncorrect" xml:space="preserve">
+    <value>Current password is incorrect</value>
+  </data>
+  <data name="Login_SeeAll" xml:space="preserve">
+    <value>See all</value>
+  </data>
+  <data name="Login_SearchCourse" xml:space="preserve">
+    <value>Search course</value>
+  </data>
+  <data name="Login_SelectCourse" xml:space="preserve">
+    <value>Select course</value>
+  </data>
+  <data name="LessonContent_ExtraLessons" xml:space="preserve">
+    <value>Additional lessons</value>
+  </data>
   <data name="Validation_EmailRequired" xml:space="preserve">
     <value>Email is required</value>
   </data>
