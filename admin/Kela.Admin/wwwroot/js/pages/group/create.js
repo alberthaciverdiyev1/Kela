@@ -4,7 +4,6 @@
 
     let createMode = true;
     let step = 1;
-    let genSpec = null;
     let options = null;
 
     function showError(m) { errBox.textContent = m; errBox.classList.remove('hidden'); }
@@ -36,25 +35,6 @@
         return true;
     }
 
-
-    window.wizToggleGen = function () {
-        document.getElementById('wizGenPanel').classList.toggle('hidden');
-    };
-
-    window.wizGenerate = function () {
-        // Generasiya dərhal başlamır: parametrlər yadda saxlanılır və qrup
-        // yaradılan POST ilə serverə verilir (orada arxa plan işi kimi işləyir).
-        genSpec = {
-            count: Number(document.getElementById('wg_count').value || 0),
-            prefix: document.getElementById('wg_prefix').value || 'student',
-            domain: document.getElementById('wg_domain').value || 'kela.az',
-            password: document.getElementById('wg_password').value || ''
-        };
-        document.getElementById('wizGenPanel').classList.add('hidden');
-        const info = document.getElementById('wizGenInfo');
-        info.textContent = (L["Group_WillGenerate"] || '{0}').replace('{0}', genSpec.count);
-        info.classList.remove('hidden');
-    };
 
     window.toggleAllCheck = function (containerId, checked) {
         document.querySelectorAll('#' + containerId + ' [data-name]').forEach(row => {
@@ -180,8 +160,6 @@
         const teacher = document.getElementById('user_id');
         if (teacher) teacher.value = '';
         document.getElementById('image').value = '';
-        genSpec = null;
-        document.getElementById('wizGenInfo')?.classList.add('hidden');
         AdminUI.fileRemove('image');
         clearError();
         clearInvalid();
@@ -201,13 +179,6 @@
         fd.append('RemoveImage', document.getElementById('image_remove').value === 'true' ? 'true' : 'false');
         const file = document.getElementById('image').files[0];
         if (file) fd.append('Image', file);
-        // Generasiya parametrləri (əgər istifadəçi generasiya seçibsə) — server arxa planda işlədir.
-        if (genSpec && genSpec.count > 0) {
-            fd.append('generate_count', String(genSpec.count));
-            fd.append('generate_prefix', genSpec.prefix);
-            fd.append('generate_domain', genSpec.domain);
-            if (genSpec.password) fd.append('generate_password', genSpec.password);
-        }
         return fd;
     };
 

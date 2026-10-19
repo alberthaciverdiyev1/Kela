@@ -3,8 +3,6 @@ async function load() {
     if (!groupId) { AdminUI.error(L["Common_SelectGroup"]); return; }
 
     const quizType = document.getElementById('quiz_type').value;
-    document.getElementById('exportLink').href = `/group-stat/export?group_id=${groupId}&quiz_type=${quizType}`;
-
     AdminUI.loader(true);
     const data = await AdminUI.get(`/group-stat/data?group_id=${groupId}&quiz_type=${quizType}`);
     AdminUI.loader(false);

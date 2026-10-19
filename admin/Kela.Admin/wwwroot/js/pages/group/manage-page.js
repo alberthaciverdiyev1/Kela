@@ -11,13 +11,6 @@
         el.innerHTML = items.map(o => `<option value="${o.id}">${o.text}</option>`).join('');
     };
 
-    function downloadGenerated(list) {
-        if (!list || !list.length) return;
-        AdminUI.downloadCsv('students-' + Date.now() + '.csv',
-            ['Ad', 'E-poçt', 'Şifrə'],
-            list.map(s => [s.fullName, s.email, s.password]));
-    }
-
     function renderMembers(containerId, items, type, labelFn, idFn) {
         const box = document.getElementById(containerId);
         if (!box) return;
@@ -143,28 +136,6 @@
 
     window.toggleGroupEdit = () => {
         document.getElementById('groupEdit').classList.toggle('hidden');
-    };
-
-    window.toggleGroupGen = () => {
-        document.getElementById('groupGenPanel').classList.toggle('hidden');
-    };
-
-    window.generateIntoGroup = async () => {
-        const res = await AdminUI.postJson('/students/generate', {
-            groupId,
-            count: Number(document.getElementById('gg_count').value),
-            fullNamePrefix: document.getElementById('gg_prefix').value,
-            emailDomain: document.getElementById('gg_domain').value,
-            password: document.getElementById('gg_password').value
-        });
-        if (res.ok) {
-            AdminUI.notify(res.data.created + L["Js_StudentsCreated"]);
-            downloadGenerated(res.data.students);
-            document.getElementById('groupGenPanel').classList.add('hidden');
-            refresh();
-        } else {
-            AdminUI.error(AdminUI.errText(res));
-        }
     };
 
     window.assignMember = async (type) => {

@@ -11,11 +11,7 @@
     };
 }
 <section class="admin-page">
-    @{
-        var groupStatHeaderExtra = new Microsoft.AspNetCore.Html.HtmlString(
-            $@"<a id=""exportLink"" href=""#"" class=""admin-button-secondary"">⬇ Excel</a>");
-    }
-    <partial name="Ui/_PageHeader" model="@(new PageHeaderModel { Extra = groupStatHeaderExtra })" />
+    <partial name="Ui/_PageHeader" model="@(new PageHeaderModel())" />
 
     <div class="admin-card">
         <partial name="Ui/_FilterBar" model="@(new FilterBarModel {

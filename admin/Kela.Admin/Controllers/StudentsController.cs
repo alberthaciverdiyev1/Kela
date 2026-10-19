@@ -23,7 +23,7 @@ public sealed class StudentsController(
         ViewData["Scripts"] = new[]
         {
             "~/js/pages/students/list.js", "~/js/pages/students/create.js",
-            "~/js/pages/students/generate.js", "~/js/pages/students/devices.js"
+            "~/js/pages/students/devices.js"
         };
         ViewData["Groups"] = await groups.ListAsync(new Kela.Core.Modules.Group.Requests.GroupListRequest { PerPage = 500 }, ct);
         return View();
@@ -100,26 +100,6 @@ public sealed class StudentsController(
         {
             return NotFound(new { message = ex.Message });
         }
-    }
-
-    [HttpPost("generate")]
-    [ValidateAntiForgeryToken]
-    public async Task<IActionResult> Generate([FromBody] GenerateStudentsRequest request, CancellationToken ct)
-    {
-        // Şagird generasiyası müvəqqəti söndürülüb — kod silinmir.
-        if (false)
-        {
-            return Json(await service.GenerateAsync(request, ct));
-        }
-
-        return BadRequest(new { error = "Student generation is disabled" });
-    }
-
-    [HttpGet("export")]
-    public async Task<IActionResult> Export([FromQuery] StudentListRequest request, CancellationToken ct)
-    {
-        var bytes = await service.ExportXlsxAsync(request, ct);
-        return File(bytes, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", $"students-{DateTime.UtcNow:yyyyMMddHHmmss}.xlsx");
     }
 
     [HttpGet("{id:long}/devices")]

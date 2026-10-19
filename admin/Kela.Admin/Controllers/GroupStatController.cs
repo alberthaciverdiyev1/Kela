@@ -28,11 +28,4 @@ public sealed class GroupStatController(
     [HttpGet("data")]
     public async Task<IActionResult> Data([FromQuery] GroupQuizStatRequest request, [FromQuery(Name = "group_id")] long groupId, CancellationToken ct)
         => Json(await stats.GetAsync(groupId, request, ct));
-
-    [HttpGet("export")]
-    public async Task<IActionResult> Export([FromQuery] GroupQuizStatRequest request, [FromQuery(Name = "group_id")] long groupId, CancellationToken ct)
-    {
-        var bytes = await stats.ExportXlsxAsync(groupId, request, ct);
-        return File(bytes, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", $"group-{groupId}-quiz-stat.xlsx");
-    }
 }

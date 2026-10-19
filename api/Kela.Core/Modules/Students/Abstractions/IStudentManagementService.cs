@@ -17,9 +17,6 @@ public interface IStudentManagementService
 
     Task RestoreAsync(long id, CancellationToken ct = default);
 
-    Task<byte[]> ExportXlsxAsync(StudentListRequest request, CancellationToken ct = default);
-
-    Task<GenerateStudentsResponse> GenerateAsync(GenerateStudentsRequest request, CancellationToken ct = default);
 
     /// <summary>Tək şagird yaratma (teacher da istifadə edir).</summary>
     Task<CreateStudentResponse> CreateAsync(CreateStudentRequest request, CancellationToken ct = default);

@@ -160,21 +160,6 @@ window.AdminUI = window.AdminUI || {};
 
     function reloadAfter(delay) { setTimeout(() => location.reload(), delay || 700); }
 
-    function downloadCsv(filename, headers, rows) {
-        const esc = v => `"${String(v ?? '').replace(/"/g, '""')}"`;
-        const csv = [headers.map(esc).join(','), ...rows.map(r => r.map(esc).join(','))].join('\r\n');
-        const blob = new Blob(['\ufeff' + csv], { type: 'text/csv;charset=utf-8;' });
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = filename;
-        document.body.appendChild(a);
-        a.click();
-        a.remove();
-        URL.revokeObjectURL(url);
-    }
-
-
     // Filtr panelindəki (.admin-toolbar) hər select dəyişəndə siyahını avtomatik yeniləyir.
     // "Axtar" düyməsinə basmağa ehtiyac qalmır. data-no-auto ilə element istisna edilə bilər.
     function filterReload() {
@@ -201,5 +186,5 @@ window.AdminUI = window.AdminUI || {};
         _filterTimer = setTimeout(filterReload, 350);
     });
 
-    Object.assign(UI, { token, copyText, SWAL_BASE, swal, lockSubmitButton, releaseSubmitButton, notify, error, confirmDelete, get, post, postForm, putForm, postJson, putJson, del, errText, loader, reloadAfter, downloadCsv });
+    Object.assign(UI, { token, copyText, SWAL_BASE, swal, lockSubmitButton, releaseSubmitButton, notify, error, confirmDelete, get, post, postForm, putForm, postJson, putJson, del, errText, loader, reloadAfter });
 })(window.AdminUI);

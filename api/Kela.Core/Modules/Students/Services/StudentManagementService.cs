@@ -1,6 +1,5 @@
 using Kela.Core.Common.Sorting;
 using System.Security.Cryptography;
-using ClosedXML.Excel;
 using Kela.Core.Common.Bulk;
 using Kela.Core.Common.Responses;
 using Kela.Core.Data;
@@ -61,35 +60,6 @@ public sealed class StudentManagementService(AppDbContext db) : Abstractions.ISt
         await db.SaveChangesAsync(ct);
     }
 
-    public async Task<byte[]> ExportXlsxAsync(StudentListRequest request, CancellationToken ct = default)
-    {
-        var students = await Query(request).ApplyListSort(request, x => x.FullName).ToListAsync(ct);
-
-        using var workbook = new XLWorkbook();
-        var ws = workbook.Worksheets.Add("Students");
-        var headers = new[] { "Id", "FullName", "Email", "Phone", "IsActive", "CreatedAt" };
-        for (var c = 0; c < headers.Length; c++) ws.Cell(1, c + 1).Value = headers[c];
-        ws.Row(1).Style.Font.Bold = true;
-
-        var row = 2;
-        foreach (var s in students)
-        {
-            ws.Cell(row, 1).Value = s.Id;
-            ws.Cell(row, 2).Value = s.FullName;
-            ws.Cell(row, 3).Value = s.Email;
-            ws.Cell(row, 4).Value = s.Phone ?? "";
-            ws.Cell(row, 5).Value = s.IsActive;
-            ws.Cell(row, 6).Value = s.CreatedAt.ToString("O");
-            row++;
-        }
-
-        ws.Columns().AdjustToContents();
-
-        using var stream = new MemoryStream();
-        workbook.SaveAs(stream);
-        return stream.ToArray();
-    }
-
     public async Task<ResetStudentPasswordResponse> ResetPasswordAsync(long id, ResetStudentPasswordRequest request, CancellationToken ct = default)
     {
         var student = await db.Students.FirstOrDefaultAsync(x => x.Id == id, ct)
@@ -146,62 +116,6 @@ public sealed class StudentManagementService(AppDbContext db) : Abstractions.ISt
         }
 
         return new CreateStudentResponse(student.Id, student.FullName, student.Email, generated ? password : null);
-    }
-
-    public async Task<GenerateStudentsResponse> GenerateAsync(GenerateStudentsRequest request, CancellationToken ct = default)
-    {
-        var count = request.Count is < 1 or > 1000 ? 10 : request.Count;
-        var fixedPassword = string.IsNullOrWhiteSpace(request.Password) ? null : request.Password;
-        var domain = string.IsNullOrWhiteSpace(request.EmailDomain) ? "kela.az" : request.EmailDomain.Trim().TrimStart('@');
-
-        var taken = (await db.Students.IgnoreQueryFilters(new[] { "SoftDelete" })
-                .Where(s => EF.Functions.ILike(s.Email, "%@" + domain))
-                .Select(s => s.Email)
-                .ToListAsync(ct))
-            .ToHashSet(StringComparer.OrdinalIgnoreCase);
-
-        var created = new List<(Student Student, string Password)>(count);
-        for (var i = 1; i <= count; i++)
-        {
-            var email = $"{request.EmailPrefix}{i}@{domain}".ToLowerInvariant();
-            while (taken.Contains(email))
-            {
-                email = $"{request.EmailPrefix}{i}-{Guid.NewGuid():N}"[..(request.EmailPrefix.Length + 7)] + $"@{domain}";
-            }
-            taken.Add(email);
-
-            var password = fixedPassword ?? GeneratePassword();
-            var student = new Student
-            {
-                FullName = $"{request.FullNamePrefix} {i}",
-                Email = email,
-                PasswordHash = BCrypt.Net.BCrypt.HashPassword(password),
-                IsActive = true,
-                MustChangePassword = true,
-                // Ad «Student 1» kimi generasiya olunur — ilk girişdə özü yazmalıdır.
-                MustChangeName = true
-            };
-            db.Students.Add(student);
-            created.Add((student, password));
-        }
-
-        await db.SaveChangesAsync(ct);
-
-        if (request.GroupId is long groupId)
-        {
-            foreach (var (student, _) in created)
-            {
-                db.StudentGroups.Add(new Modules.Group.Entities.StudentGroup
-                {
-                    GroupId = groupId,
-                    StudentId = student.Id
-                });
-            }
-            await db.SaveChangesAsync(ct);
-        }
-
-        return new GenerateStudentsResponse(count,
-            created.Select(x => new GeneratedStudentInfo(x.Student.Id, x.Student.FullName, x.Student.Email, x.Password)).ToList());
     }
 
     public async Task<IReadOnlyList<StudentDeviceResponse>> ListDevicesAsync(long studentId, CancellationToken ct = default)
