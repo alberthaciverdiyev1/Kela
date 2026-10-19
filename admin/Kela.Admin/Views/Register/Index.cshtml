@@ -1,0 +1,45 @@
+@{
+    Layout = "_AuthLayout";
+    ViewData["Title"] = L["Tenant_RegisterTitle"];
+}
+<div class="w-full max-w-md rounded-2xl bg-white p-8 shadow-lg">
+    <div class="mb-6 flex items-center gap-3">
+        <div class="grid h-11 w-11 place-items-center rounded-xl bg-gradient-to-br from-primary to-primary-700 text-white shadow-sm">
+            <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.9"><path stroke-linecap="round" stroke-linejoin="round" d="M4 19V6.5A2.5 2.5 0 0 1 6.5 4H11v15H6.5A2.5 2.5 0 0 0 4 19Zm16 0V6.5A2.5 2.5 0 0 0 17.5 4H13v15h4.5A2.5 2.5 0 0 1 20 19Z" /></svg>
+        </div>
+        <div>
+            <p class="text-lg font-extrabold leading-none tracking-tight text-slate-900">@L["Tenant_RegisterTitle"]</p>
+            <p class="mt-1 text-xs font-medium text-slate-400">@L["Tenant_RegisterSubtitle"]</p>
+        </div>
+    </div>
+
+    @if (ViewData["Error"] is string err)
+    {
+        <div class="mb-4 rounded-lg bg-red-50 px-3 py-2 text-sm text-red-600">@err</div>
+    }
+    @if (ViewData["Success"] is true)
+    {
+        <div class="mb-4 rounded-lg bg-emerald-50 px-3 py-2 text-sm text-emerald-700">@L["Tenant_RegisteredPending"]</div>
+    }
+
+    <form method="post" action="/register" class="space-y-4">
+        @Html.AntiForgeryToken()
+        <partial name="Ui/_Input" model="@(new InputModel { NativeRequired = true, Name = "CourseName", Id = "courseName", Label = L["Tenant_CourseName"], Required = true })" />
+        <partial name="Ui/_Input" model="@(new InputModel { Name = "Slug", Id = "slug", Label = L["Tenant_SlugHint"] })" />
+        <div class="grid grid-cols-2 gap-3">
+            <partial name="Ui/_Input" model="@(new InputModel { NativeRequired = true, Name = "AdminName", Id = "adminName", Label = L["Tenant_AdminName"], Required = true })" />
+            <partial name="Ui/_Input" model="@(new InputModel { Name = "AdminSurname", Id = "adminSurname", Label = L["Tenant_AdminSurname"] })" />
+        </div>
+        <partial name="Ui/_Input" model="@(new InputModel { NativeRequired = true, Name = "Email", Id = "email", Label = L["Common_Email"], Type = "email", Required = true })" />
+        <partial name="Ui/_Input" model="@(new InputModel { Name = "PhoneNumber", Id = "phoneNumber", Label = L["Tenant_PhoneOptional"] })" />
+        <div class="grid grid-cols-2 gap-3">
+            <partial name="Ui/_Input" model="@(new InputModel { NativeRequired = true, Name = "Password", Id = "password", Label = L["Common_Password"], Type = "password", Required = true })" />
+            <partial name="Ui/_Input" model="@(new InputModel { NativeRequired = true, Name = "ConfirmPassword", Id = "confirmPassword", Label = L["Tenant_ConfirmPassword"], Type = "password", Required = true })" />
+        </div>
+        <button type="submit" class="admin-button-primary w-full">@L["Tenant_RegisterSubmit"]</button>
+    </form>
+
+    <p class="mt-4 text-center text-sm text-slate-500">
+        <a href="/login" class="font-semibold text-primary hover:underline">@L["Common_SignIn"]</a>
+    </p>
+</div>

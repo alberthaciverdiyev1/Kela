@@ -18,4 +18,10 @@ public interface ITenantService
     Task<TenantResponse> UpdateCurrentAsync(UpdateTenantProfileRequest request, CancellationToken ct = default);
 
     Task<TenantResponse> CreateAsync(CreateTenantRequest request, CancellationToken ct = default);
+
+    /// <summary>Public müraciət: aktiv olmayan tenant + ilk admin hesabı yaradır.</summary>
+    Task<TenantResponse> RegisterAsync(RegisterTenantRequest request, CancellationToken ct = default);
+
+    /// <summary>Superadmin təsdiqi — tenant-ı aktivləşdirir/söndürür.</summary>
+    Task<TenantResponse> SetActiveAsync(long id, bool isActive, CancellationToken ct = default);
 }

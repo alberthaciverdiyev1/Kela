@@ -111,6 +111,57 @@
   <data name="LessonContent_ExtraLessons" xml:space="preserve">
     <value>Əlavə dərslər</value>
   </data>
+  <data name="Tenant_CourseName" xml:space="preserve">
+    <value>Kursun adı</value>
+  </data>
+  <data name="Tenant_SlugHint" xml:space="preserve">
+    <value>URL üçün qısa ad (boş buraxılsa avtomatik yaradılır)</value>
+  </data>
+  <data name="Tenant_AdminName" xml:space="preserve">
+    <value>Admin adı</value>
+  </data>
+  <data name="Tenant_AdminSurname" xml:space="preserve">
+    <value>Admin soyadı</value>
+  </data>
+  <data name="Tenant_PhoneOptional" xml:space="preserve">
+    <value>Telefon (istəyə bağlı)</value>
+  </data>
+  <data name="Tenant_ConfirmPassword" xml:space="preserve">
+    <value>Şifrənin təkrarı</value>
+  </data>
+  <data name="Tenant_Register" xml:space="preserve">
+    <value>Kursunuzu qeyd edin</value>
+  </data>
+  <data name="Tenant_RegisterTitle" xml:space="preserve">
+    <value>Kursunuzu qeydiyyatdan keçirin</value>
+  </data>
+  <data name="Tenant_RegisterSubtitle" xml:space="preserve">
+    <value>Müraciətiniz platforma admini tərəfindən təsdiqləndikdən sonra daxil ola biləcəksiniz.</value>
+  </data>
+  <data name="Tenant_RegisterSubmit" xml:space="preserve">
+    <value>Müraciət göndər</value>
+  </data>
+  <data name="Tenant_RegisteredPending" xml:space="preserve">
+    <value>Müraciətiniz qəbul edildi. Təsdiqdən sonra kurs siyahısında görünəcək.</value>
+  </data>
+  <data name="Tenant_Pending" xml:space="preserve">
+    <value>Gözləyir</value>
+  </data>
+  <data name="Tenant_CourseNameRequired" xml:space="preserve">
+    <value>Kursun adı tələb olunur</value>
+  </data>
+  <data name="Tenant_SlugTaken" xml:space="preserve">
+    <value>Bu qısa ad artıq istifadə olunur</value>
+  </data>
+  <data name="Tenant_AdminNameRequired" xml:space="preserve">
+    <value>Admin adı tələb olunur</value>
+  </data>
+  <data name="Tenant_PasswordRequirements" xml:space="preserve">
+    <value>Şifrə ən azı 8 simvol, bir hərf və bir rəqəm olmalıdır</value>
+  </data>
+  <data name="Tenant_PasswordMismatch" xml:space="preserve">
+    <value>Şifrələr uyğun gəlmir</value>
+  </data>
   <data name="Validation_EmailRequired" xml:space="preserve">
     <value>E-poçt tələb olunur</value>
   </data>

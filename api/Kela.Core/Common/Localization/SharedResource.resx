@@ -111,6 +111,57 @@
   <data name="LessonContent_ExtraLessons" xml:space="preserve">
     <value>Additional lessons</value>
   </data>
+  <data name="Tenant_CourseName" xml:space="preserve">
+    <value>Course name</value>
+  </data>
+  <data name="Tenant_SlugHint" xml:space="preserve">
+    <value>Short URL name (generated automatically when empty)</value>
+  </data>
+  <data name="Tenant_AdminName" xml:space="preserve">
+    <value>Admin first name</value>
+  </data>
+  <data name="Tenant_AdminSurname" xml:space="preserve">
+    <value>Admin last name</value>
+  </data>
+  <data name="Tenant_PhoneOptional" xml:space="preserve">
+    <value>Phone (optional)</value>
+  </data>
+  <data name="Tenant_ConfirmPassword" xml:space="preserve">
+    <value>Confirm password</value>
+  </data>
+  <data name="Tenant_Register" xml:space="preserve">
+    <value>Register your course</value>
+  </data>
+  <data name="Tenant_RegisterTitle" xml:space="preserve">
+    <value>Register your course</value>
+  </data>
+  <data name="Tenant_RegisterSubtitle" xml:space="preserve">
+    <value>You will be able to sign in after a platform admin approves your application.</value>
+  </data>
+  <data name="Tenant_RegisterSubmit" xml:space="preserve">
+    <value>Send application</value>
+  </data>
+  <data name="Tenant_RegisteredPending" xml:space="preserve">
+    <value>Your application has been received. The course will appear after approval.</value>
+  </data>
+  <data name="Tenant_Pending" xml:space="preserve">
+    <value>Pending</value>
+  </data>
+  <data name="Tenant_CourseNameRequired" xml:space="preserve">
+    <value>Course name is required</value>
+  </data>
+  <data name="Tenant_SlugTaken" xml:space="preserve">
+    <value>This slug is already in use</value>
+  </data>
+  <data name="Tenant_AdminNameRequired" xml:space="preserve">
+    <value>Admin first name is required</value>
+  </data>
+  <data name="Tenant_PasswordRequirements" xml:space="preserve">
+    <value>Password must be at least 8 characters with a letter and a digit</value>
+  </data>
+  <data name="Tenant_PasswordMismatch" xml:space="preserve">
+    <value>Passwords do not match</value>
+  </data>
   <data name="Validation_EmailRequired" xml:space="preserve">
     <value>Email is required</value>
   </data>

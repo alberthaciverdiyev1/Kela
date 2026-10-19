@@ -1,15 +1,24 @@
+using System.Text;
+using Kela.Core.Common.Localization;
 using Kela.Core.Common.MultiTenancy;
 using Kela.Core.Common.Storage;
 using Kela.Core.Data;
 using Kela.Core.Modules.Tenant.Requests;
 using Kela.Core.Modules.Tenant.Responses;
+using Kela.Core.Modules.User.Entities;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Localization;
 
 namespace Kela.Core.Modules.Tenant.Services;
 
 using Tenant = Kela.Core.Modules.Tenant.Entities.Tenant;
+using User = Kela.Core.Modules.User.Entities.User;
 
-public sealed class TenantService(AppDbContext db, ITenantProvider tenantProvider, IFileStorage storage) : ITenantService
+public sealed class TenantService(
+    AppDbContext db,
+    ITenantProvider tenantProvider,
+    IFileStorage storage,
+    IStringLocalizer<SharedResource> L) : ITenantService
 {
     public async Task<IReadOnlyList<TenantResponse>> ListAsync(CancellationToken ct = default)
     {
@@ -89,6 +98,98 @@ public sealed class TenantService(AppDbContext db, ITenantProvider tenantProvide
         await db.SaveChangesAsync(ct);
 
         return new TenantResponse(tenant.Id, tenant.Name, tenant.Slug, tenant.IsActive);
+    }
+
+    public async Task<TenantResponse> RegisterAsync(RegisterTenantRequest request, CancellationToken ct = default)
+    {
+        var courseName = request.CourseName.Trim();
+        if (courseName.Length == 0) throw new ArgumentException(L["Tenant_CourseNameRequired"]);
+        if (courseName.Length > 190) courseName = courseName[..190];
+
+        var slug = NormalizeSlug(string.IsNullOrWhiteSpace(request.Slug) ? courseName : request.Slug);
+        if (slug.Length == 0) throw new ArgumentException(L["Tenant_CourseNameRequired"]);
+        if (slug.Length > 100) slug = slug[..100];
+
+        var adminName = request.AdminName.Trim();
+        if (adminName.Length == 0) throw new ArgumentException(L["Tenant_AdminNameRequired"]);
+
+        var email = request.Email.Trim().ToLowerInvariant();
+        if (email.Length == 0 || !email.Contains('@') || email.StartsWith('@') || email.EndsWith('@'))
+        {
+            throw new ArgumentException(L["Validation_EmailInvalid"]);
+        }
+
+        if (request.Password.Length < 8
+            || !request.Password.Any(char.IsLetter)
+            || !request.Password.Any(char.IsDigit))
+        {
+            throw new ArgumentException(L["Tenant_PasswordRequirements"]);
+        }
+
+        if (request.Password != request.ConfirmPassword)
+        {
+            throw new ArgumentException(L["Tenant_PasswordMismatch"]);
+        }
+
+        if (await db.Tenants.AnyAsync(x => x.Slug == slug, ct))
+        {
+            throw new ArgumentException(L["Tenant_SlugTaken"]);
+        }
+
+        await using var tx = await db.Database.BeginTransactionAsync(ct);
+
+        var tenant = new Tenant { Name = courseName, Slug = slug, IsActive = false };
+        db.Tenants.Add(tenant);
+        await db.SaveChangesAsync(ct);
+
+        db.Users.Add(new User
+        {
+            TenantId = tenant.Id,
+            Name = adminName,
+            Surname = request.AdminSurname.Trim(),
+            Email = email,
+            PhoneNumber = string.IsNullOrWhiteSpace(request.PhoneNumber) ? null : request.PhoneNumber.Trim(),
+            PasswordHash = BCrypt.Net.BCrypt.HashPassword(request.Password),
+            Type = UserTypes.Admin
+        });
+        await db.SaveChangesAsync(ct);
+        await tx.CommitAsync(ct);
+
+        return new TenantResponse(tenant.Id, tenant.Name, tenant.Slug, tenant.IsActive);
+    }
+
+    public async Task<TenantResponse> SetActiveAsync(long id, bool isActive, CancellationToken ct = default)
+    {
+        var tenant = await db.Tenants.FirstOrDefaultAsync(x => x.Id == id, ct)
+            ?? throw new KeyNotFoundException($"Tenant not found: {id}");
+
+        tenant.IsActive = isActive;
+        await db.SaveChangesAsync(ct);
+
+        return new TenantResponse(tenant.Id, tenant.Name, tenant.Slug, tenant.IsActive, await LogoAsync(tenant.Id, ct));
+    }
+
+    /// <summary>URL üçün qısa ad: hərflər/rəqəmlər saxlanılır, digərləri tireyə çevrilir.</summary>
+    private static string NormalizeSlug(string value)
+    {
+        var sb = new StringBuilder(value.Length);
+        var lastDash = false;
+
+        foreach (var ch in value.Trim().ToLowerInvariant())
+        {
+            if (char.IsLetterOrDigit(ch))
+            {
+                sb.Append(ch);
+                lastDash = false;
+            }
+            else if (!lastDash && sb.Length > 0)
+            {
+                sb.Append('-');
+                lastDash = true;
+            }
+        }
+
+        return sb.ToString().Trim('-');
     }
 
     private async Task<Dictionary<long, string>> LogoMapAsync(CancellationToken ct)

@@ -29,6 +29,12 @@ public sealed class TenantController(ITenantService service) : Controller
     public async Task<IActionResult> Create([FromBody] CreateTenantRequest request, CancellationToken ct)
         => Json(await service.CreateAsync(request, ct));
 
+    /// <summary>Superadmin müraciəti təsdiqləyir/deaktiv edir.</summary>
+    [HttpPut("{id:long}/status")]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> SetStatus(long id, [FromBody] SetTenantStatusRequest request, CancellationToken ct)
+        => Json(await service.SetActiveAsync(id, request.IsActive, ct));
+
     /// <summary>Superadmin seçilmiş tenant-ın kontekstinə keçir (cookie-yə tenant_id/tenant_name claim).</summary>
     [HttpPost("switch/{id:long}")]
     [ValidateAntiForgeryToken]

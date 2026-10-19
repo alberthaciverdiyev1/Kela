@@ -111,6 +111,57 @@
   <data name="LessonContent_ExtraLessons" xml:space="preserve">
     <value>Ek dersler</value>
   </data>
+  <data name="Tenant_CourseName" xml:space="preserve">
+    <value>Kurs adı</value>
+  </data>
+  <data name="Tenant_SlugHint" xml:space="preserve">
+    <value>URL için kısa ad (boş bırakılırsa otomatik oluşturulur)</value>
+  </data>
+  <data name="Tenant_AdminName" xml:space="preserve">
+    <value>Yönetici adı</value>
+  </data>
+  <data name="Tenant_AdminSurname" xml:space="preserve">
+    <value>Yönetici soyadı</value>
+  </data>
+  <data name="Tenant_PhoneOptional" xml:space="preserve">
+    <value>Telefon (isteğe bağlı)</value>
+  </data>
+  <data name="Tenant_ConfirmPassword" xml:space="preserve">
+    <value>Şifre tekrarı</value>
+  </data>
+  <data name="Tenant_Register" xml:space="preserve">
+    <value>Kursunuzu kaydedin</value>
+  </data>
+  <data name="Tenant_RegisterTitle" xml:space="preserve">
+    <value>Kursunuzu kaydedin</value>
+  </data>
+  <data name="Tenant_RegisterSubtitle" xml:space="preserve">
+    <value>Platform yöneticisi başvurunuzu onayladıktan sonra giriş yapabilirsiniz.</value>
+  </data>
+  <data name="Tenant_RegisterSubmit" xml:space="preserve">
+    <value>Başvuru gönder</value>
+  </data>
+  <data name="Tenant_RegisteredPending" xml:space="preserve">
+    <value>Başvurunuz alındı. Onaydan sonra kurs listede görünecek.</value>
+  </data>
+  <data name="Tenant_Pending" xml:space="preserve">
+    <value>Bekliyor</value>
+  </data>
+  <data name="Tenant_CourseNameRequired" xml:space="preserve">
+    <value>Kurs adı gereklidir</value>
+  </data>
+  <data name="Tenant_SlugTaken" xml:space="preserve">
+    <value>Bu kısa ad zaten kullanılıyor</value>
+  </data>
+  <data name="Tenant_AdminNameRequired" xml:space="preserve">
+    <value>Yönetici adı gereklidir</value>
+  </data>
+  <data name="Tenant_PasswordRequirements" xml:space="preserve">
+    <value>Şifre en az 8 karakter, bir harf ve bir rakam içermelidir</value>
+  </data>
+  <data name="Tenant_PasswordMismatch" xml:space="preserve">
+    <value>Şifreler eşleşmiyor</value>
+  </data>
   <data name="Validation_EmailRequired" xml:space="preserve">
     <value>E-posta gereklidir</value>
   </data>

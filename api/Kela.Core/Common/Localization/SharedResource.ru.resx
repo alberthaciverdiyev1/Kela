@@ -111,6 +111,57 @@
   <data name="LessonContent_ExtraLessons" xml:space="preserve">
     <value>Дополнительные уроки</value>
   </data>
+  <data name="Tenant_CourseName" xml:space="preserve">
+    <value>Название курса</value>
+  </data>
+  <data name="Tenant_SlugHint" xml:space="preserve">
+    <value>Короткое имя в URL (создаётся автоматически, если пусто)</value>
+  </data>
+  <data name="Tenant_AdminName" xml:space="preserve">
+    <value>Имя администратора</value>
+  </data>
+  <data name="Tenant_AdminSurname" xml:space="preserve">
+    <value>Фамилия администратора</value>
+  </data>
+  <data name="Tenant_PhoneOptional" xml:space="preserve">
+    <value>Телефон (необязательно)</value>
+  </data>
+  <data name="Tenant_ConfirmPassword" xml:space="preserve">
+    <value>Повторите пароль</value>
+  </data>
+  <data name="Tenant_Register" xml:space="preserve">
+    <value>Зарегистрировать курс</value>
+  </data>
+  <data name="Tenant_RegisterTitle" xml:space="preserve">
+    <value>Зарегистрируйте свой курс</value>
+  </data>
+  <data name="Tenant_RegisterSubtitle" xml:space="preserve">
+    <value>Вы сможете войти после одобрения заявки администратором платформы.</value>
+  </data>
+  <data name="Tenant_RegisterSubmit" xml:space="preserve">
+    <value>Отправить заявку</value>
+  </data>
+  <data name="Tenant_RegisteredPending" xml:space="preserve">
+    <value>Заявка принята. Курс появится после одобрения.</value>
+  </data>
+  <data name="Tenant_Pending" xml:space="preserve">
+    <value>Ожидает</value>
+  </data>
+  <data name="Tenant_CourseNameRequired" xml:space="preserve">
+    <value>Укажите название курса</value>
+  </data>
+  <data name="Tenant_SlugTaken" xml:space="preserve">
+    <value>Это короткое имя уже используется</value>
+  </data>
+  <data name="Tenant_AdminNameRequired" xml:space="preserve">
+    <value>Укажите имя администратора</value>
+  </data>
+  <data name="Tenant_PasswordRequirements" xml:space="preserve">
+    <value>Пароль должен содержать минимум 8 символов, букву и цифру</value>
+  </data>
+  <data name="Tenant_PasswordMismatch" xml:space="preserve">
+    <value>Пароли не совпадают</value>
+  </data>
   <data name="Validation_EmailRequired" xml:space="preserve">
     <value>Эл. почта обязательна</value>
   </data>
