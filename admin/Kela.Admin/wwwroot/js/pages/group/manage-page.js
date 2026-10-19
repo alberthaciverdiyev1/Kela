@@ -55,6 +55,11 @@
             tabBadge.textContent = pending;
             tabBadge.style.display = pending > 0 ? 'inline-flex' : 'none';
         }
+        const headerBadge = document.getElementById('groupPendingBadge');
+        if (headerBadge) {
+            headerBadge.textContent = pending;
+            headerBadge.style.display = pending > 0 ? 'inline-flex' : 'none';
+        }
         if (window.refreshGroupJoinBadge) window.refreshGroupJoinBadge();
 
         box.innerHTML = items.length
@@ -97,6 +102,11 @@
         if (tabBadge) {
             tabBadge.textContent = pending;
             tabBadge.style.display = pending > 0 ? 'inline-flex' : 'none';
+        }
+        const headerBadge = document.getElementById('groupPendingBadge');
+        if (headerBadge) {
+            headerBadge.textContent = pending;
+            headerBadge.style.display = pending > 0 ? 'inline-flex' : 'none';
         }
         if (window.refreshGroupJoinBadge) window.refreshGroupJoinBadge();
 

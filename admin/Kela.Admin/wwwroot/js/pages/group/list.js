@@ -22,7 +22,9 @@ async function loadList(page) {
 
     AdminUI.table('rows', data.data.map((g, i) => [
         { html: AdminUI.rowNo(g, i, currentPage, data.perPage), cls: 'text-slate-400' },
-        { html: g.name, cls: 'font-medium text-slate-800' },
+        { html: `${g.name}${g.pendingJoins > 0
+            ? ` <span class="ml-2 inline-flex min-w-5 items-center justify-center rounded-full bg-danger px-1.5 py-0.5 text-[10px] font-bold leading-none text-white">${g.pendingJoins}</span>`
+            : ''}`, cls: 'font-medium text-slate-800' },
         { html: window.TEACHERS[g.userId] ?? '-', cls: 'text-slate-500' },
         { html: g.studentCount, cls: 'text-slate-500' },
         { html: showDeleted ? AdminUI.restoreButton(g.id) : AdminUI.rowActions([
