@@ -1,4 +1,5 @@
 using Kela.Core.Modules.Dashboard.Abstractions;
+using Kela.Admin.Infrastructure;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Kela.Admin.Controllers;
@@ -11,6 +12,7 @@ public sealed class DashboardController(IDashboardService dashboard) : Controlle
     {
         ViewData["Scripts"] = new[] { "~/js/pages/dashboard/index.js" };
 
-        return View(await dashboard.GetAsync(ct));
+        var ownerId = User.IsAdmin() ? null : User.CurrentUserId();
+        return View(await dashboard.GetAsync(ownerId, ct));
     }
 }
