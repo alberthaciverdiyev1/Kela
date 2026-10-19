@@ -20,8 +20,9 @@ public partial class Profile
         catch { /* profil qalan hissəsi işləməyə davam etsin */ }
         _attendanceLoading = false;
 
-        // Generasiya olunmuş hesab: ad-soyad dərhal yazılmalıdır.
+        // İlk giriş məcburiyyətləri: şifrə və/və ya ad-soyad.
         if (Auth.User?.MustChangeName == true) OpenName();
+        if (Auth.User?.MustChangePassword == true) _passwordOpen = true;
     }
 
     private async Task ChangeLang(ChangeEventArgs e) => await L.SetAsync(e.Value?.ToString() ?? "az");

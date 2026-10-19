@@ -136,6 +136,9 @@ public partial class MainLayout
         _instant = now - _lastSwap < TimeSpan.FromMilliseconds(300);
         _lastSwap = now;
 
+        // Hər naviqasiyada: şifrə/ad məcburiyyəti varsa profildən başqa yerə buraxma.
+        EnforcePasswordChange();
+
         _ = InvokeAsync(StateHasChanged);
     }
 
