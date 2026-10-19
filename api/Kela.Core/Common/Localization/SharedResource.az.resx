@@ -118,10 +118,10 @@
     <value>URL üçün qısa ad (boş buraxılsa avtomatik yaradılır)</value>
   </data>
   <data name="Tenant_AdminName" xml:space="preserve">
-    <value>Admin adı</value>
+    <value>İdarəçi adı</value>
   </data>
   <data name="Tenant_AdminSurname" xml:space="preserve">
-    <value>Admin soyadı</value>
+    <value>İdarəçi soyadı</value>
   </data>
   <data name="Tenant_PhoneOptional" xml:space="preserve">
     <value>Telefon (istəyə bağlı)</value>
@@ -154,7 +154,7 @@
     <value>Bu qısa ad artıq istifadə olunur</value>
   </data>
   <data name="Tenant_AdminNameRequired" xml:space="preserve">
-    <value>Admin adı tələb olunur</value>
+    <value>İdarəçi adı tələb olunur</value>
   </data>
   <data name="Tenant_PasswordRequirements" xml:space="preserve">
     <value>Şifrə ən azı 8 simvol, bir hərf və bir rəqəm olmalıdır</value>

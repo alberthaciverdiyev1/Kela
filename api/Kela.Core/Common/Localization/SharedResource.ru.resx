@@ -118,10 +118,10 @@
     <value>Короткое имя в URL (создаётся автоматически, если пусто)</value>
   </data>
   <data name="Tenant_AdminName" xml:space="preserve">
-    <value>Имя администратора</value>
+    <value>Имя управляющего</value>
   </data>
   <data name="Tenant_AdminSurname" xml:space="preserve">
-    <value>Фамилия администратора</value>
+    <value>Фамилия управляющего</value>
   </data>
   <data name="Tenant_PhoneOptional" xml:space="preserve">
     <value>Телефон (необязательно)</value>
@@ -154,7 +154,7 @@
     <value>Это короткое имя уже используется</value>
   </data>
   <data name="Tenant_AdminNameRequired" xml:space="preserve">
-    <value>Укажите имя администратора</value>
+    <value>Укажите имя управляющего</value>
   </data>
   <data name="Tenant_PasswordRequirements" xml:space="preserve">
     <value>Пароль должен содержать минимум 8 символов, букву и цифру</value>
