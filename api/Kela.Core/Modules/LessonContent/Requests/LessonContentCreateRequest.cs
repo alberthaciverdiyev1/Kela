@@ -40,4 +40,8 @@ public class LessonContentCreateRequest
     /// <summary>Materialın görünəcəyi əlavə dərslər.</summary>
     [FromForm(Name = "lesson_ids")]
     public List<long> LessonIds { get; set; } = new();
+
+    /// <summary>Əlavə dərslər üzrə sıra: JSON {"lessonId": sortOrder}.</summary>
+    [FromForm(Name = "lesson_sorts")]
+    public string? LessonSorts { get; set; }
 }

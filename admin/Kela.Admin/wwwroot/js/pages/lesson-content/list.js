@@ -2,6 +2,24 @@ let currentPage = 1;
 let lastPage = 1;
 let showDeleted = false;
 const TYPE_TEXT = { video: 'Video', file: 'Fayl', voice: L["Js_Voice"] };
+
+function esc(v) {
+    return String(v ?? '').replace(/[&<>"']/g, c => ({
+        '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+    }[c]));
+}
+
+function lessonTitle(id) {
+    const opt = document.querySelector(`#filter_lesson option[value="${id}"]`);
+    return opt ? opt.textContent : '#' + id;
+}
+
+function lessonCell(c) {
+    const primary = `<span class="text-sm text-slate-700">${esc(lessonTitle(c.lessonId))}</span>`;
+    const extra = (c.lessonIds || []).map(lessonTitle);
+    if (!extra.length) return primary;
+    return `${primary}<span class="mt-0.5 block text-[11px] text-slate-400">+${extra.length}: ${esc(extra.join(', '))}</span>`;
+}
 const CONTENT = {};
 
 const TYPE_TONE = {
@@ -65,12 +83,13 @@ async function loadList(page) {
     AdminUI.table('rows', data.data.map((c, i) => [
         { html: AdminUI.rowNo(c, i, currentPage, data.perPage), cls: 'text-slate-400' },
         { html: `<div class="flex items-center gap-4">${contentThumb(c)}<span class="font-medium text-slate-800">${c.title}</span></div>` },
+        { html: lessonCell(c) },
         { html: TYPE_TEXT[c.type] ?? '-', cls: 'text-slate-500' },
         { html: statusBadge(c) },
         { html: c.url ? `<button type="button" class="text-primary hover:underline" onclick="previewContent(${c.id})">${L["Js_View"]}</button>` : '-' },
         { html: AdminUI.statusSwitch(c.isActive, `setStatus(${c.id}, ${!c.isActive})`) },
         { html: showDeleted ? AdminUI.restoreButton(c.id) : AdminUI.actions(c.id), cls: 'text-right' }
-    ]), 7, { rowIds: data.data.map(c => c.id), selectable: !showDeleted });
+    ]), 8, { rowIds: data.data.map(c => c.id), selectable: !showDeleted });
 
     AdminUI.pagination('pagination', currentPage, lastPage, loadList);
     AdminUI.loader(false);

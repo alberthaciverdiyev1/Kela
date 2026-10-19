@@ -9,6 +9,50 @@
         return [...document.getElementById('lesson_ids').selectedOptions].map(o => o.value);
     }
 
+    function esc(v) {
+        return String(v ?? '').replace(/[&<>"']/g, c => ({
+            '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+        }[c]));
+    }
+
+    // Seçilmiş əlavə dərslər üçün sıra girişləri. Dəyərlər redaktədə saxlanılan
+    // lessonSorts-dan gəlir; yoxdursa materialın əsas sırası götürülür.
+    window.renderLessonSorts = function (values) {
+        const sel = document.getElementById('lesson_ids');
+        const box = document.getElementById('lessonSorts');
+        if (!sel || !box) return;
+
+        const prev = Object.assign({}, values || {});
+        box.querySelectorAll('[data-lesson-sort]').forEach(input => {
+            if (!Object.prototype.hasOwnProperty.call(prev, input.dataset.lessonSort)) {
+                prev[input.dataset.lessonSort] = input.value;
+            }
+        });
+
+        const fallback = Number(document.getElementById('sort_order').value || 0);
+        box.innerHTML = selectedLessonIds().map(id => {
+            const option = [...sel.options].find(o => o.value === id);
+            const title = option ? option.textContent : '#' + id;
+            const value = Number(prev[id] ?? fallback) || 0;
+            return `<label class="flex items-center gap-3">
+                <span class="min-w-0 flex-1 truncate text-sm text-slate-600">${esc(title)}</span>
+                <input type="number" min="0" step="1" value="${value}" data-lesson-sort="${id}" class="admin-field w-24" />
+            </label>`;
+        }).join('');
+    };
+
+    window.lessonSortsJson = function () {
+        const result = {};
+        document.querySelectorAll('#lessonSorts [data-lesson-sort]').forEach(input => {
+            result[input.dataset.lessonSort] = Number(input.value || 0);
+        });
+        return JSON.stringify(result);
+    };
+
+    document.getElementById('lesson_ids').addEventListener('change', function () {
+        window.renderLessonSorts();
+    });
+
 
     window.openCreate = function () {
         document.getElementById('modalTitle').textContent = L["Common_NewMaterial"];
@@ -449,7 +493,7 @@
                 if (put.ok) {
                     showSuccess(file.size);
                     const res = await AdminUI.post('/lesson-content',
-                        { lesson_id: lessonId, lesson_ids: selectedLessonIds(), title, type, path: urlRes.data.path, is_active: isActive });
+                        { lesson_id: lessonId, lesson_ids: selectedLessonIds(), lesson_sorts: lessonSortsJson(), title, type, path: urlRes.data.path, is_active: isActive });
                     if (res.ok) { await finishSuccess(file.size); return; }
                     showError(AdminUI.errText(res));
                     return;
@@ -462,6 +506,7 @@
             const fd = new FormData();
             fd.append('lesson_id', lessonId);
             selectedLessonIds().forEach(id => fd.append('lesson_ids', id));
+            fd.append('lesson_sorts', lessonSortsJson());
             fd.append('title', title);
             fd.append('type', type);
             fd.append('is_active', isActive);
@@ -485,7 +530,7 @@
             lockModal(true);
 
             const created = await AdminUI.post('/lesson-content',
-                { lesson_id: lessonId, lesson_ids: selectedLessonIds(), title, type, is_active: isActive, defer_file: 'true' });
+                { lesson_id: lessonId, lesson_ids: selectedLessonIds(), lesson_sorts: lessonSortsJson(), title, type, is_active: isActive, defer_file: 'true' });
 
             if (!created.ok) { showError(AdminUI.errText(created)); return; }
 

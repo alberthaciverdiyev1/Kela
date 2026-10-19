@@ -155,12 +155,20 @@ public sealed class StudentAppService(
             .Where(x => x.IsActive
                         && (x.LessonId == lessonId || x.AdditionalLessons.Any(l => l.LessonId == lessonId)))
             .Include(x => x.Video).Include(x => x.MediaFile).Include(x => x.VoiceRecord)
-            .OrderBy(x => x.SortOrder).ThenBy(x => x.Id)
+            .Include(x => x.AdditionalLessons)
             .ToListAsync(ct);
 
         contents = await ApplyWindowsAsync(studentId, lesson.SubjectId, contents, c => c.CreatedAt, ct);
 
-        return contents.Select(ToResponse).ToList();
+        // Əsas dərsdə materialın öz sırası, paylaşıldığı dərslərdə isə həmin dərs üçün sıra.
+        var ordered = contents
+            .OrderBy(c => c.LessonId == lessonId
+                ? c.SortOrder
+                : c.AdditionalLessons.FirstOrDefault(l => l.LessonId == lessonId)?.SortOrder ?? c.SortOrder)
+            .ThenBy(c => c.Id)
+            .ToList();
+
+        return ordered.Select(ToResponse).ToList();
     }
 
     public async Task<ContentCountResponse> GetContentCountAsync(long studentId, long lessonId, CancellationToken ct = default)

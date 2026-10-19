@@ -13,4 +13,7 @@ public class LessonContentLesson : BaseEntity
     public long LessonId { get; set; }
 
     public Lesson? Lesson { get; set; }
+
+    /// <summary>Bu dərs daxilində materialın sırası.</summary>
+    public int SortOrder { get; set; }
 }

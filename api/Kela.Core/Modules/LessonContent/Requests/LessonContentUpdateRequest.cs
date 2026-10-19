@@ -17,4 +17,8 @@ public class LessonContentUpdateRequest
     /// <summary>Materialın görünəcəyi əlavə dərslər (əsas dərs dəyişmir).</summary>
     [FromForm(Name = "lesson_ids")]
     public List<long> LessonIds { get; set; } = new();
+
+    /// <summary>Əlavə dərslər üzrə sıra: JSON {"lessonId": sortOrder}.</summary>
+    [FromForm(Name = "lesson_sorts")]
+    public string? LessonSorts { get; set; }
 }

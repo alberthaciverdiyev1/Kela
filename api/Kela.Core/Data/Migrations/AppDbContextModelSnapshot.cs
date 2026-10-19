@@ -898,6 +898,10 @@ namespace Kela.Core.Data.Migrations
                         .HasColumnType("bigint")
                         .HasColumnName("lesson_id");
 
+                    b.Property<int>("SortOrder")
+                        .HasColumnType("integer")
+                        .HasColumnName("sort_order");
+
                     b.Property<long>("TenantId")
                         .HasColumnType("bigint")
                         .HasColumnName("tenant_id");

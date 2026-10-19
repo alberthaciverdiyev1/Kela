@@ -17,6 +17,7 @@ public sealed class LessonContentLessonConfiguration : IEntityTypeConfiguration<
         builder.Property(x => x.Id).HasColumnName("id");
         builder.Property(x => x.LessonContentId).HasColumnName("lesson_content_id");
         builder.Property(x => x.LessonId).HasColumnName("lesson_id");
+        builder.Property(x => x.SortOrder).HasColumnName("sort_order");
 
         builder.HasOne(x => x.Content).WithMany(c => c.AdditionalLessons)
             .HasForeignKey(x => x.LessonContentId).OnDelete(DeleteBehavior.Cascade);

@@ -1,3 +1,4 @@
+using System.Text.Json;
 using Kela.Core.Modules.Media.Entities;
 using Kela.Core.Common.Responses;
 using Kela.Core.Common.Exceptions;
@@ -158,9 +159,15 @@ public sealed class LessonContentService(
             IsActive = request.IsActive
         };
 
+        var lessonSorts = ParseLessonSorts(request.LessonSorts);
         foreach (var lessonId in additionalLessons)
         {
-            content.AdditionalLessons.Add(new LessonContentLesson { LessonId = lessonId, TenantId = tenantId });
+            content.AdditionalLessons.Add(new LessonContentLesson
+            {
+                LessonId = lessonId,
+                TenantId = tenantId,
+                SortOrder = lessonSorts.GetValueOrDefault(lessonId, request.SortOrder)
+            });
         }
 
         if (path is not null)
@@ -255,9 +262,15 @@ public sealed class LessonContentService(
         content.AdditionalLessons.Clear();
         db.LessonContentLessons.RemoveRange(previousLinks);
 
+        var lessonSorts = ParseLessonSorts(request.LessonSorts);
         foreach (var lessonId in additionalLessons)
         {
-            content.AdditionalLessons.Add(new LessonContentLesson { LessonId = lessonId, TenantId = content.TenantId });
+            content.AdditionalLessons.Add(new LessonContentLesson
+            {
+                LessonId = lessonId,
+                TenantId = content.TenantId,
+                SortOrder = lessonSorts.GetValueOrDefault(lessonId, content.SortOrder)
+            });
         }
 
         content.Title = request.Title;
@@ -399,7 +412,25 @@ public sealed class LessonContentService(
         int? duration, string? thumbnailUrl = null, string? conversionStatus = null) =>
         new(c.Id, c.LessonId, c.Title, c.Description, type, url, playbackUrl, c.SortOrder, c.IsActive,
             duration, thumbnailUrl, conversionStatus,
-            c.AdditionalLessons.Select(l => l.LessonId).ToList());
+            c.AdditionalLessons.Select(l => l.LessonId).ToList(),
+            c.AdditionalLessons.Count == 0
+                ? null
+                : c.AdditionalLessons.ToDictionary(l => l.LessonId, l => l.SortOrder));
+
+    /// <summary>Əlavə dərslər üçün göndərilən sıra JSON-u: {"lessonId": sortOrder}.</summary>
+    private static Dictionary<long, int> ParseLessonSorts(string? json)
+    {
+        if (string.IsNullOrWhiteSpace(json)) return new Dictionary<long, int>();
+
+        try
+        {
+            return JsonSerializer.Deserialize<Dictionary<long, int>>(json) ?? new Dictionary<long, int>();
+        }
+        catch (JsonException)
+        {
+            throw new ArgumentException("lesson_sorts is invalid");
+        }
+    }
 
     /// <summary>Əlavə dərsləri yoxlayır: mövcud olmalı və materialın tenant-ına aid olmalıdır.</summary>
     private async Task<List<long>> ResolveAdditionalLessonsAsync(

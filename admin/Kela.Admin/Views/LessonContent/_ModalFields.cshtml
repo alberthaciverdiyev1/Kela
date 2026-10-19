@@ -19,6 +19,7 @@
         Name = "lesson_ids", Id = "lesson_ids", Label = L["LessonContent_ExtraLessons"], Multiple = true,
         Options = lessons.Data.Select(l => new SelectOption { Value = l.Id.ToString(), Text = l.Title }).ToList()
     })" />
+    <div id="lessonSorts" class="space-y-2"></div>
     <partial name="Ui/_Input" model="@(new InputModel { Name = "title", Id = "title", Label = L["Common_Title"], Required = true })" />
     <partial name="Ui/_Select" model="@(new SelectModel { Name = "type", Id = "type", Label = L["Common_Type"], Options = typeOptions })" />
     <div id="currentFile" class="hidden"></div>

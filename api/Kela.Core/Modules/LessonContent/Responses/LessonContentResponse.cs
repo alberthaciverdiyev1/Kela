@@ -15,4 +15,6 @@ public record LessonContentResponse(
     /// <summary>Video konversiya vəziyyəti (pending/processing/ready/failed). Video deyilsə null.</summary>
     string? ConversionStatus = null,
     /// <summary>Əlavə dərslərin id-ləri (əsas dərs <see cref="LessonId"/>-dir).</summary>
-    IReadOnlyList<long>? LessonIds = null);
+    IReadOnlyList<long>? LessonIds = null,
+    /// <summary>Əlavə dərslər üzrə sıra: dərs id → sort order.</summary>
+    IReadOnlyDictionary<long, int>? LessonSorts = null);
