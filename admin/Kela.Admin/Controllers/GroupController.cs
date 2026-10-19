@@ -1,3 +1,4 @@
+using Kela.Core.Modules.Lesson.Requests;
 using FluentValidation;
 using Kela.Core.Common.Bulk;
 using Kela.Core.Modules.Group.Abstractions;
@@ -20,6 +21,7 @@ namespace Kela.Admin.Controllers;
 public sealed class GroupController(
     IGroupService service,
     IUserService users,
+    Kela.Core.Modules.Lesson.Abstractions.ILessonService lessons,
     IStudentManagementService students,
     ISubjectService subjects,
     IQuizService quizzes,
@@ -98,11 +100,19 @@ public sealed class GroupController(
         var studentList = await students.ListAsync(new StudentListRequest { PerPage = 500 }, ct);
         var subjectList = await subjects.ListAsync(new SubjectListRequest { PerPage = 500 }, ct);
         var quizList = await quizzes.ListAsync(new QuizListRequest { PerPage = 500 }, ct);
+        var lessonList = await lessons.ListAsync(new LessonListRequest { PerPage = 500 }, ct);
+
+        // İmtahan → dərs → fənn: siyahıda imtahanları seçilmiş fənnlərə görə filtrləmək üçün.
+        var lessonSubject = lessonList.Data.ToDictionary(l => l.Id, l => l.SubjectId);
 
         return Json(new GroupOptionsResponse(
             studentList.Data.Select(s => new OptionItem(s.Id, s.FullName)).ToList(),
             subjectList.Data.Select(s => new OptionItem(s.Id, s.Name)).ToList(),
-            quizList.Data.Select(q => new OptionItem(q.Id, q.Title, q.LessonTitle)).ToList()));
+            quizList.Data.Select(q => new OptionItem(
+                q.Id,
+                q.Title,
+                q.LessonTitle,
+                q.LessonId is long lessonId && lessonSubject.TryGetValue(lessonId, out var subjectId) ? subjectId : null)).ToList()));
     }
 
     [HttpGet("{id:long}/students")]

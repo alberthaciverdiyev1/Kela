@@ -85,6 +85,7 @@
             }
         });
         updateCounts();
+        if (n === 4) renderQuizzes();
         document.getElementById('prevBtn').classList.toggle('hidden', n === 1);
         document.getElementById('nextBtn').classList.toggle('hidden', !createMode || n === 4);
         document.getElementById('saveBtn').classList.toggle('hidden', createMode && n !== 4);
@@ -104,6 +105,23 @@
     document.addEventListener('change', (e) => {
         if (e.target.matches && e.target.matches('#subjectsList input, #studentsList input, #quizzesList input')) updateCounts();
     });
+
+    // İmtahanlar yalnız seçilmiş fənnlərin dərslərinə aid olanlar göstərilir.
+    function renderQuizzes() {
+        const box = document.getElementById('quizzesList');
+        if (!box) return;
+
+        const selected = new Set(collect('subjectsList').map(Number));
+        if (!selected.size) {
+            box.innerHTML = `<div class="p-3 text-sm text-slate-400">${L["Group_PickSubjectsFirst"]}</div>`;
+            updateCounts();
+            return;
+        }
+
+        const allowed = (options?.quizzes || []).filter(q =>
+            q.subjectId != null && selected.has(Number(q.subjectId)));
+        renderCheckList('quizzesList', allowed, true);
+    }
 
     function renderCheckList(containerId, items, checked) {
         const box = document.getElementById(containerId);
@@ -136,9 +154,7 @@
         options = await AdminUI.get('/group/options');
         renderCheckList('subjectsList', options.subjects || []);
         renderCheckList('studentsList', options.students || []);
-        // İmtahanlar qrupa əvvəlcədən hamısı seçilmiş gəlir.
-        renderCheckList('quizzesList', options.quizzes || [], true);
-        updateCounts();
+        renderQuizzes();
     }
 
     window.filterCheckList = function (containerId, q) {
