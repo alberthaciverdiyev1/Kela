@@ -26,7 +26,7 @@
         <div class="relative shrink-0">
             @if (HasPhoto)
             {
-                <img src="@Auth.User!.Image" alt="" class="size-[82px] rounded-full object-cover" />
+                <img src="@Auth.User!.Image" alt="" class="size-[82px] cursor-zoom-in rounded-full object-cover" @onclick="() => _photoOpen = true" />
             }
             else
             {
@@ -224,3 +224,15 @@
         <button type="button" @onclick="LogoutAsync" class="flex-1 rounded-xl bg-danger-539 py-3 text-sm font-bold text-white">@L["Profile_Logout"]</button>
     </div>
 </Modal>
+
+@* Profil fotoğrafı böyük görünüşdə *@
+@if (_photoOpen && HasPhoto)
+{
+    <div class="fixed inset-0 z-50 flex items-center justify-center bg-black/85 p-4" @onclick="() => _photoOpen = false">
+        <img src="@Auth.User!.Image" alt="" class="max-h-[85vh] max-w-full rounded-2xl object-contain shadow-2xl" @onclick:stopPropagation="true" />
+        <button type="button" @onclick="() => _photoOpen = false" aria-label="@L["Common_Close"]"
+                class="absolute right-5 top-5 grid size-10 place-items-center rounded-full bg-white/15 text-white backdrop-blur transition hover:bg-white/25">
+            <Icon Name="x" Class="size-5" />
+        </button>
+    </div>
+}

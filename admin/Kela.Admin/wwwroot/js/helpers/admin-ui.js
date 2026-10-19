@@ -26,6 +26,13 @@ window.AdminUI = window.AdminUI || {};
         return `<button type="button" class="admin-row-action ${toneOf(opts)}" onclick="${onclick}">${label}</button>`;
     }
 
+    // Yalnız ikonlu sətir əməliyyatı (tooltip ilə).
+    function actionIcon(path, title, onclick, opts) {
+        return `<button type="button" class="admin-row-action ${toneOf(opts)}" title="${title}" aria-label="${title}" onclick="${onclick}">
+            <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.9">${path}</svg>
+        </button>`;
+    }
+
     function actionLink(label, href, opts) {
         return `<a href="${href}" class="admin-row-action ${toneOf(opts)}">${label}</a>`;
     }
@@ -113,5 +120,5 @@ window.AdminUI = window.AdminUI || {};
         document.dispatchEvent(new CustomEvent('tab:change', { detail: { tab: name } }));
     }
 
-    Object.assign(UI, { initTabs, selectTab, badge, chip, statCard, actionButton, actionLink, rowActions, actions, statusSwitch, toggleHidden, syncTrashButton, restoreButton, restoreItem, confirmRestore });
+    Object.assign(UI, { initTabs, selectTab, badge, chip, statCard, actionButton, actionIcon, actionLink, rowActions, actions, statusSwitch, toggleHidden, syncTrashButton, restoreButton, restoreItem, confirmRestore });
 })(window.AdminUI);

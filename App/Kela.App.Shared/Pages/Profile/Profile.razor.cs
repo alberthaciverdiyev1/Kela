@@ -27,6 +27,7 @@ public partial class Profile
     private bool _phoneOpen;
     private bool _nameOpen;
     private bool _imageBusy;
+    private bool _photoOpen;
     private bool _passwordOpen;
     private bool _privacyOpen;
     private bool _logoutOpen;

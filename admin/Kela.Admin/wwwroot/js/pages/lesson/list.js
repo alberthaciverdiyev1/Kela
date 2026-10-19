@@ -39,7 +39,9 @@ function subjectBadge(subjectName) {
 function rowActions(id) {
     return AdminUI.rowActions([
         AdminUI.actionLink(L["Nav_Materials"], `/lesson-content?lesson_id=${id}`),
-        AdminUI.actionButton(L["Lesson_SettingsTitle"], `openSettings(${id})`),
+        AdminUI.actionIcon(
+            '<path stroke-linecap="round" stroke-linejoin="round" d="M10.3 4.3a2 2 0 0 1 3.4 0l.5.9 1-.3a2 2 0 0 1 2.5 2.5l-.3 1 .9.5a2 2 0 0 1 0 3.4l-.9.5.3 1a2 2 0 0 1-2.5 2.5l-1-.3-.5.9a2 2 0 0 1-3.4 0l-.5-.9-1 .3a2 2 0 0 1-2.5-2.5l.3-1-.9-.5a2 2 0 0 1 0-3.4l.9-.5-.3-1a2 2 0 0 1 2.5-2.5l1 .3.5-.9Z" /><circle cx="12" cy="12" r="2.6" />',
+            L["Lesson_SettingsTitle"], `openSettings(${id})`),
         AdminUI.actionButton(L["Js_Edit"], `openEdit(${id})`, { tone: 'primary' }),
         AdminUI.actionButton(L["Common_Delete"], `removeItem(${id})`, { tone: 'danger' })
     ]);

@@ -193,27 +193,40 @@
         return fd;
     };
 
+    // Sürətli təkrar klik bir neçə qrup yaradırdı — göndərmə kilidlənir.
+    let submitting = false;
+
     form.addEventListener('submit', async (e) => {
         e.preventDefault();
         if (document.getElementById('entityId').value) return; // update.js
+        if (submitting) return;
 
         if (!validateRequired(1)) {
             setStep(1);
             return;
         }
 
-        const res = await AdminUI.postForm('/group', window.buildGroupForm());
-        if (!res.ok) { setStep(1); showError(AdminUI.errText(res)); return; }
+        submitting = true;
+        const saveBtn = document.getElementById('saveBtn');
+        if (saveBtn) saveBtn.disabled = true;
 
-        const id = res.data.id;
-        const subjects = collect('subjectsList');
-        const students = collect('studentsList');
-        const quizzes = collect('quizzesList');
+        try {
+            const res = await AdminUI.postForm('/group', window.buildGroupForm());
+            if (!res.ok) { setStep(1); showError(AdminUI.errText(res)); return; }
 
-        if (subjects.length) await AdminUI.postJson(`/group/${id}/subjects`, { subjectIds: subjects });
-        if (students.length) await AdminUI.postJson(`/group/${id}/students`, { studentIds: students });
-        if (quizzes.length) await AdminUI.postJson(`/group/${id}/quizzes`, { quizIds: quizzes });
+            const id = res.data.id;
+            const subjects = collect('subjectsList');
+            const students = collect('studentsList');
+            const quizzes = collect('quizzesList');
 
-        done();
+            if (subjects.length) await AdminUI.postJson(`/group/${id}/subjects`, { subjectIds: subjects });
+            if (students.length) await AdminUI.postJson(`/group/${id}/students`, { studentIds: students });
+            if (quizzes.length) await AdminUI.postJson(`/group/${id}/quizzes`, { quizIds: quizzes });
+
+            done();
+        } finally {
+            submitting = false;
+            if (saveBtn) saveBtn.disabled = false;
+        }
     });
 })();
