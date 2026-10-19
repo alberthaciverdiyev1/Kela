@@ -23,10 +23,18 @@ public sealed class QuestionController(
         return View();
     }
 
+    private long? CurrentUserId() =>
+        long.TryParse(User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value, out var id) ? id : null;
+
     [HttpGet("list")]
     public async Task<IActionResult> List([FromQuery] QuestionListRequest request, CancellationToken ct)
     {
-        if (!User.IsAdmin()) request.IsDeleted = 0;
+        if (!User.IsAdmin())
+        {
+            // Teacher yalnız öz qeydlərini görür.
+            request.IsDeleted = 0;
+            request.UserId = CurrentUserId();
+        }
         return Json(await service.ListAsync(request, ct));
     }
 
@@ -38,6 +46,9 @@ public sealed class QuestionController(
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Create([FromForm] QuestionUpsertRequest request, CancellationToken ct)
     {
+        // Teacher yaratdığı qeydin sahibi olur (özü görə bilsin).
+        if (!User.IsAdmin()) request.UserId = CurrentUserId();
+
         var result = await validator.ValidateAsync(request, ct);
         if (!result.IsValid) return BadRequest(Errors(result));
 

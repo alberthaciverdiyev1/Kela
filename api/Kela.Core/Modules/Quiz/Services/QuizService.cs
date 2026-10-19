@@ -37,6 +37,11 @@ public sealed class QuizService(AppDbContext db, IFileStorage storage) : IQuizSe
             query = query.Where(x => x.IsActive == request.IsActive);
         }
 
+        if (request.UserId.HasValue)
+        {
+            query = query.Where(x => x.UserId == request.UserId);
+        }
+
         if (!string.IsNullOrWhiteSpace(request.Search))
         {
             var term = $"%{request.Search.Trim()}%";
@@ -79,7 +84,8 @@ public sealed class QuizService(AppDbContext db, IFileStorage storage) : IQuizSe
             Type = request.Type,
             IsActive = request.IsActive,
             IsRepeat = request.IsRepeat,
-            SortOrder = request.SortOrder
+            SortOrder = request.SortOrder,
+            UserId = request.UserId
         };
 
         db.Quizzes.Add(quiz);

@@ -5,6 +5,9 @@ namespace Kela.Core.Modules.Question.Requests;
 
 public class QuestionUpsertRequest
 {
+    /// <summary>Yaradan istifadəçi (teacher yalnız öz qeydlərini görür).</summary>
+    public long? UserId { get; set; }
+
     [FromForm(Name = "subject_id")]
     public long SubjectId { get; set; }
 

@@ -4,6 +4,9 @@ namespace Kela.Core.Modules.Quiz.Requests;
 
 public class QuizUpsertRequest
 {
+    /// <summary>Yaradan istifadəçi (teacher yalnız öz qeydlərini görür).</summary>
+    public long? UserId { get; set; }
+
     [FromForm(Name = "lesson_id")]
     public long? LessonId { get; set; }
 

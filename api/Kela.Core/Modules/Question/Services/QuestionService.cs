@@ -34,6 +34,11 @@ public sealed class QuestionService(AppDbContext db, IFileStorage storage, ITena
             query = query.Where(x => x.SubjectId == request.SubjectId);
         }
 
+        if (request.UserId.HasValue)
+        {
+            query = query.Where(x => x.UserId == request.UserId);
+        }
+
         if (!string.IsNullOrWhiteSpace(request.Search))
         {
             var search = request.Search.Trim();
@@ -77,7 +82,8 @@ public sealed class QuestionService(AppDbContext db, IFileStorage storage, ITena
             VariantE = request.VariantE,
             CorrectAnswer = request.CorrectAnswer.ToUpperInvariant(),
             TitleType = request.TitleType,
-            VariantType = request.VariantType
+            VariantType = request.VariantType,
+            UserId = request.UserId
         };
 
         await ApplyImagesAsync(question, request, ct);

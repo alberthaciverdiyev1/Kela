@@ -115,7 +115,9 @@ public sealed class GroupController(
     {
         var studentList = await students.ListAsync(new StudentListRequest { PerPage = 500 }, ct);
         var subjectList = await subjects.ListAsync(new SubjectListRequest { PerPage = 500 }, ct);
-        var quizList = await quizzes.ListAsync(new QuizListRequest { PerPage = 500 }, ct);
+        // Teacher üçün imtahan seçimi yalnız öz imtahanları ilə məhdudlaşır.
+        var quizList = await quizzes.ListAsync(
+            new QuizListRequest { PerPage = 500, UserId = User.IsAdmin() ? null : CurrentUserId() }, ct);
         var lessonList = await lessons.ListAsync(new LessonListRequest { PerPage = 500 }, ct);
 
         // İmtahan → dərs → fənn: siyahıda imtahanları seçilmiş fənnlərə görə filtrləmək üçün.

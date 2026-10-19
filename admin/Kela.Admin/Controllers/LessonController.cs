@@ -48,6 +48,9 @@ public sealed class LessonController(
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Create([FromForm] LessonUpsertRequest request, CancellationToken ct)
     {
+        // Teacher yaratdığı qeydin sahibi olur (özü görə bilsin).
+        if (!User.IsAdmin()) request.UserId = CurrentUserId();
+
         var result = await validator.ValidateAsync(request, ct);
         if (!result.IsValid) return BadRequest(Errors(result));
 

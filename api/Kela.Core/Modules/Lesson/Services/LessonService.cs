@@ -88,6 +88,7 @@ public sealed class LessonService(AppDbContext db, IFileStorage storage, ITenant
             Image = image,
             SortOrder = request.SortOrder,
             IsActive = request.IsActive,
+            UserId = request.UserId,
             Settings = string.IsNullOrWhiteSpace(request.Settings) ? LessonDefaults.Settings : request.Settings
         };
 

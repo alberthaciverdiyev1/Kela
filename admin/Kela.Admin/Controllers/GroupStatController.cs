@@ -3,6 +3,7 @@ using Kela.Core.Modules.Group.Requests;
 using Kela.Core.Modules.Quiz.Abstractions;
 using Kela.Core.Modules.Quiz.Requests;
 using Microsoft.AspNetCore.Mvc;
+using Kela.Admin.Infrastructure;
 
 namespace Kela.Admin.Controllers;
 
@@ -15,9 +16,14 @@ public sealed class GroupStatController(
     public async Task<IActionResult> Index(CancellationToken ct)
     {
         ViewData["Scripts"] = new[] { "~/js/pages/group-stat/index.js" };
-        ViewData["Groups"] = await groups.ListAsync(new GroupListRequest { PerPage = 500 }, ct);
+        // Teacher yalnız öz qruplarını görür.
+        ViewData["Groups"] = await groups.ListAsync(
+            new GroupListRequest { PerPage = 500, UserId = User.IsAdmin() ? null : CurrentUserId() }, ct);
         return View();
     }
+
+    private long? CurrentUserId() =>
+        long.TryParse(User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value, out var id) ? id : null;
 
     [HttpGet("data")]
     public async Task<IActionResult> Data([FromQuery] GroupQuizStatRequest request, [FromQuery(Name = "group_id")] long groupId, CancellationToken ct)
