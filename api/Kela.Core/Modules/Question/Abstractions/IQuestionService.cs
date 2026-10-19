@@ -9,13 +9,14 @@ public interface IQuestionService
 {
     Task<PagedResponse<QuestionResponse>> ListAsync(QuestionListRequest request, CancellationToken ct = default);
 
-    Task<QuestionResponse> GetAsync(long id, CancellationToken ct = default);
+    /// <summary><paramref name="ownerId"/> verilərsə yalnız öz/admin sualına giriş icazəsi verilir.</summary>
+    Task<QuestionResponse> GetAsync(long id, long? ownerId = null, CancellationToken ct = default);
 
     Task<QuestionResponse> CreateAsync(QuestionUpsertRequest request, CancellationToken ct = default);
 
-    Task<QuestionResponse> UpdateAsync(long id, QuestionUpsertRequest request, CancellationToken ct = default);
+    Task<QuestionResponse> UpdateAsync(long id, QuestionUpsertRequest request, long? ownerId = null, CancellationToken ct = default);
 
-    Task DeleteAsync(long id, CancellationToken ct = default);
+    Task DeleteAsync(long id, long? ownerId = null, CancellationToken ct = default);
 
-    Task BulkAsync(BulkRequest request, CancellationToken ct = default);
+    Task BulkAsync(BulkRequest request, long? ownerId = null, CancellationToken ct = default);
 }

@@ -63,7 +63,7 @@ public sealed class AttendanceController(
 
         try
         {
-            var group = await groups.GetAsync(groupId, ct);
+            var group = await groups.GetAsync(groupId, ct: ct);
             return group.UserId == CurrentUserId();
         }
         catch (KeyNotFoundException)

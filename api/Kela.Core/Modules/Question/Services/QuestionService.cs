@@ -2,6 +2,7 @@ using Kela.Core.Common.Sorting;
 using Kela.Core.Common.Responses;
 using Kela.Core.Common.Storage;
 using Kela.Core.Common.Bulk;
+using Kela.Core.Common.Exceptions;
 using Kela.Core.Data;
 using Kela.Core.Modules.Question.Requests;
 using Kela.Core.Modules.Question.Responses;
@@ -58,18 +59,20 @@ public sealed class QuestionService(AppDbContext db, IFileStorage storage, ITena
         return new PagedResponse<QuestionResponse>(data, page, lastPage, perPage, total);
     }
 
-    public async Task<QuestionResponse> GetAsync(long id, CancellationToken ct = default)
+    public async Task<QuestionResponse> GetAsync(long id, long? ownerId = null, CancellationToken ct = default)
     {
         var question = await db.Questions.IgnoreQueryFilters(new[] { "SoftDelete" }).AsNoTracking()
             .FirstOrDefaultAsync(x => x.Id == id, ct)
             ?? throw new KeyNotFoundException($"Question not found: {id}");
 
+        EnsureAccessible(question, ownerId);
         return ToResponse(question);
     }
 
     public async Task<QuestionResponse> CreateAsync(QuestionUpsertRequest request, CancellationToken ct = default)
     {
         await EnsureSubjectExistsAsync(request.SubjectId, ct);
+        if (request.UserId is long ownerId) await EnsureSubjectAccessibleAsync(request.SubjectId, ownerId, ct);
 
         var question = new Question
         {
@@ -94,13 +97,15 @@ public sealed class QuestionService(AppDbContext db, IFileStorage storage, ITena
         return ToResponse(question);
     }
 
-    public async Task<QuestionResponse> UpdateAsync(long id, QuestionUpsertRequest request, CancellationToken ct = default)
+    public async Task<QuestionResponse> UpdateAsync(long id, QuestionUpsertRequest request, long? ownerId = null, CancellationToken ct = default)
     {
         var question = await db.Questions.IgnoreQueryFilters(new[] { "SoftDelete" })
             .FirstOrDefaultAsync(x => x.Id == id, ct)
             ?? throw new KeyNotFoundException($"Question not found: {id}");
 
+        EnsureOwned(question, ownerId);
         await EnsureSubjectExistsAsync(request.SubjectId, ct);
+        if (ownerId.HasValue) await EnsureSubjectAccessibleAsync(request.SubjectId, ownerId.Value, ct);
 
         question.SubjectId = request.SubjectId;
         question.Title = request.Title ?? string.Empty;
@@ -119,10 +124,12 @@ public sealed class QuestionService(AppDbContext db, IFileStorage storage, ITena
         return ToResponse(question);
     }
 
-    public async Task DeleteAsync(long id, CancellationToken ct = default)
+    public async Task DeleteAsync(long id, long? ownerId = null, CancellationToken ct = default)
     {
         var question = await db.Questions.FirstOrDefaultAsync(x => x.Id == id, ct)
             ?? throw new KeyNotFoundException($"Question not found: {id}");
+
+        EnsureOwned(question, ownerId);
 
         question.DeletedAt = DateTimeOffset.UtcNow;
         await db.SaveChangesAsync(ct);
@@ -180,6 +187,43 @@ public sealed class QuestionService(AppDbContext db, IFileStorage storage, ITena
     private string? ResolveUrl(string type, string? value)
         => type == "image" && !string.IsNullOrWhiteSpace(value) ? storage.GetUrl(value) : null;
 
-    public Task BulkAsync(BulkRequest request, CancellationToken ct = default)
-        => BulkHelper.ApplyAsync<Question>(db, request, ct);
+    public async Task BulkAsync(BulkRequest request, long? ownerId = null, CancellationToken ct = default)
+    {
+        if (ownerId.HasValue)
+        {
+            var wanted = request.Ids.Distinct().ToList();
+            var owned = await db.Questions.Where(x => wanted.Contains(x.Id) && x.UserId == ownerId)
+                .Select(x => x.Id).ToListAsync(ct);
+            if (owned.Count != wanted.Count) throw new ForbiddenException("You can only modify your own questions");
+        }
+
+        await BulkHelper.ApplyAsync<Question>(db, request, ct);
+    }
+
+    private async Task EnsureSubjectAccessibleAsync(long subjectId, long ownerId, CancellationToken ct)
+    {
+        var subject = await db.Subjects.AsNoTracking().FirstOrDefaultAsync(x => x.Id == subjectId, ct);
+        if (subject is null || (subject.UserId != ownerId && subject.UserId != null))
+        {
+            throw new ForbiddenException("You do not have access to this subject");
+        }
+    }
+
+    /// <summary>Oxumaq üçün: öz sualı və ya admin tərəfindən yaradılan (sahibsiz) sual.</summary>
+    private static void EnsureAccessible(Question question, long? ownerId)
+    {
+        if (ownerId.HasValue && question.UserId != ownerId && question.UserId != null)
+        {
+            throw new ForbiddenException("You do not have access to this question");
+        }
+    }
+
+    /// <summary>Dəyişmək üçün yalnız sahibi olduğu sual.</summary>
+    private static void EnsureOwned(Question question, long? ownerId)
+    {
+        if (ownerId.HasValue && question.UserId != ownerId)
+        {
+            throw new ForbiddenException("You can only modify your own question");
+        }
+    }
 }

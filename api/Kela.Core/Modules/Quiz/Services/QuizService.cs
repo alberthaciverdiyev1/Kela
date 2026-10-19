@@ -1,5 +1,6 @@
 using Kela.Core.Common.Responses;
 using Kela.Core.Common.Bulk;
+using Kela.Core.Common.Exceptions;
 using Kela.Core.Common.Sorting;
 using Kela.Core.Data;
 using Kela.Core.Common.Storage;
@@ -62,19 +63,24 @@ public sealed class QuizService(AppDbContext db, IFileStorage storage) : IQuizSe
         return new PagedResponse<QuizResponse>(data, page, lastPage, perPage, total);
     }
 
-    public async Task<QuizResponse> GetAsync(long id, CancellationToken ct = default)
+    public async Task<QuizResponse> GetAsync(long id, long? ownerId = null, CancellationToken ct = default)
     {
         var quiz = await db.Quizzes.IgnoreQueryFilters(new[] { "SoftDelete" }).AsNoTracking()
             .Include(x => x.Questions).Include(x => x.Lesson)
             .FirstOrDefaultAsync(x => x.Id == id, ct)
             ?? throw new KeyNotFoundException($"Quiz not found: {id}");
 
+        EnsureAccessible(quiz, ownerId);
         return ToResponse(quiz);
     }
 
     public async Task<QuizResponse> CreateAsync(QuizUpsertRequest request, CancellationToken ct = default)
     {
-        if (request.LessonId.HasValue) await EnsureLessonExistsAsync(request.LessonId.Value, ct);
+        if (request.LessonId.HasValue)
+        {
+            await EnsureLessonExistsAsync(request.LessonId.Value, ct);
+            if (request.UserId is long ownerId) await EnsureLessonAccessibleAsync(request.LessonId.Value, ownerId, ct);
+        }
 
         var quiz = new Quiz
         {
@@ -94,14 +100,20 @@ public sealed class QuizService(AppDbContext db, IFileStorage storage) : IQuizSe
         return ToResponse(quiz);
     }
 
-    public async Task<QuizResponse> UpdateAsync(long id, QuizUpsertRequest request, CancellationToken ct = default)
+    public async Task<QuizResponse> UpdateAsync(long id, QuizUpsertRequest request, long? ownerId = null, CancellationToken ct = default)
     {
         var quiz = await db.Quizzes.IgnoreQueryFilters(new[] { "SoftDelete" })
             .Include(x => x.Questions).Include(x => x.Lesson)
             .FirstOrDefaultAsync(x => x.Id == id, ct)
             ?? throw new KeyNotFoundException($"Quiz not found: {id}");
 
-        if (request.LessonId.HasValue) await EnsureLessonExistsAsync(request.LessonId.Value, ct);
+        EnsureOwned(quiz, ownerId);
+
+        if (request.LessonId.HasValue)
+        {
+            await EnsureLessonExistsAsync(request.LessonId.Value, ct);
+            if (ownerId.HasValue) await EnsureLessonAccessibleAsync(request.LessonId.Value, ownerId.Value, ct);
+        }
 
         quiz.LessonId = request.LessonId;
         quiz.Title = request.Title;
@@ -115,31 +127,37 @@ public sealed class QuizService(AppDbContext db, IFileStorage storage) : IQuizSe
         return ToResponse(quiz);
     }
 
-    public async Task DeleteAsync(long id, CancellationToken ct = default)
+    public async Task DeleteAsync(long id, long? ownerId = null, CancellationToken ct = default)
     {
         var quiz = await db.Quizzes.FirstOrDefaultAsync(x => x.Id == id, ct)
             ?? throw new KeyNotFoundException($"Quiz not found: {id}");
+
+        EnsureOwned(quiz, ownerId);
 
         quiz.DeletedAt = DateTimeOffset.UtcNow;
         await db.SaveChangesAsync(ct);
     }
 
-    public async Task<IReadOnlyList<QuestionResponse>> ListQuestionsAsync(long quizId, CancellationToken ct = default)
+    public async Task<IReadOnlyList<QuestionResponse>> ListQuestionsAsync(long quizId, long? ownerId = null, CancellationToken ct = default)
     {
-        await EnsureQuizExistsAsync(quizId, ct);
+        await EnsureQuizAccessibleAsync(quizId, ownerId, ct);
         return await QuestionsQuery(quizId, ct);
     }
 
     public async Task<IReadOnlyList<QuestionResponse>> AssignQuestionsAsync(
-        long quizId, AssignQuestionsRequest request, CancellationToken ct = default)
+        long quizId, AssignQuestionsRequest request, long? ownerId = null, CancellationToken ct = default)
     {
-        await EnsureQuizExistsAsync(quizId, ct);
+        await EnsureQuizOwnedAsync(quizId, ownerId, ct);
 
         foreach (var questionId in request.QuestionIds.Distinct())
         {
-            if (!await db.Questions.AnyAsync(x => x.Id == questionId, ct))
+            var question = await db.Questions.AsNoTracking().FirstOrDefaultAsync(x => x.Id == questionId, ct)
+                ?? throw new ArgumentException($"Question not found: {questionId}");
+
+            // Teacher yalnız öz və ya adminin sualını imtahana əlavə edə bilər.
+            if (ownerId.HasValue && question.UserId != ownerId && question.UserId != null)
             {
-                throw new ArgumentException($"Question not found: {questionId}");
+                throw new ForbiddenException($"You do not have access to question {questionId}");
             }
 
             var existing = await db.QuizQuestions.IgnoreQueryFilters(new[] { "SoftDelete" })
@@ -156,11 +174,13 @@ public sealed class QuizService(AppDbContext db, IFileStorage storage) : IQuizSe
         }
 
         await db.SaveChangesAsync(ct);
-        return await ListQuestionsAsync(quizId, ct);
+        return await ListQuestionsAsync(quizId, ownerId, ct);
     }
 
-    public async Task RemoveQuestionAsync(long quizId, long questionId, CancellationToken ct = default)
+    public async Task RemoveQuestionAsync(long quizId, long questionId, long? ownerId = null, CancellationToken ct = default)
     {
+        await EnsureQuizOwnedAsync(quizId, ownerId, ct);
+
         var link = await db.QuizQuestions
             .FirstOrDefaultAsync(x => x.QuizId == quizId && x.QuestionId == questionId, ct)
             ?? throw new KeyNotFoundException($"Question {questionId} is not in quiz {quizId}");
@@ -215,9 +235,82 @@ public sealed class QuizService(AppDbContext db, IFileStorage storage) : IQuizSe
         new(quiz.Id, quiz.LessonId, quiz.Title, quiz.DurationMinutes, quiz.Type, quiz.IsActive, quiz.IsRepeat,
             quiz.SortOrder, quiz.Questions.Count, quiz.Lesson?.Title);
 
-    public Task BulkAsync(BulkRequest request, CancellationToken ct = default)
-        => BulkHelper.ApplyAsync<Quiz>(db, request, ct);
+    public async Task BulkAsync(BulkRequest request, long? ownerId = null, CancellationToken ct = default)
+    {
+        if (ownerId.HasValue)
+        {
+            var wanted = request.Ids.Distinct().ToList();
+            var owned = await db.Quizzes.Where(x => wanted.Contains(x.Id) && x.UserId == ownerId)
+                .Select(x => x.Id).ToListAsync(ct);
+            if (owned.Count != wanted.Count) throw new ForbiddenException("You can only modify your own quizzes");
+        }
 
-    public Task ReorderAsync(SortRequest request, CancellationToken ct = default)
-        => SortHelper.ReorderAsync<Quiz>(db, request, ct);
+        await BulkHelper.ApplyAsync<Quiz>(db, request, ct);
+    }
+
+    public async Task ReorderAsync(SortRequest request, long? ownerId = null, CancellationToken ct = default)
+    {
+        if (ownerId.HasValue)
+        {
+            var wanted = request.Ids.Distinct().ToList();
+            var owned = await db.Quizzes.Where(x => wanted.Contains(x.Id) && x.UserId == ownerId)
+                .Select(x => x.Id).ToListAsync(ct);
+            if (owned.Count != wanted.Count) throw new ForbiddenException("You can only modify your own quizzes");
+        }
+
+        await SortHelper.ReorderAsync<Quiz>(db, request, ct);
+    }
+
+    private async Task EnsureLessonAccessibleAsync(long lessonId, long ownerId, CancellationToken ct)
+    {
+        var lesson = await db.Lessons.AsNoTracking().FirstOrDefaultAsync(x => x.Id == lessonId, ct);
+        if (lesson is null || (lesson.UserId != ownerId && lesson.UserId != null))
+        {
+            throw new ForbiddenException("You do not have access to this lesson");
+        }
+    }
+
+    private async Task EnsureQuizAccessibleAsync(long quizId, long? ownerId, CancellationToken ct)
+    {
+        if (!ownerId.HasValue) return;
+
+        var owner = await db.Quizzes.AsNoTracking().Where(x => x.Id == quizId)
+            .Select(x => (long?)x.UserId).FirstOrDefaultAsync(ct);
+
+        if (owner != ownerId && owner != null)
+        {
+            throw new ForbiddenException("You do not have access to this quiz");
+        }
+    }
+
+    private async Task EnsureQuizOwnedAsync(long quizId, long? ownerId, CancellationToken ct)
+    {
+        if (!ownerId.HasValue) return;
+
+        var owner = await db.Quizzes.AsNoTracking().Where(x => x.Id == quizId)
+            .Select(x => (long?)x.UserId).FirstOrDefaultAsync(ct);
+
+        if (owner != ownerId)
+        {
+            throw new ForbiddenException("You can only modify your own quiz");
+        }
+    }
+
+    /// <summary>Oxumaq üçün: öz imtahanı və ya admin tərəfindən yaradılan (sahibsiz) imtahan.</summary>
+    private static void EnsureAccessible(Quiz quiz, long? ownerId)
+    {
+        if (ownerId.HasValue && quiz.UserId != ownerId && quiz.UserId != null)
+        {
+            throw new ForbiddenException("You do not have access to this quiz");
+        }
+    }
+
+    /// <summary>Dəyişmək üçün yalnız sahibi olduğu imtahan.</summary>
+    private static void EnsureOwned(Quiz quiz, long? ownerId)
+    {
+        if (ownerId.HasValue && quiz.UserId != ownerId)
+        {
+            throw new ForbiddenException("You can only modify your own quiz");
+        }
+    }
 }

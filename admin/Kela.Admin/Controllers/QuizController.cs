@@ -33,6 +33,8 @@ public sealed class QuizController(
         return View();
     }
 
+    private long? OwnerScope => User.IsAdmin() ? null : User.CurrentUserId();
+
     [HttpGet("list")]
     public async Task<IActionResult> List([FromQuery] QuizListRequest request, CancellationToken ct)
     {
@@ -47,7 +49,7 @@ public sealed class QuizController(
 
     [HttpGet("{id:long}")]
     public async Task<IActionResult> Get(long id, CancellationToken ct)
-        => Json(await service.GetAsync(id, ct));
+        => Json(await service.GetAsync(id, OwnerScope, ct));
 
     [HttpPost]
     [ValidateAntiForgeryToken]
@@ -69,14 +71,14 @@ public sealed class QuizController(
         var result = await validator.ValidateAsync(request, ct);
         if (!result.IsValid) return BadRequest(Errors(result));
 
-        return Json(await service.UpdateAsync(id, request, ct));
+        return Json(await service.UpdateAsync(id, request, OwnerScope, ct));
     }
 
     [HttpDelete("{id:long}")]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Delete(long id, CancellationToken ct)
     {
-        await service.DeleteAsync(id, ct);
+        await service.DeleteAsync(id, OwnerScope, ct);
         return Json(new { ok = true });
     }
 
@@ -84,7 +86,7 @@ public sealed class QuizController(
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Sort([FromBody] SortRequest request, CancellationToken ct)
     {
-        await service.ReorderAsync(request, ct);
+        await service.ReorderAsync(request, OwnerScope, ct);
         return Json(new { ok = true });
     }
 
@@ -94,7 +96,7 @@ public sealed class QuizController(
     {
         // Bərpa yalnız adminin əməliyyatıdır — silinmişləri yalnız o görür.
         if (request.Action == BulkActions.Restore && !User.IsAdmin()) return Forbid();
-        await service.BulkAsync(request, ct);
+        await service.BulkAsync(request, OwnerScope, ct);
         return Json(new { ok = true });
     }
 
@@ -103,24 +105,24 @@ public sealed class QuizController(
     [HttpGet("options")]
     public async Task<IActionResult> Options(CancellationToken ct)
     {
-        var list = await questions.ListAsync(new QuestionListRequest { PerPage = 500 }, ct);
+        var list = await questions.ListAsync(new QuestionListRequest { PerPage = 500, UserId = User.IsAdmin() ? null : User.CurrentUserId() }, ct);
         return Json(list.Data.Select(q => new { id = q.Id, text = string.IsNullOrWhiteSpace(q.Title) ? $"#{q.Id}" : q.Title }));
     }
 
     [HttpGet("{id:long}/questions")]
     public async Task<IActionResult> QuizQuestions(long id, CancellationToken ct)
-        => Json(await service.ListQuestionsAsync(id, ct));
+        => Json(await service.ListQuestionsAsync(id, OwnerScope, ct));
 
     [HttpPost("{id:long}/questions")]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> AssignQuestions(long id, [FromBody] AssignQuestionsRequest request, CancellationToken ct)
-        => Json(await service.AssignQuestionsAsync(id, request, ct));
+        => Json(await service.AssignQuestionsAsync(id, request, OwnerScope, ct));
 
     [HttpDelete("{id:long}/questions/{questionId:long}")]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> RemoveQuestion(long id, long questionId, CancellationToken ct)
     {
-        await service.RemoveQuestionAsync(id, questionId, ct);
+        await service.RemoveQuestionAsync(id, questionId, OwnerScope, ct);
         return Json(new { ok = true });
     }
 

@@ -7,6 +7,7 @@ using Kela.Core.Common.Sorting;
 using Kela.Core.Common.Responses;
 using Kela.Core.Common.Storage;
 using Kela.Core.Common.Bulk;
+using Kela.Core.Common.Exceptions;
 using Kela.Core.Data;
 using Kela.Core.Modules.Group.Requests;
 using Kela.Core.Modules.Group.Responses;
@@ -65,7 +66,7 @@ public sealed class GroupService(AppDbContext db, IFileStorage storage, ITenantF
         return new PagedResponse<GroupResponse>(data, page, lastPage, perPage, total);
     }
 
-    public async Task<GroupResponse> GetAsync(long id, CancellationToken ct = default)
+    public async Task<GroupResponse> GetAsync(long id, long? ownerId = null, CancellationToken ct = default)
     {
         var group = await db.Groups
             .IgnoreQueryFilters(new[] { "SoftDelete" })
@@ -74,6 +75,7 @@ public sealed class GroupService(AppDbContext db, IFileStorage storage, ITenantF
             .FirstOrDefaultAsync(x => x.Id == id, ct)
             ?? throw new KeyNotFoundException($"Group not found: {id}");
 
+        EnsureAccessible(group, ownerId);
         return ToResponse(group);
     }
 
@@ -120,13 +122,15 @@ public sealed class GroupService(AppDbContext db, IFileStorage storage, ITenantF
         return ToResponse(group);
     }
 
-    public async Task<GroupResponse> UpdateAsync(long id, GroupUpsertRequest request, CancellationToken ct = default)
+    public async Task<GroupResponse> UpdateAsync(long id, GroupUpsertRequest request, long? ownerId = null, CancellationToken ct = default)
     {
         var group = await db.Groups
             .IgnoreQueryFilters(new[] { "SoftDelete" })
             .Include(x => x.Memberships)
             .FirstOrDefaultAsync(x => x.Id == id, ct)
             ?? throw new KeyNotFoundException($"Group not found: {id}");
+
+        EnsureOwned(group, ownerId);
 
         if (request.RemoveImage)
         {
@@ -141,31 +145,34 @@ public sealed class GroupService(AppDbContext db, IFileStorage storage, ITenantF
 
         group.Name = request.Name;
         group.Description = request.Description;
-        group.UserId = request.UserId;
+        // Sahiblik yalnız admin tərəfindən dəyişdirilə bilər (teacher öz sahibliyini itirməsin).
+        if (ownerId is null) group.UserId = request.UserId;
         await db.SaveChangesAsync(ct);
 
         return ToResponse(group);
     }
 
-    public async Task DeleteAsync(long id, CancellationToken ct = default)
+    public async Task DeleteAsync(long id, long? ownerId = null, CancellationToken ct = default)
     {
         var group = await db.Groups.FirstOrDefaultAsync(x => x.Id == id, ct)
             ?? throw new KeyNotFoundException($"Group not found: {id}");
+
+        EnsureOwned(group, ownerId);
 
         group.DeletedAt = DateTimeOffset.UtcNow;
         await db.SaveChangesAsync(ct);
     }
 
-    public async Task<IReadOnlyList<GroupMemberResponse>> ListStudentsAsync(long groupId, CancellationToken ct = default)
+    public async Task<IReadOnlyList<GroupMemberResponse>> ListStudentsAsync(long groupId, long? ownerId = null, CancellationToken ct = default)
     {
-        await EnsureGroupExistsAsync(groupId, ct);
+        await EnsureGroupAccessibleAsync(groupId, ownerId, ct);
         return await MembersQuery(groupId).ToListAsync(ct);
     }
 
     public async Task<IReadOnlyList<GroupMemberResponse>> AssignStudentsAsync(
-        long groupId, AssignStudentsRequest request, CancellationToken ct = default)
+        long groupId, AssignStudentsRequest request, long? ownerId = null, CancellationToken ct = default)
     {
-        await EnsureGroupExistsAsync(groupId, ct);
+        await EnsureGroupOwnedAsync(groupId, ownerId, ct);
 
         foreach (var studentId in request.StudentIds.Distinct())
         {
@@ -201,8 +208,10 @@ public sealed class GroupService(AppDbContext db, IFileStorage storage, ITenantF
         return await MembersQuery(groupId).ToListAsync(ct);
     }
 
-    public async Task RemoveStudentAsync(long groupId, long studentId, CancellationToken ct = default)
+    public async Task RemoveStudentAsync(long groupId, long studentId, long? ownerId = null, CancellationToken ct = default)
     {
+        await EnsureGroupOwnedAsync(groupId, ownerId, ct);
+
         var membership = await db.StudentGroups
             .FirstOrDefaultAsync(x => x.GroupId == groupId && x.StudentId == studentId, ct)
             ?? throw new KeyNotFoundException($"Membership not found for student {studentId} in group {groupId}");
@@ -211,9 +220,9 @@ public sealed class GroupService(AppDbContext db, IFileStorage storage, ITenantF
         await db.SaveChangesAsync(ct);
     }
 
-    public async Task<IReadOnlyList<SubjectResponse>> ListSubjectsAsync(long groupId, CancellationToken ct = default)
+    public async Task<IReadOnlyList<SubjectResponse>> ListSubjectsAsync(long groupId, long? ownerId = null, CancellationToken ct = default)
     {
-        await EnsureGroupExistsAsync(groupId, ct);
+        await EnsureGroupAccessibleAsync(groupId, ownerId, ct);
 
         return await db.GroupSubjects
             .AsNoTracking()
@@ -224,15 +233,19 @@ public sealed class GroupService(AppDbContext db, IFileStorage storage, ITenantF
     }
 
     public async Task<IReadOnlyList<SubjectResponse>> AssignSubjectsAsync(
-        long groupId, AssignSubjectsRequest request, CancellationToken ct = default)
+        long groupId, AssignSubjectsRequest request, long? ownerId = null, CancellationToken ct = default)
     {
-        await EnsureGroupExistsAsync(groupId, ct);
+        await EnsureGroupOwnedAsync(groupId, ownerId, ct);
 
         foreach (var subjectId in request.SubjectIds.Distinct())
         {
-            if (!await db.Subjects.AnyAsync(x => x.Id == subjectId, ct))
+            var subject = await db.Subjects.AsNoTracking().FirstOrDefaultAsync(x => x.Id == subjectId, ct)
+                ?? throw new ArgumentException($"Subject not found: {subjectId}");
+
+            // Teacher yalnız öz və ya adminin fənnini qrupa bağlaya bilər.
+            if (ownerId.HasValue && subject.UserId != ownerId && subject.UserId != null)
             {
-                throw new ArgumentException($"Subject not found: {subjectId}");
+                throw new ForbiddenException($"You do not have access to subject {subjectId}");
             }
 
             var existing = await db.GroupSubjects
@@ -252,11 +265,13 @@ public sealed class GroupService(AppDbContext db, IFileStorage storage, ITenantF
         }
 
         await db.SaveChangesAsync(ct);
-        return await ListSubjectsAsync(groupId, ct);
+        return await ListSubjectsAsync(groupId, ownerId, ct);
     }
 
-    public async Task RemoveSubjectAsync(long groupId, long subjectId, CancellationToken ct = default)
+    public async Task RemoveSubjectAsync(long groupId, long subjectId, long? ownerId = null, CancellationToken ct = default)
     {
+        await EnsureGroupOwnedAsync(groupId, ownerId, ct);
+
         var link = await db.GroupSubjects
             .FirstOrDefaultAsync(x => x.GroupId == groupId && x.SubjectId == subjectId, ct)
             ?? throw new KeyNotFoundException($"Subject {subjectId} is not assigned to group {groupId}");
@@ -266,9 +281,9 @@ public sealed class GroupService(AppDbContext db, IFileStorage storage, ITenantF
         await db.SaveChangesAsync(ct);
     }
 
-    public async Task<IReadOnlyList<QuizResponse>> ListQuizzesAsync(long groupId, CancellationToken ct = default)
+    public async Task<IReadOnlyList<QuizResponse>> ListQuizzesAsync(long groupId, long? ownerId = null, CancellationToken ct = default)
     {
-        await EnsureGroupExistsAsync(groupId, ct);
+        await EnsureGroupAccessibleAsync(groupId, ownerId, ct);
 
         return await (from gq in db.GroupQuizzes.AsNoTracking()
                       join q in db.Quizzes.AsNoTracking() on gq.QuizId equals q.Id
@@ -281,15 +296,19 @@ public sealed class GroupService(AppDbContext db, IFileStorage storage, ITenantF
     }
 
     public async Task<IReadOnlyList<QuizResponse>> AssignQuizzesAsync(
-        long groupId, AssignQuizzesRequest request, CancellationToken ct = default)
+        long groupId, AssignQuizzesRequest request, long? ownerId = null, CancellationToken ct = default)
     {
-        await EnsureGroupExistsAsync(groupId, ct);
+        await EnsureGroupOwnedAsync(groupId, ownerId, ct);
 
         foreach (var quizId in request.QuizIds.Distinct())
         {
-            if (!await db.Quizzes.AnyAsync(x => x.Id == quizId, ct))
+            var quiz = await db.Quizzes.AsNoTracking().FirstOrDefaultAsync(x => x.Id == quizId, ct)
+                ?? throw new ArgumentException($"Quiz not found: {quizId}");
+
+            // Teacher yalnız öz və ya adminin imtahanını qrupa bağlaya bilər.
+            if (ownerId.HasValue && quiz.UserId != ownerId && quiz.UserId != null)
             {
-                throw new ArgumentException($"Quiz not found: {quizId}");
+                throw new ForbiddenException($"You do not have access to quiz {quizId}");
             }
 
             var existing = await db.GroupQuizzes
@@ -307,17 +326,69 @@ public sealed class GroupService(AppDbContext db, IFileStorage storage, ITenantF
         }
 
         await db.SaveChangesAsync(ct);
-        return await ListQuizzesAsync(groupId, ct);
+        return await ListQuizzesAsync(groupId, ownerId, ct);
     }
 
-    public async Task RemoveQuizAsync(long groupId, long quizId, CancellationToken ct = default)
+    public async Task RemoveQuizAsync(long groupId, long quizId, long? ownerId = null, CancellationToken ct = default)
     {
+        await EnsureGroupOwnedAsync(groupId, ownerId, ct);
+
         var link = await db.GroupQuizzes
             .FirstOrDefaultAsync(x => x.GroupId == groupId && x.QuizId == quizId, ct)
             ?? throw new KeyNotFoundException($"Quiz {quizId} is not assigned to group {groupId}");
 
         link.DeletedAt = DateTimeOffset.UtcNow;
         await db.SaveChangesAsync(ct);
+    }
+
+    private async Task EnsureGroupAccessibleAsync(long groupId, long? ownerId, CancellationToken ct)
+    {
+        if (!ownerId.HasValue)
+        {
+            await EnsureGroupExistsAsync(groupId, ct);
+            return;
+        }
+
+        var owner = await db.Groups.AsNoTracking().Where(x => x.Id == groupId)
+            .Select(x => (long?)x.UserId).FirstOrDefaultAsync(ct);
+
+        if (owner != ownerId && owner != null)
+        {
+            throw new ForbiddenException("You do not have access to this group");
+        }
+    }
+
+    private async Task EnsureGroupOwnedAsync(long groupId, long? ownerId, CancellationToken ct)
+    {
+        if (!ownerId.HasValue)
+        {
+            await EnsureGroupExistsAsync(groupId, ct);
+            return;
+        }
+
+        var owner = await db.Groups.AsNoTracking().Where(x => x.Id == groupId)
+            .Select(x => (long?)x.UserId).FirstOrDefaultAsync(ct);
+
+        if (owner != ownerId)
+        {
+            throw new ForbiddenException("You can only modify your own group");
+        }
+    }
+
+    private static void EnsureAccessible(Group group, long? ownerId)
+    {
+        if (ownerId.HasValue && group.UserId != ownerId && group.UserId != null)
+        {
+            throw new ForbiddenException("You do not have access to this group");
+        }
+    }
+
+    private static void EnsureOwned(Group group, long? ownerId)
+    {
+        if (ownerId.HasValue && group.UserId != ownerId)
+        {
+            throw new ForbiddenException("You can only modify your own group");
+        }
     }
 
     private async Task EnsureGroupExistsAsync(long groupId, CancellationToken ct)
@@ -349,12 +420,22 @@ public sealed class GroupService(AppDbContext db, IFileStorage storage, ITenantF
             group.UserId,
             group.Memberships.Count);
 
-    public Task BulkAsync(BulkRequest request, CancellationToken ct = default)
-        => BulkHelper.ApplyAsync<Group>(db, request, ct);
-
-    public async Task<IReadOnlyList<AssignmentLogResponse>> ListSubjectLogsAsync(long groupId, CancellationToken ct = default)
+    public async Task BulkAsync(BulkRequest request, long? ownerId = null, CancellationToken ct = default)
     {
-        await EnsureGroupExistsAsync(groupId, ct);
+        if (ownerId.HasValue)
+        {
+            var wanted = request.Ids.Distinct().ToList();
+            var owned = await db.Groups.Where(x => wanted.Contains(x.Id) && x.UserId == ownerId)
+                .Select(x => x.Id).ToListAsync(ct);
+            if (owned.Count != wanted.Count) throw new ForbiddenException("You can only modify your own groups");
+        }
+
+        await BulkHelper.ApplyAsync<Group>(db, request, ct);
+    }
+
+    public async Task<IReadOnlyList<AssignmentLogResponse>> ListSubjectLogsAsync(long groupId, long? ownerId = null, CancellationToken ct = default)
+    {
+        await EnsureGroupAccessibleAsync(groupId, ownerId, ct);
         return await db.MainCategoryAssignmentLogs.AsNoTracking()
             .Where(x => x.GroupId == groupId)
             .OrderByDescending(x => x.Id)
