@@ -14,6 +14,8 @@ public sealed class BannerConfiguration : IEntityTypeConfiguration<Banner>
         builder.HasKey(x => x.Id);
         builder.Property(x => x.Id).HasColumnName("id");
 
+        builder.Property(x => x.UserId).HasColumnName("user_id");
+
         builder.Property(x => x.Title)
             .HasColumnName("title")
             .HasMaxLength(190)

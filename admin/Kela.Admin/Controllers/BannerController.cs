@@ -30,10 +30,15 @@ public sealed class BannerController(
     public async Task<IActionResult> Get(long id, CancellationToken ct)
         => Json(await service.GetAsync(id, ct));
 
+    /// <summary>Admin bütün bannerləri idarə edir; teacher yalnız özünü.</summary>
+    private long? OwnerScope => User.IsAdmin() ? null : User.CurrentUserId();
+
     [HttpPost]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Create([FromForm] BannerUpsertRequest request, CancellationToken ct)
     {
+        request.UserId = OwnerScope;
+
         var result = await validator.ValidateAsync(request, ct);
         if (!result.IsValid) return BadRequest(Errors(result));
 
@@ -47,14 +52,14 @@ public sealed class BannerController(
         var result = await validator.ValidateAsync(request, ct);
         if (!result.IsValid) return BadRequest(Errors(result));
 
-        return Json(await service.UpdateAsync(id, request, ct));
+        return Json(await service.UpdateAsync(id, request, OwnerScope, ct));
     }
 
     [HttpDelete("{id:long}")]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Delete(long id, CancellationToken ct)
     {
-        await service.DeleteAsync(id, ct);
+        await service.DeleteAsync(id, OwnerScope, ct);
         return Json(new { ok = true });
     }
 
@@ -64,7 +69,7 @@ public sealed class BannerController(
     {
         // Bərpa yalnız adminin əməliyyatıdır — silinmişləri yalnız o görür.
         if (request.Action == BulkActions.Restore && !User.IsAdmin()) return Forbid();
-        await service.BulkAsync(request, ct);
+        await service.BulkAsync(request, OwnerScope, ct);
         return Json(new { ok = true });
     }
 

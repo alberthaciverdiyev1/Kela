@@ -4,6 +4,9 @@ namespace Kela.Core.Modules.Banner.Entities;
 
 public class Banner : BaseEntity
 {
+    /// <summary>Banneri yaradan istifadəçi. Null — admin tərəfindən yaradılıb.</summary>
+    public long? UserId { get; set; }
+
     public string Title { get; set; } = string.Empty;
 
     public string? Image { get; set; }

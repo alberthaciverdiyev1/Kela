@@ -13,9 +13,10 @@ public interface IBannerService
 
     Task<BannerResponse> CreateAsync(BannerUpsertRequest request, CancellationToken ct = default);
 
-    Task<BannerResponse> UpdateAsync(long id, BannerUpsertRequest request, CancellationToken ct = default);
+    /// <summary><paramref name="ownerId"/> verilərsə yalnız həmin sahibin bannerinə icazə verilir.</summary>
+    Task<BannerResponse> UpdateAsync(long id, BannerUpsertRequest request, long? ownerId = null, CancellationToken ct = default);
 
-    Task DeleteAsync(long id, CancellationToken ct = default);
+    Task DeleteAsync(long id, long? ownerId = null, CancellationToken ct = default);
 
-    Task BulkAsync(BulkRequest request, CancellationToken ct = default);
+    Task BulkAsync(BulkRequest request, long? ownerId = null, CancellationToken ct = default);
 }

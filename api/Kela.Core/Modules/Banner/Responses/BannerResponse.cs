@@ -6,4 +6,6 @@ public record BannerResponse(
     string Image,
     bool IsNew,
     bool IsActive = true,
-    DateOnly? ActiveUntil = null);
+    DateOnly? ActiveUntil = null,
+    /// <summary>Bannerin sahibi. Null — admin tərəfindən yaradılıb.</summary>
+    long? UserId = null);

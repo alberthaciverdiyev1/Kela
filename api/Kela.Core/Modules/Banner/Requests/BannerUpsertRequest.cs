@@ -5,6 +5,9 @@ namespace Kela.Core.Modules.Banner.Requests;
 
 public class BannerUpsertRequest
 {
+    /// <summary>Yaradan istifadəçi — controller tərəfindən doldurulur (admin üçün null).</summary>
+    public long? UserId { get; set; }
+
     public string Title { get; set; } = string.Empty;
 
     public IFormFile? Image { get; set; }

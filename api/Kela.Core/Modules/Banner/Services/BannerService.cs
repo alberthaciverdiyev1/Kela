@@ -1,3 +1,4 @@
+using Kela.Core.Common.Exceptions;
 using Kela.Core.Common.Sorting;
 using Kela.Core.Common.Responses;
 using Kela.Core.Common.Storage;
@@ -74,6 +75,7 @@ public sealed class BannerService(AppDbContext db, IFileStorage storage, ITenant
 
         var banner = new Banner
         {
+            UserId = request.UserId,
             Title = request.Title,
             Image = image,
             IsActive = request.IsActive,
@@ -86,12 +88,14 @@ public sealed class BannerService(AppDbContext db, IFileStorage storage, ITenant
         return ToResponse(banner, DateTimeOffset.UtcNow);
     }
 
-    public async Task<BannerResponse> UpdateAsync(long id, BannerUpsertRequest request, CancellationToken ct = default)
+    public async Task<BannerResponse> UpdateAsync(long id, BannerUpsertRequest request, long? ownerId = null, CancellationToken ct = default)
     {
         var banner = await db.Banners
             .IgnoreQueryFilters(new[] { "SoftDelete" })
             .FirstOrDefaultAsync(x => x.Id == id, ct)
             ?? throw new KeyNotFoundException($"Banner not found: {id}");
+
+        EnsureOwned(banner, ownerId);
 
         if (request.RemoveImage)
         {
@@ -112,10 +116,12 @@ public sealed class BannerService(AppDbContext db, IFileStorage storage, ITenant
         return ToResponse(banner, DateTimeOffset.UtcNow);
     }
 
-    public async Task DeleteAsync(long id, CancellationToken ct = default)
+    public async Task DeleteAsync(long id, long? ownerId = null, CancellationToken ct = default)
     {
         var banner = await db.Banners.FirstOrDefaultAsync(x => x.Id == id, ct)
             ?? throw new KeyNotFoundException($"Banner not found: {id}");
+
+        EnsureOwned(banner, ownerId);
 
         banner.DeletedAt = DateTimeOffset.UtcNow;
         await db.SaveChangesAsync(ct);
@@ -128,8 +134,32 @@ public sealed class BannerService(AppDbContext db, IFileStorage storage, ITenant
             storage.GetUrl(banner.Image),
             banner.CreatedAt > now.Subtract(NewThreshold),
             banner.IsActive,
-            banner.ActiveUntil);
+            banner.ActiveUntil,
+            banner.UserId);
 
-    public Task BulkAsync(BulkRequest request, CancellationToken ct = default)
-        => BulkHelper.ApplyAsync<Banner>(db, request, ct);
+    public async Task BulkAsync(BulkRequest request, long? ownerId = null, CancellationToken ct = default)
+    {
+        if (ownerId.HasValue)
+        {
+            var owned = await db.Banners
+                .Where(x => request.Ids.Contains(x.Id) && x.UserId == ownerId)
+                .Select(x => x.Id)
+                .ToListAsync(ct);
+
+            if (owned.Count != request.Ids.Distinct().Count())
+            {
+                throw new ForbiddenException("You can only modify your own banners");
+            }
+        }
+
+        await BulkHelper.ApplyAsync<Banner>(db, request, ct);
+    }
+
+    private static void EnsureOwned(Banner banner, long? ownerId)
+    {
+        if (ownerId.HasValue && banner.UserId != ownerId)
+        {
+            throw new ForbiddenException("You can only modify your own banner");
+        }
+    }
 }

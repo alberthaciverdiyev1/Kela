@@ -2,6 +2,12 @@ let currentPage = 1;
 let lastPage = 1;
 let showDeleted = false;
 
+// Admin hər banneri idarə edir; teacher yalnız öz yaratdığını.
+function canEdit(b) {
+    const me = window.ADMIN || {};
+    return me.isAdmin || (b.userId != null && b.userId === me.userId);
+}
+
 function toggleTrash() {
     showDeleted = !showDeleted;
     AdminUI.syncTrashButton('trashBtn', showDeleted);
@@ -30,11 +36,13 @@ async function loadList(page) {
             : '<span class="text-slate-400">—</span>' },
         { html: b.title, cls: 'font-semibold text-slate-800' },
         { html: showDeleted ? AdminUI.badge(L["Js_Deleted"], 'danger')
-            : AdminUI.statusSwitch(b.isActive, `setStatus(${b.id}, ${!b.isActive})`) },
+            : canEdit(b)
+                ? AdminUI.statusSwitch(b.isActive, `setStatus(${b.id}, ${!b.isActive})`)
+                : AdminUI.badge(b.isActive ? L["Common_Active"] : L["Common_Inactive"], b.isActive ? 'success' : 'neutral') },
         { html: b.activeUntil
             ? `<span class="text-sm text-slate-500">${String(b.activeUntil).slice(0, 10)}</span>`
             : `<span class="text-sm text-slate-400">${L["Banner_Always"]}</span>` },
-        { html: showDeleted ? AdminUI.restoreButton(b.id) : AdminUI.actions(b.id), cls: 'text-right' }
+        { html: showDeleted ? AdminUI.restoreButton(b.id) : (canEdit(b) ? AdminUI.actions(b.id) : ''), cls: 'text-right' }
     ]), 5, { rowIds: data.data.map(b => b.id), selectable: !showDeleted });
 
     AdminUI.pagination('pagination', currentPage, lastPage, loadList);
