@@ -161,7 +161,11 @@ window.AdminUI = window.AdminUI || {};
         select.parentNode.insertBefore(wrap, select.nextSibling);
 
         const search = menu.querySelector('input');
+        const searchBox = menu.querySelector('.admin-select-search');
         const list = menu.querySelector('.admin-select-options');
+
+        // Axtarış yalnız çox seçim olanda məna daşıyır (10-dan çox real variant).
+        const withSearch = () => [...select.options].filter(o => !o.disabled).length > 10;
 
         const label = () => {
             const opts = [...select.options];
@@ -216,12 +220,14 @@ window.AdminUI = window.AdminUI || {};
         function open() {
             closeSelects();
             search.value = '';
+            const needsSearch = withSearch();
+            searchBox.classList.toggle('hidden', !needsSearch);
             renderOptions();
             menu.classList.remove('hidden');
             wrap.classList.add('is-open');
             openSelectWrap = wrap;
             place();
-            search.focus();
+            if (needsSearch) search.focus();
         }
 
         trigger.addEventListener('click', () => {
