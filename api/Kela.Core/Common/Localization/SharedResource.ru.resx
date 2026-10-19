@@ -222,6 +222,48 @@
   <data name="Tenant_RejectConfirm" xml:space="preserve">
     <value>Отклонить заявку и удалить курс? Это действие необратимо.</value>
   </data>
+  <data name="Tenant_RegisterHeroTitle" xml:space="preserve">
+    <value>Управляйте курсом вместе с Kela</value>
+  </data>
+  <data name="Tenant_RegisterHeroText" xml:space="preserve">
+    <value>Отправьте заявку, после одобрения откройте панель курса и управляйте всем учебным процессом в одном месте.</value>
+  </data>
+  <data name="Tenant_RegisterBenefit1" xml:space="preserve">
+    <value>Управляйте преподавателями и студентами</value>
+  </data>
+  <data name="Tenant_RegisterBenefit2" xml:space="preserve">
+    <value>Уроки, материалы и экзамены в одной панели</value>
+  </data>
+  <data name="Tenant_RegisterBenefit3" xml:space="preserve">
+    <value>Приглашайте студентов в группы по ссылке</value>
+  </data>
+  <data name="Tenant_RegisterHowItWorks" xml:space="preserve">
+    <value>Как это работает</value>
+  </data>
+  <data name="Tenant_RegisterStep1" xml:space="preserve">
+    <value>Отправьте заявку</value>
+  </data>
+  <data name="Tenant_RegisterStep2" xml:space="preserve">
+    <value>Одобрение суперадминистратора</value>
+  </data>
+  <data name="Tenant_RegisterStep3" xml:space="preserve">
+    <value>Войдите в панель курса</value>
+  </data>
+  <data name="Tenant_RegisterSectionCourse" xml:space="preserve">
+    <value>Данные курса</value>
+  </data>
+  <data name="Tenant_RegisterSectionAdmin" xml:space="preserve">
+    <value>Первый аккаунт администратора</value>
+  </data>
+  <data name="Tenant_RegisterSuccessTitle" xml:space="preserve">
+    <value>Заявка отправлена</value>
+  </data>
+  <data name="Tenant_RegisterBackToLogin" xml:space="preserve">
+    <value>Вернуться к входу</value>
+  </data>
+  <data name="Tenant_AlreadyHaveAccount" xml:space="preserve">
+    <value>Уже есть аккаунт?</value>
+  </data>
   <data name="Validation_EmailRequired" xml:space="preserve">
     <value>Эл. почта обязательна</value>
   </data>

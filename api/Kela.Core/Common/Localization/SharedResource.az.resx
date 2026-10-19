@@ -222,6 +222,48 @@
   <data name="Tenant_RejectConfirm" xml:space="preserve">
     <value>Bu müraciəti rədd edib kursu silmək istəyirsiniz? Bu əməliyyat geri qaytarılmır.</value>
   </data>
+  <data name="Tenant_RegisterHeroTitle" xml:space="preserve">
+    <value>Kursunuzu Kela ilə idarə edin</value>
+  </data>
+  <data name="Tenant_RegisterHeroText" xml:space="preserve">
+    <value>Müraciət göndərin, təsdiqdən sonra öz kurs panelinizi açın və bütün tədris prosesini bir yerdən idarə edin.</value>
+  </data>
+  <data name="Tenant_RegisterBenefit1" xml:space="preserve">
+    <value>Müəllimləri və şagirdləri idarə edin</value>
+  </data>
+  <data name="Tenant_RegisterBenefit2" xml:space="preserve">
+    <value>Dərslər, materiallar və imtahanlar bir panelde</value>
+  </data>
+  <data name="Tenant_RegisterBenefit3" xml:space="preserve">
+    <value>Dəvət linki ilə şagirdləri qruplara qoşun</value>
+  </data>
+  <data name="Tenant_RegisterHowItWorks" xml:space="preserve">
+    <value>Necə işləyir?</value>
+  </data>
+  <data name="Tenant_RegisterStep1" xml:space="preserve">
+    <value>Müraciəti göndərin</value>
+  </data>
+  <data name="Tenant_RegisterStep2" xml:space="preserve">
+    <value>Superadmin təsdiqi</value>
+  </data>
+  <data name="Tenant_RegisterStep3" xml:space="preserve">
+    <value>Kurs panelinə daxil olun</value>
+  </data>
+  <data name="Tenant_RegisterSectionCourse" xml:space="preserve">
+    <value>Kurs məlumatları</value>
+  </data>
+  <data name="Tenant_RegisterSectionAdmin" xml:space="preserve">
+    <value>İlk admin hesabı</value>
+  </data>
+  <data name="Tenant_RegisterSuccessTitle" xml:space="preserve">
+    <value>Müraciətiniz göndərildi</value>
+  </data>
+  <data name="Tenant_RegisterBackToLogin" xml:space="preserve">
+    <value>Giriş səhifəsinə qayıt</value>
+  </data>
+  <data name="Tenant_AlreadyHaveAccount" xml:space="preserve">
+    <value>Artıq hesabınız var?</value>
+  </data>
   <data name="Validation_EmailRequired" xml:space="preserve">
     <value>E-poçt tələb olunur</value>
   </data>

@@ -222,6 +222,48 @@
   <data name="Tenant_RejectConfirm" xml:space="preserve">
     <value>Bu başvuruyu reddedip kursu silmek istiyor musunuz? Bu işlem geri alınamaz.</value>
   </data>
+  <data name="Tenant_RegisterHeroTitle" xml:space="preserve">
+    <value>Kursunuzu Kela ile yönetin</value>
+  </data>
+  <data name="Tenant_RegisterHeroText" xml:space="preserve">
+    <value>Başvuru gönderin, onaylandıktan sonra kurs panelinizi açın ve tüm eğitim sürecini tek yerden yönetin.</value>
+  </data>
+  <data name="Tenant_RegisterBenefit1" xml:space="preserve">
+    <value>Öğretmenleri ve öğrencileri yönetin</value>
+  </data>
+  <data name="Tenant_RegisterBenefit2" xml:space="preserve">
+    <value>Dersler, materyaller ve sınavlar tek panelde</value>
+  </data>
+  <data name="Tenant_RegisterBenefit3" xml:space="preserve">
+    <value>Davet bağlantısıyla öğrencileri gruplara katın</value>
+  </data>
+  <data name="Tenant_RegisterHowItWorks" xml:space="preserve">
+    <value>Nasıl çalışır?</value>
+  </data>
+  <data name="Tenant_RegisterStep1" xml:space="preserve">
+    <value>Başvuruyu gönderin</value>
+  </data>
+  <data name="Tenant_RegisterStep2" xml:space="preserve">
+    <value>Süper yönetici onayı</value>
+  </data>
+  <data name="Tenant_RegisterStep3" xml:space="preserve">
+    <value>Kurs panelinize giriş yapın</value>
+  </data>
+  <data name="Tenant_RegisterSectionCourse" xml:space="preserve">
+    <value>Kurs bilgileri</value>
+  </data>
+  <data name="Tenant_RegisterSectionAdmin" xml:space="preserve">
+    <value>İlk yönetici hesabı</value>
+  </data>
+  <data name="Tenant_RegisterSuccessTitle" xml:space="preserve">
+    <value>Başvurunuz gönderildi</value>
+  </data>
+  <data name="Tenant_RegisterBackToLogin" xml:space="preserve">
+    <value>Giriş sayfasına dön</value>
+  </data>
+  <data name="Tenant_AlreadyHaveAccount" xml:space="preserve">
+    <value>Hesabınız var mı?</value>
+  </data>
   <data name="Validation_EmailRequired" xml:space="preserve">
     <value>E-posta gereklidir</value>
   </data>
