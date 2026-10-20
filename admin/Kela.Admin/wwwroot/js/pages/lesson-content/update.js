@@ -8,16 +8,16 @@
         document.getElementById('entityId').value = data.id;
         document.getElementById('sort_order').value = data.sortOrder ?? 0;
         document.getElementById('description').value = data.description ?? '';
-        document.getElementById('lesson_id').value = data.lessonId;
-        const extra = new Set((data.lessonIds || []).map(String));
-        [...document.getElementById('lesson_ids').options].forEach(o => { o.selected = extra.has(o.value); });
+        // Əsas dərs sabitdir; əlavə dərslər seçilə bilər.
+        document.getElementById('primary_lesson_id').value = data.lessonId;
+        const selected = new Set([String(data.lessonId), ...(data.lessonIds || []).map(String)]);
+        [...document.getElementById('lesson_ids').options].forEach(o => { o.selected = selected.has(o.value); });
         document.getElementById('lesson_ids').dispatchEvent(new Event('change'));
         if (window.renderLessonSorts) window.renderLessonSorts(data.lessonSorts || {});
         document.getElementById('title').value = data.title;
         document.getElementById('type').value = data.type ?? 'video';
         document.getElementById('is_active').checked = data.isActive;
         document.getElementById('fileBlock').classList.add('hidden');
-        document.getElementById('lesson_id').disabled = true;
         document.getElementById('type').disabled = true;
         renderCurrentFile(data);
         AdminUI.openModal('modal');

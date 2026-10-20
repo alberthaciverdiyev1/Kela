@@ -9,6 +9,22 @@
         return [...document.getElementById('lesson_ids').selectedOptions].map(o => o.value);
     }
 
+    // Əsas dərs: redaktədə saxlanılan dərs, yaratmada kontekst dərs, əks halda ilk seçim.
+    function primaryLessonId() {
+        const ids = selectedLessonIds();
+        const editId = document.getElementById('primary_lesson_id').value;
+        const contextId = document.getElementById('context_lesson_id').value;
+
+        if (editId && ids.includes(editId)) return editId;
+        if (contextId && ids.includes(contextId)) return contextId;
+        return ids[0] || '';
+    }
+
+    function additionalLessonIds() {
+        const primary = primaryLessonId();
+        return selectedLessonIds().filter(id => id !== primary);
+    }
+
     function esc(v) {
         return String(v ?? '').replace(/[&<>"']/g, c => ({
             '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
@@ -30,7 +46,7 @@
         });
 
         const fallback = Number(document.getElementById('sort_order').value || 0);
-        box.innerHTML = selectedLessonIds().map(id => {
+        box.innerHTML = additionalLessonIds().map(id => {
             const option = [...sel.options].find(o => o.value === id);
             const title = option ? option.textContent : '#' + id;
             const value = Number(prev[id] ?? fallback) || 0;
@@ -50,6 +66,24 @@
     };
 
     document.getElementById('lesson_ids').addEventListener('change', function () {
+        const editId = document.getElementById('entityId').value;
+        const primary = document.getElementById('primary_lesson_id').value;
+
+        if (editId && primary) {
+            const option = [...this.options].find(o => o.value === primary);
+            if (option && !option.selected) {
+                option.selected = true;
+
+                // Custom multi-select UI-da əsas dərsin seçimi vizual olaraq bərpa olunur.
+                const button = document.querySelector(
+                    '.admin-select[data-for="lesson_ids"] .admin-select-option[data-value="' + primary + '"]');
+                if (button) button.classList.add('is-selected');
+
+                this.dispatchEvent(new Event('change'));
+                return;
+            }
+        }
+
         window.renderLessonSorts();
     });
 
@@ -59,9 +93,14 @@
         document.getElementById('entityId').value = '';
         document.getElementById('sort_order').value = '';
         document.getElementById('description').value = '';
-        document.getElementById('lesson_id').value = '';
-        [...document.getElementById('lesson_ids').options].forEach(o => { o.selected = false; });
-        document.getElementById('lesson_ids').dispatchEvent(new Event('change'));
+        document.getElementById('primary_lesson_id').value = '';
+
+        // Dərs səhifəsindən gəlmişiksə həmin dərs seçili olsun.
+        const contextId = document.getElementById('context_lesson_id').value;
+        const lessonSelect = document.getElementById('lesson_ids');
+        [...lessonSelect.options].forEach(o => { o.selected = !!contextId && o.value === contextId; });
+        lessonSelect.dispatchEvent(new Event('change'));
+
         document.getElementById('title').value = '';
         document.getElementById('type').value = 'video';
         document.getElementById('is_active').checked = true;
@@ -70,7 +109,6 @@
         if (AdminUI.fileReset) AdminUI.fileReset('file');
         document.getElementById('fileBlock').classList.remove('hidden');
         document.getElementById('currentFile').classList.add('hidden');
-        document.getElementById('lesson_id').disabled = false;
         document.getElementById('type').disabled = false;
         AdminUI.openModal('modal');
     };
@@ -466,7 +504,8 @@
         const file = document.getElementById('file').files[0];
         if (!file) { showError(L["Common_ChooseFile"]); return; }
 
-        const lessonId = document.getElementById('lesson_id').value;
+        const lessonId = primaryLessonId();
+        if (!lessonId) { showError(L["Common_RequiredFields"]); return; }
         const type = document.getElementById('type').value;
         const title = document.getElementById('title').value;
         const isActive = document.getElementById('is_active').checked ? 'true' : 'false';

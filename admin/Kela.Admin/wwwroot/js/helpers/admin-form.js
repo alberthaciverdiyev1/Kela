@@ -171,6 +171,9 @@ window.AdminUI = window.AdminUI || {};
             const opts = [...select.options];
             if (multiple) {
                 const picked = opts.filter(o => o.selected);
+                // Tək seçimdə ad göstərilir: əsas dərsin avtomatik seçildiyi formada
+                // istifadəçi siyahını açmadan nəyin seçili olduğunu görsün.
+                if (picked.length === 1) return picked[0].text;
                 return picked.length
                     ? (L["Js_SelectedCount"] || '{0}').replace('{0}', picked.length)
                     : (select.dataset.placeholder || '');

@@ -11,12 +11,13 @@
     <input type="hidden" id="entityId" />
     <input type="hidden" id="sort_order" />
     <input type="hidden" id="description" />
+    <input type="hidden" id="context_lesson_id" value="@(ViewData["SelectedLessonId"] as string ?? "")" />
+    <input type="hidden" id="primary_lesson_id" />
     <partial name="Ui/_Select" model="@(new SelectModel {
-        Name = "lesson_id", Id = "lesson_id", Label = L["Common_Lesson"], Required = true,
-        Options = lessons.Data.Select(l => new SelectOption { Value = l.Id.ToString(), Text = l.Title }).ToList()
-    })" />
-    <partial name="Ui/_Select" model="@(new SelectModel {
-        Name = "lesson_ids", Id = "lesson_ids", Label = L["LessonContent_ExtraLessons"], Multiple = true,
+        Name = "lesson_ids", Id = "lesson_ids", Label = L["Nav_Lessons"], Multiple = true, Required = true,
+        Values = string.IsNullOrEmpty(ViewData["SelectedLessonId"] as string)
+            ? new List<string>()
+            : new List<string> { (string)ViewData["SelectedLessonId"]! },
         Options = lessons.Data.Select(l => new SelectOption { Value = l.Id.ToString(), Text = l.Title }).ToList()
     })" />
     <div id="lessonSorts" class="space-y-2"></div>

@@ -74,10 +74,11 @@ window.AdminUI = window.AdminUI || {};
         if (!trigger) return;
         const opts = [...select.options];
         const multiple = !!select.multiple;
+        const picked = opts.filter(o => o.selected);
         const text = multiple
-            ? (opts.filter(o => o.selected).length
-                ? (L["Js_SelectedCount"] || '{0}').replace('{0}', opts.filter(o => o.selected).length)
-                : '')
+            ? (picked.length === 1
+                ? picked[0].text
+                : (picked.length ? (L["Js_SelectedCount"] || '{0}').replace('{0}', picked.length) : ''))
             : ((opts[select.selectedIndex] || {}).text || '');
         trigger.textContent = text;
         trigger.classList.toggle('is-empty', !text);
