@@ -18,4 +18,5 @@ global using Kela.Core.Modules.User.Abstractions;
 global using Kela.Core.Modules.Dashboard.Abstractions;
 global using Kela.Core.Modules.Students.Abstractions;
 global using Kela.Core.Modules.Media.Abstractions;
+global using Kela.Core.Modules.Payments.Abstractions;
 global using Kela.Core.Modules.SystemNotification.Abstractions;

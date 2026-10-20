@@ -1,0 +1,22 @@
+@{
+    ViewData["Title"] = "Ödənişlər";
+}
+<section class="admin-page">
+    <form id="antiforgery">@Html.AntiForgeryToken()</form>
+    <partial name="Ui/_PageHeader" model="@(new PageHeaderModel())" />
+    <div class="admin-card mb-4 grid grid-cols-2 gap-3 md:grid-cols-4">
+        <div class="rounded-xl bg-surface-secondary p-4"><div class="text-sm text-slate-500">Yaxınlaşan</div><strong id="count-upcoming" class="text-2xl">0</strong></div>
+        <div class="rounded-xl bg-surface-secondary p-4"><div class="text-sm text-slate-500">Gecikən</div><strong id="count-overdue" class="text-2xl">0</strong></div>
+        <div class="rounded-xl bg-surface-secondary p-4"><div class="text-sm text-slate-500">Ödəniş planı olmayan</div><strong id="count-unpaid" class="text-2xl">0</strong></div>
+        <div class="rounded-xl bg-surface-secondary p-4"><div class="text-sm text-slate-500">Aktiv planlar</div><strong id="count-current" class="text-2xl">0</strong></div>
+    </div>
+    <div class="admin-card">
+        <div class="mb-4 flex flex-wrap gap-3">
+            <input id="payment-search" class="admin-field" placeholder="Şagird axtar" />
+            <select id="payment-status" class="admin-field"><option value="all">Hamısı</option><option value="upcoming">Yaxınlaşan</option><option value="overdue">Gecikən</option><option value="unpaid">Plan yoxdur</option><option value="current">Aktiv plan</option></select>
+            <button class="admin-button-secondary" onclick="loadPayments()">Axtar</button>
+        </div>
+        <div class="overflow-x-auto"><table class="admin-table"><thead><tr><th>Şagird</th><th>Qoşulma tarixi</th><th>Növbəti ödəniş</th><th>Məbləğ</th><th>Period</th><th>Status</th><th></th></tr></thead><tbody id="payment-rows"></tbody></table></div>
+    </div>
+</section>
+<dialog id="plan-dialog" class="rounded-2xl p-6 shadow-xl"><form id="plan-form" class="grid gap-3"><h2 class="text-lg font-bold">Ödəniş planı</h2><input type="hidden" id="plan-student-id"/><label>Qoşulma tarixi<input required type="date" id="plan-joined" class="admin-field"/></label><label>Növbəti ödəniş tarixi<input required type="date" id="plan-due" class="admin-field"/></label><label>Məbləğ<input required type="number" min="0.01" step="0.01" id="plan-amount" class="admin-field"/></label><label>Valyuta<input maxlength="3" value="AZN" id="plan-currency" class="admin-field"/></label><label>Period<select id="plan-frequency" class="admin-field"><option value="monthly">Aylıq</option><option value="custom">Xüsusi gün sayı</option></select></label><label id="interval-wrap" class="hidden">Neçə gündən bir<input type="number" min="1" max="365" id="plan-interval" class="admin-field"/></label><label>Qeyd<textarea id="plan-note" maxlength="500" class="admin-field"></textarea></label><div class="flex justify-end gap-2"><button type="button" class="admin-button-secondary" onclick="document.getElementById('plan-dialog').close()">Bağla</button><button class="admin-button-primary">Yadda saxla</button></div></form></dialog>
