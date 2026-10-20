@@ -24,4 +24,7 @@ public class RegisterTenantRequest
 
     /// <summary>İstifadə şərtləri və məxfilik siyasəti qəbul edilib.</summary>
     public bool AcceptTerms { get; set; }
+
+    /// <summary>Honeypot — istifadəçi görmür; botlar doldurur.</summary>
+    public string? Website { get; set; }
 }

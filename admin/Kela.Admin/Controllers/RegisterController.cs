@@ -2,6 +2,7 @@ using Kela.Core.Modules.PrivacyPolicy.Abstractions;
 using Kela.Core.Modules.Tenant.Abstractions;
 using Kela.Core.Modules.Tenant.Requests;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Kela.Admin.Controllers;
@@ -40,8 +41,16 @@ public sealed class RegisterController(ITenantService tenants, IPrivacyPolicySer
 
     [HttpPost]
     [ValidateAntiForgeryToken]
+    [EnableRateLimiting("public")]
     public async Task<IActionResult> Index(RegisterTenantRequest request, CancellationToken ct)
     {
+        // Honeypot: botlar bu gizli sahəni doldurur — onlara uğurlu cavab göstəririk.
+        if (!string.IsNullOrWhiteSpace(request.Website))
+        {
+            ViewData["Success"] = true;
+            return View(new RegisterTenantRequest());
+        }
+
         try
         {
             await tenants.RegisterAsync(request, ct);

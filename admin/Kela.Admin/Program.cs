@@ -1,3 +1,4 @@
+using System.Threading.RateLimiting;
 using Kela.Core;
 using Kela.Core.Common.Localization;
 using Kela.Core.Data;
@@ -15,6 +16,15 @@ builder.Services.AddControllersWithViews(options =>
 });
 builder.Services.AddCore(builder.Configuration);
 builder.Services.AddKelaLocalization();
+
+// Public qeydiyyat və digər anonim formlar üçün sadə rate limit.
+builder.Services.AddRateLimiter(options =>
+{
+    options.RejectionStatusCode = StatusCodes.Status429TooManyRequests;
+    options.AddPolicy("public", context => RateLimitPartition.GetFixedWindowLimiter(
+        context.Connection.RemoteIpAddress?.ToString() ?? "anon",
+        _ => new FixedWindowRateLimiterOptions { PermitLimit = 5, Window = TimeSpan.FromMinutes(10), QueueLimit = 0 }));
+});
 
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
     .AddCookie(options =>
@@ -58,6 +68,7 @@ app.UseKelaLocalization();
 app.UseRouting();
 app.UseAuthentication();
 app.UseAuthorization();
+app.UseRateLimiter();
 
 app.MapStaticAssets();
 
