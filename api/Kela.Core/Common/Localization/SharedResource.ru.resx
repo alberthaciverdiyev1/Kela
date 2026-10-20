@@ -282,6 +282,12 @@
   <data name="Login_HeroText" xml:space="preserve">
     <value>Войдите, чтобы управлять курсом, занятиями, студентами и материалами.</value>
   </data>
+  <data name="Login_ShowPassword" xml:space="preserve">
+    <value>Показать пароль</value>
+  </data>
+  <data name="Login_HidePassword" xml:space="preserve">
+    <value>Скрыть пароль</value>
+  </data>
   <data name="Validation_EmailRequired" xml:space="preserve">
     <value>Эл. почта обязательна</value>
   </data>

@@ -282,6 +282,12 @@
   <data name="Login_HeroText" xml:space="preserve">
     <value>Sign in to manage your course, classes, students and materials.</value>
   </data>
+  <data name="Login_ShowPassword" xml:space="preserve">
+    <value>Show password</value>
+  </data>
+  <data name="Login_HidePassword" xml:space="preserve">
+    <value>Hide password</value>
+  </data>
   <data name="Validation_EmailRequired" xml:space="preserve">
     <value>Email is required</value>
   </data>

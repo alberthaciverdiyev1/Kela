@@ -282,6 +282,12 @@
   <data name="Login_HeroText" xml:space="preserve">
     <value>Kursunuzu veya derslerinizi yönetmek için panelinize giriş yapın.</value>
   </data>
+  <data name="Login_ShowPassword" xml:space="preserve">
+    <value>Şifreyi göster</value>
+  </data>
+  <data name="Login_HidePassword" xml:space="preserve">
+    <value>Şifreyi gizle</value>
+  </data>
   <data name="Validation_EmailRequired" xml:space="preserve">
     <value>E-posta gereklidir</value>
   </data>
