@@ -155,6 +155,35 @@ document.getElementById('plan-template').addEventListener('change', e => {
     recalcDueDate();
 });
 
+document.getElementById('plan-form').addEventListener('submit', async e => {
+    e.preventDefault();
+
+    const body = {
+        studentId: +document.getElementById('plan-student-id').value,
+        joinedOn: document.getElementById('plan-joined').value,
+        nextDueOn: document.getElementById('plan-due').value,
+        amount: +document.getElementById('plan-amount').value,
+        currency: document.getElementById('plan-currency').value,
+        frequency: document.getElementById('plan-frequency').value,
+        intervalDays: +document.getElementById('plan-interval').value,
+        note: document.getElementById('plan-note').value
+    };
+
+    const res = await AdminUI.postJson('/payment/plan', body);
+    if (!res.ok) { AdminUI.error(res.data?.message || L["Js_ErrorOccured"]); return; }
+
+    const firstPaid = document.getElementById('plan-first-paid');
+    const wantsFirst = firstPaid.checked && !firstPaid.closest('label').classList.contains('hidden');
+    if (wantsFirst) {
+        const pay = await AdminUI.postJson('/payment/record', { studentId: body.studentId, paidOn: today() });
+        if (!pay.ok) { AdminUI.error(pay.data?.message || L["Js_ErrorOccured"]); return; }
+    }
+
+    AdminUI.closeModal('planModal');
+    AdminUI.notify(wantsFirst ? 'Plan yaradıldı və ilk ödəniş qeyd edildi' : L["Js_Saved"]);
+    await Promise.all([loadPayments(pager.page), loadSummary()]);
+});
+
 window.recordPayment = async function (studentId) {
     const row = PAYMENTS[studentId];
     if (!row || row.amount == null) return;
