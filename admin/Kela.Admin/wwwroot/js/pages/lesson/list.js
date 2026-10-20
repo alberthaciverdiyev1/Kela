@@ -1,5 +1,4 @@
-let currentPage = 1;
-let lastPage = 1;
+var pager = AdminUI.createPager('pagination', loadList);
 let showDeleted = false;
 
 function toggleTrash() {
@@ -9,7 +8,7 @@ function toggleTrash() {
 }
 
 async function restoreRow(id) {
-    await AdminUI.restoreItem('/lesson/bulk', id, () => loadList(currentPage));
+    await AdminUI.restoreItem('/lesson/bulk', id, () => loadList(pager.page));
 }
 
 
@@ -54,36 +53,12 @@ function updateStats(data) {
     if (el) el.textContent = total;
 }
 
-function renderPagination(containerId, current, last, onSelect) {
-    const box = document.getElementById(containerId);
-    if (!box) return;
-    box.innerHTML = '';
-
-    const makeButton = (label, page, active, disabled) => {
-        const btn = document.createElement('button');
-        btn.type = 'button';
-        btn.innerHTML = label;
-        btn.disabled = disabled;
-        btn.className = 'grid h-10 min-w-10 place-items-center rounded-xl text-sm font-bold transition ' +
-            (active ? 'bg-primary text-white shadow-[0_10px_24px_rgba(0,184,132,0.25)]' : 'bg-surface-secondary text-slate-700 hover:bg-primary-light hover:text-primary') +
-            (disabled ? ' opacity-50' : '');
-        if (!disabled) btn.addEventListener('click', () => onSelect(page));
-        return btn;
-    };
-
-    box.appendChild(makeButton('‹', Math.max(1, current - 1), false, current <= 1));
-    for (let i = 1; i <= Math.max(1, last); i++) {
-        box.appendChild(makeButton(i, i, i === current, false));
-    }
-    box.appendChild(makeButton('›', Math.min(last, current + 1), false, current >= last));
-}
-
 async function loadList(page) {
-    currentPage = page || 1;
+    var pageNo = page || pager.page;
     const subjectId = document.getElementById('filter_subject').value;
     const status = document.getElementById('filter_status').value;
     const search = document.getElementById('search').value;
-    const params = new URLSearchParams({ page: currentPage, search });
+    const params = new URLSearchParams({ page: pageNo, search });
     if (subjectId) params.set('subject_id', subjectId);
     if (status) params.set('is_active', status);
     if (showDeleted) params.set('is_deleted', '1');
@@ -93,13 +68,13 @@ async function loadList(page) {
     const items = data.data || data.Data || [];
     const perPage = data.perPage || data.PerPage || 20;
 
-    lastPage = data.lastPage || data.LastPage || 1;
+    pager.apply(data);
     updateStats(data);
 
     const rows = items.map((l, index) => {
         const subjectName = window.SUBJECTS[l.subjectId] ?? '-';
         return [
-            { html: AdminUI.rowNo(l, index, currentPage, perPage), cls: 'text-slate-400' },
+            { html: AdminUI.rowNo(l, index, pager.page, perPage), cls: 'text-slate-400' },
             {
                 html: `<div class="flex items-center gap-4">
                     ${lessonThumb(l)}
@@ -119,9 +94,6 @@ async function loadList(page) {
     });
 
     AdminUI.table('rows', rows, 6, { rowIds: items.map(l => l.id), selectable: !showDeleted });
-    renderPagination('pagination', currentPage, lastPage, loadList);
-
-    AdminUI.setInfo(data.total ?? rows.length);
 
     AdminUI.loader(false);
 }
@@ -129,7 +101,7 @@ async function loadList(page) {
 async function removeItem(id) {
     if (!await AdminUI.confirmDelete(L["Js_ConfirmDeleteLesson"])) return;
     const res = await AdminUI.del(`/lesson/${id}`);
-    if (res.ok) { AdminUI.notify(L["Js_Deleted"]); loadList(currentPage); }
+    if (res.ok) { AdminUI.notify(L["Js_Deleted"]); loadList(pager.page); }
     else AdminUI.error();
 }
 
@@ -143,7 +115,7 @@ async function setStatus(id, isActive) {
     fd.append('is_active', String(isActive));
 
     const res = await AdminUI.putForm(`/lesson/${id}`, fd);
-    if (res.ok) { AdminUI.notify(L["Js_StatusChanged"]); loadList(currentPage); }
+    if (res.ok) { AdminUI.notify(L["Js_StatusChanged"]); loadList(pager.page); }
     else AdminUI.error(AdminUI.errText(res));
 }
 document.addEventListener('DOMContentLoaded', () => {

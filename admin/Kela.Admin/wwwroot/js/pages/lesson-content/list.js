@@ -1,5 +1,4 @@
-let currentPage = 1;
-let lastPage = 1;
+var pager = AdminUI.createPager('pagination', loadList);
 let showDeleted = false;
 const TYPE_TEXT = { video: 'Video', file: 'Fayl', voice: L["Js_Voice"] };
 
@@ -65,23 +64,22 @@ function toggleTrash() {
 }
 
 async function restoreRow(id) {
-    await AdminUI.restoreItem('/lesson-content/bulk', id, () => loadList(currentPage));
+    await AdminUI.restoreItem('/lesson-content/bulk', id, () => loadList(pager.page));
 }
 
 async function loadList(page) {
-    currentPage = page || 1;
+    var pageNo = page || pager.page;
     const lessonId = document.getElementById('filter_lesson').value;
     const search = document.getElementById('search').value;
-    const params = new URLSearchParams({ page: currentPage, lesson_id: lessonId, is_deleted: showDeleted ? 1 : 0, search });
+    const params = new URLSearchParams({ page: pager.page, lesson_id: lessonId, is_deleted: showDeleted ? 1 : 0, search });
     AdminUI.loader(true);
     const data = await AdminUI.get(AdminUI.addSort(`/lesson-content/list?${params.toString()}`));
 
-    lastPage = data.lastPage;
-    AdminUI.setInfo(data.total);
+    pager.apply(data);
     data.data.forEach(c => { CONTENT[c.id] = c; });
 
     AdminUI.table('rows', data.data.map((c, i) => [
-        { html: AdminUI.rowNo(c, i, currentPage, data.perPage), cls: 'text-slate-400' },
+        { html: AdminUI.rowNo(c, i, pager.page, pager.perPage), cls: 'text-slate-400' },
         { html: `<div class="flex items-center gap-4">${contentThumb(c)}<span class="font-medium text-slate-800">${c.title}</span></div>` },
         { html: lessonCell(c) },
         { html: TYPE_TEXT[c.type] ?? '-', cls: 'text-slate-500' },
@@ -90,8 +88,6 @@ async function loadList(page) {
         { html: AdminUI.statusSwitch(c.isActive, `setStatus(${c.id}, ${!c.isActive})`) },
         { html: showDeleted ? AdminUI.restoreButton(c.id) : AdminUI.actions(c.id), cls: 'text-right' }
     ]), 8, { rowIds: data.data.map(c => c.id), selectable: !showDeleted });
-
-    AdminUI.pagination('pagination', currentPage, lastPage, loadList);
     AdminUI.loader(false);
 }
 
@@ -165,7 +161,7 @@ document.getElementById('previewModal').addEventListener('modal:closed', () => {
 async function removeItem(id) {
     if (!await AdminUI.confirmDelete(L["Js_ConfirmDeleteMaterial"])) return;
     const res = await AdminUI.del(`/lesson-content/${id}`);
-    if (res.ok) { AdminUI.notify(L["Js_Deleted"]); loadList(currentPage); }
+    if (res.ok) { AdminUI.notify(L["Js_Deleted"]); loadList(pager.page); }
     else AdminUI.error();
 }
 
@@ -178,7 +174,7 @@ async function setStatus(id, isActive) {
     fd.append('is_active', String(isActive));
 
     const res = await AdminUI.putForm(`/lesson-content/${id}`, fd);
-    if (res.ok) { AdminUI.notify(L["Js_StatusChanged"]); loadList(currentPage); }
+    if (res.ok) { AdminUI.notify(L["Js_StatusChanged"]); loadList(pager.page); }
     else AdminUI.error(AdminUI.errText(res));
 }
 document.addEventListener('DOMContentLoaded', () => loadList(1));

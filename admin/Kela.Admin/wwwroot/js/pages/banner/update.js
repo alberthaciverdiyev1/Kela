@@ -26,7 +26,7 @@
         fd.append('removeImage', document.getElementById('image_remove').value);
 
         const res = await AdminUI.putForm(`/banner/${id}`, fd);
-        if (res.ok) { AdminUI.notify(L["Js_Updated"]); AdminUI.closeModal('modal'); loadList(currentPage); return; }
+        if (res.ok) { AdminUI.notify(L["Js_Updated"]); AdminUI.closeModal('modal'); loadList(pager.page); return; }
 
         errBox.textContent = AdminUI.errText(res);
         errBox.classList.remove('hidden');

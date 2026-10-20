@@ -7,6 +7,6 @@ window.sortClick = async function () {
         title: L["Js_SortMaterials"],
         items: (data.data || []).map(c => ({ id: c.id, label: c.title })),
         saveUrl: '/lesson-content/sort',
-        onSaved: () => loadList(currentPage)
+        onSaved: () => loadList(pager.page)
     });
 };

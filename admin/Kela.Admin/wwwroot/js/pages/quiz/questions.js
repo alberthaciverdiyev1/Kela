@@ -49,6 +49,6 @@ async function assignQuestion() {
 async function removeQuestion(questionId) {
     if (!await AdminUI.confirmDelete(L["Js_ConfirmRemove"])) return;
     const res = await AdminUI.del(`/quiz/${qzId}/questions/${questionId}`);
-    if (res.ok) { AdminUI.notify(L["Js_Deleted"]); refreshQuestions(); loadList(currentPage); }
+    if (res.ok) { AdminUI.notify(L["Js_Deleted"]); refreshQuestions(); loadList(pager.page); }
     else AdminUI.error();
 }

@@ -8,6 +8,6 @@ window.sortClick = async function () {
         title: L["Js_SortQuizzes"],
         items: (data.data || []).map(q => ({ id: q.id, label: q.title })),
         saveUrl: '/quiz/sort',
-        onSaved: () => loadList(currentPage)
+        onSaved: () => loadList(pager.page)
     });
 };

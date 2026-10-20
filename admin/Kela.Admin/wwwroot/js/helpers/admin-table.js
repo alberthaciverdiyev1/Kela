@@ -89,6 +89,30 @@ window.AdminUI = window.AdminUI || {};
         }
     }
 
+    /**
+     * Səhifələmə vəziyyəti: cari səhifə, son səhifə və səhifə ölçüsünü saxlayır,
+     * `apply(data)` ilə API cavabından yeniləyir və pager düymələrini çəkir.
+     * Hər siyahı səhifəsində təkrarlanan kodu əvəz edir.
+     */
+    function createPager(containerId, load) {
+        const pager = {
+            page: 1,
+            lastPage: 1,
+            perPage: 20,
+            total: 0,
+            apply(data) {
+                pager.page = Number(data.currentPage ?? data.page ?? 1) || 1;
+                pager.lastPage = Number(data.lastPage ?? 1) || 1;
+                pager.perPage = Number(data.perPage ?? 20) || 20;
+                pager.total = Number(data.total ?? 0) || 0;
+                setInfo(pager.total);
+                pagination(containerId, pager.page, pager.lastPage, p => load(p));
+                return pager;
+            }
+        };
+        return pager;
+    }
+
     function wireSelection() {
         document.querySelectorAll('#rows .row-check').forEach(box => {
             box.addEventListener('change', () => { syncCheckAll(); updateBulkBar(); });
@@ -232,5 +256,5 @@ window.AdminUI = window.AdminUI || {};
         return `${url}${url.includes('?') ? '&' : '?'}sort_by=${field}&sort_dir=${dir}`;
     }
 
-    Object.assign(UI, { rowNo, table, setInfo, pagination, wireSelection, syncCheckAll, selectedIds, updateBulkBar, bulkDo, sortToggle, openSort, closeSort, renderSort, wireSortDnD, persistSort, addSort });
+    Object.assign(UI, { rowNo, table, setInfo, pagination, createPager, wireSelection, syncCheckAll, selectedIds, updateBulkBar, bulkDo, sortToggle, openSort, closeSort, renderSort, wireSortDnD, persistSort, addSort });
 })(window.AdminUI);

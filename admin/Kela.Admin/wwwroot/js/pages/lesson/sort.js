@@ -8,6 +8,6 @@ window.sortClick = async function () {
         title: subjectId ? L["Js_SortLessonsSubject"] : L["Js_SortLessons"],
         items: (data.data || []).map(l => ({ id: l.id, label: l.title })),
         saveUrl: '/lesson/sort',
-        onSaved: () => loadList(currentPage)
+        onSaved: () => loadList(pager.page)
     });
 };

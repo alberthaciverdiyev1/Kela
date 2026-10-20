@@ -19,7 +19,7 @@
         fd.append('name', document.getElementById('name').value);
 
         const res = await AdminUI.putForm(`/subject/${id}`, fd);
-        if (res.ok) { AdminUI.notify(L["Js_Updated"]); AdminUI.closeModal('modal'); loadList(currentPage); return; }
+        if (res.ok) { AdminUI.notify(L["Js_Updated"]); AdminUI.closeModal('modal'); loadList(pager.page); return; }
 
         errBox.textContent = AdminUI.errText(res);
         errBox.classList.remove('hidden');

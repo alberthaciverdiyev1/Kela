@@ -1,6 +1,6 @@
 // Konversiya tapşırıqları.
 window.JobsPage = (function () {
-    let page = 1;
+    var pager = AdminUI.createPager('jobPagination', reload);
 
     const statusVariant = (status) => {
         switch (status) {
@@ -13,10 +13,11 @@ window.JobsPage = (function () {
     };
 
     async function reload(target) {
-        page = target || page;
-
+        const pageNo = target || pager.page;
         const status = document.getElementById('jobStatus').value;
-        const data = await AdminUI.get(`/node/jobs?page=${page}&perPage=25${status ? `&status=${status}` : ''}`);
+        const data = await AdminUI.get(`/node/jobs?page=${pageNo}&perPage=25${status ? `&status=${status}` : ''}`);
+
+        pager.apply(data);
 
         AdminUI.table('jobRows', (data.data || []).map((job, i) => {
             const percent = Math.round((job.progress || 0) * 100);
@@ -27,7 +28,7 @@ window.JobsPage = (function () {
             const canRequeue = ['failed', 'cancelled'].includes(job.status);
 
             return [
-                { html: AdminUI.rowNo(job, i, data.currentPage, data.perPage), cls: 'text-slate-400' },
+                { html: AdminUI.rowNo(job, i, pager.page, pager.perPage), cls: 'text-slate-400' },
                 { html: `<span class="font-medium text-slate-800">${job.videoTitle || '#' + job.videoId}</span>` },
                 { html: `<span class="text-sm font-semibold text-slate-600">${job.resolution}</span>` },
                 { html: AdminUI.badge(job.status, statusVariant(job.status)) + (job.skipped ? ' <span class="text-xs text-slate-400">(atlanıb)</span>' : '') },
@@ -43,7 +44,6 @@ window.JobsPage = (function () {
             ];
         }), 8, { empty: L["Js_AdjustSearch"] });
 
-        AdminUI.pagination('jobPagination', data.currentPage, data.lastPage, (p) => reload(p));
     }
 
     async function requeue(id) {

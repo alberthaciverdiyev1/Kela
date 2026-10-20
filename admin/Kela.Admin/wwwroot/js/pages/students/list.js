@@ -1,5 +1,4 @@
-let currentPage = 1;
-let lastPage = 1;
+var pager = AdminUI.createPager('pagination', loadList);
 let showDeleted = false;
 
 function toggleTrash() {
@@ -24,16 +23,15 @@ function studentActions(s) {
 }
 
 async function loadList(page) {
-    currentPage = page || 1;
+    var pageNo = page || pager.page;
     const search = document.getElementById('search').value;
     const active = document.getElementById('filter_active').value;
     AdminUI.loader(true);
-    const data = await AdminUI.get(AdminUI.addSort(`/students/list?page=${currentPage}&search=${encodeURIComponent(search)}&is_active=${active}&is_deleted=${showDeleted ? 1 : 0}`));
-    lastPage = data.lastPage;
-    AdminUI.setInfo(data.total);
+    const data = await AdminUI.get(AdminUI.addSort(`/students/list?page=${pageNo}&search=${encodeURIComponent(search)}&is_active=${active}&is_deleted=${showDeleted ? 1 : 0}`));
+    pager.apply(data);
 
     AdminUI.table('rows', data.data.map((s, i) => [
-        { html: AdminUI.rowNo(s, i, currentPage, data.perPage), cls: 'text-slate-400' },
+        { html: AdminUI.rowNo(s, i, pager.page, pager.perPage), cls: 'text-slate-400' },
         { html: s.fullName, cls: 'font-medium text-slate-800' },
         { html: s.email, cls: 'text-slate-500' },
         { html: s.phone ?? '-', cls: 'text-slate-500' },
@@ -42,28 +40,26 @@ async function loadList(page) {
             : AdminUI.statusSwitch(s.isActive, `toggleStatus(${s.id}, ${!s.isActive})`) },
         { html: studentActions(s), cls: 'text-right' }
     ]), 6, { rowIds: data.data.map(s => s.id), selectable: !showDeleted });
-
-    AdminUI.pagination('pagination', currentPage, lastPage, loadList);
     AdminUI.loader(false);
 }
 
 async function restoreRow(id) {
     if (!await AdminUI.confirmRestore()) return;
     const res = await AdminUI.postJson(`/students/${id}/restore`, {});
-    if (res.ok) { AdminUI.notify(L["Js_Restored"]); loadList(currentPage); }
+    if (res.ok) { AdminUI.notify(L["Js_Restored"]); loadList(pager.page); }
     else AdminUI.error(AdminUI.errText(res));
 }
 
 async function toggleStatus(id, isActive) {
     const res = await AdminUI.postJson(`/students/${id}/status`, { isActive });
-    if (res.ok) { AdminUI.notify(L["Js_StatusChanged"]); loadList(currentPage); }
+    if (res.ok) { AdminUI.notify(L["Js_StatusChanged"]); loadList(pager.page); }
     else AdminUI.error();
 }
 
 async function removeItem(id) {
     if (!await AdminUI.confirmDelete(L["Js_ConfirmDeleteStudent"])) return;
     const res = await AdminUI.del(`/students/${id}`);
-    if (res.ok) { AdminUI.notify(L["Js_Deleted"]); loadList(currentPage); }
+    if (res.ok) { AdminUI.notify(L["Js_Deleted"]); loadList(pager.page); }
     else AdminUI.error();
 }
 

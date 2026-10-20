@@ -1,5 +1,5 @@
 // Ödənişlər — planlar, ödəniş qeydi və tarixçə.
-let currentPage = 1;
+var pager = AdminUI.createPager('pagination', loadPayments);
 const PAYMENTS = {};
 
 const fmtDate = value => value ? new Date(value + 'T00:00:00').toLocaleDateString() : '—';
@@ -26,17 +26,17 @@ async function loadSummary() {
 }
 
 async function loadPayments(page) {
-    currentPage = page || 1;
+    const pageNo = page || pager.page;
     const search = document.getElementById('search')?.value ?? '';
     const status = document.getElementById('payment-status')?.value ?? '';
 
     AdminUI.loader(true);
     const data = await AdminUI.get(
-        `/payment/list?page=${currentPage}&perPage=20&status=${encodeURIComponent(status)}&search=${encodeURIComponent(search)}`);
+        `/payment/list?page=${pageNo}&perPage=20&status=${encodeURIComponent(status)}&search=${encodeURIComponent(search)}`);
     AdminUI.loader(false);
 
     for (const row of data.data) PAYMENTS[row.studentId] = row;
-    AdminUI.setInfo(data.total);
+    pager.apply(data);
 
     const rows = data.data.map((x, i) => {
         const meta = STATUS[x.status] ?? STATUS.unpaid;
@@ -47,7 +47,7 @@ async function loadPayments(page) {
         ]);
 
         return [
-            { html: AdminUI.rowNo(x, i, currentPage, data.perPage), cls: 'text-slate-400' },
+            { html: AdminUI.rowNo(x, i, pager.page, pager.perPage), cls: 'text-slate-400' },
             { html: `<strong>${esc(x.fullName)}</strong><div class="mt-0.5 text-xs text-slate-500">${esc(x.email)}</div>` },
             { html: fmtDate(x.joinedOn) },
             { html: fmtDate(x.nextDueOn) },
@@ -59,7 +59,6 @@ async function loadPayments(page) {
     });
 
     AdminUI.table('payment-rows', rows, 8, {});
-    AdminUI.pagination('pagination', currentPage, data.lastPage, loadPayments);
 }
 
 // Filtr paneli dəyişdikcə avtomatik yenilə.
@@ -126,7 +125,7 @@ document.getElementById('plan-form').addEventListener('submit', async e => {
 
     AdminUI.closeModal('planModal');
     AdminUI.notify(L["Js_Saved"]);
-    await Promise.all([loadPayments(currentPage), loadSummary()]);
+    await Promise.all([loadPayments(pager.page), loadSummary()]);
 });
 
 document.getElementById('default-plan-form').addEventListener('submit', async e => {
@@ -167,7 +166,7 @@ window.recordPayment = async function (studentId) {
     if (!res.ok) { AdminUI.error(res.data?.message || L["Js_ErrorOccured"]); return; }
 
     AdminUI.notify('Ödəniş qeyd edildi');
-    await Promise.all([loadPayments(currentPage), loadSummary()]);
+    await Promise.all([loadPayments(pager.page), loadSummary()]);
 };
 
 loadSummary();

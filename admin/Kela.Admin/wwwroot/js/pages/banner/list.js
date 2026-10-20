@@ -1,5 +1,4 @@
-let currentPage = 1;
-let lastPage = 1;
+var pager = AdminUI.createPager('pagination', loadList);
 let showDeleted = false;
 
 // Admin hər banneri idarə edir; teacher yalnız öz yaratdığını.
@@ -27,22 +26,21 @@ function toggleTrash() {
 }
 
 async function restoreRow(id) {
-    await AdminUI.restoreItem('/banner/bulk', id, () => loadList(currentPage));
+    await AdminUI.restoreItem('/banner/bulk', id, () => loadList(pager.page));
 }
 
 async function loadList(page) {
-    currentPage = page || 1;
+    var pageNo = page || pager.page;
     const search = document.getElementById('search').value;
     AdminUI.loader(true);
-    const data = await AdminUI.get(AdminUI.addSort(`/banner/list?page=${currentPage}&search=${encodeURIComponent(search)}&is_deleted=${showDeleted ? 1 : 0}`));
-    lastPage = data.lastPage;
+    const data = await AdminUI.get(AdminUI.addSort(`/banner/list?page=${pageNo}&search=${encodeURIComponent(search)}&is_deleted=${showDeleted ? 1 : 0}`));
+    pager.apply(data);
 
     const total = document.getElementById('stat_total');
     if (total) total.textContent = data.total;
-    AdminUI.setInfo(data.total);
 
     AdminUI.table('rows', data.data.map((b, i) => [
-        { html: AdminUI.rowNo(b, i, currentPage, data.perPage), cls: 'text-slate-400' },
+        { html: AdminUI.rowNo(b, i, pager.page, pager.perPage), cls: 'text-slate-400' },
         { html: b.image
             ? `<img src="${b.image}" class="h-10 w-16 rounded-lg border border-slate-200 object-cover" />`
             : '<span class="text-slate-400">—</span>' },
@@ -57,8 +55,6 @@ async function loadList(page) {
             : `<span class="text-sm text-slate-400">${L["Banner_Always"]}</span>` },
         { html: showDeleted ? AdminUI.restoreButton(b.id) : (canEdit(b) ? AdminUI.actions(b.id) : ''), cls: 'text-right' }
     ]), 6, { rowIds: data.data.map(b => b.id), selectable: !showDeleted, selectableIds: data.data.filter(canEdit).map(b => b.id) });
-
-    AdminUI.pagination('pagination', currentPage, lastPage, loadList);
     AdminUI.loader(false);
 }
 
@@ -71,14 +67,14 @@ async function setStatus(id, isActive) {
     if (d.activeUntil) fd.append('active_until', String(d.activeUntil).slice(0, 10));
 
     const res = await AdminUI.putForm(`/banner/${id}`, fd);
-    if (res.ok) { AdminUI.notify(L["Js_StatusChanged"]); loadList(currentPage); }
+    if (res.ok) { AdminUI.notify(L["Js_StatusChanged"]); loadList(pager.page); }
     else AdminUI.error(AdminUI.errText(res));
 }
 
 async function removeItem(id) {
     if (!await AdminUI.confirmDelete(L["Js_ConfirmDeleteBanner"])) return;
     const res = await AdminUI.del(`/banner/${id}`);
-    if (res.ok) { AdminUI.notify(L["Js_Deleted"]); loadList(currentPage); }
+    if (res.ok) { AdminUI.notify(L["Js_Deleted"]); loadList(pager.page); }
     else AdminUI.error();
 }
 

@@ -23,7 +23,7 @@
         if (!id) return; // create.js
 
         const res = await AdminUI.putForm(`/group/${id}`, window.buildGroupForm());
-        if (res.ok) { AdminUI.notify(L["Js_Updated"]); AdminUI.closeModal('modal'); loadList(currentPage); return; }
+        if (res.ok) { AdminUI.notify(L["Js_Updated"]); AdminUI.closeModal('modal'); loadList(pager.page); return; }
 
         errBox.textContent = AdminUI.errText(res);
         errBox.classList.remove('hidden');
