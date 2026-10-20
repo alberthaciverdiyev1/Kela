@@ -5,6 +5,15 @@ const TEMPLATES = [];
 
 const fmtDate = value => value ? new Date(value + 'T00:00:00').toLocaleDateString() : '—';
 const fmtMoney = value => value == null ? '—' : Number(value).toFixed(2);
+// Normalda daha tünd, hover-də açıq çalar.
+const ROW_TONE = {
+    current:  'bg-emerald-100 hover:bg-emerald-50',
+    upcoming: 'bg-amber-100 hover:bg-amber-50',
+    overdue:  'bg-red-100 hover:bg-red-50',
+    unpaid:   'bg-rose-100 hover:bg-rose-50',
+    _default: 'bg-slate-100 hover:bg-slate-50'
+};
+
 const STATUS = {
     upcoming: { label: 'Yaxınlaşır', tone: 'warning' },
     overdue:  { label: 'Gecikib',    tone: 'danger' },
@@ -74,6 +83,13 @@ async function loadPayments(page) {
     });
 
     AdminUI.table('payment-rows', rows, 8, {});
+
+    // Sətir rəngi statusa görə: ödənilib → yaşıl, yaxınlaşır → sarı, gecikib/ödenməyib → qırmızı.
+    document.querySelectorAll('#payment-rows tr').forEach((tr, i) => {
+        const status = data.data[i]?.status;
+        if (!status) return;
+        tr.classList.add(...(ROW_TONE[status] || ROW_TONE._default).split(' '));
+    });
 }
 
 // Filtr paneli dəyişdikcə avtomatik yenilə.

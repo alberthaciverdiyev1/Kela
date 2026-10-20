@@ -3,6 +3,7 @@
 @source "../../Views";
 @source "../../Areas";
 @source "../../Pages";
+@source "../../wwwroot/js";
 @source "../../node_modules/flowbite";
 
 @theme {
