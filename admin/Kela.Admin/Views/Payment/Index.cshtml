@@ -60,7 +60,17 @@
 
 @{
     var planBody = await Html.PartialAsync("_PlanModalFields");
+    var recordBody = await Html.PartialAsync("_RecordPaymentFields");
 }
+
+<partial name="Ui/_Modal" model="@(new ModalModel
+{
+    Id = "recordModal",
+    Title = "Ödəniş qeyd et",
+    WidthClass = "max-w-lg",
+    ShowError = false,
+    Body = recordBody
+})" />
 
 <partial name="Ui/_Modal" model="@(new ModalModel
 {

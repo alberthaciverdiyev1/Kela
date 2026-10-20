@@ -17,5 +17,6 @@ public sealed partial class AppApi
     public Task<SubjectDto> SubjectAsync(long subjectId) => _api.GetAsync<SubjectDto>($"/api/student/subjects/{subjectId}");
     public Task<List<LessonDto>> LessonsAsync(long subjectId) => _api.GetAsync<List<LessonDto>>($"/api/student/subjects/{subjectId}/lessons");
     public Task<LessonDto> LessonAsync(long lessonId) => _api.GetAsync<LessonDto>($"/api/student/lessons/{lessonId}");
+    public Task<StudentPaymentOverviewDto> PaymentsAsync() => _api.GetAsync<StudentPaymentOverviewDto>("/api/student/payments");
     public Task<List<ContentItemDto>> ContentsAsync(long lessonId) => _api.GetAsync<List<ContentItemDto>>($"/api/student/lessons/{lessonId}/contents");
 }

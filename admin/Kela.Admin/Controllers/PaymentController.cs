@@ -28,6 +28,14 @@ public sealed class PaymentController(IStudentPaymentService payments, IStudentM
     public async Task<IActionResult> Summary(CancellationToken ct)
         => Json(await payments.GetSummaryAsync(ct));
 
+    [HttpDelete("payments/{id:long}")]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> DeletePayment(long id, CancellationToken ct)
+    {
+        await payments.DeletePaymentAsync(id, ct);
+        return Json(new { ok = true });
+    }
+
     // --- Plan şablonları ---
 
     [HttpGet("templates")]
@@ -75,6 +83,7 @@ public sealed class PaymentController(IStudentPaymentService payments, IStudentM
     {
         var student = await students.GetAsync(id, ct);
         ViewData["Title"] = student.FullName;
+        ViewData["Scripts"] = new[] { "~/js/pages/payment/history.js" };
         ViewData["Student"] = student;
         ViewData["History"] = await payments.HistoryAsync(id, ct);
         return View();

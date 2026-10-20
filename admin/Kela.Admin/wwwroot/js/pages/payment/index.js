@@ -200,13 +200,31 @@ document.getElementById('plan-form').addEventListener('submit', async e => {
     await Promise.all([loadPayments(pager.page), loadSummary()]);
 });
 
-window.recordPayment = async function (studentId) {
+window.recordPayment = function (studentId) {
     const row = PAYMENTS[studentId];
     if (!row || row.amount == null) return;
 
+    document.getElementById('record-student-id').value = studentId;
+    document.getElementById('record-summary').textContent =
+        `${row.fullName} — ${fmtMoney(row.amount)} ${row.currency}`;
+    document.getElementById('record-paid-on').value = today();
+    document.getElementById('record-amount').value = row.amount;
+    document.getElementById('record-note').value = '';
+
+    AdminUI.openModal('recordModal');
+};
+
+document.getElementById('record-payment-form').addEventListener('submit', async e => {
+    e.preventDefault();
+
+    const studentId = +document.getElementById('record-student-id').value;
+    const paidOn = document.getElementById('record-paid-on').value;
+    const amount = +document.getElementById('record-amount').value;
+    const note = document.getElementById('record-note').value;
+
     const answer = await AdminUI.swal({
         title: 'Ödəniş qeyd edilsin?',
-        text: `${fmtMoney(row.amount)} ${row.currency} — bu gün üçün ödəniş alınacaq.`,
+        text: `${fmtMoney(amount)} — ${paidOn}`,
         icon: 'question',
         showCancelButton: true,
         confirmButtonText: 'Bəli, qeyd et',
@@ -214,12 +232,13 @@ window.recordPayment = async function (studentId) {
     });
     if (!answer.isConfirmed) return;
 
-    const res = await AdminUI.postJson('/payment/record', { studentId, paidOn: today() });
+    const res = await AdminUI.postJson('/payment/record', { studentId, paidOn, amount, note });
     if (!res.ok) { AdminUI.error(res.data?.message || L["Js_ErrorOccured"]); return; }
 
+    AdminUI.closeModal('recordModal');
     AdminUI.notify('Ödəniş qeyd edildi');
     await Promise.all([loadPayments(pager.page), loadSummary()]);
-};
+});
 
 loadSummary();
 loadTemplateOptions();

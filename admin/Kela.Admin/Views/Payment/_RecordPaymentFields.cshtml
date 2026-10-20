@@ -1,0 +1,16 @@
+<form id="record-payment-form" class="space-y-4 p-6">
+    <input type="hidden" id="record-student-id" />
+    <p id="record-summary" class="rounded-xl bg-surface-secondary px-3.5 py-2.5 text-sm font-medium text-slate-600"></p>
+    <div class="grid gap-4 sm:grid-cols-2">
+        <partial name="Ui/_Input" model="@(new InputModel { NativeRequired = true, Name = "record_paid_on", Id = "record-paid-on", Label = "Ödəniş tarixi", Type = "date", Required = true })" />
+        <partial name="Ui/_Input" model="@(new InputModel { NativeRequired = true, Name = "record_amount", Id = "record-amount", Label = "Məbləğ", Type = "number", Required = true })" />
+    </div>
+    <div>
+        <label for="record-note" class="mb-1 block text-sm font-semibold text-slate-600">Qeyd</label>
+        <textarea id="record-note" maxlength="500" rows="2" class="admin-field h-auto py-2.5"></textarea>
+    </div>
+    <div class="flex justify-end gap-3 pt-1">
+        <button type="button" class="admin-button-secondary" onclick="AdminUI.closeModal('recordModal')">@L["Common_Cancel"]</button>
+        <button type="submit" class="admin-button-primary">@L["Common_Save"]</button>
+    </div>
+</form>

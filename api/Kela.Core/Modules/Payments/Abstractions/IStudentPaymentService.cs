@@ -20,4 +20,10 @@ public interface IStudentPaymentService
     Task SavePlanAsync(SavePaymentPlanRequest request, CancellationToken ct = default);
     Task RecordPaymentAsync(RecordPaymentRequest request, CancellationToken ct = default);
     Task<IReadOnlyList<StudentPaymentHistory>> HistoryAsync(long studentId, CancellationToken ct = default);
+
+    /// <summary>Şagird tətbiqi üçün cari plan və ödəniş tarixçəsi.</summary>
+    Task<StudentPaymentOverviewResponse> GetStudentOverviewAsync(long studentId, CancellationToken ct = default);
+
+    /// <summary>Ödəniş qeydini silir və planın vade tarixini yenidən hesablayır.</summary>
+    Task DeletePaymentAsync(long paymentId, CancellationToken ct = default);
 }

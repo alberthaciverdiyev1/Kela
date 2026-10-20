@@ -11,6 +11,8 @@ using Kela.Core.Modules.Notification.Requests;
 using Kela.Core.Modules.Notification.Responses;
 using Kela.Core.Modules.Quiz.Responses;
 using Kela.Core.Modules.Notification.Services;
+using Kela.Core.Modules.Payments.Abstractions;
+using Kela.Core.Modules.Payments.Responses;
 using Kela.Core.Modules.StudentApp.Services;
 using Kela.Core.Modules.StudentApp.Responses;
 using Kela.Core.Modules.Subject.Responses;
@@ -22,7 +24,7 @@ namespace Kela.Api.Modules.StudentApp.Controllers;
 
 [Authorize(Policy = AuthPolicies.Student)]
 [Route("api/[controller]")]
-public sealed class StudentController(IStudentAppService service, INotificationService notifications, IStringLocalizer<SharedResource> L) : ApiControllerBase
+public sealed class StudentController(IStudentAppService service, INotificationService notifications, IStudentPaymentService payments, IStringLocalizer<SharedResource> L) : ApiControllerBase
 {
     private long StudentId => long.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
 
@@ -82,6 +84,10 @@ public sealed class StudentController(IStudentAppService service, INotificationS
     [HttpGet("lessons/{lessonId:long}/quizzes")]
     public async Task<ActionResult<ApiResponse<IReadOnlyList<QuizResponse>>>> LessonQuizzes(long lessonId, CancellationToken ct)
         => Success(await service.ListLessonQuizzesAsync(StudentId, lessonId, ct));
+
+    [HttpGet("payments")]
+    public async Task<ActionResult<ApiResponse<StudentPaymentOverviewResponse>>> Payments(CancellationToken ct)
+        => Success(await payments.GetStudentOverviewAsync(StudentId, ct));
 
     [HttpGet("notifications")]
     public async Task<ActionResult<ApiResponse<PagedResponse<NotificationResponse>>>> Notifications(

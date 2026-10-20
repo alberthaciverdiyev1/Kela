@@ -151,6 +151,60 @@ public sealed class StudentPaymentService(AppDbContext db) : Abstractions.IStude
             .ToList();
     }
 
+    public async Task<StudentPaymentOverviewResponse> GetStudentOverviewAsync(long studentId, CancellationToken ct = default)
+    {
+        var plan = await db.Set<StudentPaymentPlan>().AsNoTracking()
+            .FirstOrDefaultAsync(x => x.StudentId == studentId, ct);
+        var history = await HistoryAsync(studentId, ct);
+        var today = DateOnly.FromDateTime(DateTime.Today);
+
+        var status = plan is null ? "unpaid"
+            : plan.NextDueOn < today ? "overdue"
+            : plan.NextDueOn <= today.AddDays(7) ? "upcoming"
+            : "current";
+
+        return new StudentPaymentOverviewResponse(
+            plan?.Amount, plan?.Currency, plan?.Frequency, plan?.IntervalDays,
+            plan?.JoinedOn, plan?.NextDueOn, plan?.LastPaidOn, plan?.Note, status, history);
+    }
+
+    public async Task DeletePaymentAsync(long paymentId, CancellationToken ct = default)
+    {
+        var payment = await db.Set<StudentPayment>().FirstOrDefaultAsync(x => x.Id == paymentId, ct)
+            ?? throw new KeyNotFoundException("Ödəniş tapılmadı.");
+
+        payment.DeletedAt = DateTimeOffset.UtcNow;
+
+        var plan = await db.Set<StudentPaymentPlan>().FirstOrDefaultAsync(x => x.StudentId == payment.StudentId, ct);
+        if (plan is not null)
+        {
+            var remaining = await db.Set<StudentPayment>()
+                .AsNoTracking()
+                .Where(x => x.StudentId == payment.StudentId && x.Id != payment.Id)
+                .OrderByDescending(x => x.PaidOn)
+                .ThenByDescending(x => x.Id)
+                .ToListAsync(ct);
+
+            if (remaining.Count > 0)
+            {
+                plan.LastPaidOn = remaining[0].PaidOn;
+                plan.NextDueOn = AddPeriod(remaining[0].PaidOn, plan.Frequency, plan.IntervalDays);
+            }
+            else
+            {
+                plan.LastPaidOn = null;
+                plan.NextDueOn = AddPeriod(plan.JoinedOn, plan.Frequency, plan.IntervalDays);
+            }
+        }
+
+        await db.SaveChangesAsync(ct);
+    }
+
+    private static DateOnly AddPeriod(DateOnly from, string frequency, int? interval)
+        => frequency == "custom" && interval is > 0
+            ? from.AddDays(interval.Value)
+            : from.AddMonths(1);
+
     private static DateOnly NextDue(DateOnly due, DateOnly paidOn, string frequency, int? interval)
     {
         // Növbəti ödəniş hələ gələcəkdədirsə (ilk ödəniş/prepayment) onu dəyişmirik.

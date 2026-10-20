@@ -8,3 +8,8 @@ public sealed record PaymentSummaryResponse(int Upcoming, int Overdue, int Unpai
 public sealed record PaymentPlanTemplateResponse(
     long Id, string Name, decimal Amount, string Currency, string Frequency, int? IntervalDays, string? Note);
 
+
+public sealed record StudentPaymentOverviewResponse(
+    decimal? Amount, string? Currency, string? Frequency, int? IntervalDays,
+    DateOnly? JoinedOn, DateOnly? NextDueOn, DateOnly? LastPaidOn, string? Note,
+    string Status, IReadOnlyList<StudentPaymentHistory> History);
