@@ -20,10 +20,10 @@ public sealed class RecordPaymentRequest
     public string? Note { get; set; }
 }
 
-public sealed class CreateDefaultPlanRequest
+public sealed class SavePaymentPlanTemplateRequest
 {
-    public DateOnly JoinedOn { get; set; }
-    public DateOnly NextDueOn { get; set; }
+    public long? Id { get; set; }
+    public string Name { get; set; } = string.Empty;
     public decimal Amount { get; set; }
     public string Currency { get; set; } = "AZN";
     public string Frequency { get; set; } = "monthly";

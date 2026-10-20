@@ -1,7 +1,7 @@
 @{
     ViewData["Title"] = "Ödənişlər";
     var headerExtra = new Microsoft.AspNetCore.Html.HtmlString(
-        @"<button type=""button"" class=""admin-button-secondary"" onclick=""openDefaultPlan()"">Standart plan yarat</button>");
+        @"<a href=""/payment/templates"" class=""admin-button-secondary"">Plan şablonları</a>");
     var statusOptions = new List<SelectOption>
     {
         new() { Value = "", Text = "Hamısı" },
@@ -60,7 +60,6 @@
 
 @{
     var planBody = await Html.PartialAsync("_PlanModalFields");
-    var defaultPlanBody = await Html.PartialAsync("_DefaultPlanFields");
 }
 
 <partial name="Ui/_Modal" model="@(new ModalModel
@@ -71,13 +70,4 @@
     WidthClass = "max-w-lg",
     ShowError = false,
     Body = planBody
-})" />
-
-<partial name="Ui/_Modal" model="@(new ModalModel
-{
-    Id = "defaultPlanModal",
-    Title = "Standart plan yarat",
-    WidthClass = "max-w-lg",
-    ShowError = false,
-    Body = defaultPlanBody
 })" />

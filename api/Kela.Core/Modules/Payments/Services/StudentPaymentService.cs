@@ -1,3 +1,4 @@
+using Kela.Core.Common.Pagination;
 using Kela.Core.Common.Responses;
 using Kela.Core.Data;
 using Kela.Core.Modules.Payments.Entities;
@@ -12,8 +13,7 @@ public sealed class StudentPaymentService(AppDbContext db) : Abstractions.IStude
     public async Task<PagedResponse<StudentPaymentRow>> ListAsync(
         string? status, string? search, int page = 1, int perPage = 20, CancellationToken ct = default)
     {
-        page = page < 1 ? 1 : page;
-        perPage = perPage < 1 ? 20 : Math.Min(perPage, 500);
+        (page, perPage) = Paging.Normalize(page, perPage);
 
         var rows = await BuildRowsAsync(search, ct);
 
@@ -23,10 +23,9 @@ public sealed class StudentPaymentService(AppDbContext db) : Abstractions.IStude
         }
 
         var total = rows.Count;
-        var lastPage = (int)Math.Ceiling(total / (double)perPage);
         var data = rows.Skip((page - 1) * perPage).Take(perPage).ToList();
 
-        return new PagedResponse<StudentPaymentRow>(data, page, lastPage, perPage, total);
+        return new PagedResponse<StudentPaymentRow>(data, page, Paging.LastPage(total, perPage), perPage, total);
     }
 
     public async Task<PaymentSummaryResponse> GetSummaryAsync(CancellationToken ct = default)
@@ -40,33 +39,48 @@ public sealed class StudentPaymentService(AppDbContext db) : Abstractions.IStude
             rows.Count(x => x.Status == "current"));
     }
 
-    public async Task<int> CreateDefaultPlansAsync(CreateDefaultPlanRequest request, CancellationToken ct = default)
+    public async Task<IReadOnlyList<PaymentPlanTemplateResponse>> ListTemplatesAsync(CancellationToken ct = default)
+        => await db.Set<PaymentPlanTemplate>().AsNoTracking()
+            .OrderBy(x => x.Name)
+            .Select(x => new PaymentPlanTemplateResponse(x.Id, x.Name, x.Amount, x.Currency, x.Frequency, x.IntervalDays, x.Note))
+            .ToListAsync(ct);
+
+    public async Task SaveTemplateAsync(SavePaymentPlanTemplateRequest request, CancellationToken ct = default)
     {
+        var name = request.Name.Trim();
+        if (name.Length == 0) throw new ArgumentException("Şablon adı tələb olunur.");
+
         ValidateFrequency(request.Frequency, request.IntervalDays);
         if (request.Amount <= 0) throw new ArgumentException("Ödəniş məbləği sıfırdan böyük olmalıdır.");
 
-        // Yalnız aktiv və hələ planı olmayan şagirdlər üçün.
-        var students = await db.Students
-            .Where(s => s.IsActive && !db.Set<StudentPaymentPlan>().Any(p => p.StudentId == s.Id))
-            .ToListAsync(ct);
-
-        foreach (var student in students)
+        PaymentPlanTemplate template;
+        if (request.Id is long id)
         {
-            db.Add(new StudentPaymentPlan
-            {
-                StudentId = student.Id,
-                JoinedOn = request.JoinedOn,
-                NextDueOn = request.NextDueOn,
-                Amount = request.Amount,
-                Currency = PaymentCurrencies.Normalize(request.Currency),
-                Frequency = request.Frequency,
-                IntervalDays = request.Frequency == "custom" ? request.IntervalDays : null,
-                Note = request.Note?.Trim()
-            });
+            template = await db.Set<PaymentPlanTemplate>().FirstOrDefaultAsync(x => x.Id == id, ct)
+                ?? throw new KeyNotFoundException("Şablon tapılmadı.");
+        }
+        else
+        {
+            template = new PaymentPlanTemplate();
+            db.Add(template);
         }
 
+        template.Name = name;
+        template.Amount = request.Amount;
+        template.Currency = PaymentCurrencies.Normalize(request.Currency);
+        template.Frequency = request.Frequency;
+        template.IntervalDays = request.Frequency == "custom" ? request.IntervalDays : null;
+        template.Note = request.Note?.Trim();
         await db.SaveChangesAsync(ct);
-        return students.Count;
+    }
+
+    public async Task DeleteTemplateAsync(long id, CancellationToken ct = default)
+    {
+        var template = await db.Set<PaymentPlanTemplate>().FirstOrDefaultAsync(x => x.Id == id, ct)
+            ?? throw new KeyNotFoundException("Şablon tapılmadı.");
+
+        template.DeletedAt = DateTimeOffset.UtcNow;
+        await db.SaveChangesAsync(ct);
     }
 
     private async Task<List<StudentPaymentRow>> BuildRowsAsync(string? search, CancellationToken ct)

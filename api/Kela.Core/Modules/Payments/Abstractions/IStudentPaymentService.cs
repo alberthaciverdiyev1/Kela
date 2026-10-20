@@ -11,8 +11,12 @@ public interface IStudentPaymentService
     /// <summary>Status üzrə ümumi saylar (statistika kartları üçün).</summary>
     Task<PaymentSummaryResponse> GetSummaryAsync(CancellationToken ct = default);
 
-    /// <summary>Planı olmayan aktiv şagirdlər üçün standart plan yaradır; yaradılan sayı qaytarır.</summary>
-    Task<int> CreateDefaultPlansAsync(CreateDefaultPlanRequest request, CancellationToken ct = default);
+    /// <summary>Hazır plan şablonları — tələbəyə plan təyin edərkən seçilir.</summary>
+    Task<IReadOnlyList<PaymentPlanTemplateResponse>> ListTemplatesAsync(CancellationToken ct = default);
+
+    Task SaveTemplateAsync(SavePaymentPlanTemplateRequest request, CancellationToken ct = default);
+
+    Task DeleteTemplateAsync(long id, CancellationToken ct = default);
     Task SavePlanAsync(SavePaymentPlanRequest request, CancellationToken ct = default);
     Task RecordPaymentAsync(RecordPaymentRequest request, CancellationToken ct = default);
     Task<IReadOnlyList<StudentPaymentHistory>> HistoryAsync(long studentId, CancellationToken ct = default);

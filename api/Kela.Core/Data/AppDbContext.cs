@@ -43,6 +43,8 @@ public sealed class AppDbContext : DbContext
 
     public DbSet<Modules.Auth.Entities.Student> Students => Set<Modules.Auth.Entities.Student>();
 
+    public DbSet<Modules.Payments.Entities.PaymentPlanTemplate> PaymentPlanTemplates => Set<Modules.Payments.Entities.PaymentPlanTemplate>();
+
     public DbSet<Modules.Payments.Entities.StudentPaymentPlan> StudentPaymentPlans => Set<Modules.Payments.Entities.StudentPaymentPlan>();
 
     public DbSet<Modules.Payments.Entities.StudentPayment> StudentPayments => Set<Modules.Payments.Entities.StudentPayment>();

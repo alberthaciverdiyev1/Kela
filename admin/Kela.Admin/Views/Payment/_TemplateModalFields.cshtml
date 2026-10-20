@@ -1,0 +1,27 @@
+@using Kela.Core.Modules.Payments.Entities
+<form id="template-form" class="space-y-4 p-6">
+    <input type="hidden" id="template-id" />
+    <partial name="Ui/_Input" model="@(new InputModel { NativeRequired = true, Name = "template_name", Id = "template-name", Label = "Şablon adı", Required = true })" />
+    <div class="grid gap-4 sm:grid-cols-2">
+        <partial name="Ui/_Input" model="@(new InputModel { NativeRequired = true, Name = "template_amount", Id = "template-amount", Label = "Məbləğ", Type = "number", Required = true })" />
+        <partial name="Ui/_Select" model="@(new SelectModel {
+            Name = "template_currency", Id = "template-currency", Label = "Valyuta",
+            Options = Enum.GetNames<PaymentCurrency>().Select(c => new SelectOption { Value = c, Text = c }).ToList()
+        })" />
+        <partial name="Ui/_Select" model="@(new SelectModel {
+            Name = "template_frequency", Id = "template-frequency", Label = "Period",
+            Options = new List<SelectOption> { new() { Value = "monthly", Text = "Aylıq" }, new() { Value = "custom", Text = "Xüsusi gün sayı" } }
+        })" />
+        <div id="template-interval-wrap" class="hidden">
+            <partial name="Ui/_Input" model="@(new InputModel { Name = "template_interval", Id = "template-interval", Label = "Neçə gündən bir", Type = "number", Value = "30" })" />
+        </div>
+    </div>
+    <div>
+        <label for="template-note" class="mb-1 block text-sm font-semibold text-slate-600">Qeyd</label>
+        <textarea id="template-note" maxlength="500" rows="2" class="admin-field h-auto py-2.5"></textarea>
+    </div>
+    <div class="flex justify-end gap-3 pt-1">
+        <button type="button" class="admin-button-secondary" onclick="AdminUI.closeModal('templateModal')">@L["Common_Cancel"]</button>
+        <button type="submit" class="admin-button-primary">@L["Common_Save"]</button>
+    </div>
+</form>
