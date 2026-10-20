@@ -48,6 +48,10 @@
         <SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'maccatalyst'">17.0</SupportedOSPlatformVersion>
         <SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'android'">24.0</SupportedOSPlatformVersion>
         <SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'windows'">10.0.17763.0</SupportedOSPlatformVersion>
+
+        <!-- Dəvət linkləri üçün App Links host-u: build zamanı -p:DeepLinkHost=... ilə dəyişdirilə bilər. -->
+        <DeepLinkHost Condition="'$(DeepLinkHost)' == ''">app.kela.az</DeepLinkHost>
+        <AndroidManifestPlaceholders>deepLinkHost=$(DeepLinkHost)</AndroidManifestPlaceholders>
         <TargetPlatformMinVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'windows'">10.0.17763.0</TargetPlatformMinVersion>
     </PropertyGroup>
 

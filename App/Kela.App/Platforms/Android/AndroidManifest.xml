@@ -1,7 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
     <application android:allowBackup="true" android:icon="@mipmap/appicon" android:roundIcon="@mipmap/appicon_round"
-                 android:supportsRtl="true" android:usesCleartextTraffic="true"></application>
+                 android:supportsRtl="true" android:usesCleartextTraffic="true">
+        <activity android:name=".MainActivity" android:exported="true" android:launchMode="singleTop">
+            <!-- https://<deepLinkHost>/join/{token} — App Links (assetlinks.json tələb olunur) -->
+            <intent-filter android:autoVerify="true">
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:scheme="https" android:host="${deepLinkHost}" android:pathPrefix="/join" />
+            </intent-filter>
+            <!-- kela://join/{token} — App Links təsdiqi olmadan işləyən ehtiyat variant -->
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:scheme="kela" android:host="join" />
+            </intent-filter>
+        </activity>
+    </application>
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.INTERNET" />
 </manifest>

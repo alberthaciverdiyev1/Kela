@@ -38,6 +38,14 @@ public partial class MainLayout
             : "page-transition";
 
     private string? _inviteToken;
+    private DotNetObjectReference<MainLayout>? _navigationRef;
+
+    /// <summary>Native deep link-dən çağırılır (Android App Links).</summary>
+    [JSInvokable]
+    public void Navigate(string path)
+    {
+        if (!string.IsNullOrWhiteSpace(path) && path.StartsWith('/')) Nav.NavigateTo(path);
+    }
 
     /// <summary>/join/{token} marşrutundan dəvət tokenini çıxarır (login ekranı üçün).</summary>
     private void UpdateInviteToken()
@@ -208,6 +216,17 @@ public partial class MainLayout
         {
             /* JS hələ hazır deyil */
         }
+
+        // Android dəvət linki (App Links) → Blazor naviqasiyası.
+        try
+        {
+            _navigationRef = DotNetObjectReference.Create(this);
+            await JS.InvokeVoidAsync("kelaNative.registerNavigation", _navigationRef);
+        }
+        catch
+        {
+            /* brauzer hostunda native körpü yoxdur */
+        }
     }
 
     /// <summary>
@@ -223,6 +242,7 @@ public partial class MainLayout
 
     public void Dispose()
     {
+        _navigationRef?.Dispose();
         Auth.Changed -= OnAuthChanged;
         Lang.Changed -= OnLangChanged;
         Nav.LocationChanged -= OnLocationChanged;

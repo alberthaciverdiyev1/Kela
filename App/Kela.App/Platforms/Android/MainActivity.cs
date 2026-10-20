@@ -1,4 +1,5 @@
 using Android.App;
+using Android.Content;
 using Android.Content.PM;
 using Android.OS;
 using Android.Views;
@@ -12,9 +13,14 @@ namespace Kela.App;
                            ConfigChanges.ScreenLayout | ConfigChanges.SmallestScreenSize | ConfigChanges.Density)]
 public class MainActivity : MauiAppCompatActivity
 {
+    private string? _pendingDeepLink;
+    private int _deepLinkAttempts;
+
     protected override void OnCreate(Bundle? savedInstanceState)
     {
         base.OnCreate(savedInstanceState);
+
+        HandleDeepLink(Intent);
 
         // Screenshot və ekran yazılışını bloklayır — WebView-da (lms-guard.js) mümkün deyil.
         Window?.SetFlags(WindowManagerFlags.Secure, WindowManagerFlags.Secure);
@@ -35,6 +41,72 @@ public class MainActivity : MauiAppCompatActivity
         // WebView-da geri tuşu default olaraq aktiviti bağlayır; bu callback onu
         // Blazor naviqasiya yığınına bağlayır (OnBackPressed API 33-də deprecated-dir).
         OnBackPressedDispatcher.AddCallback(this, new BackPressCallback(this));
+    }
+
+    /// <summary>https://host/join/{token} və ya kela://join/{token} linkini tətbiq daxilində açır.</summary>
+    private void HandleDeepLink(Intent? intent)
+    {
+        var data = intent?.Data;
+        if (data is null) return;
+
+        string? path = data.Scheme == "kela"
+            ? $"/{data.Host}{data.Path}"
+            : data.Scheme == "https" ? data.Path : null;
+
+        if (path is null || !path.StartsWith("/join/", StringComparison.OrdinalIgnoreCase)) return;
+
+        _pendingDeepLink = path;
+        _deepLinkAttempts = 0;
+        TryNavigateDeepLink();
+    }
+
+    protected override void OnNewIntent(Intent? intent)
+    {
+        base.OnNewIntent(intent);
+        HandleDeepLink(intent);
+    }
+
+    private void TryNavigateDeepLink()
+    {
+        if (_pendingDeepLink is not { } path) return;
+
+        var webView = FindWebView();
+        if (webView is null)
+        {
+            ScheduleDeepLinkRetry();
+            return;
+        }
+
+        // JS körpüsü Blazor hazır olanda qeydiyyatdan keçir; hazır deyilsə təkrar yoxlayırıq.
+        var jsonPath = System.Text.Json.JsonSerializer.Serialize(path);
+        webView.EvaluateJavascript(
+            $"typeof window.kelaNavigate === 'function' ? (window.kelaNavigate({jsonPath}), 'true') : 'false'",
+            new DeepLinkResultCallback(this));
+    }
+
+    private void ScheduleDeepLinkRetry()
+    {
+        if (_pendingDeepLink is null || _deepLinkAttempts++ >= 20)
+        {
+            _pendingDeepLink = null;
+            return;
+        }
+
+        new Handler(Looper.MainLooper!).PostDelayed(new Java.Lang.Runnable(TryNavigateDeepLink), 500);
+    }
+
+    private sealed class DeepLinkResultCallback(MainActivity activity) : Java.Lang.Object, Android.Webkit.IValueCallback
+    {
+        public void OnReceiveValue(Java.Lang.Object? value)
+        {
+            if (value?.ToString()?.Trim('"') == "true")
+            {
+                activity._pendingDeepLink = null;
+                return;
+            }
+
+            activity.ScheduleDeepLinkRetry();
+        }
     }
 
     private Android.Webkit.WebView? FindWebView() => Find(Window?.DecorView);

@@ -27,7 +27,13 @@
     if (depth > 0) depth--;
   });
 
+  // Native deep link → Blazor NavigationManager (MainLayout-də [JSInvokable] Navigate).
   window.kelaNative = {
+    registerNavigation: function (ref) {
+      window.kelaNavigate = function (path) {
+        return ref.invokeMethodAsync('Navigate', path);
+      };
+    },
     canGoBack: function () {
       return depth > 0;
     },
