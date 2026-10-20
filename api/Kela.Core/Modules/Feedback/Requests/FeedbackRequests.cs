@@ -2,6 +2,8 @@ using Kela.Core.Modules.Feedback.Entities;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
+using Kela.Core.Common.Requests;
+
 namespace Kela.Core.Modules.Feedback.Requests;
 
 public class CreateFeedbackRequest
@@ -31,12 +33,8 @@ public class AddFeedbackMessageRequest
     public string SenderName { get; set; } = string.Empty;
 }
 
-public class FeedbackListRequest
+public class FeedbackListRequest : ListRequestBase
 {
-    public int Page { get; set; } = 1;
-
-    public int PerPage { get; set; } = 20;
-
     /// <summary>Yalnız oxunmamış mesajı olan söhbətlər.</summary>
     [FromQuery(Name = "only_unread")]
     public bool OnlyUnread { get; set; }

@@ -1,3 +1,4 @@
+using Kela.Core.Common.Pagination;
 using Kela.Core.Common.Responses;
 using Kela.Core.Common.Storage;
 using Kela.Core.Data;
@@ -75,24 +76,14 @@ public sealed class FeedbackService(AppDbContext db, IFileStorage storage) : IFe
 
     public async Task<PagedResponse<FeedbackThreadResponse>> ListAsync(FeedbackListRequest request, CancellationToken ct = default)
     {
-        var page = request.Page < 1 ? 1 : request.Page;
-        var perPage = request.PerPage < 1 ? 20 : Math.Min(request.PerPage, 100);
-
         var query = db.Feedbacks.AsNoTracking();
         if (request.UserId is long userId) query = query.Where(x => x.UserId == userId);
         if (request.OnlyUnread) query = query.Where(x => x.Messages.Any(m => m.SenderRole == FeedbackRoles.User && !m.IsRead));
 
-        var total = await query.CountAsync(ct);
-        var items = await query
+        return await query
             .Include(x => x.Messages.OrderBy(m => m.CreatedAt))
             .OrderByDescending(x => x.LastMessageAt)
-            .Skip((page - 1) * perPage)
-            .Take(perPage)
-            .ToListAsync(ct);
-
-        var data = items.Select(ToResponse).ToList();
-        var lastPage = (int)Math.Ceiling(total / (double)perPage);
-        return new PagedResponse<FeedbackThreadResponse>(data, page, lastPage, perPage, total);
+            .ToPagedAsync(request, ToResponse, ct, maxPerPage: 100);
     }
 
     public Task<long?> OwnerIdAsync(long id, CancellationToken ct = default) =>

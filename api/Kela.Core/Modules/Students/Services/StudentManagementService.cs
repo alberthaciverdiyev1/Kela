@@ -1,6 +1,7 @@
 using Kela.Core.Common.Sorting;
 using System.Security.Cryptography;
 using Kela.Core.Common.Bulk;
+using Kela.Core.Common.Pagination;
 using Kela.Core.Common.Responses;
 using Kela.Core.Data;
 using Kela.Core.Modules.Students.Requests;
@@ -14,21 +15,9 @@ using Student = Kela.Core.Modules.Auth.Entities.Student;
 public sealed class StudentManagementService(AppDbContext db) : Abstractions.IStudentManagementService
 {
     public async Task<PagedResponse<StudentListItemResponse>> ListAsync(StudentListRequest request, CancellationToken ct = default)
-    {
-        var page = request.Page < 1 ? 1 : request.Page;
-        var perPage = request.PerPage < 1 ? 20 : Math.Min(request.PerPage, 500);
-
-        var query = Query(request);
-        var total = await query.CountAsync(ct);
-        var items = await query
+        => await Query(request)
             .ApplyListSort(request, x => x.FullName)
-            .Skip((page - 1) * perPage)
-            .Take(perPage)
-            .ToListAsync(ct);
-
-        return new PagedResponse<StudentListItemResponse>(
-            items.Select(ToResponse).ToList(), page, LastPage(total, perPage), perPage, total);
-    }
+            .ToPagedAsync(request, ToResponse, ct);
 
     public async Task<StudentListItemResponse> GetAsync(long id, CancellationToken ct = default)
         => ToResponse(await db.Students.IgnoreQueryFilters(new[] { "SoftDelete" }).AsNoTracking().FirstOrDefaultAsync(x => x.Id == id, ct)
@@ -180,7 +169,6 @@ public sealed class StudentManagementService(AppDbContext db) : Abstractions.ISt
         return query;
     }
 
-    private static int LastPage(int total, int perPage) => (int)Math.Ceiling(total / (double)(perPage < 1 ? 20 : perPage));
 
     private static StudentListItemResponse ToResponse(Student s) =>
         new(s.Id, s.FullName, s.Email, s.Phone, s.IsActive, s.CreatedAt);

@@ -1,4 +1,5 @@
 using Kela.Core.Common.Sorting;
+using Kela.Core.Common.Pagination;
 using Kela.Core.Common.Responses;
 using Kela.Core.Common.Storage;
 using Kela.Core.Common.Bulk;
@@ -26,8 +27,7 @@ public sealed class GroupService(AppDbContext db, IFileStorage storage, ITenantF
 
     public async Task<PagedResponse<GroupResponse>> ListAsync(GroupListRequest request, CancellationToken ct = default)
     {
-        var page = request.Page < 1 ? 1 : request.Page;
-        var perPage = request.PerPage < 1 ? 20 : Math.Min(request.PerPage, 500);
+        var (page, perPage) = Paging.Normalize(request);
 
         var query = db.Groups.AsNoTracking();
 
@@ -63,9 +63,7 @@ public sealed class GroupService(AppDbContext db, IFileStorage storage, ITenantF
             .ToDictionaryAsync(x => x.GroupId, x => x.Count, ct);
 
         var data = items.Select(x => ToResponse(x, pending.GetValueOrDefault(x.Id))).ToList();
-        var lastPage = (int)Math.Ceiling(total / (double)perPage);
-
-        return new PagedResponse<GroupResponse>(data, page, lastPage, perPage, total);
+        return new PagedResponse<GroupResponse>(data, page, Paging.LastPage(total, perPage), perPage, total);
     }
 
     public async Task<GroupResponse> GetAsync(long id, long? ownerId = null, CancellationToken ct = default)

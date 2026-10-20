@@ -1,6 +1,7 @@
 using Kela.Core.Modules.User.Entities;
 using Kela.Core.Common.Localization;
 using Kela.Core.Common.Sorting;
+using Kela.Core.Common.Pagination;
 using Kela.Core.Common.Responses;
 using Kela.Core.Data;
 using Kela.Core.Modules.User.Requests;
@@ -16,8 +17,6 @@ public sealed class UserService(AppDbContext db, IStringLocalizer<SharedResource
 {
     public async Task<PagedResponse<UserResponse>> ListAsync(UserListRequest request, CancellationToken ct = default)
     {
-        var page = request.Page < 1 ? 1 : request.Page;
-        var perPage = request.PerPage < 1 ? 20 : Math.Min(request.PerPage, 500);
 
         // Superadmin qlobal hesabdır — istifadəçi siyahısında göstərilmir.
         var query = db.Users.AsNoTracking().Where(x => x.Type != UserTypes.SuperAdmin);
@@ -41,17 +40,9 @@ public sealed class UserService(AppDbContext db, IStringLocalizer<SharedResource
                 (x.Surname != null && EF.Functions.ILike(x.Surname, $"%{search}%")));
         }
 
-        var total = await query.CountAsync(ct);
-        var items = await query
+        return await query
             .ApplyListSort(request)
-            .Skip((page - 1) * perPage)
-            .Take(perPage)
-            .ToListAsync(ct);
-
-        var data = items.Select(ToResponse).ToList();
-        var lastPage = (int)Math.Ceiling(total / (double)perPage);
-
-        return new PagedResponse<UserResponse>(data, page, lastPage, perPage, total);
+        .ToPagedAsync(request, ToResponse, ct);
     }
 
     public async Task<UserResponse> GetAsync(long id, CancellationToken ct = default)

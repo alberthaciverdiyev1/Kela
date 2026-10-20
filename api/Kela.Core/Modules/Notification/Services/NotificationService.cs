@@ -1,6 +1,7 @@
 using Kela.Core.Common.Requests;
 using Kela.Core.Common.Sorting;
 using Kela.Core.Common.Push;
+using Kela.Core.Common.Pagination;
 using Kela.Core.Common.Responses;
 using Kela.Core.Common.Storage;
 using Kela.Core.Data;
@@ -64,8 +65,6 @@ public sealed class NotificationService(
     public async Task<PagedResponse<NotificationResponse>> ListAsync(
         NotificationListRequest request, CancellationToken ct = default)
     {
-        var (page, perPage) = Normalize(request);
-
         var query = db.Notifications.AsNoTracking();
 
         if (request.IsDeleted == 1)
@@ -79,7 +78,7 @@ public sealed class NotificationService(
             query = query.Where(x => EF.Functions.ILike(x.Title, $"%{search}%"));
         }
 
-        return await PageAsync(query, request, page, perPage, ct);
+        return await PageAsync(query, request, ct);
     }
 
     public async Task DeleteAsync(long id, CancellationToken ct = default)
@@ -101,12 +100,10 @@ public sealed class NotificationService(
     public async Task<PagedResponse<NotificationResponse>> ListForStudentAsync(
         long studentId, NotificationListRequest request, CancellationToken ct = default)
     {
-        var (page, perPage) = Normalize(request);
-
         var query = db.Notifications.AsNoTracking()
             .Where(n => n.All || db.NotificationStudents.Any(ns => ns.NotificationId == n.Id && ns.StudentId == studentId));
 
-        return await PageAsync(query, request, page, perPage, ct);
+        return await PageAsync(query, request, ct);
     }
 
     public async Task SaveTokenAsync(long studentId, SaveNotificationTokenRequest request, CancellationToken ct = default)
@@ -172,23 +169,10 @@ public sealed class NotificationService(
     }
 
     private async Task<PagedResponse<NotificationResponse>> PageAsync(
-        IQueryable<Notification> query, ListRequestBase request, int page, int perPage, CancellationToken ct)
-    {
-        var total = await query.CountAsync(ct);
-        var items = await query
+        IQueryable<Notification> query, ListRequestBase request, CancellationToken ct)
+        => await query
             .ApplyListSort(request, x => x.Title)
-            .Skip((page - 1) * perPage)
-            .Take(perPage)
-            .ToListAsync(ct);
-
-        var data = items.Select(ToResponse).ToList();
-        var lastPage = (int)Math.Ceiling(total / (double)perPage);
-
-        return new PagedResponse<NotificationResponse>(data, page, lastPage, perPage, total);
-    }
-
-    private static (int page, int perPage) Normalize(NotificationListRequest request) =>
-        (request.Page < 1 ? 1 : request.Page, request.PerPage < 1 ? 20 : Math.Min(request.PerPage, 500));
+            .ToPagedAsync(request, ToResponse, ct);
 
     private NotificationResponse ToResponse(Notification n) =>
         new(n.Id, n.Title, n.Body, storage.GetUrl(n.Image), n.All, n.CreatedAt);

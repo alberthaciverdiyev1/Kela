@@ -1,5 +1,6 @@
 using System.Text.Json;
 using Kela.Core.Modules.Media.Entities;
+using Kela.Core.Common.Pagination;
 using Kela.Core.Common.Responses;
 using Kela.Core.Common.Exceptions;
 using Kela.Core.Common.Storage;
@@ -31,8 +32,7 @@ public sealed class LessonContentService(
     public async Task<PagedResponse<LessonContentResponse>> ListAsync(
         LessonContentListRequest request, CancellationToken ct = default)
     {
-        var page = request.Page < 1 ? 1 : request.Page;
-        var perPage = request.PerPage < 1 ? 50 : Math.Min(request.PerPage, 500);
+        var (page, perPage) = Paging.Normalize(request, defaultPerPage: 50);
 
         var query = db.LessonContents.AsNoTracking();
 
@@ -93,9 +93,7 @@ public sealed class LessonContentService(
         }
 
         var data = items.Select(ToResponse).ToList();
-        var lastPage = (int)Math.Ceiling(total / (double)perPage);
-
-        return new PagedResponse<LessonContentResponse>(data, page, lastPage, perPage, total);
+        return new PagedResponse<LessonContentResponse>(data, page, Paging.LastPage(total, perPage), perPage, total);
     }
 
     private static int EffectiveSort(LessonContent content, long lessonId) =>

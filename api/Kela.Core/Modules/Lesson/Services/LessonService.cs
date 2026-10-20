@@ -1,4 +1,5 @@
 using System.Text.Json;
+using Kela.Core.Common.Pagination;
 using Kela.Core.Common.Responses;
 using Kela.Core.Common.Storage;
 using Kela.Core.Common.Bulk;
@@ -21,8 +22,6 @@ public sealed class LessonService(AppDbContext db, IFileStorage storage, ITenant
 
     public async Task<PagedResponse<LessonResponse>> ListAsync(LessonListRequest request, CancellationToken ct = default)
     {
-        var page = request.Page < 1 ? 1 : request.Page;
-        var perPage = request.PerPage < 1 ? 20 : Math.Min(request.PerPage, 500);
 
         var query = db.Lessons.AsNoTracking();
 
@@ -53,17 +52,9 @@ public sealed class LessonService(AppDbContext db, IFileStorage storage, ITenant
             query = query.Where(x => EF.Functions.ILike(x.Title, $"%{search}%"));
         }
 
-        var total = await query.CountAsync(ct);
-        var items = await query
+        return await query
             .ApplyListSort(request, x => x.Title, x => x.SortOrder)
-            .Skip((page - 1) * perPage)
-            .Take(perPage)
-            .ToListAsync(ct);
-
-        var data = items.Select(ToResponse).ToList();
-        var lastPage = (int)Math.Ceiling(total / (double)perPage);
-
-        return new PagedResponse<LessonResponse>(data, page, lastPage, perPage, total);
+        .ToPagedAsync(request, ToResponse, ct);
     }
 
     public async Task<LessonResponse> GetAsync(long id, long? ownerId = null, CancellationToken ct = default)

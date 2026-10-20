@@ -1,16 +1,14 @@
+using Kela.Core.Common.Requests;
+
 using Microsoft.AspNetCore.Mvc;
 
 namespace Kela.Core.Modules.Nodes.Requests;
 
-public class NodeListRequest
+public class NodeListRequest : ListRequestBase
 {
     public string? Search { get; set; }
 
     public string? Status { get; set; }
-
-    public int Page { get; set; } = 1;
-
-    public int PerPage { get; set; } = 50;
 }
 
 public class CreateRegistrationCodeRequest
@@ -22,7 +20,7 @@ public class CreateRegistrationCodeRequest
     public int ExpiresHours { get; set; } = 24;
 }
 
-public class VideoJobListRequest
+public class VideoJobListRequest : ListRequestBase
 {
     public string? Status { get; set; }
 
@@ -31,8 +29,4 @@ public class VideoJobListRequest
 
     [FromQuery(Name = "node_id")]
     public long? NodeId { get; set; }
-
-    public int Page { get; set; } = 1;
-
-    public int PerPage { get; set; } = 50;
 }

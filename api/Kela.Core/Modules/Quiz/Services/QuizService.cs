@@ -1,3 +1,4 @@
+using Kela.Core.Common.Pagination;
 using Kela.Core.Common.Responses;
 using Kela.Core.Common.Bulk;
 using Kela.Core.Common.Exceptions;
@@ -18,8 +19,6 @@ public sealed class QuizService(AppDbContext db, IFileStorage storage) : IQuizSe
 {
     public async Task<PagedResponse<QuizResponse>> ListAsync(QuizListRequest request, CancellationToken ct = default)
     {
-        var page = request.Page < 1 ? 1 : request.Page;
-        var perPage = request.PerPage < 1 ? 20 : Math.Min(request.PerPage, 500);
 
         var query = db.Quizzes.AsNoTracking();
 
@@ -49,18 +48,10 @@ public sealed class QuizService(AppDbContext db, IFileStorage storage) : IQuizSe
             query = query.Where(x => EF.Functions.ILike(x.Title, term));
         }
 
-        var total = await query.CountAsync(ct);
-        var items = await query
+        return await query
             .Include(x => x.Questions).Include(x => x.Lesson)
             .ApplyListSort(request, x => x.Title, x => x.SortOrder)
-            .Skip((page - 1) * perPage)
-            .Take(perPage)
-            .ToListAsync(ct);
-
-        var data = items.Select(ToResponse).ToList();
-        var lastPage = (int)Math.Ceiling(total / (double)perPage);
-
-        return new PagedResponse<QuizResponse>(data, page, lastPage, perPage, total);
+        .ToPagedAsync(request, ToResponse, ct);
     }
 
     public async Task<QuizResponse> GetAsync(long id, long? ownerId = null, CancellationToken ct = default)

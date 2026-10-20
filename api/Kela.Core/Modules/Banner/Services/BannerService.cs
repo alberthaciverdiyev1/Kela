@@ -1,5 +1,6 @@
 using Kela.Core.Common.Exceptions;
 using Kela.Core.Common.Sorting;
+using Kela.Core.Common.Pagination;
 using Kela.Core.Common.Responses;
 using Kela.Core.Common.Storage;
 using Kela.Core.Common.Bulk;
@@ -20,8 +21,7 @@ public sealed class BannerService(AppDbContext db, IFileStorage storage, ITenant
 
     public async Task<PagedResponse<BannerResponse>> ListAsync(BannerListRequest request, CancellationToken ct = default)
     {
-        var page = request.Page < 1 ? 1 : request.Page;
-        var perPage = request.PerPage < 1 ? 20 : Math.Min(request.PerPage, 500);
+        var (page, perPage) = Paging.Normalize(request);
 
         var query = db.Banners.AsNoTracking();
 
@@ -52,9 +52,7 @@ public sealed class BannerService(AppDbContext db, IFileStorage storage, ITenant
         var now = DateTimeOffset.UtcNow;
         var ownerNames = await OwnerNameMapAsync(items.Select(x => x.UserId), ct);
         var data = items.Select(x => ToResponse(x, now, ownerNames.GetValueOrDefault(x.UserId ?? 0))).ToList();
-        var lastPage = (int)Math.Ceiling(total / (double)perPage);
-
-        return new PagedResponse<BannerResponse>(data, page, lastPage, perPage, total);
+        return new PagedResponse<BannerResponse>(data, page, Paging.LastPage(total, perPage), perPage, total);
     }
 
     public async Task<BannerResponse> GetAsync(long id, CancellationToken ct = default)

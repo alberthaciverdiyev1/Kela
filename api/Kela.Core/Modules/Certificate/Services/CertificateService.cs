@@ -1,5 +1,6 @@
 using Kela.Core.Common.Sorting;
 using Kela.Core.Common.Bulk;
+using Kela.Core.Common.Pagination;
 using Kela.Core.Common.Responses;
 using Kela.Core.Common.Storage;
 using Kela.Core.Data;
@@ -19,8 +20,6 @@ public sealed class CertificateService(AppDbContext db, IFileStorage storage, IT
 
     public async Task<PagedResponse<CertificateResponse>> ListAsync(CertificateListRequest request, CancellationToken ct = default)
     {
-        var page = request.Page < 1 ? 1 : request.Page;
-        var perPage = request.PerPage < 1 ? 20 : Math.Min(request.PerPage, 500);
 
         var query = db.Certificates.AsNoTracking();
 
@@ -35,17 +34,9 @@ public sealed class CertificateService(AppDbContext db, IFileStorage storage, IT
             query = query.Where(x => EF.Functions.ILike(x.Title, $"%{search}%"));
         }
 
-        var total = await query.CountAsync(ct);
-        var items = await query
+        return await query
             .ApplyListSort(request, x => x.Title)
-            .Skip((page - 1) * perPage)
-            .Take(perPage)
-            .ToListAsync(ct);
-
-        var data = items.Select(ToResponse).ToList();
-        var lastPage = (int)Math.Ceiling(total / (double)perPage);
-
-        return new PagedResponse<CertificateResponse>(data, page, lastPage, perPage, total);
+        .ToPagedAsync(request, ToResponse, ct);
     }
 
     public async Task<CertificateResponse> GetAsync(long id, CancellationToken ct = default)

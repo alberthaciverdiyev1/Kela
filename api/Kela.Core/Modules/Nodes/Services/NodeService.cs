@@ -1,5 +1,6 @@
 using System.Security.Cryptography;
 using Kela.Core.Common.MultiTenancy;
+using Kela.Core.Common.Pagination;
 using Kela.Core.Common.Responses;
 using Kela.Core.Data;
 using Kela.Core.Modules.Nodes.Abstractions;
@@ -177,9 +178,6 @@ public sealed class NodeService(
 
     public async Task<PagedResponse<WorkerNodeResponse>> ListAsync(NodeListRequest request, CancellationToken ct = default)
     {
-        var page = request.Page < 1 ? 1 : request.Page;
-        var perPage = request.PerPage is < 1 or > 500 ? 50 : request.PerPage;
-
         var query = db.WorkerNodes.AsNoTracking();
 
         if (!string.IsNullOrWhiteSpace(request.Status))
@@ -193,15 +191,9 @@ public sealed class NodeService(
             query = query.Where(x => EF.Functions.ILike(x.Name, term));
         }
 
-        var total = await query.CountAsync(ct);
-        var items = await query.OrderByDescending(x => x.LastSeenAt ?? x.RegisteredAt)
-            .Skip((page - 1) * perPage).Take(perPage)
-            .ToListAsync(ct);
-
-        var data = items.Select(ToResponse).ToList();
-        var lastPage = (int)Math.Ceiling(total / (double)perPage);
-
-        return new PagedResponse<WorkerNodeResponse>(data, page, lastPage, perPage, total);
+        return await query
+            .OrderByDescending(x => x.LastSeenAt ?? x.RegisteredAt)
+            .ToPagedAsync(request, ToResponse, ct, defaultPerPage: 50);
     }
 
     public async Task<WorkerNodeResponse> GetAsync(long id, CancellationToken ct = default)
@@ -340,8 +332,7 @@ public sealed class NodeService(
     public async Task<PagedResponse<VideoJobResponse>> ListJobsAsync(
         VideoJobListRequest request, CancellationToken ct = default)
     {
-        var page = request.Page < 1 ? 1 : request.Page;
-        var perPage = request.PerPage is < 1 or > 500 ? 50 : request.PerPage;
+        var (page, perPage) = Paging.Normalize(request, defaultPerPage: 50);
 
         var query = db.VideoJobs.AsNoTracking();
 
@@ -388,9 +379,7 @@ public sealed class NodeService(
                 x.CreatedAt))
             .ToListAsync(ct);
 
-        var lastPage = (int)Math.Ceiling(total / (double)perPage);
-
-        return new PagedResponse<VideoJobResponse>(items, page, lastPage, perPage, total);
+        return new PagedResponse<VideoJobResponse>(items, page, Paging.LastPage(total, perPage), perPage, total);
     }
 
     public async Task RequeueJobAsync(long jobId, CancellationToken ct = default)
