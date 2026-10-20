@@ -139,6 +139,10 @@ window.AdminUI = window.AdminUI || {};
             select.insertBefore(placeholder, select.firstChild);
         }
 
+        if (multiple && !select.dataset.placeholder) {
+            select.dataset.placeholder = L["Common_ChooseOne"] || '';
+        }
+
         const wrap = document.createElement('div');
         wrap.className = 'admin-select';
         wrap.dataset.for = select.id;
