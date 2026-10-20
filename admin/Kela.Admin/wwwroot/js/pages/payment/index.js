@@ -1,6 +1,7 @@
 // Ödənişlər — planlar, ödəniş qeydi və tarixçə.
 var pager = AdminUI.createPager('pagination', loadPayments);
 const PAYMENTS = {};
+const TEMPLATES = [];
 
 const fmtDate = value => value ? new Date(value + 'T00:00:00').toLocaleDateString() : '—';
 const fmtMoney = value => value == null ? '—' : Number(value).toFixed(2);
@@ -15,6 +16,20 @@ function esc(v) {
     const el = document.createElement('span');
     el.textContent = v ?? '';
     return el.innerHTML;
+}
+
+async function loadTemplateOptions() {
+    try {
+        const items = await AdminUI.get('/payment/templates/list');
+        TEMPLATES.length = 0;
+        items.forEach(t => TEMPLATES.push(t));
+
+        const sel = document.getElementById('plan-template');
+        if (sel) {
+            sel.innerHTML = '<option value="">— Əl ilə daxil et —</option>' +
+                items.map(t => `<option value="${t.id}">${esc(t.name)}</option>`).join('');
+        }
+    } catch { /* şablon yoxdursa əl ilə */ }
 }
 
 async function loadSummary() {
@@ -64,20 +79,43 @@ async function loadPayments(page) {
 // Filtr paneli dəyişdikcə avtomatik yenilə.
 window.loadList = () => loadPayments(1);
 
-function today() { return new Date().toISOString().slice(0, 10); }
+// Lokal tarixi yyyy-MM-dd kimi qaytarır (UTC sürüşməsi olmadan).
+function toDateInput(d) {
+    return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+}
+
+function today() { return toDateInput(new Date()); }
 function nextMonth() {
     const d = new Date();
     d.setMonth(d.getMonth() + 1);
-    return d.toISOString().slice(0, 10);
+    return toDateInput(d);
+}
+
+// Növbəti ödəniş tarixi perioda görə avtomatik hesablanır.
+function recalcDueDate() {
+    const joined = document.getElementById('plan-joined').value;
+    if (!joined) return;
+
+    const d = new Date(joined + 'T00:00:00');
+    if (document.getElementById('plan-frequency').value === 'custom') {
+        const days = Number(document.getElementById('plan-interval').value || 0);
+        if (days > 0) d.setDate(d.getDate() + days);
+    } else {
+        d.setMonth(d.getMonth() + 1);
+    }
+
+    document.getElementById('plan-due').value = toDateInput(d);
 }
 
 window.openPlan = function (studentId) {
     const row = PAYMENTS[studentId];
     if (!row) return;
 
+    const template = document.getElementById('plan-template');
+    if (template) { template.value = ''; template.dispatchEvent(new Event('change')); }
+
     document.getElementById('plan-student-id').value = studentId;
     document.getElementById('plan-joined').value = row.joinedOn || today();
-    document.getElementById('plan-due').value = row.nextDueOn || nextMonth();
     document.getElementById('plan-amount').value = row.amount ?? '';
     document.getElementById('plan-currency').value = row.currency || 'AZN';
     document.getElementById('plan-frequency').value = row.frequency || 'monthly';
@@ -85,67 +123,36 @@ window.openPlan = function (studentId) {
     document.getElementById('plan-note').value = row.note || '';
     document.getElementById('interval-wrap').classList.toggle('hidden', row.frequency !== 'custom');
 
+    recalcDueDate();
+    if (row.amount != null && row.nextDueOn) document.getElementById('plan-due').value = row.nextDueOn;
+
+    // İlk ödəniş yalnız planı olmayan (yeni) tələbə üçün təklif olunur.
+    document.getElementById('plan-first-paid-wrap').classList.toggle('hidden', row.amount != null);
+    document.getElementById('plan-first-paid').checked = false;
+
     AdminUI.openModal('planModal');
 };
 
-window.openDefaultPlan = function () {
-    document.getElementById('default-joined').value = today();
-    document.getElementById('default-due').value = nextMonth();
-    document.getElementById('default-amount').value = '';
-    document.getElementById('default-currency').value = 'AZN';
-    document.getElementById('default-frequency').value = 'monthly';
-    document.getElementById('default-interval').value = 30;
-    document.getElementById('default-note').value = '';
-    document.getElementById('default-interval-wrap').classList.add('hidden');
-
-    AdminUI.openModal('defaultPlanModal');
-};
-
-document.getElementById('plan-frequency').addEventListener('change', e =>
-    document.getElementById('interval-wrap').classList.toggle('hidden', e.target.value !== 'custom'));
-
-document.getElementById('default-frequency').addEventListener('change', e =>
-    document.getElementById('default-interval-wrap').classList.toggle('hidden', e.target.value !== 'custom'));
-
-document.getElementById('plan-form').addEventListener('submit', async e => {
-    e.preventDefault();
-    const body = {
-        studentId: +document.getElementById('plan-student-id').value,
-        joinedOn: document.getElementById('plan-joined').value,
-        nextDueOn: document.getElementById('plan-due').value,
-        amount: +document.getElementById('plan-amount').value,
-        currency: document.getElementById('plan-currency').value,
-        frequency: document.getElementById('plan-frequency').value,
-        intervalDays: +document.getElementById('plan-interval').value,
-        note: document.getElementById('plan-note').value
-    };
-
-    const res = await AdminUI.postJson('/payment/plan', body);
-    if (!res.ok) { AdminUI.error(res.data?.message || L["Js_ErrorOccured"]); return; }
-
-    AdminUI.closeModal('planModal');
-    AdminUI.notify(L["Js_Saved"]);
-    await Promise.all([loadPayments(pager.page), loadSummary()]);
+document.getElementById('plan-frequency').addEventListener('change', e => {
+    document.getElementById('interval-wrap').classList.toggle('hidden', e.target.value !== 'custom');
+    recalcDueDate();
 });
 
-document.getElementById('default-plan-form').addEventListener('submit', async e => {
-    e.preventDefault();
-    const body = {
-        joinedOn: document.getElementById('default-joined').value,
-        nextDueOn: document.getElementById('default-due').value,
-        amount: +document.getElementById('default-amount').value,
-        currency: document.getElementById('default-currency').value,
-        frequency: document.getElementById('default-frequency').value,
-        intervalDays: +document.getElementById('default-interval').value,
-        note: document.getElementById('default-note').value
-    };
+document.getElementById('plan-joined').addEventListener('change', recalcDueDate);
+document.getElementById('plan-interval').addEventListener('input', recalcDueDate);
 
-    const res = await AdminUI.postJson('/payment/default-plan', body);
-    if (!res.ok) { AdminUI.error(res.data?.message || L["Js_ErrorOccured"]); return; }
+document.getElementById('plan-template').addEventListener('change', e => {
+    const t = TEMPLATES.find(x => String(x.id) === e.target.value);
+    if (!t) return;
 
-    AdminUI.closeModal('defaultPlanModal');
-    AdminUI.notify(`${res.data.created} şagird üçün standart plan yaradıldı`);
-    await Promise.all([loadPayments(1), loadSummary()]);
+    document.getElementById('plan-amount').value = t.amount;
+    document.getElementById('plan-currency').value = t.currency;
+    document.getElementById('plan-frequency').value = t.frequency;
+    document.getElementById('plan-interval').value = t.intervalDays || 30;
+    document.getElementById('plan-note').value = t.note || '';
+    document.getElementById('interval-wrap').classList.toggle('hidden', t.frequency !== 'custom');
+    document.getElementById('plan-frequency').dispatchEvent(new Event('change'));
+    recalcDueDate();
 });
 
 window.recordPayment = async function (studentId) {
@@ -170,4 +177,5 @@ window.recordPayment = async function (studentId) {
 };
 
 loadSummary();
+loadTemplateOptions();
 loadPayments(1);

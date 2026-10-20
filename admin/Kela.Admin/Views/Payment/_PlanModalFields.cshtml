@@ -22,6 +22,10 @@
         <label for="plan-note" class="mb-1 block text-sm font-semibold text-slate-600">Qeyd</label>
         <textarea id="plan-note" maxlength="500" rows="2" class="admin-field h-auto py-2.5"></textarea>
     </div>
+    <label id="plan-first-paid-wrap" class="flex items-start gap-2.5 rounded-xl bg-primary-light px-3.5 py-3 text-sm font-medium text-primary">
+        <input type="checkbox" id="plan-first-paid" class="mt-0.5 h-4 w-4 rounded border-slate-300 text-primary focus:ring-primary" />
+        <span>İlk ödənişi indi qeyd et (bu gün üçün)</span>
+    </label>
     <div class="flex justify-end gap-3 pt-1">
         <button type="button" class="admin-button-secondary" onclick="AdminUI.closeModal('planModal')">@L["Common_Cancel"]</button>
         <button type="submit" class="admin-button-primary">@L["Common_Save"]</button>

@@ -153,7 +153,10 @@ public sealed class StudentPaymentService(AppDbContext db) : Abstractions.IStude
 
     private static DateOnly NextDue(DateOnly due, DateOnly paidOn, string frequency, int? interval)
     {
-        var next = due > paidOn ? due : paidOn;
+        // Növbəti ödəniş hələ gələcəkdədirsə (ilk ödəniş/prepayment) onu dəyişmirik.
+        if (due > paidOn) return due;
+
+        var next = due;
         if (frequency == "custom")
         {
             do { next = next.AddDays(interval!.Value); } while (next <= paidOn);
