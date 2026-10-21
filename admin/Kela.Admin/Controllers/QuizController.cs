@@ -17,7 +17,7 @@ public sealed class QuizController(
     IQuizService service,
     ILessonService lessons,
     IQuestionService questions,
-    IValidator<QuizUpsertRequest> validator) : Controller
+    IValidator<QuizUpsertRequest> validator) : AdminControllerBase
 {
     [HttpGet]
     public async Task<IActionResult> Index(CancellationToken ct)
@@ -32,8 +32,6 @@ public sealed class QuizController(
             new LessonListRequest { PerPage = 500, UserId = User.IsAdmin() ? null : User.CurrentUserId() }, ct);
         return View();
     }
-
-    private long? OwnerScope => User.IsAdmin() ? null : User.CurrentUserId();
 
     [HttpGet("list")]
     public async Task<IActionResult> List([FromQuery] QuizListRequest request, CancellationToken ct)
@@ -59,7 +57,7 @@ public sealed class QuizController(
         if (!User.IsAdmin()) request.UserId = User.CurrentUserId();
 
         var result = await validator.ValidateAsync(request, ct);
-        if (!result.IsValid) return BadRequest(Errors(result));
+        if (!result.IsValid) return BadRequest(Invalid(result));
 
         return Json(await service.CreateAsync(request, ct));
     }
@@ -69,7 +67,7 @@ public sealed class QuizController(
     public async Task<IActionResult> Update(long id, [FromForm] QuizUpsertRequest request, CancellationToken ct)
     {
         var result = await validator.ValidateAsync(request, ct);
-        if (!result.IsValid) return BadRequest(Errors(result));
+        if (!result.IsValid) return BadRequest(Invalid(result));
 
         return Json(await service.UpdateAsync(id, request, OwnerScope, ct));
     }
@@ -92,13 +90,8 @@ public sealed class QuizController(
 
     [HttpPost("bulk")]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> Bulk([FromBody] BulkRequest request, CancellationToken ct)
-    {
-        // Bərpa yalnız adminin əməliyyatıdır — silinmişləri yalnız o görür.
-        if (request.Action == BulkActions.Restore && !User.IsAdmin()) return Forbid();
-        await service.BulkAsync(request, OwnerScope, ct);
-        return Json(new { ok = true });
-    }
+    public Task<IActionResult> Bulk([FromBody] BulkRequest request, CancellationToken ct)
+        => BulkAsync(request, service.BulkAsync, ct);
 
     // --- Suallar ---
 
@@ -126,11 +119,4 @@ public sealed class QuizController(
         return Json(new { ok = true });
     }
 
-    private static object Errors(FluentValidation.Results.ValidationResult result)
-        => new
-        {
-            errors = result.Errors
-                .GroupBy(e => e.PropertyName)
-                .ToDictionary(g => g.Key, g => g.Select(e => e.ErrorMessage).ToArray())
-        };
 }

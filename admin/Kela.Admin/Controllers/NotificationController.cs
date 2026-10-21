@@ -12,7 +12,7 @@ namespace Kela.Admin.Controllers;
 public sealed class NotificationController(
     INotificationService service,
     IStudentManagementService students,
-    IValidator<CreateNotificationRequest> validator) : Controller
+    IValidator<CreateNotificationRequest> validator) : AdminControllerBase
 {
     [HttpGet]
     public async Task<IActionResult> Index(CancellationToken ct)
@@ -38,7 +38,7 @@ public sealed class NotificationController(
     public async Task<IActionResult> Create([FromForm] CreateNotificationRequest request, CancellationToken ct)
     {
         var result = await validator.ValidateAsync(request, ct);
-        if (!result.IsValid) return BadRequest(Errors(result));
+        if (!result.IsValid) return BadRequest(Invalid(result));
 
         return Json(await service.CreateAsync(request, null, ct));
     }
@@ -51,11 +51,4 @@ public sealed class NotificationController(
         return Json(new { ok = true });
     }
 
-    private static object Errors(FluentValidation.Results.ValidationResult result)
-        => new
-        {
-            errors = result.Errors
-                .GroupBy(e => e.PropertyName)
-                .ToDictionary(g => g.Key, g => g.Select(e => e.ErrorMessage).ToArray())
-        };
 }

@@ -12,7 +12,7 @@ namespace Kela.Admin.Controllers;
 public sealed class AttendanceController(
     IAttendanceService attendance,
     IGroupService groups,
-    IValidator<SaveAttendanceRequest> validator) : Controller
+    IValidator<SaveAttendanceRequest> validator) : AdminControllerBase
 {
     [HttpGet]
     public async Task<IActionResult> Index(CancellationToken ct)
@@ -20,7 +20,7 @@ public sealed class AttendanceController(
         ViewData["Scripts"] = new[] { "~/js/pages/attendance/index.js" };
         // Teacher yalnız öz qruplarını görür; admin/superadmin hamısını.
         ViewData["Groups"] = await groups.ListAsync(
-            new GroupListRequest { PerPage = 500, UserId = User.IsAdmin() ? null : CurrentUserId() }, ct);
+            new GroupListRequest { PerPage = 500, UserId = User.IsAdmin() ? null : User.CurrentUserId() }, ct);
         return View();
     }
 
@@ -52,7 +52,7 @@ public sealed class AttendanceController(
         if (!await CanReadAsync(request.GroupId, ct)) return Forbid();
 
         var result = await validator.ValidateAsync(request, ct);
-        if (!result.IsValid) return BadRequest(Errors(result));
+        if (!result.IsValid) return BadRequest(Invalid(result));
         return Json(await attendance.SaveDayAsync(request, ct));
     }
 
@@ -64,7 +64,7 @@ public sealed class AttendanceController(
         try
         {
             var group = await groups.GetAsync(groupId, ct: ct);
-            return group.UserId == CurrentUserId();
+            return group.UserId == User.CurrentUserId();
         }
         catch (KeyNotFoundException)
         {
@@ -72,13 +72,4 @@ public sealed class AttendanceController(
         }
     }
 
-    private long? CurrentUserId() =>
-        long.TryParse(User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value, out var id) ? id : null;
-
-    private static object Errors(FluentValidation.Results.ValidationResult result)
-        => new
-        {
-            errors = result.Errors.GroupBy(e => e.PropertyName)
-                .ToDictionary(g => g.Key, g => g.Select(e => e.ErrorMessage).ToArray())
-        };
 }

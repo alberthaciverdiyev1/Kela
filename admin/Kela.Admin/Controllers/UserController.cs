@@ -14,7 +14,7 @@ namespace Kela.Admin.Controllers;
 [Route("[controller]")]
 public sealed class UserController(
     IUserService service,
-    IValidator<UserUpsertRequest> validator) : Controller
+    IValidator<UserUpsertRequest> validator) : AdminControllerBase
 {
     [HttpGet]
     public IActionResult Index()
@@ -40,7 +40,7 @@ public sealed class UserController(
     {
         EnsureCanAssignType(request.Type);
         var result = await validator.ValidateAsync(request, ct);
-        if (!result.IsValid) return BadRequest(Errors(result));
+        if (!result.IsValid) return BadRequest(Invalid(result));
 
         return Json(await service.CreateAsync(request, ct));
     }
@@ -51,7 +51,7 @@ public sealed class UserController(
     {
         EnsureCanAssignType(request.Type);
         var result = await validator.ValidateAsync(request, ct);
-        if (!result.IsValid) return BadRequest(Errors(result));
+        if (!result.IsValid) return BadRequest(Invalid(result));
 
         return Json(await service.UpdateAsync(id, request, ct));
     }
@@ -72,11 +72,4 @@ public sealed class UserController(
         }
     }
 
-    private static object Errors(FluentValidation.Results.ValidationResult result)
-        => new
-        {
-            errors = result.Errors
-                .GroupBy(e => e.PropertyName)
-                .ToDictionary(g => g.Key, g => g.Select(e => e.ErrorMessage).ToArray())
-        };
 }

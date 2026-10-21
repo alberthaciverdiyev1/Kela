@@ -26,7 +26,7 @@ public sealed class GroupController(
     ISubjectService subjects,
     IQuizService quizzes,
     IValidator<GroupUpsertRequest> validator,
-    IConfiguration config) : Controller
+    IConfiguration config) : AdminControllerBase
 {
     [HttpGet]
     public async Task<IActionResult> Index(CancellationToken ct)
@@ -60,8 +60,6 @@ public sealed class GroupController(
         ViewData["QuizCount"] = (await service.ListQuizzesAsync(id, owner, ct)).Count;
         return View();
     }
-
-    private long? OwnerScope => User.IsAdmin() ? null : User.CurrentUserId();
 
     /// <summary>Dəvət linkinin əsası: konfiqurasiya, yoxdursa ilk CORS mənbəyi.</summary>
     private string AppBaseUrl
@@ -102,7 +100,7 @@ public sealed class GroupController(
         if (!User.IsAdmin()) request.UserId = User.CurrentUserId();
 
         var result = await validator.ValidateAsync(request, ct);
-        if (!result.IsValid) return BadRequest(Errors(result));
+        if (!result.IsValid) return BadRequest(Invalid(result));
 
         return Json(await service.CreateAsync(request, ct));
     }
@@ -112,7 +110,7 @@ public sealed class GroupController(
     public async Task<IActionResult> Update(long id, [FromForm] GroupUpsertRequest request, CancellationToken ct)
     {
         var result = await validator.ValidateAsync(request, ct);
-        if (!result.IsValid) return BadRequest(Errors(result));
+        if (!result.IsValid) return BadRequest(Invalid(result));
 
         return Json(await service.UpdateAsync(id, request, OwnerScope, ct));
     }
@@ -204,13 +202,8 @@ public sealed class GroupController(
 
     [HttpPost("bulk")]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> Bulk([FromBody] BulkRequest request, CancellationToken ct)
-    {
-        // Bərpa yalnız adminin əməliyyatıdır — silinmişləri yalnız o görür.
-        if (request.Action == BulkActions.Restore && !User.IsAdmin()) return Forbid();
-        await service.BulkAsync(request, OwnerScope, ct);
-        return Json(new { ok = true });
-    }
+    public Task<IActionResult> Bulk([FromBody] BulkRequest request, CancellationToken ct)
+        => BulkAsync(request, service.BulkAsync, ct);
 
     // --- Linklə qoşulma müraciətləri ---
 
@@ -243,11 +236,4 @@ public sealed class GroupController(
     public async Task<IActionResult> SubjectLogs(long id, CancellationToken ct)
         => Json(await service.ListSubjectLogsAsync(id, OwnerScope, ct));
 
-    private static object Errors(FluentValidation.Results.ValidationResult result)
-        => new
-        {
-            errors = result.Errors
-                .GroupBy(e => e.PropertyName)
-                .ToDictionary(g => g.Key, g => g.Select(e => e.ErrorMessage).ToArray())
-        };
 }

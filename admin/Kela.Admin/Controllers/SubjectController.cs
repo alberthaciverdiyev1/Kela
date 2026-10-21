@@ -10,7 +10,7 @@ namespace Kela.Admin.Controllers;
 [Route("[controller]")]
 public sealed class SubjectController(
     ISubjectService service,
-    IValidator<SubjectUpsertRequest> validator) : Controller
+    IValidator<SubjectUpsertRequest> validator) : AdminControllerBase
 {
     [HttpGet]
     public IActionResult Index()
@@ -18,8 +18,6 @@ public sealed class SubjectController(
         ViewData["Scripts"] = new[] { "~/js/pages/subject/list.js", "~/js/pages/subject/create.js", "~/js/pages/subject/update.js" };
         return View();
     }
-
-    private long? OwnerScope => User.IsAdmin() ? null : User.CurrentUserId();
 
     [HttpGet("list")]
     public async Task<IActionResult> List([FromQuery] SubjectListRequest request, CancellationToken ct)
@@ -52,7 +50,7 @@ public sealed class SubjectController(
         if (!User.IsAdmin()) request.UserId = User.CurrentUserId();
 
         var result = await validator.ValidateAsync(request, ct);
-        if (!result.IsValid) return BadRequest(Errors(result));
+        if (!result.IsValid) return BadRequest(Invalid(result));
 
         return Json(await service.CreateAsync(request, ct));
     }
@@ -62,7 +60,7 @@ public sealed class SubjectController(
     public async Task<IActionResult> Update(long id, [FromForm] SubjectUpsertRequest request, CancellationToken ct)
     {
         var result = await validator.ValidateAsync(request, ct);
-        if (!result.IsValid) return BadRequest(Errors(result));
+        if (!result.IsValid) return BadRequest(Invalid(result));
 
         return Json(await service.UpdateAsync(id, request, OwnerScope, ct));
     }
@@ -77,19 +75,7 @@ public sealed class SubjectController(
 
     [HttpPost("bulk")]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> Bulk([FromBody] BulkRequest request, CancellationToken ct)
-    {
-        // Bərpa yalnız adminin əməliyyatıdır — silinmişləri yalnız o görür.
-        if (request.Action == BulkActions.Restore && !User.IsAdmin()) return Forbid();
-        await service.BulkAsync(request, OwnerScope, ct);
-        return Json(new { ok = true });
-    }
+    public Task<IActionResult> Bulk([FromBody] BulkRequest request, CancellationToken ct)
+        => BulkAsync(request, service.BulkAsync, ct);
 
-    private static object Errors(FluentValidation.Results.ValidationResult result)
-        => new
-        {
-            errors = result.Errors
-                .GroupBy(e => e.PropertyName)
-                .ToDictionary(g => g.Key, g => g.Select(e => e.ErrorMessage).ToArray())
-        };
 }
