@@ -11,6 +11,11 @@
         document.getElementById('title').value = data.title;
         document.getElementById('is_active').checked = data.isActive;
         document.getElementById('is_shared').checked = data.isShared === true;
+
+        // Paylaşımı yalnız dərsin sahibi və ya admin dəyişir; digər müəllim
+        // yalnız statusu dəyişə bilər (o da siyahıdaki açardan).
+        const canShare = window.ADMIN && (window.ADMIN.isAdmin || data.userId === window.ADMIN.userId);
+        document.getElementById('is_shared').disabled = !canShare;
         AdminUI.fileSet('image', data.image);
         AdminUI.openModal('modal');
     };

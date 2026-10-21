@@ -69,7 +69,10 @@ AdminUI.listPage({
                     ${lessonThumb(l)}
                     <div>
                         <a href="/lesson-content?lesson_id=${l.id}" class="font-bold text-slate-950 hover:text-primary">${l.title}</a>
-                        <p class="mt-0.5 text-sm text-slate-500">${subjectName} dərsi</p>
+                        <p class="mt-0.5 flex items-center gap-2 text-sm text-slate-500">
+                            <span>${subjectName} dərsi</span>
+                            ${l.isShared ? AdminUI.badge(L["Lesson_Shared"], 'primary') : ''}
+                        </p>
                     </div>
                 </div>`
             },
