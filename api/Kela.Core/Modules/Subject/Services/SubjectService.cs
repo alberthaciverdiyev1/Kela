@@ -12,6 +12,7 @@ namespace Kela.Core.Modules.Subject.Services;
 
 using Subject = Kela.Core.Modules.Subject.Entities.Subject;
 using Kela.Core.Common.Queries;
+using Kela.Core.Common.Authorization;
 
 public sealed class SubjectService(AppDbContext db) : ISubjectService
 {
@@ -43,7 +44,7 @@ public sealed class SubjectService(AppDbContext db) : ISubjectService
             .FirstOrDefaultAsync(x => x.Id == id, ct)
             ?? throw new KeyNotFoundException($"Subject not found: {id}");
 
-        EnsureAccessible(category, ownerId);
+        OwnershipGuard.EnsureReadable(ownerId, category.UserId, category.IsShared, "You do not have access to this subject");
         return ToResponse(category);
     }
 
@@ -71,7 +72,7 @@ public sealed class SubjectService(AppDbContext db) : ISubjectService
             .FirstOrDefaultAsync(x => x.Id == id, ct)
             ?? throw new KeyNotFoundException($"Subject not found: {id}");
 
-        EnsureOwned(category, ownerId);
+        OwnershipGuard.EnsureOwned(ownerId, category.UserId, "You can only modify your own subject");
         await EnsureNameAvailableAsync(request.Name, id, ct);
 
         // Sahiblik yaratma anında qeyd olunur — redaktə onu dəyişmir.
@@ -87,7 +88,7 @@ public sealed class SubjectService(AppDbContext db) : ISubjectService
         var category = await db.Subjects.FirstOrDefaultAsync(x => x.Id == id, ct)
             ?? throw new KeyNotFoundException($"Subject not found: {id}");
 
-        EnsureOwned(category, ownerId);
+        OwnershipGuard.EnsureOwned(ownerId, category.UserId, "You can only modify your own subject");
 
         category.DeletedAt = DateTimeOffset.UtcNow;
         await db.SaveChangesAsync(ct);
@@ -109,15 +110,6 @@ public sealed class SubjectService(AppDbContext db) : ISubjectService
 
     public Task BulkAsync(BulkRequest request, long? ownerId = null, CancellationToken ct = default)
         => db.BulkOwnedAsync<Subject>(request, ownerId, x => x.UserId, "You can only modify your own subjects", ct);
-
-    /// <summary>Oxumaq üçün: öz fənni və ya bütün müəllimlərə paylaşılan fənn.</summary>
-    private static void EnsureAccessible(Subject subject, long? ownerId)
-    {
-        if (ownerId is long id && subject.UserId != id && !subject.IsShared)
-        {
-            throw new ForbiddenException("You do not have access to this subject");
-        }
-    }
 
     /// <summary>Dəyişmək üçün yalnız sahibi olduğu qeyd.</summary>
     private static void EnsureOwned(Subject subject, long? ownerId)

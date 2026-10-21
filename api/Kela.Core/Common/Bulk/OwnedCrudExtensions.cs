@@ -1,6 +1,7 @@
 using System.Linq.Expressions;
 using Kela.Core.Common.Entities;
 using Kela.Core.Common.Exceptions;
+using Kela.Core.Common.Authorization;
 using Kela.Core.Common.Sorting;
 using Kela.Core.Data;
 using Microsoft.EntityFrameworkCore;
@@ -24,6 +25,20 @@ public static class OwnedCrudExtensions
     {
         if (ownerId is long id) await EnsureAllOwnedAsync(db, request.Ids, id, owner, forbiddenMessage, ct);
         await SortHelper.ReorderAsync<T>(db, request, ct);
+    }
+
+    /// <summary>Aktiv/deaktiv statusunu yalnız sahibi (və ya admin) dəyişə bilər.</summary>
+    public static async Task SetActiveAsync<T>(this AppDbContext db, long id, bool isActive, long? ownerId,
+        Expression<Func<T, long?>> owner, string forbiddenMessage, CancellationToken ct = default)
+        where T : BaseEntity, IActivatable
+    {
+        var entity = await db.Set<T>().IgnoreQueryFilters(new[] { "SoftDelete" })
+            .FirstOrDefaultAsync(x => x.Id == id, ct)
+            ?? throw new KeyNotFoundException($"{typeof(T).Name} not found: {id}");
+
+        OwnershipGuard.EnsureOwned(ownerId, owner.Compile()(entity), forbiddenMessage);
+        entity.IsActive = isActive;
+        await db.SaveChangesAsync(ct);
     }
 
     private static async Task EnsureAllOwnedAsync<T>(AppDbContext db, IEnumerable<long> ids, long ownerId,

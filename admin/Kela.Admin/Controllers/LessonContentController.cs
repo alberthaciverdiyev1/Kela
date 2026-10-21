@@ -7,6 +7,7 @@ using Kela.Core.Modules.LessonContent.Abstractions;
 using Kela.Core.Modules.LessonContent.Requests;
 using Microsoft.AspNetCore.Mvc;
 using Kela.Admin.Infrastructure;
+using Kela.Core.Common.Requests;
 
 namespace Kela.Admin.Controllers;
 
@@ -165,6 +166,14 @@ public sealed class LessonContentController(
     public async Task<IActionResult> Sort([FromBody] SortRequest request, CancellationToken ct)
     {
         await service.ReorderAsync(request, OwnerScope, ct);
+        return Json(new { ok = true });
+    }
+
+    [HttpPut("{id:long}/status")]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> SetStatus(long id, [FromBody] SetActiveRequest request, CancellationToken ct)
+    {
+        await service.SetActiveAsync(id, request.IsActive, OwnerScope, ct);
         return Json(new { ok = true });
     }
 

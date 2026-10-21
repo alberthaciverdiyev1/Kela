@@ -19,6 +19,8 @@ public interface ILessonService
 
     Task DeleteAsync(long id, long? ownerId = null, CancellationToken ct = default);
 
+    Task SetActiveAsync(long id, bool isActive, long? ownerId = null, CancellationToken ct = default);
+
     Task BulkAsync(BulkRequest request, long? ownerId = null, CancellationToken ct = default);
 
     Task ReorderAsync(SortRequest request, long? ownerId = null, CancellationToken ct = default);

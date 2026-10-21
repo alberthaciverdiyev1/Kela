@@ -7,7 +7,7 @@ using Video = Kela.Core.Modules.Media.Entities.Video;
 using MediaFile = Kela.Core.Modules.Media.Entities.MediaFile;
 using VoiceRecord = Kela.Core.Modules.Media.Entities.VoiceRecord;
 
-public class LessonContent : BaseEntity, ISortable
+public class LessonContent : BaseEntity, ISortable, IActivatable
 {
     public long LessonId { get; set; }
 

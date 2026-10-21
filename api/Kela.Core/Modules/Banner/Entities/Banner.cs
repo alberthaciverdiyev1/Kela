@@ -2,7 +2,7 @@ using Kela.Core.Common.Entities;
 
 namespace Kela.Core.Modules.Banner.Entities;
 
-public class Banner : BaseEntity
+public class Banner : BaseEntity, IActivatable
 {
     /// <summary>Banneri yaradan istifadəçi. Null — admin tərəfindən yaradılıb.</summary>
     public long? UserId { get; set; }

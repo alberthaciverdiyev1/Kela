@@ -14,6 +14,7 @@ namespace Kela.Core.Modules.Question.Services;
 
 using Question = Kela.Core.Modules.Question.Entities.Question;
 using Kela.Core.Common.Queries;
+using Kela.Core.Common.Authorization;
 
 public sealed class QuestionService(AppDbContext db, IFileStorage storage, ITenantFolder folders) : IQuestionService
 {
@@ -50,7 +51,7 @@ public sealed class QuestionService(AppDbContext db, IFileStorage storage, ITena
             .FirstOrDefaultAsync(x => x.Id == id, ct)
             ?? throw new KeyNotFoundException($"Question not found: {id}");
 
-        EnsureAccessible(question, ownerId);
+        OwnershipGuard.EnsureReadable(ownerId, question.UserId, question.UserId == null, "You do not have access to this question");
         return ToResponse(question);
     }
 
@@ -88,7 +89,7 @@ public sealed class QuestionService(AppDbContext db, IFileStorage storage, ITena
             .FirstOrDefaultAsync(x => x.Id == id, ct)
             ?? throw new KeyNotFoundException($"Question not found: {id}");
 
-        EnsureOwned(question, ownerId);
+        OwnershipGuard.EnsureOwned(ownerId, question.UserId, "You can only modify your own question");
         await EnsureSubjectExistsAsync(request.SubjectId, ct);
         if (ownerId.HasValue) await EnsureSubjectAccessibleAsync(request.SubjectId, ownerId.Value, ct);
 
@@ -114,7 +115,7 @@ public sealed class QuestionService(AppDbContext db, IFileStorage storage, ITena
         var question = await db.Questions.FirstOrDefaultAsync(x => x.Id == id, ct)
             ?? throw new KeyNotFoundException($"Question not found: {id}");
 
-        EnsureOwned(question, ownerId);
+        OwnershipGuard.EnsureOwned(ownerId, question.UserId, "You can only modify your own question");
 
         question.DeletedAt = DateTimeOffset.UtcNow;
         await db.SaveChangesAsync(ct);
@@ -179,27 +180,13 @@ public sealed class QuestionService(AppDbContext db, IFileStorage storage, ITena
     private async Task EnsureSubjectAccessibleAsync(long subjectId, long ownerId, CancellationToken ct)
     {
         var subject = await db.Subjects.AsNoTracking().FirstOrDefaultAsync(x => x.Id == subjectId, ct);
-        if (subject is null || (subject.UserId != ownerId && subject.UserId != null))
+        if (subject is null)
         {
             throw new ForbiddenException("You do not have access to this subject");
         }
+
+        OwnershipGuard.EnsureReadable(ownerId, subject.UserId, subject.UserId == null,
+            "You do not have access to this subject");
     }
 
-    /// <summary>Oxumaq üçün: öz sualı və ya admin tərəfindən yaradılan (sahibsiz) sual.</summary>
-    private static void EnsureAccessible(Question question, long? ownerId)
-    {
-        if (ownerId.HasValue && question.UserId != ownerId && question.UserId != null)
-        {
-            throw new ForbiddenException("You do not have access to this question");
-        }
-    }
-
-    /// <summary>Dəyişmək üçün yalnız sahibi olduğu sual.</summary>
-    private static void EnsureOwned(Question question, long? ownerId)
-    {
-        if (ownerId.HasValue && question.UserId != ownerId)
-        {
-            throw new ForbiddenException("You can only modify your own question");
-        }
-    }
 }

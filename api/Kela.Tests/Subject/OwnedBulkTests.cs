@@ -1,9 +1,14 @@
 using Kela.Core.Common.Bulk;
 using Kela.Core.Common.Exceptions;
 using Kela.Core.Common.Responses;
+using Kela.Core.Modules.Lesson.Abstractions;
+using Kela.Core.Modules.Lesson.Requests;
+using Kela.Core.Modules.Lesson.Responses;
 using Kela.Core.Modules.Subject.Abstractions;
 using Kela.Core.Modules.Subject.Requests;
 using Kela.Core.Modules.Subject.Responses;
+using Kela.Core.Data;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Kela.Tests.Subject;
@@ -47,5 +52,43 @@ public class OwnedBulkTests(ApiFactory factory)
         await BulkAsync(new BulkRequest { Ids = [subject.Id], Action = BulkActions.Restore }, OwnerId);
 
         Assert.Contains((await ListAsync(OwnerId, isDeleted: 0)).Data, x => x.Id == subject.Id);
+    }
+
+    [Fact]
+    public async Task Status_can_only_be_changed_by_the_owner()
+    {
+        var subject = await With<ISubjectService, SubjectResponse>(s =>
+            s.CreateAsync(new SubjectUpsertRequest { Name = $"Status-{Guid.NewGuid():N}", UserId = OwnerId }));
+
+        var lesson = await With<ILessonService, LessonResponse>(l =>
+            l.CreateAsync(new LessonUpsertRequest
+            {
+                SubjectId = subject.Id,
+                Title = $"L-{Guid.NewGuid():N}",
+                IsActive = true,
+                UserId = OwnerId
+            }));
+
+        await Assert.ThrowsAsync<ForbiddenException>(() =>
+            With<ILessonService, bool>(async l =>
+            {
+                await l.SetActiveAsync(lesson.Id, false, OtherTeacherId);
+                return true;
+            }));
+
+        await With<ILessonService, bool>(async l =>
+        {
+            await l.SetActiveAsync(lesson.Id, false, OwnerId);
+            return true;
+        });
+
+        var isActive = await With<AppDbContext, bool?>(async db =>
+        {
+            var lessonRow = await db.Lessons.IgnoreQueryFilters(new[] { "Active" })
+                .FirstOrDefaultAsync(x => x.Id == lesson.Id);
+            return lessonRow?.IsActive;
+        });
+
+        Assert.False(isActive);
     }
 }

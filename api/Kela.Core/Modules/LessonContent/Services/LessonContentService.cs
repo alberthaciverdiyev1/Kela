@@ -20,6 +20,7 @@ using MediaFile = Kela.Core.Modules.Media.Entities.MediaFile;
 using Video = Kela.Core.Modules.Media.Entities.Video;
 using VoiceRecord = Kela.Core.Modules.Media.Entities.VoiceRecord;
 using Kela.Core.Common.Queries;
+using Kela.Core.Common.Authorization;
 
 public sealed class LessonContentService(
     AppDbContext db,
@@ -239,7 +240,7 @@ public sealed class LessonContentService(
             .FirstOrDefaultAsync(x => x.Id == id, ct)
             ?? throw new KeyNotFoundException($"Lesson content not found: {id}");
 
-        EnsureOwned(content, ownerId);
+        OwnershipGuard.EnsureOwned(ownerId, content.UserId, "You can only modify your own material");
 
         switch (request.Type)
         {
@@ -277,7 +278,7 @@ public sealed class LessonContentService(
             .FirstOrDefaultAsync(x => x.Id == id, ct)
             ?? throw new KeyNotFoundException($"Lesson content not found: {id}");
 
-        EnsureOwned(content, ownerId);
+        OwnershipGuard.EnsureOwned(ownerId, content.UserId, "You can only modify your own material");
 
         var additionalLessons = await ResolveAdditionalLessonsAsync(
             request.LessonIds, content.LessonId, content.TenantId, content.UserId, ct);
@@ -310,7 +311,7 @@ public sealed class LessonContentService(
         var content = await db.LessonContents.FirstOrDefaultAsync(x => x.Id == id, ct)
             ?? throw new KeyNotFoundException($"Lesson content not found: {id}");
 
-        EnsureOwned(content, ownerId);
+        OwnershipGuard.EnsureOwned(ownerId, content.UserId, "You can only modify your own material");
 
         content.DeletedAt = DateTimeOffset.UtcNow;
         await db.SaveChangesAsync(ct);
@@ -377,10 +378,8 @@ public sealed class LessonContentService(
             .FirstOrDefaultAsync(ct)
             ?? throw new ArgumentException($"Lesson not found: {lessonId}");
 
-        if (ownerId is long id && lesson.UserId != id && !lesson.IsShared)
-        {
-            throw new ForbiddenException("You do not have access to this lesson");
-        }
+        OwnershipGuard.EnsureReadable(ownerId, lesson.UserId, lesson.IsShared,
+            "You do not have access to this lesson");
     }
 
     /// <summary>Oxumaq üçün: öz materialı və ya paylaşılan fənnin dərsinə bağlı material.</summary>
@@ -393,19 +392,10 @@ public sealed class LessonContentService(
             .Distinct()
             .ToList();
 
-        if (!await db.Lessons.AsNoTracking().AnyAsync(x => lessonIds.Contains(x.Id) && x.Subject!.IsShared, ct))
-        {
-            throw new ForbiddenException("You do not have access to this material");
-        }
-    }
+        var shared = await db.Lessons.AsNoTracking()
+            .AnyAsync(x => lessonIds.Contains(x.Id) && x.Subject!.IsShared, ct);
 
-    /// <summary>Dəyişmək üçün yalnız sahibi olduğu material.</summary>
-    private static void EnsureOwned(LessonContent content, long? ownerId)
-    {
-        if (ownerId.HasValue && content.UserId != ownerId)
-        {
-            throw new ForbiddenException("You can only modify your own material");
-        }
+        OwnershipGuard.EnsureReadable(ownerId, content.UserId, shared, "You do not have access to this material");
     }
 
     private LessonContentResponse ToResponse(LessonContent content)
@@ -503,6 +493,9 @@ public sealed class LessonContentService(
 
         return found.Select(x => x.Id).ToList();
     }
+
+    public Task SetActiveAsync(long id, bool isActive, long? ownerId = null, CancellationToken ct = default)
+        => db.SetActiveAsync<LessonContent>(id, isActive, ownerId, x => x.UserId, "You can only modify your own material", ct);
 
     public Task BulkAsync(BulkRequest request, long? ownerId = null, CancellationToken ct = default)
         => db.BulkOwnedAsync<LessonContent>(request, ownerId, x => x.UserId,

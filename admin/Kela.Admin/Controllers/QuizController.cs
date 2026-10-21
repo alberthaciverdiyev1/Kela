@@ -9,6 +9,7 @@ using Kela.Core.Modules.Quiz.Abstractions;
 using Kela.Core.Modules.Quiz.Requests;
 using Microsoft.AspNetCore.Mvc;
 using Kela.Admin.Infrastructure;
+using Kela.Core.Common.Requests;
 
 namespace Kela.Admin.Controllers;
 
@@ -85,6 +86,14 @@ public sealed class QuizController(
     public async Task<IActionResult> Sort([FromBody] SortRequest request, CancellationToken ct)
     {
         await service.ReorderAsync(request, OwnerScope, ct);
+        return Json(new { ok = true });
+    }
+
+    [HttpPut("{id:long}/status")]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> SetStatus(long id, [FromBody] SetActiveRequest request, CancellationToken ct)
+    {
+        await service.SetActiveAsync(id, request.IsActive, OwnerScope, ct);
         return Json(new { ok = true });
     }
 

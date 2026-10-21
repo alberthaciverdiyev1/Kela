@@ -5,7 +5,7 @@ namespace Kela.Core.Modules.Lesson.Entities;
 
 using Subject = Kela.Core.Modules.Subject.Entities.Subject;
 
-public class Lesson : BaseEntity, ISortable
+public class Lesson : BaseEntity, ISortable, IActivatable
 {
     public long SubjectId { get; set; }
 

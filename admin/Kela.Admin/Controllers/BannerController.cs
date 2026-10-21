@@ -4,6 +4,7 @@ using Kela.Core.Modules.Banner.Abstractions;
 using Kela.Core.Modules.Banner.Requests;
 using Microsoft.AspNetCore.Mvc;
 using Kela.Admin.Infrastructure;
+using Kela.Core.Common.Requests;
 
 namespace Kela.Admin.Controllers;
 
@@ -59,6 +60,14 @@ public sealed class BannerController(
     public async Task<IActionResult> Delete(long id, CancellationToken ct)
     {
         await service.DeleteAsync(id, OwnerScope, ct);
+        return Json(new { ok = true });
+    }
+
+    [HttpPut("{id:long}/status")]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> SetStatus(long id, [FromBody] SetActiveRequest request, CancellationToken ct)
+    {
+        await service.SetActiveAsync(id, request.IsActive, OwnerScope, ct);
         return Json(new { ok = true });
     }
 

@@ -15,6 +15,7 @@ namespace Kela.Core.Modules.Lesson.Services;
 
 using Lesson = Kela.Core.Modules.Lesson.Entities.Lesson;
 using Kela.Core.Common.Queries;
+using Kela.Core.Common.Authorization;
 
 public sealed class LessonService(AppDbContext db, IFileStorage storage, ITenantFolder folders) : ILessonService
 {
@@ -58,7 +59,7 @@ public sealed class LessonService(AppDbContext db, IFileStorage storage, ITenant
             .FirstOrDefaultAsync(x => x.Id == id, ct)
             ?? throw new KeyNotFoundException($"Lesson not found: {id}");
 
-        EnsureAccessible(lesson, ownerId);
+        OwnershipGuard.EnsureReadable(ownerId, lesson.UserId, lesson.Subject?.IsShared == true, "You do not have access to this lesson");
         return ToResponse(lesson);
     }
 
@@ -103,7 +104,7 @@ public sealed class LessonService(AppDbContext db, IFileStorage storage, ITenant
             .FirstOrDefaultAsync(x => x.Id == id, ct)
             ?? throw new KeyNotFoundException($"Lesson not found: {id}");
 
-        EnsureOwned(lesson, ownerId);
+        OwnershipGuard.EnsureOwned(ownerId, lesson.UserId, "You can only modify your own lesson");
         await EnsureSubjectExistsAsync(request.SubjectId, ct);
 
         if (request.RemoveImage)
@@ -132,7 +133,7 @@ public sealed class LessonService(AppDbContext db, IFileStorage storage, ITenant
         var lesson = await db.Lessons.FirstOrDefaultAsync(x => x.Id == id, ct)
             ?? throw new KeyNotFoundException($"Lesson not found: {id}");
 
-        EnsureOwned(lesson, ownerId);
+        OwnershipGuard.EnsureOwned(ownerId, lesson.UserId, "You can only modify your own lesson");
 
         lesson.DeletedAt = DateTimeOffset.UtcNow;
         await db.SaveChangesAsync(ct);
@@ -156,36 +157,21 @@ public sealed class LessonService(AppDbContext db, IFileStorage storage, ITenant
             lesson.IsActive,
             lesson.Settings);
 
+    public Task SetActiveAsync(long id, bool isActive, long? ownerId = null, CancellationToken ct = default)
+        => db.SetActiveAsync<Lesson>(id, isActive, ownerId, x => x.UserId, "You can only modify your own lesson", ct);
+
     public Task BulkAsync(BulkRequest request, long? ownerId = null, CancellationToken ct = default)
         => db.BulkOwnedAsync<Lesson>(request, ownerId, x => x.UserId, "You can only modify your own lessons", ct);
 
     public Task ReorderAsync(SortRequest request, long? ownerId = null, CancellationToken ct = default)
         => db.ReorderOwnedAsync<Lesson>(request, ownerId, x => x.UserId, "You can only modify your own lessons", ct);
 
-    /// <summary>Oxumaq üçün: öz dərsi və ya paylaşılan fənnin dərsi.</summary>
-    private static void EnsureAccessible(Lesson lesson, long? ownerId)
-    {
-        if (ownerId is long id && lesson.UserId != id && lesson.Subject?.IsShared != true)
-        {
-            throw new ForbiddenException("You do not have access to this lesson");
-        }
-    }
-
-    /// <summary>Dəyişmək üçün yalnız sahibi olduğu dərs.</summary>
-    private static void EnsureOwned(Lesson lesson, long? ownerId)
-    {
-        if (ownerId.HasValue && lesson.UserId != ownerId)
-        {
-            throw new ForbiddenException("You can only modify your own lesson");
-        }
-    }
-
     public async Task<LessonSettingsResponse> GetSettingsAsync(long id, long? ownerId = null, CancellationToken ct = default)
     {
         var lesson = await db.Lessons.AsNoTracking().Include(x => x.Subject).FirstOrDefaultAsync(x => x.Id == id, ct)
             ?? throw new KeyNotFoundException($"Lesson not found: {id}");
 
-        EnsureAccessible(lesson, ownerId);
+        OwnershipGuard.EnsureReadable(ownerId, lesson.UserId, lesson.Subject?.IsShared == true, "You do not have access to this lesson");
         return LessonSettings.Parse(lesson.Settings);
     }
 
@@ -194,7 +180,7 @@ public sealed class LessonService(AppDbContext db, IFileStorage storage, ITenant
         var lesson = await db.Lessons.IgnoreQueryFilters(new[] { "SoftDelete" }).FirstOrDefaultAsync(x => x.Id == id, ct)
             ?? throw new KeyNotFoundException($"Lesson not found: {id}");
 
-        EnsureOwned(lesson, ownerId);
+        OwnershipGuard.EnsureOwned(ownerId, lesson.UserId, "You can only modify your own lesson");
         lesson.Settings = LessonSettings.Serialize(request);
         await db.SaveChangesAsync(ct);
         return LessonSettings.Parse(lesson.Settings);

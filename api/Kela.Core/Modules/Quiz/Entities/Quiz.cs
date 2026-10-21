@@ -3,7 +3,7 @@ using Kela.Core.Common.Sorting;
 
 namespace Kela.Core.Modules.Quiz.Entities;
 
-public class Quiz : BaseEntity, ISortable
+public class Quiz : BaseEntity, ISortable, IActivatable
 {
     public long? LessonId { get; set; }
 

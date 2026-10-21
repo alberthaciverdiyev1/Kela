@@ -20,6 +20,7 @@ using GroupSubject = Kela.Core.Modules.Group.Entities.GroupSubject;
 using StudentGroup = Kela.Core.Modules.Group.Entities.StudentGroup;
 using Subject = Kela.Core.Modules.Subject.Entities.Subject;
 using Kela.Core.Common.Queries;
+using Kela.Core.Common.Authorization;
 
 public sealed class GroupService(AppDbContext db, IFileStorage storage, ITenantFolder folders) : IGroupService
 {
@@ -69,7 +70,7 @@ public sealed class GroupService(AppDbContext db, IFileStorage storage, ITenantF
             .FirstOrDefaultAsync(x => x.Id == id, ct)
             ?? throw new KeyNotFoundException($"Group not found: {id}");
 
-        EnsureAccessible(group, ownerId);
+        OwnershipGuard.EnsureReadable(ownerId, group.UserId, group.UserId == null, "You do not have access to this group");
 
         var pending = await db.GroupJoinRequests.AsNoTracking()
             .CountAsync(x => x.GroupId == group.Id && x.Status == "pending", ct);
@@ -106,7 +107,7 @@ public sealed class GroupService(AppDbContext db, IFileStorage storage, ITenantF
             .FirstOrDefaultAsync(x => x.Id == id, ct)
             ?? throw new KeyNotFoundException($"Group not found: {id}");
 
-        EnsureOwned(group, ownerId);
+        OwnershipGuard.EnsureOwned(ownerId, group.UserId, "You can only modify your own group");
 
         if (request.RemoveImage)
         {
@@ -133,7 +134,7 @@ public sealed class GroupService(AppDbContext db, IFileStorage storage, ITenantF
         var group = await db.Groups.FirstOrDefaultAsync(x => x.Id == id, ct)
             ?? throw new KeyNotFoundException($"Group not found: {id}");
 
-        EnsureOwned(group, ownerId);
+        OwnershipGuard.EnsureOwned(ownerId, group.UserId, "You can only modify your own group");
 
         group.DeletedAt = DateTimeOffset.UtcNow;
         await db.SaveChangesAsync(ct);
@@ -394,10 +395,7 @@ public sealed class GroupService(AppDbContext db, IFileStorage storage, ITenantF
         var owner = await db.Groups.AsNoTracking().Where(x => x.Id == groupId)
             .Select(x => (long?)x.UserId).FirstOrDefaultAsync(ct);
 
-        if (owner != ownerId && owner != null)
-        {
-            throw new ForbiddenException("You do not have access to this group");
-        }
+        OwnershipGuard.EnsureReadable(ownerId, owner, owner == null, "You do not have access to this group");
     }
 
     private async Task EnsureGroupOwnedAsync(long groupId, long? ownerId, CancellationToken ct)
@@ -411,26 +409,7 @@ public sealed class GroupService(AppDbContext db, IFileStorage storage, ITenantF
         var owner = await db.Groups.AsNoTracking().Where(x => x.Id == groupId)
             .Select(x => (long?)x.UserId).FirstOrDefaultAsync(ct);
 
-        if (owner != ownerId)
-        {
-            throw new ForbiddenException("You can only modify your own group");
-        }
-    }
-
-    private static void EnsureAccessible(Group group, long? ownerId)
-    {
-        if (ownerId.HasValue && group.UserId != ownerId && group.UserId != null)
-        {
-            throw new ForbiddenException("You do not have access to this group");
-        }
-    }
-
-    private static void EnsureOwned(Group group, long? ownerId)
-    {
-        if (ownerId.HasValue && group.UserId != ownerId)
-        {
-            throw new ForbiddenException("You can only modify your own group");
-        }
+        OwnershipGuard.EnsureOwned(ownerId, owner, "You can only modify your own group");
     }
 
     private async Task EnsureGroupExistsAsync(long groupId, CancellationToken ct)

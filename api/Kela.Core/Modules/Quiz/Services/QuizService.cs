@@ -15,6 +15,7 @@ namespace Kela.Core.Modules.Quiz.Services;
 using Quiz = Kela.Core.Modules.Quiz.Entities.Quiz;
 using QuizQuestion = Kela.Core.Modules.Quiz.Entities.QuizQuestion;
 using Kela.Core.Common.Queries;
+using Kela.Core.Common.Authorization;
 
 public sealed class QuizService(AppDbContext db, IFileStorage storage) : IQuizService
 {
@@ -55,7 +56,7 @@ public sealed class QuizService(AppDbContext db, IFileStorage storage) : IQuizSe
             .FirstOrDefaultAsync(x => x.Id == id, ct)
             ?? throw new KeyNotFoundException($"Quiz not found: {id}");
 
-        EnsureAccessible(quiz, ownerId);
+        OwnershipGuard.EnsureReadable(ownerId, quiz.UserId, quiz.UserId == null, "You do not have access to this quiz");
         return ToResponse(quiz);
     }
 
@@ -92,7 +93,7 @@ public sealed class QuizService(AppDbContext db, IFileStorage storage) : IQuizSe
             .FirstOrDefaultAsync(x => x.Id == id, ct)
             ?? throw new KeyNotFoundException($"Quiz not found: {id}");
 
-        EnsureOwned(quiz, ownerId);
+        OwnershipGuard.EnsureOwned(ownerId, quiz.UserId, "You can only modify your own quiz");
 
         if (request.LessonId.HasValue)
         {
@@ -117,7 +118,7 @@ public sealed class QuizService(AppDbContext db, IFileStorage storage) : IQuizSe
         var quiz = await db.Quizzes.FirstOrDefaultAsync(x => x.Id == id, ct)
             ?? throw new KeyNotFoundException($"Quiz not found: {id}");
 
-        EnsureOwned(quiz, ownerId);
+        OwnershipGuard.EnsureOwned(ownerId, quiz.UserId, "You can only modify your own quiz");
 
         quiz.DeletedAt = DateTimeOffset.UtcNow;
         await db.SaveChangesAsync(ct);
@@ -140,10 +141,8 @@ public sealed class QuizService(AppDbContext db, IFileStorage storage) : IQuizSe
                 ?? throw new ArgumentException($"Question not found: {questionId}");
 
             // Teacher yalnız öz və ya adminin sualını imtahana əlavə edə bilər.
-            if (ownerId.HasValue && question.UserId != ownerId && question.UserId != null)
-            {
-                throw new ForbiddenException($"You do not have access to question {questionId}");
-            }
+            OwnershipGuard.EnsureReadable(ownerId, question.UserId, question.UserId == null,
+                $"You do not have access to question {questionId}");
 
             var existing = await db.QuizQuestions.IgnoreQueryFilters(new[] { "SoftDelete" })
                 .FirstOrDefaultAsync(x => x.QuizId == quizId && x.QuestionId == questionId, ct);
@@ -220,6 +219,9 @@ public sealed class QuizService(AppDbContext db, IFileStorage storage) : IQuizSe
         new(quiz.Id, quiz.LessonId, quiz.Title, quiz.DurationMinutes, quiz.Type, quiz.IsActive, quiz.IsRepeat,
             quiz.SortOrder, quiz.Questions.Count, quiz.Lesson?.Title);
 
+    public Task SetActiveAsync(long id, bool isActive, long? ownerId = null, CancellationToken ct = default)
+        => db.SetActiveAsync<Quiz>(id, isActive, ownerId, x => x.UserId, "You can only modify your own quiz", ct);
+
     public Task BulkAsync(BulkRequest request, long? ownerId = null, CancellationToken ct = default)
         => db.BulkOwnedAsync<Quiz>(request, ownerId, x => x.UserId, "You can only modify your own quizzes", ct);
 
@@ -242,10 +244,7 @@ public sealed class QuizService(AppDbContext db, IFileStorage storage) : IQuizSe
         var owner = await db.Quizzes.AsNoTracking().Where(x => x.Id == quizId)
             .Select(x => (long?)x.UserId).FirstOrDefaultAsync(ct);
 
-        if (owner != ownerId && owner != null)
-        {
-            throw new ForbiddenException("You do not have access to this quiz");
-        }
+        OwnershipGuard.EnsureReadable(ownerId, owner, owner == null, "You do not have access to this quiz");
     }
 
     private async Task EnsureQuizOwnedAsync(long quizId, long? ownerId, CancellationToken ct)
@@ -255,27 +254,7 @@ public sealed class QuizService(AppDbContext db, IFileStorage storage) : IQuizSe
         var owner = await db.Quizzes.AsNoTracking().Where(x => x.Id == quizId)
             .Select(x => (long?)x.UserId).FirstOrDefaultAsync(ct);
 
-        if (owner != ownerId)
-        {
-            throw new ForbiddenException("You can only modify your own quiz");
-        }
+        OwnershipGuard.EnsureOwned(ownerId, owner, "You can only modify your own quiz");
     }
 
-    /// <summary>Oxumaq üçün: öz imtahanı və ya admin tərəfindən yaradılan (sahibsiz) imtahan.</summary>
-    private static void EnsureAccessible(Quiz quiz, long? ownerId)
-    {
-        if (ownerId.HasValue && quiz.UserId != ownerId && quiz.UserId != null)
-        {
-            throw new ForbiddenException("You do not have access to this quiz");
-        }
-    }
-
-    /// <summary>Dəyişmək üçün yalnız sahibi olduğu imtahan.</summary>
-    private static void EnsureOwned(Quiz quiz, long? ownerId)
-    {
-        if (ownerId.HasValue && quiz.UserId != ownerId)
-        {
-            throw new ForbiddenException("You can only modify your own quiz");
-        }
-    }
 }

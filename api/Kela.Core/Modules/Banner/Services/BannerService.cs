@@ -13,6 +13,7 @@ namespace Kela.Core.Modules.Banner.Services;
 
 using Banner = Kela.Core.Modules.Banner.Entities.Banner;
 using Kela.Core.Common.Queries;
+using Kela.Core.Common.Authorization;
 
 public sealed class BannerService(AppDbContext db, IFileStorage storage, ITenantFolder folders) : IBannerService
 {
@@ -88,7 +89,7 @@ public sealed class BannerService(AppDbContext db, IFileStorage storage, ITenant
             .FirstOrDefaultAsync(x => x.Id == id, ct)
             ?? throw new KeyNotFoundException($"Banner not found: {id}");
 
-        EnsureOwned(banner, ownerId);
+        OwnershipGuard.EnsureOwned(ownerId, banner.UserId, "You can only modify your own banner");
 
         if (request.RemoveImage)
         {
@@ -114,7 +115,7 @@ public sealed class BannerService(AppDbContext db, IFileStorage storage, ITenant
         var banner = await db.Banners.FirstOrDefaultAsync(x => x.Id == id, ct)
             ?? throw new KeyNotFoundException($"Banner not found: {id}");
 
-        EnsureOwned(banner, ownerId);
+        OwnershipGuard.EnsureOwned(ownerId, banner.UserId, "You can only modify your own banner");
 
         banner.DeletedAt = DateTimeOffset.UtcNow;
         await db.SaveChangesAsync(ct);
@@ -149,14 +150,9 @@ public sealed class BannerService(AppDbContext db, IFileStorage storage, ITenant
             ? (await OwnerNameMapAsync(new long?[] { id }, ct)).GetValueOrDefault(id)
             : null;
 
+    public Task SetActiveAsync(long id, bool isActive, long? ownerId = null, CancellationToken ct = default)
+        => db.SetActiveAsync<Banner>(id, isActive, ownerId, x => x.UserId, "You can only modify your own banner", ct);
+
     public Task BulkAsync(BulkRequest request, long? ownerId = null, CancellationToken ct = default)
         => db.BulkOwnedAsync<Banner>(request, ownerId, x => x.UserId, "You can only modify your own banners", ct);
-
-    private static void EnsureOwned(Banner banner, long? ownerId)
-    {
-        if (ownerId.HasValue && banner.UserId != ownerId)
-        {
-            throw new ForbiddenException("You can only modify your own banner");
-        }
-    }
 }
