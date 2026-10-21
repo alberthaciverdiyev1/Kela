@@ -113,6 +113,13 @@ window.AdminUI = window.AdminUI || {};
         }
     }
 
+    // HTML-ə yazılan istifadəçi mətnini təhlükəsiz etmək üçün vahid escape.
+    function escapeHtml(value) {
+        return String(value ?? '').replace(/[&<>"']/g, c => ({
+            '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+        }[c]));
+    }
+
     async function postJson(url, obj) {
         const res = await fetch(url, {
             method: 'POST',
@@ -186,5 +193,5 @@ window.AdminUI = window.AdminUI || {};
         _filterTimer = setTimeout(filterReload, 350);
     });
 
-    Object.assign(UI, { token, copyText, SWAL_BASE, swal, lockSubmitButton, releaseSubmitButton, notify, error, confirmDelete, get, post, postForm, putForm, postJson, putJson, del, errText, loader, reloadAfter });
+    Object.assign(UI, { token, copyText, escapeHtml, SWAL_BASE, swal, lockSubmitButton, releaseSubmitButton, notify, error, confirmDelete, get, post, postForm, putForm, postJson, putJson, del, errText, loader, reloadAfter });
 })(window.AdminUI);

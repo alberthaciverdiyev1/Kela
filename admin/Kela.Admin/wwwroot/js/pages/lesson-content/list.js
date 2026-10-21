@@ -2,11 +2,6 @@ var pager = AdminUI.createPager('pagination', loadList);
 let showDeleted = false;
 const TYPE_TEXT = { video: 'Video', file: 'Fayl', voice: L["Js_Voice"] };
 
-function esc(v) {
-    return String(v ?? '').replace(/[&<>"']/g, c => ({
-        '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
-    }[c]));
-}
 
 function lessonTitle(id) {
     const opt = document.querySelector(`#filter_lesson option[value="${id}"]`);
@@ -14,10 +9,10 @@ function lessonTitle(id) {
 }
 
 function lessonCell(c) {
-    const primary = `<span class="text-sm text-slate-700">${esc(lessonTitle(c.lessonId))}</span>`;
+    const primary = `<span class="text-sm text-slate-700">${AdminUI.escapeHtml(lessonTitle(c.lessonId))}</span>`;
     const extra = (c.lessonIds || []).map(lessonTitle);
     if (!extra.length) return primary;
-    return `${primary}<span class="mt-0.5 block text-[11px] text-slate-400">+${extra.length}: ${esc(extra.join(', '))}</span>`;
+    return `${primary}<span class="mt-0.5 block text-[11px] text-slate-400">+${extra.length}: ${AdminUI.escapeHtml(extra.join(', '))}</span>`;
 }
 const CONTENT = {};
 

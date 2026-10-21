@@ -3,11 +3,6 @@ let current = new Date(new Date().getFullYear(), new Date().getMonth(), 1);
 let groupId = null;
 let selected = null;
 
-function esc(v) {
-    return String(v ?? '').replace(/[&<>"']/g, c =>
-        ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
-}
-
 function ymd(d) {
     return d.getFullYear() + '-' +
         String(d.getMonth() + 1).padStart(2, '0') + '-' +
@@ -39,7 +34,7 @@ function renderChips() {
     const groups = window.ATT_GROUPS || [];
 
     if (!groups.length) {
-        el.innerHTML = `<span class="px-1 text-sm text-slate-400">${esc(L["Attendance_NoGroups"])}</span>`;
+        el.innerHTML = `<span class="px-1 text-sm text-slate-400">${AdminUI.escapeHtml(L["Attendance_NoGroups"])}</span>`;
         return;
     }
 
@@ -49,7 +44,7 @@ function renderChips() {
                        ${g.id === groupId
                             ? 'border-primary bg-primary-light text-primary'
                             : 'border-slate-200 bg-white text-slate-500 hover:bg-slate-50'}">
-            ${esc(g.name)}
+            ${AdminUI.escapeHtml(g.name)}
         </button>`).join('');
 
     el.querySelectorAll('.att-chip').forEach(btn => {
@@ -94,11 +89,11 @@ function renderCalendar() {
     document.getElementById('calendar').innerHTML = `
         <div class="flex items-center justify-between">
             <button type="button" id="prevMonth" class="rounded-xl p-2 text-slate-400 hover:bg-slate-100" aria-label="previous">‹</button>
-            <p class="font-bold capitalize text-slate-800">${esc(monthLabel())}</p>
+            <p class="font-bold capitalize text-slate-800">${AdminUI.escapeHtml(monthLabel())}</p>
             <button type="button" id="nextMonth" class="rounded-xl p-2 text-slate-400 hover:bg-slate-100" aria-label="next">›</button>
         </div>
         <div class="mt-3 grid grid-cols-7 gap-1">
-            ${weekdayNames().map(w => `<span class="text-center text-[10px] font-bold uppercase tracking-wide text-slate-400">${esc(w)}</span>`).join('')}
+            ${weekdayNames().map(w => `<span class="text-center text-[10px] font-bold uppercase tracking-wide text-slate-400">${AdminUI.escapeHtml(w)}</span>`).join('')}
         </div>
         <div class="mt-1 grid grid-cols-7 gap-1">${cells}</div>`;
 
@@ -158,18 +153,18 @@ async function loadDay() {
     panel.innerHTML = `
         <div class="flex flex-wrap items-center justify-between gap-3 border-b border-border pb-4">
             <div>
-                <div class="font-bold text-slate-800">${esc(selected)}</div>
+                <div class="font-bold text-slate-800">${AdminUI.escapeHtml(selected)}</div>
                 <div class="mt-0.5 flex items-center gap-2 text-sm">
                     <span id="dayCount" class="text-slate-500">${data.presentCount} / ${data.totalCount}</span>
                     ${recorded
-                        ? AdminUI.badge(esc(L["Attendance_Saved"]), 'success')
-                        : AdminUI.badge(esc(L["Attendance_LegendNone"]), 'neutral')}
+                        ? AdminUI.badge(AdminUI.escapeHtml(L["Attendance_Saved"]), 'success')
+                        : AdminUI.badge(AdminUI.escapeHtml(L["Attendance_LegendNone"]), 'neutral')}
                 </div>
             </div>
             <div class="flex gap-2">
-                <button type="button" class="admin-button-secondary" onclick="markAll(true)">${esc(L["Attendance_AllPresent"])}</button>
-                <button type="button" class="admin-button-secondary" onclick="markAll(false)">${esc(L["Attendance_AllAbsent"])}</button>
-                <button type="button" id="saveBtn" class="admin-button-primary" onclick="saveDay()">${esc(L["Common_Save"])}</button>
+                <button type="button" class="admin-button-secondary" onclick="markAll(true)">${AdminUI.escapeHtml(L["Attendance_AllPresent"])}</button>
+                <button type="button" class="admin-button-secondary" onclick="markAll(false)">${AdminUI.escapeHtml(L["Attendance_AllAbsent"])}</button>
+                <button type="button" id="saveBtn" class="admin-button-primary" onclick="saveDay()">${AdminUI.escapeHtml(L["Common_Save"])}</button>
             </div>
         </div>
         <div class="mt-4 space-y-2">
@@ -179,8 +174,8 @@ async function loadDay() {
                     <input type="checkbox" class="att-check size-4" data-student="${s.studentId}"
                            data-recorded="${s.isRecorded ? '1' : '0'}" ${s.isPresent ? 'checked' : ''} />
                     <span class="min-w-0 flex-1">
-                        <span class="block truncate text-sm font-medium text-slate-800">${esc(s.fullName)}</span>
-                        <span class="block truncate text-xs text-slate-400">${esc(s.email)}</span>
+                        <span class="block truncate text-sm font-medium text-slate-800">${AdminUI.escapeHtml(s.fullName)}</span>
+                        <span class="block truncate text-xs text-slate-400">${AdminUI.escapeHtml(s.email)}</span>
                     </span>
                     <span class="att-state shrink-0 text-xs font-semibold"></span>
                 </label>`).join('')}

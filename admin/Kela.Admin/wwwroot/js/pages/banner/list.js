@@ -7,16 +7,10 @@ function canEdit(b) {
     return me.isAdmin || (b.userId != null && b.userId === me.userId);
 }
 
-function esc(v) {
-    return String(v ?? '').replace(/[&<>"']/g, c => ({
-        '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
-    }[c]));
-}
-
 function ownerCell(b) {
     if (b.userId == null) return AdminUI.badge(L["Banner_OwnerAdmin"], 'neutral');
     if (b.userId === (window.ADMIN || {}).userId) return AdminUI.badge(L["Banner_OwnerYou"], 'success');
-    return `<span class="text-sm text-slate-600">${esc(b.ownerName || ('#' + b.userId))}</span>`;
+    return `<span class="text-sm text-slate-600">${AdminUI.escapeHtml(b.ownerName || ('#' + b.userId))}</span>`;
 }
 
 function toggleTrash() {

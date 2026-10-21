@@ -21,11 +21,6 @@ const STATUS = {
     current:  { label: 'Aktiv plan',  tone: 'success' }
 };
 
-function esc(v) {
-    const el = document.createElement('span');
-    el.textContent = v ?? '';
-    return el.innerHTML;
-}
 
 async function loadTemplateOptions() {
     try {
@@ -36,7 +31,7 @@ async function loadTemplateOptions() {
         const sel = document.getElementById('plan-template');
         if (sel) {
             sel.innerHTML = '<option value="">— Əl ilə daxil et —</option>' +
-                items.map(t => `<option value="${t.id}">${esc(t.name)}</option>`).join('');
+                items.map(t => `<option value="${t.id}">${AdminUI.escapeHtml(t.name)}</option>`).join('');
         }
     } catch { /* şablon yoxdursa əl ilə */ }
 }
@@ -72,10 +67,10 @@ async function loadPayments(page) {
 
         return [
             { html: AdminUI.rowNo(x, i, pager.page, pager.perPage), cls: 'text-slate-400' },
-            { html: `<strong>${esc(x.fullName)}</strong><div class="mt-0.5 text-xs text-slate-500">${esc(x.email)}</div>` },
+            { html: `<strong>${AdminUI.escapeHtml(x.fullName)}</strong><div class="mt-0.5 text-xs text-slate-500">${AdminUI.escapeHtml(x.email)}</div>` },
             { html: fmtDate(x.joinedOn) },
             { html: fmtDate(x.nextDueOn) },
-            { html: x.amount == null ? '—' : `${fmtMoney(x.amount)} ${esc(x.currency)}` },
+            { html: x.amount == null ? '—' : `${fmtMoney(x.amount)} ${AdminUI.escapeHtml(x.currency)}` },
             { html: x.frequency === 'custom' ? `${x.intervalDays} gündən bir` : x.frequency ? 'Aylıq' : '—' },
             { html: AdminUI.badge(meta.label, meta.tone) },
             { html: actions, cls: 'text-right' }

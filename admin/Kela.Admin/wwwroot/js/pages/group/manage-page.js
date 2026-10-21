@@ -80,12 +80,6 @@
         AdminUI.copyText(base + '/join/' + token).then(ok => { if (ok) AdminUI.notify(L["Js_LinkCopied"]); });
     };
 
-    function esc(v) {
-        return String(v ?? '').replace(/[&<>"']/g, c => ({
-            '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
-        }[c]));
-    }
-
     async function loadJoins() {
         const box = document.getElementById('joinsList');
         if (!box) return;
@@ -113,8 +107,8 @@
         box.innerHTML = items.length
             ? items.map(j => `<div class="flex items-center justify-between gap-3 rounded-xl bg-surface-secondary px-4 py-2.5">
                 <div class="min-w-0">
-                    <p class="truncate text-sm font-semibold text-slate-700">${esc(j.fullName)}</p>
-                    <p class="truncate text-xs text-slate-400">${esc(j.email)}</p>
+                    <p class="truncate text-sm font-semibold text-slate-700">${AdminUI.escapeHtml(j.fullName)}</p>
+                    <p class="truncate text-xs text-slate-400">${AdminUI.escapeHtml(j.email)}</p>
                 </div>
                 <div class="flex shrink-0 items-center gap-2">
                     ${badge(j.status)}
