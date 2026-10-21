@@ -162,26 +162,11 @@ public sealed class LessonService(AppDbContext db, IFileStorage storage, ITenant
             lesson.IsActive,
             lesson.Settings);
 
-    public async Task BulkAsync(BulkRequest request, long? ownerId = null, CancellationToken ct = default)
-    {
-        if (ownerId.HasValue) await EnsureAllOwnedAsync(request.Ids, ownerId.Value, ct);
-        await BulkHelper.ApplyAsync<Lesson>(db, request, ct);
-    }
+    public Task BulkAsync(BulkRequest request, long? ownerId = null, CancellationToken ct = default)
+        => db.BulkOwnedAsync<Lesson>(request, ownerId, x => x.UserId, "You can only modify your own lessons", ct);
 
-    public async Task ReorderAsync(SortRequest request, long? ownerId = null, CancellationToken ct = default)
-    {
-        if (ownerId.HasValue) await EnsureAllOwnedAsync(request.Ids, ownerId.Value, ct);
-        await SortHelper.ReorderAsync<Lesson>(db, request, ct);
-    }
-
-    private async Task EnsureAllOwnedAsync(IEnumerable<long> ids, long ownerId, CancellationToken ct)
-    {
-        var wanted = ids.Distinct().ToList();
-        var owned = await db.Lessons.Where(x => wanted.Contains(x.Id) && x.UserId == ownerId)
-            .Select(x => x.Id).ToListAsync(ct);
-
-        if (owned.Count != wanted.Count) throw new ForbiddenException("You can only modify your own lessons");
-    }
+    public Task ReorderAsync(SortRequest request, long? ownerId = null, CancellationToken ct = default)
+        => db.ReorderOwnedAsync<Lesson>(request, ownerId, x => x.UserId, "You can only modify your own lessons", ct);
 
     /// <summary>Oxumaq üçün: öz dərsi və ya paylaşılan fənnin dərsi.</summary>
     private static void EnsureAccessible(Lesson lesson, long? ownerId)

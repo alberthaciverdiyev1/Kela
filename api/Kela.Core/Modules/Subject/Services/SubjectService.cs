@@ -113,23 +113,8 @@ public sealed class SubjectService(AppDbContext db) : ISubjectService
     private static SubjectResponse ToResponse(Subject category) =>
         new(category.Id, category.Name, category.UserId, category.IsShared);
 
-    public async Task BulkAsync(BulkRequest request, long? ownerId = null, CancellationToken ct = default)
-    {
-        if (ownerId.HasValue)
-        {
-            var owned = await db.Subjects
-                .Where(x => request.Ids.Contains(x.Id) && x.UserId == ownerId)
-                .Select(x => x.Id)
-                .ToListAsync(ct);
-
-            if (owned.Count != request.Ids.Distinct().Count())
-            {
-                throw new ForbiddenException("You can only modify your own subjects");
-            }
-        }
-
-        await BulkHelper.ApplyAsync<Subject>(db, request, ct);
-    }
+    public Task BulkAsync(BulkRequest request, long? ownerId = null, CancellationToken ct = default)
+        => db.BulkOwnedAsync<Subject>(request, ownerId, x => x.UserId, "You can only modify your own subjects", ct);
 
     /// <summary>Oxumaq üçün: öz fənni və ya bütün müəllimlərə paylaşılan fənn.</summary>
     private static void EnsureAccessible(Subject subject, long? ownerId)

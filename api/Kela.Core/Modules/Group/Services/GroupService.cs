@@ -470,18 +470,8 @@ public sealed class GroupService(AppDbContext db, IFileStorage storage, ITenantF
             group.JoinToken,
             pendingJoins);
 
-    public async Task BulkAsync(BulkRequest request, long? ownerId = null, CancellationToken ct = default)
-    {
-        if (ownerId.HasValue)
-        {
-            var wanted = request.Ids.Distinct().ToList();
-            var owned = await db.Groups.Where(x => wanted.Contains(x.Id) && x.UserId == ownerId)
-                .Select(x => x.Id).ToListAsync(ct);
-            if (owned.Count != wanted.Count) throw new ForbiddenException("You can only modify your own groups");
-        }
-
-        await BulkHelper.ApplyAsync<Group>(db, request, ct);
-    }
+    public Task BulkAsync(BulkRequest request, long? ownerId = null, CancellationToken ct = default)
+        => db.BulkOwnedAsync<Group>(request, ownerId, x => x.UserId, "You can only modify your own groups", ct);
 
     public async Task<IReadOnlyList<AssignmentLogResponse>> ListSubjectLogsAsync(long groupId, long? ownerId = null, CancellationToken ct = default)
     {

@@ -510,24 +510,12 @@ public sealed class LessonContentService(
         return found.Select(x => x.Id).ToList();
     }
 
-    public async Task BulkAsync(BulkRequest request, long? ownerId = null, CancellationToken ct = default)
-    {
-        if (ownerId.HasValue) await EnsureAllOwnedAsync(request.Ids, ownerId.Value, ct);
-        await BulkHelper.ApplyAsync<LessonContent>(db, request, ct);
-    }
+    public Task BulkAsync(BulkRequest request, long? ownerId = null, CancellationToken ct = default)
+        => db.BulkOwnedAsync<LessonContent>(request, ownerId, x => x.UserId,
+            "You can only modify your own material", ct);
 
-    public async Task ReorderAsync(SortRequest request, long? ownerId = null, CancellationToken ct = default)
-    {
-        if (ownerId.HasValue) await EnsureAllOwnedAsync(request.Ids, ownerId.Value, ct);
-        await SortHelper.ReorderAsync<LessonContent>(db, request, ct);
-    }
+    public Task ReorderAsync(SortRequest request, long? ownerId = null, CancellationToken ct = default)
+        => db.ReorderOwnedAsync<LessonContent>(request, ownerId, x => x.UserId,
+            "You can only modify your own material", ct);
 
-    private async Task EnsureAllOwnedAsync(IEnumerable<long> ids, long ownerId, CancellationToken ct)
-    {
-        var wanted = ids.Distinct().ToList();
-        var owned = await db.LessonContents.Where(x => wanted.Contains(x.Id) && x.UserId == ownerId)
-            .Select(x => x.Id).ToListAsync(ct);
-
-        if (owned.Count != wanted.Count) throw new ForbiddenException("You can only modify your own materials");
-    }
 }

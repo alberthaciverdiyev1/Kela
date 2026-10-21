@@ -155,23 +155,8 @@ public sealed class BannerService(AppDbContext db, IFileStorage storage, ITenant
             ? (await OwnerNameMapAsync(new long?[] { id }, ct)).GetValueOrDefault(id)
             : null;
 
-    public async Task BulkAsync(BulkRequest request, long? ownerId = null, CancellationToken ct = default)
-    {
-        if (ownerId.HasValue)
-        {
-            var owned = await db.Banners
-                .Where(x => request.Ids.Contains(x.Id) && x.UserId == ownerId)
-                .Select(x => x.Id)
-                .ToListAsync(ct);
-
-            if (owned.Count != request.Ids.Distinct().Count())
-            {
-                throw new ForbiddenException("You can only modify your own banners");
-            }
-        }
-
-        await BulkHelper.ApplyAsync<Banner>(db, request, ct);
-    }
+    public Task BulkAsync(BulkRequest request, long? ownerId = null, CancellationToken ct = default)
+        => db.BulkOwnedAsync<Banner>(request, ownerId, x => x.UserId, "You can only modify your own banners", ct);
 
     private static void EnsureOwned(Banner banner, long? ownerId)
     {

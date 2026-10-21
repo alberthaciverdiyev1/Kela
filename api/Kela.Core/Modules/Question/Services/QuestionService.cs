@@ -178,18 +178,9 @@ public sealed class QuestionService(AppDbContext db, IFileStorage storage, ITena
     private string? ResolveUrl(string type, string? value)
         => type == "image" && !string.IsNullOrWhiteSpace(value) ? storage.GetUrl(value) : null;
 
-    public async Task BulkAsync(BulkRequest request, long? ownerId = null, CancellationToken ct = default)
-    {
-        if (ownerId.HasValue)
-        {
-            var wanted = request.Ids.Distinct().ToList();
-            var owned = await db.Questions.Where(x => wanted.Contains(x.Id) && x.UserId == ownerId)
-                .Select(x => x.Id).ToListAsync(ct);
-            if (owned.Count != wanted.Count) throw new ForbiddenException("You can only modify your own questions");
-        }
-
-        await BulkHelper.ApplyAsync<Question>(db, request, ct);
-    }
+    public Task BulkAsync(BulkRequest request, long? ownerId = null, CancellationToken ct = default)
+        => db.BulkOwnedAsync<Question>(request, ownerId, x => x.UserId,
+            "You can only modify your own questions", ct);
 
     private async Task EnsureSubjectAccessibleAsync(long subjectId, long ownerId, CancellationToken ct)
     {

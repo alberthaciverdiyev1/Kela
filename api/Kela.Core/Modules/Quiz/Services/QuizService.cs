@@ -226,31 +226,11 @@ public sealed class QuizService(AppDbContext db, IFileStorage storage) : IQuizSe
         new(quiz.Id, quiz.LessonId, quiz.Title, quiz.DurationMinutes, quiz.Type, quiz.IsActive, quiz.IsRepeat,
             quiz.SortOrder, quiz.Questions.Count, quiz.Lesson?.Title);
 
-    public async Task BulkAsync(BulkRequest request, long? ownerId = null, CancellationToken ct = default)
-    {
-        if (ownerId.HasValue)
-        {
-            var wanted = request.Ids.Distinct().ToList();
-            var owned = await db.Quizzes.Where(x => wanted.Contains(x.Id) && x.UserId == ownerId)
-                .Select(x => x.Id).ToListAsync(ct);
-            if (owned.Count != wanted.Count) throw new ForbiddenException("You can only modify your own quizzes");
-        }
+    public Task BulkAsync(BulkRequest request, long? ownerId = null, CancellationToken ct = default)
+        => db.BulkOwnedAsync<Quiz>(request, ownerId, x => x.UserId, "You can only modify your own quizzes", ct);
 
-        await BulkHelper.ApplyAsync<Quiz>(db, request, ct);
-    }
-
-    public async Task ReorderAsync(SortRequest request, long? ownerId = null, CancellationToken ct = default)
-    {
-        if (ownerId.HasValue)
-        {
-            var wanted = request.Ids.Distinct().ToList();
-            var owned = await db.Quizzes.Where(x => wanted.Contains(x.Id) && x.UserId == ownerId)
-                .Select(x => x.Id).ToListAsync(ct);
-            if (owned.Count != wanted.Count) throw new ForbiddenException("You can only modify your own quizzes");
-        }
-
-        await SortHelper.ReorderAsync<Quiz>(db, request, ct);
-    }
+    public Task ReorderAsync(SortRequest request, long? ownerId = null, CancellationToken ct = default)
+        => db.ReorderOwnedAsync<Quiz>(request, ownerId, x => x.UserId, "You can only modify your own quizzes", ct);
 
     private async Task EnsureLessonAccessibleAsync(long lessonId, long ownerId, CancellationToken ct)
     {
