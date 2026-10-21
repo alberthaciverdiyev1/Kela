@@ -10,7 +10,7 @@
         new() { Value = "false", Text = L["Common_Archived"] }
     };
 }
-<script>window.SUBJECTS = { @Html.Raw(string.Join(",", subjects.Data.Select(s => $"{s.Id}:\"{System.Text.Json.JsonEncodedText.Encode(s.Name)}\""))) }; </script>
+<partial name="Ui/_OptionMap" model="@(new OptionMapModel { Name = "SUBJECTS", Items = subjects.Data.ToDictionary(s => s.Id, s => s.Name) })" />
 <section class="admin-page">
     <partial name="Ui/_PageHeader" model="@(new PageHeaderModel {
         CreateText = L["Lesson_Create"],

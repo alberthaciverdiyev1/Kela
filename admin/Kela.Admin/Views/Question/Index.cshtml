@@ -4,7 +4,7 @@
     var subjectFilter = new List<SelectOption> { new() { Value = "", Text = L["Common_All"] } };
     subjectFilter.AddRange(subjects.Data.Select(s => new SelectOption { Value = s.Id.ToString(), Text = s.Name }));
 }
-<script>window.SUBJECTS = { @Html.Raw(string.Join(",", subjects.Data.Select(s => $"{s.Id}:\"{System.Text.Json.JsonEncodedText.Encode(s.Name)}\""))) }; </script>
+<partial name="Ui/_OptionMap" model="@(new OptionMapModel { Name = "SUBJECTS", Items = subjects.Data.ToDictionary(s => s.Id, s => s.Name) })" />
 <section class="admin-page">
     <partial name="Ui/_PageHeader" model="@(new PageHeaderModel {
         CreateText = L["Question_Create"] })" />

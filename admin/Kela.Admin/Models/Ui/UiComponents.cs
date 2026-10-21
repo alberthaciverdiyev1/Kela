@@ -127,6 +127,14 @@ public class TableHeadModel
     public List<TableColumnModel> Columns { get; set; } = new();
 }
 
+/// <summary>JS-ə id → ad xəritəsi ötürən kiçik data bloku.</summary>
+public class OptionMapModel
+{
+    public string Name { get; set; } = string.Empty;
+
+    public IReadOnlyDictionary<long, string> Items { get; set; } = new Dictionary<long, string>();
+}
+
 /// <summary>Standart siyahı cədvəli: loader, başlıq, boş tbody və footer bir yerdə.</summary>
 public class TableModel
 {

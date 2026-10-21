@@ -4,7 +4,7 @@
     var lessonFilter = new List<SelectOption> { new() { Value = "", Text = L["Common_All"] } };
     lessonFilter.AddRange(lessons.Data.Select(l => new SelectOption { Value = l.Id.ToString(), Text = l.Title }));
 }
-<script>window.LESSONS = { @Html.Raw(string.Join(",", lessons.Data.Select(l => $"{l.Id}:\"{System.Text.Json.JsonEncodedText.Encode(l.Title)}\""))) }; </script>
+<partial name="Ui/_OptionMap" model="@(new OptionMapModel { Name = "LESSONS", Items = lessons.Data.ToDictionary(l => l.Id, l => l.Title) })" />
 <section class="admin-page">
     <partial name="Ui/_PageHeader" model="@(new PageHeaderModel {
         CreateText = L["Quiz_Create"],
