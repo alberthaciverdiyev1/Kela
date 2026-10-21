@@ -10,6 +10,7 @@
         document.getElementById('subject_id').value = '';
         document.getElementById('title').value = '';
         document.getElementById('is_active').checked = true;
+        document.getElementById('is_shared').checked = false;
         // Əvvəlki redaktədən qalan şəkil önizləməsi modaldan silinməlidir.
         AdminUI.fileReset('image');
         AdminUI.openModal('modal');
@@ -22,6 +23,7 @@
         const sortOrder = document.getElementById('sort_order').value;
         if (sortOrder !== '') fd.append('sort_order', sortOrder);
         fd.append('is_active', document.getElementById('is_active').checked ? 'true' : 'false');
+        fd.append('is_shared', document.getElementById('is_shared').checked ? 'true' : 'false');
         fd.append('RemoveImage', document.getElementById('image_remove').value === 'true' ? 'true' : 'false');
         const file = document.getElementById('image').files[0];
         if (file) fd.append('Image', file);

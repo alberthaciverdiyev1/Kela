@@ -21,6 +21,12 @@ public class Lesson : BaseEntity, ISortable, IActivatable
 
     public bool IsActive { get; set; } = true;
 
+    /// <summary>
+    /// Paylaşılan dərs: bütün müəllimlər dərsi görür və statusunu dəyişə bilər.
+    /// Yalnız dərsin sahibi (və ya admin) paylaşımı aça/bağlaya bilər.
+    /// </summary>
+    public bool IsShared { get; set; }
+
     /// <summary>JSON açarlar: {video,file,voice,quiz} (1/0) — hansı material növləri aktivdir.</summary>
     public string Settings { get; set; } = LessonDefaults.Settings;
 }

@@ -27,16 +27,26 @@ public static class OwnedCrudExtensions
         await SortHelper.ReorderAsync<T>(db, request, ct);
     }
 
-    /// <summary>Aktiv/deaktiv statusunu yalnız sahibi (və ya admin) dəyişə bilər.</summary>
+    /// <summary>
+    /// Aktiv/deaktiv statusunu sahibi (və ya admin) dəyişə bilər. <paramref name="sharedForOthers"/>
+    /// verilərsə, qeyd paylaşıldıqda digər müəllimlər də statusu dəyişə bilər — paylaşım
+    /// "baxmaq" deyil, birlikdə işləmək deməkdir.
+    /// </summary>
     public static async Task SetActiveAsync<T>(this AppDbContext db, long id, bool isActive, long? ownerId,
-        Expression<Func<T, long?>> owner, string forbiddenMessage, CancellationToken ct = default)
+        Expression<Func<T, long?>> owner, string forbiddenMessage, CancellationToken ct = default,
+        Expression<Func<T, bool>>? sharedForOthers = null,
+        Func<IQueryable<T>, IQueryable<T>>? include = null)
         where T : BaseEntity, IActivatable
     {
-        var entity = await db.Set<T>().IgnoreQueryFilters(new[] { "SoftDelete" })
-            .FirstOrDefaultAsync(x => x.Id == id, ct)
+        var query = db.Set<T>().IgnoreQueryFilters(new[] { "SoftDelete" });
+        if (include is not null) query = include(query);
+
+        var entity = await query.FirstOrDefaultAsync(x => x.Id == id, ct)
             ?? throw new KeyNotFoundException($"{typeof(T).Name} not found: {id}");
 
-        OwnershipGuard.EnsureOwned(ownerId, owner.Compile()(entity), forbiddenMessage);
+        var shared = sharedForOthers is not null && sharedForOthers.Compile()(entity);
+
+        OwnershipGuard.EnsureReadable(ownerId, owner.Compile()(entity), shared, forbiddenMessage);
         entity.IsActive = isActive;
         await db.SaveChangesAsync(ct);
     }

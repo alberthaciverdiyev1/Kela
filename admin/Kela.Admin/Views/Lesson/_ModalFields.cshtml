@@ -11,6 +11,7 @@
     <partial name="Ui/_Input" model="@(new InputModel { Name = "title", Id = "title", Label = L["Common_Title"], Required = true })" />
     <partial name="Ui/_FileUpload" model="@(new FileUploadModel { Name = "image", Id = "image", Label = L["Common_Image"], Accept = ".jpg,.jpeg,.png", Hint = "jpg/png, max 5MB" })" />
     <partial name="Ui/_Switch" model="@(new SwitchModel { Name = "is_active", Id = "is_active", Label = L["Common_Active"], Checked = true })" />
+    <partial name="Ui/_Switch" model="@(new SwitchModel { Name = "is_shared", Id = "is_shared", Label = L["Lesson_Shared"], Checked = false })" />
     <div class="flex justify-end gap-3 pt-2">
         <partial name="Ui/_Button" model="@(new ButtonModel { Text = L["Common_Cancel"], Variant = "secondary", Dismiss = true })" />
         <partial name="Ui/_Button" model="@(new ButtonModel { Text = L["Common_Save"], Type = "submit" })" />

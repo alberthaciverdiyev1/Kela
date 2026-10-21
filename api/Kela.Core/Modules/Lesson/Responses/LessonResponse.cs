@@ -7,4 +7,6 @@ public record LessonResponse(
     string? Image,
     int SortOrder,
     bool IsActive,
-    string Settings);
+    string Settings,
+    bool IsShared = false,
+    long? UserId = null);

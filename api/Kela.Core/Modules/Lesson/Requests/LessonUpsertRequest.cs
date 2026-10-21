@@ -23,6 +23,10 @@ public class LessonUpsertRequest
     [FromForm(Name = "is_active")]
     public bool IsActive { get; set; } = true;
 
+    /// <summary>Digər müəllimlərə paylaş. Yalnız sahibi (və ya admin) dəyişə bilər.</summary>
+    [FromForm(Name = "is_shared")]
+    public bool IsShared { get; set; }
+
     [FromForm(Name = "settings")]
     public string? Settings { get; set; }
 }

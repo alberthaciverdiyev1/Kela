@@ -21,6 +21,7 @@ public sealed class LessonConfiguration : IEntityTypeConfiguration<Lesson>
         builder.Property(x => x.UserId).HasColumnName("user_id");
         builder.Property(x => x.SortOrder).HasColumnName("sort_order");
         builder.Property(x => x.IsActive).HasColumnName("is_active").HasDefaultValue(true);
+        builder.Property(x => x.IsShared).HasColumnName("is_shared").HasDefaultValue(false);
         builder.Property(x => x.Settings).HasColumnName("settings");
 
         builder.HasOne(x => x.Subject).WithMany().HasForeignKey(x => x.SubjectId).OnDelete(DeleteBehavior.Cascade);

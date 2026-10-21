@@ -36,8 +36,9 @@ public sealed class LessonService(AppDbContext db, IFileStorage storage, ITenant
 
         if (request.UserId is long ownerId)
         {
-            // Teacher öz dərslərini və paylaşılan fənnlərin bütün dərslərini görür.
-            query = query.Where(x => x.UserId == ownerId || x.Subject!.IsShared);
+            // Teacher öz dərslərini, paylaşılan dərsləri və paylaşılan fənnin
+            // bütün dərslərini görür.
+            query = query.Where(x => x.UserId == ownerId || x.IsShared || x.Subject!.IsShared);
         }
 
         if (request.IsActive.HasValue)
@@ -59,7 +60,7 @@ public sealed class LessonService(AppDbContext db, IFileStorage storage, ITenant
             .FirstOrDefaultAsync(x => x.Id == id, ct)
             ?? throw new KeyNotFoundException($"Lesson not found: {id}");
 
-        OwnershipGuard.EnsureReadable(ownerId, lesson.UserId, lesson.Subject?.IsShared == true, "You do not have access to this lesson");
+        OwnershipGuard.EnsureReadable(ownerId, lesson.UserId, IsShared(lesson), "You do not have access to this lesson");
         return ToResponse(lesson);
     }
 
@@ -88,6 +89,7 @@ public sealed class LessonService(AppDbContext db, IFileStorage storage, ITenant
             Image = image,
             SortOrder = request.SortOrder,
             IsActive = request.IsActive,
+            IsShared = request.IsShared,
             UserId = request.UserId,
             Settings = string.IsNullOrWhiteSpace(request.Settings) ? LessonDefaults.Settings : request.Settings
         };
@@ -122,6 +124,8 @@ public sealed class LessonService(AppDbContext db, IFileStorage storage, ITenant
         lesson.Title = request.Title;
         lesson.SortOrder = request.SortOrder;
         lesson.IsActive = request.IsActive;
+        // Paylaşımı yalnız sahibi və ya admin dəyişir — yuxarıdaki EnsureOwned bunu təmin edir.
+        lesson.IsShared = request.IsShared;
         if (!string.IsNullOrWhiteSpace(request.Settings)) lesson.Settings = request.Settings;
         await db.SaveChangesAsync(ct);
 
@@ -147,6 +151,9 @@ public sealed class LessonService(AppDbContext db, IFileStorage storage, ITenant
         }
     }
 
+    /// <summary>Dərs digər müəllimlərə açıqdır — özü paylaşılıbsa və ya fənni paylaşılıbsa.</summary>
+    private static bool IsShared(Lesson lesson) => lesson.IsShared || lesson.Subject?.IsShared == true;
+
     private LessonResponse ToResponse(Lesson lesson) =>
         new(
             lesson.Id,
@@ -155,10 +162,18 @@ public sealed class LessonService(AppDbContext db, IFileStorage storage, ITenant
             storage.GetUrl(lesson.Image),
             lesson.SortOrder,
             lesson.IsActive,
-            lesson.Settings);
+            lesson.Settings,
+            lesson.IsShared,
+            lesson.UserId);
 
+    /// <summary>
+    /// Paylaşılan dərsin statusunu digər müəllim də dəyişə bilər — paylaşım
+    /// "baxmaq" deyil, birlikdə işləmək deməkdir.
+    /// </summary>
     public Task SetActiveAsync(long id, bool isActive, long? ownerId = null, CancellationToken ct = default)
-        => db.SetActiveAsync<Lesson>(id, isActive, ownerId, x => x.UserId, "You can only modify your own lesson", ct);
+        => db.SetActiveAsync<Lesson>(id, isActive, ownerId, x => x.UserId, "You can only modify your own lesson", ct,
+            x => x.IsShared || (x.Subject != null && x.Subject.IsShared),
+            q => q.Include(x => x.Subject));
 
     public Task BulkAsync(BulkRequest request, long? ownerId = null, CancellationToken ct = default)
         => db.BulkOwnedAsync<Lesson>(request, ownerId, x => x.UserId, "You can only modify your own lessons", ct);
@@ -171,7 +186,7 @@ public sealed class LessonService(AppDbContext db, IFileStorage storage, ITenant
         var lesson = await db.Lessons.AsNoTracking().Include(x => x.Subject).FirstOrDefaultAsync(x => x.Id == id, ct)
             ?? throw new KeyNotFoundException($"Lesson not found: {id}");
 
-        OwnershipGuard.EnsureReadable(ownerId, lesson.UserId, lesson.Subject?.IsShared == true, "You do not have access to this lesson");
+        OwnershipGuard.EnsureReadable(ownerId, lesson.UserId, IsShared(lesson), "You do not have access to this lesson");
         return LessonSettings.Parse(lesson.Settings);
     }
 

@@ -816,6 +816,12 @@ namespace Kela.Core.Data.Migrations
                         .HasDefaultValue(true)
                         .HasColumnName("is_active");
 
+                    b.Property<bool>("IsShared")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("boolean")
+                        .HasDefaultValue(false)
+                        .HasColumnName("is_shared");
+
                     b.Property<string>("Settings")
                         .IsRequired()
                         .HasColumnType("text")

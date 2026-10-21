@@ -49,10 +49,11 @@ public sealed class LessonContentService(
 
         if (request.UserId is long ownerId)
         {
-            // Teacher öz materialını və paylaşılan fənnin dərslərindəki materialları görür.
+            // Teacher öz materialını, paylaşılan dərsin və paylaşılan fənnin
+            // dərslərindəki materialları görür.
             query = query.Where(x => x.UserId == ownerId
-                || db.Lessons.Any(l => l.Id == x.LessonId && l.Subject!.IsShared)
-                || x.AdditionalLessons.Any(al => db.Lessons.Any(l => l.Id == al.LessonId && l.Subject!.IsShared)));
+                || db.Lessons.Any(l => l.Id == x.LessonId && (l.IsShared || l.Subject!.IsShared))
+                || x.AdditionalLessons.Any(al => db.Lessons.Any(l => l.Id == al.LessonId && (l.IsShared || l.Subject!.IsShared))));
         }
 
         query = query.SearchBy(request.Search, x => x.Title);
@@ -374,7 +375,7 @@ public sealed class LessonContentService(
     {
         var lesson = await db.Lessons.AsNoTracking()
             .Where(x => x.Id == lessonId)
-            .Select(x => new { x.UserId, IsShared = x.Subject!.IsShared })
+            .Select(x => new { x.UserId, IsShared = x.IsShared || x.Subject!.IsShared })
             .FirstOrDefaultAsync(ct)
             ?? throw new ArgumentException($"Lesson not found: {lessonId}");
 
@@ -382,7 +383,7 @@ public sealed class LessonContentService(
             "You do not have access to this lesson");
     }
 
-    /// <summary>Oxumaq üçün: öz materialı və ya paylaşılan fənnin dərsinə bağlı material.</summary>
+    /// <summary>Oxumaq üçün: öz materialı, paylaşılan dərsə və ya paylaşılan fənnin dərsinə bağlı material.</summary>
     private async Task EnsureAccessibleAsync(LessonContent content, long? ownerId, CancellationToken ct)
     {
         if (ownerId is not long id || content.UserId == id) return;
@@ -393,7 +394,7 @@ public sealed class LessonContentService(
             .ToList();
 
         var shared = await db.Lessons.AsNoTracking()
-            .AnyAsync(x => lessonIds.Contains(x.Id) && x.Subject!.IsShared, ct);
+            .AnyAsync(x => lessonIds.Contains(x.Id) && (x.IsShared || x.Subject!.IsShared), ct);
 
         OwnershipGuard.EnsureReadable(ownerId, content.UserId, shared, "You do not have access to this material");
     }

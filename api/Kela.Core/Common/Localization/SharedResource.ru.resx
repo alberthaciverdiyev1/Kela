@@ -1695,4 +1695,7 @@
   <data name="Node_AutoRefresh" xml:space="preserve">
     <value>Otomatik yenileme</value>
   </data>
+  <data name="Lesson_Shared" xml:space="preserve">
+    <value>Доступно всем учителям</value>
+  </data>
 </root>
