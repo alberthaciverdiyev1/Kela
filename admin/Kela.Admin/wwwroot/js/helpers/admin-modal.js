@@ -41,8 +41,9 @@ window.AdminUI = window.AdminUI || {};
         if (!form || !form.reset) return;
         form.reset();
         // Gizli sahələri JS doldurur və onların default dəyəri yoxdur —
-        // reset() onları boşaltmır, ona görə əl ilə sıfırlanır.
-        form.querySelectorAll('input[type=hidden]').forEach(input => { input.value = ''; });
+        // reset() onları boşaltmır, ona görə əl ilə sıfırlanır. data-persist
+        // olanlar səhifə kontekstini daşıyır və qalmalıdır (məs. mənbə dərs).
+        form.querySelectorAll('input[type=hidden]:not([data-persist])').forEach(input => { input.value = ''; });
         form.querySelectorAll('input[type=file]').forEach(input => { if (input.id) UI.fileReset(input.id); });
         form.querySelectorAll('.admin-editor-body').forEach(el => { el.innerHTML = ''; });
     }

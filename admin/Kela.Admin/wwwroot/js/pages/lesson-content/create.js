@@ -2,6 +2,10 @@
     const form = document.getElementById('entityForm');
     const errBox = document.getElementById('formError');
 
+    // Gizli sahələr modal bağlananda sıfırlanır; mənbə dərs isə səhifə
+    // kontekstidir və növbəti açılışda da qalmalıdır.
+    document.getElementById('context_lesson_id').dataset.persist = '1';
+
     function showError(message) { errBox.textContent = message; errBox.classList.remove('hidden'); }
     function done() { AdminUI.notify(L["Js_Added"]); AdminUI.closeModal('modal'); loadList(1); }
 
