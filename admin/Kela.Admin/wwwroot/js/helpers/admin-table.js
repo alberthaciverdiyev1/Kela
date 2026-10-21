@@ -256,6 +256,27 @@ window.AdminUI = window.AdminUI || {};
         return `${url}${url.includes('?') ? '&' : '?'}sort_by=${field}&sort_dir=${dir}`;
     }
 
+    // Siyahı səhifəsindəki bütün qeydləri sıralama modalına yükləyir.
+    async function openListSort(options) {
+        const value = options.filterId ? document.getElementById(options.filterId)?.value : '';
+        if (options.requireFilter && !value) {
+            UI.notify(L[options.requireFilter], 'warning');
+            return;
+        }
+
+        const params = new URLSearchParams({ page: '1', perPage: '500' });
+        if (options.filterId && value) params.set(options.filterParam, value);
+
+        const data = await UI.get(`${options.api}?${params.toString()}`);
+        const title = typeof options.title === 'function' ? options.title(value) : options.title;
+        UI.openSort({
+            title,
+            items: (data.data || []).map(item => ({ id: item.id, label: options.label(item) })),
+            saveUrl: options.saveUrl,
+            onSaved: options.onSaved || (() => loadList(pager.page))
+        });
+    }
+
     // Siyahı səhifələrinin ortaq skeleti: pager, silinmişlər, silmə/bərpa və cədvəl yenilənməsi.
     function listPage(options) {
         const state = { showDeleted: false };
@@ -321,5 +342,5 @@ window.AdminUI = window.AdminUI || {};
         return { loadList, pager, state };
     }
 
-    Object.assign(UI, { rowNo, table, setInfo, pagination, createPager, listPage, wireSelection, syncCheckAll, selectedIds, updateBulkBar, bulkDo, sortToggle, openSort, closeSort, renderSort, wireSortDnD, persistSort, addSort });
+    Object.assign(UI, { rowNo, table, setInfo, pagination, createPager, listPage, openListSort, wireSelection, syncCheckAll, selectedIds, updateBulkBar, bulkDo, sortToggle, openSort, closeSort, renderSort, wireSortDnD, persistSort, addSort });
 })(window.AdminUI);
