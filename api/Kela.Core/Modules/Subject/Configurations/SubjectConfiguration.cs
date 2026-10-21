@@ -21,6 +21,7 @@ public sealed class SubjectConfiguration : IEntityTypeConfiguration<Subject>
         builder.HasIndex(x => x.Name).IsUnique();
 
         builder.Property(x => x.UserId).HasColumnName("user_id");
+        builder.Property(x => x.IsShared).HasColumnName("is_shared").HasDefaultValue(false);
 
         builder.Property(x => x.CreatedAt).HasColumnName("created_at");
         builder.Property(x => x.UpdatedAt).HasColumnName("updated_at");

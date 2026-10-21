@@ -24,10 +24,10 @@ public sealed class SubjectService(AppDbContext db) : ISubjectService
             query = query.IgnoreQueryFilters(new[] { "SoftDelete" }).Where(x => x.DeletedAt != null);
         }
 
-        if (request.UserId.HasValue)
+        if (request.UserId is long ownerId)
         {
-            // Teacher yalnız özü yaratdığını görür; sahibi olmayan (admin) fənnlər hamıya açıqdır.
-            query = query.Where(x => x.UserId == request.UserId || x.UserId == null);
+            // Teacher öz fənnini və bütün müəllimlərə paylaşılan fənnləri görür.
+            query = query.Where(x => x.UserId == ownerId || x.IsShared);
         }
 
         if (!string.IsNullOrWhiteSpace(request.Search))
@@ -60,7 +60,8 @@ public sealed class SubjectService(AppDbContext db) : ISubjectService
         var category = new Subject
         {
             Name = request.Name,
-            UserId = request.UserId
+            UserId = request.UserId,
+            IsShared = request.IsShared
         };
 
         db.Subjects.Add(category);
@@ -81,6 +82,7 @@ public sealed class SubjectService(AppDbContext db) : ISubjectService
 
         // Sahiblik yaratma anında qeyd olunur — redaktə onu dəyişmir.
         category.Name = request.Name;
+        category.IsShared = request.IsShared;
         await db.SaveChangesAsync(ct);
 
         return ToResponse(category);
@@ -109,7 +111,7 @@ public sealed class SubjectService(AppDbContext db) : ISubjectService
     }
 
     private static SubjectResponse ToResponse(Subject category) =>
-        new(category.Id, category.Name, category.UserId);
+        new(category.Id, category.Name, category.UserId, category.IsShared);
 
     public async Task BulkAsync(BulkRequest request, long? ownerId = null, CancellationToken ct = default)
     {
@@ -129,10 +131,10 @@ public sealed class SubjectService(AppDbContext db) : ISubjectService
         await BulkHelper.ApplyAsync<Subject>(db, request, ct);
     }
 
-    /// <summary>Oxumaq üçün: öz qeydi və ya admin tərəfindən yaradılan (sahibsiz) qeyd.</summary>
+    /// <summary>Oxumaq üçün: öz fənni və ya bütün müəllimlərə paylaşılan fənn.</summary>
     private static void EnsureAccessible(Subject subject, long? ownerId)
     {
-        if (ownerId.HasValue && subject.UserId != ownerId && subject.UserId != null)
+        if (ownerId is long id && subject.UserId != id && !subject.IsShared)
         {
             throw new ForbiddenException("You do not have access to this subject");
         }

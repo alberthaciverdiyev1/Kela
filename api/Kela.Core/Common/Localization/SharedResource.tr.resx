@@ -795,6 +795,12 @@
   <data name="Subject_Total" xml:space="preserve">
     <value>Toplam ders</value>
   </data>
+  <data name="Subject_Shared" xml:space="preserve">
+    <value>Tüm öğretmenlere görünür</value>
+  </data>
+  <data name="Subject_SharedBadge" xml:space="preserve">
+    <value>Paylaşılan</value>
+  </data>
   <data name="Subject_Search" xml:space="preserve">
     <value>Ders adına göre ara...</value>
   </data>

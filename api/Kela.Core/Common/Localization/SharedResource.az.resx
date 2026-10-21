@@ -795,6 +795,12 @@
   <data name="Subject_Total" xml:space="preserve">
     <value>Cəmi fənn</value>
   </data>
+  <data name="Subject_Shared" xml:space="preserve">
+    <value>Bütün müəllimlər görsün</value>
+  </data>
+  <data name="Subject_SharedBadge" xml:space="preserve">
+    <value>Paylaşılan</value>
+  </data>
   <data name="Subject_Search" xml:space="preserve">
     <value>Fənn adı üzrə axtar...</value>
   </data>

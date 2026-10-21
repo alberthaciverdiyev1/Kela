@@ -795,6 +795,12 @@
   <data name="Subject_Total" xml:space="preserve">
     <value>Всего предметов</value>
   </data>
+  <data name="Subject_Shared" xml:space="preserve">
+    <value>Видно всем учителям</value>
+  </data>
+  <data name="Subject_SharedBadge" xml:space="preserve">
+    <value>Общий</value>
+  </data>
   <data name="Subject_Search" xml:space="preserve">
     <value>Поиск по названию предмета...</value>
   </data>

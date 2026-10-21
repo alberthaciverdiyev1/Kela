@@ -196,7 +196,7 @@ public sealed class StudentAppService(
             .AsNoTracking()
             .Where(gs => gs.GroupId == groupId)
             .OrderBy(gs => gs.Id)
-            .Select(gs => new SubjectResponse(gs.Subject!.Id, gs.Subject!.Name, gs.Subject!.UserId))
+            .Select(gs => new SubjectResponse(gs.Subject!.Id, gs.Subject!.Name, gs.Subject!.UserId, gs.Subject!.IsShared))
             .ToListAsync(ct);
     }
 
@@ -210,7 +210,7 @@ public sealed class StudentAppService(
         var subject = await db.Subjects.AsNoTracking().FirstOrDefaultAsync(s => s.Id == subjectId, ct)
             ?? throw new KeyNotFoundException($"Subject not found: {subjectId}");
 
-        return new SubjectResponse(subject.Id, subject.Name, subject.UserId);
+        return new SubjectResponse(subject.Id, subject.Name, subject.UserId, subject.IsShared);
     }
 
     public async Task<IReadOnlyList<LessonResponse>> ListLessonsAsync(
@@ -304,7 +304,7 @@ public sealed class StudentAppService(
         return await db.Subjects.AsNoTracking()
             .Where(s => subjectIds.Contains(s.Id))
             .OrderBy(s => s.Name)
-            .Select(s => new SubjectResponse(s.Id, s.Name, s.UserId))
+            .Select(s => new SubjectResponse(s.Id, s.Name, s.UserId, s.IsShared))
             .ToListAsync(ct);
     }
 

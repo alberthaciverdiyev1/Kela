@@ -210,7 +210,7 @@ public sealed class GroupService(AppDbContext db, IFileStorage storage, ITenantF
             .AsNoTracking()
             .Where(x => x.GroupId == groupId)
             .OrderBy(x => x.Id)
-            .Select(x => new SubjectResponse(x.Subject!.Id, x.Subject!.Name, x.Subject!.UserId))
+            .Select(x => new SubjectResponse(x.Subject!.Id, x.Subject!.Name, x.Subject!.UserId, x.Subject!.IsShared))
             .ToListAsync(ct);
     }
 

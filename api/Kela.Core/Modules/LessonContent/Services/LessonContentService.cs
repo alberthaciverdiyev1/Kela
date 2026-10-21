@@ -50,8 +50,10 @@ public sealed class LessonContentService(
 
         if (request.UserId is long ownerId)
         {
-            // Teacher yalnız öz yaratdığı materialları görür; admin materialları hamıya açıqdır.
-            query = query.Where(x => x.UserId == ownerId || x.UserId == null);
+            // Teacher öz materialını və paylaşılan fənnin dərslərindəki materialları görür.
+            query = query.Where(x => x.UserId == ownerId
+                || db.Lessons.Any(l => l.Id == x.LessonId && l.Subject!.IsShared)
+                || x.AdditionalLessons.Any(al => db.Lessons.Any(l => l.Id == al.LessonId && l.Subject!.IsShared)));
         }
 
         if (!string.IsNullOrWhiteSpace(request.Search))
@@ -106,7 +108,7 @@ public sealed class LessonContentService(
         var content = await WithMedia().FirstOrDefaultAsync(x => x.Id == id, ct)
             ?? throw new KeyNotFoundException($"Lesson content not found: {id}");
 
-        EnsureAccessible(content, ownerId);
+        await EnsureAccessibleAsync(content, ownerId, ct);
         return ToResponse(content);
     }
 
@@ -377,20 +379,27 @@ public sealed class LessonContentService(
     {
         var lesson = await db.Lessons.AsNoTracking()
             .Where(x => x.Id == lessonId)
-            .Select(x => new { x.UserId })
+            .Select(x => new { x.UserId, IsShared = x.Subject!.IsShared })
             .FirstOrDefaultAsync(ct)
             ?? throw new ArgumentException($"Lesson not found: {lessonId}");
 
-        if (ownerId.HasValue && lesson.UserId != ownerId && lesson.UserId != null)
+        if (ownerId is long id && lesson.UserId != id && !lesson.IsShared)
         {
             throw new ForbiddenException("You do not have access to this lesson");
         }
     }
 
-    /// <summary>Oxumaq üçün: öz materialı və ya admin tərəfindən yaradılan (sahibsiz) material.</summary>
-    private static void EnsureAccessible(LessonContent content, long? ownerId)
+    /// <summary>Oxumaq üçün: öz materialı və ya paylaşılan fənnin dərsinə bağlı material.</summary>
+    private async Task EnsureAccessibleAsync(LessonContent content, long? ownerId, CancellationToken ct)
     {
-        if (ownerId.HasValue && content.UserId != ownerId && content.UserId != null)
+        if (ownerId is not long id || content.UserId == id) return;
+
+        var lessonIds = content.AdditionalLessons.Select(x => x.LessonId)
+            .Append(content.LessonId)
+            .Distinct()
+            .ToList();
+
+        if (!await db.Lessons.AsNoTracking().AnyAsync(x => lessonIds.Contains(x.Id) && x.Subject!.IsShared, ct))
         {
             throw new ForbiddenException("You do not have access to this material");
         }
@@ -488,7 +497,7 @@ public sealed class LessonContentService(
         if (ownerId.HasValue)
         {
             var accessible = await db.Lessons.AsNoTracking()
-                .Where(x => wanted.Contains(x.Id) && (x.UserId == ownerId || x.UserId == null))
+                .Where(x => wanted.Contains(x.Id) && (x.UserId == ownerId || x.Subject!.IsShared))
                 .Select(x => x.Id)
                 .ToListAsync(ct);
 

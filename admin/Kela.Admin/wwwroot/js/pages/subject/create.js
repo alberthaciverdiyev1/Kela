@@ -7,6 +7,7 @@
         document.getElementById('modalTitle').textContent = L["Subject_Create"];
         document.getElementById('entityId').value = '';
         document.getElementById('name').value = '';
+        document.getElementById('is_shared').checked = false;
         AdminUI.openModal('modal');
     };
 
@@ -14,7 +15,10 @@
         e.preventDefault();
         if (document.getElementById('entityId').value) return; // update.js idarə edir
 
-        const res = await AdminUI.post('/subject', { name: document.getElementById('name').value });
+        const res = await AdminUI.post('/subject', {
+            name: document.getElementById('name').value,
+            is_shared: document.getElementById('is_shared').checked ? 'true' : 'false'
+        });
         if (res.ok) { AdminUI.notify(L["Js_Added"]); AdminUI.closeModal('modal'); loadList(1); return; }
 
         errBox.textContent = AdminUI.errText(res);

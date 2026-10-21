@@ -795,6 +795,12 @@
   <data name="Subject_Total" xml:space="preserve">
     <value>Total subjects</value>
   </data>
+  <data name="Subject_Shared" xml:space="preserve">
+    <value>Visible to all teachers</value>
+  </data>
+  <data name="Subject_SharedBadge" xml:space="preserve">
+    <value>Shared</value>
+  </data>
   <data name="Subject_Search" xml:space="preserve">
     <value>Search by subject name...</value>
   </data>

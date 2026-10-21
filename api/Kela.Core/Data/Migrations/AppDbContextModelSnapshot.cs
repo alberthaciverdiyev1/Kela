@@ -2437,6 +2437,12 @@ namespace Kela.Core.Data.Migrations
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("deleted_at");
 
+                    b.Property<bool>("IsShared")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("boolean")
+                        .HasDefaultValue(false)
+                        .HasColumnName("is_shared");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(190)

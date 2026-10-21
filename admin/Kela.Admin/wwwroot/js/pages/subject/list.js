@@ -23,7 +23,8 @@ async function loadList(page) {
 
     AdminUI.table('rows', data.data.map((s, i) => [
         { html: AdminUI.rowNo(s, i, pager.page, pager.perPage), cls: 'text-slate-400' },
-        { html: `<a href="/lesson?subject_id=${s.id}" class="font-semibold text-primary hover:underline">${s.name}</a>` },
+        { html: `<a href="/lesson?subject_id=${s.id}" class="font-semibold text-primary hover:underline">${s.name}</a>` +
+            (s.isShared ? ` <span class="ml-2 rounded-full bg-primary/10 px-2 py-0.5 text-[11px] font-semibold text-primary">${L["Subject_SharedBadge"]}</span>` : '') },
         { html: showDeleted ? AdminUI.restoreButton(s.id) : AdminUI.actions(s.id, { extra: AdminUI.actionLink(L["Nav_Lessons"], `/lesson?subject_id=${s.id}`) }), cls: 'text-right' }
     ]), 4, { rowIds: data.data.map(s => s.id), selectable: !showDeleted });
     AdminUI.loader(false);

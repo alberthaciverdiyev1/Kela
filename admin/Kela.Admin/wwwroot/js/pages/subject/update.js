@@ -7,6 +7,7 @@
         document.getElementById('modalTitle').textContent = L["Js_EditSubject"];
         document.getElementById('entityId').value = data.id;
         document.getElementById('name').value = data.name;
+        document.getElementById('is_shared').checked = data.isShared === true;
         AdminUI.openModal('modal');
     };
 
@@ -17,6 +18,7 @@
 
         const fd = new FormData();
         fd.append('name', document.getElementById('name').value);
+        fd.append('is_shared', document.getElementById('is_shared').checked ? 'true' : 'false');
 
         const res = await AdminUI.putForm(`/subject/${id}`, fd);
         if (res.ok) { AdminUI.notify(L["Js_Updated"]); AdminUI.closeModal('modal'); loadList(pager.page); return; }
