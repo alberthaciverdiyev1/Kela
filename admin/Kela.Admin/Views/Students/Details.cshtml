@@ -31,21 +31,15 @@
     </div>
 
     <div class="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
-        <partial name="Ui/_StatCard" model="@(new StatCardModel { Id = "s_lessons", Label = L["Lesson_Total"],
+        <partial name="Ui/_StatCard" model="@(new StatCardModel { Id = "s_lessons", Label = L["Lesson_Total"], Value = stats.Overview.TotalLessons.ToString(),
             Icon = "<path stroke-linecap='round' stroke-linejoin='round' d='M12 6.253v13m0-13C10.8 5.5 9 5 7 5S3.2 5.5 2 6.253v13C3.2 18.5 5 18 7 18s3.8.5 5 1.253m0-13C13.2 5.5 15 5 17 5s3.8.5 5 1.253v13C20.8 18.5 19 18 17 18s-3.8.5-5 1.253' />" })" />
-        <partial name="Ui/_StatCard" model="@(new StatCardModel { Id = "s_contents", Label = L["Common_TotalMaterials"], Accent = "bg-sky-100 text-sky-600",
+        <partial name="Ui/_StatCard" model="@(new StatCardModel { Id = "s_contents", Label = L["Common_TotalMaterials"], Value = stats.Overview.TotalContents.ToString(), Accent = "bg-sky-100 text-sky-600",
             Icon = "<path stroke-linecap='round' stroke-linejoin='round' d='M7 3h7l5 5v13H7V3Z' /><path stroke-linecap='round' stroke-linejoin='round' d='M14 3v6h5M10 14h6M10 18h4' />" })" />
-        <partial name="Ui/_StatCard" model="@(new StatCardModel { Id = "s_done", Label = "Tamamlanan", Accent = "bg-success-bg text-success",
+        <partial name="Ui/_StatCard" model="@(new StatCardModel { Id = "s_done", Label = "Tamamlanan", Value = stats.Overview.CompletedContents.ToString(), Accent = "bg-success-bg text-success",
             Icon = "<path stroke-linecap='round' stroke-linejoin='round' d='m5 13 4 4L19 7' />" })" />
-        <partial name="Ui/_StatCard" model="@(new StatCardModel { Id = "s_percent", Label = "Tamamlanma", Accent = "bg-violet-100 text-violet-600",
+        <partial name="Ui/_StatCard" model="@(new StatCardModel { Id = "s_percent", Label = "Tamamlanma", Value = $"{stats.Overview.CompletionPercent}%", Accent = "bg-violet-100 text-violet-600",
             Icon = "<path stroke-linecap='round' stroke-linejoin='round' d='M12 6v6l4 2M21 12A9 9 0 1 1 3 12a9 9 0 0 1 18 0Z' />" })" />
     </div>
-    <script>
-        document.getElementById('s_lessons').textContent = '@stats.Overview.TotalLessons';
-        document.getElementById('s_contents').textContent = '@stats.Overview.TotalContents';
-        document.getElementById('s_done').textContent = '@stats.Overview.CompletedContents';
-        document.getElementById('s_percent').textContent = '@(stats.Overview.CompletionPercent)%';
-    </script>
 
     <div class="admin-card">
         <div class="border-b border-border p-4">
@@ -185,7 +179,3 @@
         </div>
     </div>
 </section>
-
-<script>
-    // Tablar ortaq komponentlə idarə olunur (AdminUI.selectTab).
-</script>

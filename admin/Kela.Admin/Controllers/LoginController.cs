@@ -20,6 +20,7 @@ public sealed class LoginController(IUserAuthService service, ITenantService ten
         if (User.Identity?.IsAuthenticated == true) return RedirectToAction("Index", "Dashboard");
 
         ViewData["Tenants"] = await tenants.ListPublicAsync(ct);
+        ViewData["Scripts"] = new[] { "~/js/pages/login/index.js" };
         return View();
     }
 
@@ -55,6 +56,7 @@ public sealed class LoginController(IUserAuthService service, ITenantService ten
         {
             ViewData["Error"] = "Email, şifrə və ya tenant yanlışdır.";
             ViewData["Tenants"] = await tenants.ListPublicAsync(ct);
+            ViewData["Scripts"] = new[] { "~/js/pages/login/index.js" };
             return View();
         }
     }

@@ -143,34 +143,6 @@
 
     <script>window.L = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(jsStrings));</script>
     <script>window.ADMIN = { isAdmin: @(isAdmin ? "true" : "false"), userId: @currentUserId };</script>
-    <script>
-        // Gözləyən qoşulma müraciətləri — sidebar-daki Qruplar yanında qırmızı badge.
-        window.refreshGroupJoinBadge = async function () {
-            try {
-                const res = await fetch('/group/join-request-count');
-                if (!res.ok) return;
-                const data = await res.json();
-                const badge = document.getElementById('groupJoinBadge');
-                if (!badge) return;
-                badge.textContent = data.count;
-                badge.style.display = data.count > 0 ? 'inline-flex' : 'none';
-            } catch (e) { /* səssiz */ }
-        };
-        window.refreshGroupJoinBadge();
-
-        window.refreshTenantPendingBadge = async function () {
-            const badge = document.getElementById('tenantPendingBadge');
-            if (!badge) return;
-            try {
-                const res = await fetch('/tenant/pending-count');
-                if (!res.ok) return;
-                const data = await res.json();
-                badge.textContent = data.count;
-                badge.style.display = data.count > 0 ? 'inline-flex' : 'none';
-            } catch (e) { /* səssiz */ }
-        };
-        window.refreshTenantPendingBadge();
-    </script>
     @* Fon rejimində gedən yükləmə — istifadəçi modalı bağladıqdan sonra da görünür. *@
     <div id="uploadWidget" class="fixed bottom-5 right-5 z-[60] hidden w-80 rounded-2xl border border-border bg-white p-4 shadow-2xl">
         <div class="flex items-start justify-between gap-3">
@@ -198,6 +170,7 @@
     <script src="~/js/helpers/admin-table.js" asp-append-version="true"></script>
     <script src="~/js/helpers/admin-modal.js" asp-append-version="true"></script>
     <script src="~/js/helpers/admin-form.js" asp-append-version="true"></script>
+    <script src="~/js/helpers/admin-layout.js" asp-append-version="true"></script>
     @if (ViewData["Scripts"] is string[] pageScripts)
     {
         foreach (var script in pageScripts)
@@ -206,42 +179,6 @@
         }
     }
     @await RenderSectionAsync("Scripts", required: false)
-    <script>
-        function setLang(code) {
-            document.cookie = ".AspNetCore.Culture=c=" + code + "|uic=" + code + ";path=/;max-age=31536000";
-            location.reload();
-        }
-
-        const sidebar = document.getElementById('sidebar');
-        const overlay = document.getElementById('overlay');
-        const toggle = document.getElementById('menuToggle');
-        function openSidebar() { sidebar.classList.remove('-translate-x-full'); overlay.classList.remove('hidden'); }
-        function closeSidebar() { sidebar.classList.add('-translate-x-full'); overlay.classList.add('hidden'); }
-        toggle?.addEventListener('click', openSidebar);
-        overlay?.addEventListener('click', closeSidebar);
-
-        const userMenuBtn = document.getElementById('userMenuBtn');
-        const userMenu = document.getElementById('userMenu');
-        const langMenuBtn = document.getElementById('langMenuBtn');
-        const langMenu = document.getElementById('langMenu');
-        const langBackdrop = document.getElementById('langBackdrop');
-
-        function closeMenus() {
-            userMenu?.classList.add('hidden');
-            langMenu?.classList.add('hidden');
-            langBackdrop?.classList.add('hidden');
-        }
-
-        userMenuBtn?.addEventListener('click', (e) => { e.stopPropagation(); closeMenus(); userMenu.classList.toggle('hidden'); });
-        langMenuBtn?.addEventListener('click', (e) => {
-            e.stopPropagation();
-            userMenu?.classList.add('hidden');
-            const nowHidden = langMenu.classList.toggle('hidden');
-            langBackdrop?.classList.toggle('hidden', nowHidden);
-        });
-        document.addEventListener('click', closeMenus);
-        document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeMenus(); });
-    </script>
 
 </body>
 </html>
