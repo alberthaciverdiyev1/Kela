@@ -14,6 +14,7 @@ using Microsoft.EntityFrameworkCore;
 namespace Kela.Core.Modules.Lesson.Services;
 
 using Lesson = Kela.Core.Modules.Lesson.Entities.Lesson;
+using Kela.Core.Common.Queries;
 
 public sealed class LessonService(AppDbContext db, IFileStorage storage, ITenantFolder folders) : ILessonService
 {
@@ -25,10 +26,7 @@ public sealed class LessonService(AppDbContext db, IFileStorage storage, ITenant
 
         var query = db.Lessons.AsNoTracking();
 
-        if (request.IsDeleted == 1)
-        {
-            query = query.IgnoreQueryFilters(new[] { "SoftDelete" }).Where(x => x.DeletedAt != null);
-        }
+        query = query.ApplyTrashFilter(request.IsDeleted);
 
         if (request.SubjectId.HasValue)
         {
@@ -46,11 +44,7 @@ public sealed class LessonService(AppDbContext db, IFileStorage storage, ITenant
             query = query.Where(x => x.IsActive == request.IsActive);
         }
 
-        if (!string.IsNullOrWhiteSpace(request.Search))
-        {
-            var search = request.Search.Trim();
-            query = query.Where(x => EF.Functions.ILike(x.Title, $"%{search}%"));
-        }
+        query = query.SearchBy(request.Search, x => x.Title);
 
         return await query
             .ApplyListSort(request, x => x.Title, x => x.SortOrder)

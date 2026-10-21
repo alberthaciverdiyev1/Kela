@@ -13,6 +13,7 @@ using Microsoft.EntityFrameworkCore;
 namespace Kela.Core.Modules.Question.Services;
 
 using Question = Kela.Core.Modules.Question.Entities.Question;
+using Kela.Core.Common.Queries;
 
 public sealed class QuestionService(AppDbContext db, IFileStorage storage, ITenantFolder folders) : IQuestionService
 {
@@ -24,10 +25,7 @@ public sealed class QuestionService(AppDbContext db, IFileStorage storage, ITena
 
         var query = db.Questions.AsNoTracking();
 
-        if (request.IsDeleted == 1)
-        {
-            query = query.IgnoreQueryFilters(new[] { "SoftDelete" }).Where(x => x.DeletedAt != null);
-        }
+        query = query.ApplyTrashFilter(request.IsDeleted);
 
         if (request.SubjectId.HasValue)
         {
@@ -39,11 +37,7 @@ public sealed class QuestionService(AppDbContext db, IFileStorage storage, ITena
             query = query.Where(x => x.UserId == request.UserId);
         }
 
-        if (!string.IsNullOrWhiteSpace(request.Search))
-        {
-            var search = request.Search.Trim();
-            query = query.Where(x => EF.Functions.ILike(x.Title!, $"%{search}%"));
-        }
+        query = query.SearchBy(request.Search, x => x.Title!);
 
         return await query
             .ApplyListSort(request)

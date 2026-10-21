@@ -14,6 +14,7 @@ namespace Kela.Core.Modules.Quiz.Services;
 
 using Quiz = Kela.Core.Modules.Quiz.Entities.Quiz;
 using QuizQuestion = Kela.Core.Modules.Quiz.Entities.QuizQuestion;
+using Kela.Core.Common.Queries;
 
 public sealed class QuizService(AppDbContext db, IFileStorage storage) : IQuizService
 {
@@ -22,10 +23,7 @@ public sealed class QuizService(AppDbContext db, IFileStorage storage) : IQuizSe
 
         var query = db.Quizzes.AsNoTracking();
 
-        if (request.IsDeleted == 1)
-        {
-            query = query.IgnoreQueryFilters(new[] { "SoftDelete" }).Where(x => x.DeletedAt != null);
-        }
+        query = query.ApplyTrashFilter(request.IsDeleted);
 
         if (request.LessonId.HasValue)
         {
@@ -42,11 +40,7 @@ public sealed class QuizService(AppDbContext db, IFileStorage storage) : IQuizSe
             query = query.Where(x => x.UserId == request.UserId);
         }
 
-        if (!string.IsNullOrWhiteSpace(request.Search))
-        {
-            var term = $"%{request.Search.Trim()}%";
-            query = query.Where(x => EF.Functions.ILike(x.Title, term));
-        }
+        query = query.SearchBy(request.Search, x => x.Title);
 
         return await query
             .Include(x => x.Questions).Include(x => x.Lesson)

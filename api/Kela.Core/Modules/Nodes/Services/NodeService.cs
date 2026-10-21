@@ -15,6 +15,7 @@ using Microsoft.Extensions.Options;
 namespace Kela.Core.Modules.Nodes.Services;
 
 using WorkerNode = Kela.Core.Modules.Nodes.Entities.WorkerNode;
+using Kela.Core.Common.Queries;
 
 public sealed class NodeService(
     AppDbContext db,
@@ -185,11 +186,7 @@ public sealed class NodeService(
             query = query.Where(x => x.Status == request.Status);
         }
 
-        if (!string.IsNullOrWhiteSpace(request.Search))
-        {
-            var term = $"%{request.Search.Trim()}%";
-            query = query.Where(x => EF.Functions.ILike(x.Name, term));
-        }
+        query = query.SearchBy(request.Search, x => x.Name);
 
         return await query
             .OrderByDescending(x => x.LastSeenAt ?? x.RegisteredAt)

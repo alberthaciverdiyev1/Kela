@@ -19,6 +19,7 @@ using LessonContentType = Kela.Core.Modules.LessonContent.Entities.LessonContent
 using MediaFile = Kela.Core.Modules.Media.Entities.MediaFile;
 using Video = Kela.Core.Modules.Media.Entities.Video;
 using VoiceRecord = Kela.Core.Modules.Media.Entities.VoiceRecord;
+using Kela.Core.Common.Queries;
 
 public sealed class LessonContentService(
     AppDbContext db,
@@ -36,10 +37,7 @@ public sealed class LessonContentService(
 
         var query = db.LessonContents.AsNoTracking();
 
-        if (request.IsDeleted == 1)
-        {
-            query = query.IgnoreQueryFilters(new[] { "SoftDelete" }).Where(x => x.DeletedAt != null);
-        }
+        query = query.ApplyTrashFilter(request.IsDeleted);
 
         if (request.LessonId.HasValue)
         {
@@ -56,11 +54,7 @@ public sealed class LessonContentService(
                 || x.AdditionalLessons.Any(al => db.Lessons.Any(l => l.Id == al.LessonId && l.Subject!.IsShared)));
         }
 
-        if (!string.IsNullOrWhiteSpace(request.Search))
-        {
-            var term = $"%{request.Search.Trim()}%";
-            query = query.Where(x => EF.Functions.ILike(x.Title, term));
-        }
+        query = query.SearchBy(request.Search, x => x.Title);
 
         var total = await query.CountAsync(ct);
 

@@ -12,6 +12,7 @@ using Microsoft.EntityFrameworkCore;
 namespace Kela.Core.Modules.Banner.Services;
 
 using Banner = Kela.Core.Modules.Banner.Entities.Banner;
+using Kela.Core.Common.Queries;
 
 public sealed class BannerService(AppDbContext db, IFileStorage storage, ITenantFolder folders) : IBannerService
 {
@@ -31,16 +32,9 @@ public sealed class BannerService(AppDbContext db, IFileStorage storage, ITenant
             query = query.Where(x => x.IsActive && (x.ActiveUntil == null || x.ActiveUntil >= today));
         }
 
-        if (request.IsDeleted == 1)
-        {
-            query = query.IgnoreQueryFilters(new[] { "SoftDelete" }).Where(x => x.DeletedAt != null);
-        }
+        query = query.ApplyTrashFilter(request.IsDeleted);
 
-        if (!string.IsNullOrWhiteSpace(request.Search))
-        {
-            var search = request.Search.Trim();
-            query = query.Where(x => EF.Functions.ILike(x.Title, $"%{search}%"));
-        }
+        query = query.SearchBy(request.Search, x => x.Title);
 
         var total = await query.CountAsync(ct);
         var items = await query

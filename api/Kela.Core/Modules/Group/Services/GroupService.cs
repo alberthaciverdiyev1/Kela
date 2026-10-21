@@ -19,6 +19,7 @@ using MainCategoryAssignmentLog = Kela.Core.Modules.Group.Entities.MainCategoryA
 using GroupSubject = Kela.Core.Modules.Group.Entities.GroupSubject;
 using StudentGroup = Kela.Core.Modules.Group.Entities.StudentGroup;
 using Subject = Kela.Core.Modules.Subject.Entities.Subject;
+using Kela.Core.Common.Queries;
 
 public sealed class GroupService(AppDbContext db, IFileStorage storage, ITenantFolder folders) : IGroupService
 {
@@ -31,21 +32,14 @@ public sealed class GroupService(AppDbContext db, IFileStorage storage, ITenantF
 
         var query = db.Groups.AsNoTracking();
 
-        if (request.IsDeleted == 1)
-        {
-            query = query.IgnoreQueryFilters(new[] { "SoftDelete" }).Where(x => x.DeletedAt != null);
-        }
+        query = query.ApplyTrashFilter(request.IsDeleted);
 
         if (request.UserId.HasValue)
         {
             query = query.Where(x => x.UserId == request.UserId);
         }
 
-        if (!string.IsNullOrWhiteSpace(request.Search))
-        {
-            var search = request.Search.Trim();
-            query = query.Where(x => EF.Functions.ILike(x.Name, $"%{search}%"));
-        }
+        query = query.SearchBy(request.Search, x => x.Name);
 
         var total = await query.CountAsync(ct);
         var items = await query

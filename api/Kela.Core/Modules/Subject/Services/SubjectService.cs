@@ -11,6 +11,7 @@ using Microsoft.EntityFrameworkCore;
 namespace Kela.Core.Modules.Subject.Services;
 
 using Subject = Kela.Core.Modules.Subject.Entities.Subject;
+using Kela.Core.Common.Queries;
 
 public sealed class SubjectService(AppDbContext db) : ISubjectService
 {
@@ -19,10 +20,7 @@ public sealed class SubjectService(AppDbContext db) : ISubjectService
 
         var query = db.Subjects.AsNoTracking();
 
-        if (request.IsDeleted == 1)
-        {
-            query = query.IgnoreQueryFilters(new[] { "SoftDelete" }).Where(x => x.DeletedAt != null);
-        }
+        query = query.ApplyTrashFilter(request.IsDeleted);
 
         if (request.UserId is long ownerId)
         {
@@ -30,11 +28,7 @@ public sealed class SubjectService(AppDbContext db) : ISubjectService
             query = query.Where(x => x.UserId == ownerId || x.IsShared);
         }
 
-        if (!string.IsNullOrWhiteSpace(request.Search))
-        {
-            var search = request.Search.Trim();
-            query = query.Where(x => EF.Functions.ILike(x.Name, $"%{search}%"));
-        }
+        query = query.SearchBy(request.Search, x => x.Name);
 
         return await query
             .ApplyListSort(request, x => x.Name)
