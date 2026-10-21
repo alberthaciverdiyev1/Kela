@@ -127,6 +127,18 @@ public class TableHeadModel
     public List<TableColumnModel> Columns { get; set; } = new();
 }
 
+/// <summary>Standart siyahı cədvəli: loader, başlıq, boş tbody və footer bir yerdə.</summary>
+public class TableModel
+{
+    public bool Selectable { get; set; }
+
+    public List<TableColumnModel> Columns { get; set; } = new();
+
+    public string BodyId { get; set; } = "rows";
+
+    public bool Footer { get; set; } = true;
+}
+
 public class TableFooterModel
 {
     public string InfoId { get; set; } = "tableInfo";

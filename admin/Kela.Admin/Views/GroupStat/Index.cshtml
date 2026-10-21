@@ -26,29 +26,17 @@
 
         <div id="summary" class="hidden grid-cols-1 gap-4 p-5 sm:grid-cols-3"></div>
 
-        <div class="relative">
-            <div id="listLoader" class="admin-loader"><div class="spinner"></div></div>
-            <div class="overflow-x-auto">
-                <table class="admin-table">
-                    <partial name="Ui/_TableHead" model="@(new TableHeadModel
-                        {
-                            Columns = new List<TableColumnModel>
-                            {
-                                    new() { Label = L["Common_Student"] },
-                                    new() { Label = L["GroupStat_Attempt"], WidthClass = "w-32" },
-                                    new() { Label = L["GroupStat_Completed"], WidthClass = "w-40" },
-                                    new() { Label = L["Question_Correct"], WidthClass = "w-24" },
-                                    new() { Label = L["GroupStat_Wrong"], WidthClass = "w-24" },
-                                    new() { Label = L["GroupStat_Score"], WidthClass = "w-24" },
-                            }
-                        })" />
-                    <tbody id="rows"></tbody>
-                
-
-        </table>
-
-        <partial name="Ui/_TableFooter" model="@(new TableFooterModel())" />
-            </div>
-        </div>
+        <partial name="Ui/_Table" model="@(new TableModel
+{
+Columns = new List<TableColumnModel>
+{
+            new() { Label = L["Common_Student"] },
+            new() { Label = L["GroupStat_Attempt"], WidthClass = "w-32" },
+            new() { Label = L["GroupStat_Completed"], WidthClass = "w-40" },
+            new() { Label = L["Question_Correct"], WidthClass = "w-24" },
+            new() { Label = L["GroupStat_Wrong"], WidthClass = "w-24" },
+            new() { Label = L["GroupStat_Score"], WidthClass = "w-24" },
+}
+})" />
     </div>
 </section>

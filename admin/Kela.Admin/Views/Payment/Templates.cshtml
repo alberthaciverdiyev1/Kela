@@ -6,26 +6,18 @@
     <partial name="Ui/_PageHeader" model="@(new PageHeaderModel { CreateText = "Yeni şablon", CreateOnClick = "openTemplate()" })" />
 
     <div class="admin-card">
-        <div class="relative">
-            <div id="listLoader" class="admin-loader"><div class="spinner"></div></div>
-            <div class="overflow-x-auto">
-                <table class="admin-table">
-                    <partial name="Ui/_TableHead" model="@(new TableHeadModel
-                        {
-                            Columns = new List<TableColumnModel>
-                            {
-                                new() { Label = "Şablon adı" },
-                                new() { Label = "Məbləğ", WidthClass = "w-32" },
-                                new() { Label = "Valyuta", WidthClass = "w-24" },
-                                new() { Label = "Period", WidthClass = "w-36" },
-                                new() { Label = L["Common_Actions"], Right = true }
-                            }
-                        })" />
-                    <tbody id="template-rows"></tbody>
-                </table>
-            </div>
-        </div>
-        <partial name="Ui/_TableFooter" model="@(new TableFooterModel())" />
+        <partial name="Ui/_Table" model="@(new TableModel
+{
+BodyId = "template-rows",
+Columns = new List<TableColumnModel>
+{
+new() { Label = "Şablon adı" },
+new() { Label = "Məbləğ", WidthClass = "w-32" },
+new() { Label = "Valyuta", WidthClass = "w-24" },
+new() { Label = "Period", WidthClass = "w-36" },
+new() { Label = L["Common_Actions"], Right = true }
+}
+})" />
     </div>
 </section>
 

@@ -12,28 +12,18 @@
             ButtonText = L["Common_Search"]
         })" />
 
-        <div class="relative">
-            <div id="listLoader" class="admin-loader"><div class="spinner"></div></div>
-            <div class="overflow-x-auto">
-                <table class="admin-table">
-                    <partial name="Ui/_TableHead" model="@(new TableHeadModel
-                        {
-                            Columns = new List<TableColumnModel>
-                            {
-                                    new() { Label = L["Common_Title"] },
-                                    new() { Label = L["Common_Body"] },
-                                    new() { Label = L["Notification_Target"], WidthClass = "w-32" },
-                                    new() { Label = L["Common_Image"], WidthClass = "w-24" },
-                                    new() { Label = L["Common_Date"], WidthClass = "w-44" },
-                                    new() { Label = L["Common_Actions"], Right = true },
-                            }
-                        })" />
-                    <tbody id="rows"></tbody>
-                </table>
-            </div>
-        </div>
-
-        <partial name="Ui/_TableFooter" model="@(new TableFooterModel())" />
+        <partial name="Ui/_Table" model="@(new TableModel
+        {
+            Columns = new List<TableColumnModel>
+            {
+                    new() { Label = L["Common_Title"] },
+                    new() { Label = L["Common_Body"] },
+                    new() { Label = L["Notification_Target"], WidthClass = "w-32" },
+                    new() { Label = L["Common_Image"], WidthClass = "w-24" },
+                    new() { Label = L["Common_Date"], WidthClass = "w-44" },
+                    new() { Label = L["Common_Actions"], Right = true },
+            }
+        })" />
 </section>
 
 @{

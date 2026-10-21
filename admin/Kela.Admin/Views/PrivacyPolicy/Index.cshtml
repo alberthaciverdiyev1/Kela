@@ -11,27 +11,15 @@
             ButtonText = L["Common_Search"]
         })" />
 
-        <div class="relative">
-            <div id="listLoader" class="admin-loader"><div class="spinner"></div></div>
-            <div class="overflow-x-auto">
-                <table class="admin-table">
-                    <partial name="Ui/_TableHead" model="@(new TableHeadModel
-                        {
-                            Columns = new List<TableColumnModel>
-                            {
-                                    new() { Label = L["Common_Type"], WidthClass = "w-40" },
-                                    new() { Label = L["Common_Content"] },
-                                    new() { Label = L["Common_Actions"], Right = true },
-                            }
-                        })" />
-                    <tbody id="rows"></tbody>
-                
-
-        </table>
-
-        <partial name="Ui/_TableFooter" model="@(new TableFooterModel())" />
-            </div>
-        </div>
+        <partial name="Ui/_Table" model="@(new TableModel
+{
+Columns = new List<TableColumnModel>
+{
+            new() { Label = L["Common_Type"], WidthClass = "w-40" },
+            new() { Label = L["Common_Content"] },
+            new() { Label = L["Common_Actions"], Right = true },
+}
+})" />
     </div>
 </section>
 

@@ -1,0 +1,14 @@
+@model TableModel
+<div class="relative">
+    <div id="listLoader" class="admin-loader"><div class="spinner"></div></div>
+    <div class="overflow-x-auto">
+        <table class="admin-table">
+            <partial name="Ui/_TableHead" model="@(new TableHeadModel { Selectable = Model.Selectable, Columns = Model.Columns })" />
+            <tbody id="@Model.BodyId"></tbody>
+        </table>
+    </div>
+</div>
+@if (Model.Footer)
+{
+    <partial name="Ui/_TableFooter" model="@(new TableFooterModel())" />
+}

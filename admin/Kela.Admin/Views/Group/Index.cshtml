@@ -20,27 +20,17 @@
 
         <partial name="Ui/_BulkBar" model="@(new BulkBarModel { Url = "/group/bulk" })" />
 
-        <div class="relative">
-            <div id="listLoader" class="admin-loader"><div class="spinner"></div></div>
-            <div class="overflow-x-auto">
-                <table class="admin-table">
-                    <partial name="Ui/_TableHead" model="@(new TableHeadModel
-                        {
-                            Selectable = true,
-                            Columns = new List<TableColumnModel>
-                            {
-                                    new() { Label = L["Common_Name"] },
-                                    new() { Label = L["Common_Teacher"] },
-                                    new() { Label = L["Common_Student"], WidthClass = "w-28" },
-                                    new() { Label = L["Common_Actions"], Right = true },
-                            }
-                        })" />
-                    <tbody id="rows"></tbody>
-                </table>
-            </div>
-        </div>
-
-        <partial name="Ui/_TableFooter" model="@(new TableFooterModel())" />
+        <partial name="Ui/_Table" model="@(new TableModel
+        {
+            Selectable = true,
+            Columns = new List<TableColumnModel>
+            {
+                    new() { Label = L["Common_Name"] },
+                    new() { Label = L["Common_Teacher"] },
+                    new() { Label = L["Common_Student"], WidthClass = "w-28" },
+                    new() { Label = L["Common_Actions"], Right = true },
+            }
+        })" />
 </section>
 
 @{
