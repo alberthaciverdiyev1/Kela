@@ -9,7 +9,7 @@
         <input type="number" name="expires_hours" id="code_expires" value="24" min="0" max="720" class="admin-field" />
     </div>
     <div class="flex justify-end gap-3 pt-2">
-        <partial name="Ui/_Button" model="@(new ButtonModel { Text = L["Common_Cancel"], Variant = "secondary", OnClick = "CodesPage.close()" })" />
+        <partial name="Ui/_Button" model="@(new ButtonModel { Text = L["Common_Cancel"], Variant = "secondary", Action = "CodesPage.close" })" />
         <partial name="Ui/_Button" model="@(new ButtonModel { Text = L["Common_Save"], Type = "submit" })" />
     </div>
 </form>

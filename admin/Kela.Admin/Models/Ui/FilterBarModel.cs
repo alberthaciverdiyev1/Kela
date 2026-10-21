@@ -14,7 +14,7 @@ public class FilterBarModel
     public bool Trash { get; set; }
     public string TrashId { get; set; } = "trashBtn";
     public string TrashText { get; set; } = string.Empty;
-    public string TrashOnClick { get; set; } = "toggleTrash()";
+    public string TrashAction { get; set; } = "toggleTrash";
 
     // Sıralama seçimi (verilərsə sağda göstərilir)
     public FilterSortModel? Sort { get; set; }
@@ -22,7 +22,8 @@ public class FilterBarModel
     // Əsas düymə
     public bool ShowButton { get; set; } = true;
     public string ButtonText { get; set; } = string.Empty;
-    public string ButtonOnClick { get; set; } = "loadList(1)";
+    public string ButtonAction { get; set; } = "loadList";
+    public string ButtonArgs { get; set; } = "[1]";
 }
 
 public class FilterSortModel

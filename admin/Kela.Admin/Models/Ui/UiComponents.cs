@@ -5,7 +5,14 @@ public class ButtonModel
     public string Text { get; set; } = string.Empty;
     public string Variant { get; set; } = "primary";  // primary | secondary | danger | ghost
     public string Type { get; set; } = "button";       // button | submit
-    public string? OnClick { get; set; }
+    /// <summary>Qlobal funksiya adı (inline onclick yerinə).</summary>
+    public string? Action { get; set; }
+
+    /// <summary>Action üçün JSON arqumentlər, məs. ["students"].</summary>
+    public string? Args { get; set; }
+
+    /// <summary>Modalı bağlayan düymə (inline onclick yerinə).</summary>
+    public bool Dismiss { get; set; }
     public string? Href { get; set; }
     public string? Id { get; set; }
 }
@@ -158,7 +165,7 @@ public class TableFooterModel
 public class PageHeaderModel
 {
     public string? CreateText { get; set; }
-    public string CreateOnClick { get; set; } = "openCreate()";
+    public string CreateAction { get; set; } = "openCreate";
     public bool Sortable { get; set; }
     public StatCardModel? StatCard { get; set; }
 

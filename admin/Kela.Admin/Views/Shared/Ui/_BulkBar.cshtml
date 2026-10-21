@@ -1,27 +1,27 @@
 @model BulkBarModel
-<div id="bulkBar" class="mb-3 hidden items-center gap-2 rounded-xl border border-border bg-surface px-3 py-2">
+<div id="bulkBar" data-bulk-url="@Model.Url" class="mb-3 hidden items-center gap-2 rounded-xl border border-border bg-surface px-3 py-2">
     <span id="bulkCount" class="text-sm font-bold text-slate-600"></span>
     <div class="ml-auto flex items-center gap-2">
         @if (Model.CanDelete)
         {
             <button type="button" id="bulkDelete" class="admin-button-danger !min-h-0 !py-2"
-                    onclick="AdminUI.bulkDo('@Model.Url', 'delete', () => loadList(currentPage))">@L["Common_Delete"]</button>
+                    data-bulk-action="delete">@L["Common_Delete"]</button>
         }
         @if (Model.CanRestore)
         {
             @* Yalnız "Silinənlər" rejimində görünür (AdminUI.syncTrashButton). *@
             <button type="button" id="bulkRestore" class="admin-button-secondary !min-h-0 !py-2 hidden"
-                    onclick="AdminUI.bulkDo('@Model.Url', 'restore', () => loadList(currentPage))">@L["Common_Restore"]</button>
+                    data-bulk-action="restore">@L["Common_Restore"]</button>
         }
         @if (Model.CanActivate)
         {
             <button type="button" id="bulkActivate" class="admin-button-secondary !min-h-0 !py-2"
-                    onclick="AdminUI.bulkDo('@Model.Url', 'activate', () => loadList(currentPage))">@L["Common_Active"]</button>
+                    data-bulk-action="activate">@L["Common_Active"]</button>
         }
         @if (Model.CanDeactivate)
         {
             <button type="button" id="bulkDeactivate" class="admin-button-secondary !min-h-0 !py-2"
-                    onclick="AdminUI.bulkDo('@Model.Url', 'deactivate', () => loadList(currentPage))">@L["Common_Inactive"]</button>
+                    data-bulk-action="deactivate">@L["Common_Inactive"]</button>
         }
     </div>
 </div>

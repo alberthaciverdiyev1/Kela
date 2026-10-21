@@ -47,7 +47,7 @@
 
             <div class="ms-auto flex items-center gap-2">
                 <div id="refreshNote" class="hidden text-sm font-semibold text-slate-400">@L["Node_AutoRefresh"]</div>
-                <button type="button" id="createCodeBtn" onclick="CodesPage.create()"
+                <button type="button" id="createCodeBtn" data-action="CodesPage.create"
                         class="admin-button-primary hidden">
                     @L["Node_GenerateCode"]
                 </button>
@@ -79,7 +79,7 @@
 
         <div id="tab-jobs" data-tab-panel="jobs" class="relative hidden">
             <div class="mb-3 flex flex-wrap items-center gap-2">
-                <select id="jobStatus" onchange="JobsPage.reload()" class="admin-field !w-auto">
+                <select id="jobStatus" data-change-action="JobsPage.reload" class="admin-field !w-auto">
                     <option value="">@L["Node_All"]</option>
                     @foreach (var status in Kela.Nodes.Shared.Contracts.JobStatus.All)
                     {

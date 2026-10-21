@@ -9,7 +9,7 @@
         <partial name="Ui/_Switch" model="@(new SwitchModel { Name = "general_quiz", Id = "s_general_quiz", Label = L["Lesson_SetGeneralExam"], Checked = true })" />
     </div>
     <div class="flex justify-end gap-3 pt-2">
-        <partial name="Ui/_Button" model="@(new ButtonModel { Text = L["Common_Cancel"], Variant = "secondary", OnClick = "closeSettings()" })" />
-        <partial name="Ui/_Button" model="@(new ButtonModel { Text = L["Common_Save"], OnClick = "saveSettings()" })" />
+        <partial name="Ui/_Button" model="@(new ButtonModel { Text = L["Common_Cancel"], Variant = "secondary", Action = "closeSettings" })" />
+        <partial name="Ui/_Button" model="@(new ButtonModel { Text = L["Common_Save"], Action = "saveSettings" })" />
     </div>
 </div>

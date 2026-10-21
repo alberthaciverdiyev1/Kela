@@ -17,5 +17,8 @@
 }
 else
 {
-    <button type="@Model.Type" id="@Model.Id" onclick="@Model.OnClick" class="@cls">@Model.Text</button>
+    <button type="@Model.Type" id="@Model.Id" class="@cls"
+        @(Model.Action is not null ? $"data-action={Model.Action}" : null)
+        @(Model.Args is not null ? $"data-args='{Model.Args}'" : null)
+        @(Model.Dismiss ? "data-modal-close" : null)>@Model.Text</button>
 }

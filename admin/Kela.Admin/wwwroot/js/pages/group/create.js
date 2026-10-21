@@ -145,6 +145,10 @@
     window.wizardNext = function () { if (!validateRequired(step)) return; if (step < 3) setStep(step + 1); };
     window.wizardPrev = function () { if (step > 1) setStep(step - 1); };
 
+    // data-change-action / data-input-action körpüləri (inline handler yerinə).
+    window.toggleAllFrom = function (el) { toggleAllCheck(el.dataset.list, el.checked); };
+    window.filterQuizzes = function (el) { filterCheckList('quizzesList', el.value); };
+
     window.setWizardMode = function (isCreate) {
         createMode = isCreate;
         document.getElementById('wizardSteps').classList.toggle('hidden', !isCreate);

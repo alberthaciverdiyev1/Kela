@@ -1,3 +1,10 @@
+// Şablon önizləməsi yüklənmədikdə ad yerinə fallback blokunu göstərir.
+function templateFallback(img) {
+    img.style.display = 'none';
+    const fallback = img.parentElement.querySelector('.tmpl-fallback');
+    if (fallback) fallback.style.display = 'flex';
+}
+
 AdminUI.listPage({
     api: '/certificate/list',
     bulkUrl: '/certificate/bulk',

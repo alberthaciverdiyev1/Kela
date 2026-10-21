@@ -21,7 +21,7 @@
                 new() { WidthClass = "w-36", Select = new SelectModel { Name = "quiz_type", Id = "quiz_type", Label = L["Common_Type"], Options = typeOptions } }
             },
             ButtonText = L["Common_Show"],
-            ButtonOnClick = "load()"
+            ButtonAction = "load", ButtonArgs = null
         })" />
 
         <div id="summary" class="hidden grid-cols-1 gap-4 p-5 sm:grid-cols-3"></div>

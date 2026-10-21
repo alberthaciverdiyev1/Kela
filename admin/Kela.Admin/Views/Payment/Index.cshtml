@@ -28,8 +28,7 @@
             Selects = new List<FilterSelectModel> {
                 new() { WidthClass = "w-48", Select = new SelectModel { Name = "status", Id = "payment-status", Label = "Status", Options = statusOptions } }
             },
-            ButtonText = L["Common_Show"],
-            ButtonOnClick = "loadList(1)"
+            ButtonText = L["Common_Show"]
         })" />
 
         <partial name="Ui/_Table" model="@(new TableModel

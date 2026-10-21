@@ -15,6 +15,7 @@ public sealed class RegisterController(ITenantService tenants, IPrivacyPolicySer
     [HttpGet]
     public IActionResult Index()
     {
+        ViewData["Scripts"] = new[] { "~/js/pages/register/index.js" };
         if (User.Identity?.IsAuthenticated == true) return RedirectToAction("Index", "Dashboard");
         return View();
     }
@@ -48,6 +49,7 @@ public sealed class RegisterController(ITenantService tenants, IPrivacyPolicySer
         if (!string.IsNullOrWhiteSpace(request.Website))
         {
             ViewData["Success"] = true;
+            ViewData["Scripts"] = new[] { "~/js/pages/register/index.js" };
             return View(new RegisterTenantRequest());
         }
 
@@ -55,11 +57,13 @@ public sealed class RegisterController(ITenantService tenants, IPrivacyPolicySer
         {
             await tenants.RegisterAsync(request, ct);
             ViewData["Success"] = true;
+            ViewData["Scripts"] = new[] { "~/js/pages/register/index.js" };
             return View(new RegisterTenantRequest());
         }
         catch (ArgumentException ex)
         {
             ViewData["Error"] = ex.Message;
+            ViewData["Scripts"] = new[] { "~/js/pages/register/index.js" };
             return View(request);
         }
     }

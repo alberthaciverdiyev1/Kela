@@ -11,7 +11,7 @@ function hasImage(url) {
 function lessonThumb(lesson) {
     // İkon həmişə altdadır: şəkil yüklənməzsə sınıq şəkil işarəsi yerinə ikon görünür.
     const img = hasImage(lesson.image)
-        ? `<img src="${lesson.image}" alt="" class="absolute inset-0 h-full w-full object-cover" onerror="this.remove()" />`
+        ? `<img src="${lesson.image}" alt="" class="absolute inset-0 h-full w-full object-cover" data-img-remove />`
         : '';
     return `<span class="relative grid h-11 w-11 shrink-0 place-items-center overflow-hidden rounded-xl bg-primary-light text-primary">
         <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.9">${lessonIcon()}</svg>${img}</span>`;
@@ -32,18 +32,8 @@ function rowActions(id) {
     ]);
 }
 
-// Sətirdən status dəyişmə: adi redaktə endpoint-i (əlavə endpoint yoxdur).
-async function setStatus(id, isActive) {
-    const d = await AdminUI.get(`/lesson/${id}`);
-    const fd = new FormData();
-    fd.append('subject_id', d.subjectId);
-    fd.append('title', d.title);
-    fd.append('sort_order', d.sortOrder ?? 0);
-    fd.append('is_active', String(isActive));
-
-    const res = await AdminUI.putForm(`/lesson/${id}`, fd);
-    if (res.ok) { AdminUI.notify(L["Js_StatusChanged"]); loadList(pager.page); }
-    else AdminUI.error(AdminUI.errText(res));
+function setStatus(id, isActive) {
+    AdminUI.setActive('/lesson', id, isActive, () => loadList(pager.page));
 }
 
 AdminUI.listPage({

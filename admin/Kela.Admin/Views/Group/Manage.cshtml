@@ -10,9 +10,9 @@
     @{
         var headerExtra = new Microsoft.AspNetCore.Html.HtmlString($@"
             <a href=""/group-stat?group_id={group.Id}"" class=""admin-button-secondary"">{L["Nav_GroupStats"]}</a>
-            <button type=""button"" class=""admin-button-secondary"" onclick=""copyGroupLink()"">{L["Group_CopyJoinLink"]}</button>
-            <button type=""button"" class=""admin-button-secondary"" onclick=""toggleGroupEdit()"">{L["Js_Edit"]}</button>
-            <button type=""button"" class=""admin-button-danger"" onclick=""deleteGroup()"">{L["Common_Delete"]}</button>");
+            <button type=""button"" class=""admin-button-secondary"" data-action=""copyGroupLink"">{L["Group_CopyJoinLink"]}</button>
+            <button type=""button"" class=""admin-button-secondary"" data-action=""toggleGroupEdit"">{L["Js_Edit"]}</button>
+            <button type=""button"" class=""admin-button-danger"" data-action=""deleteGroup"">{L["Common_Delete"]}</button>");
     }
     <partial name="Ui/_PageHeader" model="@(new PageHeaderModel { Extra = headerExtra })" />
 
@@ -67,7 +67,7 @@
                 <partial name="Ui/_FileUpload" model="@(new FileUploadModel { Name = "image", Id = "g_image", Label = L["Common_Image"], Accept = ".jpg,.jpeg,.png", Hint = "jpg/png, max 5MB" })" />
             </div>
             <div class="flex justify-end gap-3 sm:col-span-2">
-                <partial name="Ui/_Button" model="@(new ButtonModel { Text = L["Common_Cancel"], Variant = "secondary", OnClick = "toggleGroupEdit()" })" />
+                <partial name="Ui/_Button" model="@(new ButtonModel { Text = L["Common_Cancel"], Variant = "secondary", Action = "toggleGroupEdit" })" />
                 <partial name="Ui/_Button" model="@(new ButtonModel { Text = L["Common_Save"], Type = "submit" })" />
             </div>
         </form>
@@ -93,7 +93,7 @@
             <div id="tab-students" data-tab-panel="students" class="space-y-4">
                 <div class="flex flex-wrap items-end gap-3">
                     <div class="min-w-56 flex-1"><partial name="Ui/_Select" model="@(new SelectModel { Name = "student_pick", Id = "studentPick", Label = L["Nav_Students"], Options = new List<SelectOption>() })" /></div>
-                    <partial name="Ui/_Button" model="@(new ButtonModel { Text = L["Common_Add"], OnClick = "assignMember('students')" })" />
+                    <partial name="Ui/_Button" model="@(new ButtonModel { Text = L["Common_Add"], Action = "assignMember", Args = "[\"students\"]" })" />
                 </div>
                 <div id="studentsList" class="space-y-2"></div>
             </div>
@@ -105,7 +105,7 @@
             <div id="tab-subjects" data-tab-panel="subjects" class="hidden space-y-4">
                 <div class="flex flex-wrap items-end gap-3">
                     <div class="min-w-56 flex-1"><partial name="Ui/_Select" model="@(new SelectModel { Name = "subject_pick", Id = "subjectPick", Label = L["Nav_Subjects"], Options = new List<SelectOption>() })" /></div>
-                    <partial name="Ui/_Button" model="@(new ButtonModel { Text = L["Common_Add"], OnClick = "assignMember('subjects')" })" />
+                    <partial name="Ui/_Button" model="@(new ButtonModel { Text = L["Common_Add"], Action = "assignMember", Args = "[\"subjects\"]" })" />
                 </div>
                 <div id="subjectsList" class="space-y-2"></div>
             </div>
@@ -113,7 +113,7 @@
             <div id="tab-quizzes" data-tab-panel="quizzes" class="hidden space-y-4">
                 <div class="flex flex-wrap items-end gap-3">
                     <div class="min-w-56 flex-1"><partial name="Ui/_Select" model="@(new SelectModel { Name = "quiz_pick", Id = "quizPick", Label = L["Nav_Exams"], Options = new List<SelectOption>() })" /></div>
-                    <partial name="Ui/_Button" model="@(new ButtonModel { Text = L["Common_Add"], OnClick = "assignMember('quizzes')" })" />
+                    <partial name="Ui/_Button" model="@(new ButtonModel { Text = L["Common_Add"], Action = "assignMember", Args = "[\"quizzes\"]" })" />
                 </div>
                 <div id="quizzesList" class="space-y-2"></div>
             </div>

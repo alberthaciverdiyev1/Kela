@@ -23,7 +23,7 @@
             const row = document.createElement('div');
             row.className = 'flex items-center justify-between rounded-xl bg-surface-secondary px-4 py-2.5';
             row.innerHTML = `<span class="text-sm text-slate-700">${labelFn(item)}</span>
-                <button type="button" class="admin-row-action is-danger" onclick="removeMember('${type}', ${idFn(item)})">${L["Common_Delete"]}</button>`;
+                <button type="button" class="admin-row-action is-danger" ${AdminUI.actionAttrs('removeMember', [type, idFn(item)])}>${L["Common_Delete"]}</button>`;
             box.appendChild(row);
         });
     }
@@ -113,8 +113,8 @@
                 <div class="flex shrink-0 items-center gap-2">
                     ${badge(j.status)}
                     ${j.status === 'pending'
-                        ? `<button type="button" class="admin-row-action" onclick="decideJoin(${j.id}, true)">${L["Group_JoinApprove"]}</button>
-                           <button type="button" class="admin-row-action is-danger" onclick="decideJoin(${j.id}, false)">${L["Group_JoinReject"]}</button>`
+                        ? `<button type="button" class="admin-row-action"${AdminUI.actionAttrs('decideJoin', [j.id, true])}>${L["Group_JoinApprove"]}</button>
+                           <button type="button" class="admin-row-action is-danger"${AdminUI.actionAttrs('decideJoin', [j.id, false])}>${L["Group_JoinReject"]}</button>`
                         : ''}
                 </div>
             </div>`).join('')

@@ -22,13 +22,34 @@ window.AdminUI = window.AdminUI || {};
         </article>`;
     }
 
+    // "openEdit(12)" kimi expression-u data-action/data-args-a çevirir.
+    function actionAttrs(actionOrExpr, args) {
+        let action = actionOrExpr;
+        let list = args;
+
+        if (list === undefined) {
+            const m = /^([\w.]+)\((.*)\)$/.exec(String(actionOrExpr).trim());
+            if (!m) return ` onclick="${actionOrExpr}"`;
+            action = m[1];
+            const raw = m[2].trim();
+            if (!raw) list = [];
+            else {
+                try { list = JSON.parse('[' + raw.replace(/'/g, '"') + ']'); }
+                catch { return ` onclick="${actionOrExpr}"`; }
+            }
+        }
+
+        const json = JSON.stringify(list || []).replace(/'/g, '&#39;');
+        return ` data-action="${action}" data-args='${json}'`;
+    }
+
     function actionButton(label, onclick, opts) {
-        return `<button type="button" class="admin-row-action ${toneOf(opts)}" onclick="${onclick}">${label}</button>`;
+        return `<button type="button" class="admin-row-action ${toneOf(opts)}"${actionAttrs(onclick)}>${label}</button>`;
     }
 
     // Yalnız ikonlu sətir əməliyyatı (tooltip ilə).
     function actionIcon(path, title, onclick, opts) {
-        return `<button type="button" class="admin-row-action ${toneOf(opts)}" title="${title}" aria-label="${title}" onclick="${onclick}">
+        return `<button type="button" class="admin-row-action ${toneOf(opts)}" title="${title}" aria-label="${title}"${actionAttrs(onclick)}>
             <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.9">${path}</svg>
         </button>`;
     }
@@ -53,7 +74,7 @@ window.AdminUI = window.AdminUI || {};
     function statusSwitch(checked, onclick) {
         return `<button type="button" class="admin-switch${checked ? ' is-on' : ''}" role="switch"
                         aria-checked="${checked}" title="${checked ? L["Js_Deactivate"] : L["Js_Activate"]}"
-                        onclick="${onclick}"><span></span></button>`;
+                        ${actionAttrs(onclick)}><span></span></button>`;
     }
 
     function toggleHidden(id, hidden) {
@@ -120,5 +141,5 @@ window.AdminUI = window.AdminUI || {};
         document.dispatchEvent(new CustomEvent('tab:change', { detail: { tab: name } }));
     }
 
-    Object.assign(UI, { initTabs, selectTab, badge, chip, statCard, actionButton, actionIcon, actionLink, rowActions, actions, statusSwitch, toggleHidden, syncTrashButton, restoreButton, restoreItem, confirmRestore });
+    Object.assign(UI, { actionAttrs, initTabs, selectTab, badge, chip, statCard, actionButton, actionIcon, actionLink, rowActions, actions, statusSwitch, toggleHidden, syncTrashButton, restoreButton, restoreItem, confirmRestore });
 })(window.AdminUI);

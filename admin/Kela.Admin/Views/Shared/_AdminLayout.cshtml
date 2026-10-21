@@ -88,7 +88,7 @@
                             <div class="mx-auto mb-2 h-1.5 w-10 rounded-full bg-slate-200 sm:hidden"></div>
                             @foreach (var lang in langs)
                             {
-                                <button type="button" onclick="setLang('@lang.Code')"
+                                <button type="button" data-action="setLang" data-args="@($"[\"{lang.Code}\"]")"
                                         class="flex w-full items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium transition hover:bg-surface-secondary sm:rounded-none sm:py-2.5 @(lang.Code == currentLang ? "bg-primary-light text-primary" : "text-slate-600")">
                                     <span class="text-lg leading-none">@lang.Flag</span>
                                     <span class="flex-1 text-left">@lang.Name</span>

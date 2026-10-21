@@ -10,8 +10,8 @@
 <section class="admin-page">
     @{
         var studentsHeaderExtra = new Microsoft.AspNetCore.Html.HtmlString($@"
-            <button type=""button"" class=""admin-button-primary"" onclick=""openStudentCreate()"">+ {L["Students_Create"]}</button>
-            <button type=""button"" id=""trashBtn"" class=""admin-button-secondary"" onclick=""toggleTrash()"">{L["Common_DeletedItems"]}</button>
+            <button type=""button"" class=""admin-button-primary"" data-action=""openStudentCreate"">+ {L["Students_Create"]}</button>
+            <button type=""button"" id=""trashBtn"" class=""admin-button-secondary"" data-action=""toggleTrash"">{L["Common_DeletedItems"]}</button>
             <a href=""/students/export"" class=""admin-button-secondary"">⬇ Excel</a>");
     }
     <partial name="Ui/_PageHeader" model="@(new PageHeaderModel { Extra = studentsHeaderExtra })" />

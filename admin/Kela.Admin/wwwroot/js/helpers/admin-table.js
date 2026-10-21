@@ -150,12 +150,27 @@ window.AdminUI = window.AdminUI || {};
         }
     }
 
+    document.addEventListener('click', (e) => {
+        if (e.target.closest?.('[data-sort-close]')) UI.closeSort();
+    });
+
+    document.addEventListener('click', (e) => {
+        const btn = e.target.closest?.('[data-bulk-action]');
+        if (!btn) return;
+        const bar = btn.closest('[data-bulk-url]');
+        if (bar) UI.bulkDo(bar.dataset.bulkUrl, btn.dataset.bulkAction);
+    });
+
     async function bulkDo(url, action, cb) {
         const ids = selectedIds();
         if (!ids.length) { UI.notify(L["Js_NothingSelected"], 'warning'); return; }
         if (action === 'delete' && !await UI.confirmDelete((L["Js_ConfirmBulkDelete"] || '{0}').replace('{0}', ids.length))) return;
         const res = await UI.postJson(url, { ids, action });
-        if (res.ok) { UI.notify(L["Js_Applied"]); if (typeof cb === 'function') cb(); }
+        if (res.ok) {
+            UI.notify(L["Js_Applied"]);
+            if (typeof cb === 'function') cb();
+            else if (typeof loadList === 'function' && typeof pager === 'object') loadList(pager.page);
+        }
         else UI.error(res.data?.message || L["Js_ErrorOccured"]);
     }
 

@@ -120,6 +120,52 @@ window.AdminUI = window.AdminUI || {};
         }[c]));
     }
 
+    // data-action / data-change-action: HTML-də inline JS yerinə adlandırılmış funksiya.
+    function runAction(el, extraArgs) {
+        const name = el.dataset.action || el.dataset.changeAction;
+        if (!name) return false;
+        const fn = name.split('.').reduce((obj, key) => (obj == null ? undefined : obj[key]), window);
+        if (typeof fn !== 'function') return false;
+        const args = el.dataset.args ? JSON.parse(el.dataset.args) : [];
+        fn(...args, ...(extraArgs || []));
+        return true;
+    }
+
+    document.addEventListener('click', (e) => {
+        const el = e.target.closest?.('[data-action]');
+        if (el) runAction(el);
+    });
+
+    document.addEventListener('change', (e) => {
+        const el = e.target.closest?.('[data-change-action]');
+        if (el) runAction(el, [el]);
+    });
+
+    document.addEventListener('input', (e) => {
+        const el = e.target.closest?.('[data-input-action]');
+        if (!el) return;
+        const fn = el.dataset.inputAction.split('.').reduce((obj, key) => (obj == null ? undefined : obj[key]), window);
+        if (typeof fn === 'function') fn(el);
+    });
+
+    document.addEventListener('click', (e) => {
+        const el = e.target.closest?.('[data-select-all]');
+        if (el) el.select?.();
+    });
+
+    // data-img-error: şəkil yüklənmədikdə adlandırılmış fallback funksiyası.
+    document.addEventListener('error', (e) => {
+        if (e.target?.dataset && 'imgRemove' in e.target.dataset) {
+            e.target.remove();
+            return;
+        }
+
+        const name = e.target?.dataset?.imgError;
+        if (!name) return;
+        const fn = name.split('.').reduce((obj, key) => (obj == null ? undefined : obj[key]), window);
+        if (typeof fn === 'function') fn(e.target);
+    }, true);
+
     async function postJson(url, obj) {
         const res = await fetch(url, {
             method: 'POST',
@@ -140,6 +186,17 @@ window.AdminUI = window.AdminUI || {};
         releaseSubmitButton();
         let body = null; try { body = await res.json(); } catch (e) { /* boş */ }
         return { ok: res.ok, status: res.status, data: body };
+    }
+
+    // Aktiv/deaktiv dəyişməsi — bütün resurslarda eyni endpoint forması.
+    async function setActive(url, id, isActive, done) {
+        const res = await putJson(`${url}/${id}/status`, { isActive });
+        if (res.ok) {
+            notify(L["Js_StatusChanged"]);
+            if (typeof done === 'function') done();
+        } else {
+            error(errText(res));
+        }
     }
 
     async function del(url) {
@@ -193,5 +250,5 @@ window.AdminUI = window.AdminUI || {};
         _filterTimer = setTimeout(filterReload, 350);
     });
 
-    Object.assign(UI, { token, copyText, escapeHtml, SWAL_BASE, swal, lockSubmitButton, releaseSubmitButton, notify, error, confirmDelete, get, post, postForm, putForm, postJson, putJson, del, errText, loader, reloadAfter });
+    Object.assign(UI, { token, copyText, escapeHtml, setActive, SWAL_BASE, swal, lockSubmitButton, releaseSubmitButton, notify, error, confirmDelete, get, post, postForm, putForm, postJson, putJson, del, errText, loader, reloadAfter });
 })(window.AdminUI);

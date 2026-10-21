@@ -36,10 +36,10 @@
     }
     @if (Model.Trash && User.IsAdmin())
     {
-        <button type="button" id="@Model.TrashId" class="admin-button-secondary h-[46px] px-4" onclick="@Model.TrashOnClick">@Model.TrashText</button>
+        <button type="button" id="@Model.TrashId" class="admin-button-secondary h-[46px] px-4" data-action="@Model.TrashAction">@Model.TrashText</button>
     }
     @if (Model.ShowButton)
     {
-        <button type="button" onclick="@Model.ButtonOnClick" class="admin-button-primary h-[46px] px-6">@Model.ButtonText</button>
+        <button type="button" data-action="@Model.ButtonAction" data-args="@Model.ButtonArgs" class="admin-button-primary h-[46px] px-6">@Model.ButtonText</button>
     }
 </div>

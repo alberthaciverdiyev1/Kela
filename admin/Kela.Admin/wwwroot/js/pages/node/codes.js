@@ -9,7 +9,7 @@ window.CodesPage = (function () {
 
         AdminUI.table('codeRows', (codes || []).map((code, index) => [
             { html: AdminUI.rowNo(code, index, 1, codes.length), cls: 'text-slate-400' },
-            { html: `<code class="cursor-pointer rounded-lg bg-surface-secondary px-2 py-1 text-sm font-bold text-slate-800" onclick="CodesPage.copy('${code.code}')" title="${L["Node_Copied"]}">${code.code}</code>` },
+            { html: `<code class="cursor-pointer rounded-lg bg-surface-secondary px-2 py-1 text-sm font-bold text-slate-800" ${AdminUI.actionAttrs('CodesPage.copy', [code.code])} title="${L["Node_Copied"]}">${code.code}</code>` },
             { html: `<span class="text-sm text-slate-500">${code.note || '—'}</span>` },
             { html: `<span class="text-sm text-slate-500">${code.expiresAt ? new Date(code.expiresAt).toLocaleString() : L["Node_NoExpiry"]}</span>` },
             {

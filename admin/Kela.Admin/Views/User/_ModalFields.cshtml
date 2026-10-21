@@ -24,7 +24,7 @@
         <p id="passwordHint" class="mt-1 hidden text-xs text-slate-400">@L["User_PasswordHint"]</p>
     </div>
     <div class="flex justify-end gap-3 pt-2">
-        <partial name="Ui/_Button" model="@(new ButtonModel { Text = L["Common_Cancel"], Variant = "secondary", OnClick = "AdminUI.closeModal('modal')" })" />
+        <partial name="Ui/_Button" model="@(new ButtonModel { Text = L["Common_Cancel"], Variant = "secondary", Dismiss = true })" />
         <partial name="Ui/_Button" model="@(new ButtonModel { Text = L["Common_Save"], Type = "submit" })" />
     </div>
 </form>

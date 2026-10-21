@@ -42,7 +42,7 @@
         <div data-step-panel="2" class="hidden space-y-3">
             <div class="flex items-center justify-between">
                 <p class="text-sm font-semibold text-slate-600">@L["Group_StepSubjects"] <span id="count-subjects" class="ml-1 text-xs font-bold text-primary"></span></p>
-                <label class="flex items-center gap-2 text-xs font-bold text-primary"><input type="checkbox" onchange="toggleAllCheck('subjectsList', this.checked)" class="h-4 w-4 rounded border-slate-300 text-primary focus:ring-primary" />@L["Group_SelectAll"]</label>
+                <label class="flex items-center gap-2 text-xs font-bold text-primary"><input type="checkbox" data-change-action="toggleAllFrom" data-list="subjectsList" class="h-4 w-4 rounded border-slate-300 text-primary focus:ring-primary" />@L["Group_SelectAll"]</label>
             </div>
             <div id="subjectsList" class="max-h-[45vh] space-y-1 overflow-y-auto rounded-xl border border-border p-2">
                 <div class="p-3 text-sm text-slate-400">@L["Common_LoadingResults"]</div>
@@ -53,9 +53,9 @@
         <div data-step-panel="3" class="hidden space-y-3">
             <div class="flex items-center justify-between">
                 <p class="text-sm font-semibold text-slate-600">@L["Group_StepQuizzes"] <span id="count-quizzes" class="ml-1 text-xs font-bold text-primary"></span></p>
-                <label class="flex items-center gap-2 text-xs font-bold text-primary"><input type="checkbox" onchange="toggleAllCheck('quizzesList', this.checked)" class="h-4 w-4 rounded border-slate-300 text-primary focus:ring-primary" />@L["Group_SelectAll"]</label>
+                <label class="flex items-center gap-2 text-xs font-bold text-primary"><input type="checkbox" data-change-action="toggleAllFrom" data-list="quizzesList" class="h-4 w-4 rounded border-slate-300 text-primary focus:ring-primary" />@L["Group_SelectAll"]</label>
             </div>
-            <input id="quizSearch" type="search" class="admin-field" placeholder="@L["Common_SearchPlaceholder"]" oninput="filterCheckList('quizzesList', this.value)" />
+            <input id="quizSearch" type="search" class="admin-field" placeholder="@L["Common_SearchPlaceholder"]" data-input-action="filterQuizzes" />
             <div id="quizzesList" class="max-h-[40vh] space-y-1 overflow-y-auto rounded-xl border border-border p-2">
                 <div class="p-3 text-sm text-slate-400">@L["Common_LoadingResults"]</div>
             </div>
@@ -63,10 +63,10 @@
     </div>
 
     <div class="flex items-center justify-between gap-3 border-t border-border p-5">
-        <button type="button" id="prevBtn" onclick="wizardPrev()" class="admin-button-secondary hidden">@L["Common_Back"]</button>
+        <button type="button" id="prevBtn" data-action="wizardPrev" class="admin-button-secondary hidden">@L["Common_Back"]</button>
         <div class="ml-auto flex gap-3">
-            <button type="button" onclick="AdminUI.closeModal('modal')" class="admin-button-secondary">@L["Common_Cancel"]</button>
-            <button type="button" id="nextBtn" onclick="wizardNext()" class="admin-button-primary">@L["Common_Next"]</button>
+            <button type="button" data-modal-close class="admin-button-secondary">@L["Common_Cancel"]</button>
+            <button type="button" id="nextBtn" data-action="wizardNext" class="admin-button-primary">@L["Common_Next"]</button>
             <button type="submit" id="saveBtn" class="admin-button-primary hidden">@L["Common_Save"]</button>
         </div>
     </div>

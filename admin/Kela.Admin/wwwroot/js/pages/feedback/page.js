@@ -17,7 +17,7 @@
         }
 
         box.innerHTML = threads.map(t => `
-            <button type="button" onclick="selectThread(${t.id})"
+            <button type="button"${AdminUI.actionAttrs('selectThread', [t.id])}
                     class="w-full rounded-xl border p-3 text-left transition ${t.id === activeId
                         ? 'border-primary bg-primary-light'
                         : t.hasUnreadForAdmin ? 'border-primary/30 bg-primary-light/40 hover:bg-primary-light'
@@ -50,7 +50,7 @@
                     <p class="truncate text-sm font-bold text-slate-800">${label(t)}</p>
                     <p class="text-[11px] text-slate-400">${t.role}</p>
                 </div>
-                <button type="button" class="admin-row-action is-danger" onclick="deleteThread(${t.id})">${L["Common_Delete"]}</button>
+                <button type="button" class="admin-row-action is-danger"${AdminUI.actionAttrs('deleteThread', [t.id])}>${L["Common_Delete"]}</button>
             </div>
             ${t.messages.map(m => `
                 <div class="flex ${m.senderRole === 'admin' ? 'justify-end' : 'justify-start'}">

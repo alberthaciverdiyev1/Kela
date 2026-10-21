@@ -86,6 +86,14 @@ window.AdminUI = window.AdminUI || {};
     }
 
 
+    // data-modal-close — bağlama düymələri inline onclick olmadan.
+    document.addEventListener('click', (e) => {
+        const btn = e.target.closest?.('[data-modal-close]');
+        if (!btn) return;
+        const modal = btn.closest('[data-modal]');
+        if (modal) closeModal(modal);
+    });
+
     // ESC ən üstdəki modalı bağlayır; fon sahəsinə klik də bağlayır.
     document.addEventListener('keydown', (e) => {
         if (e.key !== 'Escape') return;

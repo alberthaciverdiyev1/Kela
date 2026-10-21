@@ -162,9 +162,9 @@ async function loadDay() {
                 </div>
             </div>
             <div class="flex gap-2">
-                <button type="button" class="admin-button-secondary" onclick="markAll(true)">${AdminUI.escapeHtml(L["Attendance_AllPresent"])}</button>
-                <button type="button" class="admin-button-secondary" onclick="markAll(false)">${AdminUI.escapeHtml(L["Attendance_AllAbsent"])}</button>
-                <button type="button" id="saveBtn" class="admin-button-primary" onclick="saveDay()">${AdminUI.escapeHtml(L["Common_Save"])}</button>
+                <button type="button" class="admin-button-secondary" ${AdminUI.actionAttrs('markAll', [true])}>${AdminUI.escapeHtml(L["Attendance_AllPresent"])}</button>
+                <button type="button" class="admin-button-secondary" ${AdminUI.actionAttrs('markAll', [false])}>${AdminUI.escapeHtml(L["Attendance_AllAbsent"])}</button>
+                <button type="button" id="saveBtn" class="admin-button-primary" ${AdminUI.actionAttrs('saveDay', [])}>${AdminUI.escapeHtml(L["Common_Save"])}</button>
             </div>
         </div>
         <div class="mt-4 space-y-2">

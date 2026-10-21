@@ -6,7 +6,7 @@
     <partial name="Ui/_Input" model="@(new InputModel { Name = "active_until", Id = "active_until", Label = L["Banner_ActiveUntil"], Type = "date" })" />
 
     <div class="flex justify-end gap-3 pt-2">
-        <partial name="Ui/_Button" model="@(new ButtonModel { Text = L["Common_Cancel"], Variant = "secondary", OnClick = "AdminUI.closeModal('modal')" })" />
+        <partial name="Ui/_Button" model="@(new ButtonModel { Text = L["Common_Cancel"], Variant = "secondary", Dismiss = true })" />
         <partial name="Ui/_Button" model="@(new ButtonModel { Text = L["Common_Save"], Type = "submit" })" />
     </div>
 </form>

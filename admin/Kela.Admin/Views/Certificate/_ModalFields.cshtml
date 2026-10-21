@@ -13,11 +13,11 @@
         <div id="templateGrid" class="grid grid-cols-2 gap-3 sm:grid-cols-3">
             @foreach (var t in templates)
             {
-                <button type="button" data-key="@t.Key" onclick="selectTemplate('@t.Key')"
+                <button type="button" data-key="@t.Key" data-action="selectTemplate" data-args="@($"[\"{t.Key}\"]")"
                         class="overflow-hidden rounded-xl border-2 border-slate-200 bg-white p-1.5 text-center transition hover:border-primary">
                     <img src="/certificate-templates/previews/@(t.Key).png" alt="@t.Name"
                          class="aspect-[4/3] w-full rounded-lg bg-slate-100 object-cover"
-                         onerror="this.style.display='none';this.parentElement.querySelector('.tmpl-fallback').style.display='flex'" />
+                         data-img-error="templateFallback" />
                     <span class="tmpl-fallback hidden aspect-[4/3] w-full items-center justify-center rounded-lg bg-slate-100 text-xs font-semibold text-slate-400">@t.Name</span>
                     <span class="mt-1.5 block text-xs font-semibold text-slate-600">@t.Name</span>
                 </button>
@@ -34,7 +34,7 @@
     <partial name="Ui/_FileUpload" model="@(new FileUploadModel { Name = "signature", Id = "signature", Label = L["Certificate_SignaturePng"], Accept = ".png", Hint = "png, max 5MB" })" />
 
     <div class="flex justify-end gap-3 pt-2">
-        <partial name="Ui/_Button" model="@(new ButtonModel { Text = L["Common_Cancel"], Variant = "secondary", OnClick = "AdminUI.closeModal('modal')" })" />
+        <partial name="Ui/_Button" model="@(new ButtonModel { Text = L["Common_Cancel"], Variant = "secondary", Dismiss = true })" />
         <partial name="Ui/_Button" model="@(new ButtonModel { Text = L["Common_Save"], Type = "submit" })" />
     </div>
 </form>

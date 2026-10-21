@@ -6,20 +6,8 @@ function quizActions(q) {
     ]);
 }
 
-async function setStatus(id, isActive) {
-    const d = await AdminUI.get(`/quiz/${id}`);
-    const fd = new FormData();
-    fd.append('lesson_id', d.lessonId ?? '');
-    fd.append('title', d.title);
-    fd.append('type', d.type);
-    fd.append('duration_minutes', d.durationMinutes ?? 0);
-    fd.append('sort_order', d.sortOrder ?? 0);
-    fd.append('is_repeat', String(!!d.isRepeat));
-    fd.append('is_active', String(isActive));
-
-    const res = await AdminUI.putForm(`/quiz/${id}`, fd);
-    if (res.ok) { AdminUI.notify(L["Js_StatusChanged"]); loadList(pager.page); }
-    else AdminUI.error(AdminUI.errText(res));
+function setStatus(id, isActive) {
+    AdminUI.setActive('/quiz', id, isActive, () => loadList(pager.page));
 }
 
 AdminUI.listPage({

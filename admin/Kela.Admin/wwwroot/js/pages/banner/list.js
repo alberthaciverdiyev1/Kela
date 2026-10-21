@@ -10,19 +10,8 @@ function ownerCell(b) {
     return `<span class="text-sm text-slate-600">${AdminUI.escapeHtml(b.ownerName || ('#' + b.userId))}</span>`;
 }
 
-// Sətirdən aktiv/deaktiv etmə — adi redaktə endpoint-i ilə.
-async function setStatus(id, isActive) {
-    const d = await AdminUI.get(`/banner/${id}`);
-    const fd = new FormData();
-    fd.append('title', d.title);
-    fd.append('is_active', String(isActive));
-    if (d.activeUntil) fd.append('active_until', String(d.activeUntil).slice(0, 10));
-
-    const res = await AdminUI.putForm(`/banner/${id}`, fd);
-    if (res.ok) {
-        AdminUI.notify(L["Js_StatusChanged"]);
-        loadList(pager.page);
-    } else AdminUI.error(AdminUI.errText(res));
+function setStatus(id, isActive) {
+    AdminUI.setActive('/banner', id, isActive, () => loadList(pager.page));
 }
 
 AdminUI.listPage({

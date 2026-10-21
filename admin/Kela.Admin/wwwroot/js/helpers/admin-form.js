@@ -285,6 +285,16 @@ window.AdminUI = window.AdminUI || {};
     }
 
 
+    document.addEventListener('click', (e) => {
+        const btn = e.target.closest?.('[data-file-remove]');
+        if (btn) UI.fileRemove(btn.dataset.fileRemove);
+    });
+
+    document.addEventListener('change', (e) => {
+        const input = e.target.closest?.('[data-file-input]');
+        if (input) UI.filePreview(input.dataset.fileInput);
+    });
+
     document.addEventListener('DOMContentLoaded', () => {
         UI.enhanceSelects();
         UI.initEditors();

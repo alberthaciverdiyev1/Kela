@@ -43,7 +43,7 @@ function contentThumb(c) {
     // İkon həmişə altdadır: şəkil yüklənməzsə (obyekt silinmiş ola bilər) sınıq şəkil
     // işarəsi yerinə növ ikonu görünür.
     const img = src
-        ? `<img src="${src}" alt="" class="absolute inset-0 h-full w-full object-cover" onerror="this.remove()" />`
+        ? `<img src="${src}" alt="" class="absolute inset-0 h-full w-full object-cover" data-img-remove />`
         : '';
     return `<span class="relative grid h-11 w-11 shrink-0 place-items-center overflow-hidden rounded-xl ${tone}">
         <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.9">${icon}</svg>${img}
@@ -72,7 +72,7 @@ AdminUI.listPage({
         { html: lessonCell(c) },
         { html: TYPE_TEXT[c.type] ?? '-', cls: 'text-slate-500' },
         { html: statusBadge(c) },
-        { html: c.url ? `<button type="button" class="text-primary hover:underline" onclick="previewContent(${c.id})">${L["Js_View"]}</button>` : '-' },
+        { html: c.url ? `<button type="button" class="text-primary hover:underline"${AdminUI.actionAttrs('previewContent', [c.id])}>${L["Js_View"]}</button>` : '-' },
         { html: AdminUI.statusSwitch(c.isActive, `setStatus(${c.id}, ${!c.isActive})`) },
         { html: ctx.showDeleted ? AdminUI.restoreButton(c.id) : AdminUI.actions(c.id), cls: 'text-right' }
     ]
@@ -145,15 +145,6 @@ document.getElementById('previewModal').addEventListener('modal:closed', () => {
     document.getElementById('previewFullscreenBtn').classList.add('hidden');
 });
 
-async function setStatus(id, isActive) {
-    const d = await AdminUI.get(`/lesson-content/${id}`);
-    const fd = new FormData();
-    fd.append('title', d.title);
-    fd.append('description', d.description ?? '');
-    fd.append('sort_order', d.sortOrder ?? 0);
-    fd.append('is_active', String(isActive));
-
-    const res = await AdminUI.putForm(`/lesson-content/${id}`, fd);
-    if (res.ok) { AdminUI.notify(L["Js_StatusChanged"]); loadList(pager.page); }
-    else AdminUI.error(AdminUI.errText(res));
+function setStatus(id, isActive) {
+    AdminUI.setActive('/lesson-content', id, isActive, () => loadList(pager.page));
 }

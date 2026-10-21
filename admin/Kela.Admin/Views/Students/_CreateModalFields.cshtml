@@ -14,7 +14,7 @@
     <partial name="Ui/_Select" model="@(new SelectModel { Name = "group_id", Id = "s_group", Label = L["Common_Group"], Options = groupOptions })" />
 
     <div class="flex justify-end gap-3 pt-2">
-        <partial name="Ui/_Button" model="@(new ButtonModel { Text = L["Common_Cancel"], Variant = "secondary", OnClick = "AdminUI.closeModal('studentModal')" })" />
+        <partial name="Ui/_Button" model="@(new ButtonModel { Text = L["Common_Cancel"], Variant = "secondary", Dismiss = true })" />
         <partial name="Ui/_Button" model="@(new ButtonModel { Text = L["Common_Create"], Type = "submit" })" />
     </div>
 </form>
