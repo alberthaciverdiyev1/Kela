@@ -1,5 +1,3 @@
-var pager = AdminUI.createPager('pagination', loadList);
-let showDeleted = false;
 const TYPE_TEXT = { video: 'Video', file: 'Fayl', voice: L["Js_Voice"] };
 
 
@@ -52,39 +50,33 @@ function contentThumb(c) {
     </span>`;
 }
 
-function toggleTrash() {
-    showDeleted = !showDeleted;
-    AdminUI.syncTrashButton('trashBtn', showDeleted);
-    loadList(1);
-}
-
-async function restoreRow(id) {
-    await AdminUI.restoreItem('/lesson-content/bulk', id, () => loadList(pager.page));
-}
-
-async function loadList(page) {
-    var pageNo = page || pager.page;
-    const lessonId = document.getElementById('filter_lesson').value;
-    const search = document.getElementById('search').value;
-    const params = new URLSearchParams({ page: pager.page, lesson_id: lessonId, is_deleted: showDeleted ? 1 : 0, search });
-    AdminUI.loader(true);
-    const data = await AdminUI.get(AdminUI.addSort(`/lesson-content/list?${params.toString()}`));
-
-    pager.apply(data);
-    data.data.forEach(c => { CONTENT[c.id] = c; });
-
-    AdminUI.table('rows', data.data.map((c, i) => [
-        { html: AdminUI.rowNo(c, i, pager.page, pager.perPage), cls: 'text-slate-400' },
+AdminUI.listPage({
+    api: '/lesson-content/list',
+    bulkUrl: '/lesson-content/bulk',
+    deleteBase: '/lesson-content',
+    confirmKey: 'Js_ConfirmDeleteMaterial',
+    columns: 8,
+    selectable: true,
+    params: ({ page, search, showDeleted }) => ({
+        page,
+        search,
+        lesson_id: document.getElementById('filter_lesson').value,
+        is_deleted: showDeleted ? 1 : 0
+    }),
+    onLoaded: data => {
+        data.data.forEach(c => { CONTENT[c.id] = c; });
+    },
+    row: (c, i, ctx) => [
+        { html: AdminUI.rowNo(c, i, ctx.page, ctx.perPage), cls: 'text-slate-400' },
         { html: `<div class="flex items-center gap-4">${contentThumb(c)}<span class="font-medium text-slate-800">${c.title}</span></div>` },
         { html: lessonCell(c) },
         { html: TYPE_TEXT[c.type] ?? '-', cls: 'text-slate-500' },
         { html: statusBadge(c) },
         { html: c.url ? `<button type="button" class="text-primary hover:underline" onclick="previewContent(${c.id})">${L["Js_View"]}</button>` : '-' },
         { html: AdminUI.statusSwitch(c.isActive, `setStatus(${c.id}, ${!c.isActive})`) },
-        { html: showDeleted ? AdminUI.restoreButton(c.id) : AdminUI.actions(c.id), cls: 'text-right' }
-    ]), 8, { rowIds: data.data.map(c => c.id), selectable: !showDeleted });
-    AdminUI.loader(false);
-}
+        { html: ctx.showDeleted ? AdminUI.restoreButton(c.id) : AdminUI.actions(c.id), cls: 'text-right' }
+    ]
+});
 
 const STATUS_BADGE = {
     pending:    { text: () => L["Video_Pending"],    tone: 'neutral' },
@@ -153,13 +145,6 @@ document.getElementById('previewModal').addEventListener('modal:closed', () => {
     document.getElementById('previewFullscreenBtn').classList.add('hidden');
 });
 
-async function removeItem(id) {
-    if (!await AdminUI.confirmDelete(L["Js_ConfirmDeleteMaterial"])) return;
-    const res = await AdminUI.del(`/lesson-content/${id}`);
-    if (res.ok) { AdminUI.notify(L["Js_Deleted"]); loadList(pager.page); }
-    else AdminUI.error();
-}
-
 async function setStatus(id, isActive) {
     const d = await AdminUI.get(`/lesson-content/${id}`);
     const fd = new FormData();
@@ -172,4 +157,3 @@ async function setStatus(id, isActive) {
     if (res.ok) { AdminUI.notify(L["Js_StatusChanged"]); loadList(pager.page); }
     else AdminUI.error(AdminUI.errText(res));
 }
-document.addEventListener('DOMContentLoaded', () => loadList(1));

@@ -256,5 +256,70 @@ window.AdminUI = window.AdminUI || {};
         return `${url}${url.includes('?') ? '&' : '?'}sort_by=${field}&sort_dir=${dir}`;
     }
 
-    Object.assign(UI, { rowNo, table, setInfo, pagination, createPager, wireSelection, syncCheckAll, selectedIds, updateBulkBar, bulkDo, sortToggle, openSort, closeSort, renderSort, wireSortDnD, persistSort, addSort });
+    // Siyahı səhifələrinin ortaq skeleti: pager, silinmişlər, silmə/bərpa və cədvəl yenilənməsi.
+    function listPage(options) {
+        const state = { showDeleted: false };
+        let pager;
+
+        function query(page) {
+            const search = document.getElementById('search')?.value ?? '';
+            const params = options.params
+                ? options.params({ page, search, showDeleted: state.showDeleted })
+                : { page, search, is_deleted: state.showDeleted ? 1 : 0 };
+            const qs = new URLSearchParams();
+            Object.entries(params).forEach(([key, value]) => {
+                if (value !== undefined && value !== null) qs.set(key, value);
+            });
+            return UI.addSort(`${options.api}?${qs.toString()}`);
+        }
+
+        async function loadList(page) {
+            const pageNo = page || pager.page;
+            UI.loader(true);
+            const data = await UI.get(query(pageNo));
+            pager.apply(data);
+            if (options.onLoaded) options.onLoaded(data);
+
+            const ctx = { page: pager.page, perPage: pager.perPage, showDeleted: state.showDeleted };
+            const rows = data.data.map((item, index) => options.row(item, index, ctx));
+            const rowIds = options.selectableIds
+                ? data.data.filter(options.selectableIds).map(x => x.id)
+                : data.data.map(x => x.id);
+            UI.table(options.table || 'rows', rows, options.columns ?? (rows[0]?.length || 1), {
+                rowIds: options.selectable ? rowIds : undefined,
+                selectable: options.selectable === true && !state.showDeleted
+            });
+            UI.loader(false);
+        }
+
+        function toggleTrash() {
+            state.showDeleted = !state.showDeleted;
+            UI.syncTrashButton('trashBtn', state.showDeleted);
+            loadList(1);
+        }
+
+        async function restoreRow(id) {
+            if (options.restore) return options.restore(id, () => loadList(pager.page));
+            await UI.restoreItem(options.bulkUrl, id, () => loadList(pager.page));
+        }
+
+        async function removeItem(id) {
+            if (!await UI.confirmDelete(L[options.confirmKey])) return;
+            const res = await UI.del(`${options.deleteBase}/${id}`);
+            if (res.ok) { UI.notify(L["Js_Deleted"]); loadList(pager.page); }
+            else UI.error();
+        }
+
+        pager = UI.createPager(options.pagerId || 'pagination', loadList);
+        Object.assign(window, { loadList, toggleTrash, restoreRow, removeItem, pager });
+
+        document.addEventListener('DOMContentLoaded', () => {
+            if (options.onReady) options.onReady();
+            loadList(1);
+        });
+
+        return { loadList, pager, state };
+    }
+
+    Object.assign(UI, { rowNo, table, setInfo, pagination, createPager, listPage, wireSelection, syncCheckAll, selectedIds, updateBulkBar, bulkDo, sortToggle, openSort, closeSort, renderSort, wireSortDnD, persistSort, addSort });
 })(window.AdminUI);

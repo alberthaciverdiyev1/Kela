@@ -1,17 +1,3 @@
-var pager = AdminUI.createPager('pagination', loadList);
-let showDeleted = false;
-
-function toggleTrash() {
-    showDeleted = !showDeleted;
-    AdminUI.syncTrashButton('trashBtn', showDeleted);
-    loadList(1);
-}
-
-async function restoreRow(id) {
-    await AdminUI.restoreItem('/lesson/bulk', id, () => loadList(pager.page));
-}
-
-
 // Dərs üçün tək ikon — digər səhifələrdəki kimi sətir başına dəyişən rəng yox.
 function lessonIcon() {
     return '<path stroke-linecap="round" stroke-linejoin="round" d="M12 6.253v13m0-13C10.8 5.5 9 5 7 5S3.2 5.5 2 6.253v13C3.2 18.5 5 18 7 18s3.8.5 5 1.253m0-13C13.2 5.5 15 5 17 5s3.8.5 5 1.253v13C20.8 18.5 19 18 17 18s-3.8.5-5 1.253" />';
@@ -46,65 +32,6 @@ function rowActions(id) {
     ]);
 }
 
-
-function updateStats(data) {
-    const total = data.total ?? data.Total ?? (data.data || []).length;
-    const el = document.getElementById('stat_total');
-    if (el) el.textContent = total;
-}
-
-async function loadList(page) {
-    var pageNo = page || pager.page;
-    const subjectId = document.getElementById('filter_subject').value;
-    const status = document.getElementById('filter_status').value;
-    const search = document.getElementById('search').value;
-    const params = new URLSearchParams({ page: pageNo, search });
-    if (subjectId) params.set('subject_id', subjectId);
-    if (status) params.set('is_active', status);
-    if (showDeleted) params.set('is_deleted', '1');
-
-    AdminUI.loader(true);
-    const data = await AdminUI.get(AdminUI.addSort(`/lesson/list?${params.toString()}`));
-    const items = data.data || data.Data || [];
-    const perPage = data.perPage || data.PerPage || 20;
-
-    pager.apply(data);
-    updateStats(data);
-
-    const rows = items.map((l, index) => {
-        const subjectName = window.SUBJECTS[l.subjectId] ?? '-';
-        return [
-            { html: AdminUI.rowNo(l, index, pager.page, perPage), cls: 'text-slate-400' },
-            {
-                html: `<div class="flex items-center gap-4">
-                    ${lessonThumb(l)}
-                    <div>
-                        <a href="/lesson-content?lesson_id=${l.id}" class="font-bold text-slate-950 hover:text-primary">${l.title}</a>
-                        <p class="mt-0.5 text-sm text-slate-500">${subjectName} dərsi</p>
-                    </div>
-                </div>`
-            },
-            { html: subjectBadge(subjectName) },
-            { html: `<span class="inline-flex items-center gap-2 text-slate-700">${l.sortOrder ?? rowNumber}</span>` },
-            {
-                html: AdminUI.statusSwitch(l.isActive, `setStatus(${l.id}, ${!l.isActive})`)
-            },
-            { html: showDeleted ? AdminUI.restoreButton(l.id) : rowActions(l.id), cls: 'text-right' }
-        ];
-    });
-
-    AdminUI.table('rows', rows, 6, { rowIds: items.map(l => l.id), selectable: !showDeleted });
-
-    AdminUI.loader(false);
-}
-
-async function removeItem(id) {
-    if (!await AdminUI.confirmDelete(L["Js_ConfirmDeleteLesson"])) return;
-    const res = await AdminUI.del(`/lesson/${id}`);
-    if (res.ok) { AdminUI.notify(L["Js_Deleted"]); loadList(pager.page); }
-    else AdminUI.error();
-}
-
 // Sətirdən status dəyişmə: adi redaktə endpoint-i (əlavə endpoint yoxdur).
 async function setStatus(id, isActive) {
     const d = await AdminUI.get(`/lesson/${id}`);
@@ -118,9 +45,48 @@ async function setStatus(id, isActive) {
     if (res.ok) { AdminUI.notify(L["Js_StatusChanged"]); loadList(pager.page); }
     else AdminUI.error(AdminUI.errText(res));
 }
-document.addEventListener('DOMContentLoaded', () => {
-    document.getElementById('search')?.addEventListener('keydown', (event) => {
-        if (event.key === 'Enter') loadList(1);
-    });
-    loadList(1);
+
+AdminUI.listPage({
+    api: '/lesson/list',
+    bulkUrl: '/lesson/bulk',
+    deleteBase: '/lesson',
+    confirmKey: 'Js_ConfirmDeleteLesson',
+    columns: 6,
+    selectable: true,
+    params: ({ page, search, showDeleted }) => ({
+        page,
+        search,
+        subject_id: document.getElementById('filter_subject').value || undefined,
+        is_active: document.getElementById('filter_status').value || undefined,
+        is_deleted: showDeleted ? 1 : undefined
+    }),
+    onLoaded: data => {
+        const total = data.total ?? (data.data || []).length;
+        const el = document.getElementById('stat_total');
+        if (el) el.textContent = total;
+    },
+    onReady: () => {
+        document.getElementById('search')?.addEventListener('keydown', (event) => {
+            if (event.key === 'Enter') loadList(1);
+        });
+    },
+    row: (l, i, ctx) => {
+        const subjectName = window.SUBJECTS[l.subjectId] ?? '-';
+        return [
+            { html: AdminUI.rowNo(l, i, ctx.page, ctx.perPage), cls: 'text-slate-400' },
+            {
+                html: `<div class="flex items-center gap-4">
+                    ${lessonThumb(l)}
+                    <div>
+                        <a href="/lesson-content?lesson_id=${l.id}" class="font-bold text-slate-950 hover:text-primary">${l.title}</a>
+                        <p class="mt-0.5 text-sm text-slate-500">${subjectName} dərsi</p>
+                    </div>
+                </div>`
+            },
+            { html: subjectBadge(subjectName) },
+            { html: `<span class="inline-flex items-center gap-2 text-slate-700">${l.sortOrder ?? 0}</span>` },
+            { html: AdminUI.statusSwitch(l.isActive, `setStatus(${l.id}, ${!l.isActive})`) },
+            { html: ctx.showDeleted ? AdminUI.restoreButton(l.id) : rowActions(l.id), cls: 'text-right' }
+        ];
+    }
 });

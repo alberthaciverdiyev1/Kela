@@ -1,40 +1,18 @@
-var pager = AdminUI.createPager('pagination', loadList);
-let showDeleted = false;
-
-function toggleTrash() {
-    showDeleted = !showDeleted;
-    AdminUI.syncTrashButton('trashBtn', showDeleted);
-    loadList(1);
-}
-
-async function restoreRow(id) {
-    await AdminUI.restoreItem('/subject/bulk', id, () => loadList(pager.page));
-}
-
-async function loadList(page) {
-    var pageNo = page || pager.page;
-    const search = document.getElementById('search').value;
-    AdminUI.loader(true);
-    const data = await AdminUI.get(AdminUI.addSort(`/subject/list?page=${pageNo}&search=${encodeURIComponent(search)}&is_deleted=${showDeleted ? 1 : 0}`));
-    pager.apply(data);
-
-    const total = document.getElementById('stat_total');
-    if (total) total.textContent = data.total;
-
-    AdminUI.table('rows', data.data.map((s, i) => [
-        { html: AdminUI.rowNo(s, i, pager.page, pager.perPage), cls: 'text-slate-400' },
+AdminUI.listPage({
+    api: '/subject/list',
+    bulkUrl: '/subject/bulk',
+    deleteBase: '/subject',
+    confirmKey: 'Js_ConfirmDeleteSubject',
+    columns: 4,
+    selectable: true,
+    onLoaded: data => {
+        const total = document.getElementById('stat_total');
+        if (total) total.textContent = data.total;
+    },
+    row: (s, i, ctx) => [
+        { html: AdminUI.rowNo(s, i, ctx.page, ctx.perPage), cls: 'text-slate-400' },
         { html: `<a href="/lesson?subject_id=${s.id}" class="font-semibold text-primary hover:underline">${s.name}</a>` +
             (s.isShared ? ` <span class="ml-2 rounded-full bg-primary/10 px-2 py-0.5 text-[11px] font-semibold text-primary">${L["Subject_SharedBadge"]}</span>` : '') },
-        { html: showDeleted ? AdminUI.restoreButton(s.id) : AdminUI.actions(s.id, { extra: AdminUI.actionLink(L["Nav_Lessons"], `/lesson?subject_id=${s.id}`) }), cls: 'text-right' }
-    ]), 4, { rowIds: data.data.map(s => s.id), selectable: !showDeleted });
-    AdminUI.loader(false);
-}
-
-async function removeItem(id) {
-    if (!await AdminUI.confirmDelete(L["Js_ConfirmDeleteSubject"])) return;
-    const res = await AdminUI.del(`/subject/${id}`);
-    if (res.ok) { AdminUI.notify(L["Js_Deleted"]); loadList(pager.page); }
-    else AdminUI.error();
-}
-
-document.addEventListener('DOMContentLoaded', () => loadList(1));
+        { html: ctx.showDeleted ? AdminUI.restoreButton(s.id) : AdminUI.actions(s.id, { extra: AdminUI.actionLink(L["Nav_Lessons"], `/lesson?subject_id=${s.id}`) }), cls: 'text-right' }
+    ]
+});
