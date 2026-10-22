@@ -28,11 +28,13 @@ public sealed class SubscriptionService(AppDbContext db) : ISubscriptionService
                 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1080, [], []));
         }
 
-        var students = await db.Students.CountAsync(ct);
-        var teachers = await db.Users.CountAsync(x => x.Type == UserTypes.Teacher, ct);
-        var groups = await db.Groups.CountAsync(ct);
-        var subjects = await db.Subjects.CountAsync(ct);
-        var lessons = await db.Lessons.CountAsync(ct);
+        // Superadmin tenant-ı dəyişəndə qlobal filtr söndürülür — sayım hər halda
+        // yalnız seçilmiş tenant üzrə aparılmalıdır.
+        var students = await db.Students.CountAsync(x => x.TenantId == tenantId, ct);
+        var teachers = await db.Users.CountAsync(x => x.TenantId == tenantId && x.Type == UserTypes.Teacher, ct);
+        var groups = await db.Groups.CountAsync(x => x.TenantId == tenantId, ct);
+        var subjects = await db.Subjects.CountAsync(x => x.TenantId == tenantId, ct);
+        var lessons = await db.Lessons.CountAsync(x => x.TenantId == tenantId, ct);
 
         var maxStudents = plan.MaxStudents + usage.AddonStudents;
         var maxVideo = plan.MonthlyVideoMinutes + usage.AddonVideoMinutes;
