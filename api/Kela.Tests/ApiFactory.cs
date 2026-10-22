@@ -90,6 +90,7 @@ public sealed class ApiFactory : WebApplicationFactory<Program>, IAsyncLifetime
                 ["Storage:RootPath"] = _storageRoot,
                 // Lease/reconciliation dövrü testlərdə determinist olmalıdır.
                 ["Nodes:BackgroundEnabled"] = "false",
+                ["Subscription:BackgroundEnabled"] = "false",
                 // Test bazası bütün testlərin videolarını saxlayır — claim süzgəci
                 // işləyə bilsin deyə bir dəfədə çoxlu tapşırıq götürməyə icazə verilir.
                 ["Nodes:MaxConcurrentJobsPerNode"] = "64"

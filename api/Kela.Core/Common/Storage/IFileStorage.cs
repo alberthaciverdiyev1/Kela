@@ -28,6 +28,12 @@ public interface IFileStorage
     /// <summary>Verilmiş prefiks altındakı bütün açarları qaytarır (HLS seqment yoxlaması üçün).</summary>
     Task<IReadOnlyList<string>> ListAsync(string prefix, CancellationToken ct = default);
 
+    /// <summary>
+    /// Prefiks altındakı obyektləri ölçü və tarixlə qaytarır — abunəlikdə depolama
+    /// hesablanması və köhnə orijinalların təmizlənməsi üçün.
+    /// </summary>
+    Task<IReadOnlyList<StoredObject>> ListObjectsAsync(string prefix, CancellationToken ct = default);
+
     /// <summary>Yüklənən faylın həqiqətən mövcud olduğunu yoxlayır.</summary>
     Task<bool> ExistsAsync(string path, CancellationToken ct = default);
 

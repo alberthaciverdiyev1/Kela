@@ -109,7 +109,7 @@ public sealed class SubscriptionService(AppDbContext db) : ISubscriptionService
     /// Video yükləməzdən əvvəl yoxlanılır. Müddət konversiyadan sonra bilindiyi üçün
     /// burada yalnız "artıq limit dolubmu" yoxlanılır; cari yükləmə bloklanmır.
     /// </summary>
-    public async Task EnsureCanUploadAsync(CancellationToken ct = default)
+    public async Task EnsureCanUploadAsync(bool isVideo = true, CancellationToken ct = default)
     {
         var tenantId = db.CurrentTenantId;
         if (tenantId is not long id) return;
@@ -121,14 +121,20 @@ public sealed class SubscriptionService(AppDbContext db) : ISubscriptionService
 
         await EnsureWritableAsync(id, ct);
 
-        var limit = plan.MonthlyVideoMinutes + usage.AddonVideoMinutes;
-        if (limit <= 0) return; // 0 = limitsiz
-
-        if (usage.VideoMinutes >= limit)
+        var videoLimit = plan.MonthlyVideoMinutes + usage.AddonVideoMinutes;
+        if (isVideo && videoLimit > 0 && usage.VideoMinutes >= videoLimit)
         {
             throw new ForbiddenException(
-                $"Aylıq video limiti dolub ({usage.VideoMinutes}/{limit} dəqiqə). " +
+                $"Aylıq video limiti dolub ({usage.VideoMinutes}/{videoLimit} dəqiqə). " +
                 "Əlavə paket alın və ya planı yüksəldin.");
+        }
+
+        var storageLimit = plan.StorageBytes + usage.AddonStorageBytes;
+        if (storageLimit > 0 && usage.StorageBytes >= storageLimit)
+        {
+            throw new ForbiddenException(
+                $"Depolama limiti dolub ({usage.StorageBytes / 1024 / 1024} MB / {storageLimit / 1024 / 1024} MB). " +
+                "Köhnə faylları silin, əlavə paket alın və ya planı yüksəldin.");
         }
     }
 
@@ -138,6 +144,15 @@ public sealed class SubscriptionService(AppDbContext db) : ISubscriptionService
 
         var usage = await GetOrCreateUsageAsync(tenantId, Period(), ct);
         usage.VideoMinutes += minutes;
+        await db.SaveChangesAsync(ct);
+    }
+
+    public async Task AddStorageAsync(long tenantId, long bytes, CancellationToken ct = default)
+    {
+        if (bytes <= 0) return;
+
+        var usage = await GetOrCreateUsageAsync(tenantId, Period(), ct);
+        usage.StorageBytes += bytes;
         await db.SaveChangesAsync(ct);
     }
 

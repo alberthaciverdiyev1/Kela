@@ -149,6 +149,32 @@ public sealed class R2FileStorage : IFileStorage, IDisposable
         return keys;
     }
 
+    public async Task<IReadOnlyList<StoredObject>> ListObjectsAsync(string prefix, CancellationToken ct = default)
+    {
+        var objects = new List<StoredObject>();
+        string? token = null;
+
+        do
+        {
+            var response = await _client.ListObjectsV2Async(new Amazon.S3.Model.ListObjectsV2Request
+            {
+                BucketName = _options.BucketName,
+                Prefix = prefix,
+                ContinuationToken = token
+            }, ct);
+
+            objects.AddRange(response.S3Objects.Select(o => new StoredObject(
+                o.Key,
+                o.Size ?? 0,
+                new DateTimeOffset(o.LastModified?.ToUniversalTime() ?? DateTime.UtcNow, TimeSpan.Zero))));
+
+            token = response.IsTruncated == true ? response.NextContinuationToken : null;
+        }
+        while (token is not null);
+
+        return objects;
+    }
+
     public async Task<string> BuildUniquePathAsync(string folder, string fileName, CancellationToken ct = default)
     {
         var name = StorageNaming.Sanitize(fileName);

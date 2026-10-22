@@ -5,8 +5,10 @@ using Kela.Core.Modules.Subscription;
 using Kela.Core.Modules.Subscription.Entities;
 using Kela.Core.Modules.Subscription.Requests;
 using Kela.Core.Modules.Subscription.Services;
+using Kela.Core.Modules.Subscription.Abstractions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Kela.Tests.Subscription;
 
@@ -236,5 +238,136 @@ public class SubscriptionTests(ApiFactory factory)
         await scopedService.RecordVideoMinutesAsync(tenantId, 60);
 
         await Assert.ThrowsAsync<ForbiddenException>(() => scopedService.EnsureCanUploadAsync());
+    }
+}
+
+/// <summary>Bucket taraması: tenant-ın tutduğu yer və köhnə orijinalların silinməsi.</summary>
+[Collection("api")]
+public class StorageMeteringTests(ApiFactory factory)
+{
+    private sealed class FixedTenant(long tenantId) : ITenantProvider
+    {
+        public long? TenantId => tenantId;
+
+        public bool IgnoreTenant => false;
+    }
+
+    private AppDbContext Db(long tenantId = 0)
+    {
+        var options = new DbContextOptionsBuilder<AppDbContext>()
+            .UseNpgsql(factory.ConnectionString)
+            .Options;
+
+        var config = new ConfigurationBuilder()
+            .AddInMemoryCollection(new Dictionary<string, string?> { ["Tenancy:Strict"] = "false" })
+            .Build();
+
+        return new AppDbContext(options, new FixedTenant(tenantId), config);
+    }
+
+    [Fact]
+    public async Task Metering_records_the_bytes_a_tenant_uses()
+    {
+        await using var db = Db();
+
+        var tenant = new Core.Modules.Tenant.Entities.Tenant
+        {
+            Name = $"M-{Guid.NewGuid():N}",
+            Slug = $"m-{Guid.NewGuid():N}",
+            IsActive = true
+        };
+
+        db.Tenants.Add(tenant);
+        await db.SaveChangesAsync();
+
+        using var scope = factory.Services.CreateScope();
+        var storage = scope.ServiceProvider.GetRequiredService<Kela.Core.Common.Storage.IFileStorage>();
+        var folders = scope.ServiceProvider.GetRequiredService<Kela.Core.Common.Storage.ITenantFolder>();
+
+        var folder = await folders.ResolveAsync(tenant.Id);
+        await storage.UploadTextAsync($"{folder}/videos/raw/test.mp4", new string('x', 1000));
+        await storage.UploadTextAsync($"{folder}/files/doc.pdf", new string('y', 500));
+
+        var metering = scope.ServiceProvider.GetRequiredService<IStorageMeteringService>();
+        await metering.MeterAsync();
+
+        await using var check = Db();
+        var usage = await check.TenantUsages.IgnoreQueryFilters()
+            .FirstAsync(x => x.TenantId == tenant.Id);
+
+        Assert.True(usage.StorageBytes >= 1500, $"Ölçülən: {usage.StorageBytes}");
+    }
+
+    [Fact]
+    public async Task Expired_originals_are_deleted_only_when_enabled()
+    {
+        await using var db = Db();
+
+        var service = new SubscriptionService(db);
+        var plan = await service.CreatePlanAsync(new PlanRequest
+        {
+            Code = $"r-{Guid.NewGuid():N}"[..20],
+            Name = "Retention",
+            MonthlyPrice = 10,
+            MaxStudents = 10,
+            MaxGroups = 5,
+            MonthlyVideoMinutes = 60,
+            StorageGb = 1,
+            ConcurrentConversions = 1,
+            OriginalRetentionDays = 1,
+            IsActive = true,
+            SortOrder = 99
+        });
+
+        var tenant = new Core.Modules.Tenant.Entities.Tenant
+        {
+            Name = $"R-{Guid.NewGuid():N}",
+            Slug = $"r-{Guid.NewGuid():N}",
+            IsActive = true,
+            PlanId = plan.Id
+        };
+
+        db.Tenants.Add(tenant);
+        await db.SaveChangesAsync();
+
+        using var scope = factory.Services.CreateScope();
+        var storage = scope.ServiceProvider.GetRequiredService<Kela.Core.Common.Storage.IFileStorage>();
+        var folders = scope.ServiceProvider.GetRequiredService<Kela.Core.Common.Storage.ITenantFolder>();
+
+        var folder = await folders.ResolveAsync(tenant.Id);
+        var key = $"{folder}/videos/raw/old.mp4";
+        await storage.UploadTextAsync(key, "old");
+
+        await using (var videoDb = Db(tenant.Id))
+        {
+            var video = new Core.Modules.Media.Entities.Video
+            {
+                TenantId = tenant.Id,
+                Title = "old",
+                Path = key,
+                ConversionStatus = Core.Modules.Media.Entities.VideoStatus.Ready,
+                PlaybackUrl = $"{folder}/videos/m3u8/1/v1/master.m3u8"
+            };
+
+            videoDb.Videos.Add(video);
+            await videoDb.SaveChangesAsync();
+
+            // CreatedAt audit tərəfindən "indi" yazılır — köhnəltmək üçün ikinci save.
+            video.CreatedAt = DateTimeOffset.UtcNow.AddDays(-10);
+            await videoDb.SaveChangesAsync();
+        }
+
+        var metering = scope.ServiceProvider.GetRequiredService<IStorageMeteringService>();
+
+        // Söndürülmüş halda silinmir.
+        await metering.MeterAsync();
+        Assert.True(await storage.ExistsAsync(key, ct: default));
+
+        // Yandırılmış halda silinir.
+        var enabled = scope.ServiceProvider.GetRequiredService<Microsoft.Extensions.Options.IOptions<Core.Modules.Subscription.SubscriptionOptions>>();
+        enabled.Value.DeleteExpiredOriginals = true;
+
+        await metering.MeterAsync();
+        Assert.False(await storage.ExistsAsync(key, ct: default));
     }
 }

@@ -123,6 +123,9 @@ builder.Services.AddAuthorization(options =>
 // Worker tapşırıqlarının lease/reconciliation dövrü — yalnız API hostunda işləyir.
 builder.Services.AddHostedService<NodesBackgroundService>();
 
+// Abunəlik üzrə storage ölçməsi — dövri, istək zamanı deyil.
+builder.Services.AddHostedService<Kela.Api.Modules.Subscription.Services.SubscriptionMaintenanceService>();
+
 var app = builder.Build();
 
 await app.Services.SeedDefaultAdminAsync(app.Configuration);

@@ -114,10 +114,7 @@ public sealed class LessonContentService(
     {
         await EnsureLessonAccessibleAsync(request.LessonId, ownerId, ct);
 
-        if (request.Type == LessonContentType.Video)
-        {
-            await subscription.EnsureCanUploadAsync(ct);
-        }
+        await subscription.EnsureCanUploadAsync(request.Type == LessonContentType.Video, ct);
 
         var folder = await FolderForAsync(request.Type, await LessonTenantAsync(request.LessonId, ct), ct);
         var path = await storage.BuildUniquePathAsync(folder, request.FileName, ct);
@@ -225,6 +222,13 @@ public sealed class LessonContentService(
 
         db.LessonContents.Add(content);
         await db.SaveChangesAsync(ct);
+
+        // Depolama sayğacı hər yükləmədə dərhal yenilənir — limit anında düzgün işləsin.
+        if (!string.IsNullOrWhiteSpace(path)
+            && await storage.GetSizeAsync(path, ct) is long bytes && bytes > 0)
+        {
+            await subscription.AddStorageAsync(tenantId, bytes, ct);
+        }
 
         // Video yüklənən kimi konversiya tapşırıqları yaranır — worker onları götürə bilər.
         if (content.Video is not null) await jobs.EnsureJobsAsync(content.Video.Id, ct);

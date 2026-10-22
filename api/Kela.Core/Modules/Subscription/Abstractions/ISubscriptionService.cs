@@ -19,10 +19,16 @@ public interface ISubscriptionService
     Task EnsureCanAddGroupsAsync(int count, CancellationToken ct = default);
     Task EnsureCanAddSubjectsAsync(int count, CancellationToken ct = default);
     Task EnsureCanAddLessonsAsync(int count, CancellationToken ct = default);
-    Task EnsureCanUploadAsync(CancellationToken ct = default);
+    Task EnsureCanUploadAsync(bool isVideo = true, CancellationToken ct = default);
 
     /// <summary>Uğurlu konversiyadan sonra mənbə dəqiqələrini cari dövrə yazır.</summary>
     Task RecordVideoMinutesAsync(long tenantId, int minutes, CancellationToken ct = default);
+
+    /// <summary>
+    /// Yüklənən faylın ölçüsünü cari dövrün depolama istifadəsinə əlavə edir.
+    /// Sayğac hər yükləmədə dərhal yenilənir — limit dərhal düzgün işləsin.
+    /// </summary>
+    Task AddStorageAsync(long tenantId, long bytes, CancellationToken ct = default);
 
     /// <summary>Tenant üçün cari dövrədək icazə verilən eyni vaxtlı konversiya sayı.</summary>
     Task<int> ConcurrentConversionsAsync(long tenantId, CancellationToken ct = default);
