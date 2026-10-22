@@ -96,48 +96,81 @@ window.AdminUI = window.AdminUI || {};
         }
     }
 
-    async function promptLimit(info) {
-        const { offers, currency } = await limitInfo();
-        const offer = offers.find(o => o.kind === info.kind) || null;
-        const canBuy = !!offer && !!(window.ADMIN && window.ADMIN.isAdmin);
+    let _limitResolve = null;
 
-        const lines = [`<p class="text-sm text-slate-600">${escapeHtml(info.message || L["Js_ErrorOccured"])}</p>`];
+    function finishLimit(value) {
+        const resolve = _limitResolve;
+        _limitResolve = null;
+        const modal = document.getElementById('limitModal');
+        if (modal) UI.closeModal(modal);
+        if (resolve) resolve(value);
+    }
 
-        if (offer) {
-            lines.push(`<div class="mt-4 rounded-xl bg-surface-secondary p-3 text-left">
-                <p class="text-sm font-semibold text-slate-800">${escapeHtml(offer.label)}</p>
-                <p class="mt-1 text-sm text-slate-500">+${offer.packSize} ${escapeHtml(offer.unit)} — ${offer.packPrice} ${escapeHtml(currency)}</p>
-            </div>`);
-        }
+    // Panelin ümumi modal qabığı ilə eyni görünüş — SweetAlert deyil.
+    function promptLimit(info) {
+        const modal = document.getElementById('limitModal');
+        if (!modal) return Promise.resolve(false);
 
-        if (!canBuy) {
-            lines.push(`<p class="mt-3 text-sm text-slate-500">${offer ? L["Limit_ContactAdmin"] : L["Limit_NoOffer"]}</p>`);
-        }
+        return limitInfo().then(({ offers, currency }) => {
+            const offer = offers.find(o => o.kind === info.kind) || null;
+            const canBuy = !!offer && !!(window.ADMIN && window.ADMIN.isAdmin);
 
-        const options = {
-            title: L["Limit_Title"],
-            html: lines.join(''),
-            icon: 'warning',
-            confirmButtonText: canBuy ? L["Limit_Buy"] : L["Common_Close"],
-            showCancelButton: canBuy,
-            cancelButtonText: L["Common_Cancel"]
-        };
+            const offerBox = document.getElementById('limitOffer');
+            const packsRow = document.getElementById('limitPacksRow');
+            const note = document.getElementById('limitNote');
+            const errorBox = document.getElementById('limitError');
+            const buy = document.getElementById('limitBuy');
+            const packs = document.getElementById('limitPacks');
 
-        if (canBuy) {
-            options.input = 'number';
-            options.inputValue = 1;
-            options.inputAttributes = { min: 1, max: offer.maxQuantity };
-        }
+            document.getElementById('limitMessage').textContent = info.message || L["Js_ErrorOccured"];
 
-        const result = await swal(options);
-        if (!canBuy || !result.isConfirmed) return false;
+            offerBox.classList.toggle('hidden', !offer);
+            packsRow.classList.toggle('hidden', !canBuy);
+            buy.classList.toggle('hidden', !canBuy);
+            errorBox.classList.add('hidden');
 
-        const packs = Math.max(1, Math.min(offer.maxQuantity, parseInt(result.value, 10) || 1));
-        const added = await post('/subscription/addons', { kind: offer.kind, packs });
-        if (!added.ok) { error(errText(added)); return false; }
+            if (offer) {
+                document.getElementById('limitOfferLabel').textContent = offer.label;
+                document.getElementById('limitOfferDetail').textContent = `+${offer.packSize} ${offer.unit}`;
+                document.getElementById('limitOfferPrice').textContent = `${offer.packPrice} ${currency}`;
+                packs.value = 1;
+                packs.max = offer.maxQuantity;
+            }
 
-        notify(L["Limit_Confirmed"]);
-        return true;
+            note.classList.toggle('hidden', canBuy);
+            if (!canBuy) {
+                note.textContent = offer ? L["Limit_ContactAdmin"] : L["Limit_NoOffer"];
+            }
+
+            return new Promise(resolve => {
+                _limitResolve = resolve;
+
+                buy.onclick = async () => {
+                    errorBox.classList.add('hidden');
+                    buy.disabled = true;
+                    buy.classList.add('is-loading');
+
+                    const count = Math.max(1, Math.min(offer.maxQuantity, parseInt(packs.value, 10) || 1));
+                    const added = await post('/subscription/addons', { kind: offer.kind, packs: count });
+
+                    buy.disabled = false;
+                    buy.classList.remove('is-loading');
+
+                    if (!added.ok) {
+                        errorBox.textContent = errText(added);
+                        errorBox.classList.remove('hidden');
+                        return;
+                    }
+
+                    notify(L["Limit_Confirmed"]);
+                    finishLimit(true);
+                };
+
+                // Bağlama düyməsi, ESC və ya fona klik — sorğu təkrar göndərilmir.
+                modal.addEventListener('modal:closed', () => finishLimit(false), { once: true });
+                UI.openModal(modal);
+            });
+        });
     }
 
     // Bütün fetch sorğuları buradan keçir: limit xətası olsa modal göstərilir və

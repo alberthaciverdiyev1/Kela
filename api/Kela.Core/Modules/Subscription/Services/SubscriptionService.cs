@@ -361,8 +361,10 @@ public sealed class SubscriptionService(AppDbContext db) : ISubscriptionService
         if (limit <= 0) return; // 0 = limitsiz
         if (used + count <= limit) return;
 
+        var title = char.ToUpperInvariant(label[0]) + label[1..];
+
         throw new LimitExceededException(kind,
-            $"{label} limitinə çatmısınız ({used}/{limit}). " +
+            $"{title} limitinə çatmısınız ({used}/{limit}). " +
             "Əlavə paket alın və ya planı yüksəldin.",
             used, limit);
     }

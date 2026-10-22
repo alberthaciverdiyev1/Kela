@@ -1713,4 +1713,7 @@
   <data name="Limit_NoOffer" xml:space="preserve">
     <value>This resource has no add-on pack. Contact your administrator to upgrade the plan.</value>
   </data>
+  <data name="Limit_Packs" xml:space="preserve">
+    <value>Number of packs</value>
+  </data>
 </root>

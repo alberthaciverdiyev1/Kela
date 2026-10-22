@@ -141,6 +141,8 @@
         </div>
     </div>
 
+    <partial name="Ui/_LimitModal" />
+
     <script>window.L = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(jsStrings));</script>
     <script>window.ADMIN = { isAdmin: @(isAdmin ? "true" : "false"), userId: @currentUserId };</script>
     @* Fon rejimində gedən yükləmə — istifadəçi modalı bağladıqdan sonra da görünür. *@

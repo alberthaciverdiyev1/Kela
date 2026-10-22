@@ -1713,4 +1713,7 @@
   <data name="Limit_NoOffer" xml:space="preserve">
     <value>Для этого ресурса нет дополнительного пакета. Свяжитесь с администратором для повышения плана.</value>
   </data>
+  <data name="Limit_Packs" xml:space="preserve">
+    <value>Количество пакетов</value>
+  </data>
 </root>
