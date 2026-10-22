@@ -1,12 +1,11 @@
 @{
     ViewData["Title"] = "Abunəlik planları";
+    var headerExtra = new Microsoft.AspNetCore.Html.HtmlString(
+        @"<button type=""button"" class=""admin-button-primary"" data-action=""PlanPage.create"">+ Yeni plan</button>");
 }
 
 <section class="admin-page">
-    <div class="mb-5">
-        <h2 class="text-xl font-bold text-slate-900">Abunəlik planları</h2>
-        <p class="mt-1 text-sm text-slate-500">Qiymətlər, limitlər və əlavə paketlər — dəyişiklik dərhal qüvvəyə minir</p>
-    </div>
+    <partial name="Ui/_PageHeader" model="@(new PageHeaderModel { Extra = headerExtra })" />
 
     <div class="admin-card">
         <div class="overflow-x-auto">

@@ -21,6 +21,16 @@
         modal().classList.remove('flex');
     };
 
+    window.PlanPage.create = function () {
+        document.getElementById('planForm').reset();
+        document.getElementById('planId').value = '';
+        document.getElementById('planTitle').textContent = 'Yeni plan';
+        document.getElementById('monthly_price').value = '0';
+        document.getElementById('max_video_height').value = '1080';
+        document.getElementById('is_active').value = 'true';
+        window.PlanPage.open();
+    };
+
     window.PlanPage.edit = async function (id) {
         const p = await AdminUI.get(`/plan/${id}`);
 

@@ -31,5 +31,7 @@ window.PlanPage = (function () {
         else AdminUI.error(AdminUI.errText(res));
     }
 
+    document.addEventListener('DOMContentLoaded', load);
+
     return { load, remove };
 })();
