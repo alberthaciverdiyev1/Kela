@@ -94,7 +94,14 @@
                 <div class="grid gap-3 sm:grid-cols-3">
                     <div><label class="mb-1 block text-sm font-semibold text-slate-600">Tələbə paketi (nəfər)</label><input id="addon_student_pack_size" type="number" min="1" class="admin-field" value="10" /></div>
                     <div><label class="mb-1 block text-sm font-semibold text-slate-600">Tələbə paketi qiyməti</label><input id="addon_student_pack_price" type="number" step="0.01" min="0" class="admin-field" /></div>
-                    <div><label class="mb-1 block text-sm font-semibold text-slate-600">Maks. əlavə (%)</label><input id="max_addon_percent" type="number" min="0" max="500" class="admin-field" value="100" /></div>
+                    <div>
+                        <label class="mb-1 block text-sm font-semibold text-slate-600">Maks. əlavə həddi (%)</label>
+                        <input id="max_addon_percent" type="number" min="0" max="500" class="admin-field" value="100" />
+                        <p class="mt-1 text-xs text-slate-400">
+                            Plan limitinin neçə faizi qədər əlavə paket almaq olar.
+                            100 = limiti iki dəfə artırmaq, 0 = əlavə paket yoxdur.
+                        </p>
+                    </div>
 
                     <div><label class="mb-1 block text-sm font-semibold text-slate-600">Video paketi (dəq)</label><input id="addon_video_pack_minutes" type="number" min="1" class="admin-field" value="600" /></div>
                     <div><label class="mb-1 block text-sm font-semibold text-slate-600">Video paketi qiyməti</label><input id="addon_video_pack_price" type="number" step="0.01" min="0" class="admin-field" /></div>
