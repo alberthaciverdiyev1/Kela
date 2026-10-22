@@ -17,5 +17,5 @@ public class TenantUsage : BaseEntity
 
     public int AddonVideoMinutes { get; set; }
 
-    public long AddonStorageBytes { get; set; }
+    public int AddonGroups { get; set; }
 }

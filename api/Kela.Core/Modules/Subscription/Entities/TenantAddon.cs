@@ -7,16 +7,11 @@ public class TenantAddon : BaseEntity
 {
     public string Period { get; set; } = string.Empty;
 
-    /// <summary>students | video | storage</summary>
+    /// <summary>students | groups | video</summary>
     public string Kind { get; set; } = string.Empty;
 
-    /// <summary>Paket sayı (neçə paket alınıb).</summary>
-    public int Packs { get; set; } = 1;
-
-    /// <summary>Limitə əlavə olunan miqdar (tələbə sayı / dəqiqə / bayt).</summary>
+    /// <summary>Limitə əlavə olunan miqdar (tələbə / qrup sayı, video üçün saat).</summary>
     public int Quantity { get; set; }
-
-    public long Bytes { get; set; }
 
     public decimal Amount { get; set; }
 
@@ -28,8 +23,8 @@ public class TenantAddon : BaseEntity
 public static class AddonKinds
 {
     public const string Students = "students";
+    public const string Groups = "groups";
     public const string Video = "video";
-    public const string Storage = "storage";
 
-    public static readonly string[] All = [Students, Video, Storage];
+    public static readonly string[] All = [Students, Groups, Video];
 }

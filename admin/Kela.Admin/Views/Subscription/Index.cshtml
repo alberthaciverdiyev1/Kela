@@ -6,7 +6,6 @@
     var tenants = ViewData["Tenants"] as IReadOnlyList<TenantResponse>;
     var selectedTenantId = ViewData["SelectedTenantId"] as long?;
     var usage = Model?.Usage!;
-    var isAdmin = ViewData["IsAdmin"] as bool? == true;
 
     string Bar(int used, int max) => max <= 0 ? $"{used} / limitsiz" : $"{used} / {max}  ({Math.Min(100, (int)Math.Round(used * 100.0 / max))}%)";
 
@@ -40,11 +39,8 @@
         : new (string Label, int Used, int Max)[]
         {
             ("Tələbə", usage.Students, usage.MaxStudents),
-            ("Müəllim", usage.Teachers, usage.MaxTeachers),
             ("Qrup", usage.Groups, usage.MaxGroups),
-            ("Fənn", usage.Subjects, usage.MaxSubjects),
-            ("Dərs", usage.Lessons, usage.MaxLessons),
-            ("Video (aylıq, dəqiqə)", usage.VideoMinutes, usage.MonthlyVideoMinutes)
+            ("Video (aylıq, saat)", usage.VideoMinutes / 60, usage.MonthlyVideoMinutes / 60)
         };
 }
 
@@ -99,9 +95,11 @@
             <div class="admin-card p-5">
                 <p class="text-xs font-semibold uppercase tracking-wide text-slate-400">Video (bu ay)</p>
                 <p class="mt-1 text-2xl font-extrabold text-slate-900">
-                    @(usage.MonthlyVideoMinutes > 0 ? $"{usage.VideoMinutes} / {usage.MonthlyVideoMinutes}" : usage.VideoMinutes.ToString())
+                    @(usage.MonthlyVideoMinutes > 0
+                        ? $"{usage.VideoMinutes / 60} / {usage.MonthlyVideoMinutes / 60}"
+                        : (usage.VideoMinutes / 60).ToString())
                 </p>
-                <p class="mt-1 text-sm text-slate-500">dəqiqə</p>
+                <p class="mt-1 text-sm text-slate-500">saat</p>
             </div>
         </div>
 
@@ -123,28 +121,15 @@
                 }
             </div>
 
-            <div class="mt-5 border-t border-border pt-5">
-                <div class="flex items-center justify-between text-sm">
-                    <span class="font-medium text-slate-600">Depolama</span>
-                    <span class="font-semibold text-slate-800">
-                        @(Math.Round(usage.StorageBytes / 1024.0 / 1024 / 1024, 1)) GB /
-                        @(usage.MaxStorageBytes > 0 ? Math.Round(usage.MaxStorageBytes / 1024.0 / 1024 / 1024) + " GB" : "limitsiz")
-                    </span>
-                </div>
-                <div class="mt-2 h-2 overflow-hidden rounded-full bg-slate-100">
-                    <div class="h-full rounded-full @Tone(usage.StorageBytes, usage.MaxStorageBytes)"
-                         style="width:@(Width(usage.StorageBytes, usage.MaxStorageBytes))%"></div>
-                </div>
-            </div>
         </div>
 
         @if (usage.AddonOffers.Count > 0)
         {
             <div class="admin-card p-5">
-                <h3 class="mb-2 text-base font-bold text-slate-900">Əlavə paketlər</h3>
+                <h3 class="mb-2 text-base font-bold text-slate-900">Limit artırımı</h3>
                 <p class="mb-4 text-sm text-slate-500">
-                    Limit dolubsa planı dəyişmədən yalnız çatışmayan resursu əlavə edə bilərsiniz.
-                    Paket cari ay üçün keçərlidir.
+                    Planı dəyişmədən istənilən sayda əlavə yer ala bilərsiniz.
+                    Əlavə limit cari ay üçün keçərlidir.
                 </p>
 
                 <div class="grid gap-3 sm:grid-cols-3">
@@ -152,18 +137,15 @@
                     {
                         <div class="flex flex-col rounded-xl border border-border bg-surface-secondary p-4">
                             <p class="font-bold text-slate-900">@offer.Label</p>
-                            <p class="mt-1 text-sm text-slate-500">+@offer.PackSize @offer.Unit</p>
-                            <p class="mt-2 text-lg font-extrabold text-primary">@offer.PackPrice @Model.Plan.Currency</p>
-                            <p class="text-xs text-slate-400">maks. @offer.MaxQuantity paket</p>
+                            <p class="mt-1 text-sm text-slate-500">1 @offer.Unit</p>
+                            <p class="mt-2 text-lg font-extrabold text-primary">@offer.UnitPrice @Model.Plan.Currency</p>
 
-                            @if (isAdmin)
-                            {
-                                <button type="button"
-                                        class="admin-button-primary mt-3 w-full"
-                                        onclick="SubscriptionPage.addAddon('@offer.Kind')">
-                                    Əlavə et
-                                </button>
-                            }
+                            <button type="button"
+                                    class="admin-button-primary mt-3 w-full"
+                                    data-action="SubscriptionPage.addAddon"
+                                    data-args='["@offer.Kind"]'>
+                                Əlavə et
+                            </button>
                         </div>
                     }
                 </div>

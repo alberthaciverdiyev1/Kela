@@ -21,14 +21,14 @@ window.SubscriptionPage = (function () {
     }
 
     async function addAddon(kind) {
-        const labels = { students: 'tələbə yeri', video: 'video vaxtı', storage: 'depolama' };
+        const labels = { students: 'tələbə', groups: 'qrup', video: 'saat' };
 
         const result = await Swal.fire({
-            title: 'Əlavə paket',
-            text: `Neçə paket ${labels[kind] || ''} əlavə edilsin?`,
+            title: 'Limit artırımı',
+            text: `Neçə ${labels[kind] || 'vahid'} əlavə edilsin?`,
             input: 'number',
             inputValue: 1,
-            inputAttributes: { min: 1, max: 100 },
+            inputAttributes: { min: 1, max: 10000 },
             showCancelButton: true,
             confirmButtonText: 'Əlavə et',
             cancelButtonText: L["Common_Cancel"]
@@ -36,7 +36,7 @@ window.SubscriptionPage = (function () {
 
         if (!result.isConfirmed) return;
 
-        const payload = { kind, packs: result.value || 1 };
+        const payload = { kind, quantity: result.value || 1 };
         const tenantId = selectedTenantId();
         if (tenantId) payload.tenant_id = tenantId;
 

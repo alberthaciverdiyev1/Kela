@@ -113,7 +113,7 @@ window.AdminUI = window.AdminUI || {};
 
         return limitInfo().then(({ offers, currency }) => {
             const offer = offers.find(o => o.kind === info.kind) || null;
-            const canBuy = !!offer && !!(window.ADMIN && window.ADMIN.isAdmin);
+            const canBuy = !!offer;
 
             const offerBox = document.getElementById('limitOffer');
             const packsRow = document.getElementById('limitPacksRow');
@@ -131,10 +131,10 @@ window.AdminUI = window.AdminUI || {};
 
             if (offer) {
                 document.getElementById('limitOfferLabel').textContent = offer.label;
-                document.getElementById('limitOfferDetail').textContent = `+${offer.packSize} ${offer.unit}`;
-                document.getElementById('limitOfferPrice').textContent = `${offer.packPrice} ${currency}`;
+                document.getElementById('limitOfferDetail').textContent = `1 ${offer.unit}`;
+                document.getElementById('limitOfferPrice').textContent = `${offer.unitPrice} ${currency}`;
                 packs.value = 1;
-                packs.max = offer.maxQuantity;
+                packs.max = 10000;
             }
 
             note.classList.toggle('hidden', canBuy);
@@ -150,8 +150,8 @@ window.AdminUI = window.AdminUI || {};
                     buy.disabled = true;
                     buy.classList.add('is-loading');
 
-                    const count = Math.max(1, Math.min(offer.maxQuantity, parseInt(packs.value, 10) || 1));
-                    const added = await post('/subscription/addons', { kind: offer.kind, packs: count });
+                    const count = Math.max(1, Math.min(10000, parseInt(packs.value, 10) || 1));
+                    const added = await post('/subscription/addons', { kind: offer.kind, quantity: count });
 
                     buy.disabled = false;
                     buy.classList.remove('is-loading');

@@ -1702,10 +1702,10 @@
     <value>Plan limit reached</value>
   </data>
   <data name="Limit_Buy" xml:space="preserve">
-    <value>Buy add-on pack</value>
+    <value>Increase limit</value>
   </data>
   <data name="Limit_Confirmed" xml:space="preserve">
-    <value>Add-on pack activated — try again</value>
+    <value>Limit increased — try again</value>
   </data>
   <data name="Limit_ContactAdmin" xml:space="preserve">
     <value>Contact your administrator to raise the limit.</value>
@@ -1714,6 +1714,6 @@
     <value>This resource has no add-on pack. Contact your administrator to upgrade the plan.</value>
   </data>
   <data name="Limit_Packs" xml:space="preserve">
-    <value>Number of packs</value>
+    <value>Quantity</value>
   </data>
 </root>

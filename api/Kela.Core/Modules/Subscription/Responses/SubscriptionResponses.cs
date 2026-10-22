@@ -41,10 +41,8 @@ public record SubscriptionResponse(
 public record AddonOfferResponse(
     string Kind,
     string Label,
-    int PackSize,
-    decimal PackPrice,
-    string Unit,
-    int MaxQuantity);
+    decimal UnitPrice,
+    string Unit);
 
 public record PlanResponse(
     long Id,
@@ -63,13 +61,9 @@ public record PlanResponse(
     long StorageBytes,
     int ConcurrentConversions,
     int MaxVideoHeight,
-    int AddonStudentPackSize,
-    decimal AddonStudentPackPrice,
-    int AddonVideoPackMinutes,
-    decimal AddonVideoPackPrice,
-    long AddonStoragePackBytes,
-    decimal AddonStoragePackPrice,
-    int MaxAddonPercent,
+    decimal PricePerStudent,
+    decimal PricePerGroup,
+    decimal PricePerVideoHour,
     int OriginalRetentionDays,
     string Features,
     bool IsActive,
@@ -79,9 +73,7 @@ public record TenantAddonResponse(
     long Id,
     string Period,
     string Kind,
-    int Packs,
     int Quantity,
-    long Bytes,
     decimal Amount,
     string Currency,
     string? Note,

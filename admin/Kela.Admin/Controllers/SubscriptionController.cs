@@ -18,7 +18,6 @@ public sealed class SubscriptionController(
     public async Task<IActionResult> Index(long? tenantId, CancellationToken ct)
     {
         ViewData["Scripts"] = new[] { "~/js/pages/subscription/index.js" };
-        ViewData["IsAdmin"] = User.IsAdmin();
 
         var selected = await ResolveTenantAsync(tenantId, ct);
 
@@ -49,8 +48,6 @@ public sealed class SubscriptionController(
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> AddAddon([FromForm] AddAddonRequest request, CancellationToken ct)
     {
-        if (!User.IsAdmin()) return Forbid();
-
         var tenantId = request.TenantId
             ?? await ResolveTenantAsync(null, ct);
 

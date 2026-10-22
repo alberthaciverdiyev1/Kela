@@ -59,7 +59,7 @@ public class SubscriptionTests(ApiFactory factory)
         return tenant.Id;
     }
 
-    private static PlanRequest Request(string code, int maxStudents, int monthlyVideoMinutes, int maxAddonPercent = 100) => new()
+    private static PlanRequest Request(string code, int maxStudents, int monthlyVideoMinutes) => new()
     {
         Code = code,
         Name = code,
@@ -74,13 +74,9 @@ public class SubscriptionTests(ApiFactory factory)
         MaxLessons = 50,
         ConcurrentConversions = 2,
         MaxVideoHeight = 1080,
-        AddonStudentPackSize = 10,
-        AddonStudentPackPrice = 8,
-        AddonVideoPackMinutes = 600,
-        AddonVideoPackPrice = 12,
-        AddonStoragePackGb = 50,
-        AddonStoragePackPrice = 10,
-        MaxAddonPercent = maxAddonPercent,
+        PricePerStudent = 8,
+        PricePerGroup = 5,
+        PricePerVideoHour = 12,
         OriginalRetentionDays = 30,
         IsActive = true,
         SortOrder = 10
@@ -174,11 +170,11 @@ public class SubscriptionTests(ApiFactory factory)
         await using var scoped = Db(tenantId);
         var scopedService = new SubscriptionService(scoped);
 
-        await scopedService.AddAddonAsync(tenantId, new AddAddonRequest { Kind = AddonKinds.Students, Packs = 2 });
+        await scopedService.AddAddonAsync(tenantId, new AddAddonRequest { Kind = AddonKinds.Students, Quantity = 20 });
 
         var current = await scopedService.GetAsync(tenantId);
 
-        // 50 + 2 × 10 = 70
+        // 50 + 20 = 70
         Assert.Equal(70, current.Usage.MaxStudents);
 
         // Limit artıq 70-dir — 50-də bloklanmır.
@@ -186,22 +182,26 @@ public class SubscriptionTests(ApiFactory factory)
     }
 
     [Fact]
-    public async Task An_addon_cannot_exceed_the_plan_cap()
+    public async Task Any_quantity_of_an_addon_can_be_bought()
     {
         await using var db = Db(0);
         var service = new SubscriptionService(db);
 
-        var plan = await service.CreatePlanAsync(Request($"p-{Guid.NewGuid():N}"[..20], 50, 600, maxAddonPercent: 100));
+        var plan = await service.CreatePlanAsync(Request($"p-{Guid.NewGuid():N}"[..20], 50, 600));
         var tenantId = await TenantAsync(db, plan.Id);
 
         await using var scoped = Db(tenantId);
         var scopedService = new SubscriptionService(scoped);
 
-        // 50 limitin 100%-i = 50 əlavə tələbə = 5 paket.
-        await scopedService.AddAddonAsync(tenantId, new AddAddonRequest { Kind = AddonKinds.Students, Packs = 5 });
+        // Paket anlayışı yoxdur — istənilən sayda tələbə yeri alınır.
+        var addon = await scopedService.AddAddonAsync(tenantId,
+            new AddAddonRequest { Kind = AddonKinds.Students, Quantity = 500 });
 
-        await Assert.ThrowsAsync<ArgumentException>(() =>
-            scopedService.AddAddonAsync(tenantId, new AddAddonRequest { Kind = AddonKinds.Students, Packs = 1 }));
+        Assert.Equal(500, addon.Quantity);
+        Assert.Equal(500 * 8m, addon.Amount);
+
+        var current = await scopedService.GetAsync(tenantId);
+        Assert.Equal(550, current.Usage.MaxStudents);
     }
 
     [Fact]

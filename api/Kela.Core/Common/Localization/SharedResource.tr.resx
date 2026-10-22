@@ -1702,10 +1702,10 @@
     <value>Plan limiti doldu</value>
   </data>
   <data name="Limit_Buy" xml:space="preserve">
-    <value>Ek paket al</value>
+    <value>Limiti artır</value>
   </data>
   <data name="Limit_Confirmed" xml:space="preserve">
-    <value>Ek paket etkinleştirildi — tekrar deneyin</value>
+    <value>Limit artırıldı — tekrar deneyin</value>
   </data>
   <data name="Limit_ContactAdmin" xml:space="preserve">
     <value>Limiti artırmak için yöneticinizle iletişime geçin.</value>
@@ -1714,6 +1714,6 @@
     <value>Bu kaynak için ek paket yok. Planı yükseltmek için yöneticinizle iletişime geçin.</value>
   </data>
   <data name="Limit_Packs" xml:space="preserve">
-    <value>Paket sayısı</value>
+    <value>Miktar</value>
   </data>
 </root>

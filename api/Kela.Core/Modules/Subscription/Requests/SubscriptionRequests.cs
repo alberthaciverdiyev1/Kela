@@ -44,26 +44,14 @@ public class PlanRequest
     [FromForm(Name = "max_video_height")]
     public int MaxVideoHeight { get; set; } = 1080;
 
-    [FromForm(Name = "addon_student_pack_size")]
-    public int AddonStudentPackSize { get; set; } = 10;
+    [FromForm(Name = "price_per_student")]
+    public decimal PricePerStudent { get; set; }
 
-    [FromForm(Name = "addon_student_pack_price")]
-    public decimal AddonStudentPackPrice { get; set; }
+    [FromForm(Name = "price_per_group")]
+    public decimal PricePerGroup { get; set; }
 
-    [FromForm(Name = "addon_video_pack_minutes")]
-    public int AddonVideoPackMinutes { get; set; } = 600;
-
-    [FromForm(Name = "addon_video_pack_price")]
-    public decimal AddonVideoPackPrice { get; set; }
-
-    [FromForm(Name = "addon_storage_pack_gb")]
-    public int AddonStoragePackGb { get; set; } = 50;
-
-    [FromForm(Name = "addon_storage_pack_price")]
-    public decimal AddonStoragePackPrice { get; set; }
-
-    [FromForm(Name = "max_addon_percent")]
-    public int MaxAddonPercent { get; set; } = 100;
+    [FromForm(Name = "price_per_video_hour")]
+    public decimal PricePerVideoHour { get; set; }
 
     [FromForm(Name = "original_retention_days")]
     public int OriginalRetentionDays { get; set; } = 30;
@@ -92,11 +80,12 @@ public class AddAddonRequest
     [FromForm(Name = "tenant_id")]
     public long? TenantId { get; set; }
 
-    /// <summary>students | video | storage</summary>
+    /// <summary>students | groups | video</summary>
     public string Kind { get; set; } = string.Empty;
 
-    /// <summary>Neçə paket alınır.</summary>
-    public int Packs { get; set; } = 1;
+    /// <summary>Əlavə olunan miqdar: tələbə/qrup sayı, video üçün saat.</summary>
+    [FromForm(Name = "quantity")]
+    public int Quantity { get; set; } = 1;
 
     public decimal? Amount { get; set; }
 

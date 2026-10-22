@@ -33,9 +33,7 @@ public static class SubscriptionSeeder
             MaxTeachers = 1, MaxStudents = 50, MaxGroups = 5, MaxSubjects = 3, MaxLessons = 100,
             MonthlyVideoMinutes = 20 * 60, StorageBytes = 30 * Gb,
             ConcurrentConversions = 2, MaxVideoHeight = 720, OriginalRetentionDays = 30,
-            AddonStudentPackSize = 10, AddonStudentPackPrice = 8,
-            AddonVideoPackMinutes = 10 * 60, AddonVideoPackPrice = 12,
-            AddonStoragePackBytes = 50 * Gb, AddonStoragePackPrice = 10,
+            PricePerStudent = 8, PricePerGroup = 5, PricePerVideoHour = 12,
             Features = "{}"
         };
 
@@ -46,9 +44,7 @@ public static class SubscriptionSeeder
             MaxTeachers = 3, MaxStudents = 300, MaxGroups = 25, MaxSubjects = 10, MaxLessons = 500,
             MonthlyVideoMinutes = 80 * 60, StorageBytes = 150 * Gb,
             ConcurrentConversions = 4, MaxVideoHeight = 1080, OriginalRetentionDays = 90,
-            AddonStudentPackSize = 10, AddonStudentPackPrice = 8,
-            AddonVideoPackMinutes = 10 * 60, AddonVideoPackPrice = 12,
-            AddonStoragePackBytes = 50 * Gb, AddonStoragePackPrice = 10,
+            PricePerStudent = 8, PricePerGroup = 5, PricePerVideoHour = 12,
             Features = """{"certificates":true,"payments":true}"""
         };
 
@@ -59,9 +55,7 @@ public static class SubscriptionSeeder
             MaxTeachers = 10, MaxStudents = 1000, MaxGroups = 100, MaxSubjects = 50, MaxLessons = 2000,
             MonthlyVideoMinutes = 250 * 60, StorageBytes = 500 * Gb,
             ConcurrentConversions = 8, MaxVideoHeight = 1080, OriginalRetentionDays = 180,
-            AddonStudentPackSize = 10, AddonStudentPackPrice = 8,
-            AddonVideoPackMinutes = 10 * 60, AddonVideoPackPrice = 12,
-            AddonStoragePackBytes = 50 * Gb, AddonStoragePackPrice = 10,
+            PricePerStudent = 8, PricePerGroup = 5, PricePerVideoHour = 12,
             Features = """{"certificates":true,"payments":true,"crm":true,"chat":true,"branding":true}"""
         };
 
@@ -72,9 +66,7 @@ public static class SubscriptionSeeder
             MaxTeachers = 0, MaxStudents = 5000, MaxGroups = 0, MaxSubjects = 0, MaxLessons = 0,
             MonthlyVideoMinutes = 800 * 60, StorageBytes = 2 * 1024 * Gb,
             ConcurrentConversions = 16, MaxVideoHeight = 1080, OriginalRetentionDays = 0,
-            AddonStudentPackSize = 10, AddonStudentPackPrice = 8,
-            AddonVideoPackMinutes = 10 * 60, AddonVideoPackPrice = 12,
-            AddonStoragePackBytes = 50 * Gb, AddonStoragePackPrice = 10,
+            PricePerStudent = 8, PricePerGroup = 5, PricePerVideoHour = 12,
             Features = """{"certificates":true,"payments":true,"crm":true,"chat":true,"branding":true,"api":true}"""
         };
     }

@@ -7,6 +7,7 @@
     {
         <label for="@id" class="mb-1 block text-sm font-semibold text-slate-600">@Model.Label @if (Model.Required) { <span class="text-danger">*</span> }</label>
     }
-    <input type="@Model.Type" name="@Model.Name" id="@id" value="@Model.Value" placeholder="@Model.Placeholder" @(Model.NativeRequired ? "required" : null) data-required="@(Model.Required ? "true" : "false")"
+    <input type="@Model.Type" name="@Model.Name" id="@id" value="@Model.Value" placeholder="@Model.Placeholder"
+           @(Model.Step is not null ? $"step={Model.Step}" : null) @(Model.Min is not null ? $"min={Model.Min}" : null) @(Model.NativeRequired ? "required" : null) data-required="@(Model.Required ? "true" : "false")"
            class="admin-field" />
 </div>

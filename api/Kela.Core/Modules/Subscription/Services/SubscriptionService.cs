@@ -37,8 +37,8 @@ public sealed class SubscriptionService(AppDbContext db) : ISubscriptionService
         var lessons = await db.Lessons.CountAsync(x => x.TenantId == tenantId, ct);
 
         var maxStudents = plan.MaxStudents + usage.AddonStudents;
+        var maxGroups = plan.MaxGroups + usage.AddonGroups;
         var maxVideo = plan.MonthlyVideoMinutes + usage.AddonVideoMinutes;
-        var maxStorage = plan.StorageBytes + usage.AddonStorageBytes;
 
         return new SubscriptionResponse(
             new SubscriptionPlanInfo(plan.Id, plan.Code, plan.Name, plan.MonthlyPrice, plan.Currency, plan.YearlyFreeMonths),
@@ -54,7 +54,7 @@ public sealed class SubscriptionService(AppDbContext db) : ISubscriptionService
                 teachers,
                 plan.MaxTeachers,
                 groups,
-                plan.MaxGroups,
+                maxGroups,
                 subjects,
                 plan.MaxSubjects,
                 lessons,
@@ -62,10 +62,10 @@ public sealed class SubscriptionService(AppDbContext db) : ISubscriptionService
                 usage.VideoMinutes,
                 maxVideo,
                 usage.StorageBytes,
-                maxStorage,
+                plan.StorageBytes,
                 plan.MaxVideoHeight,
                 ParseFeatures(plan.Features),
-                Offers(plan, usage, maxStudents, maxVideo, maxStorage)));
+                Offers(plan)));
     }
 
     public async Task<SubscriptionResponse> GetCurrentAsync(CancellationToken ct = default)
@@ -95,17 +95,18 @@ public sealed class SubscriptionService(AppDbContext db) : ISubscriptionService
     public Task EnsureCanAddStudentsAsync(int count, CancellationToken ct = default)
         => EnsureCapacityAsync(Rule.Students, count, ct);
 
+    // Müəllim, fənn və dərs limitsizdir — yalnız planın bitmə vəziyyəti yoxlanılır.
     public Task EnsureCanAddTeachersAsync(int count, CancellationToken ct = default)
-        => EnsureCapacityAsync(Rule.Teachers, count, ct);
+        => EnsureOpenAsync(ct);
 
     public Task EnsureCanAddGroupsAsync(int count, CancellationToken ct = default)
         => EnsureCapacityAsync(Rule.Groups, count, ct);
 
     public Task EnsureCanAddSubjectsAsync(int count, CancellationToken ct = default)
-        => EnsureCapacityAsync(Rule.Subjects, count, ct);
+        => EnsureOpenAsync(ct);
 
     public Task EnsureCanAddLessonsAsync(int count, CancellationToken ct = default)
-        => EnsureCapacityAsync(Rule.Lessons, count, ct);
+        => EnsureOpenAsync(ct);
 
     /// <summary>
     /// Video yükləməzdən əvvəl yoxlanılır. Müddət konversiyadan sonra bilindiyi üçün
@@ -128,20 +129,11 @@ public sealed class SubscriptionService(AppDbContext db) : ISubscriptionService
         {
             throw new LimitExceededException(
                 AddonKinds.Video,
-                $"Aylıq video limiti dolub ({usage.VideoMinutes}/{videoLimit} dəqiqə). " +
-                "Əlavə paket alın və ya planı yüksəldin.",
+                $"Aylıq video limiti dolub ({usage.VideoMinutes / 60}/{videoLimit / 60} saat). " +
+                "Əlavə video saatı alın və ya planı yüksəldin.",
                 usage.VideoMinutes, videoLimit);
         }
 
-        var storageLimit = plan.StorageBytes + usage.AddonStorageBytes;
-        if (storageLimit > 0 && usage.StorageBytes >= storageLimit)
-        {
-            throw new LimitExceededException(
-                AddonKinds.Storage,
-                $"Depolama limiti dolub ({usage.StorageBytes / 1024 / 1024} MB / {storageLimit / 1024 / 1024} MB). " +
-                "Köhnə faylları silin, əlavə paket alın və ya planı yüksəldin.",
-                usage.StorageBytes, storageLimit);
-        }
     }
 
     public async Task RecordVideoMinutesAsync(long tenantId, int minutes, CancellationToken ct = default)
@@ -190,7 +182,7 @@ public sealed class SubscriptionService(AppDbContext db) : ISubscriptionService
             throw new ArgumentException($"kind must be one of: {string.Join(", ", AddonKinds.All)}");
         }
 
-        var packs = Math.Clamp(request.Packs, 1, 100);
+        var quantity = Math.Clamp(request.Quantity, 1, 10000);
 
         var tenant = await db.Tenants.AsNoTracking().FirstOrDefaultAsync(x => x.Id == tenantId, ct)
             ?? throw new KeyNotFoundException($"Tenant not found: {tenantId}");
@@ -204,7 +196,7 @@ public sealed class SubscriptionService(AppDbContext db) : ISubscriptionService
             TenantId = tenantId,
             Period = Period(),
             Kind = request.Kind,
-            Packs = packs,
+            Quantity = quantity,
             Currency = plan.Currency,
             Note = Truncate(request.Note, 190)
         };
@@ -212,39 +204,21 @@ public sealed class SubscriptionService(AppDbContext db) : ISubscriptionService
         switch (request.Kind)
         {
             case AddonKinds.Students:
-                var students = packs * plan.AddonStudentPackSize;
-                if (ExceedsCap(plan.MaxStudents, usage.AddonStudents + students, plan.MaxAddonPercent))
-                {
-                    throw new ArgumentException("Bu plan üçün maksimum əlavə tələbə sayına çatmısınız");
-                }
-
-                usage.AddonStudents += students;
-                addon.Quantity = students;
-                addon.Amount = request.Amount ?? packs * plan.AddonStudentPackPrice;
+                if (plan.PricePerStudent <= 0) throw new ArgumentException("Bu plan üçün əlavə tələbə yeri satılmır");
+                usage.AddonStudents += quantity;
+                addon.Amount = request.Amount ?? quantity * plan.PricePerStudent;
                 break;
 
-            case AddonKinds.Video:
-                var minutes = packs * plan.AddonVideoPackMinutes;
-                if (ExceedsCap(plan.MonthlyVideoMinutes, usage.AddonVideoMinutes + minutes, plan.MaxAddonPercent))
-                {
-                    throw new ArgumentException("Bu plan üçün maksimum əlavə video limitinə çatmısınız");
-                }
-
-                usage.AddonVideoMinutes += minutes;
-                addon.Quantity = minutes;
-                addon.Amount = request.Amount ?? packs * plan.AddonVideoPackPrice;
+            case AddonKinds.Groups:
+                if (plan.PricePerGroup <= 0) throw new ArgumentException("Bu plan üçün əlavə qrup satılmır");
+                usage.AddonGroups += quantity;
+                addon.Amount = request.Amount ?? quantity * plan.PricePerGroup;
                 break;
 
             default:
-                var bytes = packs * plan.AddonStoragePackBytes;
-                if (ExceedsCap(plan.StorageBytes, usage.AddonStorageBytes + bytes, plan.MaxAddonPercent))
-                {
-                    throw new ArgumentException("Bu plan üçün maksimum əlavə yer limitinə çatmısınız");
-                }
-
-                usage.AddonStorageBytes += bytes;
-                addon.Bytes = bytes;
-                addon.Amount = request.Amount ?? packs * plan.AddonStoragePackPrice;
+                if (plan.PricePerVideoHour <= 0) throw new ArgumentException("Bu plan üçün əlavə video saatı satılmır");
+                usage.AddonVideoMinutes += quantity * 60;
+                addon.Amount = request.Amount ?? quantity * plan.PricePerVideoHour;
                 break;
         }
 
@@ -259,7 +233,7 @@ public sealed class SubscriptionService(AppDbContext db) : ISubscriptionService
             .Where(x => x.TenantId == tenantId)
             .OrderByDescending(x => x.Id)
             .Take(100)
-            .Select(x => new TenantAddonResponse(x.Id, x.Period, x.Kind, x.Packs, x.Quantity, x.Bytes,
+            .Select(x => new TenantAddonResponse(x.Id, x.Period, x.Kind, x.Quantity,
                 x.Amount, x.Currency, x.Note, x.CreatedAt))
             .ToListAsync(ct);
 
@@ -337,7 +311,12 @@ public sealed class SubscriptionService(AppDbContext db) : ISubscriptionService
 
     // ---- Daxili ----
 
-    private enum Rule { Students, Teachers, Groups, Subjects, Lessons }
+    private enum Rule { Students, Groups }
+
+    private async Task EnsureOpenAsync(CancellationToken ct)
+    {
+        if (db.CurrentTenantId is long id) await EnsureWritableAsync(id, ct);
+    }
 
     private async Task EnsureCapacityAsync(Rule rule, int count, CancellationToken ct)
     {
@@ -353,11 +332,8 @@ public sealed class SubscriptionService(AppDbContext db) : ISubscriptionService
 
         var (used, limit, label, kind) = rule switch
         {
-            Rule.Students => (await db.Students.CountAsync(ct), plan.MaxStudents + usage.AddonStudents, "tələbə", "students"),
-            Rule.Teachers => (await db.Users.CountAsync(x => x.Type == UserTypes.Teacher, ct), plan.MaxTeachers, "müəllim", "teachers"),
-            Rule.Groups => (await db.Groups.CountAsync(ct), plan.MaxGroups, "qrup", "groups"),
-            Rule.Subjects => (await db.Subjects.CountAsync(ct), plan.MaxSubjects, "fənn", "subjects"),
-            _ => (await db.Lessons.CountAsync(ct), plan.MaxLessons, "dərs", "lessons")
+            Rule.Students => (await db.Students.CountAsync(ct), plan.MaxStudents + usage.AddonStudents, "tələbə", AddonKinds.Students),
+            _ => (await db.Groups.CountAsync(ct), plan.MaxGroups + usage.AddonGroups, "qrup", AddonKinds.Groups)
         };
 
         if (limit <= 0) return; // 0 = limitsiz
@@ -367,7 +343,7 @@ public sealed class SubscriptionService(AppDbContext db) : ISubscriptionService
 
         throw new LimitExceededException(kind,
             $"{title} limitinə çatmısınız ({used}/{limit}). " +
-            "Əlavə paket alın və ya planı yüksəldin.",
+            "Əlavə limit alın və ya planı yüksəldin.",
             used, limit);
     }
 
@@ -419,17 +395,6 @@ public sealed class SubscriptionService(AppDbContext db) : ISubscriptionService
 
     private static string Period() => DateTimeOffset.UtcNow.ToString("yyyy-MM");
 
-    private static bool ExceedsCap(int planLimit, int addonTotal, int maxPercent)
-        => ExceedsCap((long)planLimit, addonTotal, maxPercent);
-
-    private static bool ExceedsCap(long planLimit, long addonTotal, int maxPercent)
-    {
-        if (planLimit <= 0) return false;
-        if (maxPercent <= 0) return true;
-
-        return addonTotal > planLimit * maxPercent / 100;
-    }
-
     private static IReadOnlyList<string> ParseFeatures(string json)
     {
         if (string.IsNullOrWhiteSpace(json)) return [];
@@ -446,44 +411,24 @@ public sealed class SubscriptionService(AppDbContext db) : ISubscriptionService
         }
     }
 
-    private static IReadOnlyList<AddonOfferResponse> Offers(
-        SubscriptionPlan plan, TenantUsage usage, int maxStudents, int maxVideo, long maxStorage)
+    private static IReadOnlyList<AddonOfferResponse> Offers(SubscriptionPlan plan)
     {
         var offers = new List<AddonOfferResponse>();
 
-        if (plan.AddonStudentPackPrice > 0 && plan.MaxStudents > 0)
+        if (plan.PricePerStudent > 0)
         {
-            var room = (plan.MaxStudents * plan.MaxAddonPercent / 100) - usage.AddonStudents;
-            if (room >= plan.AddonStudentPackSize)
-            {
-                offers.Add(new AddonOfferResponse(AddonKinds.Students, "+ tələbə yeri", plan.AddonStudentPackSize,
-                    plan.AddonStudentPackPrice, "tələbə", room / plan.AddonStudentPackSize));
-            }
+            offers.Add(new AddonOfferResponse(AddonKinds.Students, "+ tələbə yeri", plan.PricePerStudent, "tələbə"));
         }
 
-        if (plan.AddonVideoPackPrice > 0 && plan.MonthlyVideoMinutes > 0)
+        if (plan.PricePerGroup > 0)
         {
-            var room = (plan.MonthlyVideoMinutes * plan.MaxAddonPercent / 100) - usage.AddonVideoMinutes;
-            if (room >= plan.AddonVideoPackMinutes)
-            {
-                offers.Add(new AddonOfferResponse(AddonKinds.Video, "+ video vaxtı", plan.AddonVideoPackMinutes,
-                    plan.AddonVideoPackPrice, "dəqiqə", room / plan.AddonVideoPackMinutes));
-            }
+            offers.Add(new AddonOfferResponse(AddonKinds.Groups, "+ qrup", plan.PricePerGroup, "qrup"));
         }
 
-        if (plan.AddonStoragePackPrice > 0 && plan.StorageBytes > 0)
+        if (plan.PricePerVideoHour > 0)
         {
-            var room = (plan.StorageBytes * plan.MaxAddonPercent / 100) - usage.AddonStorageBytes;
-            if (room >= plan.AddonStoragePackBytes)
-            {
-                offers.Add(new AddonOfferResponse(AddonKinds.Storage, "+ depolama", (int)(plan.AddonStoragePackBytes / (1024 * 1024 * 1024)),
-                    plan.AddonStoragePackPrice, "GB", (int)(room / plan.AddonStoragePackBytes)));
-            }
+            offers.Add(new AddonOfferResponse(AddonKinds.Video, "+ video saatı", plan.PricePerVideoHour, "saat"));
         }
-
-        _ = maxStudents;
-        _ = maxVideo;
-        _ = maxStorage;
 
         return offers;
     }
@@ -505,13 +450,9 @@ public sealed class SubscriptionService(AppDbContext db) : ISubscriptionService
         plan.StorageBytes = Math.Max(0, request.StorageGb) * 1024L * 1024 * 1024;
         plan.ConcurrentConversions = request.ConcurrentConversions;
         plan.MaxVideoHeight = request.MaxVideoHeight is 720 or 1080 ? request.MaxVideoHeight : 1080;
-        plan.AddonStudentPackSize = Math.Max(1, request.AddonStudentPackSize);
-        plan.AddonStudentPackPrice = request.AddonStudentPackPrice;
-        plan.AddonVideoPackMinutes = Math.Max(1, request.AddonVideoPackMinutes);
-        plan.AddonVideoPackPrice = request.AddonVideoPackPrice;
-        plan.AddonStoragePackBytes = Math.Max(1, request.AddonStoragePackGb) * 1024L * 1024 * 1024;
-        plan.AddonStoragePackPrice = request.AddonStoragePackPrice;
-        plan.MaxAddonPercent = Math.Clamp(request.MaxAddonPercent, 0, 500);
+        plan.PricePerStudent = Math.Max(0, request.PricePerStudent);
+        plan.PricePerGroup = Math.Max(0, request.PricePerGroup);
+        plan.PricePerVideoHour = Math.Max(0, request.PricePerVideoHour);
         plan.OriginalRetentionDays = request.OriginalRetentionDays;
         plan.IsActive = request.IsActive;
         plan.SortOrder = request.SortOrder;
@@ -529,12 +470,11 @@ public sealed class SubscriptionService(AppDbContext db) : ISubscriptionService
         x.Id, x.Code, x.Name, x.Description, x.MonthlyPrice, x.Currency, x.YearlyFreeMonths,
         x.MaxTeachers, x.MaxStudents, x.MaxGroups, x.MaxSubjects, x.MaxLessons,
         x.MonthlyVideoMinutes, x.StorageBytes, x.ConcurrentConversions, x.MaxVideoHeight,
-        x.AddonStudentPackSize, x.AddonStudentPackPrice, x.AddonVideoPackMinutes, x.AddonVideoPackPrice,
-        x.AddonStoragePackBytes, x.AddonStoragePackPrice, x.MaxAddonPercent, x.OriginalRetentionDays,
+        x.PricePerStudent, x.PricePerGroup, x.PricePerVideoHour, x.OriginalRetentionDays,
         x.Features, x.IsActive, x.SortOrder);
 
     private static TenantAddonResponse ToAddonResponse(TenantAddon x)
-        => new(x.Id, x.Period, x.Kind, x.Packs, x.Quantity, x.Bytes, x.Amount, x.Currency, x.Note, x.CreatedAt);
+        => new(x.Id, x.Period, x.Kind, x.Quantity, x.Amount, x.Currency, x.Note, x.CreatedAt);
 
     private static string? Truncate(string? value, int max)
         => string.IsNullOrWhiteSpace(value) ? null : value.Length <= max ? value : value[..max];

@@ -24,6 +24,8 @@ public class InputModel
     public string Type { get; set; } = "text";
     public string? Value { get; set; }
     public string? Placeholder { get; set; }
+    public string? Step { get; set; }
+    public string? Min { get; set; }
     public bool Required { get; set; }
 
     /// <summary>JS yoxlaması olmayan səhifələr üçün (məs. giriş) brauzerin öz required-ı.</summary>

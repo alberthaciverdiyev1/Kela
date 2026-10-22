@@ -2486,33 +2486,6 @@ namespace Kela.Core.Data.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
 
-                    b.Property<long>("AddonStoragePackBytes")
-                        .HasColumnType("bigint")
-                        .HasColumnName("addon_storage_pack_bytes");
-
-                    b.Property<decimal>("AddonStoragePackPrice")
-                        .HasPrecision(12, 2)
-                        .HasColumnType("numeric(12,2)")
-                        .HasColumnName("addon_storage_pack_price");
-
-                    b.Property<decimal>("AddonStudentPackPrice")
-                        .HasPrecision(12, 2)
-                        .HasColumnType("numeric(12,2)")
-                        .HasColumnName("addon_student_pack_price");
-
-                    b.Property<int>("AddonStudentPackSize")
-                        .HasColumnType("integer")
-                        .HasColumnName("addon_student_pack_size");
-
-                    b.Property<int>("AddonVideoPackMinutes")
-                        .HasColumnType("integer")
-                        .HasColumnName("addon_video_pack_minutes");
-
-                    b.Property<decimal>("AddonVideoPackPrice")
-                        .HasPrecision(12, 2)
-                        .HasColumnType("numeric(12,2)")
-                        .HasColumnName("addon_video_pack_price");
-
                     b.Property<string>("Code")
                         .IsRequired()
                         .HasMaxLength(40)
@@ -2548,10 +2521,6 @@ namespace Kela.Core.Data.Migrations
                         .HasColumnType("boolean")
                         .HasDefaultValue(true)
                         .HasColumnName("is_active");
-
-                    b.Property<int>("MaxAddonPercent")
-                        .HasColumnType("integer")
-                        .HasColumnName("max_addon_percent");
 
                     b.Property<int>("MaxGroups")
                         .HasColumnType("integer")
@@ -2596,6 +2565,21 @@ namespace Kela.Core.Data.Migrations
                         .HasColumnType("integer")
                         .HasColumnName("original_retention_days");
 
+                    b.Property<decimal>("PricePerGroup")
+                        .HasPrecision(12, 2)
+                        .HasColumnType("numeric(12,2)")
+                        .HasColumnName("price_per_group");
+
+                    b.Property<decimal>("PricePerStudent")
+                        .HasPrecision(12, 2)
+                        .HasColumnType("numeric(12,2)")
+                        .HasColumnName("price_per_student");
+
+                    b.Property<decimal>("PricePerVideoHour")
+                        .HasPrecision(12, 2)
+                        .HasColumnType("numeric(12,2)")
+                        .HasColumnName("price_per_video_hour");
+
                     b.Property<int>("SortOrder")
                         .HasColumnType("integer")
                         .HasColumnName("sort_order");
@@ -2634,10 +2618,6 @@ namespace Kela.Core.Data.Migrations
                         .HasColumnType("numeric(12,2)")
                         .HasColumnName("amount");
 
-                    b.Property<long>("Bytes")
-                        .HasColumnType("bigint")
-                        .HasColumnName("bytes");
-
                     b.Property<DateTimeOffset>("CreatedAt")
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("created_at");
@@ -2662,10 +2642,6 @@ namespace Kela.Core.Data.Migrations
                         .HasMaxLength(190)
                         .HasColumnType("character varying(190)")
                         .HasColumnName("note");
-
-                    b.Property<int>("Packs")
-                        .HasColumnType("integer")
-                        .HasColumnName("packs");
 
                     b.Property<string>("Period")
                         .IsRequired()
@@ -2703,9 +2679,9 @@ namespace Kela.Core.Data.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
 
-                    b.Property<long>("AddonStorageBytes")
-                        .HasColumnType("bigint")
-                        .HasColumnName("addon_storage_bytes");
+                    b.Property<int>("AddonGroups")
+                        .HasColumnType("integer")
+                        .HasColumnName("addon_groups");
 
                     b.Property<int>("AddonStudents")
                         .HasColumnType("integer")

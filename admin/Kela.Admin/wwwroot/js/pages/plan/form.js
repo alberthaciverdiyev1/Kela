@@ -1,24 +1,19 @@
 (function () {
     const fields = [
         'code', 'name', 'description', 'monthly_price', 'currency', 'yearly_free_months', 'sort_order',
-        'max_teachers', 'max_students', 'max_groups', 'max_subjects', 'max_lessons',
-        'monthly_video_minutes', 'storage_gb', 'concurrent_conversions',
-        'addon_student_pack_size', 'addon_student_pack_price',
-        'addon_video_pack_minutes', 'addon_video_pack_price',
-        'addon_storage_pack_gb', 'addon_storage_pack_price',
-        'max_addon_percent', 'original_retention_days', 'features'
+        'max_students', 'max_groups', 'monthly_video_hours',
+        'price_per_student', 'price_per_group', 'price_per_video_hour',
+        // Görünməyən, amma mövcud planı redaktə edəndə saxlanmalı olan sahələr.
+        'max_teachers', 'max_subjects', 'max_lessons', 'storage_gb',
+        'concurrent_conversions', 'max_video_height', 'original_retention_days', 'features'
     ];
 
-    const modal = () => document.getElementById('planModal');
-
     window.PlanPage.open = function () {
-        modal().classList.remove('hidden');
-        modal().classList.add('flex');
+        AdminUI.openModal('planModal');
     };
 
     window.PlanPage.close = function () {
-        modal().classList.add('hidden');
-        modal().classList.remove('flex');
+        AdminUI.closeModal('planModal');
     };
 
     window.PlanPage.create = function () {
@@ -26,7 +21,7 @@
         document.getElementById('planId').value = '';
         document.getElementById('planTitle').textContent = 'Yeni plan';
         document.getElementById('monthly_price').value = '0';
-        document.getElementById('max_video_height').value = '1080';
+        document.getElementById('monthly_video_minutes').value = '0';
         document.getElementById('is_active').value = 'true';
         window.PlanPage.open();
     };
@@ -45,25 +40,21 @@
         document.getElementById('sort_order').value = p.sortOrder;
         document.getElementById('is_active').value = String(p.isActive);
 
-        document.getElementById('max_teachers').value = p.maxTeachers;
         document.getElementById('max_students').value = p.maxStudents;
         document.getElementById('max_groups').value = p.maxGroups;
+        document.getElementById('monthly_video_hours').value = p.monthlyVideoMinutes > 0 ? p.monthlyVideoMinutes / 60 : 0;
+
+        document.getElementById('price_per_student').value = p.pricePerStudent;
+        document.getElementById('price_per_group').value = p.pricePerGroup;
+        document.getElementById('price_per_video_hour').value = p.pricePerVideoHour;
+
+        document.getElementById('max_teachers').value = p.maxTeachers;
         document.getElementById('max_subjects').value = p.maxSubjects;
         document.getElementById('max_lessons').value = p.maxLessons;
-        document.getElementById('monthly_video_minutes').value = p.monthlyVideoMinutes;
         document.getElementById('storage_gb').value = Math.round(p.storageBytes / 1024 / 1024 / 1024);
         document.getElementById('concurrent_conversions').value = p.concurrentConversions;
         document.getElementById('max_video_height').value = p.maxVideoHeight;
-
-        document.getElementById('addon_student_pack_size').value = p.addonStudentPackSize;
-        document.getElementById('addon_student_pack_price').value = p.addonStudentPackPrice;
-        document.getElementById('addon_video_pack_minutes').value = p.addonVideoPackMinutes;
-        document.getElementById('addon_video_pack_price').value = p.addonVideoPackPrice;
-        document.getElementById('addon_storage_pack_gb').value = Math.round(p.addonStoragePackBytes / 1024 / 1024 / 1024);
-        document.getElementById('addon_storage_pack_price').value = p.addonStoragePackPrice;
-        document.getElementById('max_addon_percent').value = p.maxAddonPercent;
         document.getElementById('original_retention_days').value = p.originalRetentionDays;
-
         document.getElementById('features').value = Object.entries(JSON.parse(p.features || '{}'))
             .filter(([, on]) => on).map(([key]) => key).join(',');
 
@@ -74,8 +65,12 @@
         document.getElementById('planForm').addEventListener('submit', async (e) => {
             e.preventDefault();
 
+            const hours = parseFloat(document.getElementById('monthly_video_hours').value) || 0;
+            document.getElementById('monthly_video_minutes').value = Math.round(hours * 60);
+
             const fd = new FormData();
             fields.forEach(id => fd.append(id, document.getElementById(id).value || ''));
+            fd.append('monthly_video_minutes', document.getElementById('monthly_video_minutes').value);
             fd.append('is_active', document.getElementById('is_active').value);
 
             const id = document.getElementById('planId').value;

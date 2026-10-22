@@ -41,19 +41,15 @@ public class SubscriptionPlan
     /// <summary>Ən yüksək çıxış hündürlüyü: 720 və ya 1080.</summary>
     public int MaxVideoHeight { get; set; } = 1080;
 
-    // ---- Əlavə paketlər ----
-    public int AddonStudentPackSize { get; set; } = 10;
-    public decimal AddonStudentPackPrice { get; set; }
+    // ---- Əlavə limit qiymətləri (istənilən sayda almaq olar) ----
+    /// <summary>Bir əlavə tələbə yerinin qiyməti.</summary>
+    public decimal PricePerStudent { get; set; }
 
-    /// <summary>Video paketinin ölçüsü dəqiqə ilə (məs. 600 = 10 saat).</summary>
-    public int AddonVideoPackMinutes { get; set; } = 600;
-    public decimal AddonVideoPackPrice { get; set; }
+    /// <summary>Bir əlavə qrupun qiyməti.</summary>
+    public decimal PricePerGroup { get; set; }
 
-    public long AddonStoragePackBytes { get; set; } = 50L * 1024 * 1024 * 1024;
-    public decimal AddonStoragePackPrice { get; set; }
-
-    /// <summary>Plan limitinin üzərinə əlave edilə bilən maksimum (plan limitinin faizi).</summary>
-    public int MaxAddonPercent { get; set; } = 100;
+    /// <summary>Bir əlavə video saatının qiyməti.</summary>
+    public decimal PricePerVideoHour { get; set; }
 
     // ---- Digər ----
     /// <summary>Orijinal videonun neçə gün saxlanacağı (0 = limitsiz).</summary>
