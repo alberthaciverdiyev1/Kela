@@ -156,6 +156,15 @@ public sealed class SubscriptionService(AppDbContext db) : ISubscriptionService
         await db.SaveChangesAsync(ct);
     }
 
+    public async Task SubtractStorageAsync(long tenantId, long bytes, CancellationToken ct = default)
+    {
+        if (bytes <= 0) return;
+
+        var usage = await GetOrCreateUsageAsync(tenantId, Period(), ct);
+        usage.StorageBytes = Math.Max(0, usage.StorageBytes - bytes);
+        await db.SaveChangesAsync(ct);
+    }
+
     public async Task<int> ConcurrentConversionsAsync(long tenantId, CancellationToken ct = default)
     {
         var tenant = await db.Tenants.AsNoTracking().FirstOrDefaultAsync(x => x.Id == tenantId, ct);

@@ -22,7 +22,7 @@ using VoiceRecord = Kela.Core.Modules.Media.Entities.VoiceRecord;
 using Kela.Core.Common.Queries;
 using Kela.Core.Common.Authorization;
 
-public sealed class LessonContentService(
+public sealed partial class LessonContentService(
     AppDbContext db,
     IFileStorage storage,
     ITenantFolder folders,
@@ -319,13 +319,65 @@ public sealed class LessonContentService(
 
     public async Task DeleteAsync(long id, long? ownerId = null, CancellationToken ct = default)
     {
-        var content = await db.LessonContents.FirstOrDefaultAsync(x => x.Id == id, ct)
+        // İzlənən sorğu — soft-delete üçün DeletedAt yazılmalıdır.
+        var content = await TrackedWithMedia().FirstOrDefaultAsync(x => x.Id == id, ct)
             ?? throw new KeyNotFoundException($"Lesson content not found: {id}");
 
         OwnershipGuard.EnsureOwned(ownerId, content.UserId, "You can only modify your own material");
 
+        // Fayllar silinir ki, depolama kotası dərhal boşalsın — istifadəçi köhnə videonu
+        // silib yerinə yenisini yükləyə bilsin. Silinmiş materialın bərpası yalnız
+        // qeydi qaytarır, medianı yox.
+        await RemoveMediaAsync(content, ct);
+
         content.DeletedAt = DateTimeOffset.UtcNow;
         await db.SaveChangesAsync(ct);
+    }
+
+    /// <summary>Materialın bütün fayllarını storage-dan silir və istifadə sayğacını azaldır.</summary>
+    private async Task RemoveMediaAsync(LessonContent content, CancellationToken ct)
+    {
+        long freed = 0;
+
+        if (content.Video is not null)
+        {
+            freed += await DeleteFileAsync(content.Video.Path, ct);
+
+            // PlaybackUrl master.m3u8 açarıdır. Versiya qovluğunun valideynini götürürük ki,
+            // əvvəlki konversiya versiyaları (v1, v2, ...) və thumbnail da birlikdə silinsin.
+            if (!string.IsNullOrWhiteSpace(content.Video.PlaybackUrl)
+                && !content.Video.PlaybackUrl.StartsWith("http", StringComparison.OrdinalIgnoreCase))
+            {
+                var versionDir = content.Video.PlaybackUrl[..content.Video.PlaybackUrl.LastIndexOf('/')];
+                var match = VersionDirRegex().Match(versionDir);
+                var prefix = match.Success ? match.Groups["root"].Value : versionDir;
+
+                foreach (var item in await storage.ListObjectsAsync(prefix + "/", ct))
+                {
+                    await storage.DeleteAsync(item.Key, ct);
+                    freed += item.SizeBytes;
+                }
+            }
+        }
+
+        if (content.MediaFile is not null) freed += await DeleteFileAsync(content.MediaFile.Path, ct);
+        if (content.VoiceRecord is not null) freed += await DeleteFileAsync(content.VoiceRecord.Path, ct);
+
+        // Sayğac yükləmə zamanı materialın öz tenant-ına yazılmışdı — çıxma da oraya.
+        if (freed > 0)
+        {
+            await subscription.SubtractStorageAsync(content.TenantId, freed, ct);
+        }
+    }
+
+    private async Task<long> DeleteFileAsync(string? path, CancellationToken ct)
+    {
+        if (string.IsNullOrWhiteSpace(path) || path.StartsWith("http", StringComparison.OrdinalIgnoreCase)) return 0;
+
+        var size = await storage.GetSizeAsync(path, ct) ?? 0;
+        await storage.DeleteAsync(path, ct);
+
+        return size;
     }
 
     private async Task<string?> ResolvePathAsync(LessonContentCreateRequest request, CancellationToken ct)
@@ -372,9 +424,14 @@ public sealed class LessonContentService(
 
 
     private IQueryable<LessonContent> WithMedia() =>
-        db.LessonContents.AsNoTracking()
-            .Include(x => x.Video).Include(x => x.MediaFile).Include(x => x.VoiceRecord)
-            .Include(x => x.AdditionalLessons);
+        TrackedWithMedia().AsNoTracking().Include(x => x.AdditionalLessons);
+
+    private IQueryable<LessonContent> TrackedWithMedia() =>
+        db.LessonContents
+            .Include(x => x.Video).Include(x => x.MediaFile).Include(x => x.VoiceRecord);
+
+    [System.Text.RegularExpressions.GeneratedRegex(@"^(?<root>.*)/v\d+$")]
+    private static partial System.Text.RegularExpressions.Regex VersionDirRegex();
 
     /// <summary>Dərsin tenant-ı — materialın tenant-ı da ondan götürülür.</summary>
     private Task<long?> LessonTenantAsync(long lessonId, CancellationToken ct)
@@ -508,9 +565,30 @@ public sealed class LessonContentService(
     public Task SetActiveAsync(long id, bool isActive, long? ownerId = null, CancellationToken ct = default)
         => db.SetActiveAsync<LessonContent>(id, isActive, ownerId, x => x.UserId, "You can only modify your own material", ct);
 
-    public Task BulkAsync(BulkRequest request, long? ownerId = null, CancellationToken ct = default)
-        => db.BulkOwnedAsync<LessonContent>(request, ownerId, x => x.UserId,
+    public async Task BulkAsync(BulkRequest request, long? ownerId = null, CancellationToken ct = default)
+    {
+        if (request.Action != BulkActions.Delete)
+        {
+            await db.BulkOwnedAsync<LessonContent>(request, ownerId, x => x.UserId,
+                "You can only modify your own material", ct);
+            return;
+        }
+
+        // Əvvəlcə fayl yollarını oxuyuruq — soft-delete-dən sonra sorğu onları görməz.
+        var contents = await WithMedia()
+            .Where(x => request.Ids.Contains(x.Id))
+            .ToListAsync(ct);
+
+        // Sahiblik yoxlaması və soft-delete. İcazəsiz id varsa burada dayanır —
+        // fayllar hələ silinməyib.
+        await db.BulkOwnedAsync<LessonContent>(request, ownerId, x => x.UserId,
             "You can only modify your own material", ct);
+
+        foreach (var content in contents)
+        {
+            await RemoveMediaAsync(content, ct);
+        }
+    }
 
     public Task ReorderAsync(SortRequest request, long? ownerId = null, CancellationToken ct = default)
         => db.ReorderOwnedAsync<LessonContent>(request, ownerId, x => x.UserId,

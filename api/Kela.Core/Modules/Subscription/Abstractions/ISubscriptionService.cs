@@ -30,6 +30,9 @@ public interface ISubscriptionService
     /// </summary>
     Task AddStorageAsync(long tenantId, long bytes, CancellationToken ct = default);
 
+    /// <summary>Silinən faylların ölçüsünü istifadədən çıxır (sıfırdan aşağı düşmür).</summary>
+    Task SubtractStorageAsync(long tenantId, long bytes, CancellationToken ct = default);
+
     /// <summary>Tenant üçün cari dövrədək icazə verilən eyni vaxtlı konversiya sayı.</summary>
     Task<int> ConcurrentConversionsAsync(long tenantId, CancellationToken ct = default);
 

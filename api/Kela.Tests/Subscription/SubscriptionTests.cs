@@ -101,6 +101,38 @@ public class SubscriptionTests(ApiFactory factory)
     }
 
     [Fact]
+    public async Task A_deleted_student_frees_a_seat_in_the_plan()
+    {
+        await using var db = Db(0);
+        var service = new SubscriptionService(db);
+
+        var plan = await service.CreatePlanAsync(Request($"p-{Guid.NewGuid():N}"[..20], 1, 600));
+        var tenantId = await TenantAsync(db, plan.Id);
+
+        await using var scoped = Db(tenantId);
+        var scopedService = new SubscriptionService(scoped);
+
+        var student = new Core.Modules.Auth.Entities.Student
+        {
+            TenantId = tenantId,
+            FullName = "Solo",
+            Email = $"solo-{Guid.NewGuid():N}@test.local",
+            PasswordHash = "x"
+        };
+
+        scoped.Students.Add(student);
+        await scoped.SaveChangesAsync();
+
+        await Assert.ThrowsAsync<ForbiddenException>(() => scopedService.EnsureCanAddStudentsAsync(1));
+
+        // Silinmiş (arxivlənmiş) tələbə limiti tutmur.
+        student.DeletedAt = DateTimeOffset.UtcNow;
+        await scoped.SaveChangesAsync();
+
+        await scopedService.EnsureCanAddStudentsAsync(1);
+    }
+
+    [Fact]
     public async Task The_student_limit_blocks_the_next_student()
     {
         await using var db = Db(0);
