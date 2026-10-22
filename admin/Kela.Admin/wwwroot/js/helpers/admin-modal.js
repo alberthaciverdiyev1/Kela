@@ -88,7 +88,11 @@ window.AdminUI = window.AdminUI || {};
 
 
     // Tam ekran: modal qabığı ekranı doldurur, bağlananda normal ölçüyə qayıdır.
+    // Keçid FLIP ilə animasiya olunur — ölçü dəyişikliyi layout-u təkrar hesablamır.
     function setFullscreen(modal, on) {
+        const panel = modal.querySelector('[data-modal-panel]');
+        const first = panel ? panel.getBoundingClientRect() : null;
+
         modal.classList.toggle('is-fullscreen', on);
 
         const expand = modal.querySelector('[data-fullscreen-expand]');
@@ -98,6 +102,27 @@ window.AdminUI = window.AdminUI || {};
         if (expand) expand.classList.toggle('hidden', on);
         if (collapse) collapse.classList.toggle('hidden', !on);
         if (button) button.setAttribute('aria-pressed', on ? 'true' : 'false');
+
+        if (!panel || !first || typeof panel.animate !== 'function') return;
+
+        const last = panel.getBoundingClientRect();
+        if (!last.width || !last.height) return;
+
+        const dx = first.left - last.left;
+        const dy = first.top - last.top;
+        const sx = first.width / last.width;
+        const sy = first.height / last.height;
+
+        panel.style.transformOrigin = 'top left';
+        const animation = panel.animate([
+            { transform: `translate(${dx}px, ${dy}px) scale(${sx}, ${sy})` },
+            { transform: 'none' }
+        ], { duration: 280, easing: 'cubic-bezier(0.4, 0, 0.2, 1)' });
+
+        animation.onfinish = () => {
+            panel.style.transform = '';
+            panel.style.transformOrigin = '';
+        };
     }
 
     // data-modal-close — bağlama düymələri inline onclick olmadan.
