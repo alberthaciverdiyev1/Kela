@@ -25,6 +25,16 @@ public sealed class ExceptionHandlingMiddleware(
         {
             await WriteAsync(context, HttpStatusCode.Unauthorized, ex.Message);
         }
+        catch (LimitExceededException ex)
+        {
+            await WriteAsync(context, HttpStatusCode.Forbidden, ex.Message, new Dictionary<string, object?>
+            {
+                ["code"] = "limit_exceeded",
+                ["kind"] = ex.Kind,
+                ["used"] = ex.Used,
+                ["limit"] = ex.Limit
+            });
+        }
         catch (ForbiddenException ex)
         {
             await WriteAsync(context, HttpStatusCode.Forbidden, ex.Message);
@@ -45,17 +55,26 @@ public sealed class ExceptionHandlingMiddleware(
         => HttpMethods.IsGet(context.Request.Method)
            && context.Request.Headers.Accept.ToString().Contains("text/html", StringComparison.OrdinalIgnoreCase);
 
-    private static async Task WriteAsync(HttpContext context, HttpStatusCode status, string message)
+    private static async Task WriteAsync(
+        HttpContext context, HttpStatusCode status, string message, IDictionary<string, object?>? extra = null)
     {
         if (context.Response.HasStarted) return;
+
+        var body = new Dictionary<string, object?>
+        {
+            ["success"] = false,
+            ["statusCode"] = (int)status,
+            ["message"] = message,
+            ["error"] = message
+        };
+
+        if (extra is not null)
+        {
+            foreach (var item in extra) body[item.Key] = item.Value;
+        }
+
         context.Response.StatusCode = (int)status;
         context.Response.ContentType = "application/json; charset=utf-8";
-        await context.Response.WriteAsJsonAsync(new
-        {
-            success = false,
-            statusCode = (int)status,
-            message,
-            error = message
-        });
+        await context.Response.WriteAsJsonAsync(body);
     }
 }

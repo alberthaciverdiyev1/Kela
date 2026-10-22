@@ -123,7 +123,7 @@ public class SubscriptionTests(ApiFactory factory)
         scoped.Students.Add(student);
         await scoped.SaveChangesAsync();
 
-        await Assert.ThrowsAsync<ForbiddenException>(() => scopedService.EnsureCanAddStudentsAsync(1));
+        await Assert.ThrowsAsync<LimitExceededException>(() => scopedService.EnsureCanAddStudentsAsync(1));
 
         // Silinmiş (arxivlənmiş) tələbə limiti tutmur.
         student.DeletedAt = DateTimeOffset.UtcNow;
@@ -158,7 +158,7 @@ public class SubscriptionTests(ApiFactory factory)
 
         await scoped.SaveChangesAsync();
 
-        var error = await Assert.ThrowsAsync<ForbiddenException>(() => scopedService.EnsureCanAddStudentsAsync(1));
+        var error = await Assert.ThrowsAsync<LimitExceededException>(() => scopedService.EnsureCanAddStudentsAsync(1));
         Assert.Contains("limitinə çatmısınız", error.Message);
     }
 
@@ -269,7 +269,7 @@ public class SubscriptionTests(ApiFactory factory)
 
         await scopedService.RecordVideoMinutesAsync(tenantId, 60);
 
-        await Assert.ThrowsAsync<ForbiddenException>(() => scopedService.EnsureCanUploadAsync());
+        await Assert.ThrowsAsync<LimitExceededException>(() => scopedService.EnsureCanUploadAsync());
     }
 }
 

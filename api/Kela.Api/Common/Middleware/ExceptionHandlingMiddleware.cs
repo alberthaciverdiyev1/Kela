@@ -25,6 +25,16 @@ public sealed class ExceptionHandlingMiddleware(
         {
             await WriteAsync(context, HttpStatusCode.Unauthorized, ex.Message);
         }
+        catch (LimitExceededException ex)
+        {
+            await WriteAsync(context, HttpStatusCode.Forbidden, ex.Message, new
+            {
+                code = "limit_exceeded",
+                kind = ex.Kind,
+                used = ex.Used,
+                limit = ex.Limit
+            });
+        }
         catch (ForbiddenException ex)
         {
             await WriteAsync(context, HttpStatusCode.Forbidden, ex.Message);
@@ -40,10 +50,11 @@ public sealed class ExceptionHandlingMiddleware(
         }
     }
 
-    private static async Task WriteAsync(HttpContext context, HttpStatusCode status, string message)
+    private static async Task WriteAsync(
+        HttpContext context, HttpStatusCode status, string message, object? data = null)
     {
         context.Response.StatusCode = (int)status;
         context.Response.ContentType = "application/json";
-        await context.Response.WriteAsJsonAsync(ApiResponse.Error(message, (int)status));
+        await context.Response.WriteAsJsonAsync(ApiResponse.Error(message, (int)status, data));
     }
 }

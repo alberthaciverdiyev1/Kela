@@ -81,18 +81,89 @@ window.AdminUI = window.AdminUI || {};
         return postForm(url, fd);
     }
 
-    async function postForm(url, formData) {
-        const res = await fetch(url, { method: 'POST', body: formData, headers: { 'RequestVerificationToken': token() } });
+    // --- Plan limiti ---
+    // Limit dolanda server 403 + code:"limit_exceeded" qaytarır. İstifadəçiyə
+    // uyğun əlavə paketi təklif edirik; alınıbsa sorğu bir dəfə təkrar göndərilir.
+    async function limitInfo() {
+        try {
+            const data = await get('/subscription/data');
+            return {
+                offers: data?.usage?.addonOffers || [],
+                currency: data?.plan?.currency || ''
+            };
+        } catch (e) {
+            return { offers: [], currency: '' };
+        }
+    }
+
+    async function promptLimit(info) {
+        const { offers, currency } = await limitInfo();
+        const offer = offers.find(o => o.kind === info.kind) || null;
+        const canBuy = !!offer && !!(window.ADMIN && window.ADMIN.isAdmin);
+
+        const lines = [`<p class="text-sm text-slate-600">${escapeHtml(info.message || L["Js_ErrorOccured"])}</p>`];
+
+        if (offer) {
+            lines.push(`<div class="mt-4 rounded-xl bg-surface-secondary p-3 text-left">
+                <p class="text-sm font-semibold text-slate-800">${escapeHtml(offer.label)}</p>
+                <p class="mt-1 text-sm text-slate-500">+${offer.packSize} ${escapeHtml(offer.unit)} — ${offer.packPrice} ${escapeHtml(currency)}</p>
+            </div>`);
+        }
+
+        if (!canBuy) {
+            lines.push(`<p class="mt-3 text-sm text-slate-500">${offer ? L["Limit_ContactAdmin"] : L["Limit_NoOffer"]}</p>`);
+        }
+
+        const options = {
+            title: L["Limit_Title"],
+            html: lines.join(''),
+            icon: 'warning',
+            confirmButtonText: canBuy ? L["Limit_Buy"] : L["Common_Close"],
+            showCancelButton: canBuy,
+            cancelButtonText: L["Common_Cancel"]
+        };
+
+        if (canBuy) {
+            options.input = 'number';
+            options.inputValue = 1;
+            options.inputAttributes = { min: 1, max: offer.maxQuantity };
+        }
+
+        const result = await swal(options);
+        if (!canBuy || !result.isConfirmed) return false;
+
+        const packs = Math.max(1, Math.min(offer.maxQuantity, parseInt(result.value, 10) || 1));
+        const added = await post('/subscription/addons', { kind: offer.kind, packs });
+        if (!added.ok) { error(errText(added)); return false; }
+
+        notify(L["Limit_Confirmed"]);
+        return true;
+    }
+
+    // Bütün fetch sorğuları buradan keçir: limit xətası olsa modal göstərilir və
+    // paket alındıqdan sonra eyni sorğu təkrarən (bir dəfə) göndərilir.
+    async function request(method, url, body, retryLimit) {
+        const init = { method, headers: { 'RequestVerificationToken': token() } };
+        if (body !== undefined) init.body = body;
+
+        const res = await fetch(url, init);
         releaseSubmitButton();
-        let body = null; try { body = await res.json(); } catch (e) { /* boş */ }
-        return { ok: res.ok, status: res.status, data: body };
+        let data = null; try { data = await res.json(); } catch (e) { /* boş */ }
+        const result = { ok: res.ok, status: res.status, data };
+
+        if (!result.ok && data?.code === 'limit_exceeded' && retryLimit !== false) {
+            if (await promptLimit(data)) return request(method, url, body, false);
+        }
+
+        return result;
+    }
+
+    async function postForm(url, formData) {
+        return request('POST', url, formData);
     }
 
     async function putForm(url, formData) {
-        const res = await fetch(url, { method: 'PUT', body: formData, headers: { 'RequestVerificationToken': token() } });
-        releaseSubmitButton();
-        let body = null; try { body = await res.json(); } catch (e) { /* boş */ }
-        return { ok: res.ok, status: res.status, data: body };
+        return request('PUT', url, formData);
     }
 
     async function copyText(text) {
@@ -167,25 +238,28 @@ window.AdminUI = window.AdminUI || {};
     }, true);
 
     async function postJson(url, obj) {
-        const res = await fetch(url, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json', 'RequestVerificationToken': token() },
-            body: JSON.stringify(obj)
-        });
-        releaseSubmitButton();
-        let body = null; try { body = await res.json(); } catch (e) { /* boş */ }
-        return { ok: res.ok, status: res.status, data: body };
+        return postFormJson('POST', url, obj, true);
     }
 
     async function putJson(url, obj) {
+        return postFormJson('PUT', url, obj, true);
+    }
+
+    async function postFormJson(method, url, obj, retryLimit) {
         const res = await fetch(url, {
-            method: 'PUT',
+            method,
             headers: { 'Content-Type': 'application/json', 'RequestVerificationToken': token() },
             body: JSON.stringify(obj)
         });
         releaseSubmitButton();
         let body = null; try { body = await res.json(); } catch (e) { /* boş */ }
-        return { ok: res.ok, status: res.status, data: body };
+        const result = { ok: res.ok, status: res.status, data: body };
+
+        if (!result.ok && body?.code === 'limit_exceeded' && retryLimit) {
+            if (await promptLimit(body)) return postFormJson(method, url, obj, false);
+        }
+
+        return result;
     }
 
     // Aktiv/deaktiv dəyişməsi — bütün resurslarda eyni endpoint forması.
@@ -200,10 +274,7 @@ window.AdminUI = window.AdminUI || {};
     }
 
     async function del(url) {
-        const res = await fetch(url, { method: 'DELETE', headers: { 'RequestVerificationToken': token() } });
-        releaseSubmitButton();
-        let body = null; try { body = await res.json(); } catch (e) { /* boş */ }
-        return { ok: res.ok, status: res.status, data: body };
+        return request('DELETE', url);
     }
 
     function errText(res) {
