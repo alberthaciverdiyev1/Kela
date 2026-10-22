@@ -2,11 +2,20 @@
 @* Bütün modallar üçün ortaq qabıq: başlıq, bağlama düyməsi, xəta yeri və gövdə.
    ESC və fona klik admin.js-də qlobal idarə olunur (data-modal sahəsi). *@
 <div id="@Model.Id" data-modal class="fixed inset-0 z-50 hidden items-center justify-center bg-slate-950/60 p-4">
-    <div class="flex max-h-[90vh] w-full @Model.WidthClass flex-col rounded-2xl bg-white shadow-2xl">
+    <div data-modal-panel class="flex max-h-[90vh] w-full @Model.WidthClass flex-col rounded-2xl bg-white shadow-2xl">
         <div class="flex items-center justify-between border-b border-border p-5">
             <h3 id="@Model.TitleId" class="text-lg font-bold text-slate-900">@Model.Title</h3>
             <div class="flex items-center gap-1">
                 @Model.HeaderExtra
+                <button type="button" data-modal-fullscreen aria-label="@L["Common_Fullscreen"]" title="@L["Common_Fullscreen"]"
+                        class="grid h-9 w-9 place-items-center rounded-lg border border-border bg-white text-slate-500 transition hover:bg-surface-secondary hover:text-slate-700">
+                    <svg data-fullscreen-expand class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.9">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5" />
+                    </svg>
+                    <svg data-fullscreen-collapse class="hidden h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.9">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M9 4v5H4M15 4v5h5M9 20v-5H4M15 20v-5h5" />
+                    </svg>
+                </button>
                 <button type="button" data-modal-close aria-label="@L["Common_Close"]"
                         class="grid h-9 w-9 place-items-center rounded-lg border border-danger/25 bg-danger-bg text-danger transition hover:bg-danger hover:text-white">✕</button>
             </div>

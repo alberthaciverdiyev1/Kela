@@ -19,6 +19,7 @@ window.AdminUI = window.AdminUI || {};
         if (!modal || modal.classList.contains('hidden')) return;
         if (!modal.dispatchEvent(new CustomEvent('modal:before-close', { cancelable: true }))) return;
 
+        setFullscreen(modal, false);
         modal.classList.add('hidden');
         modal.classList.remove('flex');
 
@@ -86,8 +87,28 @@ window.AdminUI = window.AdminUI || {};
     }
 
 
+    // Tam ekran: modal qabığı ekranı doldurur, bağlananda normal ölçüyə qayıdır.
+    function setFullscreen(modal, on) {
+        modal.classList.toggle('is-fullscreen', on);
+
+        const expand = modal.querySelector('[data-fullscreen-expand]');
+        const collapse = modal.querySelector('[data-fullscreen-collapse]');
+        const button = modal.querySelector('[data-modal-fullscreen]');
+
+        if (expand) expand.classList.toggle('hidden', on);
+        if (collapse) collapse.classList.toggle('hidden', !on);
+        if (button) button.setAttribute('aria-pressed', on ? 'true' : 'false');
+    }
+
     // data-modal-close — bağlama düymələri inline onclick olmadan.
     document.addEventListener('click', (e) => {
+        const full = e.target.closest?.('[data-modal-fullscreen]');
+        if (full) {
+            const modal = full.closest('[data-modal]');
+            if (modal) setFullscreen(modal, !modal.classList.contains('is-fullscreen'));
+            return;
+        }
+
         const btn = e.target.closest?.('[data-modal-close]');
         if (!btn) return;
         const modal = btn.closest('[data-modal]');

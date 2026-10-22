@@ -510,6 +510,20 @@
   color: #94a3b8;
 }
 
+/* ---------- Modal: tam ekran ----------
+   _Modal başlığındakı düymə data-modal-a .is-fullscreen əlavə edir. */
+[data-modal].is-fullscreen {
+  padding: 0;
+}
+
+[data-modal].is-fullscreen > [data-modal-panel] {
+  height: 100%;
+  max-height: none;
+  width: 100%;
+  max-width: none;
+  border-radius: 0;
+}
+
 /* ---------- SweetAlert panel üslubunda ----------
    JS: AdminUI.swal / notify (buttonsStyling: false, .admin-button-* düymələri). */
 .admin-swal {
