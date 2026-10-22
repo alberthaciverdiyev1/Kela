@@ -41,8 +41,8 @@
     @if (tenants is { Count: > 0 })
     {
         <div class="flex flex-wrap items-center justify-end gap-3">
-            <label for="subscriptionTenant" class="text-sm font-semibold text-slate-600">Tenant</label>
-            <select id="subscriptionTenant" class="admin-field w-full sm:w-72"
+            <label for="subscriptionTenant" class="whitespace-nowrap text-sm font-semibold text-slate-600">Tenant</label>
+            <select id="subscriptionTenant" class="admin-field w-full text-[15px] sm:w-[26rem]"
                     data-change-action="SubscriptionPage.switchTenant">
                 @foreach (var tenant in tenants)
                 {
