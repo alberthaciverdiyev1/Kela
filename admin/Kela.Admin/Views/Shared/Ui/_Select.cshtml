@@ -7,7 +7,7 @@
     {
         <label for="@id" class="mb-1 block text-sm font-semibold text-slate-600">@Model.Label</label>
     }
-    <select id="@id" name="@Model.Name" multiple="@(Model.Multiple ? "multiple" : null)" @(Model.NativeRequired ? "required" : null) data-required="@(Model.Required ? "true" : "false")" class="admin-field">
+    <select id="@id" name="@Model.Name" multiple="@(Model.Multiple ? "multiple" : null)" @(Model.NativeRequired ? "required" : null) data-required="@(Model.Required ? "true" : "false")" data-change-action="@Model.ChangeAction" data-selected="@Model.Value" class="admin-field">
         @foreach (var o in Model.Options)
         {
             var selected = Model.Multiple ? Model.Values.Contains(o.Value) : o.Value == Model.Value;

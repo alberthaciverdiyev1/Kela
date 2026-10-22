@@ -1,5 +1,6 @@
 @model Kela.Core.Modules.Subscription.Responses.SubscriptionResponse?
 @using Kela.Core.Modules.Tenant.Responses
+@using Kela.Admin.Models.Ui
 @{
     ViewData["Title"] = "Abunəlik";
     var tenants = ViewData["Tenants"] as IReadOnlyList<TenantResponse>;
@@ -22,6 +23,18 @@
         _ => ("Aktiv", "success")
     };
 
+    var tenantSelect = tenants is { Count: > 0 }
+        ? new SelectModel
+        {
+            Id = "subscriptionTenant",
+            Name = "tenant_id",
+            Label = "Tenant",
+            Value = selectedTenantId?.ToString(),
+            ChangeAction = "SubscriptionPage.switchTenant",
+            Options = tenants.Select(t => new SelectOption { Value = t.Id.ToString(), Text = t.Name }).ToList()
+        }
+        : null;
+
     var gaugeRows = usage is null
         ? []
         : new (string Label, int Used, int Max)[]
@@ -38,17 +51,12 @@
 <section class="admin-page">
     <partial name="Ui/_PageHeader" model="@(new PageHeaderModel())" />
 
-    @if (tenants is { Count: > 0 })
+    @if (tenantSelect is not null)
     {
-        <div class="flex flex-wrap items-center justify-end gap-3">
-            <label for="subscriptionTenant" class="whitespace-nowrap text-sm font-semibold text-slate-600">Tenant</label>
-            <select id="subscriptionTenant" class="admin-field w-full text-[15px] sm:w-[26rem]"
-                    data-change-action="SubscriptionPage.switchTenant">
-                @foreach (var tenant in tenants)
-                {
-                    <option value="@tenant.Id" selected="@(tenant.Id == selectedTenantId)">@tenant.Name</option>
-                }
-            </select>
+        <div class="flex justify-end">
+            <div class="w-full sm:w-[22rem]">
+                <partial name="Ui/_Select" model="tenantSelect" />
+            </div>
         </div>
     }
 

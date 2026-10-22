@@ -77,7 +77,10 @@ public sealed class SubscriptionController(
             return own > 0 ? own : null;
         }
 
-        if (tenantId is > 0) return tenantId;
+        if (tenantId is > 0)
+        {
+            return await tenants.GetByIdAsync(tenantId.Value, ct) is not null ? tenantId : null;
+        }
 
         var switched = User.CurrentTenantId();
         if (switched > 0) return switched;

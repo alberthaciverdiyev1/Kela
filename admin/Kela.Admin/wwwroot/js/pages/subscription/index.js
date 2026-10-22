@@ -5,6 +5,17 @@ window.SubscriptionPage = (function () {
         location.href = '/subscription?tenant_id=' + encodeURIComponent(el.value);
     }
 
+    // Ortaq select komponenti açılışda boş placeholder seçir — serverdən gələn
+    // tenant-ı geri qaytarırıq ki, səhifə məlumatı ilə seçim uyğun olsun.
+    document.addEventListener('DOMContentLoaded', () => {
+        const select = document.getElementById('subscriptionTenant');
+        if (!select) return;
+
+        const marked = select.querySelector('option[selected]');
+        if (marked) select.value = marked.value;
+        if (window.AdminUI && AdminUI.syncSelect) AdminUI.syncSelect(select);
+    });
+
     function selectedTenantId() {
         return document.getElementById('subscriptionTenant')?.value || '';
     }

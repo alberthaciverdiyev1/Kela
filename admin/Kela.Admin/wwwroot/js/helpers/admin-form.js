@@ -129,8 +129,9 @@ window.AdminUI = window.AdminUI || {};
         const multiple = !!select.multiple;
 
         // Boş seçim üçün disabled placeholder — istifadəçi təsadüfən ilk variantı
-        // seçməsin və heç bir seçim olmadığı görünsün.
-        if (!multiple && !select.querySelector('option[value=""]')) {
+        // seçməsin və heç bir seçim olmadığı görünsün. Əvvəlcədən seçilmiş dəyər
+        // varsa (məs. cari tenant) placeholder əlavə olunmur.
+        if (!multiple && !select.dataset.selected && !select.querySelector('option[value=""]')) {
             const placeholder = document.createElement('option');
             placeholder.value = '';
             placeholder.textContent = L["Common_ChooseOne"] || '—';

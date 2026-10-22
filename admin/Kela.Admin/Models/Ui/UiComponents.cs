@@ -54,6 +54,9 @@ public class SelectModel
     public bool NativeRequired { get; set; }
 
     public string? Id { get; set; }
+
+    /// <summary>data-change-action — select dəyişəndə çağırılacaq JS funksiyası.</summary>
+    public string? ChangeAction { get; set; }
 }
 
 public class SwitchModel
