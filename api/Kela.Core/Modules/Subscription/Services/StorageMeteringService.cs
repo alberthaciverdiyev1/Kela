@@ -50,7 +50,10 @@ public sealed class StorageMeteringService(
             {
                 var folder = await folders.ResolveAsync(tenant.Id, ct);
                 var objects = await storage.ListObjectsAsync($"{folder}/", ct);
-                var size = objects.Sum(x => x.SizeBytes);
+
+                // HLS çıxışı (seqmentlər + playlistlər) sayılmır: eyni video bir neçə
+                // keyfiyyətdə təkrarlanır. Yer yalnız orijinal faylla ölçülür.
+                var size = objects.Where(x => !IsHls(x.Key)).Sum(x => x.SizeBytes);
 
                 total += size;
 
@@ -101,6 +104,10 @@ public sealed class StorageMeteringService(
 
         return new MeteringResult(tenants.Count, total, deleted);
     }
+
+    /// <summary>Konversiya çıxışı — storage istifadəsinə daxil edilmir.</summary>
+    private static bool IsHls(string key)
+        => key.Contains("/videos/m3u8/", StringComparison.OrdinalIgnoreCase);
 
     /// <summary>
     /// Yalnız yayıma çıxmış videoların orijinalları silinir — konversiya bitməyibsə

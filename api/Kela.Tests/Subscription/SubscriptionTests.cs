@@ -331,6 +331,43 @@ public class StorageMeteringTests(ApiFactory factory)
     }
 
     [Fact]
+    public async Task Hls_output_is_not_counted_but_originals_are()
+    {
+        await using var db = Db();
+
+        var tenant = new Core.Modules.Tenant.Entities.Tenant
+        {
+            Name = $"H-{Guid.NewGuid():N}",
+            Slug = $"h-{Guid.NewGuid():N}",
+            IsActive = true
+        };
+
+        db.Tenants.Add(tenant);
+        await db.SaveChangesAsync();
+
+        using var scope = factory.Services.CreateScope();
+        var storage = scope.ServiceProvider.GetRequiredService<Kela.Core.Common.Storage.IFileStorage>();
+        var folders = scope.ServiceProvider.GetRequiredService<Kela.Core.Common.Storage.ITenantFolder>();
+
+        var folder = await folders.ResolveAsync(tenant.Id);
+        var raw = $"{folder}/videos/raw/lesson.mp4";
+        await storage.UploadTextAsync(raw, new string('x', 4000));
+        await storage.UploadTextAsync($"{folder}/videos/m3u8/lesson/v1/master.m3u8", new string('y', 300));
+        await storage.UploadTextAsync($"{folder}/videos/m3u8/lesson/v1/720/index.m3u8", new string('z', 5000));
+        await storage.UploadTextAsync($"{folder}/videos/m3u8/lesson/v1/720/seg0.ts", new string('s', 9000));
+
+        var metering = scope.ServiceProvider.GetRequiredService<IStorageMeteringService>();
+        await metering.MeterAsync();
+
+        await using var check = Db();
+        var usage = await check.TenantUsages.IgnoreQueryFilters()
+            .FirstAsync(x => x.TenantId == tenant.Id);
+
+        // Yalnız orijinal video — HLS playlistləri və seqmentləri sayılmır.
+        Assert.Equal(await storage.GetSizeAsync(raw), usage.StorageBytes);
+    }
+
+    [Fact]
     public async Task Expired_originals_are_deleted_only_when_enabled()
     {
         await using var db = Db();

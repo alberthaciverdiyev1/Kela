@@ -352,10 +352,11 @@ public sealed partial class LessonContentService(
                 var match = VersionDirRegex().Match(versionDir);
                 var prefix = match.Success ? match.Groups["root"].Value : versionDir;
 
+                // HLS seqmentləri silinir, lakin istifadə sayğacından çıxılmır —
+                // ölçmə də yalnız orijinal faylı sayır.
                 foreach (var item in await storage.ListObjectsAsync(prefix + "/", ct))
                 {
                     await storage.DeleteAsync(item.Key, ct);
-                    freed += item.SizeBytes;
                 }
             }
         }
