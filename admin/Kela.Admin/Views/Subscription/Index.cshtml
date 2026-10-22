@@ -1,7 +1,10 @@
-@model Kela.Core.Modules.Subscription.Responses.SubscriptionResponse
+@model Kela.Core.Modules.Subscription.Responses.SubscriptionResponse?
+@using Kela.Core.Modules.Tenant.Responses
 @{
     ViewData["Title"] = "Abunəlik";
-    var usage = Model.Usage;
+    var tenants = ViewData["Tenants"] as IReadOnlyList<TenantResponse>;
+    var selectedTenantId = ViewData["SelectedTenantId"] as long?;
+    var usage = Model?.Usage!;
     var isAdmin = ViewData["IsAdmin"] as bool? == true;
 
     string Bar(int used, int max) => max <= 0 ? $"{used} / limitsiz" : $"{used} / {max}  ({Math.Min(100, (int)Math.Round(used * 100.0 / max))}%)";
@@ -19,24 +22,44 @@
         _ => ("Aktiv", "success")
     };
 
-    var gaugeRows = new (string Label, int Used, int Max)[]
-    {
-        ("Tələbə", usage.Students, usage.MaxStudents),
-        ("Müəllim", usage.Teachers, usage.MaxTeachers),
-        ("Qrup", usage.Groups, usage.MaxGroups),
-        ("Fənn", usage.Subjects, usage.MaxSubjects),
-        ("Dərs", usage.Lessons, usage.MaxLessons),
-        ("Video (aylıq, dəqiqə)", usage.VideoMinutes, usage.MonthlyVideoMinutes)
-    };
+    var gaugeRows = usage is null
+        ? []
+        : new (string Label, int Used, int Max)[]
+        {
+            ("Tələbə", usage.Students, usage.MaxStudents),
+            ("Müəllim", usage.Teachers, usage.MaxTeachers),
+            ("Qrup", usage.Groups, usage.MaxGroups),
+            ("Fənn", usage.Subjects, usage.MaxSubjects),
+            ("Dərs", usage.Lessons, usage.MaxLessons),
+            ("Video (aylıq, dəqiqə)", usage.VideoMinutes, usage.MonthlyVideoMinutes)
+        };
 }
 
 <section class="admin-page">
     <partial name="Ui/_PageHeader" model="@(new PageHeaderModel())" />
 
-    @if (Model.Plan is null)
+    @if (tenants is { Count: > 0 })
+    {
+        <div class="flex flex-wrap items-center justify-end gap-3">
+            <label for="subscriptionTenant" class="text-sm font-semibold text-slate-600">Tenant</label>
+            <select id="subscriptionTenant" class="admin-field w-full sm:w-72"
+                    data-change-action="SubscriptionPage.switchTenant">
+                @foreach (var tenant in tenants)
+                {
+                    <option value="@tenant.Id" selected="@(tenant.Id == selectedTenantId)">@tenant.Name</option>
+                }
+            </select>
+        </div>
+    }
+
+    @if (Model?.Plan is null)
     {
         <div class="admin-card p-5">
-            <p class="text-sm text-slate-500">Hələ plan təyin edilməyib. Administratorla əlaqə saxlayın.</p>
+            <p class="text-sm text-slate-500">
+                @(tenants is { Count: > 0 }
+                    ? "Tenant seçin — seçilmiş tenant-ın planı, limitləri və istifadəsi göstəriləcək."
+                    : "Hələ plan təyin edilməyib. Administratorla əlaqə saxlayın.")
+            </p>
         </div>
     }
     else
