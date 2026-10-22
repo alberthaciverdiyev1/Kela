@@ -17,6 +17,9 @@ public sealed class TenantConfiguration : IEntityTypeConfiguration<Tenant>
         builder.HasIndex(x => x.Slug).IsUnique();
         builder.Property(x => x.IsActive).HasColumnName("is_active").HasDefaultValue(true);
         builder.Property(x => x.IsPending).HasColumnName("is_pending").HasDefaultValue(false);
+        builder.Property(x => x.PlanId).HasColumnName("plan_id");
+        builder.Property(x => x.PlanStartedAt).HasColumnName("plan_started_at");
+        builder.Property(x => x.PlanExpiresAt).HasColumnName("plan_expires_at");
         builder.Property(x => x.CreatedAt).HasColumnName("created_at");
     }
 }

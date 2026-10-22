@@ -1,0 +1,117 @@
+@{
+    ViewData["Title"] = "Abunəlik planları";
+}
+
+<section class="admin-page">
+    <div class="mb-5">
+        <h2 class="text-xl font-bold text-slate-900">Abunəlik planları</h2>
+        <p class="mt-1 text-sm text-slate-500">Qiymətlər, limitlər və əlavə paketlər — dəyişiklik dərhal qüvvəyə minir</p>
+    </div>
+
+    <div class="admin-card">
+        <div class="overflow-x-auto">
+            <table class="admin-table">
+                <thead>
+                    <tr>
+                        <th>Plan</th>
+                        <th>Qiymət</th>
+                        <th>Tələbə</th>
+                        <th>Müəllim</th>
+                        <th>Video (saat/ay)</th>
+                        <th>Depolama</th>
+                        <th>Paralel</th>
+                        <th>Status</th>
+                        <th class="text-right">Əməliyyat</th>
+                    </tr>
+                </thead>
+                <tbody id="rows"></tbody>
+            </table>
+        </div>
+    </div>
+</section>
+
+<div id="planModal" class="fixed inset-0 z-40 hidden items-start justify-center overflow-y-auto bg-slate-950/40 p-4">
+    <div class="my-8 w-full max-w-3xl rounded-2xl border border-border bg-white p-6 shadow-xl">
+        <h3 id="planTitle" class="mb-4 text-lg font-bold text-slate-900">Plan</h3>
+
+        <form id="planForm" class="space-y-5">
+            <input type="hidden" id="planId" />
+
+            <div class="grid gap-3 sm:grid-cols-3">
+                <div>
+                    <label class="admin-label">Kod</label>
+                    <input id="code" class="admin-input" placeholder="basic" required />
+                </div>
+                <div>
+                    <label class="admin-label">Ad</label>
+                    <input id="name" class="admin-input" placeholder="Basic" required />
+                </div>
+                <div>
+                    <label class="admin-label">Aylıq qiymət</label>
+                    <input id="monthly_price" type="number" step="0.01" min="0" class="admin-input" />
+                </div>
+            </div>
+
+            <div>
+                <label class="admin-label">Təsvir</label>
+                <input id="description" class="admin-input" maxlength="500" />
+            </div>
+
+            <div class="grid gap-3 sm:grid-cols-4">
+                <div><label class="admin-label">Valyuta</label><input id="currency" class="admin-input" value="AZN" /></div>
+                <div><label class="admin-label">İllik pulsuz ay</label><input id="yearly_free_months" type="number" min="0" max="12" class="admin-input" value="2" /></div>
+                <div><label class="admin-label">Sıra</label><input id="sort_order" type="number" class="admin-input" value="0" /></div>
+                <div><label class="admin-label">Status</label>
+                    <select id="is_active" class="admin-input">
+                        <option value="true">Aktiv</option>
+                        <option value="false">Deaktiv</option>
+                    </select>
+                </div>
+            </div>
+
+            <div>
+                <p class="mb-2 text-xs font-bold uppercase tracking-wide text-slate-400">Limitlər (0 = limitsiz)</p>
+                <div class="grid gap-3 sm:grid-cols-3">
+                    <div><label class="admin-label">Müəllim</label><input id="max_teachers" type="number" min="0" class="admin-input" /></div>
+                    <div><label class="admin-label">Tələbə</label><input id="max_students" type="number" min="0" class="admin-input" /></div>
+                    <div><label class="admin-label">Qrup</label><input id="max_groups" type="number" min="0" class="admin-input" /></div>
+                    <div><label class="admin-label">Fənn</label><input id="max_subjects" type="number" min="0" class="admin-input" /></div>
+                    <div><label class="admin-label">Dərs</label><input id="max_lessons" type="number" min="0" class="admin-input" /></div>
+                    <div><label class="admin-label">Video (dəq/ay)</label><input id="monthly_video_minutes" type="number" min="0" class="admin-input" /></div>
+                    <div><label class="admin-label">Depolama (GB)</label><input id="storage_gb" type="number" min="0" class="admin-input" /></div>
+                    <div><label class="admin-label">Paralel konversiya</label><input id="concurrent_conversions" type="number" min="0" class="admin-input" /></div>
+                    <div><label class="admin-label">Maks. keyfiyyət</label>
+                        <select id="max_video_height" class="admin-input">
+                            <option value="720">720p</option>
+                            <option value="1080">1080p</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <div>
+                <p class="mb-2 text-xs font-bold uppercase tracking-wide text-slate-400">Əlavə paketlər</p>
+                <div class="grid gap-3 sm:grid-cols-3">
+                    <div><label class="admin-label">Tələbə paketi (nəfər)</label><input id="addon_student_pack_size" type="number" min="1" class="admin-input" value="10" /></div>
+                    <div><label class="admin-label">Tələbə paketi qiyməti</label><input id="addon_student_pack_price" type="number" step="0.01" min="0" class="admin-input" /></div>
+                    <div><label class="admin-label">Maks. əlavə (%)</label><input id="max_addon_percent" type="number" min="0" max="500" class="admin-input" value="100" /></div>
+
+                    <div><label class="admin-label">Video paketi (dəq)</label><input id="addon_video_pack_minutes" type="number" min="1" class="admin-input" value="600" /></div>
+                    <div><label class="admin-label">Video paketi qiyməti</label><input id="addon_video_pack_price" type="number" step="0.01" min="0" class="admin-input" /></div>
+                    <div><label class="admin-label">Orijinal saxlama (gün)</label><input id="original_retention_days" type="number" min="0" class="admin-input" /></div>
+
+                    <div><label class="admin-label">Depolama paketi (GB)</label><input id="addon_storage_pack_gb" type="number" min="1" class="admin-input" value="50" /></div>
+                    <div><label class="admin-label">Depolama paketi qiyməti</label><input id="addon_storage_pack_price" type="number" step="0.01" min="0" class="admin-input" /></div>
+                    <div><label class="admin-label">Modullar (vergüllə)</label><input id="features" class="admin-input" placeholder="certificates,payments" /></div>
+                </div>
+            </div>
+
+            <div class="flex justify-end gap-2 pt-2">
+                <button type="button" onclick="PlanPage.close()" class="admin-button admin-button-secondary">Ləğv et</button>
+                <button type="submit" class="admin-button admin-button-primary">Yadda saxla</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<form id="antiforgery">@Html.AntiForgeryToken()</form>

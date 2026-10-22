@@ -29,6 +29,8 @@ using Kela.Core.Modules.Attendance.Services;
 using Kela.Core.Modules.Nodes;
 using Kela.Core.Modules.Nodes.Abstractions;
 using Kela.Core.Modules.Nodes.Services;
+using Kela.Core.Modules.Subscription.Abstractions;
+using Kela.Core.Modules.Subscription.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Hosting;
@@ -123,6 +125,7 @@ public static class DependencyInjection
         services.AddScoped<ITenantFolder, TenantFolder>();
 
         services.Configure<NodeOptions>(configuration.GetSection(NodeOptions.SectionName));
+        services.AddScoped<ISubscriptionService, SubscriptionService>();
         services.AddScoped<INodeService, NodeService>();
         services.AddScoped<IVideoJobScheduler, VideoJobScheduler>();
         services.AddScoped<IVideoJobLifecycle, VideoJobLifecycle>();

@@ -11,6 +11,7 @@ using Kela.Api.Modules.Nodes.Services;
 using Kela.Core;
 using Kela.Core.Common.Localization;
 using Kela.Core.Modules.Auth;
+using Kela.Core.Modules.Subscription;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.AspNetCore.Mvc;
@@ -125,6 +126,7 @@ builder.Services.AddHostedService<NodesBackgroundService>();
 var app = builder.Build();
 
 await app.Services.SeedDefaultAdminAsync(app.Configuration);
+await app.Services.SeedSubscriptionPlansAsync();
 
 app.UseMiddleware<ExceptionHandlingMiddleware>();
 

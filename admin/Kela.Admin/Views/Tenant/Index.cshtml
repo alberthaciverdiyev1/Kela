@@ -17,6 +17,7 @@ Columns = new List<TableColumnModel>
 {
             new() { Label = L["Common_Name"] },
             new() { Label = L["Tenant_Slug"] },
+            new() { Label = "Plan", WidthClass = "w-36" },
             new() { Label = L["Common_Status"], WidthClass = "w-32" },
             new() { Label = L["Common_Actions"], Right = true },
 }
@@ -37,5 +38,30 @@ Columns = new List<TableColumnModel>
     ShowError = false,
     Body = modalBody
 })" />
+
+<div id="planModal" class="fixed inset-0 z-40 hidden items-center justify-center bg-slate-950/40 p-4">
+    <div class="w-full max-w-md rounded-2xl border border-border bg-white p-5 shadow-xl">
+        <h3 class="mb-4 text-lg font-bold text-slate-900">Abunəlik planı</h3>
+
+        <form id="planForm">
+            <input type="hidden" id="planTenantId" />
+
+            <label class="admin-label">Plan</label>
+            <select id="planSelect" class="admin-input"></select>
+
+            <label class="admin-label mt-3">Bitmə tarixi (boş = müddətsiz)</label>
+            <input id="planExpires" type="date" class="admin-input" />
+
+            <div class="mt-4 rounded-xl bg-surface-secondary p-3 text-sm text-slate-600">
+                Ödənişdən sonra əlavə paket də əlavə edə bilərsiniz — plan limitinə dərhal təsir edir.
+            </div>
+
+            <div class="mt-5 flex justify-end gap-2">
+                <button type="button" onclick="PlanModal.close()" class="admin-button admin-button-secondary">Ləğv et</button>
+                <button type="submit" class="admin-button admin-button-primary">Yadda saxla</button>
+            </div>
+        </form>
+    </div>
+</div>
 
 <form id="antiforgery">@Html.AntiForgeryToken()</form>

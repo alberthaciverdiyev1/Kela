@@ -248,6 +248,11 @@ public sealed class VideoJobScheduler(
         if (take <= 0) return [];
 
         var lease = DateTimeOffset.UtcNow.AddMinutes(Settings.LeaseMinutes);
+
+        // Abunəlik limiti: planında icazə veriləndən çox eyni vaxtlı konversiyası
+        // olan tenant-ların işləri verilmir (digər tenant-lar davam edir).
+        var saturated = await SaturatedTenantsAsync(ct);
+
         List<VideoJob> jobs;
 
         await using (var tx = await db.Database.BeginTransactionAsync(ct))
@@ -263,6 +268,7 @@ public sealed class VideoJobScheduler(
                     WHERE deleted_at IS NULL
                       AND status = ANY({new[] { JobStatus.Pending, JobStatus.Queued }})
                       AND (next_attempt_at IS NULL OR next_attempt_at <= now())
+                      AND tenant_id <> ALL({saturated.ToArray()})
                     -- Əvvəlcə ən köhnə video bitirilir, sonra növbəti. Beləliklə
                     -- bir videonun bütün pillələri paralel paylanır və video tam
                     -- hazır olur; əvvəlki sıralamada bütün 1080p-lər əvvəl
@@ -384,6 +390,42 @@ public sealed class VideoJobScheduler(
             });
         }
         return result;
+    }
+
+    /// <summary>Abunəlik planındaki eyni vaxtlı konversiya limitini doldurmuş tenant-lar.</summary>
+    private async Task<List<long>> SaturatedTenantsAsync(CancellationToken ct)
+    {
+        var active = JobStatus.Active;
+
+        var counts = await db.VideoJobs.IgnoreQueryFilters()
+            .Where(j => j.DeletedAt == null && active.Contains(j.Status))
+            .GroupBy(j => j.TenantId)
+            .Select(g => new { TenantId = g.Key, Count = g.Count() })
+            .ToListAsync(ct);
+
+        if (counts.Count == 0) return [];
+
+        var tenants = await db.Tenants.AsNoTracking()
+            .Select(t => new { t.Id, t.PlanId })
+            .ToDictionaryAsync(t => t.Id, t => t.PlanId, ct);
+
+        var plans = await db.SubscriptionPlans.AsNoTracking()
+            .ToDictionaryAsync(p => p.Id, p => p.ConcurrentConversions, ct);
+
+        var saturated = new List<long>();
+
+        foreach (var row in counts)
+        {
+            // Paralellik yalnız AÇIQ plan təyin edilmiş tenant-lara tətbiq olunur:
+            // plan verilməmiş köhnə quraşdırmalar default planla süni şəkildə
+            // məhdudlaşdırılmamalıdır.
+            if (!tenants.TryGetValue(row.TenantId, out var planId) || planId is not long id) continue;
+            if (!plans.TryGetValue(id, out var limit)) continue;
+
+            if (limit > 0 && row.Count >= limit) saturated.Add(row.TenantId);
+        }
+
+        return saturated;
     }
 
     private static string? Truncate(string? value, int max)

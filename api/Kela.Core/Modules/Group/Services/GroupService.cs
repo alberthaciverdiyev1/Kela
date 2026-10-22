@@ -22,7 +22,11 @@ using Subject = Kela.Core.Modules.Subject.Entities.Subject;
 using Kela.Core.Common.Queries;
 using Kela.Core.Common.Authorization;
 
-public sealed class GroupService(AppDbContext db, IFileStorage storage, ITenantFolder folders) : IGroupService
+public sealed class GroupService(
+    AppDbContext db,
+    IFileStorage storage,
+    ITenantFolder folders,
+    Kela.Core.Modules.Subscription.Abstractions.ISubscriptionService subscription) : IGroupService
 {
     private async Task<string> FolderAsync(CancellationToken ct)
         => $"{await folders.ResolveAsync(ct: ct)}/groups";
@@ -80,6 +84,8 @@ public sealed class GroupService(AppDbContext db, IFileStorage storage, ITenantF
 
     public async Task<GroupResponse> CreateAsync(GroupUpsertRequest request, CancellationToken ct = default)
     {
+        await subscription.EnsureCanAddGroupsAsync(1, ct);
+
         var image = request.Image is not null
             ? await storage.UploadAsync(request.Image, await FolderAsync(ct), ct)
             : null;

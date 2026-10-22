@@ -17,7 +17,11 @@ using Lesson = Kela.Core.Modules.Lesson.Entities.Lesson;
 using Kela.Core.Common.Queries;
 using Kela.Core.Common.Authorization;
 
-public sealed class LessonService(AppDbContext db, IFileStorage storage, ITenantFolder folders) : ILessonService
+public sealed class LessonService(
+    AppDbContext db,
+    IFileStorage storage,
+    ITenantFolder folders,
+    Kela.Core.Modules.Subscription.Abstractions.ISubscriptionService subscription) : ILessonService
 {
     private async Task<string> FolderAsync(CancellationToken ct)
         => $"{await folders.ResolveAsync(ct: ct)}/lessons";
@@ -66,6 +70,7 @@ public sealed class LessonService(AppDbContext db, IFileStorage storage, ITenant
 
     public async Task<LessonResponse> CreateAsync(LessonUpsertRequest request, CancellationToken ct = default)
     {
+        await subscription.EnsureCanAddLessonsAsync(1, ct);
         await EnsureSubjectExistsAsync(request.SubjectId, ct);
 
         // Teacher yalnız öz və ya adminin fənninə dərs əlavə edə bilər.

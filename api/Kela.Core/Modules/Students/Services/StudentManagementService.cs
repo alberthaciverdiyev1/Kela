@@ -12,7 +12,10 @@ namespace Kela.Core.Modules.Students.Services;
 
 using Student = Kela.Core.Modules.Auth.Entities.Student;
 
-public sealed class StudentManagementService(AppDbContext db) : Abstractions.IStudentManagementService
+public sealed class StudentManagementService(
+    AppDbContext db,
+    Kela.Core.Modules.Subscription.Abstractions.ISubscriptionService subscription)
+    : Abstractions.IStudentManagementService
 {
     public async Task<PagedResponse<StudentListItemResponse>> ListAsync(StudentListRequest request, CancellationToken ct = default)
         => await Query(request)
@@ -67,6 +70,8 @@ public sealed class StudentManagementService(AppDbContext db) : Abstractions.ISt
 
     public async Task<CreateStudentResponse> CreateAsync(CreateStudentRequest request, CancellationToken ct = default)
     {
+        await subscription.EnsureCanAddStudentsAsync(1, ct);
+
         var fullName = (request.FullName ?? string.Empty).Trim();
         var email = (request.Email ?? string.Empty).Trim().ToLowerInvariant();
 

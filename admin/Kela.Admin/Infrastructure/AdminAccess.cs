@@ -9,6 +9,10 @@ public static class AdminAccess
     public static bool IsAdmin(this ClaimsPrincipal user) =>
         user.IsInRole(UserTypes.Admin) || user.IsInRole(UserTypes.SuperAdmin);
 
+    /// <summary>Cookie-dəki tenant_id claim-i. Superadmin tenant seçməyibsə 0.</summary>
+    public static long CurrentTenantId(this ClaimsPrincipal user) =>
+        long.TryParse(user.FindFirst("tenant_id")?.Value, out var id) ? id : 0;
+
     public static long? CurrentUserId(this ClaimsPrincipal user) =>
         long.TryParse(user.FindFirst(ClaimTypes.NameIdentifier)?.Value, out var id) ? id : null;
 }

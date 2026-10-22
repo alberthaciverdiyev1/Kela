@@ -14,4 +14,13 @@ public class Tenant
     public bool IsPending { get; set; }
 
     public DateTimeOffset CreatedAt { get; set; } = DateTimeOffset.UtcNow;
+
+    // ---- Abunəlik ----
+    /// <summary>Seçilmiş plan (subscription_plans.id). Null = default plan.</summary>
+    public long? PlanId { get; set; }
+
+    public DateTimeOffset? PlanStartedAt { get; set; }
+
+    /// <summary>Planın bitmə tarixi. Null = müddətsiz.</summary>
+    public DateTimeOffset? PlanExpiresAt { get; set; }
 }

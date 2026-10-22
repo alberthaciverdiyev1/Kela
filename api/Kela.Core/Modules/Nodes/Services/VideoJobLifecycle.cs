@@ -23,6 +23,7 @@ public sealed class VideoJobLifecycle(
     IFileStorage storage,
     ITenantFolder folders,
     IVideoProcessingService videoProcessing,
+    Kela.Core.Modules.Subscription.Abstractions.ISubscriptionService subscription,
     IHttpContextAccessor accessor,
     IOptions<NodeOptions> options,
     ILogger<VideoJobLifecycle> logger) : IVideoJobLifecycle
@@ -439,6 +440,13 @@ public sealed class VideoJobLifecycle(
             return JobOperationResult.Invalid("No variant could be published");
         }
 
+        // Paralel iki worker eyni anda finalize edə bilər — video artıq yayımdadırsa
+        // master yenidən yazılmır və video dəqiqəsi ikinci dəfə sayılmır.
+        if (video.ConversionStatus == VideoStatus.Ready && video.PlaybackUrl is not null)
+        {
+            return JobOperationResult.Ok();
+        }
+
         var masterKey = NodePaths.MasterKey(prefix);
         var thumbnailKey = NodePaths.ThumbnailKey(prefix);
         var master = BuildMasterPlaylist(completed);
@@ -461,6 +469,13 @@ public sealed class VideoJobLifecycle(
             DurationSeconds = video.DurationSeconds,
             Status = VideoStatus.Ready
         }, ct);
+
+        // Abunəlik limiti: mənbə videonun faktiki müddəti qədər (yuxarı yuvarlaqlaşdırılır).
+        var minutes = video.DurationSeconds is int seconds && seconds > 0 ? (seconds + 59) / 60 : 0;
+        if (minutes > 0)
+        {
+            await subscription.RecordVideoMinutesAsync(video.TenantId, minutes, ct);
+        }
 
         logger.LogInformation("Published HLS version {Version} for video {VideoId}", video.ConversionVersion, videoId);
         return JobOperationResult.Ok();

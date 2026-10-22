@@ -25,11 +25,20 @@ public sealed class TenantService(
     public async Task<IReadOnlyList<TenantResponse>> ListAsync(CancellationToken ct = default)
     {
         var tenants = await db.Tenants.AsNoTracking().OrderBy(x => x.Id)
-            .Select(x => new { x.Id, x.Name, x.Slug, x.IsActive, x.IsPending })
+            .Select(x => new { x.Id, x.Name, x.Slug, x.IsActive, x.IsPending, x.PlanId, x.PlanExpiresAt })
             .ToListAsync(ct);
 
         var logos = await LogoMapAsync(ct);
-        return tenants.Select(t => new TenantResponse(t.Id, t.Name, t.Slug, t.IsActive, Lookup(logos, t.Id), t.IsPending)).ToList();
+
+        var plans = await db.SubscriptionPlans.AsNoTracking()
+            .Select(x => new { x.Id, x.Name })
+            .ToDictionaryAsync(x => x.Id, x => x.Name, ct);
+
+        return tenants.Select(t => new TenantResponse(
+            t.Id, t.Name, t.Slug, t.IsActive, Lookup(logos, t.Id), t.IsPending,
+            t.PlanId,
+            t.PlanId is long id && plans.TryGetValue(id, out var name) ? name : null,
+            t.PlanExpiresAt)).ToList();
     }
 
     public async Task<IReadOnlyList<TenantResponse>> ListPublicAsync(CancellationToken ct = default)

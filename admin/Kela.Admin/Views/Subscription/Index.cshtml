@@ -1,0 +1,156 @@
+@model Kela.Core.Modules.Subscription.Responses.SubscriptionResponse
+@{
+    ViewData["Title"] = "Abunəlik";
+    var usage = Model.Usage;
+    var isAdmin = ViewData["IsAdmin"] as bool? == true;
+
+    string Bar(int used, int max)
+    {
+        if (max <= 0) return "limitsiz";
+        var percent = Math.Min(100, (int)Math.Round(used * 100.0 / max));
+        return $"{used} / {max}  ({percent}%)";
+    }
+
+    string Width(int used, int max)
+    {
+        if (max <= 0) return "8";
+        return Math.Clamp((int)Math.Round(used * 100.0 / max), 2, 100).ToString();
+    }
+
+    string Tone(int used, int max)
+        => max > 0 && used >= max ? "bg-danger" : max > 0 && used * 100 / max >= 80 ? "bg-amber-500" : "bg-primary";
+
+    var statusLabel = usage.Status switch
+    {
+        "readonly" => ("Oxuma rejimi", "warning"),
+        "suspended" => ("Dayandırılıb", "danger"),
+        _ => ("Aktiv", "success")
+    };
+}
+
+<section class="admin-page">
+    <div class="mb-5">
+        <h2 class="text-xl font-bold text-slate-900">Abunəlik</h2>
+        <p class="mt-1 text-sm text-slate-500">Cari plan, limitlər və istifadə</p>
+    </div>
+
+    @if (Model.Plan is null)
+    {
+        <div class="admin-card">
+            <p class="text-slate-600">Hələ plan təyin edilməyib. Administratorla əlaqə saxlayın.</p>
+        </div>
+    }
+    else
+    {
+        <div class="mb-5 grid gap-4 lg:grid-cols-3">
+            <div class="admin-card">
+                <p class="text-xs font-semibold uppercase tracking-wide text-slate-400">Cari plan</p>
+                <p class="mt-1 text-2xl font-extrabold text-slate-900">@Model.Plan.Name</p>
+                <p class="mt-1 text-sm text-slate-500">@Model.Plan.MonthlyPrice @Model.Plan.Currency / ay</p>
+                <div class="mt-3">@Html.Raw($"<span class=\"badge badge-{statusLabel.Item2}\">{statusLabel.Item1}</span>")</div>
+            </div>
+
+            <div class="admin-card">
+                <p class="text-xs font-semibold uppercase tracking-wide text-slate-400">Müddət</p>
+                @if (usage.ExpiresAt is { } expires)
+                {
+                    <p class="mt-1 text-lg font-bold text-slate-900">@expires.ToString("dd.MM.yyyy")</p>
+                    <p class="mt-1 text-sm text-slate-500">@(usage.DaysLeft is { } d ? $"{d} gün qalıb" : "—")</p>
+                }
+                else
+                {
+                    <p class="mt-1 text-lg font-bold text-slate-900">Müddətsiz</p>
+                }
+            </div>
+
+            <div class="admin-card">
+                <p class="text-xs font-semibold uppercase tracking-wide text-slate-400">Video (bu ay)</p>
+                <p class="mt-1 text-2xl font-extrabold text-slate-900">
+                    @(usage.MonthlyVideoMinutes > 0 ? $"{usage.VideoMinutes} / {usage.MonthlyVideoMinutes}" : usage.VideoMinutes)
+                </p>
+                <p class="mt-1 text-sm text-slate-500">dəqiqə</p>
+            </div>
+        </div>
+
+        <div class="admin-card mb-5">
+            <p class="mb-4 text-sm font-bold text-slate-800">İstifadə</p>
+
+            <div class="grid gap-4 sm:grid-cols-2">
+                @foreach (var row in new (string Label, int Used, int Max)[]
+                {
+                    ("Tələbə", usage.Students, usage.MaxStudents),
+                    ("Müəllim", usage.Teachers, usage.MaxTeachers),
+                    ("Qrup", usage.Groups, usage.MaxGroups),
+                    ("Fənn", usage.Subjects, usage.MaxSubjects),
+                    ("Dərs", usage.Lessons, usage.MaxLessons)
+                })
+                {
+                    <div>
+                        <div class="flex items-center justify-between text-sm">
+                            <span class="font-medium text-slate-600">@row.Label</span>
+                            <span class="font-semibold text-slate-800">@Bar(row.Used, row.Max)</span>
+                        </div>
+                        <div class="mt-1.5 h-2 overflow-hidden rounded-full bg-slate-200">
+                            <div class="h-full rounded-full @Tone(row.Used, row.Max)" style="width:@(Width(row.Used, row.Max))%"></div>
+                        </div>
+                    </div>
+                }
+            </div>
+
+            <div class="mt-5">
+                <div class="flex items-center justify-between text-sm">
+                    <span class="font-medium text-slate-600">Video (aylıq, dəqiqə)</span>
+                    <span class="font-semibold text-slate-800">@Bar(usage.VideoMinutes, usage.MonthlyVideoMinutes)</span>
+                </div>
+                <div class="mt-1.5 h-2 overflow-hidden rounded-full bg-slate-200">
+                    <div class="h-full rounded-full @Tone(usage.VideoMinutes, usage.MonthlyVideoMinutes)"
+                         style="width:@(Width(usage.VideoMinutes, usage.MonthlyVideoMinutes))%"></div>
+                </div>
+            </div>
+
+            <div class="mt-5">
+                <div class="flex items-center justify-between text-sm">
+                    <span class="font-medium text-slate-600">Depolama</span>
+                    <span class="font-semibold text-slate-800">
+                        @(Math.Round(usage.StorageBytes / 1024.0 / 1024 / 1024, 1)) GB /
+                        @(usage.MaxStorageBytes > 0 ? Math.Round(usage.MaxStorageBytes / 1024.0 / 1024 / 1024) + " GB" : "limitsiz")
+                    </span>
+                </div>
+            </div>
+        </div>
+
+        @if (usage.AddonOffers.Count > 0)
+        {
+            <div class="admin-card">
+                <p class="mb-3 text-sm font-bold text-slate-800">Əlavə paketlər</p>
+                <p class="mb-4 text-sm text-slate-500">
+                    Limit dolubsa planı dəyişmədən yalnız çatışmayan resursu əlavə edə bilərsiniz.
+                    Paket cari ay üçün keçərlidir.
+                </p>
+
+                <div class="grid gap-3 sm:grid-cols-3">
+                    @foreach (var offer in usage.AddonOffers)
+                    {
+                        <div class="rounded-xl border border-border p-4">
+                            <p class="font-bold text-slate-800">@offer.Label</p>
+                            <p class="mt-1 text-sm text-slate-500">+@offer.PackSize @offer.Unit</p>
+                            <p class="mt-2 text-lg font-extrabold text-primary">@offer.PackPrice @Model.Plan.Currency</p>
+                            <p class="text-xs text-slate-400">maks. @offer.MaxQuantity paket</p>
+
+                            @if (isAdmin)
+                            {
+                                <button type="button"
+                                        class="admin-button admin-button-primary mt-3 w-full"
+                                        onclick="SubscriptionPage.addAddon('@offer.Kind')">
+                                    Əlavə et
+                                </button>
+                            }
+                        </div>
+                    }
+                </div>
+            </div>
+        }
+    }
+</section>
+
+<form id="antiforgery">@Html.AntiForgeryToken()</form>

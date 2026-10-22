@@ -3,6 +3,7 @@ using Kela.Core;
 using Kela.Core.Common.Localization;
 using Kela.Core.Data;
 using Kela.Core.Modules.Auth;
+using Kela.Core.Modules.Subscription;
 using Kela.Admin.Infrastructure;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
@@ -51,6 +52,7 @@ builder.Services.AddAuthorization(options =>
 var app = builder.Build();
 
 await app.Services.SeedDefaultAdminAsync(app.Configuration);
+await app.Services.SeedSubscriptionPlansAsync();
 
 if (!app.Environment.IsDevelopment())
 {

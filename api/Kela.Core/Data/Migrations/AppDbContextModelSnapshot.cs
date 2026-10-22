@@ -2477,6 +2477,285 @@ namespace Kela.Core.Data.Migrations
                     b.ToTable("subjects", (string)null);
                 });
 
+            modelBuilder.Entity("Kela.Core.Modules.Subscription.Entities.SubscriptionPlan", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint")
+                        .HasColumnName("id");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
+
+                    b.Property<long>("AddonStoragePackBytes")
+                        .HasColumnType("bigint")
+                        .HasColumnName("addon_storage_pack_bytes");
+
+                    b.Property<decimal>("AddonStoragePackPrice")
+                        .HasPrecision(12, 2)
+                        .HasColumnType("numeric(12,2)")
+                        .HasColumnName("addon_storage_pack_price");
+
+                    b.Property<decimal>("AddonStudentPackPrice")
+                        .HasPrecision(12, 2)
+                        .HasColumnType("numeric(12,2)")
+                        .HasColumnName("addon_student_pack_price");
+
+                    b.Property<int>("AddonStudentPackSize")
+                        .HasColumnType("integer")
+                        .HasColumnName("addon_student_pack_size");
+
+                    b.Property<int>("AddonVideoPackMinutes")
+                        .HasColumnType("integer")
+                        .HasColumnName("addon_video_pack_minutes");
+
+                    b.Property<decimal>("AddonVideoPackPrice")
+                        .HasPrecision(12, 2)
+                        .HasColumnType("numeric(12,2)")
+                        .HasColumnName("addon_video_pack_price");
+
+                    b.Property<string>("Code")
+                        .IsRequired()
+                        .HasMaxLength(40)
+                        .HasColumnType("character varying(40)")
+                        .HasColumnName("code");
+
+                    b.Property<int>("ConcurrentConversions")
+                        .HasColumnType("integer")
+                        .HasColumnName("concurrent_conversions");
+
+                    b.Property<DateTimeOffset>("CreatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_at");
+
+                    b.Property<string>("Currency")
+                        .IsRequired()
+                        .HasMaxLength(3)
+                        .HasColumnType("character varying(3)")
+                        .HasColumnName("currency");
+
+                    b.Property<string>("Description")
+                        .HasMaxLength(500)
+                        .HasColumnType("character varying(500)")
+                        .HasColumnName("description");
+
+                    b.Property<string>("Features")
+                        .IsRequired()
+                        .HasColumnType("jsonb")
+                        .HasColumnName("features");
+
+                    b.Property<bool>("IsActive")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("boolean")
+                        .HasDefaultValue(true)
+                        .HasColumnName("is_active");
+
+                    b.Property<int>("MaxAddonPercent")
+                        .HasColumnType("integer")
+                        .HasColumnName("max_addon_percent");
+
+                    b.Property<int>("MaxGroups")
+                        .HasColumnType("integer")
+                        .HasColumnName("max_groups");
+
+                    b.Property<int>("MaxLessons")
+                        .HasColumnType("integer")
+                        .HasColumnName("max_lessons");
+
+                    b.Property<int>("MaxStudents")
+                        .HasColumnType("integer")
+                        .HasColumnName("max_students");
+
+                    b.Property<int>("MaxSubjects")
+                        .HasColumnType("integer")
+                        .HasColumnName("max_subjects");
+
+                    b.Property<int>("MaxTeachers")
+                        .HasColumnType("integer")
+                        .HasColumnName("max_teachers");
+
+                    b.Property<int>("MaxVideoHeight")
+                        .HasColumnType("integer")
+                        .HasColumnName("max_video_height");
+
+                    b.Property<decimal>("MonthlyPrice")
+                        .HasPrecision(12, 2)
+                        .HasColumnType("numeric(12,2)")
+                        .HasColumnName("monthly_price");
+
+                    b.Property<int>("MonthlyVideoMinutes")
+                        .HasColumnType("integer")
+                        .HasColumnName("monthly_video_minutes");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(120)
+                        .HasColumnType("character varying(120)")
+                        .HasColumnName("name");
+
+                    b.Property<int>("OriginalRetentionDays")
+                        .HasColumnType("integer")
+                        .HasColumnName("original_retention_days");
+
+                    b.Property<int>("SortOrder")
+                        .HasColumnType("integer")
+                        .HasColumnName("sort_order");
+
+                    b.Property<long>("StorageBytes")
+                        .HasColumnType("bigint")
+                        .HasColumnName("storage_bytes");
+
+                    b.Property<DateTimeOffset?>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("updated_at");
+
+                    b.Property<int>("YearlyFreeMonths")
+                        .HasColumnType("integer")
+                        .HasColumnName("yearly_free_months");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Code")
+                        .IsUnique();
+
+                    b.ToTable("subscription_plans", (string)null);
+                });
+
+            modelBuilder.Entity("Kela.Core.Modules.Subscription.Entities.TenantAddon", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint")
+                        .HasColumnName("id");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
+
+                    b.Property<decimal>("Amount")
+                        .HasPrecision(12, 2)
+                        .HasColumnType("numeric(12,2)")
+                        .HasColumnName("amount");
+
+                    b.Property<long>("Bytes")
+                        .HasColumnType("bigint")
+                        .HasColumnName("bytes");
+
+                    b.Property<DateTimeOffset>("CreatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_at");
+
+                    b.Property<string>("Currency")
+                        .IsRequired()
+                        .HasMaxLength(3)
+                        .HasColumnType("character varying(3)")
+                        .HasColumnName("currency");
+
+                    b.Property<DateTimeOffset?>("DeletedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("deleted_at");
+
+                    b.Property<string>("Kind")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("character varying(20)")
+                        .HasColumnName("kind");
+
+                    b.Property<string>("Note")
+                        .HasMaxLength(190)
+                        .HasColumnType("character varying(190)")
+                        .HasColumnName("note");
+
+                    b.Property<int>("Packs")
+                        .HasColumnType("integer")
+                        .HasColumnName("packs");
+
+                    b.Property<string>("Period")
+                        .IsRequired()
+                        .HasMaxLength(7)
+                        .HasColumnType("character varying(7)")
+                        .HasColumnName("period");
+
+                    b.Property<int>("Quantity")
+                        .HasColumnType("integer")
+                        .HasColumnName("quantity");
+
+                    b.Property<long>("TenantId")
+                        .HasColumnType("bigint")
+                        .HasColumnName("tenant_id");
+
+                    b.Property<DateTimeOffset?>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("updated_at");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("DeletedAt");
+
+                    b.HasIndex("TenantId", "Period");
+
+                    b.ToTable("tenant_addons", (string)null);
+                });
+
+            modelBuilder.Entity("Kela.Core.Modules.Subscription.Entities.TenantUsage", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint")
+                        .HasColumnName("id");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
+
+                    b.Property<long>("AddonStorageBytes")
+                        .HasColumnType("bigint")
+                        .HasColumnName("addon_storage_bytes");
+
+                    b.Property<int>("AddonStudents")
+                        .HasColumnType("integer")
+                        .HasColumnName("addon_students");
+
+                    b.Property<int>("AddonVideoMinutes")
+                        .HasColumnType("integer")
+                        .HasColumnName("addon_video_minutes");
+
+                    b.Property<DateTimeOffset>("CreatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_at");
+
+                    b.Property<DateTimeOffset?>("DeletedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("deleted_at");
+
+                    b.Property<string>("Period")
+                        .IsRequired()
+                        .HasMaxLength(7)
+                        .HasColumnType("character varying(7)")
+                        .HasColumnName("period");
+
+                    b.Property<long>("StorageBytes")
+                        .HasColumnType("bigint")
+                        .HasColumnName("storage_bytes");
+
+                    b.Property<long>("TenantId")
+                        .HasColumnType("bigint")
+                        .HasColumnName("tenant_id");
+
+                    b.Property<DateTimeOffset?>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("updated_at");
+
+                    b.Property<int>("VideoMinutes")
+                        .HasColumnType("integer")
+                        .HasColumnName("video_minutes");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("DeletedAt");
+
+                    b.HasIndex("TenantId", "Period")
+                        .IsUnique()
+                        .HasFilter("deleted_at IS NULL");
+
+                    b.ToTable("tenant_usage", (string)null);
+                });
+
             modelBuilder.Entity("Kela.Core.Modules.SystemNotification.Entities.SystemNotification", b =>
                 {
                     b.Property<long>("Id")
@@ -2561,6 +2840,18 @@ namespace Kela.Core.Data.Migrations
                         .HasMaxLength(190)
                         .HasColumnType("character varying(190)")
                         .HasColumnName("name");
+
+                    b.Property<DateTimeOffset?>("PlanExpiresAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("plan_expires_at");
+
+                    b.Property<long?>("PlanId")
+                        .HasColumnType("bigint")
+                        .HasColumnName("plan_id");
+
+                    b.Property<DateTimeOffset?>("PlanStartedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("plan_started_at");
 
                     b.Property<string>("Slug")
                         .IsRequired()

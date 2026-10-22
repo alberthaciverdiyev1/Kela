@@ -1,6 +1,8 @@
 using System.Security.Claims;
 using Kela.Core.Modules.Auth;
 using Kela.Core.Modules.Tenant.Abstractions;
+using Kela.Core.Modules.Subscription.Abstractions;
+using Kela.Core.Modules.Subscription.Requests;
 using Kela.Core.Modules.Tenant.Requests;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
@@ -11,12 +13,12 @@ namespace Kela.Admin.Controllers;
 
 [Authorize(Policy = AuthPolicies.SuperAdmin)]
 [Route("[controller]")]
-public sealed class TenantController(ITenantService service) : Controller
+public sealed class TenantController(ITenantService service, ISubscriptionService subscriptions) : Controller
 {
     [HttpGet]
     public IActionResult Index()
     {
-        ViewData["Scripts"] = new[] { "~/js/pages/tenant/list.js", "~/js/pages/tenant/create.js" };
+        ViewData["Scripts"] = new[] { "~/js/pages/tenant/list.js", "~/js/pages/tenant/create.js", "~/js/pages/tenant/plan.js" };
         return View();
     }
 
@@ -28,6 +30,25 @@ public sealed class TenantController(ITenantService service) : Controller
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Create([FromBody] CreateTenantRequest request, CancellationToken ct)
         => Json(await service.CreateAsync(request, ct));
+
+    [HttpGet("plan-list")]
+    public async Task<IActionResult> PlanList(CancellationToken ct)
+        => Json(await subscriptions.ListPlansAsync(onlyActive: true, ct));
+
+    /// <summary>Superadmin tenant-a plan təyin edir (və ya planı dəyişir).</summary>
+    [HttpPut("{id:long}/plan")]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> SetPlan(long id, [FromForm] AssignPlanRequest request, CancellationToken ct)
+    {
+        await subscriptions.AssignPlanAsync(id, request, ct);
+        return Json(new { ok = true });
+    }
+
+    /// <summary>Ödənişdən sonra əlavə paket (məs. +10 tələbə yeri).</summary>
+    [HttpPost("{id:long}/addons")]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> AddAddon(long id, [FromForm] AddAddonRequest request, CancellationToken ct)
+        => Json(await subscriptions.AddAddonAsync(id, request, ct));
 
     [HttpGet("pending-count")]
     public async Task<IActionResult> PendingCount(CancellationToken ct)

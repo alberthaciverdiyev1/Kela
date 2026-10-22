@@ -13,7 +13,10 @@ namespace Kela.Core.Modules.User.Services;
 
 using User = Kela.Core.Modules.User.Entities.User;
 
-public sealed class UserService(AppDbContext db, IStringLocalizer<SharedResource> L) : IUserService
+public sealed class UserService(
+    AppDbContext db,
+    IStringLocalizer<SharedResource> L,
+    Kela.Core.Modules.Subscription.Abstractions.ISubscriptionService subscription) : IUserService
 {
     public async Task<PagedResponse<UserResponse>> ListAsync(UserListRequest request, CancellationToken ct = default)
     {
@@ -56,6 +59,12 @@ public sealed class UserService(AppDbContext db, IStringLocalizer<SharedResource
 
     public async Task<UserResponse> CreateAsync(UserUpsertRequest request, CancellationToken ct = default)
     {
+        // Limit yalnız müəllimlərə aiddir — admin hesabları sayılmır.
+        if (request.Type == UserTypes.Teacher)
+        {
+            await subscription.EnsureCanAddTeachersAsync(1, ct);
+        }
+
         if (string.IsNullOrWhiteSpace(request.Password))
         {
             throw new ArgumentException("Password is required");

@@ -119,6 +119,12 @@ public sealed class AppDbContext : DbContext
 
     public DbSet<Modules.Nodes.Entities.VideoJob> VideoJobs => Set<Modules.Nodes.Entities.VideoJob>();
 
+    public DbSet<Modules.Subscription.Entities.SubscriptionPlan> SubscriptionPlans => Set<Modules.Subscription.Entities.SubscriptionPlan>();
+
+    public DbSet<Modules.Subscription.Entities.TenantUsage> TenantUsages => Set<Modules.Subscription.Entities.TenantUsage>();
+
+    public DbSet<Modules.Subscription.Entities.TenantAddon> TenantAddons => Set<Modules.Subscription.Entities.TenantAddon>();
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);

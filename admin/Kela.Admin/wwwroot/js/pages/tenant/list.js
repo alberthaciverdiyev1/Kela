@@ -10,6 +10,7 @@ async function loadList() {
         { html: AdminUI.rowNo(t, i, 1, items.length), cls: 'text-slate-400' },
         { html: t.name, cls: 'font-medium text-slate-800' },
         { html: `<code class="text-sm text-slate-500">${t.slug}</code>` },
+        { html: t.planName ? AdminUI.badge(t.planName, 'primary') : '<span class="text-slate-400">—</span>' },
         { html: t.isPending
             ? AdminUI.badge(L["Tenant_Pending"], 'warning')
             : AdminUI.statusSwitch(t.isActive, `setTenantStatus(${t.id}, ${!t.isActive})`) },
@@ -18,8 +19,11 @@ async function loadList() {
                 AdminUI.actionButton(L["Tenant_Approve"], `approveTenant(${t.id})`, { tone: 'primary' }),
                 AdminUI.actionButton(L["Tenant_Reject"], `rejectTenant(${t.id})`, { tone: 'danger' })
             ])
-            : AdminUI.rowActions([AdminUI.actionButton(L["Tenant_Switch"], `switchTenant(${t.id})`, { tone: 'primary' })]), cls: 'text-right' }
-    ]), 5);
+            : AdminUI.rowActions([
+                AdminUI.actionButton(L["Tenant_Switch"], `switchTenant(${t.id})`, { tone: 'primary' }),
+                AdminUI.actionButton('Plan', `PlanModal.open(${t.id}, '${(t.planId ?? '')}', '${t.planExpiresAt ?? ''}')`)
+            ]), cls: 'text-right' }
+    ]), 6);
 
     AdminUI.loader(false);
 }

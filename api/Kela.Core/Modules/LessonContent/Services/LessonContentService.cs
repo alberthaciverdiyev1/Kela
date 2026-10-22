@@ -26,7 +26,8 @@ public sealed class LessonContentService(
     AppDbContext db,
     IFileStorage storage,
     ITenantFolder folders,
-    Kela.Core.Modules.Nodes.Abstractions.IVideoJobScheduler jobs)
+    Kela.Core.Modules.Nodes.Abstractions.IVideoJobScheduler jobs,
+    Kela.Core.Modules.Subscription.Abstractions.ISubscriptionService subscription)
     : Abstractions.ILessonContentService
 {
     private static readonly TimeSpan UploadUrlExpiry = TimeSpan.FromMinutes(30);
@@ -112,6 +113,11 @@ public sealed class LessonContentService(
         LessonContentUploadUrlRequest request, long? ownerId = null, CancellationToken ct = default)
     {
         await EnsureLessonAccessibleAsync(request.LessonId, ownerId, ct);
+
+        if (request.Type == LessonContentType.Video)
+        {
+            await subscription.EnsureCanUploadAsync(ct);
+        }
 
         var folder = await FolderForAsync(request.Type, await LessonTenantAsync(request.LessonId, ct), ct);
         var path = await storage.BuildUniquePathAsync(folder, request.FileName, ct);

@@ -14,7 +14,9 @@ using Subject = Kela.Core.Modules.Subject.Entities.Subject;
 using Kela.Core.Common.Queries;
 using Kela.Core.Common.Authorization;
 
-public sealed class SubjectService(AppDbContext db) : ISubjectService
+public sealed class SubjectService(
+    AppDbContext db,
+    Kela.Core.Modules.Subscription.Abstractions.ISubscriptionService subscription) : ISubjectService
 {
     public async Task<PagedResponse<SubjectResponse>> ListAsync(SubjectListRequest request, CancellationToken ct = default)
     {
@@ -50,6 +52,8 @@ public sealed class SubjectService(AppDbContext db) : ISubjectService
 
     public async Task<SubjectResponse> CreateAsync(SubjectUpsertRequest request, CancellationToken ct = default)
     {
+        await subscription.EnsureCanAddSubjectsAsync(1, ct);
+
         await EnsureNameAvailableAsync(request.Name, null, ct);
 
         var category = new Subject
