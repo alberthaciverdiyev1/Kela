@@ -18,7 +18,6 @@
                         <th>Müəllim</th>
                         <th>Video (saat/ay)</th>
                         <th>Depolama</th>
-                        <th>Paralel</th>
                         <th>Status</th>
                         <th class="text-right">Əməliyyat</th>
                     </tr>
@@ -35,6 +34,9 @@
 
         <form id="planForm" class="space-y-5">
             <input type="hidden" id="planId" />
+            <input type="hidden" id="concurrent_conversions" value="2" />
+            <input type="hidden" id="original_retention_days" value="0" />
+            <input type="hidden" id="features" value="" />
 
             <div class="grid gap-3 sm:grid-cols-3">
                 <div>
@@ -78,7 +80,6 @@
                     <div><label class="mb-1 block text-sm font-semibold text-slate-600">Dərs</label><input id="max_lessons" type="number" min="0" class="admin-field" /></div>
                     <div><label class="mb-1 block text-sm font-semibold text-slate-600">Video (dəq/ay)</label><input id="monthly_video_minutes" type="number" min="0" class="admin-field" /></div>
                     <div><label class="mb-1 block text-sm font-semibold text-slate-600">Depolama (GB)</label><input id="storage_gb" type="number" min="0" class="admin-field" /></div>
-                    <div><label class="mb-1 block text-sm font-semibold text-slate-600">Paralel konversiya</label><input id="concurrent_conversions" type="number" min="0" class="admin-field" /></div>
                     <div><label class="mb-1 block text-sm font-semibold text-slate-600">Maks. keyfiyyət</label>
                         <select id="max_video_height" class="admin-field">
                             <option value="720">720p</option>
@@ -97,11 +98,9 @@
 
                     <div><label class="mb-1 block text-sm font-semibold text-slate-600">Video paketi (dəq)</label><input id="addon_video_pack_minutes" type="number" min="1" class="admin-field" value="600" /></div>
                     <div><label class="mb-1 block text-sm font-semibold text-slate-600">Video paketi qiyməti</label><input id="addon_video_pack_price" type="number" step="0.01" min="0" class="admin-field" /></div>
-                    <div><label class="mb-1 block text-sm font-semibold text-slate-600">Orijinal saxlama (gün)</label><input id="original_retention_days" type="number" min="0" class="admin-field" /></div>
 
                     <div><label class="mb-1 block text-sm font-semibold text-slate-600">Depolama paketi (GB)</label><input id="addon_storage_pack_gb" type="number" min="1" class="admin-field" value="50" /></div>
                     <div><label class="mb-1 block text-sm font-semibold text-slate-600">Depolama paketi qiyməti</label><input id="addon_storage_pack_price" type="number" step="0.01" min="0" class="admin-field" /></div>
-                    <div><label class="mb-1 block text-sm font-semibold text-slate-600">Modullar (vergüllə)</label><input id="features" class="admin-field" placeholder="certificates,payments" /></div>
                 </div>
             </div>
 

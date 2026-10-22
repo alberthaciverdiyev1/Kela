@@ -12,7 +12,6 @@ window.PlanPage = (function () {
             { html: limit(p.maxTeachers) },
             { html: Math.round(p.monthlyVideoMinutes / 60) },
             { html: gb(p.storageBytes) },
-            { html: limit(p.concurrentConversions) },
             { html: p.isActive ? AdminUI.badge('Aktiv', 'success') : AdminUI.badge('Deaktiv', 'neutral') },
             {
                 html: `<div class="flex justify-end gap-1">
@@ -20,7 +19,7 @@ window.PlanPage = (function () {
                     <button type="button" class="inline-flex items-center rounded-lg px-2.5 py-1.5 text-sm font-semibold text-danger hover:bg-danger-light" onclick="PlanPage.remove(${p.id})">Sil</button>
                 </div>`, cls: 'text-right'
             }
-        ]), 9, { empty: 'Plan yoxdur' });
+        ]), 8, { empty: 'Plan yoxdur' });
     }
 
     async function remove(id) {
