@@ -1,3 +1,4 @@
+using Kela.Core.Common.Content;
 using Kela.Core.Data;
 using Kela.Core.Modules.PrivacyPolicy.Requests;
 using Kela.Core.Modules.PrivacyPolicy.Responses;
@@ -10,10 +11,10 @@ using PrivacyPolicy = Kela.Core.Modules.PrivacyPolicy.Entities.PrivacyPolicy;
 public sealed class PrivacyPolicyService(AppDbContext db) : IPrivacyPolicyService
 {
     public async Task<IReadOnlyList<PrivacyPolicyResponse>> ListAsync(CancellationToken ct = default)
-        => await db.PrivacyPolicies.AsNoTracking()
-            .OrderBy(x => x.Id)
-            .Select(x => new PrivacyPolicyResponse(x.Type, x.Content))
-            .ToListAsync(ct);
+    {
+        var items = await db.PrivacyPolicies.AsNoTracking().OrderBy(x => x.Id).ToListAsync(ct);
+        return items.Select(x => new PrivacyPolicyResponse(x.Type, SafeHtml.Sanitize(x.Content) ?? string.Empty)).ToList();
+    }
 
     public async Task<PrivacyPolicyResponse> GetAsync(string type, CancellationToken ct = default)
     {
@@ -21,7 +22,7 @@ public sealed class PrivacyPolicyService(AppDbContext db) : IPrivacyPolicyServic
             .FirstOrDefaultAsync(x => x.Type == type, ct)
             ?? throw new KeyNotFoundException($"Privacy policy not found: {type}");
 
-        return new PrivacyPolicyResponse(policy.Type, policy.Content);
+        return new PrivacyPolicyResponse(policy.Type, SafeHtml.Sanitize(policy.Content) ?? string.Empty);
     }
 
     public async Task<PrivacyPolicyResponse?> GetPublicAsync(string type, CancellationToken ct = default)
@@ -34,21 +35,22 @@ public sealed class PrivacyPolicyService(AppDbContext db) : IPrivacyPolicyServic
             .ThenBy(x => x.TenantId)
             .FirstOrDefaultAsync(ct);
 
-        return policy is null ? null : new PrivacyPolicyResponse(policy.Type, policy.Content);
+        return policy is null ? null : new PrivacyPolicyResponse(policy.Type, SafeHtml.Sanitize(policy.Content) ?? string.Empty);
     }
 
     public async Task<PrivacyPolicyResponse> UpsertAsync(UpsertPrivacyPolicyRequest request, CancellationToken ct = default)
     {
+        var content = SafeHtml.Sanitize(request.Content) ?? string.Empty;
         var policy = await db.PrivacyPolicies.FirstOrDefaultAsync(x => x.Type == request.Type, ct);
 
         if (policy is null)
         {
-            policy = new PrivacyPolicy { Type = request.Type, Content = request.Content };
+            policy = new PrivacyPolicy { Type = request.Type, Content = content };
             db.PrivacyPolicies.Add(policy);
         }
         else
         {
-            policy.Content = request.Content;
+            policy.Content = content;
         }
 
         await db.SaveChangesAsync(ct);
