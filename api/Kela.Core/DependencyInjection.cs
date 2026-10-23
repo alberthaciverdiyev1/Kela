@@ -33,6 +33,7 @@ using Kela.Core.Modules.Subscription;
 using Kela.Core.Modules.Subscription.Abstractions;
 using Kela.Core.Modules.Subscription.Services;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.StaticFiles;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
@@ -149,10 +150,37 @@ public static class DependencyInjection
 
         Directory.CreateDirectory(root);
 
+        // Əks halda .m3u8/.ts brauzerdə tanınmır və yayım pozulur.
+        var types = new FileExtensionContentTypeProvider();
+        types.Mappings[".m3u8"] = "application/vnd.apple.mpegurl";
+        types.Mappings[".ts"] = "video/mp2t";
+        types.Mappings[".m4a"] = "audio/mp4";
+
+        // Skript işlədə bilən fayllar heç vaxt inline açılmır — eyni origin-də
+        // icra olunmaq admin sessiyasını oğurlamağa bərabərdir.
+        var executable = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
+        {
+            ".html", ".htm", ".xhtml", ".shtml", ".svg", ".svgz",
+            ".xml", ".xsl", ".xslt", ".js", ".mjs", ".swf", ".wasm"
+        };
+
         app.UseStaticFiles(new StaticFileOptions
         {
             FileProvider = new PhysicalFileProvider(root),
-            RequestPath = StoragePaths.RequestPath
+            RequestPath = StoragePaths.RequestPath,
+            ContentTypeProvider = types,
+            ServeUnknownFileTypes = false,
+            OnPrepareResponse = ctx =>
+            {
+                ctx.Context.Response.Headers["X-Content-Type-Options"] = "nosniff";
+
+                var extension = Path.GetExtension(ctx.File.Name);
+                if (!executable.Contains(extension)) return;
+
+                ctx.Context.Response.ContentType = "application/octet-stream";
+                var name = Uri.EscapeDataString(ctx.File.Name);
+                ctx.Context.Response.Headers["Content-Disposition"] = $"attachment; filename*=UTF-8''{name}";
+            }
         });
     }
 }
