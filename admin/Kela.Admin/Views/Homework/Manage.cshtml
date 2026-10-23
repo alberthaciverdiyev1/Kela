@@ -1,0 +1,99 @@
+@{
+    var h = (HomeworkResponse)ViewData["Homework"]!;
+}
+
+<section class="admin-page">
+    @{
+        var headerExtra = new Microsoft.AspNetCore.Html.HtmlString(
+            $@"<a href=""/homework"" class=""admin-button-secondary"">← {L["Common_Back"]}</a>");
+    }
+    <partial name="Ui/_PageHeader" model="@(new PageHeaderModel { Extra = headerExtra })" />
+
+    <div class="admin-card p-5">
+        <div class="flex flex-wrap items-start justify-between gap-4">
+            <div>
+                <h2 class="text-lg font-bold text-slate-900">@h.Title</h2>
+                <p class="mt-1 text-sm text-slate-500">
+                    @L["Homework_DueDate"]: @h.DueDate.ToString("dd.MM.yyyy HH:mm")
+                    · @L["Homework_MaxScore"]: @h.MaxScore
+                </p>
+                @if (!string.IsNullOrWhiteSpace(h.Description))
+                {
+                    <p class="mt-2 max-w-3xl whitespace-pre-wrap text-sm text-slate-600">@h.Description</p>
+                }
+            </div>
+            @if (h.IsPublished)
+            {
+                <span class="badge badge-success">@L["Homework_Published"]</span>
+            }
+            else
+            {
+                <span class="badge badge-neutral">@L["Homework_Draft"]</span>
+            }
+        </div>
+
+        <div class="mt-4 grid gap-3 sm:grid-cols-4">
+            @foreach (var card in new (string Label, int Value)[]
+            {
+                (L["Homework_StatusAssigned"], h.AssignedCount),
+                (L["Homework_StatusSubmitted"], h.SubmittedCount),
+                (L["Homework_StatusGraded"], h.GradedCount),
+                (L["Homework_StatusReturned"], h.ReturnedCount)
+            })
+            {
+                <div class="rounded-xl bg-surface-secondary p-4">
+                    <p class="text-xs font-semibold uppercase tracking-wide text-slate-400">@card.Label</p>
+                    <p class="mt-1 text-2xl font-extrabold text-slate-900">@card.Value</p>
+                </div>
+            }
+        </div>
+    </div>
+
+    <div class="admin-card">
+        <div class="admin-toolbar">
+            <input id="search" type="search" class="admin-field grow" placeholder="@L["Homeworks_Search"]" />
+            <div class="w-44">
+                <select id="filter_status" class="admin-field">
+                    <option value="">@L["Common_All"]</option>
+                    <option value="submitted">@L["Homework_StatusSubmitted"]</option>
+                    <option value="graded">@L["Homework_StatusGraded"]</option>
+                    <option value="returned">@L["Homework_StatusReturned"]</option>
+                    <option value="assigned">@L["Homework_StatusAssigned"]</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="overflow-x-auto">
+            <table class="admin-table">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>@L["Common_Name"]</th>
+                        <th>@L["Common_Status"]</th>
+                        <th>@L["Homework_SubmittedAt"]</th>
+                        <th>@L["Homework_Quizzes"]</th>
+                        <th>@L["Homework_Score"]</th>
+                        <th class="text-right">@L["Common_Actions"]</th>
+                    </tr>
+                </thead>
+                <tbody id="rows" data-homework-id="@h.Id"></tbody>
+            </table>
+        </div>
+    </div>
+</section>
+
+@{
+    var reviewBody = await Html.PartialAsync("_ReviewFields");
+}
+
+<partial name="Ui/_Modal" model="@(new ModalModel
+{
+    Id = "reviewModal",
+    TitleId = "reviewTitle",
+    Title = L["Homework_Review"],
+    WidthClass = "max-w-2xl",
+    ShowError = false,
+    Body = reviewBody
+})" />
+
+<form id="antiforgery">@Html.AntiForgeryToken()</form>

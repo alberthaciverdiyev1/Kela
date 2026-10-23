@@ -1,0 +1,57 @@
+@{
+    ViewData["Title"] = L["Nav_Homework"];
+}
+
+<section class="admin-page">
+    <partial name="Ui/_PageHeader" model="@(new PageHeaderModel { CreateText = L["Homework_Create"] })" />
+
+    <div class="admin-card">
+        <partial name="Ui/_FilterBar" model="@(new FilterBarModel
+        {
+            SearchPlaceholder = L["Homeworks_Search"],
+            Selects = new List<FilterSelectModel>
+            {
+                new() { WidthClass = "w-40", Select = new SelectModel
+                {
+                    Name = "is_published", Id = "filter_status", Label = L["Common_Status"],
+                    Options = new List<SelectOption>
+                    {
+                        new() { Value = "", Text = L["Common_All"] },
+                        new() { Value = "false", Text = L["Homework_Draft"] },
+                        new() { Value = "true", Text = L["Homework_Published"] }
+                    }
+                } }
+            },
+            ButtonText = L["Common_Search"]
+        })" />
+
+        <partial name="Ui/_Table" model="@(new TableModel
+        {
+            Columns = new List<TableColumnModel>
+            {
+                new() { Label = L["Homework_Title"] },
+                new() { Label = L["Homework_Groups"] },
+                new() { Label = L["Homework_DueDate"] },
+                new() { Label = L["Homework_Submissions"], WidthClass = "w-36" },
+                new() { Label = L["Common_Status"], WidthClass = "w-32" },
+                new() { Label = L["Common_Actions"], Right = true }
+            }
+        })" />
+    </div>
+</section>
+
+@{
+    var modalBody = await Html.PartialAsync("_ModalFields");
+}
+
+<partial name="Ui/_Modal" model="@(new ModalModel
+{
+    Id = "modal",
+    TitleId = "modalTitle",
+    Title = L["Homework_Create"],
+    WidthClass = "max-w-2xl",
+    ShowError = false,
+    Body = modalBody
+})" />
+
+<form id="antiforgery">@Html.AntiForgeryToken()</form>

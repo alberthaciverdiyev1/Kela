@@ -1731,4 +1731,169 @@
   <data name="Tenant_RegisterSectionAccount" xml:space="preserve">
     <value>Personal details</value>
   </data>
+  <data name="Homework_GroupRequired" xml:space="preserve">
+    <value>At least one group is required</value>
+  </data>
+  <data name="Homework_GroupNotFound" xml:space="preserve">
+    <value>The selected group was not found</value>
+  </data>
+  <data name="Homework_QuizNotFound" xml:space="preserve">
+    <value>The selected quiz was not found</value>
+  </data>
+  <data name="Homework_PublishedTargetsLocked" xml:space="preserve">
+    <value>Groups, quizzes and max score cannot change after publishing</value>
+  </data>
+  <data name="Homework_NotPublished" xml:space="preserve">
+    <value>Homework is not published yet</value>
+  </data>
+  <data name="Homework_NotSubmitted" xml:space="preserve">
+    <value>The student has not submitted yet</value>
+  </data>
+  <data name="Homework_ScoreOutOfRange" xml:space="preserve">
+    <value>Score must be between 0 and {0}</value>
+  </data>
+  <data name="Homework_AlreadyGraded" xml:space="preserve">
+    <value>A graded homework cannot be resubmitted</value>
+  </data>
+  <data name="Homework_TextTooLong" xml:space="preserve">
+    <value>The answer is too long (max 10000 characters)</value>
+  </data>
+  <data name="Homework_LinkInvalid" xml:space="preserve">
+    <value>The link must be a valid http or https URL</value>
+  </data>
+  <data name="Homework_EmptySubmission" xml:space="preserve">
+    <value>Add text, a link or at least one file</value>
+  </data>
+  <data name="Homework_MaxScoreInvalid" xml:space="preserve">
+    <value>Max score must be greater than 0</value>
+  </data>
+  <data name="Homework_DueDateRequired" xml:space="preserve">
+    <value>Due date is required</value>
+  </data>
+  <data name="Homework_TooManyFiles" xml:space="preserve">
+    <value>At most 5 files are allowed</value>
+  </data>
+  <data name="Homework_FileTooLarge" xml:space="preserve">
+    <value>Each file must be at most 10 MB</value>
+  </data>
+  <data name="Homework_NotifyPublishedTitle" xml:space="preserve">
+    <value>New homework</value>
+  </data>
+  <data name="Homework_NotifyPublishedBody" xml:space="preserve">
+    <value>New homework assigned: “{0}”</value>
+  </data>
+  <data name="Homework_NotifyGradedTitle" xml:space="preserve">
+    <value>Homework graded</value>
+  </data>
+  <data name="Homework_NotifyGradedBody" xml:space="preserve">
+    <value>Your homework “{0}” was graded</value>
+  </data>
+  <data name="Homework_NotifyReturnedTitle" xml:space="preserve">
+    <value>Homework returned</value>
+  </data>
+  <data name="Homework_NotifyReturnedBody" xml:space="preserve">
+    <value>Your homework “{0}” was returned for revision</value>
+  </data>
+  <data name="Nav_Homework" xml:space="preserve">
+    <value>Homework</value>
+  </data>
+  <data name="Homework_Create" xml:space="preserve">
+    <value>New homework</value>
+  </data>
+  <data name="Homework_Edit" xml:space="preserve">
+    <value>Edit homework</value>
+  </data>
+  <data name="Homework_Title" xml:space="preserve">
+    <value>Title</value>
+  </data>
+  <data name="Homework_Description" xml:space="preserve">
+    <value>Description</value>
+  </data>
+  <data name="Homework_MaxScore" xml:space="preserve">
+    <value>Max score</value>
+  </data>
+  <data name="Homework_DueDate" xml:space="preserve">
+    <value>Due date</value>
+  </data>
+  <data name="Homework_Groups" xml:space="preserve">
+    <value>Groups</value>
+  </data>
+  <data name="Homework_Quizzes" xml:space="preserve">
+    <value>Quizzes</value>
+  </data>
+  <data name="Homework_Publish" xml:space="preserve">
+    <value>Publish</value>
+  </data>
+  <data name="Homework_Published" xml:space="preserve">
+    <value>Published</value>
+  </data>
+  <data name="Homework_Draft" xml:space="preserve">
+    <value>Draft</value>
+  </data>
+  <data name="Homework_Manage" xml:space="preserve">
+    <value>Submissions</value>
+  </data>
+  <data name="Homework_Submissions" xml:space="preserve">
+    <value>Submissions</value>
+  </data>
+  <data name="Homework_StatusAssigned" xml:space="preserve">
+    <value>Assigned</value>
+  </data>
+  <data name="Homework_StatusSubmitted" xml:space="preserve">
+    <value>Submitted</value>
+  </data>
+  <data name="Homework_StatusGraded" xml:space="preserve">
+    <value>Graded</value>
+  </data>
+  <data name="Homework_StatusReturned" xml:space="preserve">
+    <value>Returned</value>
+  </data>
+  <data name="Homework_Late" xml:space="preserve">
+    <value>Late</value>
+  </data>
+  <data name="Homework_Score" xml:space="preserve">
+    <value>Score</value>
+  </data>
+  <data name="Homework_Feedback" xml:space="preserve">
+    <value>Feedback</value>
+  </data>
+  <data name="Homework_Review" xml:space="preserve">
+    <value>Review</value>
+  </data>
+  <data name="Homework_Grade" xml:space="preserve">
+    <value>Grade</value>
+  </data>
+  <data name="Homework_ReturnForRevision" xml:space="preserve">
+    <value>Return for revision</value>
+  </data>
+  <data name="Homework_NoSubmissions" xml:space="preserve">
+    <value>No submissions</value>
+  </data>
+  <data name="Homework_SubmittedAt" xml:space="preserve">
+    <value>Submitted at</value>
+  </data>
+  <data name="Homework_Answer" xml:space="preserve">
+    <value>Answer</value>
+  </data>
+  <data name="Homework_Attachments" xml:space="preserve">
+    <value>Attachments</value>
+  </data>
+  <data name="Homework_NoFiles" xml:space="preserve">
+    <value>No files</value>
+  </data>
+  <data name="Homework_NotCompleted" xml:space="preserve">
+    <value>Not completed</value>
+  </data>
+  <data name="Homeworks_Search" xml:space="preserve">
+    <value>Search by title...</value>
+  </data>
+  <data name="Js_ConfirmDeleteHomework" xml:space="preserve">
+    <value>Delete this homework?</value>
+  </data>
+  <data name="Js_ConfirmPublishHomework" xml:space="preserve">
+    <value>Send this homework to the students in the selected groups? Groups and quizzes can no longer change.</value>
+  </data>
+  <data name="Js_Published" xml:space="preserve">
+    <value>Homework published</value>
+  </data>
 </root>

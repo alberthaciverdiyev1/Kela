@@ -1731,4 +1731,169 @@
   <data name="Tenant_RegisterSectionAccount" xml:space="preserve">
     <value>Личные данные</value>
   </data>
+  <data name="Homework_GroupRequired" xml:space="preserve">
+    <value>Нужно выбрать хотя бы одну группу</value>
+  </data>
+  <data name="Homework_GroupNotFound" xml:space="preserve">
+    <value>Выбранная группа не найдена</value>
+  </data>
+  <data name="Homework_QuizNotFound" xml:space="preserve">
+    <value>Выбранный тест не найден</value>
+  </data>
+  <data name="Homework_PublishedTargetsLocked" xml:space="preserve">
+    <value>После публикации нельзя менять группы, тесты и максимальный балл</value>
+  </data>
+  <data name="Homework_NotPublished" xml:space="preserve">
+    <value>Задание ещё не опубликовано</value>
+  </data>
+  <data name="Homework_NotSubmitted" xml:space="preserve">
+    <value>Ученик ещё не отправил ответ</value>
+  </data>
+  <data name="Homework_ScoreOutOfRange" xml:space="preserve">
+    <value>Балл должен быть от 0 до {0}</value>
+  </data>
+  <data name="Homework_AlreadyGraded" xml:space="preserve">
+    <value>Оценённое задание нельзя отправить повторно</value>
+  </data>
+  <data name="Homework_TextTooLong" xml:space="preserve">
+    <value>Ответ слишком длинный (максимум 10000 символов)</value>
+  </data>
+  <data name="Homework_LinkInvalid" xml:space="preserve">
+    <value>Ссылка должна быть корректным адресом http или https</value>
+  </data>
+  <data name="Homework_EmptySubmission" xml:space="preserve">
+    <value>Добавьте текст, ссылку или хотя бы один файл</value>
+  </data>
+  <data name="Homework_MaxScoreInvalid" xml:space="preserve">
+    <value>Максимальный балл должен быть больше 0</value>
+  </data>
+  <data name="Homework_DueDateRequired" xml:space="preserve">
+    <value>Требуется срок сдачи</value>
+  </data>
+  <data name="Homework_TooManyFiles" xml:space="preserve">
+    <value>Можно добавить не более 5 файлов</value>
+  </data>
+  <data name="Homework_FileTooLarge" xml:space="preserve">
+    <value>Каждый файл — не более 10 МБ</value>
+  </data>
+  <data name="Homework_NotifyPublishedTitle" xml:space="preserve">
+    <value>Новое домашнее задание</value>
+  </data>
+  <data name="Homework_NotifyPublishedBody" xml:space="preserve">
+    <value>Назначено новое домашнее задание: «{0}»</value>
+  </data>
+  <data name="Homework_NotifyGradedTitle" xml:space="preserve">
+    <value>Домашнее задание оценено</value>
+  </data>
+  <data name="Homework_NotifyGradedBody" xml:space="preserve">
+    <value>Ваше задание «{0}» оценено</value>
+  </data>
+  <data name="Homework_NotifyReturnedTitle" xml:space="preserve">
+    <value>Задание возвращено</value>
+  </data>
+  <data name="Homework_NotifyReturnedBody" xml:space="preserve">
+    <value>Ваше задание «{0}» возвращено на доработку</value>
+  </data>
+  <data name="Nav_Homework" xml:space="preserve">
+    <value>Домашние задания</value>
+  </data>
+  <data name="Homework_Create" xml:space="preserve">
+    <value>Новое домашнее задание</value>
+  </data>
+  <data name="Homework_Edit" xml:space="preserve">
+    <value>Редактировать задание</value>
+  </data>
+  <data name="Homework_Title" xml:space="preserve">
+    <value>Заголовок</value>
+  </data>
+  <data name="Homework_Description" xml:space="preserve">
+    <value>Описание</value>
+  </data>
+  <data name="Homework_MaxScore" xml:space="preserve">
+    <value>Макс. балл</value>
+  </data>
+  <data name="Homework_DueDate" xml:space="preserve">
+    <value>Срок сдачи</value>
+  </data>
+  <data name="Homework_Groups" xml:space="preserve">
+    <value>Группы</value>
+  </data>
+  <data name="Homework_Quizzes" xml:space="preserve">
+    <value>Тесты</value>
+  </data>
+  <data name="Homework_Publish" xml:space="preserve">
+    <value>Опубликовать</value>
+  </data>
+  <data name="Homework_Published" xml:space="preserve">
+    <value>Опубликовано</value>
+  </data>
+  <data name="Homework_Draft" xml:space="preserve">
+    <value>Черновик</value>
+  </data>
+  <data name="Homework_Manage" xml:space="preserve">
+    <value>Сдачи</value>
+  </data>
+  <data name="Homework_Submissions" xml:space="preserve">
+    <value>Сдачи</value>
+  </data>
+  <data name="Homework_StatusAssigned" xml:space="preserve">
+    <value>Назначено</value>
+  </data>
+  <data name="Homework_StatusSubmitted" xml:space="preserve">
+    <value>Отправлено</value>
+  </data>
+  <data name="Homework_StatusGraded" xml:space="preserve">
+    <value>Оценено</value>
+  </data>
+  <data name="Homework_StatusReturned" xml:space="preserve">
+    <value>Возвращено</value>
+  </data>
+  <data name="Homework_Late" xml:space="preserve">
+    <value>С опозданием</value>
+  </data>
+  <data name="Homework_Score" xml:space="preserve">
+    <value>Балл</value>
+  </data>
+  <data name="Homework_Feedback" xml:space="preserve">
+    <value>Комментарий</value>
+  </data>
+  <data name="Homework_Review" xml:space="preserve">
+    <value>Просмотр</value>
+  </data>
+  <data name="Homework_Grade" xml:space="preserve">
+    <value>Оценить</value>
+  </data>
+  <data name="Homework_ReturnForRevision" xml:space="preserve">
+    <value>Вернуть на доработку</value>
+  </data>
+  <data name="Homework_NoSubmissions" xml:space="preserve">
+    <value>Нет сдач</value>
+  </data>
+  <data name="Homework_SubmittedAt" xml:space="preserve">
+    <value>Отправлено</value>
+  </data>
+  <data name="Homework_Answer" xml:space="preserve">
+    <value>Ответ</value>
+  </data>
+  <data name="Homework_Attachments" xml:space="preserve">
+    <value>Файлы</value>
+  </data>
+  <data name="Homework_NoFiles" xml:space="preserve">
+    <value>Файлов нет</value>
+  </data>
+  <data name="Homework_NotCompleted" xml:space="preserve">
+    <value>Не пройдено</value>
+  </data>
+  <data name="Homeworks_Search" xml:space="preserve">
+    <value>Поиск по заголовку...</value>
+  </data>
+  <data name="Js_ConfirmDeleteHomework" xml:space="preserve">
+    <value>Удалить это задание?</value>
+  </data>
+  <data name="Js_ConfirmPublishHomework" xml:space="preserve">
+    <value>Отправить задание ученикам выбранных групп? После этого группы и тесты изменить нельзя.</value>
+  </data>
+  <data name="Js_Published" xml:space="preserve">
+    <value>Задание опубликовано</value>
+  </data>
 </root>

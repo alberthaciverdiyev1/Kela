@@ -125,6 +125,16 @@ public sealed class AppDbContext : DbContext
 
     public DbSet<Modules.Subscription.Entities.TenantAddon> TenantAddons => Set<Modules.Subscription.Entities.TenantAddon>();
 
+    public DbSet<Modules.Homework.Entities.Homework> Homeworks => Set<Modules.Homework.Entities.Homework>();
+
+    public DbSet<Modules.Homework.Entities.HomeworkGroup> HomeworkGroups => Set<Modules.Homework.Entities.HomeworkGroup>();
+
+    public DbSet<Modules.Homework.Entities.HomeworkQuiz> HomeworkQuizzes => Set<Modules.Homework.Entities.HomeworkQuiz>();
+
+    public DbSet<Modules.Homework.Entities.HomeworkAssignment> HomeworkAssignments => Set<Modules.Homework.Entities.HomeworkAssignment>();
+
+    public DbSet<Modules.Homework.Entities.HomeworkAssignmentFile> HomeworkAssignmentFiles => Set<Modules.Homework.Entities.HomeworkAssignmentFile>();
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);

@@ -103,6 +103,8 @@ public static class DependencyInjection
         services.AddScoped<IGroupQuizStatService, GroupQuizStatService>();
         services.AddScoped<Kela.Core.Modules.ScreenGuard.Abstractions.IScreenGuardService, Kela.Core.Modules.ScreenGuard.Services.ScreenGuardService>();
         services.AddScoped<INotificationService, NotificationService>();
+        services.AddScoped<IHomeworkService, Kela.Core.Modules.Homework.Services.HomeworkService>();
+        services.AddScoped<IStudentHomeworkService, Kela.Core.Modules.Homework.Services.StudentHomeworkService>();
         services.AddScoped<IPrivacyPolicyService, PrivacyPolicyService>();
         services.AddScoped<ITenantService, TenantService>();        services.AddScoped<IDashboardService, DashboardService>();
         services.AddScoped<IStudentManagementService, StudentManagementService>();

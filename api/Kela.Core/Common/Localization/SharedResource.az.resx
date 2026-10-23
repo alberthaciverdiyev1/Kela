@@ -1731,4 +1731,169 @@
   <data name="Tenant_RegisterSectionAccount" xml:space="preserve">
     <value>Şəxsi məlumatlar</value>
   </data>
+  <data name="Homework_GroupRequired" xml:space="preserve">
+    <value>Ən azı bir qrup seçilməlidir</value>
+  </data>
+  <data name="Homework_GroupNotFound" xml:space="preserve">
+    <value>Seçilmiş qrup tapılmadı</value>
+  </data>
+  <data name="Homework_QuizNotFound" xml:space="preserve">
+    <value>Seçilmiş quiz tapılmadı</value>
+  </data>
+  <data name="Homework_PublishedTargetsLocked" xml:space="preserve">
+    <value>Yayımlanmış tapşırığın qrupları, quizləri və maksimum balı dəyişdirilə bilməz</value>
+  </data>
+  <data name="Homework_NotPublished" xml:space="preserve">
+    <value>Tapşırıq hələ yayımlanmayıb</value>
+  </data>
+  <data name="Homework_NotSubmitted" xml:space="preserve">
+    <value>Tələbə hələ cavab təqdim etməyib</value>
+  </data>
+  <data name="Homework_ScoreOutOfRange" xml:space="preserve">
+    <value>Bal 0 ilə {0} arasında olmalıdır</value>
+  </data>
+  <data name="Homework_AlreadyGraded" xml:space="preserve">
+    <value>Qiymətləndirilmiş tapşırıq yenidən təqdim edilə bilməz</value>
+  </data>
+  <data name="Homework_TextTooLong" xml:space="preserve">
+    <value>Cavab mətni çox uzundur (maks. 10000 simvol)</value>
+  </data>
+  <data name="Homework_LinkInvalid" xml:space="preserve">
+    <value>Link düzgün http və ya https ünvanı olmalıdır</value>
+  </data>
+  <data name="Homework_EmptySubmission" xml:space="preserve">
+    <value>Ən azı mətn, link və ya bir fayl əlavə edin</value>
+  </data>
+  <data name="Homework_MaxScoreInvalid" xml:space="preserve">
+    <value>Maksimum bal 0-dan böyük olmalıdır</value>
+  </data>
+  <data name="Homework_DueDateRequired" xml:space="preserve">
+    <value>Son tarix tələb olunur</value>
+  </data>
+  <data name="Homework_TooManyFiles" xml:space="preserve">
+    <value>Ən çoxu 5 fayl əlavə edilə bilər</value>
+  </data>
+  <data name="Homework_FileTooLarge" xml:space="preserve">
+    <value>Hər fayl maksimum 10 MB olmalıdır</value>
+  </data>
+  <data name="Homework_NotifyPublishedTitle" xml:space="preserve">
+    <value>Yeni ev tapşırığı</value>
+  </data>
+  <data name="Homework_NotifyPublishedBody" xml:space="preserve">
+    <value>«{0}» adlı yeni ev tapşırığı verildi</value>
+  </data>
+  <data name="Homework_NotifyGradedTitle" xml:space="preserve">
+    <value>Ev tapşırığı qiymətləndirildi</value>
+  </data>
+  <data name="Homework_NotifyGradedBody" xml:space="preserve">
+    <value>«{0}» tapşırığı qiymətləndirildi</value>
+  </data>
+  <data name="Homework_NotifyReturnedTitle" xml:space="preserve">
+    <value>Ev tapşırığı düzəlişə qaytarıldı</value>
+  </data>
+  <data name="Homework_NotifyReturnedBody" xml:space="preserve">
+    <value>«{0}» tapşırığı düzəliş üçün qaytarıldı</value>
+  </data>
+  <data name="Nav_Homework" xml:space="preserve">
+    <value>Ev tapşırıqları</value>
+  </data>
+  <data name="Homework_Create" xml:space="preserve">
+    <value>Yeni ev tapşırığı</value>
+  </data>
+  <data name="Homework_Edit" xml:space="preserve">
+    <value>Ev tapşırığını redaktə et</value>
+  </data>
+  <data name="Homework_Title" xml:space="preserve">
+    <value>Başlıq</value>
+  </data>
+  <data name="Homework_Description" xml:space="preserve">
+    <value>Təsvir</value>
+  </data>
+  <data name="Homework_MaxScore" xml:space="preserve">
+    <value>Maks. bal</value>
+  </data>
+  <data name="Homework_DueDate" xml:space="preserve">
+    <value>Son tarix</value>
+  </data>
+  <data name="Homework_Groups" xml:space="preserve">
+    <value>Qruplar</value>
+  </data>
+  <data name="Homework_Quizzes" xml:space="preserve">
+    <value>Quizlər</value>
+  </data>
+  <data name="Homework_Publish" xml:space="preserve">
+    <value>Yayımla</value>
+  </data>
+  <data name="Homework_Published" xml:space="preserve">
+    <value>Yayımlanıb</value>
+  </data>
+  <data name="Homework_Draft" xml:space="preserve">
+    <value>Qaralama</value>
+  </data>
+  <data name="Homework_Manage" xml:space="preserve">
+    <value>Tapşırıqlar</value>
+  </data>
+  <data name="Homework_Submissions" xml:space="preserve">
+    <value>Təqdimatlar</value>
+  </data>
+  <data name="Homework_StatusAssigned" xml:space="preserve">
+    <value>Təyin olunub</value>
+  </data>
+  <data name="Homework_StatusSubmitted" xml:space="preserve">
+    <value>Təqdim edilib</value>
+  </data>
+  <data name="Homework_StatusGraded" xml:space="preserve">
+    <value>Qiymətləndirilib</value>
+  </data>
+  <data name="Homework_StatusReturned" xml:space="preserve">
+    <value>Qaytarılıb</value>
+  </data>
+  <data name="Homework_Late" xml:space="preserve">
+    <value>Gecikmiş</value>
+  </data>
+  <data name="Homework_Score" xml:space="preserve">
+    <value>Bal</value>
+  </data>
+  <data name="Homework_Feedback" xml:space="preserve">
+    <value>Rəy</value>
+  </data>
+  <data name="Homework_Review" xml:space="preserve">
+    <value>Cavaba bax</value>
+  </data>
+  <data name="Homework_Grade" xml:space="preserve">
+    <value>Qiymətləndir</value>
+  </data>
+  <data name="Homework_ReturnForRevision" xml:space="preserve">
+    <value>Düzəlişə qaytar</value>
+  </data>
+  <data name="Homework_NoSubmissions" xml:space="preserve">
+    <value>Təqdimat yoxdur</value>
+  </data>
+  <data name="Homework_SubmittedAt" xml:space="preserve">
+    <value>Təqdim olunub</value>
+  </data>
+  <data name="Homework_Answer" xml:space="preserve">
+    <value>Cavab</value>
+  </data>
+  <data name="Homework_Attachments" xml:space="preserve">
+    <value>Fayllar</value>
+  </data>
+  <data name="Homework_NoFiles" xml:space="preserve">
+    <value>Fayl yoxdur</value>
+  </data>
+  <data name="Homework_NotCompleted" xml:space="preserve">
+    <value>Tamamlanmayıb</value>
+  </data>
+  <data name="Homeworks_Search" xml:space="preserve">
+    <value>Başlıq üzrə axtar...</value>
+  </data>
+  <data name="Js_ConfirmDeleteHomework" xml:space="preserve">
+    <value>Bu ev tapşırığı silinsin?</value>
+  </data>
+  <data name="Js_ConfirmPublishHomework" xml:space="preserve">
+    <value>Tapşırıq qruplardakı tələbələrə göndərilsin? Bundan sonra qruplar və quizlər dəyişdirilə bilməz.</value>
+  </data>
+  <data name="Js_Published" xml:space="preserve">
+    <value>Tapşırıq yayımlandı</value>
+  </data>
 </root>

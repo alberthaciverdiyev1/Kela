@@ -1,0 +1,43 @@
+<div class="space-y-4 p-6">
+    <input type="hidden" id="reviewStudentId" />
+
+    <div class="rounded-xl bg-surface-secondary p-4">
+        <p id="reviewStudent" class="font-bold text-slate-900"></p>
+        <p id="reviewMeta" class="mt-1 text-sm text-slate-500"></p>
+    </div>
+
+    <div>
+        <p class="mb-1 text-sm font-semibold text-slate-600">@L["Homework_Answer"]</p>
+        <p id="reviewText" class="whitespace-pre-wrap rounded-xl border border-border p-3 text-sm text-slate-700"></p>
+        <a id="reviewLink" href="#" target="_blank" rel="noopener" class="mt-2 inline-block text-sm font-semibold text-primary hover:underline"></a>
+    </div>
+
+    <div>
+        <p class="mb-2 text-sm font-semibold text-slate-600">@L["Homework_Attachments"]</p>
+        <div id="reviewFiles" class="flex flex-wrap gap-2 text-sm"></div>
+    </div>
+
+    <div>
+        <p class="mb-2 text-sm font-semibold text-slate-600">@L["Homework_Quizzes"]</p>
+        <div id="reviewQuizzes" class="space-y-1 text-sm text-slate-700"></div>
+    </div>
+
+    <div class="grid gap-3 sm:grid-cols-[140px_1fr]">
+        <div>
+            <label for="reviewScore" class="mb-1 block text-sm font-semibold text-slate-600">@L["Homework_Score"]</label>
+            <input id="reviewScore" type="number" step="0.01" min="0" class="admin-field" />
+        </div>
+        <div>
+            <label for="reviewFeedback" class="mb-1 block text-sm font-semibold text-slate-600">@L["Homework_Feedback"]</label>
+            <textarea id="reviewFeedback" rows="3" class="admin-field" style="height:auto;padding:12px 14px"></textarea>
+        </div>
+    </div>
+
+    <div id="reviewError" class="hidden rounded-xl bg-danger-bg px-3 py-2 text-sm font-semibold text-danger"></div>
+
+    <div class="flex flex-wrap justify-end gap-2 pt-2">
+        <button type="button" data-modal-close class="admin-button-secondary">@L["Common_Close"]</button>
+        <button type="button" data-action="gradeHomework" data-args='[true]' class="admin-button-secondary">@L["Homework_ReturnForRevision"]</button>
+        <button type="button" data-action="gradeHomework" data-args='[false]' class="admin-button-primary">@L["Homework_Grade"]</button>
+    </div>
+</div>

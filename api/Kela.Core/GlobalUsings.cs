@@ -3,6 +3,7 @@ global using Kela.Core.Modules.Auth.Abstractions;
 global using Kela.Core.Modules.Attendance.Abstractions;
 global using Kela.Core.Modules.Banner.Abstractions;
 global using Kela.Core.Modules.Group.Abstractions;
+global using Kela.Core.Modules.Homework.Abstractions;
 global using Kela.Core.Modules.Lesson.Abstractions;
 global using Kela.Core.Modules.LessonContent.Abstractions;
 global using Kela.Core.Modules.Notification.Abstractions;

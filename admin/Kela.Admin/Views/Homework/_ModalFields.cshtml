@@ -1,0 +1,37 @@
+@{
+    var groups = (PagedResponse<GroupResponse>)ViewData["Groups"]!;
+    var quizzes = (PagedResponse<QuizResponse>)ViewData["Quizzes"]!;
+
+    var groupOptions = groups.Data.Select(g => new SelectOption { Value = g.Id.ToString(), Text = g.Name }).ToList();
+    var quizOptions = quizzes.Data.Select(q => new SelectOption { Value = q.Id.ToString(), Text = q.Title }).ToList();
+}
+
+<form id="entityForm" class="space-y-4 p-6">
+    <input type="hidden" id="entityId" />
+
+    <partial name="Ui/_Input" model="@(new InputModel { Name = "title", Id = "title", Label = L["Homework_Title"], Required = true })" />
+
+    <div>
+        <label for="description" class="mb-1 block text-sm font-semibold text-slate-600">@L["Homework_Description"]</label>
+        <textarea id="description" rows="4" class="admin-field" style="height:auto;padding:12px 14px"></textarea>
+    </div>
+
+    <div class="grid gap-4 sm:grid-cols-2">
+        <partial name="Ui/_Select" model="@(new SelectModel { Name = "group_ids", Id = "group_ids", Label = L["Homework_Groups"], Multiple = true, Required = true, Options = groupOptions })" />
+        <partial name="Ui/_Select" model="@(new SelectModel { Name = "quiz_ids", Id = "quiz_ids", Label = L["Homework_Quizzes"], Multiple = true, Options = quizOptions })" />
+    </div>
+
+    <div class="grid gap-4 sm:grid-cols-2">
+        <partial name="Ui/_Input" model="@(new InputModel { Name = "due_date", Id = "due_date", Label = L["Homework_DueDate"], Type = "datetime-local", Required = true })" />
+        <partial name="Ui/_Input" model="@(new InputModel { Name = "max_score", Id = "max_score", Label = L["Homework_MaxScore"], Type = "number", Step = "0.01", Min = "0", Value = "100" })" />
+    </div>
+
+    <p id="publishedHint" class="hidden rounded-xl bg-surface-secondary px-3.5 py-3 text-sm text-slate-500">
+        @L["Homework_PublishedTargetsLocked"]
+    </p>
+
+    <div class="flex justify-end gap-3 pt-2">
+        <partial name="Ui/_Button" model="@(new ButtonModel { Text = L["Common_Cancel"], Variant = "secondary", Dismiss = true })" />
+        <partial name="Ui/_Button" model="@(new ButtonModel { Text = L["Common_Save"], Type = "submit" })" />
+    </div>
+</form>
