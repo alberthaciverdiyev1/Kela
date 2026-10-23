@@ -49,6 +49,8 @@ builder.Services.AddAuthorization(options =>
         .Build();
 });
 
+Kela.Core.Common.Configuration.SecretGuard.EnsureProductionSecrets(builder.Configuration, builder.Environment.IsDevelopment());
+
 var app = builder.Build();
 
 await app.Services.SeedDefaultAdminAsync(app.Configuration);

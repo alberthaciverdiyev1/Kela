@@ -126,6 +126,8 @@ builder.Services.AddHostedService<NodesBackgroundService>();
 // Abunəlik üzrə storage ölçməsi — dövri, istək zamanı deyil.
 builder.Services.AddHostedService<Kela.Api.Modules.Subscription.Services.SubscriptionMaintenanceService>();
 
+Kela.Core.Common.Configuration.SecretGuard.EnsureProductionSecrets(builder.Configuration, builder.Environment.IsDevelopment());
+
 var app = builder.Build();
 
 await app.Services.SeedDefaultAdminAsync(app.Configuration);
