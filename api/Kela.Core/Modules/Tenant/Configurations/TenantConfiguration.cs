@@ -21,5 +21,6 @@ public sealed class TenantConfiguration : IEntityTypeConfiguration<Tenant>
         builder.Property(x => x.PlanStartedAt).HasColumnName("plan_started_at");
         builder.Property(x => x.PlanExpiresAt).HasColumnName("plan_expires_at");
         builder.Property(x => x.CreatedAt).HasColumnName("created_at");
+        builder.Property(x => x.DeletedAt).HasColumnName("deleted_at");
     }
 }

@@ -24,7 +24,7 @@ public sealed class TenantService(
 {
     public async Task<IReadOnlyList<TenantResponse>> ListAsync(CancellationToken ct = default)
     {
-        var tenants = await db.Tenants.AsNoTracking().OrderBy(x => x.Id)
+        var tenants = await db.Tenants.AsNoTracking().Where(x => x.DeletedAt == null).OrderBy(x => x.Id)
             .Select(x => new { x.Id, x.Name, x.Slug, x.IsActive, x.IsPending, x.PlanId, x.PlanExpiresAt })
             .ToListAsync(ct);
 
@@ -43,7 +43,7 @@ public sealed class TenantService(
 
     public async Task<IReadOnlyList<TenantResponse>> ListPublicAsync(CancellationToken ct = default)
     {
-        var tenants = await db.Tenants.AsNoTracking().Where(x => x.IsActive).OrderBy(x => x.Name)
+        var tenants = await db.Tenants.AsNoTracking().Where(x => x.IsActive && x.DeletedAt == null).OrderBy(x => x.Name)
             .Select(x => new { x.Id, x.Name, x.Slug, x.IsActive, x.IsPending })
             .ToListAsync(ct);
 
@@ -53,7 +53,7 @@ public sealed class TenantService(
 
     public async Task<TenantResponse?> GetByIdAsync(long id, CancellationToken ct = default)
     {
-        var t = await db.Tenants.AsNoTracking().Where(x => x.Id == id)
+        var t = await db.Tenants.AsNoTracking().Where(x => x.Id == id && x.DeletedAt == null)
             .Select(x => new { x.Id, x.Name, x.Slug, x.IsActive, x.IsPending })
             .FirstOrDefaultAsync(ct);
 
@@ -65,7 +65,7 @@ public sealed class TenantService(
     {
         if (tenantProvider.TenantId is not long id) return null;
 
-        var t = await db.Tenants.AsNoTracking().Where(x => x.Id == id)
+        var t = await db.Tenants.AsNoTracking().Where(x => x.Id == id && x.DeletedAt == null)
             .Select(x => new { x.Id, x.Name, x.Slug, x.IsActive, x.IsPending })
             .FirstOrDefaultAsync(ct);
 
@@ -80,7 +80,7 @@ public sealed class TenantService(
             throw new InvalidOperationException("Tenant context is required");
         }
 
-        var tenant = await db.Tenants.FirstOrDefaultAsync(x => x.Id == id, ct)
+        var tenant = await db.Tenants.FirstOrDefaultAsync(x => x.Id == id && x.DeletedAt == null, ct)
             ?? throw new KeyNotFoundException($"Tenant not found: {id}");
 
         var name = request.Name.Trim();
@@ -99,7 +99,7 @@ public sealed class TenantService(
     {
         var slug = request.Slug.Trim().ToLowerInvariant();
 
-        if (await db.Tenants.AnyAsync(x => x.Slug == slug, ct))
+        if (await db.Tenants.AnyAsync(x => x.Slug == slug && x.DeletedAt == null, ct))
         {
             throw new ArgumentException("A tenant with this slug already exists");
         }
@@ -186,7 +186,7 @@ public sealed class TenantService(
 
     public async Task<TenantResponse> SetActiveAsync(long id, bool isActive, CancellationToken ct = default)
     {
-        var tenant = await db.Tenants.FirstOrDefaultAsync(x => x.Id == id, ct)
+        var tenant = await db.Tenants.FirstOrDefaultAsync(x => x.Id == id && x.DeletedAt == null, ct)
             ?? throw new KeyNotFoundException($"Tenant not found: {id}");
 
         tenant.IsActive = isActive;
@@ -201,17 +201,22 @@ public sealed class TenantService(
 
     public async Task DeleteAsync(long id, CancellationToken ct = default)
     {
-        var tenant = await db.Tenants.FirstOrDefaultAsync(x => x.Id == id, ct)
+        var tenant = await db.Tenants.FirstOrDefaultAsync(x => x.Id == id && x.DeletedAt == null, ct)
             ?? throw new KeyNotFoundException($"Tenant not found: {id}");
 
-        if (tenant.IsActive)
+        // Təsdiqlənməmiş müraciətin məlumatı yoxdur — fiziki silinir, slug yenidən istifadə oluna bilsin.
+        if (!tenant.IsPending)
         {
-            throw new ArgumentException("An active tenant cannot be deleted");
+            // Real tenant-ın məlumatı qorunur: giriş bağlanır, siyahılardan çıxır.
+            tenant.IsActive = false;
+            tenant.IsPending = false;
+            tenant.DeletedAt = DateTimeOffset.UtcNow;
+            await db.SaveChangesAsync(ct);
+            return;
         }
 
         await using var tx = await db.Database.BeginTransactionAsync(ct);
 
-        // Müraciət heç bir real məlumat yaratmayıb — yalnız ilk admin hesabı var.
         await db.Users.IgnoreQueryFilters().Where(x => x.TenantId == id).ExecuteDeleteAsync(ct);
         await db.Settings.IgnoreQueryFilters().Where(x => x.TenantId == id).ExecuteDeleteAsync(ct);
         await db.PrivacyPolicies.IgnoreQueryFilters().Where(x => x.TenantId == id).ExecuteDeleteAsync(ct);
@@ -228,7 +233,7 @@ public sealed class TenantService(
         var slug = root;
         var suffix = 2;
 
-        while (await db.Tenants.AnyAsync(x => x.Slug == slug, ct))
+        while (await db.Tenants.AnyAsync(x => x.Slug == slug && x.DeletedAt == null, ct))
         {
             var tail = "-" + suffix++;
             slug = root[..Math.Min(root.Length, 100 - tail.Length)] + tail;

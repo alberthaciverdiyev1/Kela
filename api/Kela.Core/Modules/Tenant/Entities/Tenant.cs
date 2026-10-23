@@ -15,6 +15,9 @@ public class Tenant
 
     public DateTimeOffset CreatedAt { get; set; } = DateTimeOffset.UtcNow;
 
+    /// <summary>Superadmin tərəfindən silinib — giriş bağlıdır, siyahılarda görünmür.</summary>
+    public DateTimeOffset? DeletedAt { get; set; }
+
     // ---- Abunəlik ----
     /// <summary>Seçilmiş plan (subscription_plans.id). Null = default plan.</summary>
     public long? PlanId { get; set; }

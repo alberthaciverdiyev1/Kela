@@ -11,6 +11,7 @@ using TenantEntity = Kela.Core.Modules.Tenant.Entities.Tenant;
 using Kela.Core.Modules.Auth.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Kela.Tests.MultiTenancy;
 
@@ -98,5 +99,27 @@ public class TenantIsolationTests(ApiFactory factory)
     {
         public long? TenantId => tenantId;
         public bool IgnoreTenant => false;
+    }
+}
+
+[Collection("api")]
+public class TenantDeleteTests(ApiFactory factory)
+{
+    [Fact]
+    public async Task Deleting_a_tenant_hides_it_and_blocks_it_from_the_list()
+    {
+        using var scope = factory.Services.CreateScope();
+        var service = scope.ServiceProvider.GetRequiredService<Kela.Core.Modules.Tenant.Abstractions.ITenantService>();
+
+        var created = await service.CreateAsync(new Kela.Core.Modules.Tenant.Requests.CreateTenantRequest
+        {
+            Name = $"Delete {Guid.NewGuid():N}",
+            Slug = $"del-{Guid.NewGuid():N}"
+        });
+
+        await service.DeleteAsync(created.Id);
+
+        Assert.Null(await service.GetByIdAsync(created.Id));
+        Assert.DoesNotContain(await service.ListAsync(), x => x.Id == created.Id);
     }
 }

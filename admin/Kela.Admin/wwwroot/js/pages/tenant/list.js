@@ -21,7 +21,8 @@ async function loadList() {
             ])
             : AdminUI.rowActions([
                 AdminUI.actionButton(L["Tenant_Switch"], `switchTenant(${t.id})`, { tone: 'primary' }),
-                AdminUI.actionButton('Plan', `PlanModal.open(${t.id}, '${(t.planId ?? '')}', '${t.planExpiresAt ?? ''}')`)
+                AdminUI.actionButton('Plan', `PlanModal.open(${t.id}, '${(t.planId ?? '')}', '${t.planExpiresAt ?? ''}')`),
+                AdminUI.actionButton(L["Common_Delete"], `deleteTenant(${t.id})`, { tone: 'danger' })
             ]), cls: 'text-right' }
     ]), 6);
 
@@ -53,6 +54,14 @@ window.rejectTenant = async function (id) {
 window.setTenantStatus = async function (id, isActive) {
     const res = await AdminUI.putJson(`/tenant/${id}/status`, { isActive });
     if (res.ok) { AdminUI.notify(L["Js_StatusChanged"]); loadList(); }
+    else AdminUI.error(AdminUI.errText(res));
+};
+
+window.deleteTenant = async function (id) {
+    if (!await AdminUI.confirmDelete()) return;
+
+    const res = await AdminUI.del(`/tenant/${id}`);
+    if (res.ok) { AdminUI.notify(L["Js_Deleted"]); loadList(); if (window.refreshTenantPendingBadge) window.refreshTenantPendingBadge(); }
     else AdminUI.error(AdminUI.errText(res));
 };
 
