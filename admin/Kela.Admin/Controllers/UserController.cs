@@ -60,6 +60,20 @@ public sealed class UserController(
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Delete(long id, CancellationToken ct)
     {
+        // Öz hesabını silmək kilidlənmə riskidir — heç bir rol üçün icazə verilmir.
+        if (id == User.CurrentUserId())
+        {
+            throw new ForbiddenException("Öz hesabınızı silə bilməzsiniz");
+        }
+
+        var target = await service.GetAsync(id, ct);
+
+        // Admin hesablarını yalnız superadmin silə bilər.
+        if (!User.IsInRole(AuthRoles.SuperAdmin) && target.Type is UserTypes.Admin or UserTypes.SuperAdmin)
+        {
+            throw new ForbiddenException("Admin hesabını yalnız superadmin silə bilər");
+        }
+
         await service.DeleteAsync(id, ct);
         return Json(new { ok = true });
     }
