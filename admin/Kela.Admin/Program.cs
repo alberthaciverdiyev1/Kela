@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Http;
 using System.Threading.RateLimiting;
 using Kela.Core;
 using Kela.Core.Common.Localization;
@@ -38,7 +39,26 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
         options.AccessDeniedPath = "/login";
         options.ExpireTimeSpan = TimeSpan.FromHours(8);
         options.SlidingExpiration = true;
+
+        // Session cookie yalnız HTTP-only, Lax və HTTPS-də göndərilir.
+        // Development-da http://localhost işlədiyi üçün Secure tələb olunmur.
+        options.Cookie.Name = "kela.admin.auth";
+        options.Cookie.HttpOnly = true;
+        options.Cookie.SameSite = SameSiteMode.Lax;
+        options.Cookie.SecurePolicy = builder.Environment.IsDevelopment()
+            ? CookieSecurePolicy.SameAsRequest
+            : CookieSecurePolicy.Always;
     });
+
+builder.Services.AddAntiforgery(options =>
+{
+    options.Cookie.Name = "kela.admin.antiforgery";
+    options.Cookie.HttpOnly = true;
+    options.Cookie.SameSite = SameSiteMode.Strict;
+    options.Cookie.SecurePolicy = builder.Environment.IsDevelopment()
+        ? CookieSecurePolicy.SameAsRequest
+        : CookieSecurePolicy.Always;
+});
 
 // Yalnız personel (teacher/admin/superadmin) MVC-yə girə bilər; student yalnız API-yə.
 builder.Services.AddAuthorization(options =>
