@@ -113,16 +113,26 @@ public sealed class TenantService(
 
     public async Task<TenantResponse> RegisterAsync(RegisterTenantRequest request, CancellationToken ct = default)
     {
-        var courseName = request.CourseName.Trim();
+        var adminName = request.AdminName.Trim();
+        if (adminName.Length == 0) throw new ArgumentException(L["Tenant_AdminNameRequired"]);
+
+        // Fərdi müəllim öz adı ilə tək nəfərlik tenant kimi qeydiyyatdan keçir.
+        var isTeacher = string.Equals(request.AccountType, "teacher", StringComparison.OrdinalIgnoreCase);
+        var surname = request.AdminSurname?.Trim();
+
+        var courseName = isTeacher
+            ? $"{adminName} {surname}".Trim()
+            : request.CourseName.Trim();
+
         if (courseName.Length == 0) throw new ArgumentException(L["Tenant_CourseNameRequired"]);
         if (courseName.Length > 190) courseName = courseName[..190];
 
         var baseSlug = NormalizeSlug(courseName);
-        if (baseSlug.Length == 0) baseSlug = "kurs";
+        if (baseSlug.Length == 0) baseSlug = isTeacher ? "muellim" : "kurs";
         var slug = await UniqueSlugAsync(baseSlug, ct);
 
-        var adminName = request.AdminName.Trim();
-        if (adminName.Length == 0) throw new ArgumentException(L["Tenant_AdminNameRequired"]);
+        var phone = request.PhoneNumber.Trim();
+        if (phone.Length == 0) throw new ArgumentException(L["Validation_PhoneRequired"]);
 
         var email = request.Email.Trim().ToLowerInvariant();
         if (email.Length == 0 || !email.Contains('@') || email.StartsWith('@') || email.EndsWith('@'))
@@ -158,14 +168,15 @@ public sealed class TenantService(
         {
             TenantId = tenant.Id,
             Name = adminName,
-            Surname = request.AdminSurname?.Trim(),
+            Surname = surname,
             Email = email,
-            PhoneNumber = string.IsNullOrWhiteSpace(request.PhoneNumber) ? null : request.PhoneNumber.Trim(),
+            PhoneNumber = phone,
             PasswordHash = BCrypt.Net.BCrypt.HashPassword(request.Password),
-            Type = UserTypes.Admin
+            // Fərdi müəllim müəllim kimi daxil olur; kurs sahibi isə admin olur.
+            Type = isTeacher ? UserTypes.Teacher : UserTypes.Admin
         });
 
-        if (request.Logo is not null)
+        if (!isTeacher && request.Logo is not null)
         {
             var folder = $"{await folders.ResolveAsync(tenant.Id, ct)}/settings";
             var logo = await storage.UploadAsync(request.Logo, folder, ct);

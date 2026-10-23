@@ -93,6 +93,27 @@
                         @Html.AntiForgeryToken()
 
                         <div>
+                            <p class="mb-2 text-sm font-semibold text-slate-600">@L["Tenant_AccountType"]</p>
+                            <div class="grid gap-3 sm:grid-cols-2">
+                                <label class="cursor-pointer">
+                                    <input type="radio" name="AccountType" value="course" class="peer sr-only" checked data-account-type />
+                                    <span class="flex h-full items-center gap-3 rounded-xl border border-border bg-surface-secondary p-4 transition peer-checked:border-primary peer-checked:bg-primary-light">
+                                        <svg class="h-5 w-5 shrink-0 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M4 19V6.5A2.5 2.5 0 0 1 6.5 4H11v15H6.5A2.5 2.5 0 0 0 4 19Zm16 0V6.5A2.5 2.5 0 0 0 17.5 4H13v15h4.5A2.5 2.5 0 0 1 20 19Z" /></svg>
+                                        <span class="font-semibold text-slate-800">@L["Tenant_AccountTypeCourse"]</span>
+                                    </span>
+                                </label>
+                                <label class="cursor-pointer">
+                                    <input type="radio" name="AccountType" value="teacher" class="peer sr-only" data-account-type />
+                                    <span class="flex h-full items-center gap-3 rounded-xl border border-border bg-surface-secondary p-4 transition peer-checked:border-primary peer-checked:bg-primary-light">
+                                        <svg class="h-5 w-5 shrink-0 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M16 7a4 4 0 1 1-8 0 4 4 0 0 1 8 0ZM12 14a7 7 0 0 0-7 7h14a7 7 0 0 0-7-7Z" /></svg>
+                                        <span class="font-semibold text-slate-800">@L["Tenant_AccountTypeTeacher"]</span>
+                                    </span>
+                                </label>
+                            </div>
+                            <p class="mt-2 text-xs text-slate-400">@L["Tenant_AccountTypeHint"]</p>
+                        </div>
+
+                        <div id="courseBlock">
                             <p class="mb-3 flex items-center gap-2 text-xs font-bold uppercase tracking-wide text-slate-400">
                                 <span class="grid h-5 w-5 place-items-center rounded-full bg-primary-light text-[10px] font-extrabold text-primary">1</span>
                                 @L["Tenant_RegisterSectionCourse"]
@@ -113,16 +134,16 @@
 
                         <div class="border-t border-border pt-6">
                             <p class="mb-3 flex items-center gap-2 text-xs font-bold uppercase tracking-wide text-slate-400">
-                                <span class="grid h-5 w-5 place-items-center rounded-full bg-primary-light text-[10px] font-extrabold text-primary">2</span>
-                                @L["Tenant_RegisterSectionAdmin"]
+                                <span id="accountStepNo" class="grid h-5 w-5 place-items-center rounded-full bg-primary-light text-[10px] font-extrabold text-primary">2</span>
+                                @L["Tenant_RegisterSectionAccount"]
                             </p>
                             <div class="grid gap-4 sm:grid-cols-2">
-                                <partial name="Ui/_Input" model="@(new InputModel { NativeRequired = true, Name = "AdminName", Id = "adminName", Label = L["Tenant_AdminName"], Required = true })" />
-                                <partial name="Ui/_Input" model="@(new InputModel { Name = "AdminSurname", Id = "adminSurname", Label = L["Tenant_AdminSurname"] })" />
+                                <partial name="Ui/_Input" model="@(new InputModel { NativeRequired = true, Name = "AdminName", Id = "adminName", Label = L["Common_Name"], Required = true })" />
+                                <partial name="Ui/_Input" model="@(new InputModel { Name = "AdminSurname", Id = "adminSurname", Label = L["Common_Surname"] })" />
                             </div>
                             <div class="mt-4 space-y-4">
                                 <partial name="Ui/_Input" model="@(new InputModel { NativeRequired = true, Name = "Email", Id = "email", Label = L["Common_Email"], Type = "email", Required = true })" />
-                                <partial name="Ui/_Input" model="@(new InputModel { Name = "PhoneNumber", Id = "phoneNumber", Label = L["Tenant_PhoneOptional"] })" />
+                                <partial name="Ui/_Input" model="@(new InputModel { NativeRequired = true, Name = "PhoneNumber", Id = "phoneNumber", Label = L["Common_Phone"], Type = "tel", Required = true })" />
                             </div>
                             <div class="mt-4 grid gap-4 sm:grid-cols-2">
                                 <partial name="Ui/_Input" model="@(new InputModel { NativeRequired = true, Name = "Password", Id = "password", Label = L["Common_Password"], Type = "password", Required = true })" />

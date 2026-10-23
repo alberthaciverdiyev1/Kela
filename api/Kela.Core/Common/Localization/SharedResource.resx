@@ -1716,4 +1716,19 @@
   <data name="Limit_Packs" xml:space="preserve">
     <value>Quantity</value>
   </data>
+  <data name="Tenant_AccountType" xml:space="preserve">
+    <value>Account type</value>
+  </data>
+  <data name="Tenant_AccountTypeCourse" xml:space="preserve">
+    <value>Course</value>
+  </data>
+  <data name="Tenant_AccountTypeTeacher" xml:space="preserve">
+    <value>Individual teacher</value>
+  </data>
+  <data name="Tenant_AccountTypeHint" xml:space="preserve">
+    <value>A course account is an administrator that adds its teachers. An individual teacher manages their own lessons.</value>
+  </data>
+  <data name="Tenant_RegisterSectionAccount" xml:space="preserve">
+    <value>Personal details</value>
+  </data>
 </root>

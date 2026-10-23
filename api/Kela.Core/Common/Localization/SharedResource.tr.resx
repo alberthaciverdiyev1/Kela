@@ -1716,4 +1716,19 @@
   <data name="Limit_Packs" xml:space="preserve">
     <value>Miktar</value>
   </data>
+  <data name="Tenant_AccountType" xml:space="preserve">
+    <value>Hesap türü</value>
+  </data>
+  <data name="Tenant_AccountTypeCourse" xml:space="preserve">
+    <value>Kurs</value>
+  </data>
+  <data name="Tenant_AccountTypeTeacher" xml:space="preserve">
+    <value>Bireysel öğretmen</value>
+  </data>
+  <data name="Tenant_AccountTypeHint" xml:space="preserve">
+    <value>Kurs hesabı, öğretmenleri kendisi ekleyen bir yöneticidir. Bireysel öğretmen derslerini kendi yönetir.</value>
+  </data>
+  <data name="Tenant_RegisterSectionAccount" xml:space="preserve">
+    <value>Kişisel bilgiler</value>
+  </data>
 </root>

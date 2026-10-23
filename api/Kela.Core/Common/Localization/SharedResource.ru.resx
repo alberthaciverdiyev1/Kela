@@ -1716,4 +1716,19 @@
   <data name="Limit_Packs" xml:space="preserve">
     <value>Количество</value>
   </data>
+  <data name="Tenant_AccountType" xml:space="preserve">
+    <value>Тип аккаунта</value>
+  </data>
+  <data name="Tenant_AccountTypeCourse" xml:space="preserve">
+    <value>Курс</value>
+  </data>
+  <data name="Tenant_AccountTypeTeacher" xml:space="preserve">
+    <value>Частный преподаватель</value>
+  </data>
+  <data name="Tenant_AccountTypeHint" xml:space="preserve">
+    <value>Аккаунт курса — это администратор, который добавляет преподавателей. Частный преподаватель ведёт свои уроки сам.</value>
+  </data>
+  <data name="Tenant_RegisterSectionAccount" xml:space="preserve">
+    <value>Личные данные</value>
+  </data>
 </root>

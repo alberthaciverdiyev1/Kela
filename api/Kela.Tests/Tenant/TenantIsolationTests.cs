@@ -123,3 +123,51 @@ public class TenantDeleteTests(ApiFactory factory)
         Assert.DoesNotContain(await service.ListAsync(), x => x.Id == created.Id);
     }
 }
+
+[Collection("api")]
+public class TenantRegistrationTests(ApiFactory factory)
+{
+    [Fact]
+    public async Task An_individual_teacher_gets_their_own_tenant_and_the_teacher_role()
+    {
+        using var scope = factory.Services.CreateScope();
+        var service = scope.ServiceProvider.GetRequiredService<Kela.Core.Modules.Tenant.Abstractions.ITenantService>();
+        var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+
+        var tenant = await service.RegisterAsync(new Kela.Core.Modules.Tenant.Requests.RegisterTenantRequest
+        {
+            AccountType = "teacher",
+            AdminName = "Aysel",
+            AdminSurname = "Aliyeva",
+            Email = $"teacher-{Guid.NewGuid():N}@test.local",
+            PhoneNumber = "0500000000",
+            Password = "Password1",
+            ConfirmPassword = "Password1",
+            AcceptTerms = true
+        });
+
+        Assert.Equal("Aysel Aliyeva", tenant.Name);
+
+        var user = await db.Users.IgnoreQueryFilters().FirstAsync(u => u.TenantId == tenant.Id);
+        Assert.Equal("teacher", user.Type);
+    }
+
+    [Fact]
+    public async Task A_course_registration_creates_an_admin_and_requires_a_phone()
+    {
+        using var scope = factory.Services.CreateScope();
+        var service = scope.ServiceProvider.GetRequiredService<Kela.Core.Modules.Tenant.Abstractions.ITenantService>();
+
+        await Assert.ThrowsAsync<ArgumentException>(() => service.RegisterAsync(
+            new Kela.Core.Modules.Tenant.Requests.RegisterTenantRequest
+            {
+                AccountType = "course",
+                CourseName = $"Kurs {Guid.NewGuid():N}",
+                AdminName = "Test",
+                Email = $"admin-{Guid.NewGuid():N}@test.local",
+                Password = "Password1",
+                ConfirmPassword = "Password1",
+                AcceptTerms = true
+            }));
+    }
+}

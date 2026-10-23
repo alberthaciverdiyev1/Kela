@@ -5,6 +5,9 @@ namespace Kela.Core.Modules.Tenant.Requests;
 /// <summary>Public müraciət: yeni kurs + onun ilk admini. Superadmin təsdiqinə qədər aktiv olmur.</summary>
 public class RegisterTenantRequest
 {
+    /// <summary>course = kurs (admin hesabı); teacher = fərdi müəllim (müəllim hesabı).</summary>
+    public string AccountType { get; set; } = "course";
+
     public string CourseName { get; set; } = string.Empty;
 
     /// <summary>İstəyə bağlı kurs loqosu.</summary>
@@ -16,7 +19,7 @@ public class RegisterTenantRequest
 
     public string Email { get; set; } = string.Empty;
 
-    public string? PhoneNumber { get; set; }
+    public string PhoneNumber { get; set; } = string.Empty;
 
     public string Password { get; set; } = string.Empty;
 
