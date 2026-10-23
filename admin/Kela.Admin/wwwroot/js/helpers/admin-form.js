@@ -200,9 +200,9 @@ window.AdminUI = window.AdminUI || {};
             }
             list.innerHTML = opts.map(o => `
                 <button type="button" class="admin-select-option${(multiple ? o.selected : o.index === select.selectedIndex) ? ' is-selected' : ''}"
-                        data-value="${o.value.replace(/"/g, '&quot;')}">
+                        data-value="${UI.escapeHtml(o.value)}">
                     ${multiple ? '<span class="admin-select-box"></span>' : ''}
-                    <span class="truncate">${o.text}</span>
+                    <span class="truncate">${UI.escapeHtml(o.text)}</span>
                 </button>`).join('');
         }
 

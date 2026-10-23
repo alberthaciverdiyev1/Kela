@@ -11,7 +11,7 @@ function hasImage(url) {
 function lessonThumb(lesson) {
     // İkon həmişə altdadır: şəkil yüklənməzsə sınıq şəkil işarəsi yerinə ikon görünür.
     const img = hasImage(lesson.image)
-        ? `<img src="${lesson.image}" alt="" class="absolute inset-0 h-full w-full object-cover" data-img-remove />`
+        ? `<img src="${AdminUI.escapeHtml(lesson.image)}" alt="" class="absolute inset-0 h-full w-full object-cover" data-img-remove />`
         : '';
     return `<span class="relative grid h-11 w-11 shrink-0 place-items-center overflow-hidden rounded-xl bg-primary-light text-primary">
         <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.9">${lessonIcon()}</svg>${img}</span>`;
@@ -68,7 +68,7 @@ AdminUI.listPage({
                 html: `<div class="flex items-center gap-4">
                     ${lessonThumb(l)}
                     <div>
-                        <a href="/lesson-content?lesson_id=${l.id}" class="font-bold text-slate-950 hover:text-primary">${l.title}</a>
+                        <a href="/lesson-content?lesson_id=${l.id}" class="font-bold text-slate-950 hover:text-primary">${AdminUI.escapeHtml(l.title)}</a>
                         <p class="mt-0.5 flex items-center gap-2 text-sm text-slate-500">
                             <span>${subjectName} dərsi</span>
                             ${l.isShared ? AdminUI.badge(L["Lesson_Shared"], 'primary') : ''}

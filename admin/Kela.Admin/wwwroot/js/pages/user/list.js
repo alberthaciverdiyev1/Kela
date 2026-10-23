@@ -17,9 +17,9 @@ AdminUI.listPage({
     }),
     row: (u, i, ctx) => [
         { html: AdminUI.rowNo(u, i, ctx.page, ctx.perPage), cls: 'text-slate-400' },
-        { html: `${u.name ?? ''} ${u.surname ?? ''}`.trim() || '-', cls: 'font-medium text-slate-800' },
-        { html: u.email, cls: 'text-slate-500' },
-        { html: u.phoneNumber ?? '-', cls: 'text-slate-500' },
+        { html: `${AdminUI.escapeHtml(u.name ?? '')} ${AdminUI.escapeHtml(u.surname ?? '')}`.trim() || '-', cls: 'font-medium text-slate-800' },
+        { html: AdminUI.escapeHtml(u.email), cls: 'text-slate-500' },
+        { html: AdminUI.escapeHtml(u.phoneNumber ?? '-'), cls: 'text-slate-500' },
         { html: u.type === 'superadmin' ? AdminUI.badge('SuperAdmin', 'success') : (u.type === 'admin' ? AdminUI.badge('Admin', 'primary') : AdminUI.badge(L["Role_Teacher"], 'neutral')) },
         {
             html: AdminUI.rowActions([

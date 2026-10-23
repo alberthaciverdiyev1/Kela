@@ -54,15 +54,15 @@ window.NodesPage = (function () {
 
             return [
                 { html: AdminUI.rowNo(node, index), cls: 'text-slate-400' },
-                { html: `<span class="font-semibold text-slate-800">${node.name}</span>` },
+                { html: `<span class="font-semibold text-slate-800">${AdminUI.escapeHtml(node.name)}</span>` },
                 { html: statusBadge(node.status) },
-                { html: `<span class="text-sm text-slate-500">${platform || '—'}</span>` },
-                { html: `<span class="text-sm text-slate-500">${encoders}</span>` },
+                { html: `<span class="text-sm text-slate-500">${AdminUI.escapeHtml(platform || '—')}</span>` },
+                { html: `<span class="text-sm text-slate-500">${AdminUI.escapeHtml(encoders)}</span>` },
                 { html: benchmark
                     ? `<span class="text-sm font-semibold text-slate-700">${benchmark.fps} fps</span> <span class="text-xs text-slate-400">(bal ${node.performanceScore})</span>`
                     : '<span class="text-sm text-slate-400">—</span>' },
                 { html: `<span class="text-sm font-semibold text-slate-700">${node.activeJobs} / ${node.maxConcurrentJobs}</span>` },
-                { html: `<span class="text-sm text-slate-500" title="${node.lastSeenAt || ''}">${secondsAgo(node.lastSeenAt)}</span>` },
+                { html: `<span class="text-sm text-slate-500" title="${AdminUI.escapeHtml(node.lastSeenAt || '')}">${secondsAgo(node.lastSeenAt)}</span>` },
                 { html: actions, cls: 'text-right' }
             ];
         }), 8, { empty: L["Node_NoDevices"] });

@@ -22,7 +22,7 @@ async function load() {
     AdminUI.setInfo(students.length);
     AdminUI.table('rows', students.map((s, index) => [
         { html: AdminUI.rowNo(s, index), cls: 'text-slate-400' },
-        { html: `<div class="font-medium text-slate-800">${s.fullName}</div><div class="text-xs text-slate-400">${s.email}</div>` },
+        { html: `<div class="font-medium text-slate-800">${AdminUI.escapeHtml(s.fullName)}</div><div class="text-xs text-slate-400">${AdminUI.escapeHtml(s.email)}</div>` },
         { html: `${s.attemptedQuizCount} / ${s.quizCount}`, cls: 'text-slate-500' },
         { html: s.completedQuestions, cls: 'text-slate-500' },
         { html: AdminUI.badge(s.correct, 'success') },

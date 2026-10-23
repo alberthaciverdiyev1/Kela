@@ -6,19 +6,22 @@ window.AdminUI = window.AdminUI || {};
     const TONE_CLASS = { primary: 'is-primary', danger: 'is-danger' };
     const toneOf = (opts) => TONE_CLASS[(opts && opts.tone) || ''] || '';
 
+    // İstifadəçi mətni innerHTML-ə düşməzdən əvvəl həmişə escape olunur.
+    const esc = (v) => UI.escapeHtml(v);
+
     function badge(text, variant, opts) {
         const dot = (opts && opts.dot) ? '<span class="badge-dot"></span>' : '';
-        return `<span class="badge badge-${variant || 'neutral'}">${dot}${text}</span>`;
+        return `<span class="badge badge-${variant || 'neutral'}">${dot}${esc(text)}</span>`;
     }
 
     function chip(text, tone) {
-        return `<span class="chip chip-${tone || 'neutral'}">${text}</span>`;
+        return `<span class="chip chip-${tone || 'neutral'}">${esc(text)}</span>`;
     }
 
     function statCard(label, value, tone) {
         return `<article class="admin-card p-4">
-            <p class="text-xs font-semibold uppercase tracking-wide text-slate-400">${label}</p>
-            <p class="mt-1 text-2xl font-extrabold ${tone || 'text-slate-950'}">${value}</p>
+            <p class="text-xs font-semibold uppercase tracking-wide text-slate-400">${esc(label)}</p>
+            <p class="mt-1 text-2xl font-extrabold ${tone || 'text-slate-950'}">${esc(value)}</p>
         </article>`;
     }
 
@@ -44,18 +47,19 @@ window.AdminUI = window.AdminUI || {};
     }
 
     function actionButton(label, onclick, opts) {
-        return `<button type="button" class="admin-row-action ${toneOf(opts)}"${actionAttrs(onclick)}>${label}</button>`;
+        return `<button type="button" class="admin-row-action ${toneOf(opts)}"${actionAttrs(onclick)}>${esc(label)}</button>`;
     }
 
     // Yalnız ikonlu sətir əməliyyatı (tooltip ilə).
     function actionIcon(path, title, onclick, opts) {
-        return `<button type="button" class="admin-row-action ${toneOf(opts)}" title="${title}" aria-label="${title}"${actionAttrs(onclick)}>
+        const safeTitle = esc(title);
+        return `<button type="button" class="admin-row-action ${toneOf(opts)}" title="${safeTitle}" aria-label="${safeTitle}"${actionAttrs(onclick)}>
             <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.9">${path}</svg>
         </button>`;
     }
 
     function actionLink(label, href, opts) {
-        return `<a href="${href}" class="admin-row-action ${toneOf(opts)}">${label}</a>`;
+        return `<a href="${esc(href)}" class="admin-row-action ${toneOf(opts)}">${esc(label)}</a>`;
     }
 
     function rowActions(parts) {

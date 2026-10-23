@@ -16,7 +16,7 @@ async function refreshDevices() {
     const items = await AdminUI.get(`/students/${devStudentId}/devices`);
     const box = document.getElementById('devicesList');
     box.innerHTML = items.length
-        ? items.map(d => `<div class="rounded-lg bg-slate-50 px-3 py-2 text-sm text-slate-700">${d.deviceId}</div>`).join('')
+        ? items.map(d => `<div class="rounded-lg bg-slate-50 px-3 py-2 text-sm text-slate-700">${AdminUI.escapeHtml(d.deviceId)}</div>`).join('')
         : '<div class="text-sm text-slate-400">Cihaz yoxdur</div>';
 }
 

@@ -44,7 +44,7 @@
                 ${items.map(i => `
                     <div class="flex items-center gap-2 text-sm">
                         <span class="h-2.5 w-2.5 shrink-0 rounded-full" style="background:${color(i.tone)}"></span>
-                        <span class="text-slate-500">${i.label}</span>
+                        <span class="text-slate-500">${AdminUI.escapeHtml(i.label)}</span>
                         <span class="ml-auto font-bold text-slate-800">${i.value}</span>
                     </div>`).join('')}
             </div>`;
@@ -54,7 +54,7 @@
         const max = Math.max(1, ...items.map(i => i.value));
         el.innerHTML = items.map(i => `
             <div class="admin-bar-row">
-                <span class="min-w-0 flex-1 truncate text-sm text-slate-600">${i.label}</span>
+                <span class="min-w-0 flex-1 truncate text-sm text-slate-600">${AdminUI.escapeHtml(i.label)}</span>
                 <span class="w-full max-w-[45%]">
                     <span class="admin-bar-track">
                         <span class="admin-bar-fill" style="width:${Math.round((i.value / max) * 100)}%;background:${color(i.tone)}"></span>

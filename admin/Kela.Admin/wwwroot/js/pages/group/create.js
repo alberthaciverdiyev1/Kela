@@ -114,12 +114,12 @@
             const group = o.group || '';
             if (group !== lastGroup) {
                 lastGroup = group;
-                header = `<div class="px-3 pt-3 pb-1 text-xs font-bold uppercase tracking-wide text-slate-400">${group || L["Common_General"]}</div>`;
+                header = `<div class="px-3 pt-3 pb-1 text-xs font-bold uppercase tracking-wide text-slate-400">${AdminUI.escapeHtml(group || L["Common_General"])}</div>`;
             }
             return header + `
-            <label class="flex cursor-pointer items-center gap-3 rounded-lg px-3 py-2 hover:bg-surface-secondary" data-name="${(o.text || '').toLowerCase()}">
+            <label class="flex cursor-pointer items-center gap-3 rounded-lg px-3 py-2 hover:bg-surface-secondary" data-name="${AdminUI.escapeHtml((o.text || '').toLowerCase())}">
                 <input type="checkbox" value="${o.id}" ${checked ? 'checked' : ''} class="h-4 w-4 rounded border-slate-300 text-primary focus:ring-primary" />
-                <span class="text-sm text-slate-700">${o.text}</span>
+                <span class="text-sm text-slate-700">${AdminUI.escapeHtml(o.text)}</span>
             </label>`;
         }).join('');
     }

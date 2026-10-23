@@ -8,7 +8,7 @@
     const fillSelect = (id, items) => {
         const el = document.getElementById(id);
         if (!el) return;
-        el.innerHTML = items.map(o => `<option value="${o.id}">${o.text}</option>`).join('');
+        el.innerHTML = items.map(o => `<option value="${o.id}">${AdminUI.escapeHtml(o.text)}</option>`).join('');
     };
 
     function renderMembers(containerId, items, type, labelFn, idFn) {
@@ -22,7 +22,7 @@
         items.forEach(item => {
             const row = document.createElement('div');
             row.className = 'flex items-center justify-between rounded-xl bg-surface-secondary px-4 py-2.5';
-            row.innerHTML = `<span class="text-sm text-slate-700">${labelFn(item)}</span>
+            row.innerHTML = `<span class="text-sm text-slate-700">${AdminUI.escapeHtml(labelFn(item))}</span>
                 <button type="button" class="admin-row-action is-danger" ${AdminUI.actionAttrs('removeMember', [type, idFn(item)])}>${L["Common_Delete"]}</button>`;
             box.appendChild(row);
         });

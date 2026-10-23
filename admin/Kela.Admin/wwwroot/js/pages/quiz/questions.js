@@ -32,7 +32,7 @@ async function refreshQuestions() {
     items.forEach(q => {
         const row = document.createElement('div');
         row.className = 'flex items-center justify-between rounded-lg bg-slate-50 px-3 py-2';
-        row.innerHTML = `<span class="text-sm text-slate-700">${q.title ?? ('#' + q.id)}</span>
+        row.innerHTML = `<span class="text-sm text-slate-700">${AdminUI.escapeHtml(q.title ?? ('#' + q.id))}</span>
             <button type="button" class="text-sm text-red-600 hover:text-red-800"${AdminUI.actionAttrs('removeQuestion', [q.id])}>Sil</button>`;
         box.appendChild(row);
     });

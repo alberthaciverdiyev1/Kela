@@ -68,7 +68,7 @@ AdminUI.listPage({
     },
     row: (c, i, ctx) => [
         { html: AdminUI.rowNo(c, i, ctx.page, ctx.perPage), cls: 'text-slate-400' },
-        { html: `<div class="flex items-center gap-4">${contentThumb(c)}<span class="font-medium text-slate-800">${c.title}</span></div>` },
+        { html: `<div class="flex items-center gap-4">${contentThumb(c)}<span class="font-medium text-slate-800">${AdminUI.escapeHtml(c.title)}</span></div>` },
         { html: lessonCell(c) },
         { html: TYPE_TEXT[c.type] ?? '-', cls: 'text-slate-500' },
         { html: statusBadge(c) },
@@ -109,18 +109,18 @@ function previewContent(id) {
         } else {
             // Şaquli videolar modal-ı ekrandan uzun edirdi — hündürlük məhdudlaşdırılır,
             // tam ölçü üçün fullscreen düyməsi var.
-            body.innerHTML = `<video id="previewVideo" controls autoplay playsinline data-src="${url}"
+            body.innerHTML = `<video id="previewVideo" controls autoplay playsinline data-src="${AdminUI.escapeHtml(url)}"
                 class="preview-video mx-auto block max-h-[55vh] max-w-full rounded-xl bg-black"></video>`;
             AdminMedia.hydrate(body);
         }
     } else if (c.type === 'voice') {
-        body.innerHTML = `<audio src="${c.url}" controls autoplay class="mx-auto block w-full"></audio>`;
+        body.innerHTML = `<audio src="${AdminUI.escapeHtml(c.url)}" controls autoplay class="mx-auto block w-full"></audio>`;
     } else if (/\.(png|jpe?g|gif|webp|svg)($|\?)/i.test(c.url)) {
-        body.innerHTML = `<img src="${c.url}" alt="" class="mx-auto max-h-[70vh] rounded-xl" />`;
+        body.innerHTML = `<img src="${AdminUI.escapeHtml(c.url)}" alt="" class="mx-auto max-h-[70vh] rounded-xl" />`;
     } else if (/\.pdf($|\?)/i.test(c.url)) {
-        body.innerHTML = `<iframe src="${c.url}" class="h-[70vh] w-full rounded-xl"></iframe>`;
+        body.innerHTML = `<iframe src="${AdminUI.escapeHtml(c.url)}" class="h-[70vh] w-full rounded-xl"></iframe>`;
     } else {
-        body.innerHTML = `<iframe src="${c.url}" class="h-[70vh] w-full rounded-xl" title="${c.title || ''}"></iframe>`;
+        body.innerHTML = `<iframe src="${AdminUI.escapeHtml(c.url)}" class="h-[70vh] w-full rounded-xl" title="${AdminUI.escapeHtml(c.title || '')}"></iframe>`;
     }
 
     document.getElementById('previewFullscreenBtn')

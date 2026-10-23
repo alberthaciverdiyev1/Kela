@@ -5,7 +5,7 @@ window.PlanPage = (function () {
         const plans = await AdminUI.get('/plan/list');
 
         AdminUI.table('rows', (plans || []).map(p => [
-            { html: `<span class="font-bold text-slate-900">${p.name}</span><br><code class="text-xs text-slate-400">${p.code}</code>` },
+            { html: `<span class="font-bold text-slate-900">${AdminUI.escapeHtml(p.name)}</span><br><code class="text-xs text-slate-400">${AdminUI.escapeHtml(p.code)}</code>` },
             { html: `<span class="font-semibold">${p.monthlyPrice} ${p.currency}</span>` },
             { html: limit(p.maxStudents) },
             { html: limit(p.maxGroups) },

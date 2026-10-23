@@ -8,8 +8,8 @@ async function loadList() {
     AdminUI.setInfo(items.length);
     AdminUI.table('rows', items.map((t, i) => [
         { html: AdminUI.rowNo(t, i, 1, items.length), cls: 'text-slate-400' },
-        { html: t.name, cls: 'font-medium text-slate-800' },
-        { html: `<code class="text-sm text-slate-500">${t.slug}</code>` },
+        { html: AdminUI.escapeHtml(t.name), cls: 'font-medium text-slate-800' },
+        { html: `<code class="text-sm text-slate-500">${AdminUI.escapeHtml(t.slug)}</code>` },
         { html: t.planName ? AdminUI.badge(t.planName, 'primary') : '<span class="text-slate-400">—</span>' },
         { html: t.isPending
             ? AdminUI.badge(L["Tenant_Pending"], 'warning')

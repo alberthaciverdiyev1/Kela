@@ -6,6 +6,7 @@
     const $ = (id) => document.getElementById(id);
 
     const label = (t) => `${t.userName} · ${t.userEmail}`;
+    const safeLabel = (t) => AdminUI.escapeHtml(label(t));
 
     function renderThreads() {
         const box = $('fbThreads');
@@ -23,10 +24,10 @@
                         : t.hasUnreadForAdmin ? 'border-primary/30 bg-primary-light/40 hover:bg-primary-light'
                         : 'border-border bg-white hover:bg-surface-secondary'}">
                 <div class="flex items-center justify-between gap-2">
-                    <span class="truncate text-sm font-bold text-slate-800">${label(t)}</span>
+                    <span class="truncate text-sm font-bold text-slate-800">${safeLabel(t)}</span>
                     ${t.hasUnreadForAdmin ? '<span class="h-2 w-2 shrink-0 rounded-full bg-primary"></span>' : ''}
                 </div>
-                <p class="mt-1 truncate text-xs text-slate-500">${t.messages[t.messages.length - 1]?.body || ''}</p>
+                <p class="mt-1 truncate text-xs text-slate-500">${AdminUI.escapeHtml(t.messages[t.messages.length - 1]?.body || '')}</p>
                 <p class="mt-1 text-[11px] text-slate-400">${new Date(t.lastMessageAt).toLocaleString('az')}</p>
             </button>`).join('');
     }
@@ -47,16 +48,16 @@
         box.innerHTML = `
             <div class="mb-2 flex items-center justify-between gap-2 border-b border-border pb-2">
                 <div class="min-w-0">
-                    <p class="truncate text-sm font-bold text-slate-800">${label(t)}</p>
-                    <p class="text-[11px] text-slate-400">${t.role}</p>
+                    <p class="truncate text-sm font-bold text-slate-800">${safeLabel(t)}</p>
+                    <p class="text-[11px] text-slate-400">${AdminUI.escapeHtml(t.role)}</p>
                 </div>
                 <button type="button" class="admin-row-action is-danger"${AdminUI.actionAttrs('deleteThread', [t.id])}>${L["Common_Delete"]}</button>
             </div>
             ${t.messages.map(m => `
                 <div class="flex ${m.senderRole === 'admin' ? 'justify-end' : 'justify-start'}">
                     <div class="max-w-[75%] rounded-2xl px-3 py-2 text-sm ${m.senderRole === 'admin' ? 'bg-primary text-white' : 'bg-surface-secondary text-slate-800'}">
-                        <p class="whitespace-pre-wrap break-words">${m.body}</p>
-                        ${m.imageUrl ? `<a href="${m.imageUrl}" target="_blank" rel="noopener"><img src="${m.imageUrl}" alt="" class="mt-2 max-h-40 rounded-lg object-contain" /></a>` : ''}
+                        <p class="whitespace-pre-wrap break-words">${AdminUI.escapeHtml(m.body)}</p>
+                        ${m.imageUrl ? `<a href="${AdminUI.escapeHtml(m.imageUrl)}" target="_blank" rel="noopener"><img src="${AdminUI.escapeHtml(m.imageUrl)}" alt="" class="mt-2 max-h-40 rounded-lg object-contain" /></a>` : ''}
                         <span class="mt-1 block text-[10px] ${m.senderRole === 'admin' ? 'text-white/70' : 'text-slate-400'}">
                             ${new Date(m.createdAt).toLocaleString('az')}${m.senderRole === 'admin' && m.isRead ? ' · ' + L["Feedback_Read"] : ''}
                         </span>
