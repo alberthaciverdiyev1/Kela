@@ -14,5 +14,8 @@ public class OtpCode
 
     public DateTimeOffset? UsedAt { get; set; }
 
+    /// <summary>Səhv cəhdlərin sayı — brute-force qarşısı üçün.</summary>
+    public int Attempts { get; set; }
+
     public DateTimeOffset CreatedAt { get; set; } = DateTimeOffset.UtcNow;
 }
