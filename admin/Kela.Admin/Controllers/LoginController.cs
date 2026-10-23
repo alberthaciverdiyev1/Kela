@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.RateLimiting;
 
 namespace Kela.Admin.Controllers;
 
@@ -26,6 +27,7 @@ public sealed class LoginController(IUserAuthService service, ITenantService ten
 
     [HttpPost]
     [ValidateAntiForgeryToken]
+    [EnableRateLimiting("login")]
     public async Task<IActionResult> Index(UserLoginRequest request, CancellationToken ct)
     {
         try
