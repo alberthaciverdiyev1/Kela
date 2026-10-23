@@ -169,5 +169,5 @@ public sealed class NotificationService(
             .ToPagedAsync(request, ToResponse, ct);
 
     private NotificationResponse ToResponse(Notification n) =>
-        new(n.Id, n.Title, n.Body, storage.GetUrl(n.Image), n.All, n.CreatedAt);
+        new(n.Id, n.Title, n.Body, storage.GetUrl(n.Image), n.All, n.CreatedAt, n.Data);
 }

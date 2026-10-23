@@ -39,6 +39,12 @@
                                 <p class="mt-1 text-[12px] leading-5 text-sage-459">@n.Body</p>
                             }
                             <p class="mt-1.5 text-[10px] text-sage-410">@n.CreatedAt.ToLocalTime().ToString("dd.MM.yyyy HH:mm")</p>
+                            @if (HomeworkRoute(n) is string route)
+                            {
+                                <a href="@route" class="mt-1.5 inline-block text-[12px] font-bold text-brand-671 hover:underline">
+                                    @L["Homework_OpenNotification"]
+                                </a>
+                            }
                         </div>
                     </div>
                 </article>

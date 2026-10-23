@@ -6,4 +6,5 @@ public record NotificationResponse(
     string? Body,
     string? Image,
     bool All,
-    DateTimeOffset CreatedAt);
+    DateTimeOffset CreatedAt,
+    string? Data = null);

@@ -6,7 +6,8 @@ public record NotificationDto(
     string? Body,
     string? Image,
     bool All,
-    DateTimeOffset CreatedAt);
+    DateTimeOffset CreatedAt,
+    string? Data = null);
 
 /// <summary>Serverin PagedResponse&lt;T&gt; zərfi ilə uyğun səhifələnmiş nəticə.</summary>
 public record PagedResult<T>(

@@ -1,3 +1,4 @@
+using System.Text.Json;
 using Microsoft.AspNetCore.Components;
 using Kela.App.Shared.Dtos.Notification;
 using Kela.App.Shared.Services.Api;
@@ -25,6 +26,22 @@ public partial class Notifications
     protected override Task OnInitializedAsync() => FetchAsync();
 
     /// <summary>Növbəti səhifəni çəkir (ilk səhifədə siyahını sıfırlayır).</summary>
+    /// <summary>Bildirişin Data sahəsindəki təhlükəsiz daxili route (yalnız /homeworks/...).</summary>
+    private static string? HomeworkRoute(NotificationDto n)
+    {
+        if (string.IsNullOrWhiteSpace(n.Data)) return null;
+
+        try
+        {
+            using var document = JsonDocument.Parse(n.Data);
+            if (!document.RootElement.TryGetProperty("route", out var route)) return null;
+
+            var value = route.GetString();
+            return value is not null && value.StartsWith("/homeworks/", StringComparison.Ordinal) ? value : null;
+        }
+        catch (JsonException) { return null; }
+    }
+
     private async Task FetchAsync()
     {
         if (_busy) return;

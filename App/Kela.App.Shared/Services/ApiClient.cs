@@ -68,6 +68,26 @@ public sealed class ApiClient(HttpClient http, AuthState auth, TokenStore store,
     public Task<T> PostFeedbackMessageAsync<T>(string path, string message, Stream? image, string? fileName, string? contentType)
         => PostFeedbackAsync<T>(path, message, image, fileName, contentType);
 
+    /// <summary>Çoxfayllı təqdimat: mətn, link və təkrar `files` sahələri.</summary>
+    public Task<T> PostHomeworkSubmissionAsync<T>(
+        string path, string? text, string? link,
+        IEnumerable<Kela.App.Shared.Dtos.Homework.HomeworkUploadFile> files)
+    {
+        var form = new MultipartFormDataContent();
+        if (!string.IsNullOrWhiteSpace(text)) form.Add(new StringContent(text), "text");
+        if (!string.IsNullOrWhiteSpace(link)) form.Add(new StringContent(link), "link");
+
+        foreach (var file in files)
+        {
+            var content = new StreamContent(file.Content);
+            content.Headers.ContentType = new MediaTypeHeaderValue(
+                string.IsNullOrWhiteSpace(file.ContentType) ? "application/octet-stream" : file.ContentType);
+            form.Add(content, "files", file.FileName);
+        }
+
+        return SendRequestAsync<T>(HttpMethod.Post, path, form);
+    }
+
     private Task<T> SendAsync<T>(HttpMethod method, string path, object? body)
     {
         HttpContent? content = body is null ? null : JsonContent.Create(body, options: JsonOptions);
