@@ -295,7 +295,7 @@ public sealed class SubscriptionService(AppDbContext db) : ISubscriptionService
 
     public async Task AssignPlanAsync(long tenantId, AssignPlanRequest request, CancellationToken ct = default)
     {
-        var tenant = await db.Tenants.FirstOrDefaultAsync(x => x.Id == tenantId, ct)
+        var tenant = await db.Tenants.FirstOrDefaultAsync(x => x.Id == tenantId && x.DeletedAt == null, ct)
             ?? throw new KeyNotFoundException($"Tenant not found: {tenantId}");
 
         if (!await db.SubscriptionPlans.AnyAsync(x => x.Id == request.PlanId, ct))

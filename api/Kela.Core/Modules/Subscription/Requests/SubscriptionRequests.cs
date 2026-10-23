@@ -68,6 +68,7 @@ public class PlanRequest
 
 public class AssignPlanRequest
 {
+    [FromForm(Name = "plan_id")]
     public long PlanId { get; set; }
 
     [FromForm(Name = "expires_at")]

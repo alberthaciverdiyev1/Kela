@@ -19,16 +19,18 @@ window.PlanModal = (function () {
         await loadPlans();
 
         document.getElementById('planTenantId').value = tenantId;
-        if (planId) document.getElementById('planSelect').value = planId;
+
+        const select = document.getElementById('planSelect');
+        select.value = planId || '';
+        if (AdminUI.syncSelect) AdminUI.syncSelect(select);
+
         document.getElementById('planExpires').value = expiresAt ? expiresAt.substring(0, 10) : '';
 
-        modal().classList.remove('hidden');
-        modal().classList.add('flex');
+        AdminUI.openModal('planModal');
     }
 
     function close() {
-        modal().classList.add('hidden');
-        modal().classList.remove('flex');
+        AdminUI.closeModal('planModal');
     }
 
     document.addEventListener('DOMContentLoaded', () => {
