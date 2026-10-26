@@ -187,12 +187,34 @@ public sealed class QuizService(AppDbContext db, IFileStorage storage) : IQuizSe
             .ToListAsync(ct);
     }
 
+    public async Task<IReadOnlyList<QuizGroupResponse>> ListGroupOptionsAsync(
+        long quizId, long? ownerId = null, CancellationToken ct = default)
+    {
+        await EnsureQuizAccessibleAsync(quizId, ownerId, ct);
+        var subjectId = await QuizSubjectIdAsync(quizId, ct);
+
+        var query = db.Groups.AsNoTracking();
+
+        if (ownerId is long id) query = query.Where(x => x.UserId == id);
+
+        // Fənnə bağlı imtahan yalnız həmin fənni olan qruplara təklif olunur.
+        if (subjectId is long sid)
+        {
+            query = query.Where(g => db.GroupSubjects.Any(gs => gs.GroupId == g.Id && gs.SubjectId == sid));
+        }
+
+        return await query.OrderBy(g => g.Name)
+            .Select(g => new QuizGroupResponse(g.Id, g.Name))
+            .ToListAsync(ct);
+    }
+
     public async Task<IReadOnlyList<QuizGroupResponse>> AssignGroupsAsync(
         long quizId, AssignGroupsRequest request, long? ownerId = null, CancellationToken ct = default)
     {
         await EnsureQuizOwnedAsync(quizId, ownerId, ct);
 
         var ids = request.GroupIds.Distinct().ToList();
+        var subjectId = await QuizSubjectIdAsync(quizId, ct);
 
         if (ids.Count > 0)
         {
@@ -202,6 +224,21 @@ public sealed class QuizService(AppDbContext db, IFileStorage storage) : IQuizSe
                 .ToListAsync(ct);
 
             if (groups.Count != ids.Count) throw new ArgumentException("Group not found");
+
+            // Fənnə bağlı imtahan yalnız həmin fənni olan qrupa bağlana bilər.
+            if (subjectId is long sid)
+            {
+                var withSubject = await db.GroupSubjects.AsNoTracking()
+                    .Where(gs => ids.Contains(gs.GroupId) && gs.SubjectId == sid)
+                    .Select(gs => gs.GroupId)
+                    .Distinct()
+                    .ToListAsync(ct);
+
+                if (ids.Except(withSubject).Any())
+                {
+                    throw new ArgumentException("The group does not have the quiz's subject");
+                }
+            }
 
             // Qrup tərəfindəki AssignQuizzes ilə eyni qayda: teacher yalnız öz qrupuna bağlayır.
             foreach (var group in groups)
@@ -247,6 +284,22 @@ public sealed class QuizService(AppDbContext db, IFileStorage storage) : IQuizSe
 
         link.DeletedAt = DateTimeOffset.UtcNow;
         await db.SaveChangesAsync(ct);
+    }
+
+    /// <summary>İmtahanın dərsinin fənni; ümumi imtahanda null.</summary>
+    private async Task<long?> QuizSubjectIdAsync(long quizId, CancellationToken ct)
+    {
+        var lessonId = await db.Quizzes.AsNoTracking()
+            .Where(x => x.Id == quizId)
+            .Select(x => x.LessonId)
+            .FirstOrDefaultAsync(ct);
+
+        if (lessonId is not long id) return null;
+
+        return await db.Lessons.AsNoTracking()
+            .Where(x => x.Id == id)
+            .Select(x => (long?)x.SubjectId)
+            .FirstOrDefaultAsync(ct);
     }
 
     private async Task EnsureLessonExistsAsync(long lessonId, CancellationToken ct)

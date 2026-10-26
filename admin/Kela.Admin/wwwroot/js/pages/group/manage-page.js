@@ -29,9 +29,17 @@
     }
 
     async function refresh() {
+        const subjects = await AdminUI.get(`/group/${groupId}/subjects`);
+
         renderMembers('studentsList', await AdminUI.get(`/group/${groupId}/students`), 'students', m => `${m.fullName} · ${m.email}`, m => m.studentId);
-        renderMembers('subjectsList', await AdminUI.get(`/group/${groupId}/subjects`), 'subjects', s => s.name, s => s.id);
+        renderMembers('subjectsList', subjects, 'subjects', s => s.name, s => s.id);
         renderMembers('quizzesList', await AdminUI.get(`/group/${groupId}/quizzes`), 'quizzes', q => q.title, q => q.id);
+
+        // İmtahan seçimi yalnız qrupun fənlərinə aid olanlarla məhdudlaşır.
+        if (options) {
+            const subjectIds = new Set(subjects.map(s => s.id));
+            fillSelect('quizPick', (options.quizzes || []).filter(q => q.subjectId == null || subjectIds.has(q.subjectId)));
+        }
     }
 
     async function loadOptions() {

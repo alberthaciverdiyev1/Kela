@@ -17,20 +17,22 @@ async function openGroups(id) {
     const q = await AdminUI.get('/quiz/' + id);
     document.getElementById('groupsTitle').textContent = (q.title || '') + ' — ' + L["Nav_Groups"];
 
-    if (!groupOptionsCache) {
-        const res = await AdminUI.get('/group/list?per_page=500');
-        groupOptionsCache = (res.data || []).map(g => ({ id: g.id, text: g.name }));
-    }
-
+    groupOptionsCache = await loadGroupOptions(id);
     await refreshGroups();
     AdminUI.openModal('groupsModal');
+}
+
+async function loadGroupOptions(id) {
+    // İmtahanın fənni olmayan qruplar serverdə artıq filtrlənir.
+    const items = await AdminUI.get(`/quiz/${id}/group-options`);
+    return items.map(g => ({ id: g.id, text: g.name }));
 }
 
 function refreshGroups() {
     return Promise.all([
         AdminUI.get(`/quiz/${qzGroupsQuizId}/groups`),
-        groupOptionsCache ? Promise.resolve(groupOptionsCache) : AdminUI.get('/group/list?per_page=500')
-            .then(res => (groupOptionsCache = (res.data || []).map(g => ({ id: g.id, text: g.name }))))
+        groupOptionsCache ? Promise.resolve(groupOptionsCache) : loadGroupOptions(qzGroupsQuizId)
+            .then(options => (groupOptionsCache = options))
     ]).then(([assigned, options]) => {
         const box = document.getElementById('groupsList');
         box.innerHTML = assigned.length

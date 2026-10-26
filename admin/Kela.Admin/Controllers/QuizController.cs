@@ -161,6 +161,10 @@ public sealed class QuizController(
     public async Task<IActionResult> Groups(long id, CancellationToken ct)
         => Json(await service.ListGroupsAsync(id, OwnerScope, ct));
 
+    [HttpGet("{id:long}/group-options")]
+    public async Task<IActionResult> GroupOptions(long id, CancellationToken ct)
+        => Json(await service.ListGroupOptionsAsync(id, OwnerScope, ct));
+
     [HttpPost("{id:long}/groups")]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> AssignGroups(

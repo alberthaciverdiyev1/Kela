@@ -333,6 +333,21 @@ public sealed class GroupService(
                 throw new ForbiddenException($"You do not have access to quiz {quizId}");
             }
 
+            // Fənnə bağlı imtahan yalnız həmin fənni olan qrupa əlavə olunur.
+            if (quiz.LessonId is long lessonId)
+            {
+                var subjectId = await db.Lessons.AsNoTracking()
+                    .Where(x => x.Id == lessonId)
+                    .Select(x => (long?)x.SubjectId)
+                    .FirstOrDefaultAsync(ct);
+
+                if (subjectId is long sid && !await db.GroupSubjects
+                        .AnyAsync(gs => gs.GroupId == groupId && gs.SubjectId == sid, ct))
+                {
+                    throw new ArgumentException("The quiz's subject is not assigned to this group");
+                }
+            }
+
             var existing = await db.GroupQuizzes
                 .IgnoreQueryFilters(new[] { "SoftDelete" })
                 .FirstOrDefaultAsync(x => x.GroupId == groupId && x.QuizId == quizId, ct);
