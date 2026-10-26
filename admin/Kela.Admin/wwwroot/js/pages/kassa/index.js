@@ -4,10 +4,29 @@ window.KassaPage = (function () {
 
     let currency = data.currencies[0]?.currency || 'AZN';
     let students = null;
+    let planTemplates = null;
 
     const money = (value) => Number(value || 0).toLocaleString('az', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
     const amountText = (value, code) => `${money(value)} ${code}`;
     const today = () => new Date().toLocaleDateString('sv-SE'); // yyyy-MM-dd
+
+    function addDays(iso, days) {
+        const date = new Date(iso + 'T00:00:00');
+        date.setDate(date.getDate() + days);
+        return date.toLocaleDateString('sv-SE');
+    }
+
+    function addMonths(iso, months) {
+        const date = new Date(iso + 'T00:00:00');
+        date.setMonth(date.getMonth() + months);
+        return date.toLocaleDateString('sv-SE');
+    }
+
+    function periodLabel(template) {
+        return template.frequency === 'custom'
+            ? `${template.intervalDays || 30} gün`
+            : 'aylıq';
+    }
 
     function statsFor(code) {
         return data.currencies.find(c => c.currency === code) || {};
@@ -18,6 +37,7 @@ window.KassaPage = (function () {
 
         document.getElementById('k-today').textContent = amountText(s.today, currency);
         document.getElementById('k-this').textContent = amountText(s.thisMonth, currency);
+        document.getElementById('k-expected').textContent = amountText(s.expectedThisMonth, currency);
         document.getElementById('k-last').textContent = amountText(s.lastMonth, currency);
         document.getElementById('k-projection').textContent = amountText(s.projected, currency);
         document.getElementById('k-overdue').textContent = amountText(s.overdue, currency);
@@ -47,11 +67,11 @@ window.KassaPage = (function () {
         }).join('');
     }
 
-    function renderRecent() {
+    function renderPayments(rows, emptyText) {
         const box = document.getElementById('kassaRecent');
 
-        box.innerHTML = data.recent.length
-            ? data.recent.map(r => `<tr>
+        box.innerHTML = rows.length
+            ? rows.map(r => `<tr>
                     <td class="whitespace-nowrap text-slate-500">${r.paidOn}</td>
                     <td class="font-medium text-slate-800">${esc(r.student)}</td>
                     <td class="whitespace-nowrap text-right font-semibold text-slate-800">${amountText(r.amount, r.currency)}</td>
@@ -60,27 +80,118 @@ window.KassaPage = (function () {
                         <button type="button" class="admin-row-action is-danger" data-action="KassaPage.removePayment" data-args='[${r.id}]'>Sil</button>
                     </td>
                 </tr>`).join('')
-            : '<tr><td colspan="5" class="p-4 text-sm text-slate-400">Hələ ödəniş qeydə alınmayıb.</td></tr>';
+            : `<tr><td colspan="5" class="p-4 text-sm text-slate-400">${emptyText}</td></tr>`;
+    }
+
+    function renderRecent() {
+        renderPayments(data.recent, 'Hələ ödəniş qeydə alınmayıb.');
+    }
+
+    async function applyRange() {
+        const from = document.getElementById('kassaFrom').value;
+        const to = document.getElementById('kassaTo').value;
+
+        const query = new URLSearchParams();
+        if (from) query.set('from', from);
+        if (to) query.set('to', to);
+
+        const rows = await AdminUI.get('/kassa/payments' + (query.toString() ? '?' + query : ''));
+        renderPayments(rows, 'Seçilmiş aralıqda ödəniş yoxdur.');
+
+        const totals = rows.reduce((acc, r) => {
+            acc[r.currency] = (acc[r.currency] || 0) + Number(r.amount || 0);
+            return acc;
+        }, {});
+
+        const text = Object.entries(totals).map(([code, total]) => amountText(total, code)).join(' · ');
+        document.getElementById('kassaRangeTotal').textContent = text ? `Aralıq mədaxili: ${text}` : '';
+    }
+
+    function clearRange() {
+        document.getElementById('kassaFrom').value = '';
+        document.getElementById('kassaTo').value = '';
+        document.getElementById('kassaRangeTotal').textContent = '';
+        renderRecent();
+    }
+
+    function fillStudentSelect() {
+        const select = document.getElementById('kassaStudent');
+
+        select.innerHTML = '<option value="">Tələbə seçin</option>' + students.map(s => {
+            const plan = s.amount ? ` — ${money(s.amount)} ${s.currency}` : '';
+            return `<option value="${s.id}">${esc(s.name)}${plan}</option>`;
+        }).join('');
+
+        AdminUI.syncSelect(select);
+    }
+
+    function fillPlanSelect() {
+        const select = document.getElementById('kassaPlan');
+
+        select.innerHTML = '<option value="">Plan seçilməyib</option>' + planTemplates.map(t =>
+            `<option value="${t.id}">${esc(t.name)} — ${money(t.amount)} ${t.currency} (${periodLabel(t)})</option>`
+        ).join('');
+
+        AdminUI.syncSelect(select);
+    }
+
+    function selectedStudent() {
+        const id = document.getElementById('kassaStudent').value;
+        return students?.find(s => String(s.id) === id);
+    }
+
+    function selectedPlan() {
+        const id = document.getElementById('kassaPlan').value;
+        return planTemplates?.find(t => String(t.id) === id);
+    }
+
+    function syncStudentHint() {
+        const student = selectedStudent();
+        const plan = selectedPlan();
+        const hint = document.getElementById('kassaStudentHint');
+        const amount = document.getElementById('kassaAmount');
+
+        if (plan) {
+            amount.value = plan.amount;
+            hint.textContent = `Seçilmiş plan: ${plan.name} · ${money(plan.amount)} ${plan.currency} · ${periodLabel(plan)}`;
+            return;
+        }
+
+        amount.value = student?.amount ?? '';
+
+        if (!student) { hint.textContent = ''; return; }
+
+        hint.textContent = student.amount
+            ? `Mövcud plan: ${money(student.amount)} ${student.currency}` +
+              (student.nextDueOn ? ` · növbəti ödəniş: ${student.nextDueOn}` : '')
+            : 'Bu tələbənin ödəniş planı yoxdur — yuxarıdan plan seçin.';
     }
 
     async function openPayment() {
         document.getElementById('kassaPaidOn').value = today();
-        document.getElementById('kassaAmount').value = '';
         document.getElementById('kassaNote').value = '';
         document.getElementById('kassaStudentHint').textContent = '';
 
-        const select = document.getElementById('kassaStudent');
-        AdminUI.openModal('kassaPaymentModal');
-
-        if (!students) {
-            select.innerHTML = '<option value="">Yüklənir...</option>';
-            students = await AdminUI.get('/kassa/students');
+        if (!students || !planTemplates) {
+            const [s, p] = await Promise.all([
+                students ? Promise.resolve(students) : AdminUI.get('/kassa/students'),
+                planTemplates ? Promise.resolve(planTemplates) : AdminUI.get('/kassa/plans')
+            ]);
+            students = s;
+            planTemplates = p;
         }
 
-        select.innerHTML = '<option value="">Tələbə seçin</option>' + students.map(s => {
-            const plan = s.amount ? ` — ${money(s.amount)} ${s.currency}` : '';
-            return `<option value="${s.id}" data-amount="${s.amount ?? ''}">${esc(s.name)}${plan}</option>`;
-        }).join('');
+        fillStudentSelect();
+        fillPlanSelect();
+
+        document.getElementById('kassaStudent').value = '';
+        document.getElementById('kassaPlan').value = '';
+        document.getElementById('kassaAmount').value = '';
+
+        AdminUI.syncSelect(document.getElementById('kassaStudent'));
+        AdminUI.syncSelect(document.getElementById('kassaPlan'));
+
+        AdminUI.openModal('kassaPaymentModal');
     }
 
     async function removePayment(id) {
@@ -91,29 +202,43 @@ window.KassaPage = (function () {
         else AdminUI.error(AdminUI.errText(res));
     }
 
-    document.getElementById('kassaStudent')?.addEventListener('change', (e) => {
-        const option = e.target.selectedOptions[0];
-        const amount = option?.dataset.amount;
-
-        if (amount) document.getElementById('kassaAmount').value = amount;
-
-        const student = students?.find(s => String(s.id) === e.target.value);
-        document.getElementById('kassaStudentHint').textContent = student?.nextDueOn
-            ? `Növbəti ödəniş tarixi: ${student.nextDueOn}`
-            : '';
-    });
+    document.getElementById('kassaStudent')?.addEventListener('change', syncStudentHint);
+    document.getElementById('kassaPlan')?.addEventListener('change', syncStudentHint);
 
     document.getElementById('kassaPaymentForm')?.addEventListener('submit', async (e) => {
         e.preventDefault();
 
-        const studentId = Number(document.getElementById('kassaStudent').value);
+        const student = selectedStudent();
+        const plan = selectedPlan();
         const amount = Number(document.getElementById('kassaAmount').value);
+        const paidOn = document.getElementById('kassaPaidOn').value || today();
 
-        if (!studentId || !(amount > 0)) { AdminUI.error('Tələbə və məbləğ tələb olunur'); return; }
+        if (!student) { AdminUI.error('Tələbə seçin'); return; }
+        if (!(amount > 0)) { AdminUI.error('Məbləğ sıfırdan böyük olmalıdır'); return; }
+        if (!plan && !student.amount) { AdminUI.error('Bu tələbənin ödəniş planı yoxdur — plan seçin'); return; }
+
+        if (plan) {
+            const nextDueOn = plan.frequency === 'custom'
+                ? addDays(paidOn, plan.intervalDays || 30)
+                : addMonths(paidOn, 1);
+
+            const planRes = await AdminUI.postJson('/kassa/plan', {
+                studentId: student.id,
+                joinedOn: paidOn,
+                nextDueOn,
+                amount: plan.amount,
+                currency: plan.currency,
+                frequency: plan.frequency,
+                intervalDays: plan.intervalDays,
+                note: plan.note
+            });
+
+            if (!planRes.ok) { AdminUI.error(AdminUI.errText(planRes)); return; }
+        }
 
         const res = await AdminUI.postJson('/kassa/payments', {
-            studentId,
-            paidOn: document.getElementById('kassaPaidOn').value || today(),
+            studentId: student.id,
+            paidOn,
             amount,
             note: document.getElementById('kassaNote').value.trim()
         });
@@ -139,5 +264,5 @@ window.KassaPage = (function () {
         renderRecent();
     });
 
-    return { openPayment, removePayment };
+    return { openPayment, removePayment, applyRange, clearRange };
 })();

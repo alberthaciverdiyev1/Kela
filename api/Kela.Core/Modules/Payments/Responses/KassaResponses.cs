@@ -4,6 +4,8 @@ public sealed record KassaCurrencyStats(
     string Currency,
     decimal Today,
     decimal ThisMonth,
+    /// <summary>Bu ay yığılması gözlənilən məbləğ: vaxtı keçmiş + bu ay ödənilməli planlar.</summary>
+    decimal ExpectedThisMonth,
     decimal LastMonth,
     /// <summary>Aktiv planların aylıq ekvivalentinə əsaslanan təxmini gəlir.</summary>
     decimal ProjectedNextMonth,

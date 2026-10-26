@@ -48,6 +48,46 @@ public sealed class KassaController(
         }));
     }
 
+    [HttpGet("plans")]
+    public async Task<IActionResult> Plans(CancellationToken ct)
+    {
+        if (!await CanAccessAsync(ct)) return Forbid();
+
+        return Json(await payments.ListTemplatesAsync(ct));
+    }
+
+    [HttpGet("payments")]
+    public async Task<IActionResult> PaymentRange(
+        [FromQuery(Name = "from")] DateOnly? from,
+        [FromQuery(Name = "to")] DateOnly? to,
+        CancellationToken ct)
+    {
+        if (!await CanAccessAsync(ct)) return Forbid();
+
+        return Json(await kassa.ListPaymentsAsync(from, to, ct));
+    }
+
+    [HttpPost("plan")]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> SavePlan([FromBody] SavePaymentPlanRequest request, CancellationToken ct)
+    {
+        if (!await CanAccessAsync(ct)) return Forbid();
+
+        try
+        {
+            await payments.SavePlanAsync(request, ct);
+            return Json(new { ok = true });
+        }
+        catch (ArgumentException ex)
+        {
+            return BadRequest(new { message = ex.Message });
+        }
+        catch (KeyNotFoundException ex)
+        {
+            return NotFound(new { message = ex.Message });
+        }
+    }
+
     [HttpPost("payments")]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Record([FromBody] RecordPaymentRequest request, CancellationToken ct)

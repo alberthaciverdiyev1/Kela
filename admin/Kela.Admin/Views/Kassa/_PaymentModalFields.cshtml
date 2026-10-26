@@ -1,10 +1,15 @@
 <form id="kassaPaymentForm" class="space-y-4 p-6">
-    <div>
-        <label for="kassaStudent" class="mb-1 block text-sm font-semibold text-slate-600">Tələbə</label>
-        <select id="kassaStudent" class="admin-field" data-native="1">
-            <option value="">Yüklənir...</option>
-        </select>
-    </div>
+    <partial name="Ui/_Select" model="@(new SelectModel
+    {
+        Name = "student_id", Id = "kassaStudent", Label = "Tələbə",
+        Options = new List<SelectOption>()
+    })" />
+
+    <partial name="Ui/_Select" model="@(new SelectModel
+    {
+        Name = "plan_id", Id = "kassaPlan", Label = "Ödəniş planı",
+        Options = new List<SelectOption>()
+    })" />
 
     <div class="grid gap-4 sm:grid-cols-2">
         <div>

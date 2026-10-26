@@ -48,6 +48,7 @@ public sealed class KassaService(AppDbContext db) : IKassaService
                 currency,
                 Today: paid.Where(p => p.PaidOn == today).Sum(p => p.Amount),
                 ThisMonth: paid.Where(p => p.PaidOn >= monthStart && p.PaidOn < nextMonthStart).Sum(p => p.Amount),
+                ExpectedThisMonth: activePlans.Where(p => p.NextDueOn < nextMonthStart).Sum(p => p.Amount),
                 LastMonth: paid.Where(p => p.PaidOn >= lastMonthStart && p.PaidOn < monthStart).Sum(p => p.Amount),
                 ProjectedNextMonth: activePlans.Sum(p => MonthlyEquivalent(p.Frequency, p.IntervalDays, p.Amount)),
                 OverdueAmount: activePlans.Where(p => p.NextDueOn < today).Sum(p => p.Amount),
@@ -96,7 +97,10 @@ public sealed class KassaService(AppDbContext db) : IKassaService
         if (from is DateOnly start) query = query.Where(p => p.PaidOn >= start);
         if (to is DateOnly end) query = query.Where(p => p.PaidOn <= end);
 
-        var rows = await query.OrderByDescending(p => p.PaidOn).ThenByDescending(p => p.Id).ToListAsync(ct);
+        var rows = await query
+            .OrderByDescending(p => p.PaidOn).ThenByDescending(p => p.Id)
+            .Take(1000)
+            .ToListAsync(ct);
         var studentIds = rows.Select(r => r.StudentId).Distinct().ToList();
 
         var names = await db.Students.AsNoTracking()
