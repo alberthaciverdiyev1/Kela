@@ -40,6 +40,7 @@ public sealed class GroupController(
         };
         ViewData["Teachers"] = await users.ListAsync(new UserListRequest { PerPage = 200 }, ct);
         ViewData["DefaultTeacherId"] = await DefaultTeacherIdAsync(ct);
+        ViewData["MultipleTeachers"] = await HasMultipleTeachersAsync(ct);
         ViewData["AppBaseUrl"] = AppBaseUrl;
         return View();
     }
@@ -60,10 +61,19 @@ public sealed class GroupController(
         ViewData["Group"] = group;
         ViewData["Teachers"] = await users.ListAsync(new UserListRequest { PerPage = 200 }, ct);
         ViewData["DefaultTeacherId"] = await DefaultTeacherIdAsync(ct);
+        ViewData["MultipleTeachers"] = await HasMultipleTeachersAsync(ct);
         ViewData["SubjectCount"] = (await service.ListSubjectsAsync(id, owner, ct)).Count;
         ViewData["QuizCount"] = (await service.ListQuizzesAsync(id, owner, ct)).Count;
         return View();
     }
+
+    /// <summary>Seçim yalnız birdən çox müəllim hesabı olanda məna daşıyır.</summary>
+    private async Task<bool> HasMultipleTeachersAsync(CancellationToken ct)
+        => (await users.ListAsync(new UserListRequest
+        {
+            PerPage = 1,
+            Type = Kela.Core.Modules.User.Entities.UserTypes.Teacher
+        }, ct)).Total > 1;
 
     /// <summary>
     /// Fərdi müəllim (kurs olmayan) tenant-da qrup yaradan şəxs avtomatik müəllim olur;

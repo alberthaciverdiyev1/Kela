@@ -21,7 +21,11 @@ public sealed class SubjectController(
         ViewData["Scripts"] = new[] { "~/js/pages/subject/list.js", "~/js/pages/subject/create.js", "~/js/pages/subject/update.js" };
 
         // Tək müəllim varsa "Bütün müəllimlər görsün" seçimi mənasızdır.
-        var staff = await users.ListAsync(new UserListRequest { PerPage = 1 }, ct);
+        var staff = await users.ListAsync(new UserListRequest
+        {
+            PerPage = 1,
+            Type = Kela.Core.Modules.User.Entities.UserTypes.Teacher
+        }, ct);
         ViewData["MultipleTeachers"] = staff.Total > 1;
 
         return View();

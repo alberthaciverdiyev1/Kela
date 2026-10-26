@@ -33,7 +33,7 @@
             <partial name="Ui/_Input" model="@(new InputModel { Name = "description", Id = "description", Label = L["Common_Description"] })" />
             @* Tək müəllim varsa seçim mənasızdır — sahə göstərilmir.
                Kursda birdən çox müəllim olanda admin seçir. *@
-            @if (User.IsAdmin() && teachers.Total > 1)
+            @if (User.IsAdmin() && ViewData["MultipleTeachers"] is true)
             {
                 <partial name="Ui/_Select" model="@(new SelectModel { Name = "user_id", Id = "user_id", Label = L["Common_Teacher"], Options = teacherOptions, Value = defaultTeacher })" />
             }
