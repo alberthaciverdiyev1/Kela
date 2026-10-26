@@ -9,7 +9,8 @@ namespace Kela.Api.Common.Middleware;
 public sealed class ExceptionHandlingMiddleware(
     RequestDelegate next,
     ILogger<ExceptionHandlingMiddleware> logger,
-    IStringLocalizer<SharedResource> L)
+    IStringLocalizer<SharedResource> L,
+    IWebHostEnvironment env)
 {
     public async Task InvokeAsync(HttpContext context)
     {
@@ -46,7 +47,14 @@ public sealed class ExceptionHandlingMiddleware(
         catch (Exception ex)
         {
             logger.LogError(ex, "Unexpected error");
-            await WriteAsync(context, HttpStatusCode.InternalServerError, L["Api_UnexpectedError"]);
+
+            // İnkişaf zamanı əsl səbəb görünsün; istehsalda detallar sızmasın.
+            var message = env.IsDevelopment() ? ex.Message : L["Api_UnexpectedError"];
+            await WriteAsync(
+                context,
+                HttpStatusCode.InternalServerError,
+                message,
+                env.IsDevelopment() ? new { detail = ex.ToString() } : null);
         }
     }
 

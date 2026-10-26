@@ -9,7 +9,8 @@ namespace Kela.Admin.Infrastructure;
 /// </summary>
 public sealed class ExceptionHandlingMiddleware(
     RequestDelegate next,
-    ILogger<ExceptionHandlingMiddleware> logger)
+    ILogger<ExceptionHandlingMiddleware> logger,
+    IWebHostEnvironment env)
 {
     public async Task InvokeAsync(HttpContext context)
     {
@@ -46,8 +47,16 @@ public sealed class ExceptionHandlingMiddleware(
         catch (Exception ex)
         {
             logger.LogError(ex, "Unexpected error");
+
+            // HTML səhifə naviqasiyasında framework-ün öz detallı xəta səhifəsi göstərilsin.
             if (WantsHtml(context)) throw;
-            await WriteAsync(context, HttpStatusCode.InternalServerError, "An unexpected error occurred.");
+
+            // İnkişaf zamanı əsl səbəb görünsün; istehsalda detallar sızmasın.
+            await WriteAsync(
+                context,
+                HttpStatusCode.InternalServerError,
+                env.IsDevelopment() ? ex.Message : "An unexpected error occurred.",
+                detail: env.IsDevelopment() ? ex.ToString() : null);
         }
     }
 
@@ -56,7 +65,8 @@ public sealed class ExceptionHandlingMiddleware(
            && context.Request.Headers.Accept.ToString().Contains("text/html", StringComparison.OrdinalIgnoreCase);
 
     private static async Task WriteAsync(
-        HttpContext context, HttpStatusCode status, string message, IDictionary<string, object?>? extra = null)
+        HttpContext context, HttpStatusCode status, string message,
+        IDictionary<string, object?>? extra = null, string? detail = null)
     {
         if (context.Response.HasStarted) return;
 
@@ -72,6 +82,8 @@ public sealed class ExceptionHandlingMiddleware(
         {
             foreach (var item in extra) body[item.Key] = item.Value;
         }
+
+        if (detail is not null) body["detail"] = detail;
 
         context.Response.StatusCode = (int)status;
         context.Response.ContentType = "application/json; charset=utf-8";
