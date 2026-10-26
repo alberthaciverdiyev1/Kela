@@ -26,8 +26,12 @@ window.AdminUI = window.AdminUI || {};
     }
 
     function notify(message, icon) {
+        const kind = icon || 'success';
+        const iconColors = { success: '#059669', error: '#ef4444', warning: '#f59e0b', info: '#00b884' };
+
         Swal.fire(Object.assign({}, SWAL_BASE, {
-            toast: true, position: 'top-end', icon: icon || 'success', title: message,
+            toast: true, position: 'top-end', icon: kind, title: message,
+            iconColor: iconColors[kind] || iconColors.info,
             showConfirmButton: false, timer: 2500, timerProgressBar: true,
             customClass: Object.assign({}, SWAL_BASE.customClass, { popup: 'admin-swal admin-swal-toast' })
         }));
