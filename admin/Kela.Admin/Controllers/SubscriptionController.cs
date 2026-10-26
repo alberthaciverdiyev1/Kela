@@ -2,6 +2,7 @@ using Kela.Admin.Infrastructure;
 using Kela.Core.Modules.Subscription.Abstractions;
 using Kela.Core.Modules.Subscription.Requests;
 using Kela.Core.Modules.Subscription.Responses;
+using Kela.Core.Modules.Setting.Abstractions;
 using Kela.Core.Modules.Tenant.Abstractions;
 using Kela.Core.Modules.User.Entities;
 using Microsoft.AspNetCore.Mvc;
@@ -12,8 +13,11 @@ namespace Kela.Admin.Controllers;
 [Route("[controller]")]
 public sealed class SubscriptionController(
     ISubscriptionService service,
-    ITenantService tenants) : AdminControllerBase
+    ITenantService tenants,
+    ISettingService settings) : AdminControllerBase
 {
+    private const string DefaultWhatsApp = "994709990569";
+
     [HttpGet]
     public async Task<IActionResult> Index(long? tenantId, CancellationToken ct)
     {
@@ -30,6 +34,19 @@ public sealed class SubscriptionController(
 
         // Superadmin tenant seçməyibsə plan yoxdur — səhifə seçim tələb edir.
         SubscriptionResponse? model = selected is long id ? await service.GetAsync(id, ct) : null;
+
+        if (selected is long tenantIdValue)
+        {
+            var tenant = await tenants.GetByIdAsync(tenantIdValue, ct);
+            var platform = await settings.GetPlatformAsync(ct);
+
+            ViewData["TenantName"] = tenant?.Name ?? string.Empty;
+            ViewData["Plans"] = await service.ListPlansAsync(onlyActive: true, ct);
+
+            // Plan seçimi hazırda WhatsApp ilə göndərilir — nömrə superadmin-in
+            // platforma ayarlarından götürülür, yoxdursa sabit nömrə.
+            ViewData["WhatsAppNumber"] = NormalizeWhatsApp(platform.WhatsappNumber);
+        }
 
         return View(model);
     }
@@ -63,6 +80,19 @@ public sealed class SubscriptionController(
         if (selected is not long id) return BadRequest(new { message = "Tenant seçilməyib" });
 
         return Json(await service.ListAddonsAsync(id, ct));
+    }
+
+    private static string NormalizeWhatsApp(string? value)
+    {
+        var digits = new string((value ?? string.Empty).Where(char.IsDigit).ToArray());
+
+        if (digits.StartsWith("00")) digits = digits[2..];
+        if (digits.Length == 0) return DefaultWhatsApp;
+
+        // Yerli format (0XX XXX XX XX) → beynəlxalq (994XX...).
+        if (digits.Length == 10 && digits.StartsWith('0')) digits = "994" + digits[1..];
+
+        return digits;
     }
 
     /// <summary>Superadmin üçün seçilmiş tenant: query → keçmiş tenant claim → ilk tenant.</summary>
