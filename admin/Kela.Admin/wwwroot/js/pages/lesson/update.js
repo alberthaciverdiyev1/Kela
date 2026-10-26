@@ -10,7 +10,9 @@
         document.getElementById('subject_id').value = data.subjectId;
         document.getElementById('title').value = data.title;
         document.getElementById('is_active').checked = data.isActive;
-        document.getElementById('is_shared').checked = data.isShared === true;
+        window.LESSON_CURRENT_SHARED = data.isShared === true;
+        const sharedToggle = document.getElementById('is_shared');
+        if (sharedToggle) sharedToggle.checked = window.LESSON_CURRENT_SHARED;
 
         // "Bütün qruplara əlavə et" yalnız yaratma zamanı tətbiq olunur.
         document.getElementById('add_to_groups').checked = false;
@@ -19,7 +21,7 @@
         // Paylaşımı yalnız dərsin sahibi və ya admin dəyişir; digər müəllim
         // yalnız statusu dəyişə bilər (o da siyahıdaki açardan).
         const canShare = window.ADMIN && (window.ADMIN.isAdmin || data.userId === window.ADMIN.userId);
-        document.getElementById('is_shared').disabled = !canShare;
+        if (sharedToggle) sharedToggle.disabled = !canShare;
         AdminUI.fileSet('image', data.image);
         AdminUI.openModal('modal');
     };

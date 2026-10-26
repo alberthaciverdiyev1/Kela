@@ -12,7 +12,9 @@
         document.getElementById('subject_id').value = document.getElementById('filter_subject')?.value || '';
         document.getElementById('title').value = '';
         document.getElementById('is_active').checked = true;
-        document.getElementById('is_shared').checked = false;
+        const sharedToggle = document.getElementById('is_shared');
+        if (sharedToggle) sharedToggle.checked = false;
+        window.LESSON_CURRENT_SHARED = false;
         document.getElementById('add_to_groups').checked = false;
         document.getElementById('addToGroupsBlock').classList.remove('hidden');
         // Əvvəlki redaktədən qalan şəkil önizləməsi modaldan silinməlidir.
@@ -27,7 +29,9 @@
         const sortOrder = document.getElementById('sort_order').value;
         if (sortOrder !== '') fd.append('sort_order', sortOrder);
         fd.append('is_active', document.getElementById('is_active').checked ? 'true' : 'false');
-        fd.append('is_shared', document.getElementById('is_shared').checked ? 'true' : 'false');
+        const sharedField = document.getElementById('is_shared');
+        const isShared = sharedField ? sharedField.checked : window.LESSON_CURRENT_SHARED === true;
+        fd.append('is_shared', isShared ? 'true' : 'false');
         fd.append('add_to_groups', document.getElementById('add_to_groups').checked ? 'true' : 'false');
         fd.append('RemoveImage', document.getElementById('image_remove').value === 'true' ? 'true' : 'false');
         const file = document.getElementById('image').files[0];

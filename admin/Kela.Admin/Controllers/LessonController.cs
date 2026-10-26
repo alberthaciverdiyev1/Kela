@@ -5,6 +5,8 @@ using Kela.Core.Modules.Lesson.Abstractions;
 using Kela.Core.Modules.Lesson.Requests;
 using Kela.Core.Modules.Subject.Abstractions;
 using Kela.Core.Modules.Subject.Requests;
+using Kela.Core.Modules.User.Abstractions;
+using Kela.Core.Modules.User.Requests;
 using Microsoft.AspNetCore.Mvc;
 using Kela.Admin.Infrastructure;
 using Kela.Core.Common.Requests;
@@ -15,6 +17,7 @@ namespace Kela.Admin.Controllers;
 public sealed class LessonController(
     ILessonService service,
     ISubjectService subjects,
+    IUserService users,
     IValidator<LessonUpsertRequest> validator) : AdminControllerBase
 {
     [HttpGet]
@@ -24,6 +27,15 @@ public sealed class LessonController(
         ViewData["Subjects"] = await subjects.ListAsync(
             new SubjectListRequest { PerPage = 200, UserId = User.IsAdmin() ? null : User.CurrentUserId() }, ct);
         ViewData["SelectedSubjectId"] = subjectId?.ToString() ?? "";
+
+        // Tək müəllim varsa paylaşım seçimi mənasızdır.
+        var staff = await users.ListAsync(new UserListRequest
+        {
+            PerPage = 1,
+            Type = Kela.Core.Modules.User.Entities.UserTypes.Teacher
+        }, ct);
+        ViewData["MultipleTeachers"] = staff.Total > 1;
+
         return View();
     }
 
