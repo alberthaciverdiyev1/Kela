@@ -1806,6 +1806,9 @@
   <data name="Homework_Title" xml:space="preserve">
     <value>Başlık</value>
   </data>
+  <data name="Homework_GroupOptionalHint" xml:space="preserve">
+    <value>Boş bırakabilirsiniz (taslak) — yayımlamadan önce grup seçmelisiniz.</value>
+  </data>
   <data name="Homework_Description" xml:space="preserve">
     <value>Açıklama</value>
   </data>

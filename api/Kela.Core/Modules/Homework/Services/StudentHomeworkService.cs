@@ -1,5 +1,6 @@
 using Kela.Core.Common.Localization;
 using Kela.Core.Common.Storage;
+using Kela.Core.Common.Content;
 using Kela.Core.Common.Exceptions;
 using Kela.Core.Data;
 using Kela.Core.Modules.Homework.Abstractions;
@@ -226,7 +227,7 @@ public sealed class StudentHomeworkService(
         return new StudentHomeworkDetailResponse(
             homework.Id,
             homework.Title,
-            homework.Description,
+            SafeHtml.Sanitize(homework.Description),
             homework.DueDate,
             homework.MaxScore,
             assignment.Status,

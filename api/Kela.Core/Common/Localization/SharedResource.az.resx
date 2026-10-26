@@ -1806,6 +1806,9 @@
   <data name="Homework_Title" xml:space="preserve">
     <value>Başlıq</value>
   </data>
+  <data name="Homework_GroupOptionalHint" xml:space="preserve">
+    <value>Boş buraxsanız qaralama kimi saxlanılır — yayımlamadan əvvəl qrup seçmək lazımdır.</value>
+  </data>
   <data name="Homework_Description" xml:space="preserve">
     <value>Təsvir</value>
   </data>

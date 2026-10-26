@@ -14,14 +14,14 @@ public sealed class HomeworkUpsertRequestValidator : AbstractValidator<HomeworkU
             .NotEmpty().WithMessage(L["Validation_TitleRequired"])
             .MaximumLength(190).WithMessage(L["Validation_TitleMaxLength190"]);
 
-        RuleFor(x => x.Description).MaximumLength(4000);
+        // Rich editor HTML saxlayır — limit mətn limitindən böyükdür.
+        RuleFor(x => x.Description).MaximumLength(20000);
 
         RuleFor(x => x.MaxScore)
             .GreaterThan(0).WithMessage(L["Homework_MaxScoreInvalid"])
             .LessThanOrEqualTo(1000).WithMessage(L["Homework_MaxScoreInvalid"]);
 
-        RuleFor(x => x.GroupIds)
-            .NotEmpty().WithMessage(L["Homework_GroupRequired"]);
+        RuleForEach(x => x.GroupIds).GreaterThan(0);
 
         RuleForEach(x => x.QuizIds).GreaterThan(0);
     }

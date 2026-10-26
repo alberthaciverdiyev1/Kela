@@ -1806,6 +1806,9 @@
   <data name="Homework_Title" xml:space="preserve">
     <value>Заголовок</value>
   </data>
+  <data name="Homework_GroupOptionalHint" xml:space="preserve">
+    <value>Можно оставить пустым (черновик) — перед публикацией нужно выбрать группу.</value>
+  </data>
   <data name="Homework_Description" xml:space="preserve">
     <value>Описание</value>
   </data>

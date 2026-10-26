@@ -1,5 +1,6 @@
 using System.Text.Json;
 using Kela.Core.Common.Authorization;
+using Kela.Core.Common.Content;
 using Kela.Core.Common.Exceptions;
 using Kela.Core.Common.Localization;
 using Kela.Core.Common.Pagination;
@@ -81,7 +82,7 @@ public sealed class HomeworkService(
         {
             UserId = ownerId ?? request.UserId,
             Title = request.Title.Trim(),
-            Description = string.IsNullOrWhiteSpace(request.Description) ? null : request.Description.Trim(),
+            Description = SanitizeDescription(request.Description),
             MaxScore = request.MaxScore,
             DueDate = request.DueDate
         };
@@ -128,7 +129,7 @@ public sealed class HomeworkService(
         }
 
         homework.Title = request.Title.Trim();
-        homework.Description = string.IsNullOrWhiteSpace(request.Description) ? null : request.Description.Trim();
+        homework.Description = SanitizeDescription(request.Description);
         homework.DueDate = request.DueDate;
 
         await db.SaveChangesAsync(ct);
@@ -320,7 +321,7 @@ public sealed class HomeworkService(
     private async Task<List<long>> ValidateGroupsAsync(IEnumerable<long> groupIds, long? ownerId, CancellationToken ct)
     {
         var ids = groupIds.Distinct().ToList();
-        if (ids.Count == 0) throw new ArgumentException(L["Homework_GroupRequired"]);
+        if (ids.Count == 0) return ids;
 
         var groups = await db.Groups.AsNoTracking()
             .Where(x => ids.Contains(x.Id))
@@ -424,7 +425,7 @@ public sealed class HomeworkService(
         => new(
             homework.Id,
             homework.Title,
-            homework.Description,
+            SafeHtml.Sanitize(homework.Description),
             homework.MaxScore,
             homework.DueDate,
             homework.IsPublished,
@@ -442,6 +443,9 @@ public sealed class HomeworkService(
             counts?.Submitted ?? 0,
             counts?.Graded ?? 0,
             counts?.Returned ?? 0);
+
+    private static string? SanitizeDescription(string? html)
+        => string.IsNullOrWhiteSpace(html) ? null : SafeHtml.Sanitize(html)?.Trim();
 
     private HomeworkFileResponse ToFileResponse(Entities.HomeworkAssignmentFile file)
         => new(file.Id, file.FileName, storage.GetUrl(file.Path), file.ContentType, file.SizeBytes);

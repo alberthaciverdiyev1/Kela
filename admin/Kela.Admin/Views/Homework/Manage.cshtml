@@ -19,7 +19,7 @@
                 </p>
                 @if (!string.IsNullOrWhiteSpace(h.Description))
                 {
-                    <p class="mt-2 max-w-3xl whitespace-pre-wrap text-sm text-slate-600">@h.Description</p>
+                    <div class="admin-rich-text mt-2 max-w-3xl">@Html.Raw(h.Description)</div>
                 }
             </div>
             @if (h.IsPublished)

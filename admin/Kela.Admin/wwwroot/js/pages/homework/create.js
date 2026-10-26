@@ -1,6 +1,16 @@
 (function () {
     const form = document.getElementById('entityForm');
 
+    // Boş editor HTML qalığı (<br>, <p></p>) saxlamasın; şəkil varsa mətn boş olsa da qalsın.
+    window.homeworkDescription = function () {
+        const raw = (document.getElementById('description')?.value || '').trim();
+        if (!raw) return '';
+
+        const tmp = document.createElement('div');
+        tmp.innerHTML = raw;
+        return !tmp.querySelector('img') && !tmp.textContent.trim() ? '' : raw;
+    };
+
     function syncSelects() {
         ['group_ids', 'quiz_ids'].forEach(id => {
             const select = document.getElementById(id);
@@ -31,7 +41,7 @@
     window.buildHomeworkForm = function () {
         const fd = new FormData();
         fd.append('title', document.getElementById('title').value.trim());
-        fd.append('description', document.getElementById('description').value.trim());
+        fd.append('description', window.homeworkDescription());
         fd.append('max_score', document.getElementById('max_score').value || '0');
 
         const due = document.getElementById('due_date').value;

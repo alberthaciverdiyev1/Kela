@@ -11,13 +11,13 @@
 
     <partial name="Ui/_Input" model="@(new InputModel { Name = "title", Id = "title", Label = L["Homework_Title"], Required = true })" />
 
-    <div>
-        <label for="description" class="mb-1 block text-sm font-semibold text-slate-600">@L["Homework_Description"]</label>
-        <textarea id="description" rows="4" class="admin-field" style="height:auto;padding:12px 14px"></textarea>
-    </div>
+    <partial name="Ui/_Editor" model="@(new EditorModel { Name = "description", Id = "description", Label = L["Homework_Description"] })" />
 
     <div class="grid gap-4 sm:grid-cols-2">
-        <partial name="Ui/_Select" model="@(new SelectModel { Name = "group_ids", Id = "group_ids", Label = L["Homework_Groups"], Multiple = true, Required = true, Options = groupOptions })" />
+        <div>
+            <partial name="Ui/_Select" model="@(new SelectModel { Name = "group_ids", Id = "group_ids", Label = L["Homework_Groups"], Multiple = true, Options = groupOptions })" />
+            <p class="mt-1 text-xs text-slate-400">@L["Homework_GroupOptionalHint"]</p>
+        </div>
         <partial name="Ui/_Select" model="@(new SelectModel { Name = "quiz_ids", Id = "quiz_ids", Label = L["Homework_Quizzes"], Multiple = true, Options = quizOptions })" />
     </div>
 

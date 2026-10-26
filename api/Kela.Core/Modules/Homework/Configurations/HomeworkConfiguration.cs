@@ -16,7 +16,8 @@ public sealed class HomeworkConfiguration : IEntityTypeConfiguration<Homework>
         builder.Property(x => x.Id).HasColumnName("id");
         builder.Property(x => x.UserId).HasColumnName("user_id");
         builder.Property(x => x.Title).HasColumnName("title").HasMaxLength(190).IsRequired();
-        builder.Property(x => x.Description).HasColumnName("description").HasMaxLength(4000);
+        // Rich editor HTML saxlayır — mətn limitindən daha böyük sütun lazımdır.
+        builder.Property(x => x.Description).HasColumnName("description").HasMaxLength(20000);
         builder.Property(x => x.MaxScore).HasColumnName("max_score").HasPrecision(6, 2);
         builder.Property(x => x.DueDate).HasColumnName("due_date");
         builder.Property(x => x.IsPublished).HasColumnName("is_published").HasDefaultValue(false);

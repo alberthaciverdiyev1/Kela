@@ -1806,6 +1806,9 @@
   <data name="Homework_Title" xml:space="preserve">
     <value>Title</value>
   </data>
+  <data name="Homework_GroupOptionalHint" xml:space="preserve">
+    <value>Leave empty to save as a draft — a group is required before publishing.</value>
+  </data>
   <data name="Homework_Description" xml:space="preserve">
     <value>Description</value>
   </data>

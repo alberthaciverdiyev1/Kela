@@ -812,8 +812,8 @@ namespace Kela.Core.Data.Migrations
                         .HasColumnName("deleted_at");
 
                     b.Property<string>("Description")
-                        .HasMaxLength(4000)
-                        .HasColumnType("character varying(4000)")
+                        .HasMaxLength(20000)
+                        .HasColumnType("character varying(20000)")
                         .HasColumnName("description");
 
                     b.Property<DateTimeOffset>("DueDate")
