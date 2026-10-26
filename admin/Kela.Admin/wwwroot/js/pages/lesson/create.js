@@ -7,7 +7,9 @@
         document.getElementById('modalTitle').textContent = L["Lesson_Create"];
         document.getElementById('entityId').value = '';
         document.getElementById('sort_order').value = '';
-        document.getElementById('subject_id').value = '';
+        // Səhifədə fənn filtri seçilibsə (URL-dəki subject_id də daxil) yeni dərs
+        // həmin fənnə görə yaradılsın.
+        document.getElementById('subject_id').value = document.getElementById('filter_subject')?.value || '';
         document.getElementById('title').value = '';
         document.getElementById('is_active').checked = true;
         document.getElementById('is_shared').checked = false;
