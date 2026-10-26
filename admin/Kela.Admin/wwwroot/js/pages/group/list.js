@@ -24,6 +24,7 @@ AdminUI.listPage({
         { html: g.studentCount, cls: 'text-slate-500' },
         { html: ctx.showDeleted ? AdminUI.restoreButton(g.id) : AdminUI.rowActions([
             AdminUI.actionLink(L["Common_Manage"], `/group/${g.id}/manage`),
+            AdminUI.actionLink(L["Nav_Homework"], `/homework?group_id=${g.id}`),
             AdminUI.actionButton(L["Group_CopyJoinLink"], `copyJoinLink('${g.joinToken}')`, { tone: 'neutral' }),
             AdminUI.actionButton(L["Js_Edit"], `openEdit(${g.id})`, { tone: 'primary' }),
             AdminUI.actionButton(L["Common_Delete"], `removeItem(${g.id})`, { tone: 'danger' })

@@ -33,7 +33,8 @@ AdminUI.listPage({
     params: ({ page, search }) => ({
         page,
         search,
-        is_published: document.getElementById('filter_status').value
+        is_published: document.getElementById('filter_status').value,
+        group_id: window.HOMEWORK_GROUP_ID || ''
     }),
     row: (h, i, ctx) => [
         { html: AdminUI.rowNo(h, i, ctx.page, ctx.perPage), cls: 'text-slate-400' },

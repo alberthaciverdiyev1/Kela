@@ -41,6 +41,11 @@
 </section>
 
 @{
+    var selectedGroupId = (string?)ViewData["SelectedGroupId"] ?? "";
+}
+<script>window.HOMEWORK_GROUP_ID = '@selectedGroupId';</script>
+
+@{
     var modalBody = await Html.PartialAsync("_ModalFields");
 }
 

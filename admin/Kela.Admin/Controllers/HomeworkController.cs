@@ -19,7 +19,7 @@ public sealed class HomeworkController(
     IValidator<HomeworkUpsertRequest> validator) : AdminControllerBase
 {
     [HttpGet]
-    public async Task<IActionResult> Index(CancellationToken ct)
+    public async Task<IActionResult> Index([FromQuery(Name = "group_id")] long? groupId, CancellationToken ct)
     {
         ViewData["Scripts"] = new[]
         {
@@ -29,6 +29,7 @@ public sealed class HomeworkController(
         };
 
         ViewData["Groups"] = await LoadGroupsAsync(ct);
+        ViewData["SelectedGroupId"] = groupId?.ToString() ?? "";
         ViewData["Quizzes"] = await quizzes.ListAsync(new QuizListRequest
         {
             PerPage = 500,
