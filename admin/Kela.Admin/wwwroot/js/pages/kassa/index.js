@@ -125,12 +125,27 @@ window.KassaPage = (function () {
         AdminUI.syncSelect(select);
     }
 
-    function fillPlanSelect() {
+    // Tələbənin mövcud planı varsa siyahının başında "Mövcud plan" kimi göstərilir
+    // və avtomatik seçilir; yeni plan seçilsə, ödənişdən əvvəl təyin olunur.
+    function refreshPlanOptions() {
+        const student = selectedStudent();
         const select = document.getElementById('kassaPlan');
 
-        select.innerHTML = '<option value="">Plan seçilməyib</option>' + planTemplates.map(t =>
+        let html = '';
+
+        if (student?.amount) {
+            const period = student.frequency === 'custom'
+                ? `${student.intervalDays || 30} gün`
+                : 'aylıq';
+            html += `<option value="current">Mövcud plan — ${money(student.amount)} ${student.currency} (${period})</option>`;
+        }
+
+        html += '<option value="">Plan seçilməyib</option>' + planTemplates.map(t =>
             `<option value="${t.id}">${esc(t.name)} — ${money(t.amount)} ${t.currency} (${periodLabel(t)})</option>`
         ).join('');
+
+        select.innerHTML = html;
+        select.value = student?.amount ? 'current' : '';
 
         AdminUI.syncSelect(select);
     }
@@ -145,6 +160,10 @@ window.KassaPage = (function () {
         return planTemplates?.find(t => String(t.id) === id);
     }
 
+    function keepsCurrentPlan() {
+        return document.getElementById('kassaPlan').value === 'current';
+    }
+
     function syncStudentHint() {
         const student = selectedStudent();
         const plan = selectedPlan();
@@ -154,6 +173,13 @@ window.KassaPage = (function () {
         if (plan) {
             amount.value = plan.amount;
             hint.textContent = `Seçilmiş plan: ${plan.name} · ${money(plan.amount)} ${plan.currency} · ${periodLabel(plan)}`;
+            return;
+        }
+
+        if (keepsCurrentPlan() && student) {
+            amount.value = student.amount;
+            hint.textContent = `Mövcud plan: ${money(student.amount)} ${student.currency}` +
+                (student.nextDueOn ? ` · növbəti ödəniş: ${student.nextDueOn}` : '');
             return;
         }
 
@@ -182,10 +208,9 @@ window.KassaPage = (function () {
         }
 
         fillStudentSelect();
-        fillPlanSelect();
+        refreshPlanOptions();
 
         document.getElementById('kassaStudent').value = '';
-        document.getElementById('kassaPlan').value = '';
         document.getElementById('kassaAmount').value = '';
 
         AdminUI.syncSelect(document.getElementById('kassaStudent'));
@@ -202,7 +227,10 @@ window.KassaPage = (function () {
         else AdminUI.error(AdminUI.errText(res));
     }
 
-    document.getElementById('kassaStudent')?.addEventListener('change', syncStudentHint);
+    document.getElementById('kassaStudent')?.addEventListener('change', () => {
+        refreshPlanOptions();
+        syncStudentHint();
+    });
     document.getElementById('kassaPlan')?.addEventListener('change', syncStudentHint);
 
     document.getElementById('kassaPaymentForm')?.addEventListener('submit', async (e) => {
@@ -215,7 +243,10 @@ window.KassaPage = (function () {
 
         if (!student) { AdminUI.error('Tələbə seçin'); return; }
         if (!(amount > 0)) { AdminUI.error('Məbləğ sıfırdan böyük olmalıdır'); return; }
-        if (!plan && !student.amount) { AdminUI.error('Bu tələbənin ödəniş planı yoxdur — plan seçin'); return; }
+        if (!plan && !keepsCurrentPlan() && !student.amount) {
+            AdminUI.error('Bu tələbənin ödəniş planı yoxdur — plan seçin');
+            return;
+        }
 
         if (plan) {
             const nextDueOn = plan.frequency === 'custom'

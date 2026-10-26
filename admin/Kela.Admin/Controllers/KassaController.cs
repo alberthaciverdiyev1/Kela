@@ -43,6 +43,8 @@ public sealed class KassaController(
             name = s.FullName,
             amount = s.Amount,
             currency = s.Currency,
+            frequency = s.Frequency,
+            intervalDays = s.IntervalDays,
             nextDueOn = s.NextDueOn,
             status = s.Status
         }));
