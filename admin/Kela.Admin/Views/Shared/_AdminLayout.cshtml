@@ -16,12 +16,13 @@
         "admin" => "badge-primary",
         _ => "badge-neutral"
     };
-    var langs = new (string Code, string Flag, string Name)[]
+    // Emoji bayraqlar bütün platformalarda eyni görünmür — SVG istifadə olunur.
+    var langs = new (string Code, string Name)[]
     {
-        ("az", "🇦🇿", "Azərbaycan"),
-        ("ru", "🇷🇺", "Русский"),
-        ("tr", "🇹🇷", "Türkçe"),
-        ("en", "🇬🇧", "English")
+        ("az", "Azərbaycan"),
+        ("ru", "Русский"),
+        ("tr", "Türkçe"),
+        ("en", "English")
     };
     var currentLang = System.Globalization.CultureInfo.CurrentUICulture.TwoLetterISOLanguageName;
     var currentLangItem = langs.FirstOrDefault(l => l.Code == currentLang);
@@ -79,7 +80,14 @@
                         <button type="button" id="langMenuBtn" aria-label="Language"
                                 class="flex items-center gap-2 rounded-xl border border-border bg-white px-3 py-2 text-sm font-semibold text-slate-600 transition hover:bg-surface-secondary">
                             <svg class="h-4 w-4 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9" /><path stroke-linecap="round" stroke-linejoin="round" d="M3 12h18M12 3a15 15 0 0 1 0 18M12 3a15 15 0 0 0 0 18" /></svg>
-                            <span class="text-base leading-none">@(currentLangItem.Flag ?? "🌐")</span>
+                            @if (!string.IsNullOrEmpty(currentLangItem.Code))
+                            {
+                                <img src="~/img/flags/@(currentLangItem.Code).svg" alt="" class="h-4 w-6 rounded-[3px] object-cover ring-1 ring-black/10" />
+                            }
+                            else
+                            {
+                                <span class="text-base leading-none">🌐</span>
+                            }
                             <span class="hidden sm:inline">@(currentLangItem.Name ?? currentLang.ToUpperInvariant())</span>
                             <svg class="h-3.5 w-3.5 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="m6 9 6 6 6-6" /></svg>
                         </button>
@@ -91,7 +99,7 @@
                             {
                                 <button type="button" data-action="setLang" data-args="@($"[\"{lang.Code}\"]")"
                                         class="flex w-full items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium transition hover:bg-surface-secondary sm:rounded-none sm:py-2.5 @(lang.Code == currentLang ? "bg-primary-light text-primary" : "text-slate-600")">
-                                    <span class="text-lg leading-none">@lang.Flag</span>
+                                    <img src="~/img/flags/@(lang.Code).svg" alt="" class="h-4 w-6 rounded-[3px] object-cover ring-1 ring-black/10" />
                                     <span class="flex-1 text-left">@lang.Name</span>
                                     @if (lang.Code == currentLang)
                                     {
