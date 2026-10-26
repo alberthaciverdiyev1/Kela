@@ -5,6 +5,7 @@ using Kela.Core.Modules.Group.Abstractions;
 using Kela.Core.Modules.Group.Requests;
 using Kela.Core.Modules.Group.Responses;
 using Kela.Core.Modules.Quiz.Abstractions;
+using Kela.Core.Modules.Tenant.Abstractions;
 using Kela.Core.Modules.Quiz.Requests;
 using Kela.Core.Modules.Students.Abstractions;
 using Kela.Core.Modules.Students.Requests;
@@ -25,6 +26,7 @@ public sealed class GroupController(
     IStudentManagementService students,
     ISubjectService subjects,
     IQuizService quizzes,
+    ITenantService tenants,
     IValidator<GroupUpsertRequest> validator,
     IConfiguration config) : AdminControllerBase
 {
@@ -37,6 +39,7 @@ public sealed class GroupController(
             "~/js/pages/group/update.js"
         };
         ViewData["Teachers"] = await users.ListAsync(new UserListRequest { PerPage = 200 }, ct);
+        ViewData["DefaultTeacherId"] = await DefaultTeacherIdAsync(ct);
         ViewData["AppBaseUrl"] = AppBaseUrl;
         return View();
     }
@@ -56,10 +59,20 @@ public sealed class GroupController(
         ViewData["Title"] = group.Name;
         ViewData["Group"] = group;
         ViewData["Teachers"] = await users.ListAsync(new UserListRequest { PerPage = 200 }, ct);
+        ViewData["DefaultTeacherId"] = await DefaultTeacherIdAsync(ct);
         ViewData["SubjectCount"] = (await service.ListSubjectsAsync(id, owner, ct)).Count;
         ViewData["QuizCount"] = (await service.ListQuizzesAsync(id, owner, ct)).Count;
         return View();
     }
+
+    /// <summary>
+    /// Fərdi müəllim (kurs olmayan) tenant-da qrup yaradan şəxs avtomatik müəllim olur;
+    /// kurs tenant-ında seçim adminə buraxılır.
+    /// </summary>
+    private async Task<string> DefaultTeacherIdAsync(CancellationToken ct)
+        => await tenants.GetCurrentAccountTypeAsync(ct) == "teacher"
+            ? User.CurrentUserId()?.ToString() ?? string.Empty
+            : string.Empty;
 
     /// <summary>Dəvət linkinin əsası: konfiqurasiya, yoxdursa ilk CORS mənbəyi.</summary>
     private string AppBaseUrl

@@ -1,5 +1,6 @@
 @{
     var teachers = (PagedResponse<UserResponse>)ViewData["Teachers"]!;
+    var defaultTeacher = ViewData["DefaultTeacherId"] as string ?? "";
     var teacherOptions = new List<SelectOption> { new() { Value = "", Text = L["Group_NoTeacher"] } };
     teacherOptions.AddRange(teachers.Data.Select(u => new SelectOption { Value = u.Id.ToString(), Text = $"{u.Name} {u.Surname}".Trim() }));
 }
@@ -30,10 +31,11 @@
         <div data-step-panel="1" class="space-y-4">
             <partial name="Ui/_Input" model="@(new InputModel { Name = "name", Id = "name", Label = L["Common_Name"], Required = true })" />
             <partial name="Ui/_Input" model="@(new InputModel { Name = "description", Id = "description", Label = L["Common_Description"] })" />
-            @* Teacher yaratdığı qrupun sahibi özüdür — seçim göstərilmir. *@
-            @if (User.IsAdmin())
+            @* Fərdi müəllim tenant-ında yeganə müəllim odur — avtomatik seçilir.
+               Kurs tenant-ında isə seçimi admin edir. *@
+            @if (User.IsAdmin() || !string.IsNullOrEmpty(defaultTeacher))
             {
-                <partial name="Ui/_Select" model="@(new SelectModel { Name = "user_id", Id = "user_id", Label = L["Common_Teacher"], Options = teacherOptions })" />
+                <partial name="Ui/_Select" model="@(new SelectModel { Name = "user_id", Id = "user_id", Label = L["Common_Teacher"], Options = teacherOptions, Value = defaultTeacher })" />
             }
             <partial name="Ui/_FileUpload" model="@(new FileUploadModel { Name = "image", Id = "image", Label = L["Common_Image"], Accept = ".jpg,.jpeg,.png", Hint = "jpg/png, max 5MB" })" />
         </div>

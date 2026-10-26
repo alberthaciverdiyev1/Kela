@@ -73,6 +73,18 @@ public sealed class TenantService(
         return new TenantResponse(t.Id, t.Name, t.Slug, t.IsActive, await LogoAsync(t.Id, ct), t.IsPending);
     }
 
+    public async Task<string> GetCurrentAccountTypeAsync(CancellationToken ct = default)
+    {
+        if (tenantProvider.TenantId is not long tenantId) return "course";
+
+        var type = await db.Tenants.AsNoTracking()
+            .Where(x => x.Id == tenantId)
+            .Select(x => x.AccountType)
+            .FirstOrDefaultAsync(ct);
+
+        return string.IsNullOrWhiteSpace(type) ? "course" : type;
+    }
+
     public async Task<TenantResponse> UpdateCurrentAsync(UpdateTenantProfileRequest request, CancellationToken ct = default)
     {
         if (tenantProvider.TenantId is not long id)
@@ -160,7 +172,14 @@ public sealed class TenantService(
         await using var tx = await db.Database.BeginTransactionAsync(ct);
 
         // Təsdiq gözlənilmir — kurs dərhal aktiv yaradılır (subscription sonra əlavə olunacaq).
-        var tenant = new Tenant { Name = courseName, Slug = slug, IsActive = true, IsPending = false };
+        var tenant = new Tenant
+        {
+            Name = courseName,
+            Slug = slug,
+            IsActive = true,
+            IsPending = false,
+            AccountType = isTeacher ? "teacher" : "course"
+        };
         db.Tenants.Add(tenant);
         await db.SaveChangesAsync(ct);
 

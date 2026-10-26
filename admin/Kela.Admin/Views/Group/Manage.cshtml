@@ -1,6 +1,7 @@
 @{
     var group = (GroupResponse)ViewData["Group"]!;
     var teachers = (PagedResponse<UserResponse>)ViewData["Teachers"]!;
+    var defaultTeacher = ViewData["DefaultTeacherId"] as string ?? "";
     var teacherOptions = new List<SelectOption> { new() { Value = "", Text = L["Group_NoTeacher"] } };
     teacherOptions.AddRange(teachers.Data.Select(u => new SelectOption { Value = u.Id.ToString(), Text = $"{u.Name} {u.Surname}".Trim() }));
     var subjectCount = (int)ViewData["SubjectCount"]!;
@@ -56,9 +57,9 @@
         <h3 class="mb-4 text-base font-bold text-slate-900">@L["Js_Edit"]</h3>
         <form id="groupEditForm" class="grid gap-4 sm:grid-cols-2">
             <partial name="Ui/_Input" model="@(new InputModel { Name = "name", Id = "g_name", Label = L["Common_Name"], Value = group.Name, Required = true })" />
-            @if (User.IsAdmin())
+            @if (User.IsAdmin() || !string.IsNullOrEmpty(defaultTeacher))
             {
-                <partial name="Ui/_Select" model="@(new SelectModel { Name = "user_id", Id = "g_teacher", Label = L["Common_Teacher"], Options = teacherOptions, Value = group.UserId?.ToString() ?? "" })" />
+                <partial name="Ui/_Select" model="@(new SelectModel { Name = "user_id", Id = "g_teacher", Label = L["Common_Teacher"], Options = teacherOptions, Value = group.UserId?.ToString() ?? defaultTeacher })" />
             }
             <div class="sm:col-span-2">
                 <partial name="Ui/_Input" model="@(new InputModel { Name = "description", Id = "g_description", Label = L["Common_Description"], Value = group.Description })" />

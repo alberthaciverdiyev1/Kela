@@ -3,6 +3,7 @@
     var teachers = (PagedResponse<UserResponse>)ViewData["Teachers"]!;
 }
 <script>window.GROUP_APP_BASE_URL = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(ViewData["AppBaseUrl"] ?? ""));</script>
+<script>window.GROUP_DEFAULT_TEACHER_ID = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(ViewData["DefaultTeacherId"] ?? ""));</script>
 <partial name="Ui/_OptionMap" model="@(new OptionMapModel { Name = "TEACHERS", Items = teachers.Data.ToDictionary(u => u.Id, u => $"{u.Name} {u.Surname}".Trim()) })" />
 
 <section class="admin-page">

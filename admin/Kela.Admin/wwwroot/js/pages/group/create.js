@@ -160,9 +160,9 @@
         document.getElementById('entityId').value = '';
         document.getElementById('name').value = '';
         document.getElementById('description').value = '';
-        // Müəllim seçimi yalnız admin üçün göstərilir.
+        // Fərdi müəllim tenant-ında cari istifadəçi avtomatik müəllim olur.
         const teacher = document.getElementById('user_id');
-        if (teacher) teacher.value = '';
+        if (teacher) teacher.value = window.GROUP_DEFAULT_TEACHER_ID || '';
         document.getElementById('image').value = '';
         AdminUI.fileRemove('image');
         clearError();

@@ -15,6 +15,9 @@ public interface ITenantService
     /// <summary>Cari sorğunun tenant-ı (kurs admini öz kursunu idarə edir).</summary>
     Task<TenantResponse?> GetCurrentAsync(CancellationToken ct = default);
 
+    /// <summary>Cari tenant-ın hesab növü: "course" | "teacher".</summary>
+    Task<string> GetCurrentAccountTypeAsync(CancellationToken ct = default);
+
     Task<TenantResponse> UpdateCurrentAsync(UpdateTenantProfileRequest request, CancellationToken ct = default);
 
     Task<TenantResponse> CreateAsync(CreateTenantRequest request, CancellationToken ct = default);

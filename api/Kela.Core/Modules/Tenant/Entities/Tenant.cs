@@ -10,6 +10,9 @@ public class Tenant
 
     public bool IsActive { get; set; } = true;
 
+    /// <summary>Qeydiyyat hesab növü: "course" (kurs) və ya "teacher" (fərdi müəllim).</summary>
+    public string AccountType { get; set; } = "course";
+
     /// <summary>Özünəqeydiyyatdan gəlib superadmin təsdiqini gözləyir.</summary>
     public bool IsPending { get; set; }
 
