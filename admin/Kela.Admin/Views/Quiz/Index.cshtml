@@ -66,6 +66,20 @@
     ShowError = false,
     Body = questionsModalBody
 })" />
+@{
+    var groupsModalBody = await Html.PartialAsync("_GroupsModalFields");
+}
+
+<partial name="Ui/_Modal" model="@(new ModalModel
+{
+    Id = "groupsModal",
+    TitleId = "groupsTitle",
+    Title = L["Nav_Groups"],
+    WidthClass = "max-w-lg",
+    ShowError = false,
+    Body = groupsModalBody
+})" />
+
 <partial name="Ui/_SortModal" />
 
 <form id="antiforgery">@Html.AntiForgeryToken()</form>

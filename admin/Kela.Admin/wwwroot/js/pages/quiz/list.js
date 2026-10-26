@@ -1,6 +1,7 @@
 function quizActions(q) {
     return AdminUI.rowActions([
         AdminUI.actionButton(L["Common_Questions"], `openQuestions(${q.id})`),
+        AdminUI.actionButton(L["Nav_Groups"], `openGroups(${q.id})`),
         AdminUI.actionButton(L["Js_Edit"], `openEdit(${q.id})`, { tone: 'primary' }),
         AdminUI.actionButton(L["Common_Delete"], `removeItem(${q.id})`, { tone: 'danger' })
     ]);

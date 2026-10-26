@@ -30,7 +30,7 @@ public sealed class QuizController(
         {
             "~/js/pages/quiz/list.js", "~/js/pages/quiz/create.js",
             "~/js/pages/quiz/update.js", "~/js/pages/quiz/questions.js",
-            "~/js/pages/quiz/sort.js"
+            "~/js/pages/quiz/groups.js", "~/js/pages/quiz/sort.js"
         };
         ViewData["Lessons"] = await lessons.ListAsync(
             new LessonListRequest { PerPage = 500, UserId = User.IsAdmin() ? null : User.CurrentUserId() }, ct);
@@ -136,6 +136,26 @@ public sealed class QuizController(
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> AssignQuestions(long id, [FromBody] AssignQuestionsRequest request, CancellationToken ct)
         => Json(await service.AssignQuestionsAsync(id, request, OwnerScope, ct));
+
+    // --- Qruplar ---
+
+    [HttpGet("{id:long}/groups")]
+    public async Task<IActionResult> Groups(long id, CancellationToken ct)
+        => Json(await service.ListGroupsAsync(id, OwnerScope, ct));
+
+    [HttpPost("{id:long}/groups")]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> AssignGroups(
+        long id, [FromBody] AssignGroupsRequest request, CancellationToken ct)
+        => Json(await service.AssignGroupsAsync(id, request, OwnerScope, ct));
+
+    [HttpDelete("{id:long}/groups/{groupId:long}")]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> RemoveGroup(long id, long groupId, CancellationToken ct)
+    {
+        await service.RemoveGroupAsync(id, groupId, OwnerScope, ct);
+        return Json(new { ok = true });
+    }
 
     [HttpDelete("{id:long}/questions/{questionId:long}")]
     [ValidateAntiForgeryToken]

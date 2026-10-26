@@ -26,6 +26,12 @@ public interface IQuizService
 
     Task RemoveQuestionAsync(long quizId, long questionId, long? ownerId = null, CancellationToken ct = default);
 
+    Task<IReadOnlyList<QuizGroupResponse>> ListGroupsAsync(long quizId, long? ownerId = null, CancellationToken ct = default);
+
+    Task<IReadOnlyList<QuizGroupResponse>> AssignGroupsAsync(long quizId, AssignGroupsRequest request, long? ownerId = null, CancellationToken ct = default);
+
+    Task RemoveGroupAsync(long quizId, long groupId, long? ownerId = null, CancellationToken ct = default);
+
     Task SetActiveAsync(long id, bool isActive, long? ownerId = null, CancellationToken ct = default);
 
     Task BulkAsync(BulkRequest request, long? ownerId = null, CancellationToken ct = default);

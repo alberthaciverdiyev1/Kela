@@ -14,6 +14,7 @@ namespace Kela.Core.Modules.Quiz.Services;
 
 using Quiz = Kela.Core.Modules.Quiz.Entities.Quiz;
 using QuizQuestion = Kela.Core.Modules.Quiz.Entities.QuizQuestion;
+using GroupQuiz = Kela.Core.Modules.Group.Entities.GroupQuiz;
 using Kela.Core.Common.Queries;
 using Kela.Core.Common.Authorization;
 
@@ -168,6 +169,81 @@ public sealed class QuizService(AppDbContext db, IFileStorage storage) : IQuizSe
         var link = await db.QuizQuestions
             .FirstOrDefaultAsync(x => x.QuizId == quizId && x.QuestionId == questionId, ct)
             ?? throw new KeyNotFoundException($"Question {questionId} is not in quiz {quizId}");
+
+        link.DeletedAt = DateTimeOffset.UtcNow;
+        await db.SaveChangesAsync(ct);
+    }
+
+    public async Task<IReadOnlyList<QuizGroupResponse>> ListGroupsAsync(
+        long quizId, long? ownerId = null, CancellationToken ct = default)
+    {
+        await EnsureQuizAccessibleAsync(quizId, ownerId, ct);
+
+        return await (from gq in db.GroupQuizzes.AsNoTracking()
+                      join g in db.Groups.AsNoTracking() on gq.GroupId equals g.Id
+                      where gq.QuizId == quizId
+                      orderby g.Name
+                      select new QuizGroupResponse(g.Id, g.Name))
+            .ToListAsync(ct);
+    }
+
+    public async Task<IReadOnlyList<QuizGroupResponse>> AssignGroupsAsync(
+        long quizId, AssignGroupsRequest request, long? ownerId = null, CancellationToken ct = default)
+    {
+        await EnsureQuizOwnedAsync(quizId, ownerId, ct);
+
+        var ids = request.GroupIds.Distinct().ToList();
+
+        if (ids.Count > 0)
+        {
+            var groups = await db.Groups.AsNoTracking()
+                .Where(x => ids.Contains(x.Id))
+                .Select(x => new { x.Id, x.UserId })
+                .ToListAsync(ct);
+
+            if (groups.Count != ids.Count) throw new ArgumentException("Group not found");
+
+            // Qrup tərəfindəki AssignQuizzes ilə eyni qayda: teacher yalnız öz qrupuna bağlayır.
+            foreach (var group in groups)
+            {
+                OwnershipGuard.EnsureOwned(ownerId, group.UserId, "You can only modify your own groups");
+            }
+        }
+
+        foreach (var groupId in ids)
+        {
+            var existing = await db.GroupQuizzes.IgnoreQueryFilters(new[] { "SoftDelete" })
+                .FirstOrDefaultAsync(x => x.GroupId == groupId && x.QuizId == quizId, ct);
+
+            if (existing is null)
+            {
+                db.GroupQuizzes.Add(new GroupQuiz { GroupId = groupId, QuizId = quizId });
+            }
+            else
+            {
+                existing.DeletedAt = null;
+            }
+        }
+
+        await db.SaveChangesAsync(ct);
+        return await ListGroupsAsync(quizId, ownerId, ct);
+    }
+
+    public async Task RemoveGroupAsync(long quizId, long groupId, long? ownerId = null, CancellationToken ct = default)
+    {
+        await EnsureQuizOwnedAsync(quizId, ownerId, ct);
+
+        var group = await db.Groups.AsNoTracking()
+            .Where(x => x.Id == groupId)
+            .Select(x => new { x.UserId })
+            .FirstOrDefaultAsync(ct)
+            ?? throw new KeyNotFoundException($"Group not found: {groupId}");
+
+        OwnershipGuard.EnsureOwned(ownerId, group.UserId, "You can only modify your own groups");
+
+        var link = await db.GroupQuizzes
+            .FirstOrDefaultAsync(x => x.GroupId == groupId && x.QuizId == quizId, ct)
+            ?? throw new KeyNotFoundException($"Quiz {quizId} is not assigned to group {groupId}");
 
         link.DeletedAt = DateTimeOffset.UtcNow;
         await db.SaveChangesAsync(ct);
