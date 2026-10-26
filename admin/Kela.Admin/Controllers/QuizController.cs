@@ -110,9 +110,27 @@ public sealed class QuizController(
     // --- Suallar ---
 
     [HttpGet("options")]
-    public async Task<IActionResult> Options(CancellationToken ct)
+    public async Task<IActionResult> Options([FromQuery(Name = "quiz_id")] long? quizId, CancellationToken ct)
     {
-        var list = await questions.ListAsync(new QuestionListRequest { PerPage = 500, UserId = User.IsAdmin() ? null : User.CurrentUserId() }, ct);
+        // İmtahan hansı dərsə/fənnə bağlıdırsa yalnız həmin fənnin sualları təklif olunur.
+        long? subjectId = null;
+
+        if (quizId is long id)
+        {
+            var quiz = await service.GetAsync(id, OwnerScope, ct);
+
+            if (quiz.LessonId is long lessonId)
+            {
+                subjectId = (await lessons.GetAsync(lessonId, OwnerScope, ct)).SubjectId;
+            }
+        }
+
+        var list = await questions.ListAsync(new QuestionListRequest
+        {
+            PerPage = 500,
+            SubjectId = subjectId,
+            UserId = User.IsAdmin() ? null : User.CurrentUserId()
+        }, ct);
 
         // Şəkilli sualın başlığı boş olur — seçimdə hansı sual olduğunu görmək üçün
         // şəkil URL-ləri də qaytarılır (modal onları önizləmə kimi göstərir).

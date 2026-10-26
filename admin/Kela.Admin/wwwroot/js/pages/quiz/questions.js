@@ -47,7 +47,8 @@ async function openQuestions(id) {
     const q = await AdminUI.get('/quiz/' + id);
     document.getElementById('questionsTitle').textContent = (q.title || '') + ' — suallar';
 
-    if (!qzOptions) qzOptions = await AdminUI.get('/quiz/options');
+    // Siyahı imtahana görə dəyişir — hər açılışda yenidən alınır.
+    qzOptions = await AdminUI.get('/quiz/options?quiz_id=' + id);
     fillQuestionSelect(qzOptions);
 
     await refreshQuestions();
