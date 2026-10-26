@@ -7,7 +7,8 @@
         document.getElementById('modalTitle').textContent = L["Subject_Create"];
         document.getElementById('entityId').value = '';
         document.getElementById('name').value = '';
-        document.getElementById('is_shared').checked = false;
+        const sharedField = document.getElementById('is_shared');
+        if (sharedField) sharedField.checked = false;
         AdminUI.openModal('modal');
     };
 
@@ -17,7 +18,7 @@
 
         const res = await AdminUI.post('/subject', {
             name: document.getElementById('name').value,
-            is_shared: document.getElementById('is_shared').checked ? 'true' : 'false'
+            is_shared: document.getElementById('is_shared')?.checked ? 'true' : 'false'
         });
         if (res.ok) { AdminUI.notify(L["Js_Added"]); AdminUI.closeModal('modal'); loadList(1); return; }
 

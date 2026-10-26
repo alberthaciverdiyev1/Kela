@@ -31,9 +31,9 @@
         <div data-step-panel="1" class="space-y-4">
             <partial name="Ui/_Input" model="@(new InputModel { Name = "name", Id = "name", Label = L["Common_Name"], Required = true })" />
             <partial name="Ui/_Input" model="@(new InputModel { Name = "description", Id = "description", Label = L["Common_Description"] })" />
-            @* Fərdi müəllim tenant-ında yeganə müəllim odur — avtomatik seçilir.
-               Kurs tenant-ında isə seçimi admin edir. *@
-            @if (User.IsAdmin() || !string.IsNullOrEmpty(defaultTeacher))
+            @* Tək müəllim varsa seçim mənasızdır — sahə göstərilmir.
+               Kursda birdən çox müəllim olanda admin seçir. *@
+            @if (User.IsAdmin() && teachers.Total > 1)
             {
                 <partial name="Ui/_Select" model="@(new SelectModel { Name = "user_id", Id = "user_id", Label = L["Common_Teacher"], Options = teacherOptions, Value = defaultTeacher })" />
             }

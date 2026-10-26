@@ -1,7 +1,10 @@
 <form id="entityForm" class="space-y-4 p-6">
     <input type="hidden" id="entityId" />
     <partial name="Ui/_Input" model="@(new InputModel { Name = "name", Id = "name", Label = L["Common_Name"], Required = true })" />
-    <partial name="Ui/_Switch" model="@(new SwitchModel { Name = "is_shared", Id = "is_shared", Label = L["Subject_Shared"], Checked = false })" />
+    @if (ViewData["MultipleTeachers"] is true)
+    {
+        <partial name="Ui/_Switch" model="@(new SwitchModel { Name = "is_shared", Id = "is_shared", Label = L["Subject_Shared"], Checked = false })" />
+    }
     <div class="flex justify-end gap-3 pt-2">
         <partial name="Ui/_Button" model="@(new ButtonModel { Text = L["Common_Cancel"], Variant = "secondary", Dismiss = true })" />
         <partial name="Ui/_Button" model="@(new ButtonModel { Text = L["Common_Save"], Type = "submit" })" />

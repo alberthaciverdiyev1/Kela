@@ -2,6 +2,8 @@ using FluentValidation;
 using Kela.Core.Common.Bulk;
 using Kela.Core.Modules.Subject.Abstractions;
 using Kela.Core.Modules.Subject.Requests;
+using Kela.Core.Modules.User.Abstractions;
+using Kela.Core.Modules.User.Requests;
 using Microsoft.AspNetCore.Mvc;
 using Kela.Admin.Infrastructure;
 
@@ -10,12 +12,18 @@ namespace Kela.Admin.Controllers;
 [Route("[controller]")]
 public sealed class SubjectController(
     ISubjectService service,
+    IUserService users,
     IValidator<SubjectUpsertRequest> validator) : AdminControllerBase
 {
     [HttpGet]
-    public IActionResult Index()
+    public async Task<IActionResult> Index(CancellationToken ct)
     {
         ViewData["Scripts"] = new[] { "~/js/pages/subject/list.js", "~/js/pages/subject/create.js", "~/js/pages/subject/update.js" };
+
+        // Tək müəllim varsa "Bütün müəllimlər görsün" seçimi mənasızdır.
+        var staff = await users.ListAsync(new UserListRequest { PerPage = 1 }, ct);
+        ViewData["MultipleTeachers"] = staff.Total > 1;
+
         return View();
     }
 
