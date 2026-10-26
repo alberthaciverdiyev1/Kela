@@ -144,6 +144,32 @@
 
     let pendingSubjectId = null;
 
+    const lessonCheckboxes = () => [...document.querySelectorAll('#subjectLessonsList input[type=checkbox]')];
+
+    function updateSelectionCount() {
+        const total = lessonCheckboxes().length;
+        const checked = lessonCheckboxes().filter(x => x.checked).length;
+
+        const count = document.getElementById('subjectLessonsCount');
+        if (count) count.textContent = total ? `${checked}/${total}` : '';
+
+        // Hamısını seç qutusu qismən seçimi də göstərsin.
+        const selectAll = document.getElementById('subjectLessonsSelectAll');
+        if (selectAll) {
+            selectAll.checked = total > 0 && checked === total;
+            selectAll.indeterminate = checked > 0 && checked < total;
+        }
+    }
+
+    document.getElementById('subjectLessonsSelectAll')?.addEventListener('change', (e) => {
+        lessonCheckboxes().forEach(c => { c.checked = e.target.checked; });
+        updateSelectionCount();
+    });
+
+    document.getElementById('subjectLessonsList')?.addEventListener('change', (e) => {
+        if (e.target.matches('input[type=checkbox]')) updateSelectionCount();
+    });
+
     // Fənn əlavə etməzdən əvvəl hansı dərslərin açılacağını soruşuruq.
     async function openSubjectLessons() {
         const value = document.getElementById('subjectPick').value;
@@ -154,12 +180,17 @@
         const box = document.getElementById('subjectLessonsList');
 
         box.innerHTML = items.length
-            ? items.map(l => `<label class="flex cursor-pointer items-center gap-2 rounded-xl bg-surface-secondary px-3 py-2 text-sm">
-                    <input type="checkbox" value="${l.id}" checked class="h-4 w-4 accent-primary" />
-                    <span class="text-slate-700">${AdminUI.escapeHtml(l.title)}</span>
+            ? items.map(l => `<label class="flex cursor-pointer items-center gap-3 rounded-lg px-3 py-2 hover:bg-surface-secondary">
+                    <input type="checkbox" value="${l.id}" checked class="h-4 w-4 rounded border-slate-300 text-primary focus:ring-primary" />
+                    <span class="text-sm text-slate-700">${AdminUI.escapeHtml(l.title)}</span>
                     ${l.isActive ? '' : `<span class="text-xs text-slate-400">(${L["Common_Inactive"]})</span>`}
                 </label>`).join('')
-            : `<div class="text-sm text-slate-400">${L["Js_Empty"]}</div>`;
+            : `<div class="p-3 text-sm text-slate-400">${L["Js_Empty"]}</div>`;
+
+        const selectAll = document.getElementById('subjectLessonsSelectAll');
+        selectAll.checked = items.length > 0;
+        selectAll.indeterminate = false;
+        updateSelectionCount();
 
         AdminUI.openModal('subjectLessonsModal');
     }

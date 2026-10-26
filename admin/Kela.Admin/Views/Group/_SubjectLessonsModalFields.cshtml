@@ -1,6 +1,16 @@
 <form id="subjectLessonsForm" class="space-y-4 p-6">
     <p class="text-sm text-slate-500">@L["Group_SelectLessonsHint"]</p>
-    <div id="subjectLessonsList" class="max-h-[50vh] space-y-2 overflow-y-auto"></div>
+
+    <div class="flex items-center justify-between">
+        <p class="text-sm font-semibold text-slate-600">@L["Common_Lesson"] <span id="subjectLessonsCount" class="ml-1 text-xs font-bold text-primary"></span></p>
+        <label class="flex cursor-pointer items-center gap-2 text-xs font-bold text-primary">
+            <input type="checkbox" id="subjectLessonsSelectAll" checked class="h-4 w-4 rounded border-slate-300 text-primary focus:ring-primary" />
+            @L["Group_SelectAll"]
+        </label>
+    </div>
+
+    <div id="subjectLessonsList" class="max-h-[45vh] space-y-1 overflow-y-auto rounded-xl border border-border p-2"></div>
+
     <div class="flex justify-end gap-3 pt-2">
         <partial name="Ui/_Button" model="@(new ButtonModel { Text = L["Common_Cancel"], Variant = "secondary", Dismiss = true })" />
         <partial name="Ui/_Button" model="@(new ButtonModel { Text = L["Common_Add"], Type = "submit" })" />
