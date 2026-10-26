@@ -14,7 +14,7 @@
         document.getElementById('subject_filter').value = (window.LESSON_SUBJECTS || {})[lessonId] ?? '';
         window.filterQuizLessons(lessonId);
         document.getElementById('title').value = d.title;
-        document.getElementById('duration_minutes').value = d.durationMinutes;
+        document.getElementById('duration_minutes').value = Math.max(1, d.durationMinutes || 0);
         document.getElementById('type').value = d.type;
         document.getElementById('is_active').checked = d.isActive;
         document.getElementById('is_repeat').checked = d.isRepeat;

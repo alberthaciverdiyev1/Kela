@@ -32,7 +32,7 @@
         const fd = new FormData();
         fd.append('lesson_id', document.getElementById('lesson_id').value);
         fd.append('title', document.getElementById('title').value);
-        fd.append('duration_minutes', document.getElementById('duration_minutes').value || '0');
+        fd.append('duration_minutes', document.getElementById('duration_minutes').value || '1');
         const sortOrder = document.getElementById('sort_order').value;
         if (sortOrder !== '') fd.append('sort_order', sortOrder);
         fd.append('type', document.getElementById('type').value);
@@ -48,7 +48,7 @@
         document.getElementById('subject_filter').value = '';
         window.filterQuizLessons('');
         document.getElementById('title').value = '';
-        document.getElementById('duration_minutes').value = 0;
+        document.getElementById('duration_minutes').value = 1;
         document.getElementById('type').value = 'lesson';
         document.getElementById('is_active').checked = true;
         document.getElementById('is_repeat').checked = false;

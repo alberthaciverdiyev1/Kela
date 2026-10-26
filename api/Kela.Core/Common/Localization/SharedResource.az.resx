@@ -1908,4 +1908,7 @@
   <data name="Lesson_AddToGroups" xml:space="preserve">
     <value>Fənnin mövcud qruplarına da əlavə et</value>
   </data>
+  <data name="Quiz_DurationInvalid" xml:space="preserve">
+    <value>Müddət ən azı 1, ən çoxu 600 dəqiqə olmalıdır</value>
+  </data>
 </root>

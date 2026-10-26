@@ -22,7 +22,7 @@
     </div>
     <partial name="Ui/_Input" model="@(new InputModel { Name = "title", Id = "title", Label = L["Common_Title"], Required = true })" />
     <div class="grid grid-cols-2 gap-4">
-        <partial name="Ui/_Input" model="@(new InputModel { Name = "duration_minutes", Id = "duration_minutes", Label = L["Quiz_DurationMin"], Type = "number", Value = "0" })" />
+        <partial name="Ui/_Input" model="@(new InputModel { Name = "duration_minutes", Id = "duration_minutes", Label = L["Quiz_DurationMin"], Type = "number", Min = "1", Step = "1", Value = "1", Required = true })" />
         <partial name="Ui/_Select" model="@(new SelectModel { Name = "type", Id = "type", Label = L["Common_Type"], Options = typeOptions })" />
     </div>
     <div class="flex flex-wrap gap-6">

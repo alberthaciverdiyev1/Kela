@@ -18,6 +18,9 @@ public sealed class QuizUpsertRequestValidator : AbstractValidator<QuizUpsertReq
             .NotEmpty().WithMessage(L["Validation_TitleRequired"])
             .MaximumLength(190).WithMessage(L["Validation_TitleMaxLength190"]);
 
-        RuleFor(x => x.DurationMinutes).GreaterThanOrEqualTo(0);
+        // 0 dəqiqə mənasızdır — imtahanın minimum müddəti 1 dəqiqədir.
+        RuleFor(x => x.DurationMinutes)
+            .GreaterThanOrEqualTo(1).WithMessage(L["Quiz_DurationInvalid"])
+            .LessThanOrEqualTo(600).WithMessage(L["Quiz_DurationInvalid"]);
     }
 }

@@ -1908,4 +1908,7 @@
   <data name="Lesson_AddToGroups" xml:space="preserve">
     <value>Also add to existing groups of the subject</value>
   </data>
+  <data name="Quiz_DurationInvalid" xml:space="preserve">
+    <value>Duration must be between 1 and 600 minutes</value>
+  </data>
 </root>
