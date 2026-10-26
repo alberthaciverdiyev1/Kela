@@ -81,36 +81,69 @@ window.AdminUI = window.AdminUI || {};
             editor.dataset.ready = '1';
 
             const field = document.getElementById(editor.dataset.for);
-            const body = editor.querySelector('.admin-editor-body');
-            if (!field || !body) return;
+            const mount = editor.querySelector('.admin-editor-body');
+            if (!field || !mount || !window.Quill) return;
 
-            const sync = () => { field.value = body.innerHTML.trim(); };
-            body.addEventListener('input', sync);
-            body.addEventListener('blur', sync);
-
-            editor.querySelectorAll('[data-cmd]').forEach(btn => {
-                // Klik zamanı seçim itməsin.
-                btn.addEventListener('mousedown', (e) => e.preventDefault());
-                btn.addEventListener('click', async () => {
-                    const cmd = btn.dataset.cmd;
-                    body.focus();
-                    if (cmd === 'createLink') {
-                        const url = await UI.swal({ input: 'url', title: 'Keçid', inputPlaceholder: 'https://' });
-                        if (url.value) document.execCommand('createLink', false, url.value);
-                    } else {
-                        document.execCommand(cmd, false, btn.dataset.value || null);
+            const quill = new window.Quill(mount, {
+                theme: 'snow',
+                modules: {
+                    toolbar: {
+                        container: [
+                            ['bold', 'italic', 'underline'],
+                            [{ header: [2, 3, false] }],
+                            [{ list: 'ordered' }, { list: 'bullet' }],
+                            ['link', 'image'],
+                            ['clean']
+                        ],
+                        handlers: { image: () => pickImage(quill) }
                     }
-                    sync();
-                });
+                }
+            });
+
+            mount._quill = quill;
+            quill.on('text-change', () => {
+                const html = quill.root.innerHTML.trim();
+                field.value = html === '<p><br></p>' ? '' : html;
             });
         });
+    }
+
+    // Şəkil brauzerdə base64 kimi yox, serverə yüklənib URL ilə saxlanılır.
+    function pickImage(quill) {
+        const input = document.createElement('input');
+        input.type = 'file';
+        input.accept = 'image/png,image/jpeg,image/gif,image/webp';
+
+        input.addEventListener('change', async () => {
+            const file = input.files[0];
+            if (!file) return;
+
+            const fd = new FormData();
+            fd.append('file', file);
+
+            const res = await UI.postForm('/editor/image', fd);
+            if (!res.ok || !res.data?.url) { UI.error(res.data?.error); return; }
+
+            const index = quill.getSelection(true)?.index ?? quill.getLength();
+            quill.insertEmbed(index, 'image', res.data.url, 'user');
+            quill.setSelection(index + 1, 0);
+        }, { once: true });
+
+        input.click();
     }
 
     function syncEditors(root) {
         (root || document).querySelectorAll('.admin-editor[data-for]').forEach(editor => {
             const field = document.getElementById(editor.dataset.for);
             const body = editor.querySelector('.admin-editor-body');
-            if (field && body) body.innerHTML = field.value || '';
+            if (!field || !body) return;
+
+            if (body._quill) {
+                // setContents köhnə məzmunu tam əvəz edir; dangerouslyPasteHTML isə yerinə əlavə edir.
+                body._quill.setContents(body._quill.clipboard.convert({ html: field.value || '' }), 'silent');
+            } else {
+                body.innerHTML = field.value || '';
+            }
         });
     }
 

@@ -46,7 +46,10 @@ window.AdminUI = window.AdminUI || {};
         // olanlar səhifə kontekstini daşıyır və qalmalıdır (məs. mənbə dərs).
         form.querySelectorAll('input[type=hidden]:not([data-persist])').forEach(input => { input.value = ''; });
         form.querySelectorAll('input[type=file]').forEach(input => { if (input.id) UI.fileReset(input.id); });
-        form.querySelectorAll('.admin-editor-body').forEach(el => { el.innerHTML = ''; });
+        form.querySelectorAll('.admin-editor-body').forEach(el => {
+            if (el._quill) el._quill.setText('');
+            else el.innerHTML = '';
+        });
     }
 
     function validateForm(formOrId) {
