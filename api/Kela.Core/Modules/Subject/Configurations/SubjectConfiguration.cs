@@ -18,7 +18,11 @@ public sealed class SubjectConfiguration : IEntityTypeConfiguration<Subject>
             .HasColumnName("name")
             .HasMaxLength(190)
             .IsRequired();
-        builder.HasIndex(x => x.Name).IsUnique();
+        // Ad yalnız öz tenant-ında unikal olmalıdır; silinmiş fənn adı yenidən
+        // istifadə oluna bilsin deyə indeks soft-delete sətirlərini əhatə etmir.
+        builder.HasIndex(x => new { x.TenantId, x.Name })
+            .IsUnique()
+            .HasFilter("deleted_at IS NULL");
 
         builder.Property(x => x.UserId).HasColumnName("user_id");
         builder.Property(x => x.IsShared).HasColumnName("is_shared").HasDefaultValue(false);

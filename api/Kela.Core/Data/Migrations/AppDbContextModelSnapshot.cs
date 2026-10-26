@@ -2809,8 +2809,9 @@ namespace Kela.Core.Data.Migrations
 
                     b.HasIndex("DeletedAt");
 
-                    b.HasIndex("Name")
-                        .IsUnique();
+                    b.HasIndex("TenantId", "Name")
+                        .IsUnique()
+                        .HasFilter("deleted_at IS NULL");
 
                     b.ToTable("subjects", (string)null);
                 });

@@ -100,7 +100,9 @@ public sealed class SubjectService(
 
     private async Task EnsureNameAvailableAsync(string name, long? excludeId, CancellationToken ct)
     {
-        var exists = await db.Subjects.IgnoreQueryFilters(new[] { "SoftDelete" })
+        // Normal sorğu tenant və soft-delete filtrlərini tətbiq edir: silinmiş fənn
+        // adı yenidən istifadə oluna bilər, başqa tenant-ın adı isə mane olmur.
+        var exists = await db.Subjects
             .AnyAsync(x => x.Name == name && (excludeId == null || x.Id != excludeId), ct);
 
         if (exists)
