@@ -109,6 +109,7 @@ public static class DependencyInjection
         services.AddScoped<ITenantService, TenantService>();        services.AddScoped<IDashboardService, DashboardService>();
         services.AddScoped<IStudentManagementService, StudentManagementService>();
         services.AddScoped<Kela.Core.Modules.Payments.Abstractions.IStudentPaymentService, Kela.Core.Modules.Payments.Services.StudentPaymentService>();
+        services.AddScoped<Kela.Core.Modules.Payments.Abstractions.IKassaService, Kela.Core.Modules.Payments.Services.KassaService>();
 
         services.AddHttpContextAccessor();
         services.AddScoped<ITenantScope, TenantScope>();
