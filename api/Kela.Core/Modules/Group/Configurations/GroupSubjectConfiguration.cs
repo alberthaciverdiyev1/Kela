@@ -18,6 +18,7 @@ public sealed class GroupSubjectConfiguration : IEntityTypeConfiguration<GroupSu
 
         builder.Property(x => x.GroupId).HasColumnName("group_id");
         builder.Property(x => x.SubjectId).HasColumnName("subject_id");
+        builder.Property(x => x.LessonsConfigured).HasColumnName("lessons_configured").HasDefaultValue(false);
 
         builder.HasOne(x => x.Group).WithMany(g => g.SubjectLinks).HasForeignKey(x => x.GroupId).OnDelete(DeleteBehavior.Cascade);
         builder.HasOne(x => x.Subject).WithMany().HasForeignKey(x => x.SubjectId).OnDelete(DeleteBehavior.Cascade);

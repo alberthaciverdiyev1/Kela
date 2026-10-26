@@ -10,6 +10,9 @@ public interface IStudentAccessService
 
     Task<bool> HasSubjectAccessAsync(long studentId, long subjectId, CancellationToken ct = default);
 
+    /// <summary>Fənn açıqdırsa və dərs qrupun seçdiyi dərslər içindedirsə true.</summary>
+    Task<bool> HasLessonAccessAsync(long studentId, long lessonId, CancellationToken ct = default);
+
     /// <summary>Şagirdin həmin fenn üzrə tarixli üzvülük pəncərələri (start_date olan). Boşdursa məhdudiyyət yox.</summary>
     Task<List<MembershipWindow>> MembershipWindowsAsync(long studentId, long subjectId, CancellationToken ct = default);
 }

@@ -607,6 +607,51 @@ namespace Kela.Core.Data.Migrations
                     b.ToTable("group_join_requests", (string)null);
                 });
 
+            modelBuilder.Entity("Kela.Core.Modules.Group.Entities.GroupLesson", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint")
+                        .HasColumnName("id");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
+
+                    b.Property<DateTimeOffset>("CreatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_at");
+
+                    b.Property<DateTimeOffset?>("DeletedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("deleted_at");
+
+                    b.Property<long>("GroupId")
+                        .HasColumnType("bigint")
+                        .HasColumnName("group_id");
+
+                    b.Property<long>("LessonId")
+                        .HasColumnType("bigint")
+                        .HasColumnName("lesson_id");
+
+                    b.Property<long>("TenantId")
+                        .HasColumnType("bigint")
+                        .HasColumnName("tenant_id");
+
+                    b.Property<DateTimeOffset?>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("updated_at");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("DeletedAt");
+
+                    b.HasIndex("LessonId");
+
+                    b.HasIndex("GroupId", "LessonId")
+                        .IsUnique();
+
+                    b.ToTable("group_lessons", (string)null);
+                });
+
             modelBuilder.Entity("Kela.Core.Modules.Group.Entities.GroupQuiz", b =>
                 {
                     b.Property<long>("Id")
@@ -672,6 +717,12 @@ namespace Kela.Core.Data.Migrations
                     b.Property<long>("GroupId")
                         .HasColumnType("bigint")
                         .HasColumnName("group_id");
+
+                    b.Property<bool>("LessonsConfigured")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("boolean")
+                        .HasDefaultValue(false)
+                        .HasColumnName("lessons_configured");
 
                     b.Property<long>("SubjectId")
                         .HasColumnType("bigint")
@@ -3317,6 +3368,25 @@ namespace Kela.Core.Data.Migrations
                     b.Navigation("Group");
 
                     b.Navigation("Student");
+                });
+
+            modelBuilder.Entity("Kela.Core.Modules.Group.Entities.GroupLesson", b =>
+                {
+                    b.HasOne("Kela.Core.Modules.Group.Entities.Group", "Group")
+                        .WithMany()
+                        .HasForeignKey("GroupId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Kela.Core.Modules.Lesson.Entities.Lesson", "Lesson")
+                        .WithMany()
+                        .HasForeignKey("LessonId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Group");
+
+                    b.Navigation("Lesson");
                 });
 
             modelBuilder.Entity("Kela.Core.Modules.Group.Entities.GroupQuiz", b =>

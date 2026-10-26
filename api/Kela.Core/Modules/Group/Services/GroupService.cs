@@ -17,6 +17,7 @@ using Group = Kela.Core.Modules.Group.Entities.Group;
 using GroupQuiz = Kela.Core.Modules.Group.Entities.GroupQuiz;
 using MainCategoryAssignmentLog = Kela.Core.Modules.Group.Entities.MainCategoryAssignmentLog;
 using GroupSubject = Kela.Core.Modules.Group.Entities.GroupSubject;
+using GroupLesson = Kela.Core.Modules.Group.Entities.GroupLesson;
 using StudentGroup = Kela.Core.Modules.Group.Entities.StudentGroup;
 using Subject = Kela.Core.Modules.Subject.Entities.Subject;
 using Kela.Core.Common.Queries;
@@ -235,13 +236,22 @@ public sealed class GroupService(
                 .IgnoreQueryFilters(new[] { "SoftDelete" })
                 .FirstOrDefaultAsync(x => x.GroupId == groupId && x.SubjectId == subjectId, ct);
 
-            if (existing is null)
+            var link = existing;
+            if (link is null)
             {
-                db.GroupSubjects.Add(new GroupSubject { GroupId = groupId, SubjectId = subjectId });
+                link = new GroupSubject { GroupId = groupId, SubjectId = subjectId };
+                db.GroupSubjects.Add(link);
             }
             else
             {
-                existing.DeletedAt = null;
+                link.DeletedAt = null;
+            }
+
+            if (request.LessonIds is not null)
+            {
+                // Boş siyahı da "seçim edildi" sayılır — heç bir dərs göstərilməyəcək.
+                link.LessonsConfigured = true;
+                await ReplaceGroupLessonsAsync(groupId, subjectId, request.LessonIds, ct);
             }
 
             db.MainCategoryAssignmentLogs.Add(new MainCategoryAssignmentLog { GroupId = groupId, SubjectId = subjectId, Action = "attach" });
@@ -260,8 +270,37 @@ public sealed class GroupService(
             ?? throw new KeyNotFoundException($"Subject {subjectId} is not assigned to group {groupId}");
 
         link.DeletedAt = DateTimeOffset.UtcNow;
+
+        // Fənn çıxarılarsa ona bağlı dərs seçimləri də qalmasın.
+        var lessonIds = await db.Lessons.AsNoTracking()
+            .Where(x => x.SubjectId == subjectId).Select(x => x.Id).ToListAsync(ct);
+        var groupLessons = await db.GroupLessons
+            .Where(x => x.GroupId == groupId && lessonIds.Contains(x.LessonId)).ToListAsync(ct);
+
+        db.GroupLessons.RemoveRange(groupLessons);
         db.MainCategoryAssignmentLogs.Add(new MainCategoryAssignmentLog { GroupId = groupId, SubjectId = subjectId, Action = "detach" });
         await db.SaveChangesAsync(ct);
+    }
+
+    private async Task ReplaceGroupLessonsAsync(long groupId, long subjectId, IReadOnlyList<long> lessonIds, CancellationToken ct)
+    {
+        var ids = lessonIds.Distinct().ToList();
+
+        if (ids.Count > 0)
+        {
+            var valid = await db.Lessons.AsNoTracking()
+                .CountAsync(x => ids.Contains(x.Id) && x.SubjectId == subjectId, ct);
+
+            if (valid != ids.Count) throw new ArgumentException("Lesson does not belong to the selected subject");
+        }
+
+        var current = await (from gl in db.GroupLessons
+                             join l in db.Lessons.AsNoTracking() on gl.LessonId equals l.Id
+                             where gl.GroupId == groupId && l.SubjectId == subjectId
+                             select gl).ToListAsync(ct);
+
+        db.GroupLessons.RemoveRange(current);
+        foreach (var lessonId in ids) db.GroupLessons.Add(new GroupLesson { GroupId = groupId, LessonId = lessonId });
     }
 
     public async Task<IReadOnlyList<QuizResponse>> ListQuizzesAsync(long groupId, long? ownerId = null, CancellationToken ct = default)

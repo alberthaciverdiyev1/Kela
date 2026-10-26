@@ -126,3 +126,17 @@
 </section>
 
 <form id="antiforgery">@Html.AntiForgeryToken()</form>
+
+@{
+    var subjectLessonsBody = await Html.PartialAsync("_SubjectLessonsModalFields");
+}
+
+<partial name="Ui/_Modal" model="@(new ModalModel
+{
+    Id = "subjectLessonsModal",
+    TitleId = "subjectLessonsTitle",
+    Title = L["Group_SelectLessons"],
+    WidthClass = "max-w-lg",
+    ShowError = false,
+    Body = subjectLessonsBody
+})" />

@@ -142,8 +142,32 @@
         document.getElementById('groupEdit').classList.toggle('hidden');
     };
 
+    let pendingSubjectId = null;
+
+    // Fənn əlavə etməzdən əvvəl hansı dərslərin açılacağını soruşuruq.
+    async function openSubjectLessons() {
+        const value = document.getElementById('subjectPick').value;
+        if (!value) return;
+        pendingSubjectId = Number(value);
+
+        const items = await AdminUI.get(`/group/${groupId}/subject-lessons?subject_id=${value}`);
+        const box = document.getElementById('subjectLessonsList');
+
+        box.innerHTML = items.length
+            ? items.map(l => `<label class="flex cursor-pointer items-center gap-2 rounded-xl bg-surface-secondary px-3 py-2 text-sm">
+                    <input type="checkbox" value="${l.id}" checked class="h-4 w-4 accent-primary" />
+                    <span class="text-slate-700">${AdminUI.escapeHtml(l.title)}</span>
+                    ${l.isActive ? '' : `<span class="text-xs text-slate-400">(${L["Common_Inactive"]})</span>`}
+                </label>`).join('')
+            : `<div class="text-sm text-slate-400">${L["Js_Empty"]}</div>`;
+
+        AdminUI.openModal('subjectLessonsModal');
+    }
+
     window.assignMember = async (type) => {
-        const pickId = type === 'students' ? 'studentPick' : type === 'subjects' ? 'subjectPick' : 'quizPick';
+        if (type === 'subjects') { await openSubjectLessons(); return; }
+
+        const pickId = type === 'students' ? 'studentPick' : 'quizPick';
         const value = document.getElementById(pickId).value;
         if (!value) return;
 
@@ -152,6 +176,28 @@
         if (res.ok) { AdminUI.notify(L["Js_Added"]); refresh(); }
         else AdminUI.error(AdminUI.errText(res));
     };
+
+    document.getElementById('subjectLessonsForm')?.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        if (!pendingSubjectId) return;
+
+        const lessonIds = [...document.querySelectorAll('#subjectLessonsList input[type=checkbox]:checked')]
+            .map(x => Number(x.value));
+
+        const res = await AdminUI.postJson(`/group/${groupId}/subjects`, {
+            subjectIds: [pendingSubjectId],
+            lessonIds
+        });
+
+        if (res.ok) {
+            AdminUI.notify(L["Js_Added"]);
+            AdminUI.closeModal('subjectLessonsModal');
+            pendingSubjectId = null;
+            refresh();
+        } else {
+            AdminUI.error(AdminUI.errText(res));
+        }
+    });
 
     window.removeMember = async (type, id) => {
         if (!await AdminUI.confirmDelete(L["Js_ConfirmRemove"])) return;

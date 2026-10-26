@@ -89,6 +89,8 @@ public sealed class AppDbContext : DbContext
 
     public DbSet<Modules.Group.Entities.GroupQuiz> GroupQuizzes => Set<Modules.Group.Entities.GroupQuiz>();
 
+    public DbSet<Modules.Group.Entities.GroupLesson> GroupLessons => Set<Modules.Group.Entities.GroupLesson>();
+
     public DbSet<Modules.Group.Entities.GroupJoinRequest> GroupJoinRequests => Set<Modules.Group.Entities.GroupJoinRequest>();
 
     public DbSet<Modules.Notification.Entities.Notification> Notifications => Set<Modules.Notification.Entities.Notification>();

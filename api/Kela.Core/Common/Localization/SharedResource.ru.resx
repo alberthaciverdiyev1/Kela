@@ -1899,4 +1899,10 @@
   <data name="Js_Published" xml:space="preserve">
     <value>Задание опубликовано</value>
   </data>
+  <data name="Group_SelectLessons" xml:space="preserve">
+    <value>Выберите уроки</value>
+  </data>
+  <data name="Group_SelectLessonsHint" xml:space="preserve">
+    <value>Предмет добавляется в группу. Выберите, какие уроки будут доступны группе.</value>
+  </data>
 </root>

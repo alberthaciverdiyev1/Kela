@@ -35,7 +35,7 @@ public sealed class StudentAppService(
 
         var groupSubjects = await db.GroupSubjects.AsNoTracking()
             .Where(gs => groupIds.Contains(gs.GroupId) && accessibleSubjectIds.Contains(gs.SubjectId))
-            .Select(gs => new { gs.GroupId, gs.SubjectId })
+            .Select(gs => new { gs.GroupId, gs.SubjectId, gs.LessonsConfigured })
             .ToListAsync(ct);
 
         var subjectIds = groupSubjects.Select(x => x.SubjectId).Distinct().ToList();
@@ -44,6 +44,17 @@ public sealed class StudentAppService(
             .Where(l => subjectIds.Contains(l.SubjectId) && l.IsActive)
             .Select(l => new { l.Id, l.SubjectId })
             .ToListAsync(ct);
+
+        var accessibleLessonIds = lessons.Select(l => l.Id).ToList();
+        var groupLessons = await db.GroupLessons.AsNoTracking()
+            .Where(gl => groupIds.Contains(gl.GroupId) && accessibleLessonIds.Contains(gl.LessonId))
+            .Select(gl => new { gl.GroupId, gl.LessonId })
+            .ToListAsync(ct);
+
+        var configured = groupSubjects
+            .Where(x => x.LessonsConfigured)
+            .Select(x => (x.GroupId, x.SubjectId))
+            .ToHashSet();
 
         var lessonIds = lessons.Select(l => l.Id).ToList();
 
@@ -60,7 +71,14 @@ public sealed class StudentAppService(
         return groups.Select(g =>
         {
             var subjectIdsOfGroup = groupSubjects.Where(x => x.GroupId == g.Id).Select(x => x.SubjectId).ToHashSet();
-            var lessonIdsOfGroup = lessons.Where(l => subjectIdsOfGroup.Contains(l.SubjectId)).Select(l => l.Id).ToHashSet();
+
+            // Fənn üzrə dərs seçimi edilibsə yalnız seçilmişlər sayılır; köhnədə hamısı.
+            var lessonIdsOfGroup = lessons
+                .Where(l => subjectIdsOfGroup.Contains(l.SubjectId)
+                    && (!configured.Contains((g.Id, l.SubjectId))
+                        || groupLessons.Any(gl => gl.GroupId == g.Id && gl.LessonId == l.Id)))
+                .Select(l => l.Id)
+                .ToHashSet();
             var contentIdsOfGroup = contents.Where(c => lessonIdsOfGroup.Contains(c.LessonId)).Select(c => c.Id).ToList();
             var done = contentIdsOfGroup.Count(completed.Contains);
 
@@ -221,9 +239,35 @@ public sealed class StudentAppService(
             throw new ForbiddenException("You do not have access to this subject");
         }
 
-        var lessons = await db.Lessons
+        var query = db.Lessons
             .AsNoTracking()
-            .Where(x => x.SubjectId == subjectId && x.IsActive)
+            .Where(x => x.SubjectId == subjectId && x.IsActive);
+
+        // Qrup fənnlə birlikdə dərs seçibsə yalnız onlar görünür. Seçim etməyən
+        // qruplar (köhnə məlumat) üçün bütün dərslər açıq qalır.
+        var groupIds = await db.StudentGroups.AsNoTracking()
+            .Where(sg => sg.StudentId == studentId
+                && db.GroupSubjects.Any(gs => gs.GroupId == sg.GroupId && gs.SubjectId == subjectId))
+            .Select(sg => sg.GroupId)
+            .ToListAsync(ct);
+
+        var configuredGroups = await db.GroupSubjects.AsNoTracking()
+            .Where(gs => groupIds.Contains(gs.GroupId) && gs.SubjectId == subjectId && gs.LessonsConfigured)
+            .Select(gs => gs.GroupId)
+            .ToListAsync(ct);
+
+        if (groupIds.Count > 0 && configuredGroups.Count == groupIds.Count)
+        {
+            var selected = await db.GroupLessons.AsNoTracking()
+                .Where(gl => groupIds.Contains(gl.GroupId))
+                .Select(gl => gl.LessonId)
+                .Distinct()
+                .ToListAsync(ct);
+
+            query = query.Where(x => selected.Contains(x.Id));
+        }
+
+        var lessons = await query
             .OrderBy(x => x.SortOrder).ThenBy(x => x.Id)
             .ToListAsync(ct);
 
@@ -239,7 +283,7 @@ public sealed class StudentAppService(
         var lesson = await db.Lessons.AsNoTracking().FirstOrDefaultAsync(x => x.Id == lessonId, ct)
             ?? throw new KeyNotFoundException($"Lesson not found: {lessonId}");
 
-        if (!await access.HasSubjectAccessAsync(studentId, lesson.SubjectId, ct))
+        if (!await access.HasLessonAccessAsync(studentId, lessonId, ct))
         {
             throw new ForbiddenException("You do not have access to this lesson");
         }
@@ -254,7 +298,7 @@ public sealed class StudentAppService(
         var lesson = await db.Lessons.AsNoTracking().FirstOrDefaultAsync(x => x.Id == lessonId, ct)
             ?? throw new KeyNotFoundException($"Lesson not found: {lessonId}");
 
-        if (!await access.HasSubjectAccessAsync(studentId, lesson.SubjectId, ct))
+        if (!await access.HasLessonAccessAsync(studentId, lessonId, ct))
         {
             throw new ForbiddenException("You do not have access to this lesson");
         }
@@ -285,7 +329,7 @@ public sealed class StudentAppService(
         var lesson = await db.Lessons.AsNoTracking().FirstOrDefaultAsync(x => x.Id == lessonId, ct)
             ?? throw new KeyNotFoundException($"Lesson not found: {lessonId}");
 
-        if (!await access.HasSubjectAccessAsync(studentId, lesson.SubjectId, ct))
+        if (!await access.HasLessonAccessAsync(studentId, lessonId, ct))
         {
             throw new ForbiddenException("You do not have access to this lesson");
         }

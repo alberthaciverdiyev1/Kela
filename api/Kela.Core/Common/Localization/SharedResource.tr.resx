@@ -1899,4 +1899,10 @@
   <data name="Js_Published" xml:space="preserve">
     <value>Ödev yayımlandı</value>
   </data>
+  <data name="Group_SelectLessons" xml:space="preserve">
+    <value>Dersleri seçin</value>
+  </data>
+  <data name="Group_SelectLessonsHint" xml:space="preserve">
+    <value>Ders gruba ekleniyor. Grubun hangi derslere erişeceğini seçin.</value>
+  </data>
 </root>

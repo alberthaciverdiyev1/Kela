@@ -1,0 +1,8 @@
+<form id="subjectLessonsForm" class="space-y-4 p-6">
+    <p class="text-sm text-slate-500">@L["Group_SelectLessonsHint"]</p>
+    <div id="subjectLessonsList" class="max-h-[50vh] space-y-2 overflow-y-auto"></div>
+    <div class="flex justify-end gap-3 pt-2">
+        <partial name="Ui/_Button" model="@(new ButtonModel { Text = L["Common_Cancel"], Variant = "secondary", Dismiss = true })" />
+        <partial name="Ui/_Button" model="@(new ButtonModel { Text = L["Common_Add"], Type = "submit" })" />
+    </div>
+</form>

@@ -1899,4 +1899,10 @@
   <data name="Js_Published" xml:space="preserve">
     <value>Tapşırıq yayımlandı</value>
   </data>
+  <data name="Group_SelectLessons" xml:space="preserve">
+    <value>Dərsləri seçin</value>
+  </data>
+  <data name="Group_SelectLessonsHint" xml:space="preserve">
+    <value>Fənn qrupa əlavə edilir. Qrupa hansı dərslərin açılacağını seçin.</value>
+  </data>
 </root>

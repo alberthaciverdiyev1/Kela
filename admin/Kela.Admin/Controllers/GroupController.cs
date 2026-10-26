@@ -170,6 +170,26 @@ public sealed class GroupController(
     public async Task<IActionResult> GroupSubjects(long id, CancellationToken ct)
         => Json(await service.ListSubjectsAsync(id, OwnerScope, ct));
 
+    /// <summary>Fənn qrupa əlavə edilərkən hansı dərslərin açılacağını seçmək üçün siyahı.</summary>
+    [HttpGet("{id:long}/subject-lessons")]
+    public async Task<IActionResult> SubjectLessons(
+        long id, [FromQuery(Name = "subject_id")] long subjectId, CancellationToken ct)
+    {
+        var ownerId = OwnerScope;
+        await service.GetAsync(id, ownerId, ct);
+
+        var list = await lessons.ListAsync(new LessonListRequest
+        {
+            PerPage = 500,
+            SubjectId = subjectId,
+            UserId = ownerId
+        }, ct);
+
+        return Json(list.Data
+            .OrderBy(x => x.SortOrder).ThenBy(x => x.Id)
+            .Select(x => new { x.Id, x.Title, x.IsActive }));
+    }
+
     [HttpPost("{id:long}/subjects")]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> AssignSubjects(long id, [FromBody] AssignSubjectsRequest request, CancellationToken ct)

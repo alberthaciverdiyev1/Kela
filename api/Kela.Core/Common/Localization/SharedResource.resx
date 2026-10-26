@@ -1899,4 +1899,10 @@
   <data name="Js_Published" xml:space="preserve">
     <value>Homework published</value>
   </data>
+  <data name="Group_SelectLessons" xml:space="preserve">
+    <value>Select lessons</value>
+  </data>
+  <data name="Group_SelectLessonsHint" xml:space="preserve">
+    <value>The subject is being added to the group. Choose which lessons the group can access.</value>
+  </data>
 </root>
