@@ -1905,4 +1905,7 @@
   <data name="Group_SelectLessonsHint" xml:space="preserve">
     <value>The subject is being added to the group. Choose which lessons the group can access.</value>
   </data>
+  <data name="Lesson_AddToGroups" xml:space="preserve">
+    <value>Also add to existing groups of the subject</value>
+  </data>
 </root>

@@ -29,4 +29,11 @@ public class LessonUpsertRequest
 
     [FromForm(Name = "settings")]
     public string? Settings { get; set; }
+
+    /// <summary>
+    /// Yaradılan dərsi fənnin bağlı olduğu, dərs seçimi edilmiş bütün qruplara əlavə et.
+    /// Yalnız yaratma zamanı istifadə olunur.
+    /// </summary>
+    [FromForm(Name = "add_to_groups")]
+    public bool AddToGroups { get; set; }
 }

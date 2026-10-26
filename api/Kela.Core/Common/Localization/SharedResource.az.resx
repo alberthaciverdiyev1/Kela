@@ -1905,4 +1905,7 @@
   <data name="Group_SelectLessonsHint" xml:space="preserve">
     <value>Fənn qrupa əlavə edilir. Qrupa hansı dərslərin açılacağını seçin.</value>
   </data>
+  <data name="Lesson_AddToGroups" xml:space="preserve">
+    <value>Fənnin mövcud qruplarına da əlavə et</value>
+  </data>
 </root>

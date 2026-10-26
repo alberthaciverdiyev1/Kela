@@ -1905,4 +1905,7 @@
   <data name="Group_SelectLessonsHint" xml:space="preserve">
     <value>Ders gruba ekleniyor. Grubun hangi derslere erişeceğini seçin.</value>
   </data>
+  <data name="Lesson_AddToGroups" xml:space="preserve">
+    <value>Dersin mevcut gruplarına da ekle</value>
+  </data>
 </root>

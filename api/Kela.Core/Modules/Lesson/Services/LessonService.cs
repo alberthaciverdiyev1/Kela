@@ -12,6 +12,7 @@ using Kela.Core.Modules.Lesson.Responses;
 using Microsoft.EntityFrameworkCore;
 
 namespace Kela.Core.Modules.Lesson.Services;
+using GroupLesson = Kela.Core.Modules.Group.Entities.GroupLesson;
 
 using Lesson = Kela.Core.Modules.Lesson.Entities.Lesson;
 using Kela.Core.Common.Queries;
@@ -102,7 +103,38 @@ public sealed class LessonService(
         db.Lessons.Add(lesson);
         await db.SaveChangesAsync(ct);
 
+        if (request.AddToGroups)
+        {
+            await AddLessonToConfiguredGroupsAsync(lesson, ct);
+        }
+
         return ToResponse(lesson);
+    }
+
+    /// <summary>
+    /// Dərs seçimi edilmiş qruplara yeni dərsi əlavə edir. Seçim etməyən (köhnə)
+    /// qruplar bütün dərsləri gördüyü üçün onlara sətir yazmaq lazım deyil.
+    /// </summary>
+    private async Task AddLessonToConfiguredGroupsAsync(Kela.Core.Modules.Lesson.Entities.Lesson lesson, CancellationToken ct)
+    {
+        var groupIds = await db.GroupSubjects
+            .Where(gs => gs.SubjectId == lesson.SubjectId && gs.LessonsConfigured)
+            .Select(gs => gs.GroupId)
+            .ToListAsync(ct);
+
+        if (groupIds.Count == 0) return;
+
+        var already = await db.GroupLessons
+            .Where(gl => groupIds.Contains(gl.GroupId) && gl.LessonId == lesson.Id)
+            .Select(gl => gl.GroupId)
+            .ToListAsync(ct);
+
+        foreach (var groupId in groupIds.Except(already))
+        {
+            db.GroupLessons.Add(new GroupLesson { GroupId = groupId, LessonId = lesson.Id });
+        }
+
+        await db.SaveChangesAsync(ct);
     }
 
     public async Task<LessonResponse> UpdateAsync(long id, LessonUpsertRequest request, long? ownerId = null, CancellationToken ct = default)

@@ -12,6 +12,10 @@
         document.getElementById('is_active').checked = data.isActive;
         document.getElementById('is_shared').checked = data.isShared === true;
 
+        // "Bütün qruplara əlavə et" yalnız yaratma zamanı tətbiq olunur.
+        document.getElementById('add_to_groups').checked = false;
+        document.getElementById('addToGroupsBlock').classList.add('hidden');
+
         // Paylaşımı yalnız dərsin sahibi və ya admin dəyişir; digər müəllim
         // yalnız statusu dəyişə bilər (o da siyahıdaki açardan).
         const canShare = window.ADMIN && (window.ADMIN.isAdmin || data.userId === window.ADMIN.userId);
