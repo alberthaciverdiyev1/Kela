@@ -1,12 +1,25 @@
 @{
     var lessons = (PagedResponse<LessonResponse>)ViewData["Lessons"]!;
-    var lessonOptions = lessons.Data.Select(l => new SelectOption { Value = l.Id.ToString(), Text = l.Title }).ToList();
+    var subjects = (PagedResponse<SubjectResponse>)ViewData["Subjects"]!;
+    var subjectNames = subjects.Data.ToDictionary(s => s.Id, s => s.Name);
+    // Eyni adlı dərslər müxtəlif fənlərdə ola bilər — seçimdə fənn adı da yazılır.
+    var lessonOptions = lessons.Data.Select(l => new SelectOption
+    {
+        Value = l.Id.ToString(),
+        Text = subjectNames.TryGetValue(l.SubjectId, out var subjectName) ? $"{subjectName} — {l.Title}" : l.Title
+    }).ToList();
+    var subjectFilterOptions = new List<SelectOption> { new() { Value = "", Text = L["Common_All"] } };
+    subjectFilterOptions.AddRange(subjects.Data.Select(s => new SelectOption { Value = s.Id.ToString(), Text = s.Name }));
     var typeOptions = new List<SelectOption> { new() { Value = "lesson", Text = L["Common_LessonExam"] }, new() { Value = "general", Text = L["Common_General"] } };
 }
+<partial name="Ui/_OptionMap" model="@(new OptionMapModel { Name = "LESSON_SUBJECTS", Items = lessons.Data.ToDictionary(l => l.Id, l => l.SubjectId.ToString()) })" />
 <form id="entityForm" class="space-y-4 p-6">
     <input type="hidden" id="entityId" />
     <input type="hidden" id="sort_order" />
-    <partial name="Ui/_Select" model="@(new SelectModel { Name = "lesson_id", Id = "lesson_id", Label = L["Common_Lesson"], Required = true, Options = lessonOptions })" />
+    <div class="grid grid-cols-2 gap-4">
+        <partial name="Ui/_Select" model="@(new SelectModel { Name = "subject_filter", Id = "subject_filter", Label = L["Common_Subject"], Options = subjectFilterOptions })" />
+        <partial name="Ui/_Select" model="@(new SelectModel { Name = "lesson_id", Id = "lesson_id", Label = L["Common_Lesson"], Required = true, Options = lessonOptions })" />
+    </div>
     <partial name="Ui/_Input" model="@(new InputModel { Name = "title", Id = "title", Label = L["Common_Title"], Required = true })" />
     <div class="grid grid-cols-2 gap-4">
         <partial name="Ui/_Input" model="@(new InputModel { Name = "duration_minutes", Id = "duration_minutes", Label = L["Quiz_DurationMin"], Type = "number", Value = "0" })" />

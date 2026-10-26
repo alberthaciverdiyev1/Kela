@@ -7,7 +7,12 @@
         document.getElementById('modalTitle').textContent = L["Js_EditQuiz"];
         document.getElementById('entityId').value = d.id;
         document.getElementById('sort_order').value = d.sortOrder ?? 0;
-        document.getElementById('lesson_id').value = d.lessonId ?? '';
+
+        // Dərsin fənnini filtrə qoyub siyahını ona görə daraldırıq — eyni adlı
+        // dərslər arasında qarışıqlıq olmasın.
+        const lessonId = String(d.lessonId ?? '');
+        document.getElementById('subject_filter').value = (window.LESSON_SUBJECTS || {})[lessonId] ?? '';
+        window.filterQuizLessons(lessonId);
         document.getElementById('title').value = d.title;
         document.getElementById('duration_minutes').value = d.durationMinutes;
         document.getElementById('type').value = d.type;

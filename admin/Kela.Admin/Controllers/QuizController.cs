@@ -7,6 +7,8 @@ using Kela.Core.Modules.Question.Abstractions;
 using Kela.Core.Modules.Question.Requests;
 using Kela.Core.Modules.Quiz.Abstractions;
 using Kela.Core.Modules.Quiz.Requests;
+using Kela.Core.Modules.Subject.Abstractions;
+using Kela.Core.Modules.Subject.Requests;
 using Microsoft.AspNetCore.Mvc;
 using Kela.Admin.Infrastructure;
 using Kela.Core.Common.Requests;
@@ -18,6 +20,7 @@ public sealed class QuizController(
     IQuizService service,
     ILessonService lessons,
     IQuestionService questions,
+    ISubjectService subjects,
     IValidator<QuizUpsertRequest> validator) : AdminControllerBase
 {
     [HttpGet]
@@ -31,6 +34,8 @@ public sealed class QuizController(
         };
         ViewData["Lessons"] = await lessons.ListAsync(
             new LessonListRequest { PerPage = 500, UserId = User.IsAdmin() ? null : User.CurrentUserId() }, ct);
+        ViewData["Subjects"] = await subjects.ListAsync(
+            new SubjectListRequest { PerPage = 500, UserId = User.IsAdmin() ? null : User.CurrentUserId() }, ct);
         return View();
     }
 
@@ -108,7 +113,19 @@ public sealed class QuizController(
     public async Task<IActionResult> Options(CancellationToken ct)
     {
         var list = await questions.ListAsync(new QuestionListRequest { PerPage = 500, UserId = User.IsAdmin() ? null : User.CurrentUserId() }, ct);
-        return Json(list.Data.Select(q => new { id = q.Id, text = string.IsNullOrWhiteSpace(q.Title) ? $"#{q.Id}" : q.Title }));
+
+        // Şəkilli sualın başlığı boş olur — seçimdə hansı sual olduğunu görmək üçün
+        // şəkil URL-ləri də qaytarılır (modal onları önizləmə kimi göstərir).
+        return Json(list.Data.Select(q => new
+        {
+            id = q.Id,
+            // Şəkilli sualda Title URL/path saxlayır — seçimdə onu göstərmirik.
+            text = q.TitleType == "image" || string.IsNullOrWhiteSpace(q.Title) ? $"#{q.Id}" : q.Title,
+            titleUrl = q.TitleType == "image" ? q.TitleUrl : null,
+            imageUrls = new[] { q.VariantAUrl, q.VariantBUrl, q.VariantCUrl, q.VariantDUrl, q.VariantEUrl }
+                .Where(u => !string.IsNullOrWhiteSpace(u))
+                .ToList()
+        }));
     }
 
     [HttpGet("{id:long}/questions")]
