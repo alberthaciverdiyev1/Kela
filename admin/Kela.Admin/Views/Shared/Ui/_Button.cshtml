@@ -17,8 +17,11 @@
 }
 else
 {
+    @* Null olduqda Razor atributu ümumiyyətlə yazmır. JSON arqumentləri mütləq
+       dırnaq içində verilməlidir — əks halda brauzer tək dırnaqları da dəyərə
+       daxil edir və dataset.args JSON.parse-da partlayır. *@
     <button type="@Model.Type" id="@Model.Id" class="@cls"
-        @(Model.Action is not null ? $"data-action={Model.Action}" : null)
-        @(Model.Args is not null ? $"data-args='{Model.Args}'" : null)
-        @(Model.Dismiss ? "data-modal-close" : null)>@Model.Text</button>
+            data-action="@Model.Action"
+            data-args="@Model.Args"
+            @(Model.Dismiss ? "data-modal-close" : null)>@Model.Text</button>
 }
