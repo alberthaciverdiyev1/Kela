@@ -62,6 +62,14 @@ window.AdminUI = window.AdminUI || {};
         return `<a href="${esc(href)}" class="admin-row-action ${toneOf(opts)}">${esc(label)}</a>`;
     }
 
+    // Naviqasiya əməliyyatı ikonla (tooltip başlıqdan gəlir).
+    function actionLinkIcon(href, path, title, opts) {
+        const safeTitle = esc(title);
+        return `<a href="${esc(href)}" class="admin-row-action ${toneOf(opts)}" title="${safeTitle}" aria-label="${safeTitle}">
+            <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.9">${path}</svg>
+        </a>`;
+    }
+
     function rowActions(parts) {
         return `<div class="admin-row-actions">${parts.filter(Boolean).join('')}</div>`;
     }
@@ -145,5 +153,5 @@ window.AdminUI = window.AdminUI || {};
         document.dispatchEvent(new CustomEvent('tab:change', { detail: { tab: name } }));
     }
 
-    Object.assign(UI, { actionAttrs, initTabs, selectTab, badge, chip, statCard, actionButton, actionIcon, actionLink, rowActions, actions, statusSwitch, toggleHidden, syncTrashButton, restoreButton, restoreItem, confirmRestore });
+    Object.assign(UI, { actionLinkIcon,  actionAttrs, initTabs, selectTab, badge, chip, statCard, actionButton, actionIcon, actionLink, rowActions, actions, statusSwitch, toggleHidden, syncTrashButton, restoreButton, restoreItem, confirmRestore });
 })(window.AdminUI);
