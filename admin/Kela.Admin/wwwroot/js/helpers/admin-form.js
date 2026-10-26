@@ -178,7 +178,13 @@ window.AdminUI = window.AdminUI || {};
         }
 
         const wrap = document.createElement('div');
-        wrap.className = 'admin-select';
+
+        // Native select gizlədilir — onun en/flex sinifləri (məs. modalda tək
+        // select + düymə olan flex sırasındaki flex-1) sarğıya keçməlidir,
+        // əks halda görünən select məzmuna görə daralır.
+        const layoutClasses = [...select.classList]
+            .filter(c => c === 'flex-1' || c === 'grow' || /^w-/.test(c));
+        wrap.className = 'admin-select' + (layoutClasses.length ? ' ' + layoutClasses.join(' ') : '');
         wrap.dataset.for = select.id;
 
         const trigger = document.createElement('button');
