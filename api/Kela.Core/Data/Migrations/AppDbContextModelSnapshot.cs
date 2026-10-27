@@ -286,6 +286,14 @@ namespace Kela.Core.Data.Migrations
                         .HasDefaultValue(true)
                         .HasColumnName("is_active");
 
+                    b.Property<string>("Scope")
+                        .IsRequired()
+                        .ValueGeneratedOnAdd()
+                        .HasMaxLength(20)
+                        .HasColumnType("character varying(20)")
+                        .HasDefaultValue("tenant")
+                        .HasColumnName("scope");
+
                     b.Property<long>("TenantId")
                         .HasColumnType("bigint")
                         .HasColumnName("tenant_id");

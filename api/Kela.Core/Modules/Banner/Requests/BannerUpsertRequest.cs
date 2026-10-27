@@ -20,4 +20,7 @@ public class BannerUpsertRequest
     /// <summary>Boş = müddətsiz. Format: yyyy-MM-dd.</summary>
     [FromForm(Name = "active_until")]
     public DateOnly? ActiveUntil { get; set; }
+
+    /// <summary>Görünürlük həddi — controller rola görə təyin edir (BannerScope).</summary>
+    public string? Scope { get; set; }
 }

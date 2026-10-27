@@ -28,6 +28,12 @@ public sealed class BannerConfiguration : IEntityTypeConfiguration<Banner>
         builder.Property(x => x.IsActive).HasColumnName("is_active").HasDefaultValue(true);
         builder.Property(x => x.ActiveUntil).HasColumnName("active_until").HasColumnType("date");
 
+        builder.Property(x => x.Scope)
+            .HasColumnName("scope")
+            .HasMaxLength(20)
+            .HasDefaultValue(Entities.BannerScope.Tenant)
+            .IsRequired();
+
         builder.Property(x => x.CreatedAt).HasColumnName("created_at");
         builder.Property(x => x.UpdatedAt).HasColumnName("updated_at");
         builder.Property(x => x.DeletedAt).HasColumnName("deleted_at");

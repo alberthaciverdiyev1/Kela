@@ -9,7 +9,13 @@ public interface IBannerService
 {
     Task<PagedResponse<BannerResponse>> ListAsync(BannerListRequest request, CancellationToken ct = default);
 
+    /// <summary>Şagirdin gördüyü story-lər: superadmin → bütün tenantlar, admin → cari tenant, müəllim → yalnız öz qrupları.</summary>
+    Task<PagedResponse<BannerResponse>> ListForStudentAsync(long studentId, BannerListRequest request, CancellationToken ct = default);
+
     Task<BannerResponse> GetAsync(long id, CancellationToken ct = default);
+
+    /// <summary>Şagirdin görə biləcəyi tək story — görünmürsə <see cref="KeyNotFoundException"/>.</summary>
+    Task<BannerResponse> GetForStudentAsync(long studentId, long id, CancellationToken ct = default);
 
     Task<BannerResponse> CreateAsync(BannerUpsertRequest request, CancellationToken ct = default);
 

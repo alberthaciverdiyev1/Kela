@@ -1,6 +1,8 @@
 using FluentValidation;
 using Kela.Core.Common.Bulk;
+using Kela.Core.Modules.Auth;
 using Kela.Core.Modules.Banner.Abstractions;
+using Kela.Core.Modules.Banner.Entities;
 using Kela.Core.Modules.Banner.Requests;
 using Microsoft.AspNetCore.Mvc;
 using Kela.Admin.Infrastructure;
@@ -38,6 +40,10 @@ public sealed class BannerController(
     public async Task<IActionResult> Create([FromForm] BannerUpsertRequest request, CancellationToken ct)
     {
         request.UserId = OwnerScope;
+        // Görünürlük yaradanın rolundan asılıdır — client göndərdiyi dəyər nəzərə alınmır.
+        request.Scope = User.IsInRole(AuthRoles.SuperAdmin) ? BannerScope.Global
+            : User.IsInRole(AuthRoles.Admin) ? BannerScope.Tenant
+            : BannerScope.Teacher;
 
         var result = await validator.ValidateAsync(request, ct);
         if (!result.IsValid) return BadRequest(Invalid(result));

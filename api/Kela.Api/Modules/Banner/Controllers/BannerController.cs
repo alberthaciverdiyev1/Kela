@@ -18,12 +18,16 @@ public sealed class BannerController(IBannerService service) : ApiControllerBase
     public async Task<ActionResult<ApiResponse<IReadOnlyList<BannerResponse>>>> List(
         [FromQuery] BannerListRequest request, CancellationToken ct)
     {
-        // Şagird tətbiqi yalnız aktiv və müddəti bitməmiş bannerləri görür.
+        // Şagird tətbiqi yalnız aktiv və müddəti bitməmiş bannerləri görür;
+        // müəllim story-si yalnız öz qruplarına, admin story-si bütün tenant-a, superadmin story-si hamıya.
         request.OnlyActive = true;
-        return Success((await service.ListAsync(request, ct)).Data);
+        return Success((await service.ListForStudentAsync(CurrentUserId(), request, ct)).Data);
     }
 
     [HttpGet("{id:long}")]
     public async Task<ActionResult<ApiResponse<BannerResponse>>> Show(long id, CancellationToken ct)
-        => Success(await service.GetAsync(id, ct));
+        => Success(await service.GetForStudentAsync(CurrentUserId(), id, ct));
+
+    private long CurrentUserId()
+        => long.TryParse(User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value, out var id) ? id : 0;
 }

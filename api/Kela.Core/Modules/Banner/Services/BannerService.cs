@@ -5,6 +5,7 @@ using Kela.Core.Common.Responses;
 using Kela.Core.Common.Storage;
 using Kela.Core.Common.Bulk;
 using Kela.Core.Data;
+using Kela.Core.Modules.Banner.Entities;
 using Kela.Core.Modules.Banner.Requests;
 using Kela.Core.Modules.Banner.Responses;
 using Microsoft.EntityFrameworkCore;
@@ -50,6 +51,58 @@ public sealed class BannerService(AppDbContext db, IFileStorage storage, ITenant
         return new PagedResponse<BannerResponse>(data, page, Paging.LastPage(total, perPage), perPage, total);
     }
 
+    public async Task<PagedResponse<BannerResponse>> ListForStudentAsync(
+        long studentId, BannerListRequest request, CancellationToken ct = default)
+    {
+        var (page, perPage) = Paging.Normalize(request);
+
+        var query = VisibleForStudent(studentId);
+
+        query = query.SearchBy(request.Search, x => x.Title);
+
+        var total = await query.CountAsync(ct);
+        var items = await query
+            .ApplyListSort(request, x => x.Title)
+            .Skip((page - 1) * perPage)
+            .Take(perPage)
+            .ToListAsync(ct);
+
+        var now = DateTimeOffset.UtcNow;
+        var ownerNames = await OwnerNameMapAsync(items.Select(x => x.UserId), ct);
+        var data = items.Select(x => ToResponse(x, now, ownerNames.GetValueOrDefault(x.UserId ?? 0))).ToList();
+        return new PagedResponse<BannerResponse>(data, page, Paging.LastPage(total, perPage), perPage, total);
+    }
+
+    public async Task<BannerResponse> GetForStudentAsync(long studentId, long id, CancellationToken ct = default)
+    {
+        var banner = await VisibleForStudent(studentId).FirstOrDefaultAsync(x => x.Id == id, ct)
+            ?? throw new KeyNotFoundException($"Banner not found: {id}");
+
+        return ToResponse(banner, DateTimeOffset.UtcNow, await OwnerNameAsync(banner.UserId, ct));
+    }
+
+    /// <summary>
+    /// Şagirdin görə biləcəyi story-lər. Global (superadmin) story-lər tenant filtrindən asılı deyil —
+    /// filtr yalnız bu sorğuda söndürülür və tenant yoxlaması əl ilə aparılır.
+    /// </summary>
+    private IQueryable<Banner> VisibleForStudent(long studentId)
+    {
+        var today = DateOnly.FromDateTime(DateTime.UtcNow);
+        var tenantId = db.CurrentTenantId;
+
+        return db.Banners
+            .IgnoreQueryFilters(new[] { "Tenant" })
+            .AsNoTracking()
+            .Where(x => x.IsActive && (x.ActiveUntil == null || x.ActiveUntil >= today))
+            .Where(x => x.Scope == BannerScope.Global
+                || ((tenantId == null || x.TenantId == tenantId)
+                    && (x.Scope == BannerScope.Tenant
+                        || (x.Scope == BannerScope.Teacher
+                            && x.UserId != null
+                            && db.Groups.Any(g => g.UserId == x.UserId
+                                && db.StudentGroups.Any(sg => sg.GroupId == g.Id && sg.StudentId == studentId))))));
+    }
+
     public async Task<BannerResponse> GetAsync(long id, CancellationToken ct = default)
     {
         var banner = await db.Banners
@@ -73,7 +126,8 @@ public sealed class BannerService(AppDbContext db, IFileStorage storage, ITenant
             Title = request.Title,
             Image = image,
             IsActive = request.IsActive,
-            ActiveUntil = request.ActiveUntil
+            ActiveUntil = request.ActiveUntil,
+            Scope = request.Scope ?? BannerScope.Tenant
         };
 
         db.Banners.Add(banner);
