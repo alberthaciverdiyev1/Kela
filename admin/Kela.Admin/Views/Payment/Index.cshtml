@@ -1,7 +1,5 @@
 @{
     ViewData["Title"] = "Ödənişlər";
-    var headerExtra = new Microsoft.AspNetCore.Html.HtmlString(
-        @"<a href=""/payment/templates"" class=""admin-button-secondary"">Plan şablonları</a>");
     var statusOptions = new List<SelectOption>
     {
         new() { Value = "", Text = "Hamısı" },
@@ -13,7 +11,7 @@
 }
 <section class="admin-page">
     <form id="antiforgery">@Html.AntiForgeryToken()</form>
-    <partial name="Ui/_PageHeader" model="@(new PageHeaderModel { Extra = headerExtra })" />
+    <partial name="Ui/_PageHeader" model="@(new PageHeaderModel())" />
 
     <div class="mb-4 grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
         <partial name="Ui/_StatCard" model="@(new StatCardModel { Id = "count-upcoming", Label = "Yaxınlaşan", Value = "0", Compact = true, ValueClass = "text-warning" })" />

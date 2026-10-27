@@ -36,47 +36,6 @@ public sealed class PaymentController(IStudentPaymentService payments, IStudentM
         return Json(new { ok = true });
     }
 
-    // --- Plan şablonları ---
-
-    [HttpGet("templates")]
-    public IActionResult Templates()
-    {
-        ViewData["Title"] = "Plan şablonları";
-        ViewData["Scripts"] = new[] { "~/js/pages/payment/templates.js" };
-        return View();
-    }
-
-    [HttpGet("templates/list")]
-    public async Task<IActionResult> TemplateList(CancellationToken ct)
-        => Json(await payments.ListTemplatesAsync(ct));
-
-    [HttpPost("templates")]
-    [ValidateAntiForgeryToken]
-    public async Task<IActionResult> SaveTemplate([FromBody] SavePaymentPlanTemplateRequest request, CancellationToken ct)
-    {
-        try
-        {
-            await payments.SaveTemplateAsync(request, ct);
-            return Json(new { ok = true });
-        }
-        catch (ArgumentException ex)
-        {
-            return BadRequest(new { message = ex.Message });
-        }
-        catch (KeyNotFoundException ex)
-        {
-            return NotFound(new { message = ex.Message });
-        }
-    }
-
-    [HttpDelete("templates/{id:long}")]
-    [ValidateAntiForgeryToken]
-    public async Task<IActionResult> DeleteTemplate(long id, CancellationToken ct)
-    {
-        await payments.DeleteTemplateAsync(id, ct);
-        return Json(new { ok = true });
-    }
-
     /// <summary>Şagirdin ödəniş tarixçəsi — ayrıca səhifə.</summary>
     [HttpGet("{id:long}/history")]
     public async Task<IActionResult> History(long id, CancellationToken ct)

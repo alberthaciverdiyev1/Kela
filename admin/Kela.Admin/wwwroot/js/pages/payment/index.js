@@ -24,7 +24,7 @@ const STATUS = {
 
 async function loadTemplateOptions() {
     try {
-        const items = await AdminUI.get('/payment/templates/list');
+        const items = await AdminUI.get('/payment-plan/list');
         TEMPLATES.length = 0;
         items.forEach(t => TEMPLATES.push(t));
 

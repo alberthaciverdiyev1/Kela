@@ -1,0 +1,36 @@
+@{
+    ViewData["Title"] = "Plan şablonları";
+}
+<section class="admin-page">
+    <form id="antiforgery">@Html.AntiForgeryToken()</form>
+    <partial name="Ui/_PageHeader" model="@(new PageHeaderModel { CreateText = "Yeni şablon", CreateAction = "openTemplate" })" />
+
+    <div class="admin-card">
+        <partial name="Ui/_Table" model="@(new TableModel
+{
+BodyId = "template-rows",
+Columns = new List<TableColumnModel>
+{
+new() { Label = "Şablon adı" },
+new() { Label = "Məbləğ", WidthClass = "w-32" },
+new() { Label = "Valyuta", WidthClass = "w-24" },
+new() { Label = "Period", WidthClass = "w-36" },
+new() { Label = L["Common_Actions"], Right = true }
+}
+})" />
+    </div>
+</section>
+
+@{
+    var templateBody = await Html.PartialAsync("_TemplateModalFields");
+}
+
+<partial name="Ui/_Modal" model="@(new ModalModel
+{
+    Id = "templateModal",
+    TitleId = "templateModalTitle",
+    Title = "Plan şablonu",
+    WidthClass = "max-w-lg",
+    ShowError = false,
+    Body = templateBody
+})" />

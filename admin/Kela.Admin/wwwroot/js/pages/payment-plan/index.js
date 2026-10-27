@@ -9,7 +9,7 @@ function escT(v) {
 
 async function loadTemplates() {
     AdminUI.loader(true);
-    const items = await AdminUI.get('/payment/templates/list');
+    const items = await AdminUI.get('/payment-plan/list');
     AdminUI.loader(false);
 
     TEMPLATES.length = 0;
@@ -49,7 +49,7 @@ window.removeTemplate = async function (id) {
     const ok = await AdminUI.confirmDelete('Bu plan şablonu silinsin?');
     if (!ok) return;
 
-    const res = await AdminUI.del(`/payment/templates/${id}`);
+    const res = await AdminUI.del(`/payment-plan/${id}`);
     if (res.ok) { AdminUI.notify(L["Js_Deleted"]); loadTemplates(); }
     else AdminUI.error(AdminUI.errText(res));
 };
@@ -70,7 +70,7 @@ document.getElementById('template-form').addEventListener('submit', async e => {
         note: document.getElementById('template-note').value
     };
 
-    const res = await AdminUI.postJson('/payment/templates', body);
+    const res = await AdminUI.postJson('/payment-plan', body);
     if (!res.ok) { AdminUI.error(res.data?.message || L["Js_ErrorOccured"]); return; }
 
     AdminUI.closeModal('templateModal');
