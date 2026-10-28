@@ -62,9 +62,9 @@ wait_http() {
 }
 
 restart_services() {
-    systemctl restart edutor-api || return 1
+    systemctl restart edutor-api 9>&- || return 1
     wait_http "http://127.0.0.1:$API_PORT/health" 120 || return 1
-    systemctl restart edutor-admin || return 1
+    systemctl restart edutor-admin 9>&- || return 1
     wait_http "http://127.0.0.1:$ADMIN_PORT/health" 120 || return 1
 }
 
@@ -215,7 +215,9 @@ EOF
 
 log "building release $(basename "$RELEASE") from $SHA"
 mkdir -p "$RELEASE"
-( set -Eeuo pipefail; build_release ) || {
+# fd 9 carries the deploy lock; drop it in the subshell so long-lived build
+# children (VBCSCompiler) do not inherit it and keep the lock forever.
+( set -Eeuo pipefail; exec 9>&-; build_release ) || {
     rm -rf "$RELEASE"
     fail "build failed; nothing was switched"
 }
