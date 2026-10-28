@@ -24,10 +24,12 @@ public sealed class UserAuthService(AppDbContext db, ITokenService tokens, ITena
         // Email tenant-a görə unikaldır → sorğu tenant ilə məhdudlaşdırılır
         // (superadmin qlobal olduğu üçün tenant 0-da axtarılır).
         var scopeTenant = requestedTenant ?? 0L;
-        // Superadmin (tenant 0) seçilmiş tenant-dan asılı olmayaraq tapılır (üzərində üstünlük).
+        // Açıq şəkildə tenant verilibsə həmin tenant-ın hesabı üstün tutulur — eyni
+        // email superadmin-də də varsa, qeydiyyatdan sonra yanlış hesaba düşməsin.
         var user = await db.Users.IgnoreQueryFilters()
             .Where(x => x.Email == email && x.DeletedAt == null && (x.TenantId == 0 || x.TenantId == scopeTenant))
-            .OrderByDescending(x => x.TenantId == 0)
+            .OrderByDescending(x => x.TenantId == scopeTenant)
+            .ThenByDescending(x => x.TenantId == 0)
             .FirstOrDefaultAsync(ct);
 
         if (user is null || !BCrypt.Net.BCrypt.Verify(request.Password, user.PasswordHash))

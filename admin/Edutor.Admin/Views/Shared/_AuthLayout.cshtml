@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="az">
+<html lang="@System.Globalization.CultureInfo.CurrentUICulture.TwoLetterISOLanguageName">
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -7,7 +7,38 @@
     <link rel="stylesheet" href="~/css/app.css" asp-append-version="true" />
 </head>
 <body class="@(ViewData["FullBleed"] is true ? "min-h-screen bg-white text-slate-800" : "flex min-h-screen items-center justify-center bg-slate-100 p-4 text-slate-800")">
+    @{
+        var langs = new (string Code, string Name)[]
+        {
+            ("az", "Azərbaycan"),
+            ("ru", "Русский"),
+            ("tr", "Türkçe"),
+            ("en", "English")
+        };
+        var currentLang = System.Globalization.CultureInfo.CurrentUICulture.TwoLetterISOLanguageName;
+    }
+    <div class="fixed right-4 top-4 z-50">
+        <div class="flex items-center gap-1 rounded-full border border-[#e2e8e4] bg-white/95 px-2 py-1 shadow-sm">
+            @foreach (var lang in langs)
+            {
+                <button type="button" data-lang="@lang.Code" title="@lang.Name"
+                        class="rounded-full px-2.5 py-1 text-xs font-semibold transition @(lang.Code == currentLang ? "bg-primary text-white" : "text-slate-500 hover:bg-slate-100")">
+                    @lang.Code.ToUpperInvariant()
+                </button>
+            }
+        </div>
+    </div>
+
     @RenderBody()
+    <script>
+        document.querySelectorAll('[data-lang]').forEach(function (btn) {
+            btn.addEventListener('click', function () {
+                var code = btn.getAttribute('data-lang');
+                document.cookie = '.AspNetCore.Culture=c=' + code + '|uic=' + code + ';path=/;max-age=31536000';
+                location.reload();
+            });
+        });
+    </script>
     @if (ViewData["Scripts"] is string[] pageScripts)
     {
         foreach (var script in pageScripts)

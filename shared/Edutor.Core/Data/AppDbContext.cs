@@ -3,6 +3,7 @@ using Edutor.Core.Common.Entities;
 using Edutor.Core.Common.MultiTenancy;
 using Edutor.Core.Modules.Banner.Entities;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Microsoft.Extensions.Configuration;
 
 namespace Edutor.Core.Data;
@@ -227,6 +228,8 @@ public sealed class AppDbContext : DbContext
 
         foreach (var entry in ChangeTracker.Entries())
         {
+            if (entry.State is EntityState.Added or EntityState.Modified) NormalizeTimestamps(entry);
+
             var hasTenant = entry.Metadata.FindProperty("TenantId") is not null;
             var isBaseEntity = entry.Entity is BaseEntity;
 
@@ -248,6 +251,21 @@ public sealed class AppDbContext : DbContext
             {
                 ((BaseEntity)entry.Entity).UpdatedAt = now;
             }
+        }
+    }
+
+    /// <summary>
+    /// Npgsql yalnız UTC offset-li DateTimeOffset qəbul edir; formdan gələn tarixlər
+    /// isə serverin lokal offset-i ilə bağlanır. Yadda saxlamadan əvvəl UTC-yə salınır.
+    /// </summary>
+    private static void NormalizeTimestamps(EntityEntry entry)
+    {
+        foreach (var property in entry.Properties)
+        {
+            if (property.CurrentValue is not DateTimeOffset value) continue;
+
+            var utc = value.ToUniversalTime();
+            if (utc != value) property.CurrentValue = utc;
         }
     }
 }

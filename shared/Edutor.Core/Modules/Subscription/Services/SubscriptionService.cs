@@ -545,9 +545,16 @@ public sealed class SubscriptionService(AppDbContext db) : ISubscriptionService
 
         tenant.PlanId = plan.Id;
         tenant.PlanStartedAt = now;
-        tenant.PlanExpiresAt = request.ExpiresAt ?? TrialEnd(plan, now);
+        tenant.PlanExpiresAt = EndOfDayUtc(request.ExpiresAt) ?? TrialEnd(plan, now);
         await db.SaveChangesAsync(ct);
     }
+
+    // Formdan yalnız tarix seçilir (saat 00:00) — plan həmin günün sonuna qədər qüvvədə qalsın.
+    private static DateTimeOffset? EndOfDayUtc(DateTimeOffset? value)
+        => value is { } v
+            ? (v.TimeOfDay == TimeSpan.Zero ? v.AddDays(1) : v)
+                .ToUniversalTime()
+            : null;
 
     /// <summary>
     /// Tenant özü plan seçir (qeydiyyatdan sonra). Pulsuz plan dərhal açılır;

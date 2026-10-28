@@ -46,8 +46,13 @@ public static class DbSeeder
             logger.LogWarning("Default superadmin yaradıldı: {Email}", email);
         }
 
-        await SeedSampleTenantsAsync(db, configuration, logger, ct);
-        await SeedTenantAccountsAsync(db, configuration, logger, ct);
+        // Demo məlumatları (nümunə tenant-lar, hər tenant üçün test hesabları) yalnız
+        // Seed:Demo=true olduqda yaradılır — istehsalda istifadəçi limitinə təsir etməsin.
+        if (configuration.GetValue("Seed:Demo", false))
+        {
+            await SeedSampleTenantsAsync(db, configuration, logger, ct);
+            await SeedTenantAccountsAsync(db, configuration, logger, ct);
+        }
     }
 
     /// <summary>Yalnız təzə quraşdırmada (≤1 tenant) bir neçə nümunə kurs yaradır.</summary>

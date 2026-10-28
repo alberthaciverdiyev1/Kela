@@ -6,8 +6,8 @@ using Microsoft.AspNetCore.Mvc.Filters;
 namespace Edutor.Admin.Infrastructure;
 
 /// <summary>
-/// Plan seçməmiş tenant admini panelin hər hansı səhifəsindən plan seçiminə
-/// yönləndirir. Superadmin, müəllim və anonim istifadəçilərə tətbiq olunmur.
+/// Plan seçməmiş tenant istifadəçisini panelin hər hansı səhifəsindən plan seçiminə
+/// yönləndirir. Superadmin və anonim istifadəçilərə tətbiq olunmur.
 /// </summary>
 public sealed class PlanSelectionFilter(ISubscriptionService subscriptions) : IAsyncActionFilter
 {
@@ -21,7 +21,7 @@ public sealed class PlanSelectionFilter(ISubscriptionService subscriptions) : IA
         var user = context.HttpContext.User;
 
         if (user.Identity?.IsAuthenticated == true
-            && user.IsInRole(UserTypes.Admin)
+            && !user.IsInRole(UserTypes.SuperAdmin)
             && user.CurrentTenantId() is long tenantId and > 0
             && !Skipped.Any(prefix => path.StartsWith(prefix, StringComparison.OrdinalIgnoreCase))
             && await subscriptions.NeedsPlanSelectionAsync(tenantId, context.HttpContext.RequestAborted))
