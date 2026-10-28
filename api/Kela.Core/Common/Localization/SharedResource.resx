@@ -606,6 +606,18 @@
   <data name="Role_Admin" xml:space="preserve">
     <value>Admin</value>
   </data>
+  <data name="Role_Student" xml:space="preserve">
+    <value>Student</value>
+  </data>
+  <data name="User_HidePassword" xml:space="preserve">
+    <value>Hide password</value>
+  </data>
+  <data name="User_ShowPassword" xml:space="preserve">
+    <value>Show password</value>
+  </data>
+  <data name="User_GeneratePassword" xml:space="preserve">
+    <value>Generate password</value>
+  </data>
   <data name="Role_Teacher" xml:space="preserve">
     <value>Teacher</value>
   </data>
@@ -1830,6 +1842,12 @@
   <data name="Tenant_RegisterSectionAccount" xml:space="preserve">
     <value>Personal details</value>
   </data>
+  <data name="Homework_GroupDeadlineRequired" xml:space="preserve">
+    <value>Due date and max score are required for every selected group</value>
+  </data>
+  <data name="Homework_GroupSettingsHint" xml:space="preserve">
+    <value>Set a due date and max score for every selected group.</value>
+  </data>
   <data name="Homework_GroupRequired" xml:space="preserve">
     <value>At least one group is required</value>
   </data>
@@ -1840,7 +1858,7 @@
     <value>The selected quiz was not found</value>
   </data>
   <data name="Homework_PublishedTargetsLocked" xml:space="preserve">
-    <value>Groups, quizzes and max score cannot change after publishing</value>
+    <value>Groups, quizzes, deadlines and max score cannot be changed after publishing</value>
   </data>
   <data name="Homework_NotPublished" xml:space="preserve">
     <value>Homework is not published yet</value>

@@ -15,6 +15,8 @@ public sealed class HomeworkAssignmentConfiguration : IEntityTypeConfiguration<H
         builder.Property(x => x.HomeworkId).HasColumnName("homework_id");
         builder.Property(x => x.StudentId).HasColumnName("student_id");
         builder.Property(x => x.GroupId).HasColumnName("group_id");
+        builder.Property(x => x.DueDate).HasColumnName("due_date");
+        builder.Property(x => x.MaxScore).HasColumnName("max_score").HasPrecision(6, 2);
         builder.Property(x => x.Status).HasColumnName("status").HasMaxLength(16).IsRequired();
         builder.Property(x => x.Text).HasColumnName("text").HasMaxLength(10000);
         builder.Property(x => x.Link).HasColumnName("link").HasMaxLength(500);

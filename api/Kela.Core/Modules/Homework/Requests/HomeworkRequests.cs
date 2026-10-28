@@ -25,14 +25,16 @@ public class HomeworkUpsertRequest
 
     public string? Description { get; set; }
 
-    [FromForm(Name = "max_score")]
-    public decimal MaxScore { get; set; } = 100;
-
-    [FromForm(Name = "due_date")]
-    public DateTimeOffset DueDate { get; set; }
-
     [FromForm(Name = "group_ids")]
     public List<long> GroupIds { get; set; } = new();
+
+    /// <summary>GroupIds ilə indeks üzrə uyğun gələn son tarixlər.</summary>
+    [FromForm(Name = "group_due_dates")]
+    public List<DateTimeOffset> GroupDueDates { get; set; } = new();
+
+    /// <summary>GroupIds ilə indeks üzrə uyğun gələn maksimum ballar.</summary>
+    [FromForm(Name = "group_scores")]
+    public List<decimal> GroupScores { get; set; } = new();
 
     [FromForm(Name = "quiz_ids")]
     public List<long> QuizIds { get; set; } = new();

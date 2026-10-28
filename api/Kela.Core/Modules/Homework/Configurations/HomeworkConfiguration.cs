@@ -18,8 +18,6 @@ public sealed class HomeworkConfiguration : IEntityTypeConfiguration<Homework>
         builder.Property(x => x.Title).HasColumnName("title").HasMaxLength(190).IsRequired();
         // Rich editor HTML saxlayır — mətn limitindən daha böyük sütun lazımdır.
         builder.Property(x => x.Description).HasColumnName("description").HasMaxLength(20000);
-        builder.Property(x => x.MaxScore).HasColumnName("max_score").HasPrecision(6, 2);
-        builder.Property(x => x.DueDate).HasColumnName("due_date");
         builder.Property(x => x.IsPublished).HasColumnName("is_published").HasDefaultValue(false);
         builder.Property(x => x.PublishedAt).HasColumnName("published_at");
         builder.Property(x => x.IsActive).HasColumnName("is_active").HasDefaultValue(true);
@@ -29,7 +27,7 @@ public sealed class HomeworkConfiguration : IEntityTypeConfiguration<Homework>
         builder.Property(x => x.DeletedAt).HasColumnName("deleted_at");
 
         builder.HasIndex(x => x.UserId);
-        builder.HasIndex(x => new { x.IsPublished, x.DueDate });
+        builder.HasIndex(x => x.IsPublished);
         builder.HasIndex(x => x.DeletedAt);
     }
 }
@@ -44,6 +42,8 @@ public sealed class HomeworkGroupConfiguration : IEntityTypeConfiguration<Homewo
         builder.Property(x => x.Id).HasColumnName("id");
         builder.Property(x => x.HomeworkId).HasColumnName("homework_id");
         builder.Property(x => x.GroupId).HasColumnName("group_id");
+        builder.Property(x => x.DueDate).HasColumnName("due_date");
+        builder.Property(x => x.MaxScore).HasColumnName("max_score").HasPrecision(6, 2);
 
         builder.HasOne(x => x.Homework).WithMany(x => x.Groups)
             .HasForeignKey(x => x.HomeworkId).OnDelete(DeleteBehavior.Cascade);

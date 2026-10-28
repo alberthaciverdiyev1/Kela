@@ -12,11 +12,6 @@ public class Homework : BaseEntity
 
     public string? Description { get; set; }
 
-    /// <summary>Mətn/fayl hissəsi üçün müəllimin verə biləcəyi maksimum bal.</summary>
-    public decimal MaxScore { get; set; } = 100;
-
-    public DateTimeOffset DueDate { get; set; }
-
     public bool IsPublished { get; set; }
 
     public DateTimeOffset? PublishedAt { get; set; }

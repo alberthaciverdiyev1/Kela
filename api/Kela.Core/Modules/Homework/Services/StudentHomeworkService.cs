@@ -29,7 +29,7 @@ public sealed class StudentHomeworkService(
             .Where(x => x.StudentId == studentId)
             .Join(db.Homeworks.Where(h => h.IsPublished && h.IsActive),
                 a => a.HomeworkId, h => h.Id, (a, h) => new { Assignment = a, Homework = h })
-            .OrderBy(x => x.Homework.DueDate)
+            .OrderBy(x => x.Assignment.DueDate)
             .ToListAsync(ct);
 
         var homeworkIds = rows.Select(x => x.Homework.Id).ToList();
@@ -54,8 +54,8 @@ public sealed class StudentHomeworkService(
             return new StudentHomeworkSummaryResponse(
                 x.Homework.Id,
                 x.Homework.Title,
-                x.Homework.DueDate,
-                x.Homework.MaxScore,
+                x.Assignment.DueDate,
+                x.Assignment.MaxScore,
                 x.Assignment.Status,
                 x.Assignment.IsLate,
                 x.Assignment.Score,
@@ -139,7 +139,7 @@ public sealed class StudentHomeworkService(
         assignment.Text = text;
         assignment.Link = link;
         assignment.SubmittedAt = DateTimeOffset.UtcNow;
-        assignment.IsLate = assignment.SubmittedAt > homework.DueDate;
+        assignment.IsLate = assignment.SubmittedAt > assignment.DueDate;
         assignment.AttemptCount += 1;
         assignment.Status = HomeworkStatus.Submitted;
 
@@ -228,8 +228,8 @@ public sealed class StudentHomeworkService(
             homework.Id,
             homework.Title,
             SafeHtml.Sanitize(homework.Description),
-            homework.DueDate,
-            homework.MaxScore,
+            assignment.DueDate,
+            assignment.MaxScore,
             assignment.Status,
             assignment.IsLate,
             assignment.AttemptCount,

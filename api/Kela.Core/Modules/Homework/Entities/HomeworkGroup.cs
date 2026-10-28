@@ -14,4 +14,8 @@ public class HomeworkGroup : BaseEntity
     public long GroupId { get; set; }
 
     public Group? Group { get; set; }
+
+    public DateTimeOffset DueDate { get; set; }
+
+    public decimal MaxScore { get; set; } = 100;
 }

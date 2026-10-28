@@ -21,9 +21,10 @@
         <partial name="Ui/_Select" model="@(new SelectModel { Name = "quiz_ids", Id = "quiz_ids", Label = L["Homework_Quizzes"], Multiple = true, Options = quizOptions })" />
     </div>
 
-    <div class="grid gap-4 sm:grid-cols-2">
-        <partial name="Ui/_Input" model="@(new InputModel { Name = "due_date", Id = "due_date", Label = L["Homework_DueDate"], Type = "datetime-local", Required = true })" />
-        <partial name="Ui/_Input" model="@(new InputModel { Name = "max_score", Id = "max_score", Label = L["Homework_MaxScore"], Type = "number", Step = "0.01", Min = "0", Value = "100" })" />
+    <div>
+        <p class="mb-2 text-sm font-semibold text-slate-600">@L["Homework_GroupDeadlineRequired"]</p>
+        <div id="groupSettings" class="space-y-2"></div>
+        <p class="mt-1 text-xs text-slate-400">@L["Homework_GroupSettingsHint"]</p>
     </div>
 
     <p id="publishedHint" class="hidden rounded-xl bg-surface-secondary px-3.5 py-3 text-sm text-slate-500">

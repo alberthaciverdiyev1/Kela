@@ -875,10 +875,6 @@ namespace Kela.Core.Data.Migrations
                         .HasColumnType("character varying(20000)")
                         .HasColumnName("description");
 
-                    b.Property<DateTimeOffset>("DueDate")
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("due_date");
-
                     b.Property<bool>("IsActive")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("boolean")
@@ -890,11 +886,6 @@ namespace Kela.Core.Data.Migrations
                         .HasColumnType("boolean")
                         .HasDefaultValue(false)
                         .HasColumnName("is_published");
-
-                    b.Property<decimal>("MaxScore")
-                        .HasPrecision(6, 2)
-                        .HasColumnType("numeric(6,2)")
-                        .HasColumnName("max_score");
 
                     b.Property<DateTimeOffset?>("PublishedAt")
                         .HasColumnType("timestamp with time zone")
@@ -922,9 +913,9 @@ namespace Kela.Core.Data.Migrations
 
                     b.HasIndex("DeletedAt");
 
-                    b.HasIndex("UserId");
+                    b.HasIndex("IsPublished");
 
-                    b.HasIndex("IsPublished", "DueDate");
+                    b.HasIndex("UserId");
 
                     b.ToTable("homeworks", (string)null);
                 });
@@ -951,6 +942,10 @@ namespace Kela.Core.Data.Migrations
                     b.Property<DateTimeOffset?>("DeletedAt")
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("deleted_at");
+
+                    b.Property<DateTimeOffset>("DueDate")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("due_date");
 
                     b.Property<string>("Feedback")
                         .HasMaxLength(4000)
@@ -983,6 +978,11 @@ namespace Kela.Core.Data.Migrations
                         .HasMaxLength(500)
                         .HasColumnType("character varying(500)")
                         .HasColumnName("link");
+
+                    b.Property<decimal>("MaxScore")
+                        .HasPrecision(6, 2)
+                        .HasColumnType("numeric(6,2)")
+                        .HasColumnName("max_score");
 
                     b.Property<DateTimeOffset?>("ReturnedAt")
                         .HasColumnType("timestamp with time zone")
@@ -1108,6 +1108,10 @@ namespace Kela.Core.Data.Migrations
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("deleted_at");
 
+                    b.Property<DateTimeOffset>("DueDate")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("due_date");
+
                     b.Property<long>("GroupId")
                         .HasColumnType("bigint")
                         .HasColumnName("group_id");
@@ -1115,6 +1119,11 @@ namespace Kela.Core.Data.Migrations
                     b.Property<long>("HomeworkId")
                         .HasColumnType("bigint")
                         .HasColumnName("homework_id");
+
+                    b.Property<decimal>("MaxScore")
+                        .HasPrecision(6, 2)
+                        .HasColumnType("numeric(6,2)")
+                        .HasColumnName("max_score");
 
                     b.Property<long>("TenantId")
                         .HasColumnType("bigint")

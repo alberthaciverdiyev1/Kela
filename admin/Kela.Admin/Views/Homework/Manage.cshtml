@@ -13,10 +13,20 @@
         <div class="flex flex-wrap items-start justify-between gap-4">
             <div>
                 <h2 class="text-lg font-bold text-slate-900">@h.Title</h2>
-                <p class="mt-1 text-sm text-slate-500">
-                    @L["Homework_DueDate"]: @h.DueDate.ToString("dd.MM.yyyy HH:mm")
-                    · @L["Homework_MaxScore"]: @h.MaxScore
-                </p>
+                <div class="mt-1 space-y-0.5 text-sm text-slate-500">
+                    @foreach (var group in h.Groups)
+                    {
+                        var dueLeft = group.DueDate - DateTimeOffset.UtcNow;
+                        var dueClass = dueLeft < TimeSpan.Zero
+                            ? "font-semibold text-danger"
+                            : dueLeft <= TimeSpan.FromHours(48) ? "font-semibold text-warning" : "";
+                        <p>
+                            <span class="font-medium text-slate-600">@group.Name</span> ·
+                            @L["Homework_DueDate"]: <span class="@dueClass">@group.DueDate.ToString("dd.MM.yyyy HH:mm")</span>
+                            · @L["Homework_MaxScore"]: @group.MaxScore
+                        </p>
+                    }
+                </div>
                 @if (!string.IsNullOrWhiteSpace(h.Description))
                 {
                     <div class="admin-rich-text mt-2 max-w-3xl">@Html.Raw(h.Description)</div>

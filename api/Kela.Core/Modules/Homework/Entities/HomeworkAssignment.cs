@@ -18,6 +18,11 @@ public class HomeworkAssignment : BaseEntity
     /// <summary>Snapshot götürülərkən mənbə qrup.</summary>
     public long? GroupId { get; set; }
 
+    /// <summary>Yayım anındaki qrup son tarixi — sonradan dəyişmir.</summary>
+    public DateTimeOffset DueDate { get; set; }
+
+    public decimal MaxScore { get; set; } = 100;
+
     public string Status { get; set; } = HomeworkStatus.Assigned;
 
     public string? Text { get; set; }

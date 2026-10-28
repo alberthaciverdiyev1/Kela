@@ -606,6 +606,18 @@
   <data name="Role_Admin" xml:space="preserve">
     <value>Админ</value>
   </data>
+  <data name="Role_Student" xml:space="preserve">
+    <value>Ученик</value>
+  </data>
+  <data name="User_HidePassword" xml:space="preserve">
+    <value>Скрыть пароль</value>
+  </data>
+  <data name="User_ShowPassword" xml:space="preserve">
+    <value>Показать пароль</value>
+  </data>
+  <data name="User_GeneratePassword" xml:space="preserve">
+    <value>Сгенерировать пароль</value>
+  </data>
   <data name="Role_Teacher" xml:space="preserve">
     <value>Учитель</value>
   </data>
@@ -1830,6 +1842,12 @@
   <data name="Tenant_RegisterSectionAccount" xml:space="preserve">
     <value>Личные данные</value>
   </data>
+  <data name="Homework_GroupDeadlineRequired" xml:space="preserve">
+    <value>Для каждой выбранной группы нужны срок и максимальный балл</value>
+  </data>
+  <data name="Homework_GroupSettingsHint" xml:space="preserve">
+    <value>После выбора группы укажите для неё срок и максимальный балл.</value>
+  </data>
   <data name="Homework_GroupRequired" xml:space="preserve">
     <value>Нужно выбрать хотя бы одну группу</value>
   </data>
@@ -1840,7 +1858,7 @@
     <value>Выбранный тест не найден</value>
   </data>
   <data name="Homework_PublishedTargetsLocked" xml:space="preserve">
-    <value>После публикации нельзя менять группы, тесты и максимальный балл</value>
+    <value>После публикации нельзя менять группы, тесты, сроки и максимальный балл</value>
   </data>
   <data name="Homework_NotPublished" xml:space="preserve">
     <value>Задание ещё не опубликовано</value>

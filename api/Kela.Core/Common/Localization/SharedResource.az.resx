@@ -606,6 +606,18 @@
   <data name="Role_Admin" xml:space="preserve">
     <value>Admin</value>
   </data>
+  <data name="Role_Student" xml:space="preserve">
+    <value>Şagird</value>
+  </data>
+  <data name="User_HidePassword" xml:space="preserve">
+    <value>Şifrəni gizlət</value>
+  </data>
+  <data name="User_ShowPassword" xml:space="preserve">
+    <value>Şifrəni göstər</value>
+  </data>
+  <data name="User_GeneratePassword" xml:space="preserve">
+    <value>Şifrə yarat</value>
+  </data>
   <data name="Role_Teacher" xml:space="preserve">
     <value>Müəllim</value>
   </data>
@@ -1830,6 +1842,12 @@
   <data name="Tenant_RegisterSectionAccount" xml:space="preserve">
     <value>Şəxsi məlumatlar</value>
   </data>
+  <data name="Homework_GroupDeadlineRequired" xml:space="preserve">
+    <value>Hər seçilmiş qrup üçün son tarix və bal təyin edilməlidir</value>
+  </data>
+  <data name="Homework_GroupSettingsHint" xml:space="preserve">
+    <value>Qrupu seçdikdən sonra onun üçün son tarix və maksimum balı təyin edin.</value>
+  </data>
   <data name="Homework_GroupRequired" xml:space="preserve">
     <value>Ən azı bir qrup seçilməlidir</value>
   </data>
@@ -1840,7 +1858,7 @@
     <value>Seçilmiş quiz tapılmadı</value>
   </data>
   <data name="Homework_PublishedTargetsLocked" xml:space="preserve">
-    <value>Yayımlanmış tapşırığın qrupları, quizləri və maksimum balı dəyişdirilə bilməz</value>
+    <value>Yayımlanmış tapşırığın qrupları, quizləri, son tarixləri və maksimum balı dəyişdirilə bilməz</value>
   </data>
   <data name="Homework_NotPublished" xml:space="preserve">
     <value>Tapşırıq hələ yayımlanmayıb</value>

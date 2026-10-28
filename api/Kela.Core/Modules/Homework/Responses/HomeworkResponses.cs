@@ -1,6 +1,6 @@
 namespace Kela.Core.Modules.Homework.Responses;
 
-public record HomeworkGroupInfoResponse(long Id, string Name);
+public record HomeworkGroupInfoResponse(long Id, string Name, DateTimeOffset DueDate, decimal MaxScore);
 
 public record HomeworkQuizInfoResponse(long Id, string Title, int QuestionCount, int DurationMinutes);
 
@@ -8,8 +8,6 @@ public record HomeworkResponse(
     long Id,
     string Title,
     string? Description,
-    decimal MaxScore,
-    DateTimeOffset DueDate,
     bool IsPublished,
     DateTimeOffset? PublishedAt,
     bool IsActive,

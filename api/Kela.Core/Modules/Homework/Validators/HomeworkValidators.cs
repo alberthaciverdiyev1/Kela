@@ -17,7 +17,18 @@ public sealed class HomeworkUpsertRequestValidator : AbstractValidator<HomeworkU
         // Rich editor HTML saxlayır — limit mətn limitindən böyükdür.
         RuleFor(x => x.Description).MaximumLength(20000);
 
-        RuleFor(x => x.MaxScore)
+        RuleFor(x => x.GroupDueDates)
+            .Must((request, dates) => dates.Count == request.GroupIds.Count)
+            .WithMessage(L["Homework_GroupDeadlineRequired"]);
+
+        RuleFor(x => x.GroupScores)
+            .Must((request, scores) => scores.Count == request.GroupIds.Count)
+            .WithMessage(L["Homework_GroupDeadlineRequired"]);
+
+        RuleForEach(x => x.GroupDueDates)
+            .Must(date => date != default).WithMessage(L["Homework_GroupDeadlineRequired"]);
+
+        RuleForEach(x => x.GroupScores)
             .GreaterThan(0).WithMessage(L["Homework_MaxScoreInvalid"])
             .LessThanOrEqualTo(1000).WithMessage(L["Homework_MaxScoreInvalid"]);
 

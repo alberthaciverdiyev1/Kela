@@ -9,6 +9,30 @@ function formatDue(value) {
     return new Date(value).toLocaleString('az', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' });
 }
 
+// Vaxtı keçmiş son tarixlər qırmızı, 48 saat içində bitənlər sarı göstərilir.
+const DUE_SOON_MS = 48 * 60 * 60 * 1000;
+
+function dueClass(value) {
+    if (!value) return 'text-slate-500 text-sm';
+
+    const left = new Date(value).getTime() - Date.now();
+    if (left < 0) return 'text-sm font-semibold text-danger';
+    if (left <= DUE_SOON_MS) return 'text-sm font-semibold text-warning';
+
+    return 'text-sm text-slate-500';
+}
+
+// Hər qrupun öz son tarixi var — hamısı ayrı sətirdə göstərilir.
+function dueCell(h) {
+    if (!h.groups.length) return { html: '<span class="text-slate-400">—</span>', cls: 'text-slate-500' };
+
+    const html = h.groups.map(g =>
+        `<div class="flex flex-wrap items-baseline gap-1"><span class="text-xs text-slate-400">${AdminUI.escapeHtml(g.name)}</span><span class="${dueClass(g.dueDate)}">${AdminUI.escapeHtml(formatDue(g.dueDate))}</span></div>`
+    ).join('');
+
+    return { html, cls: 'text-slate-500' };
+}
+
 window.publishHomework = async function (id) {
     const result = await AdminUI.swal({
         title: L["Homework_Publish"],
@@ -40,7 +64,7 @@ AdminUI.listPage({
         { html: AdminUI.rowNo(h, i, ctx.page, ctx.perPage), cls: 'text-slate-400' },
         { html: `<span class="font-semibold text-slate-900">${AdminUI.escapeHtml(h.title)}</span>${h.quizzes.length ? `<div class="mt-0.5 text-xs text-slate-400">${AdminUI.escapeHtml(h.quizzes.map(q => q.title).join(', '))}</div>` : ''}` },
         { html: AdminUI.escapeHtml(h.groups.map(g => g.name).join(', ') || '—'), cls: 'text-slate-500' },
-        { html: formatDue(h.dueDate), cls: 'text-slate-500 text-sm' },
+        dueCell(h),
         { html: h.isPublished ? `${h.submittedCount + h.gradedCount + h.returnedCount} / ${h.assignedCount}` : '—', cls: 'text-slate-500' },
         { html: homeworkStatusBadge(h) },
         {

@@ -606,6 +606,18 @@
   <data name="Role_Admin" xml:space="preserve">
     <value>Yönetici</value>
   </data>
+  <data name="Role_Student" xml:space="preserve">
+    <value>Öğrenci</value>
+  </data>
+  <data name="User_HidePassword" xml:space="preserve">
+    <value>Şifreyi gizle</value>
+  </data>
+  <data name="User_ShowPassword" xml:space="preserve">
+    <value>Şifreyi göster</value>
+  </data>
+  <data name="User_GeneratePassword" xml:space="preserve">
+    <value>Şifre oluştur</value>
+  </data>
   <data name="Role_Teacher" xml:space="preserve">
     <value>Öğretmen</value>
   </data>
@@ -1830,6 +1842,12 @@
   <data name="Tenant_RegisterSectionAccount" xml:space="preserve">
     <value>Kişisel bilgiler</value>
   </data>
+  <data name="Homework_GroupDeadlineRequired" xml:space="preserve">
+    <value>Seçilen her grup için son tarih ve puan girilmelidir</value>
+  </data>
+  <data name="Homework_GroupSettingsHint" xml:space="preserve">
+    <value>Grubu seçtikten sonra o grup için son tarih ve maksimum puanı belirleyin.</value>
+  </data>
   <data name="Homework_GroupRequired" xml:space="preserve">
     <value>En az bir grup seçilmelidir</value>
   </data>
@@ -1840,7 +1858,7 @@
     <value>Seçilen sınav bulunamadı</value>
   </data>
   <data name="Homework_PublishedTargetsLocked" xml:space="preserve">
-    <value>Yayımlandıktan sonra gruplar, sınavlar ve maksimum puan değiştirilemez</value>
+    <value>Yayımlanmış ödevin grupları, quizleri, son tarihleri ve maksimum puanı değiştirilemez</value>
   </data>
   <data name="Homework_NotPublished" xml:space="preserve">
     <value>Ödev henüz yayımlanmadı</value>

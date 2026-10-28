@@ -89,9 +89,9 @@ public class HomeworkTests(ApiFactory factory)
     {
         Title = $"HW-{Guid.NewGuid():N}",
         Description = "Test homework",
-        MaxScore = 100,
-        DueDate = DateTimeOffset.UtcNow.AddDays(1),
         GroupIds = [groupId],
+        GroupDueDates = [DateTimeOffset.UtcNow.AddDays(1)],
+        GroupScores = [100],
         QuizIds = quizId is long id ? [id] : []
     };
 
@@ -110,9 +110,9 @@ public class HomeworkTests(ApiFactory factory)
         var draft = await service.CreateAsync(new HomeworkUpsertRequest
         {
             Title = "Snapshot",
-            MaxScore = 100,
-            DueDate = DateTimeOffset.UtcNow.AddDays(1),
-            GroupIds = [g1, g2]
+            GroupIds = [g1, g2],
+            GroupDueDates = [DateTimeOffset.UtcNow.AddDays(1), DateTimeOffset.UtcNow.AddDays(2)],
+            GroupScores = [100, 80]
         }, teacherA);
 
         Assert.False(draft.IsPublished);
@@ -123,6 +123,49 @@ public class HomeworkTests(ApiFactory factory)
 
         var again = await service.PublishAsync(draft.Id, teacherA);
         Assert.Equal(2, again.AssignedCount);
+    }
+
+    [Fact]
+    public async Task Each_group_keeps_its_own_deadline_and_score()
+    {
+        var teacherA = await CreateTeacherAsync("Teacher A");
+        var earlyStudent = await RegisterStudentAsync("Early Student");
+        var lateStudent = await RegisterStudentAsync("Late Student");
+        var earlyGroup = await CreateGroupAsync(teacherA, earlyStudent);
+        var lateGroup = await CreateGroupAsync(teacherA, lateStudent);
+
+        using var scope = factory.Services.CreateScope();
+        var homeworkService = scope.ServiceProvider.GetRequiredService<IHomeworkService>();
+        var studentService = scope.ServiceProvider.GetRequiredService<IStudentHomeworkService>();
+
+        var homework = await homeworkService.CreateAsync(new HomeworkUpsertRequest
+        {
+            Title = "Per-group terms",
+            GroupIds = [earlyGroup, lateGroup],
+            GroupDueDates = [DateTimeOffset.UtcNow.AddDays(-1), DateTimeOffset.UtcNow.AddDays(5)],
+            GroupScores = [40, 90]
+        }, teacherA);
+
+        await homeworkService.PublishAsync(homework.Id, teacherA);
+
+        var early = await studentService.GetAsync(earlyStudent, homework.Id);
+        var late = await studentService.GetAsync(lateStudent, homework.Id);
+
+        Assert.Equal(40, early.MaxScore);
+        Assert.Equal(90, late.MaxScore);
+
+        var earlySubmit = await studentService.SubmitAsync(earlyStudent, homework.Id, new SubmitHomeworkRequest { Text = "early" });
+        var lateSubmit = await studentService.SubmitAsync(lateStudent, homework.Id, new SubmitHomeworkRequest { Text = "late" });
+        Assert.True(earlySubmit.IsLate);
+        Assert.False(lateSubmit.IsLate);
+
+        // Bal qrupun öz limiti ilə yoxlanılır.
+        await Assert.ThrowsAsync<ArgumentException>(() => homeworkService.GradeAsync(
+            homework.Id, earlyStudent, new GradeHomeworkRequest { Score = 50 }, teacherA, teacherA));
+
+        var graded = await homeworkService.GradeAsync(
+            homework.Id, earlyStudent, new GradeHomeworkRequest { Score = 40 }, teacherA, teacherA);
+        Assert.Equal(40, graded.Score);
     }
 
     [Fact]
@@ -157,7 +200,7 @@ public class HomeworkTests(ApiFactory factory)
         await service.PublishAsync(homework.Id, teacherA);
 
         var update = Request(group);
-        update.MaxScore = 50;
+        update.GroupScores = [50];
 
         await Assert.ThrowsAsync<ArgumentException>(() => service.UpdateAsync(homework.Id, update, teacherA));
     }
@@ -174,7 +217,7 @@ public class HomeworkTests(ApiFactory factory)
         var studentService = scope.ServiceProvider.GetRequiredService<IStudentHomeworkService>();
 
         var request = Request(group);
-        request.DueDate = DateTimeOffset.UtcNow.AddDays(-1); // gecikmiş
+        request.GroupDueDates = [DateTimeOffset.UtcNow.AddDays(-1)]; // gecikmiş
         var homework = await homeworkService.CreateAsync(request, teacherA);
         await homeworkService.PublishAsync(homework.Id, teacherA);
 

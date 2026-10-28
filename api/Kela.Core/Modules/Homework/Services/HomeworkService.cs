@@ -77,17 +77,19 @@ public sealed class HomeworkService(
 
         var groups = await ValidateGroupsAsync(request.GroupIds, ownerId, ct);
         var quizzes = await ValidateQuizzesAsync(request.QuizIds, ownerId, ct);
+        var settings = ReadGroupSettings(request);
 
         var homework = new Homework
         {
             UserId = ownerId ?? request.UserId,
             Title = request.Title.Trim(),
-            Description = SanitizeDescription(request.Description),
-            MaxScore = request.MaxScore,
-            DueDate = request.DueDate
+            Description = SanitizeDescription(request.Description)
         };
 
-        foreach (var groupId in groups) homework.Groups.Add(new HomeworkGroup { GroupId = groupId });
+        foreach (var (groupId, dueDate, maxScore) in settings)
+        {
+            homework.Groups.Add(new HomeworkGroup { GroupId = groupId, DueDate = dueDate, MaxScore = maxScore });
+        }
         for (var i = 0; i < quizzes.Count; i++) homework.Quizzes.Add(new HomeworkQuiz { QuizId = quizzes[i], SortOrder = i });
 
         db.Homeworks.Add(homework);
@@ -102,19 +104,25 @@ public sealed class HomeworkService(
         var homework = await LoadAsync(id, ownerId, tracked: true, ct);
         await EnsureWritableAsync(ct);
 
+        var settings = ReadGroupSettings(request);
+
         if (homework.IsPublished)
         {
-            var groupsChanged = !homework.Groups.Select(x => x.GroupId).Order().SequenceEqual(request.GroupIds.Distinct().Order());
+            // Yayımdan sonra hədəflər və qrup şərtləri dəyişmir — tələbələr snapshot alıb.
+            var current = homework.Groups
+                .OrderBy(x => x.GroupId)
+                .Select(x => (x.GroupId, x.DueDate, x.MaxScore));
+            var groupsChanged = !current.SequenceEqual(settings.OrderBy(x => x.GroupId));
             var quizzesChanged = !homework.Quizzes.Select(x => x.QuizId).Order().SequenceEqual(request.QuizIds.Distinct().Order());
 
-            if (groupsChanged || quizzesChanged || homework.MaxScore != request.MaxScore)
+            if (groupsChanged || quizzesChanged)
             {
                 throw new ArgumentException(L["Homework_PublishedTargetsLocked"]);
             }
         }
         else
         {
-            var groups = await ValidateGroupsAsync(request.GroupIds, ownerId, ct);
+            await ValidateGroupsAsync(request.GroupIds, ownerId, ct);
             var quizzes = await ValidateQuizzesAsync(request.QuizIds, ownerId, ct);
 
             db.HomeworkGroups.RemoveRange(homework.Groups);
@@ -122,15 +130,16 @@ public sealed class HomeworkService(
             homework.Groups.Clear();
             homework.Quizzes.Clear();
 
-            foreach (var groupId in groups) homework.Groups.Add(new HomeworkGroup { GroupId = groupId });
-            for (var i = 0; i < quizzes.Count; i++) homework.Quizzes.Add(new HomeworkQuiz { QuizId = quizzes[i], SortOrder = i });
+            foreach (var (groupId, dueDate, maxScore) in settings)
+            {
+                homework.Groups.Add(new HomeworkGroup { GroupId = groupId, DueDate = dueDate, MaxScore = maxScore });
+            }
 
-            homework.MaxScore = request.MaxScore;
+            for (var i = 0; i < quizzes.Count; i++) homework.Quizzes.Add(new HomeworkQuiz { QuizId = quizzes[i], SortOrder = i });
         }
 
         homework.Title = request.Title.Trim();
         homework.Description = SanitizeDescription(request.Description);
-        homework.DueDate = request.DueDate;
 
         await db.SaveChangesAsync(ct);
         return await GetAsync(homework.Id, ownerId, ct);
@@ -159,9 +168,22 @@ public sealed class HomeworkService(
             .Select(x => new { x.StudentId, x.GroupId })
             .ToListAsync(ct);
 
+        var targetGroups = homework.Groups.ToDictionary(x => x.GroupId, x => (x.DueDate, x.MaxScore));
+
+        // Bir tələbə bir neçə qrupdadırsa, ən erkən son tarixli qrupun şərtləri götürülür.
         var students = members
             .GroupBy(x => x.StudentId)
-            .Select(g => new { StudentId = g.Key, GroupId = g.First().GroupId })
+            .Select(g =>
+            {
+                var picked = g.Select(x => x.GroupId).OrderBy(id => targetGroups[id].DueDate).First();
+                return new
+                {
+                    StudentId = g.Key,
+                    GroupId = picked,
+                    targetGroups[picked].DueDate,
+                    targetGroups[picked].MaxScore
+                };
+            })
             .ToList();
 
         foreach (var student in students)
@@ -171,6 +193,8 @@ public sealed class HomeworkService(
                 HomeworkId = homework.Id,
                 StudentId = student.StudentId,
                 GroupId = student.GroupId,
+                DueDate = student.DueDate,
+                MaxScore = student.MaxScore,
                 Status = HomeworkStatus.Assigned
             });
         }
@@ -250,9 +274,9 @@ public sealed class HomeworkService(
             throw new ArgumentException(L["Homework_NotSubmitted"]);
         }
 
-        if (request.Score < 0 || request.Score > homework.MaxScore)
+        if (request.Score < 0 || request.Score > assignment.MaxScore)
         {
-            throw new ArgumentException(string.Format(L["Homework_ScoreOutOfRange"], homework.MaxScore));
+            throw new ArgumentException(string.Format(L["Homework_ScoreOutOfRange"], assignment.MaxScore));
         }
 
         var now = DateTimeOffset.UtcNow;
@@ -316,6 +340,33 @@ public sealed class HomeworkService(
     private async Task EnsureWritableAsync(CancellationToken ct)
     {
         if (db.CurrentTenantId is long tenantId) await subscription.EnsureWritableAsync(tenantId, ct);
+    }
+
+    private List<(long GroupId, DateTimeOffset DueDate, decimal MaxScore)> ReadGroupSettings(HomeworkUpsertRequest request)
+    {
+        if (request.GroupIds.Count != request.GroupDueDates.Count
+            || request.GroupIds.Count != request.GroupScores.Count)
+        {
+            throw new ArgumentException(L["Homework_GroupDeadlineRequired"]);
+        }
+
+        var settings = new List<(long, DateTimeOffset, decimal)>();
+        var seen = new HashSet<long>();
+
+        for (var i = 0; i < request.GroupIds.Count; i++)
+        {
+            if (!seen.Add(request.GroupIds[i])) continue;
+
+            var dueDate = request.GroupDueDates[i];
+            var maxScore = request.GroupScores[i];
+
+            if (dueDate == default) throw new ArgumentException(L["Homework_GroupDeadlineRequired"]);
+            if (maxScore <= 0 || maxScore > 1000) throw new ArgumentException(L["Homework_MaxScoreInvalid"]);
+
+            settings.Add((request.GroupIds[i], dueDate, maxScore));
+        }
+
+        return settings;
     }
 
     private async Task<List<long>> ValidateGroupsAsync(IEnumerable<long> groupIds, long? ownerId, CancellationToken ct)
@@ -426,14 +477,13 @@ public sealed class HomeworkService(
             homework.Id,
             homework.Title,
             SafeHtml.Sanitize(homework.Description),
-            homework.MaxScore,
-            homework.DueDate,
             homework.IsPublished,
             homework.PublishedAt,
             homework.IsActive,
             homework.UserId,
             homework.Groups.OrderBy(x => x.Id)
-                .Select(x => new HomeworkGroupInfoResponse(x.GroupId, x.Group?.Name ?? string.Empty)).ToList(),
+                .Select(x => new HomeworkGroupInfoResponse(
+                    x.GroupId, x.Group?.Name ?? string.Empty, x.DueDate, x.MaxScore)).ToList(),
             homework.Quizzes.OrderBy(x => x.SortOrder).Select(x =>
             {
                 var info = quizInfo.GetValueOrDefault(x.QuizId);
