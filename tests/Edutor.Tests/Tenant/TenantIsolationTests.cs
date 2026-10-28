@@ -128,7 +128,7 @@ public class TenantDeleteTests(ApiFactory factory)
 public class TenantRegistrationTests(ApiFactory factory)
 {
     [Fact]
-    public async Task An_individual_teacher_gets_their_own_tenant_and_the_teacher_role()
+    public async Task An_individual_teacher_gets_their_own_tenant_and_is_its_admin()
     {
         using var scope = factory.Services.CreateScope();
         var service = scope.ServiceProvider.GetRequiredService<Edutor.Core.Modules.Tenant.Abstractions.ITenantService>();
@@ -149,7 +149,11 @@ public class TenantRegistrationTests(ApiFactory factory)
         Assert.Equal("Aysel Aliyeva", tenant.Name);
 
         var user = await db.Users.IgnoreQueryFilters().FirstAsync(u => u.TenantId == tenant.Id);
-        Assert.Equal("teacher", user.Type);
+        Assert.Equal("admin", user.Type);
+
+        var accountType = await db.Tenants.IgnoreQueryFilters()
+            .Where(t => t.Id == tenant.Id).Select(t => t.AccountType).FirstAsync();
+        Assert.Equal("teacher", accountType);
     }
 
     [Fact]

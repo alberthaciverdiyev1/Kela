@@ -191,8 +191,9 @@ public sealed class TenantService(
             Email = email,
             PhoneNumber = phone,
             PasswordHash = BCrypt.Net.BCrypt.HashPassword(request.Password),
-            // Fərdi müəllim müəllim kimi daxil olur; kurs sahibi isə admin olur.
-            Type = isTeacher ? UserTypes.Teacher : UserTypes.Admin
+            // Qeydiyyatdan keçən şəxs həmişə öz tenant-ının adminidir — fərdi müəllim də
+            // kiçik kursunu idarə edə bilsin. Müəllim görünüşü tenant-ın AccountType-ı ilə gəlir.
+            Type = UserTypes.Admin
         });
 
         if (!isTeacher && request.Logo is not null)
