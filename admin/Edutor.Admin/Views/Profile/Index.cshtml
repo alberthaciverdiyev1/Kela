@@ -1,0 +1,35 @@
+@model Edutor.Core.Modules.User.Responses.UserResponse
+@{
+    ViewData["Title"] = L["Profile_Title"];
+}
+<section class="admin-page">
+    <partial name="Ui/_PageHeader" model="@(new PageHeaderModel {
+        })" />
+
+    <form id="profileForm" class="admin-card w-full space-y-6 p-6 sm:p-7">
+        <h3 class="text-sm font-bold uppercase tracking-wider text-slate-400">@L["Profile_Personal"]</h3>
+        <div class="grid gap-4 sm:grid-cols-2">
+            <partial name="Ui/_Input" model="@(new InputModel { Name = "name", Id = "name", Label = L["Common_Name"], Value = Model.Name })" />
+            <partial name="Ui/_Input" model="@(new InputModel { Name = "surname", Id = "surname", Label = L["Common_Surname"], Value = Model.Surname })" />
+            <partial name="Ui/_Input" model="@(new InputModel { Name = "email", Id = "email", Label = L["Common_Email"], Type = "email", Required = true, Value = Model.Email })" />
+            <partial name="Ui/_Input" model="@(new InputModel { Name = "phoneNumber", Id = "phoneNumber", Label = L["Common_Phone"], Value = Model.PhoneNumber })" />
+        </div>
+        <div class="flex justify-end border-t border-border pt-6">
+            <partial name="Ui/_Button" model="@(new ButtonModel { Text = L["Common_Save"], Type = "submit" })" />
+        </div>
+    </form>
+
+    <form id="passwordForm" class="admin-card w-full space-y-6 p-6 sm:p-7">
+        <h3 class="text-sm font-bold uppercase tracking-wider text-slate-400">@L["Profile_Password"]</h3>
+        <div class="grid gap-4 sm:grid-cols-3">
+            <partial name="Ui/_Input" model="@(new InputModel { Name = "currentPassword", Id = "currentPassword", Label = L["Profile_CurrentPassword"], Type = "password", Required = true })" />
+            <partial name="Ui/_Input" model="@(new InputModel { Name = "newPassword", Id = "newPassword", Label = L["Profile_NewPassword"], Type = "password", Required = true })" />
+            <partial name="Ui/_Input" model="@(new InputModel { Name = "confirmPassword", Id = "confirmPassword", Label = L["Profile_ConfirmPassword"], Type = "password", Required = true })" />
+        </div>
+        <div class="flex justify-end border-t border-border pt-6">
+            <partial name="Ui/_Button" model="@(new ButtonModel { Text = L["Profile_ChangePassword"], Type = "submit" })" />
+        </div>
+    </form>
+</section>
+
+<form id="antiforgery">@Html.AntiForgeryToken()</form>

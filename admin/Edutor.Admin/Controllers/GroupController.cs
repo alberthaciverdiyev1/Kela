@@ -1,0 +1,282 @@
+using Edutor.Core.Modules.Lesson.Requests;
+using FluentValidation;
+using Edutor.Core.Common.Bulk;
+using Edutor.Core.Modules.Group.Abstractions;
+using Edutor.Core.Modules.Group.Requests;
+using Edutor.Core.Modules.Group.Responses;
+using Edutor.Core.Modules.Quiz.Abstractions;
+using Edutor.Core.Modules.Tenant.Abstractions;
+using Edutor.Core.Modules.Quiz.Requests;
+using Edutor.Core.Modules.Students.Abstractions;
+using Edutor.Core.Modules.Students.Requests;
+using Edutor.Core.Modules.Subject.Abstractions;
+using Edutor.Core.Modules.Subject.Requests;
+using Edutor.Core.Modules.User.Abstractions;
+using Edutor.Core.Modules.User.Requests;
+using Microsoft.AspNetCore.Mvc;
+using Edutor.Admin.Infrastructure;
+
+namespace Edutor.Admin.Controllers;
+
+[Route("[controller]")]
+public sealed class GroupController(
+    IGroupService service,
+    IUserService users,
+    Edutor.Core.Modules.Lesson.Abstractions.ILessonService lessons,
+    IStudentManagementService students,
+    ISubjectService subjects,
+    IQuizService quizzes,
+    ITenantService tenants,
+    IValidator<GroupUpsertRequest> validator,
+    IConfiguration config) : AdminControllerBase
+{
+    [HttpGet]
+    public async Task<IActionResult> Index(CancellationToken ct)
+    {
+        ViewData["Scripts"] = new[]
+        {
+            "~/js/pages/group/list.js", "~/js/pages/group/create.js",
+            "~/js/pages/group/update.js"
+        };
+        ViewData["Teachers"] = await users.ListAsync(new UserListRequest { PerPage = 200 }, ct);
+        ViewData["DefaultTeacherId"] = await DefaultTeacherIdAsync(ct);
+        ViewData["MultipleTeachers"] = await HasMultipleTeachersAsync(ct);
+        ViewData["AppBaseUrl"] = AppBaseUrl;
+        return View();
+    }
+
+    [HttpGet("{id:long}/manage")]
+    public async Task<IActionResult> Manage(long id, CancellationToken ct)
+    {
+        ViewData["Scripts"] = new[] { "~/js/pages/group/manage-page.js" };
+
+        var owner = OwnerScope;
+        var group = await service.GetAsync(id, owner, ct);
+
+        // Teacher başqasının qrupunu URL ilə də aça bilməsin.
+        if (!User.IsAdmin() && group.UserId != owner)
+            return Forbid();
+
+        ViewData["Title"] = group.Name;
+        ViewData["Group"] = group;
+        ViewData["Teachers"] = await users.ListAsync(new UserListRequest { PerPage = 200 }, ct);
+        ViewData["DefaultTeacherId"] = await DefaultTeacherIdAsync(ct);
+        ViewData["MultipleTeachers"] = await HasMultipleTeachersAsync(ct);
+        ViewData["SubjectCount"] = (await service.ListSubjectsAsync(id, owner, ct)).Count;
+        ViewData["QuizCount"] = (await service.ListQuizzesAsync(id, owner, ct)).Count;
+        return View();
+    }
+
+    /// <summary>Seçim yalnız birdən çox müəllim hesabı olanda məna daşıyır.</summary>
+    private async Task<bool> HasMultipleTeachersAsync(CancellationToken ct)
+        => (await users.ListAsync(new UserListRequest
+        {
+            PerPage = 1,
+            Type = Edutor.Core.Modules.User.Entities.UserTypes.Teacher
+        }, ct)).Total > 1;
+
+    /// <summary>
+    /// Fərdi müəllim (kurs olmayan) tenant-da qrup yaradan şəxs avtomatik müəllim olur;
+    /// kurs tenant-ında seçim adminə buraxılır.
+    /// </summary>
+    private async Task<string> DefaultTeacherIdAsync(CancellationToken ct)
+        => await tenants.GetCurrentAccountTypeAsync(ct) == "teacher"
+            ? User.CurrentUserId()?.ToString() ?? string.Empty
+            : string.Empty;
+
+    /// <summary>Dəvət linkinin əsası: konfiqurasiya, yoxdursa ilk CORS mənbəyi.</summary>
+    private string AppBaseUrl
+    {
+        get
+        {
+            var configured = config["App:BaseUrl"];
+            if (!string.IsNullOrWhiteSpace(configured)) return configured.TrimEnd('/');
+
+            var origin = config.GetSection("Cors:Origins").Get<string[]>()?
+                .FirstOrDefault(x => !string.IsNullOrWhiteSpace(x));
+
+            return origin?.TrimEnd('/') ?? "";
+        }
+    }
+
+    [HttpGet("list")]
+    public async Task<IActionResult> List([FromQuery] GroupListRequest request, CancellationToken ct)
+    {
+        if (!User.IsAdmin())
+        {
+            // Teacher yalnız öz qruplarını görür; admin/superadmin hamısını.
+            request.IsDeleted = 0;
+            request.UserId = User.CurrentUserId();
+        }
+        return Json(await service.ListAsync(request, ct));
+    }
+
+    [HttpGet("{id:long}")]
+    public async Task<IActionResult> Get(long id, CancellationToken ct)
+        => Json(await service.GetAsync(id, OwnerScope, ct));
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> Create([FromForm] GroupUpsertRequest request, CancellationToken ct)
+    {
+        // Teacher yalnız özünə qrup yaradır — müəllim seçimi məcburi özüdür.
+        if (!User.IsAdmin()) request.UserId = User.CurrentUserId();
+
+        var result = await validator.ValidateAsync(request, ct);
+        if (!result.IsValid) return BadRequest(Invalid(result));
+
+        return Json(await service.CreateAsync(request, ct));
+    }
+
+    [HttpPut("{id:long}")]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> Update(long id, [FromForm] GroupUpsertRequest request, CancellationToken ct)
+    {
+        var result = await validator.ValidateAsync(request, ct);
+        if (!result.IsValid) return BadRequest(Invalid(result));
+
+        return Json(await service.UpdateAsync(id, request, OwnerScope, ct));
+    }
+
+    [HttpDelete("{id:long}")]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> Delete(long id, CancellationToken ct)
+    {
+        await service.DeleteAsync(id, OwnerScope, ct);
+        return Json(new { ok = true });
+    }
+
+    // --- İdarəetmə: şagird / fənn / imtahan ---
+
+    [HttpGet("options")]
+    public async Task<IActionResult> Options(CancellationToken ct)
+    {
+        var studentList = await students.ListAsync(new StudentListRequest { PerPage = 500 }, ct);
+        var ownerId = User.IsAdmin() ? null : User.CurrentUserId();
+        var subjectList = await subjects.ListAsync(new SubjectListRequest { PerPage = 500, UserId = ownerId }, ct);
+        // Teacher üçün imtahan seçimi yalnız öz imtahanları ilə məhdudlaşır.
+        var quizList = await quizzes.ListAsync(
+            new QuizListRequest { PerPage = 500, UserId = ownerId }, ct);
+        var lessonList = await lessons.ListAsync(new LessonListRequest { PerPage = 500, UserId = ownerId }, ct);
+
+        // İmtahan → dərs → fənn: siyahıda imtahanları seçilmiş fənnlərə görə filtrləmək üçün.
+        var lessonSubject = lessonList.Data.ToDictionary(l => l.Id, l => l.SubjectId);
+
+        return Json(new GroupOptionsResponse(
+            studentList.Data.Select(s => new OptionItem(s.Id, s.FullName)).ToList(),
+            subjectList.Data.Select(s => new OptionItem(s.Id, s.Name)).ToList(),
+            quizList.Data.Select(q => new OptionItem(
+                q.Id,
+                q.Title,
+                q.LessonTitle,
+                q.LessonId is long lessonId && lessonSubject.TryGetValue(lessonId, out var subjectId) ? subjectId : null)).ToList()));
+    }
+
+    [HttpGet("{id:long}/students")]
+    public async Task<IActionResult> GroupStudents(long id, CancellationToken ct)
+        => Json(await service.ListStudentsAsync(id, OwnerScope, ct));
+
+    [HttpPost("{id:long}/students")]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> AssignStudents(long id, [FromBody] AssignStudentsRequest request, CancellationToken ct)
+        => Json(await service.AssignStudentsAsync(id, request, OwnerScope, ct));
+
+    [HttpDelete("{id:long}/students/{studentId:long}")]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> RemoveStudent(long id, long studentId, CancellationToken ct)
+    {
+        await service.RemoveStudentAsync(id, studentId, OwnerScope, ct);
+        return Json(new { ok = true });
+    }
+
+    [HttpGet("{id:long}/subjects")]
+    public async Task<IActionResult> GroupSubjects(long id, CancellationToken ct)
+        => Json(await service.ListSubjectsAsync(id, OwnerScope, ct));
+
+    /// <summary>Fənn qrupa əlavə edilərkən hansı dərslərin açılacağını seçmək üçün siyahı.</summary>
+    [HttpGet("{id:long}/subject-lessons")]
+    public async Task<IActionResult> SubjectLessons(
+        long id, [FromQuery(Name = "subject_id")] long subjectId, CancellationToken ct)
+    {
+        var ownerId = OwnerScope;
+        await service.GetAsync(id, ownerId, ct);
+
+        var list = await lessons.ListAsync(new LessonListRequest
+        {
+            PerPage = 500,
+            SubjectId = subjectId,
+            UserId = ownerId
+        }, ct);
+
+        return Json(list.Data
+            .OrderBy(x => x.SortOrder).ThenBy(x => x.Id)
+            .Select(x => new { x.Id, x.Title, x.IsActive }));
+    }
+
+    [HttpPost("{id:long}/subjects")]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> AssignSubjects(long id, [FromBody] AssignSubjectsRequest request, CancellationToken ct)
+        => Json(await service.AssignSubjectsAsync(id, request, OwnerScope, ct));
+
+    [HttpDelete("{id:long}/subjects/{subjectId:long}")]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> RemoveSubject(long id, long subjectId, CancellationToken ct)
+    {
+        await service.RemoveSubjectAsync(id, subjectId, OwnerScope, ct);
+        return Json(new { ok = true });
+    }
+
+    [HttpGet("{id:long}/quizzes")]
+    public async Task<IActionResult> GroupQuizzes(long id, CancellationToken ct)
+        => Json(await service.ListQuizzesAsync(id, OwnerScope, ct));
+
+    [HttpPost("{id:long}/quizzes")]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> AssignQuizzes(long id, [FromBody] AssignQuizzesRequest request, CancellationToken ct)
+        => Json(await service.AssignQuizzesAsync(id, request, OwnerScope, ct));
+
+    [HttpDelete("{id:long}/quizzes/{quizId:long}")]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> RemoveQuiz(long id, long quizId, CancellationToken ct)
+    {
+        await service.RemoveQuizAsync(id, quizId, OwnerScope, ct);
+        return Json(new { ok = true });
+    }
+
+    [HttpPost("bulk")]
+    [ValidateAntiForgeryToken]
+    public Task<IActionResult> Bulk([FromBody] BulkRequest request, CancellationToken ct)
+        => BulkAsync(request, service.BulkAsync, ct);
+
+    // --- Linklə qoşulma müraciətləri ---
+
+    [HttpGet("join-request-count")]
+    public async Task<IActionResult> JoinRequestCount(CancellationToken ct)
+        => Json(new { count = await service.CountPendingJoinRequestsAsync(OwnerScope, ct) });
+
+    [HttpGet("{id:long}/join-requests")]
+    public async Task<IActionResult> JoinRequests(long id, CancellationToken ct)
+        => Json(await service.ListJoinRequestsAsync(id, OwnerScope, ct));
+
+    [HttpPost("{id:long}/join-requests/{requestId:long}/approve")]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> ApproveJoin(long id, long requestId, CancellationToken ct)
+    {
+        await service.DecideJoinRequestAsync(id, requestId, true, OwnerScope, ct);
+        return Json(new { ok = true });
+    }
+
+    [HttpPost("{id:long}/join-requests/{requestId:long}/reject")]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> RejectJoin(long id, long requestId, CancellationToken ct)
+    {
+        await service.DecideJoinRequestAsync(id, requestId, false, OwnerScope, ct);
+        return Json(new { ok = true });
+    }
+
+    // Fənn atama/çıxarma audit loqları
+    [HttpGet("{id:long}/subject-logs")]
+    public async Task<IActionResult> SubjectLogs(long id, CancellationToken ct)
+        => Json(await service.ListSubjectLogsAsync(id, OwnerScope, ct));
+
+}

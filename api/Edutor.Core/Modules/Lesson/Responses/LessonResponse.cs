@@ -1,0 +1,12 @@
+namespace Edutor.Core.Modules.Lesson.Responses;
+
+public record LessonResponse(
+    long Id,
+    long SubjectId,
+    string Title,
+    string? Image,
+    int SortOrder,
+    bool IsActive,
+    string Settings,
+    bool IsShared = false,
+    long? UserId = null);

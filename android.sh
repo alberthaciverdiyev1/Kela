@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Kela mobil app (MAUI Blazor Hybrid) — Android cihaza qurub işə salır.
+# Edutor mobil app (MAUI Blazor Hybrid) — Android cihaza qurub işə salır.
 # İstifadə:  ./android.sh            (Debug, telefona deploy + run)
 #            ./android.sh -c Release
 set -euo pipefail
@@ -15,7 +15,7 @@ CONFIG="Debug"
 [ "${1:-}" = "-c" ] && CONFIG="${2:-Release}"
 
 API_URL="${API_URL:-http://localhost:5080}"
-APP_ID="${APP_ID:-com.kela.app}"
+APP_ID="${APP_ID:-com.edutor.app}"
 
 echo "==> JDK : $JAVA_HOME"
 echo "==> SDK : $ANDROID_HOME"
@@ -33,7 +33,7 @@ echo "==> adb reverse tcp:$PORT tcp:$PORT"
 "$ADB" reverse "tcp:$PORT" "tcp:$PORT"
 
 echo "==> Build & deploy ($CONFIG) ..."
-dotnet build "$ROOT/App/Kela.App/Kela.App.csproj" \
+dotnet build "$ROOT/App/Edutor.App/Edutor.App.csproj" \
   -f net10.0-android -c "$CONFIG" -t:Run \
   -p:AndroidSdkDirectory="$ANDROID_HOME" \
   -p:JavaSdkDirectory="$JAVA_HOME"

@@ -1,0 +1,105 @@
+@inherits RefreshablePage
+@using Edutor.App.Shared.Services.Localization
+@inject Localizer L
+@page "/payments"
+@inject AppApi Api
+
+<PageTitle>@L["Payments_Title"]</PageTitle>
+
+<PageHeader Title="@L["Payments_Title"]" Back="/profile"/>
+
+<div @key="_loading" class="px-5 pb-28 pt-6 @(!_loading ? "page-fade" : null)">
+    @if (_loading)
+    {
+        <SkeletonCardGrid Count="2"/>
+    }
+    else if (_payment is null || (_payment.Amount is null && _payment.History.Count == 0))
+    {
+        <EmptyState Text="@L["Payments_NoPlan"]"/>
+    }
+    else
+    {
+        var p = _payment;
+        var statusText = p.Status switch
+        {
+            "current" => L["Payments_Status_Current"],
+            "upcoming" => L["Payments_Status_Upcoming"],
+            "overdue" => L["Payments_Status_Overdue"],
+            _ => L["Payments_Status_Unpaid"]
+        };
+        var statusClass = p.Status switch
+        {
+            "current" => "bg-brand-103 text-brand-698",
+            "upcoming" => "bg-[#fdf6e3] text-[#8a6d1a]",
+            "overdue" => "bg-[#fdecef] text-danger-539",
+            _ => "bg-brand-081 text-sage-410"
+        };
+        var period = p.Frequency == "custom" && p.IntervalDays is > 0
+            ? string.Format(L["Payments_PeriodCustom"], p.IntervalDays)
+            : L["Payments_PeriodMonthly"];
+
+        <section class="overflow-hidden rounded-3xl border border-brand-090 bg-white shadow-[0_10px_40px_rgba(36,78,62,0.08)]">
+            <div class="bg-gradient-to-br from-brand-671 to-brand-784 p-6 text-white">
+                <div class="flex items-start justify-between gap-3">
+                    <div>
+                        <p class="text-[10px] font-bold uppercase tracking-[0.18em] text-white/60">@L["Payments_Plan"]</p>
+                        <p class="mt-2 text-3xl font-extrabold tracking-[-0.04em]">
+                            @(p.Amount?.ToString("0.00") ?? "—") <span class="text-lg font-bold text-white/80">@p.Currency</span>
+                        </p>
+                        <p class="mt-1 text-xs text-white/70">@period</p>
+                    </div>
+                    <span class="rounded-full px-3 py-1 text-[11px] font-bold @statusClass">@statusText</span>
+                </div>
+            </div>
+
+            <div class="divide-y divide-brand-075 px-5">
+                <div class="flex items-center justify-between py-3.5">
+                    <span class="text-[12px] text-sage-410">@L["Payments_NextDue"]</span>
+                    <span class="text-[13px] font-semibold text-brand-776">@(p.NextDueOn?.ToString("dd.MM.yyyy") ?? "—")</span>
+                </div>
+                <div class="flex items-center justify-between py-3.5">
+                    <span class="text-[12px] text-sage-410">@L["Payments_LastPaid"]</span>
+                    <span class="text-[13px] font-semibold text-brand-776">@(p.LastPaidOn?.ToString("dd.MM.yyyy") ?? "—")</span>
+                </div>
+                <div class="flex items-center justify-between py-3.5">
+                    <span class="text-[12px] text-sage-410">@L["Payments_Joined"]</span>
+                    <span class="text-[13px] font-semibold text-brand-776">@(p.JoinedOn?.ToString("dd.MM.yyyy") ?? "—")</span>
+                </div>
+                @if (!string.IsNullOrWhiteSpace(p.Note))
+                {
+                    <div class="flex items-start justify-between gap-4 py-3.5">
+                        <span class="text-[12px] text-sage-410">@L["Payments_Note"]</span>
+                        <span class="text-right text-[13px] text-brand-776">@p.Note</span>
+                    </div>
+                }
+            </div>
+        </section>
+
+        <section class="mt-6">
+            <p class="mb-3 text-[10px] font-bold uppercase tracking-[0.18em] text-brand-671">@L["Payments_History"]</p>
+
+            @if (p.History.Count == 0)
+            {
+                <p class="text-[12px] text-sage-410">@L["Payments_Empty"]</p>
+            }
+            else
+            {
+                <div class="space-y-2">
+                    @foreach (var item in p.History)
+                    {
+                        <div class="flex items-center justify-between rounded-2xl border border-brand-090 bg-white px-4 py-3">
+                            <div>
+                                <p class="text-[13px] font-semibold text-brand-776">@item.PaidOn.ToString("dd.MM.yyyy")</p>
+                                @if (!string.IsNullOrWhiteSpace(item.Note))
+                                {
+                                    <p class="mt-0.5 text-[11px] text-sage-410">@item.Note</p>
+                                }
+                            </div>
+                            <p class="text-[14px] font-bold text-brand-698">@item.Amount.ToString("0.00") @item.Currency</p>
+                        </div>
+                    }
+                </div>
+            }
+        </section>
+    }
+</div>

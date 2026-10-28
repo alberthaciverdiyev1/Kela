@@ -1,0 +1,146 @@
+@using Edutor.Core.Modules.Nodes.Responses
+@{
+    ViewData["Title"] = L["Nav_Nodes"];
+}
+@{
+    var summary = ViewData["Summary"] as NodeSummaryResponse;
+}
+<section class="admin-page">
+    <partial name="Ui/_PageHeader" model="@(new PageHeaderModel {
+        })" />
+
+    @if (summary is not null)
+    {
+        <div class="mb-5 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-6">
+            @foreach (var card in new (string Label, int Value, string Tone)[]
+            {
+                (L["Node_Online"], summary.OnlineNodes, "text-emerald-600"),
+                (L["Node_Offline"], summary.OfflineNodes, "text-slate-500"),
+                (L["Node_Disabled"], summary.DisabledNodes, "text-slate-400"),
+                (L["Node_ActiveJobs"], summary.ActiveJobs, "text-primary"),
+                (L["Node_PendingJobs"], summary.PendingJobs, "text-amber-600"),
+                (L["Node_VideosProcessing"], summary.RunningVideos, "text-primary")
+            })
+            {
+                <partial name="Ui/_StatCard" model="@(new StatCardModel {
+                    Label = card.Label, Value = card.Value.ToString(), ValueClass = card.Tone, Compact = true })" />
+            }
+        </div>
+    }
+
+    <div class="admin-card">
+        <div class="mb-4 flex flex-wrap items-center gap-2 border-b border-border pb-3">
+            <div class="admin-tabs" id="nodeTabs">
+                @foreach (var tab in new[] { "devices", "jobs", "codes" })
+                {
+                    var label = tab switch
+                    {
+                        "devices" => L["Node_Devices"],
+                        "jobs" => L["Node_Jobs"],
+                        _ => L["Node_Codes"]
+                    };
+
+                    <button type="button" data-tab="@tab"
+                            class="admin-tab@(tab == "devices" ? " is-active" : "")">@label</button>
+                }
+            </div>
+
+            <div class="ms-auto flex items-center gap-2">
+                <div id="refreshNote" class="hidden text-sm font-semibold text-slate-400">@L["Node_AutoRefresh"]</div>
+                <button type="button" id="createCodeBtn" data-action="CodesPage.create"
+                        class="admin-button-primary hidden">
+                    @L["Node_GenerateCode"]
+                </button>
+            </div>
+        </div>
+
+        <div id="tab-devices" data-tab-panel="devices" class="relative">
+            <div id="listLoader" class="admin-loader"><div class="spinner"></div></div>
+            <div class="overflow-x-auto">
+                <table class="admin-table">
+                    <partial name="Ui/_TableHead" model="@(new TableHeadModel
+                        {
+                            Columns = new List<TableColumnModel>
+                            {
+                                    new() { Label = L["Node_Name"] },
+                                    new() { Label = L["Node_Status"] },
+                                    new() { Label = L["Node_Platform"] },
+                                    new() { Label = L["Node_Encoders"] },
+                                    new() { Label = L["Node_Benchmark"] },
+                                    new() { Label = L["Node_ActiveJobs"] },
+                                    new() { Label = L["Node_LastSeen"] },
+                                    new() { Label = L["Common_Actions"], Right = true },
+                            }
+                        })" />
+                    <tbody id="rows"></tbody>
+                </table>
+            </div>
+        </div>
+
+        <div id="tab-jobs" data-tab-panel="jobs" class="relative hidden">
+            <div class="mb-3 flex flex-wrap items-center gap-2">
+                <select id="jobStatus" data-change-action="JobsPage.filterChanged" class="admin-field !w-auto">
+                    <option value="">@L["Node_All"]</option>
+                    @foreach (var status in Edutor.Nodes.Shared.Contracts.JobStatus.All)
+                    {
+                        <option value="@status">@status</option>
+                    }
+                </select>
+            </div>
+            <div class="overflow-x-auto">
+                <table class="admin-table">
+                    <partial name="Ui/_TableHead" model="@(new TableHeadModel
+                        {
+                            Columns = new List<TableColumnModel>
+                            {
+                                    new() { Label = L["Job_Video"] },
+                                    new() { Label = L["Job_Resolution"] },
+                                    new() { Label = L["Node_Status"] },
+                                    new() { Label = L["Job_Progress"] },
+                                    new() { Label = L["Job_Node"] },
+                                    new() { Label = L["Job_Attempts"] },
+                                    new() { Label = L["Common_Actions"], Right = true },
+                            }
+                        })" />
+                    <tbody id="jobRows"></tbody>
+                </table>
+            </div>
+            <div id="jobPagination" class="mt-4 flex flex-wrap justify-center gap-2"></div>
+        </div>
+
+        <div id="tab-codes" data-tab-panel="codes" class="relative hidden">
+            <div class="overflow-x-auto">
+                <table class="admin-table">
+                    <partial name="Ui/_TableHead" model="@(new TableHeadModel
+                        {
+                            Columns = new List<TableColumnModel>
+                            {
+                                    new() { Label = L["Node_Code"] },
+                                    new() { Label = L["Node_Note"] },
+                                    new() { Label = L["Node_Expires"] },
+                                    new() { Label = L["Node_Status"] },
+                                    new() { Label = L["Common_Actions"], Right = true },
+                            }
+                        })" />
+                    <tbody id="codeRows"></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</section>
+
+@{
+    var codeModalBody = await Html.PartialAsync("_CodeModalFields");
+}
+
+<partial name="Ui/_Modal" model="@(new ModalModel
+{
+    Id = "codeModal",
+    TitleId = null,
+    Title = L["Node_GenerateCode"],
+    WidthClass = "max-w-md",
+    ShowError = false,
+    Body = codeModalBody
+})" />
+
+<form id="antiforgery">@Html.AntiForgeryToken()</form>

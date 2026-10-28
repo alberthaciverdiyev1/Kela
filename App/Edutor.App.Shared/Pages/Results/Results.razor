@@ -1,0 +1,71 @@
+@inherits RefreshablePage
+@using Edutor.App.Shared.Services.Localization
+@inject Localizer L
+@page "/results"
+@inject AppApi Api
+
+<PageTitle>@L["Nav_Results"]</PageTitle>
+
+<PageHeader Title="@L["Nav_Results"]" Back="/"/>
+
+<div @key="_loading" class="px-5 pb-28 pt-6 @(!_loading ? "page-fade" : null)">
+    @if (_loading)
+    {
+        <div class="mt-4 grid grid-cols-2 gap-3">
+            <Skeleton Class="h-[62px] rounded-xl"/>
+            <Skeleton Class="h-[62px] rounded-xl"/>
+        </div>
+
+        <div class="mt-4 grid grid-cols-3 gap-3 rounded-2xl bg-brand-836 p-4">
+            <div class="flex flex-col items-center gap-1.5">
+                <Skeleton Class="h-7 w-12 rounded-md bg-white/20"/>
+                <Skeleton Class="h-2.5 w-14 rounded-md bg-white/20"/>
+            </div>
+            <div class="flex flex-col items-center gap-1.5">
+                <Skeleton Class="h-7 w-12 rounded-md bg-white/20"/>
+                <Skeleton Class="h-2.5 w-14 rounded-md bg-white/20"/>
+            </div>
+            <div class="flex flex-col items-center gap-1.5">
+                <Skeleton Class="h-7 w-12 rounded-md bg-white/20"/>
+                <Skeleton Class="h-2.5 w-14 rounded-md bg-white/20"/>
+            </div>
+        </div>
+
+        <SkeletonCardGrid Count="4"/>
+    }
+    else
+    {
+        <div class="mt-4 grid grid-cols-2 gap-3">
+            <label class="block">
+                <span class="text-[10px] font-bold uppercase tracking-[0.14em] text-sage-410">@L["Results_From"]</span>
+                <input type="date" @bind="_from" @bind:after="FetchAsync"
+                       class="mt-1 w-full rounded-xl border border-brand-104 bg-white px-3 py-2 text-[13px] text-brand-755 outline-none focus:border-brand-467" />
+            </label>
+            <label class="block">
+                <span class="text-[10px] font-bold uppercase tracking-[0.14em] text-sage-410">@L["Results_To"]</span>
+                <input type="date" @bind="_to" @bind:after="FetchAsync"
+                       class="mt-1 w-full rounded-xl border border-brand-104 bg-white px-3 py-2 text-[13px] text-brand-755 outline-none focus:border-brand-467" />
+            </label>
+        </div>
+
+        <div class="mt-4 grid grid-cols-3 gap-3 rounded-2xl bg-brand-836 p-4 text-center text-white">
+            <div><p class="text-2xl font-semibold tracking-[-0.04em]">@_count</p><p class="text-[10px] text-brand-286">@L["Nav_Exam"]</p></div>
+            <div><p class="text-2xl font-semibold tracking-[-0.04em]">@_avg%</p><p class="text-[10px] text-brand-286">@L["Results_Avg"]</p></div>
+            <div><p class="text-2xl font-semibold tracking-[-0.04em]">@_best%</p><p class="text-[10px] text-brand-286">@L["Results_Best"]</p></div>
+        </div>
+
+        @if (_filtered.Count == 0)
+        {
+            <EmptyState Text="@L["Results_Empty"]"/>
+        }
+        else
+        {
+            <section class="mt-5 grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
+                @foreach (var r in _filtered)
+                {
+                    <ResultCard Result="r"/>
+                }
+            </section>
+        }
+    }
+</div>

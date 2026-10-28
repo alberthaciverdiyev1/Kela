@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="az">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - Edutor</title>
+    <link rel="stylesheet" href="~/css/app.css" asp-append-version="true" />
+</head>
+<body class="@(ViewData["FullBleed"] is true ? "min-h-screen bg-white text-slate-800" : "flex min-h-screen items-center justify-center bg-slate-100 p-4 text-slate-800")">
+    @RenderBody()
+    @if (ViewData["Scripts"] is string[] pageScripts)
+    {
+        foreach (var script in pageScripts)
+        {
+            <script src="@script" asp-append-version="true"></script>
+        }
+    }
+</body>
+</html>

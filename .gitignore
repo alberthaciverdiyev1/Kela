@@ -36,8 +36,8 @@ CLAUDE.md
 appsettings.Development.json
 
 # Tailwind build outputs (generated)
-admin/Kela.Admin/wwwroot/css/app.css
-App/Kela.App.Shared/wwwroot/css/app.css
+admin/Edutor.Admin/wwwroot/css/app.css
+App/Edutor.App.Shared/wwwroot/css/app.css
 
 # Şəxsi qeydlər — commit olunmur (CLAUDE.md)
-api/Kela.Api/ToDo/
+api/Edutor.Api/ToDo/

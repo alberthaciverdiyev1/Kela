@@ -1,0 +1,60 @@
+@using Edutor.App.Shared.Services.Localization
+@inject NavigationManager Nav
+@inject AuthState Auth
+@inject Localizer L
+
+<header class="sticky top-0 z-30 hidden h-[68px] grid-cols-[auto_1fr_auto] items-center gap-6 border-b border-brand-086 bg-brand-022/95 px-8 backdrop-blur md:grid">
+    <a href="/" class="flex shrink-0 items-center gap-2.5">
+        <div class="flex size-8 items-center justify-center rounded-lg bg-brand-743 text-white">
+            <Icon Name="book" Class="size-4" />
+        </div>
+        <span class="text-[19px] font-semibold tracking-[-0.04em]">@L["App_Name"]</span>
+    </a>
+
+    @* Ortalanmış menyu; overflow-x-auto: dar ekranlarda maddeler itməz, sürüşdürülə bilər *@
+    <nav class="-mx-2 flex items-center justify-center gap-1 overflow-x-auto px-2 [scrollbar-width:none]">
+        <TopNavItem Href="/" Label="@L["Nav_Overview"]" IconName="dashboard" MatchAll="true" />
+        <TopNavItem Href="/groups" Label="@L["Nav_Groups"]" IconName="book" />
+        <TopNavItem Href="/homeworks" Label="@L["Nav_Homeworks"]" IconName="clipboard-check" />
+        <TopNavItem Href="/exams" Label="@L["Nav_Exams"]" IconName="file" />
+        <TopNavItem Href="/results" Label="@L["Nav_Results"]" IconName="clipboard-check" />
+        <TopNavItem Href="/contact" Label="@L["Nav_Contact"]" IconName="mail" />
+    </nav>
+
+    <div class="flex items-center justify-self-end gap-3">
+        <select value="@L.Current" @onchange="ChangeLang"
+                class="rounded-lg border border-brand-104 bg-white px-2 py-1 text-[12px] font-semibold text-brand-722 outline-none focus:border-brand-467"
+                aria-label="Dil">
+            @foreach (var c in Localizer.Supported)
+            {
+                <option value="@c">@c.ToUpperInvariant()</option>
+            }
+        </select>
+
+        @if (false)
+        {
+            <a href="/notifications" aria-label="@L["Nav_Notifications"]"
+               class="grid size-9 place-items-center rounded-full text-sage-473 transition hover:bg-brand-041 hover:text-brand-743">
+                <Icon Name="bell" Class="size-[18px]" />
+            </a>
+        }
+        <span class="max-w-[160px] truncate text-[13px] font-semibold text-brand-722">@(Auth.User?.FullName ?? L["Common_Student"])</span>
+        <a href="/profile" aria-label="@L["Nav_Profile"]">
+            @if (!string.IsNullOrWhiteSpace(Auth.User?.Image))
+            {
+                <img src="@Auth.User!.Image" alt="" class="size-9 rounded-full object-cover" />
+            }
+            else
+            {
+                <span class="grid size-9 place-items-center rounded-full bg-brand-103 text-[13px] font-bold text-brand-835">@(Auth.User?.Initial ?? "L")</span>
+            }
+        </a>
+    </div>
+</header>
+
+@code {
+    protected override void OnInitialized() => L.Changed += OnChanged;
+    private void OnChanged() => InvokeAsync(StateHasChanged);
+    private async Task ChangeLang(ChangeEventArgs e)
+        => await L.SetAsync(e.Value?.ToString() ?? "az");
+}

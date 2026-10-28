@@ -1,0 +1,17 @@
+@using Edutor.App.Shared.Services.Localization
+@inject Localizer L
+@* Səhifə başlığı: geri düyməsi + başlıq + (istəyə görə) sağ tərəf. *@
+<header class="@(Sticky ? "sticky top-0 z-20 " : "")flex h-[72px] items-center justify-between border-b border-brand-080 bg-brand-027 px-5">
+    <button type="button" @onclick="GoBack" class="flex size-10 items-center justify-center rounded-full bg-white text-brand-600 shadow-sm" aria-label="@L["Common_Back"]">
+        <Icon Name="arrow-left" Class="size-5" />
+    </button>
+    <h1 class="max-w-[220px] truncate text-[18px] font-bold tracking-[-0.04em] text-brand-784">@Title</h1>
+    @if (Right is not null)
+    {
+        @Right
+    }
+    else
+    {
+        <span class="size-10"></span>
+    }
+</header>

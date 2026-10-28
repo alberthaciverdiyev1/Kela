@@ -1,0 +1,36 @@
+@using Edutor.App.Shared.Services.Localization
+@inject Localizer L
+@* Bir sualın cavab təhlili — bütün variantlar; doğru yaşıl, səhv (seçilən) qırmızı. *@
+<div class="rounded-2xl border bg-white p-4 shadow-[0_4px_15px_rgba(36,78,62,0.03)] @(Item.IsRight ? "border-brand-149" : "border-danger-043")">
+    <div class="flex items-start gap-3">
+        <div class="mt-0.5 flex size-6 shrink-0 items-center justify-center rounded-full @(Item.IsRight ? "bg-brand-671 text-white" : "bg-danger-539 text-white")">
+            <Icon Name="@(Item.IsRight ? "check" : "x")" Class="size-3.5" />
+        </div>
+        <div class="min-w-0 flex-1">
+            <p class="text-[13px] font-semibold leading-5 text-brand-776">@Number. @Item.Title</p>
+
+            <div class="mt-2.5 flex flex-col gap-1.5">
+                @foreach (var opt in Options)
+                {
+                    <div class="flex items-center gap-2 rounded-lg border px-3 py-2 text-[12px] @OptClass(opt.Key)">
+                        <span class="font-bold">@opt.Key)</span>
+                        <span class="min-w-0 flex-1">@opt.Text</span>
+                        @if (opt.Key == Item.CorrectAnswer)
+                        {
+                            <span class="shrink-0 text-[10px] font-bold text-brand-671">@L["Result_Correct"]</span>
+                        }
+                        @if (opt.Key == Item.StudentAnswer)
+                        {
+                            <span class="shrink-0 text-[10px] font-bold @(Item.IsRight ? "text-brand-671" : "text-danger-539")">@L["Answer_Your"]</span>
+                        }
+                    </div>
+                }
+            </div>
+
+            @if (string.IsNullOrEmpty(Item.StudentAnswer))
+            {
+                <p class="mt-2 text-[11px] text-sage-410">@L["Answer_NotAnswered"]</p>
+            }
+        </div>
+    </div>
+</div>

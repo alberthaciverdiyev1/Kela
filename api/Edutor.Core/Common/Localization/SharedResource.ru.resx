@@ -1,0 +1,2067 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype"><value>text/microsoft-resx</value></resheader>
+  <resheader name="version"><value>2.0</value></resheader>
+  <resheader name="reader"><value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+  <resheader name="writer"><value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+  <data name="Api_Registered" xml:space="preserve">
+    <value>Регистрация выполнена</value>
+  </data>
+  <data name="Api_LoginSuccessful" xml:space="preserve">
+    <value>Вход выполнен</value>
+  </data>
+  <data name="Api_LoggedOut" xml:space="preserve">
+    <value>Вы вышли из системы</value>
+  </data>
+  <data name="Api_Logged" xml:space="preserve">
+    <value>Записано</value>
+  </data>
+  <data name="Api_OtpSent" xml:space="preserve">
+    <value>OTP отправлен</value>
+  </data>
+  <data name="Api_OtpChecked" xml:space="preserve">
+    <value>OTP проверен</value>
+  </data>
+  <data name="Api_PasswordResetSuccessfully" xml:space="preserve">
+    <value>Пароль успешно сброшен</value>
+  </data>
+  <data name="Api_PasswordChanged" xml:space="preserve">
+    <value>Пароль изменён</value>
+  </data>
+  <data name="Api_EmailChanged" xml:space="preserve">
+    <value>Эл. почта изменена</value>
+  </data>
+  <data name="Api_PhoneChanged" xml:space="preserve">
+    <value>Телефон изменён</value>
+  </data>
+  <data name="Api_NameChanged" xml:space="preserve">
+    <value>Имя изменено</value>
+  </data>
+  <data name="Api_ImageChanged" xml:space="preserve">
+    <value>Изображение изменено</value>
+  </data>
+  <data name="Api_NotificationStatusUpdated" xml:space="preserve">
+    <value>Статус уведомлений обновлён</value>
+  </data>
+  <data name="Api_AccountDeleted" xml:space="preserve">
+    <value>Аккаунт удалён</value>
+  </data>
+  <data name="Api_TokenSaved" xml:space="preserve">
+    <value>Токен сохранён</value>
+  </data>
+  <data name="Api_TokenRemoved" xml:space="preserve">
+    <value>Токен удалён</value>
+  </data>
+
+  <data name="Api_WorkerUnauthorized" xml:space="preserve">
+    <value>Неверный ключ worker</value>
+  </data>
+
+  <data name="Video_Status" xml:space="preserve">
+    <value>Статус</value>
+  </data>
+  <data name="Video_Pending" xml:space="preserve">
+    <value>Ожидает</value>
+  </data>
+  <data name="Video_Processing" xml:space="preserve">
+    <value>Обработка</value>
+  </data>
+  <data name="Video_Ready" xml:space="preserve">
+    <value>Готово</value>
+  </data>
+  <data name="Video_Failed" xml:space="preserve">
+    <value>Ошибка</value>
+  </data>
+  <data name="Video_NotReady" xml:space="preserve">
+    <value>Видео ещё не готово — идёт конвертация.</value>
+  </data>
+  <data name="Api_VideoNotFound" xml:space="preserve">
+    <value>Видео по указанному пути не найдено</value>
+  </data>
+  <data name="Api_ProgressSaved" xml:space="preserve">
+    <value>Прогресс сохранён</value>
+  </data>
+  <data name="Api_QuizStarted" xml:space="preserve">
+    <value>Тест начат</value>
+  </data>
+  <data name="Api_QuizCompleted" xml:space="preserve">
+    <value>Тест завершён</value>
+  </data>
+  <data name="Api_UnexpectedErrorTitle" xml:space="preserve">
+    <value>Непредвиденная ошибка</value>
+  </data>
+  <data name="Api_UnexpectedError" xml:space="preserve">
+    <value>Произошла непредвиденная ошибка.</value>
+  </data>
+  <data name="Api_ValidationFailed" xml:space="preserve">
+    <value>Проверка не пройдена</value>
+  </data>
+  <data name="Api_CurrentPasswordIncorrect" xml:space="preserve">
+    <value>Текущий пароль неверен</value>
+  </data>
+  <data name="Login_SeeAll" xml:space="preserve">
+    <value>Ещё</value>
+  </data>
+  <data name="Login_SearchCourse" xml:space="preserve">
+    <value>Поиск курса</value>
+  </data>
+  <data name="Login_SelectCourse" xml:space="preserve">
+    <value>Выберите курс</value>
+  </data>
+  <data name="LessonContent_ExtraLessons" xml:space="preserve">
+    <value>Дополнительные уроки</value>
+  </data>
+  <data name="Tenant_CourseName" xml:space="preserve">
+    <value>Название (курса или преподавателя)</value>
+  </data>
+  <data name="Tenant_SlugHint" xml:space="preserve">
+    <value>Короткое имя в URL (создаётся автоматически, если пусто)</value>
+  </data>
+  <data name="Tenant_AdminName" xml:space="preserve">
+    <value>Имя управляющего</value>
+  </data>
+  <data name="Tenant_AdminSurname" xml:space="preserve">
+    <value>Фамилия управляющего</value>
+  </data>
+  <data name="Tenant_PhoneOptional" xml:space="preserve">
+    <value>Телефон (необязательно)</value>
+  </data>
+  <data name="Tenant_ConfirmPassword" xml:space="preserve">
+    <value>Повторите пароль</value>
+  </data>
+  <data name="Tenant_Register" xml:space="preserve">
+    <value>Зарегистрироваться</value>
+  </data>
+  <data name="Tenant_RegisterTitle" xml:space="preserve">
+    <value>Создайте аккаунт</value>
+  </data>
+  <data name="Tenant_RegisterSubtitle" xml:space="preserve">
+    <value>Курс или частный преподаватель — создайте своё пространство и сразу начните управлять.</value>
+  </data>
+  <data name="Tenant_RegisterSubmit" xml:space="preserve">
+    <value>Создать аккаунт</value>
+  </data>
+  <data name="Tenant_RegisteredPending" xml:space="preserve">
+    <value>Аккаунт готов. Теперь можно войти.</value>
+  </data>
+  <data name="Tenant_Pending" xml:space="preserve">
+    <value>Ожидает</value>
+  </data>
+  <data name="Tenant_CourseNameRequired" xml:space="preserve">
+    <value>Укажите название</value>
+  </data>
+  <data name="Tenant_SlugTaken" xml:space="preserve">
+    <value>Это короткое имя уже используется</value>
+  </data>
+  <data name="Tenant_AdminNameRequired" xml:space="preserve">
+    <value>Укажите имя управляющего</value>
+  </data>
+  <data name="Tenant_PasswordRequirements" xml:space="preserve">
+    <value>Пароль должен содержать минимум 8 символов, букву и цифру</value>
+  </data>
+  <data name="Tenant_PasswordMismatch" xml:space="preserve">
+    <value>Пароли не совпадают</value>
+  </data>
+  <data name="Banner_Owner" xml:space="preserve">
+    <value>Владелец</value>
+  </data>
+  <data name="Banner_OwnerYou" xml:space="preserve">
+    <value>Вы</value>
+  </data>
+  <data name="Banner_OwnerAdmin" xml:space="preserve">
+    <value>Админ</value>
+  </data>
+  <data name="Tenant_AcceptTerms" xml:space="preserve">
+    <value>Я принимаю условия использования и политику конфиденциальности.</value>
+  </data>
+  <data name="Tenant_TermsLink" xml:space="preserve">
+    <value>Условия использования и политика конфиденциальности</value>
+  </data>
+  <data name="Tenant_TermsRequired" xml:space="preserve">
+    <value>Необходимо принять условия использования</value>
+  </data>
+  <data name="Tenant_TermsFallback" xml:space="preserve">
+    <value>Условия использования ещё не опубликованы.</value>
+  </data>
+  <data name="Group_CopyJoinLink" xml:space="preserve">
+    <value>Скопировать ссылку-приглашение</value>
+  </data>
+  <data name="Group_JoinRequests" xml:space="preserve">
+    <value>Запросы на вступление</value>
+  </data>
+  <data name="Group_JoinApprove" xml:space="preserve">
+    <value>Одобрить</value>
+  </data>
+  <data name="Group_JoinReject" xml:space="preserve">
+    <value>Отклонить</value>
+  </data>
+  <data name="Group_JoinPending" xml:space="preserve">
+    <value>Ожидает</value>
+  </data>
+  <data name="Group_JoinApproved" xml:space="preserve">
+    <value>Одобрено</value>
+  </data>
+  <data name="Group_JoinRejected" xml:space="preserve">
+    <value>Отклонено</value>
+  </data>
+  <data name="Js_LinkCopied" xml:space="preserve">
+    <value>Ссылка скопирована</value>
+  </data>
+  <data name="Group_CreatedTitle" xml:space="preserve">
+    <value>Группа создана</value>
+  </data>
+  <data name="Group_JoinLinkExplain" xml:space="preserve">
+    <value>По этой ссылке студенты могут запросить вступление в группу. Запросы отображаются во вкладке «Запросы на вступление», и после вашего одобрения студент добавляется в группу.</value>
+  </data>
+  <data name="Tenant_Approve" xml:space="preserve">
+    <value>Одобрить</value>
+  </data>
+  <data name="Tenant_Reject" xml:space="preserve">
+    <value>Отклонить</value>
+  </data>
+  <data name="Tenant_RejectConfirm" xml:space="preserve">
+    <value>Отклонить заявку и удалить курс? Это действие необратимо.</value>
+  </data>
+  <data name="Tenant_RegisterHeroTitle" xml:space="preserve">
+    <value>Управляйте курсом или занятиями с Edutor</value>
+  </data>
+  <data name="Tenant_RegisterHeroText" xml:space="preserve">
+    <value>Учебный центр или частный преподаватель — управляйте студентами, группами, уроками и материалами из одной панели.</value>
+  </data>
+  <data name="Tenant_RegisterBenefit1" xml:space="preserve">
+    <value>Управляйте студентами и группами</value>
+  </data>
+  <data name="Tenant_RegisterBenefit2" xml:space="preserve">
+    <value>Уроки, материалы и экзамены в одной панели</value>
+  </data>
+  <data name="Tenant_RegisterBenefit3" xml:space="preserve">
+    <value>Приглашайте студентов в группы по ссылке</value>
+  </data>
+  <data name="Tenant_RegisterHowItWorks" xml:space="preserve">
+    <value>Как это работает</value>
+  </data>
+  <data name="Tenant_RegisterStep1" xml:space="preserve">
+    <value>Отправьте заявку</value>
+  </data>
+  <data name="Tenant_RegisterStep2" xml:space="preserve">
+    <value>Аккаунт активируется автоматически</value>
+  </data>
+  <data name="Tenant_RegisterStep3" xml:space="preserve">
+    <value>Войдите в свою панель</value>
+  </data>
+  <data name="Tenant_RegisterSectionCourse" xml:space="preserve">
+    <value>Данные профиля</value>
+  </data>
+  <data name="Tenant_RegisterSectionAdmin" xml:space="preserve">
+    <value>Данные аккаунта</value>
+  </data>
+  <data name="Tenant_RegisterSuccessTitle" xml:space="preserve">
+    <value>Ваш аккаунт готов</value>
+  </data>
+  <data name="Tenant_RegisterBackToLogin" xml:space="preserve">
+    <value>Вернуться к входу</value>
+  </data>
+  <data name="Tenant_AlreadyHaveAccount" xml:space="preserve">
+    <value>Уже есть аккаунт?</value>
+  </data>
+  <data name="Tenant_RegisterLogo" xml:space="preserve">
+    <value>Логотип (необязательно)</value>
+  </data>
+  <data name="Tenant_RegisterLogoHint" xml:space="preserve">
+    <value>Загрузите логотип (PNG, JPG или WEBP)</value>
+  </data>
+  <data name="Login_HeroTitle" xml:space="preserve">
+    <value>С возвращением в панель</value>
+  </data>
+  <data name="Login_Subtitle" xml:space="preserve">
+    <value>Выберите организацию и войдите, чтобы продолжить.</value>
+  </data>
+  <data name="Login_NoAccount" xml:space="preserve">
+    <value>Ещё нет аккаунта?</value>
+  </data>
+  <data name="Login_HeroText" xml:space="preserve">
+    <value>Войдите, чтобы управлять курсом, занятиями, студентами и материалами.</value>
+  </data>
+  <data name="Login_ShowPassword" xml:space="preserve">
+    <value>Показать пароль</value>
+  </data>
+  <data name="Login_HidePassword" xml:space="preserve">
+    <value>Скрыть пароль</value>
+  </data>
+  <data name="Validation_EmailRequired" xml:space="preserve">
+    <value>Эл. почта обязательна</value>
+  </data>
+  <data name="Validation_EmailInvalid" xml:space="preserve">
+    <value>Некорректный адрес эл. почты</value>
+  </data>
+  <data name="Validation_PasswordRequired" xml:space="preserve">
+    <value>Пароль обязателен</value>
+  </data>
+  <data name="Validation_PasswordMinLength" xml:space="preserve">
+    <value>Пароль должен содержать не менее 6 символов</value>
+  </data>
+  <data name="Validation_CurrentPasswordRequired" xml:space="preserve">
+    <value>Текущий пароль обязателен</value>
+  </data>
+  <data name="Validation_OtpRequired" xml:space="preserve">
+    <value>OTP обязателен</value>
+  </data>
+  <data name="Validation_FullNameRequired" xml:space="preserve">
+    <value>Полное имя обязательно</value>
+  </data>
+  <data name="Validation_FullNameMaxLength" xml:space="preserve">
+    <value>Полное имя не должно превышать 255 символов</value>
+  </data>
+  <data name="Validation_TitleRequired" xml:space="preserve">
+    <value>Заголовок обязателен</value>
+  </data>
+  <data name="Validation_TitleMaxLength190" xml:space="preserve">
+    <value>Заголовок не должен превышать 190 символов</value>
+  </data>
+  <data name="Validation_NameRequired" xml:space="preserve">
+    <value>Название обязательно</value>
+  </data>
+  <data name="Validation_NameMaxLength190" xml:space="preserve">
+    <value>Название не должно превышать 190 символов</value>
+  </data>
+  <data name="Validation_DescriptionMaxLength255" xml:space="preserve">
+    <value>Описание не должно превышать 255 символов</value>
+  </data>
+  <data name="Validation_ImageMaxSize" xml:space="preserve">
+    <value>Размер изображения не должен превышать 5 МБ</value>
+  </data>
+  <data name="Validation_ImageFormat" xml:space="preserve">
+    <value>Недопустимый формат изображения (разрешены: jpg, jpeg, png)</value>
+  </data>
+  <data name="Validation_SubjectRequired" xml:space="preserve">
+    <value>Предмет обязателен</value>
+  </data>
+  <data name="Validation_GroupRequired" xml:space="preserve">
+    <value>Требуется группа</value>
+  </data>
+  <data name="Validation_DateRequired" xml:space="preserve">
+    <value>Требуется дата</value>
+  </data>
+  <data name="Validation_StudentsRequired" xml:space="preserve">
+    <value>Требуется список учеников</value>
+  </data>
+  <data name="Validation_LessonRequired" xml:space="preserve">
+    <value>Урок обязателен</value>
+  </data>
+  <data name="Validation_FileOrPathRequired" xml:space="preserve">
+    <value>Требуется файл или путь</value>
+  </data>
+  <data name="Validation_AtLeastOneStudent" xml:space="preserve">
+    <value>При отправке не всем требуется хотя бы один ученик</value>
+  </data>
+  <data name="Validation_TypeRequired" xml:space="preserve">
+    <value>Тип обязателен</value>
+  </data>
+  <data name="Validation_ContentRequired" xml:space="preserve">
+    <value>Содержимое обязательно</value>
+  </data>
+  <data name="Validation_TitleType" xml:space="preserve">
+    <value>Тип заголовка должен быть текстом или изображением</value>
+  </data>
+  <data name="Validation_VariantType" xml:space="preserve">
+    <value>Тип варианта должен быть текстом или изображением</value>
+  </data>
+  <data name="Validation_VariantARequired" xml:space="preserve">
+    <value>Вариант A обязателен</value>
+  </data>
+  <data name="Validation_VariantBRequired" xml:space="preserve">
+    <value>Вариант B обязателен</value>
+  </data>
+  <data name="Validation_VariantCRequired" xml:space="preserve">
+    <value>Вариант C обязателен</value>
+  </data>
+  <data name="Validation_VariantDRequired" xml:space="preserve">
+    <value>Вариант D обязателен</value>
+  </data>
+  <data name="Validation_CorrectAnswer" xml:space="preserve">
+    <value>Правильный ответ должен быть одним из A, B, C, D, E</value>
+  </data>
+  <data name="Validation_UserType" xml:space="preserve">
+    <value>Тип должен быть &#x27;teacher&#x27;, &#x27;admin&#x27; или &#x27;superadmin&#x27;</value>
+  </data>
+  <data name="Validation_PhoneRequired" xml:space="preserve">
+    <value>Телефон обязателен</value>
+  </data>
+  <data name="Validation_TemplateRequired" xml:space="preserve">
+    <value>Шаблон обязателен</value>
+  </data>
+  <data name="Validation_TemplateNotExists" xml:space="preserve">
+    <value>Шаблон не существует</value>
+  </data>
+  <data name="Validation_BodyTextRequired" xml:space="preserve">
+    <value>Текст обязателен</value>
+  </data>
+  <data name="Nav_Dashboard" xml:space="preserve">
+    <value>Панель</value>
+  </data>
+  <data name="Nav_Subjects" xml:space="preserve">
+    <value>Предметы</value>
+  </data>
+  <data name="Nav_Lessons" xml:space="preserve">
+    <value>Уроки</value>
+  </data>
+  <data name="Nav_Materials" xml:space="preserve">
+    <value>Материалы</value>
+  </data>
+  <data name="Nav_Questions" xml:space="preserve">
+    <value>Вопросы</value>
+  </data>
+  <data name="Nav_Exams" xml:space="preserve">
+    <value>Экзамены</value>
+  </data>
+  <data name="Nav_Groups" xml:space="preserve">
+    <value>Группы</value>
+  </data>
+
+  <data name="Nav_Attendance" xml:space="preserve">
+    <value>Посещаемость</value>
+  </data>
+  <data name="Attendance_Title" xml:space="preserve">
+    <value>Посещаемость</value>
+  </data>
+  <data name="Attendance_Subtitle" xml:space="preserve">
+    <value>Отмечайте посещаемость по группам</value>
+  </data>
+  <data name="Attendance_PickDay" xml:space="preserve">
+    <value>Выберите день в календаре</value>
+  </data>
+  <data name="Attendance_LegendFull" xml:space="preserve">
+    <value>Все присутствовали</value>
+  </data>
+  <data name="Attendance_LegendPartial" xml:space="preserve">
+    <value>Больше половины</value>
+  </data>
+  <data name="Attendance_LegendLow" xml:space="preserve">
+    <value>Низкая посещаемость</value>
+  </data>
+  <data name="Attendance_LegendNone" xml:space="preserve">
+    <value>Нет записи</value>
+  </data>
+  <data name="Attendance_MonthSummary" xml:space="preserve">
+    <value>За месяц: {0} / {1}</value>
+  </data>
+  <data name="Attendance_AllPresent" xml:space="preserve">
+    <value>Все присутствуют</value>
+  </data>
+  <data name="Attendance_AllAbsent" xml:space="preserve">
+    <value>Все отсутствуют</value>
+  </data>
+
+  <data name="Attendance_OpenCalendar" xml:space="preserve">
+    <value>Открыть календарь</value>
+  </data>
+  <data name="Attendance_MyMonthSummary" xml:space="preserve">
+    <value>За этот месяц: {0} / {1}</value>
+  </data>
+
+
+  <data name="Attendance_Saved" xml:space="preserve">
+    <value>Сохранено</value>
+  </data>
+  <data name="Attendance_NoGroups" xml:space="preserve">
+    <value>Нет групп</value>
+  </data>
+  <data name="Attendance_MyTitle" xml:space="preserve">
+    <value>Посещаемость</value>
+  </data>
+  <data name="Attendance_MyPercent" xml:space="preserve">
+    <value>{0}% посещаемости</value>
+  </data>
+  <data name="Attendance_MyCount" xml:space="preserve">
+    <value>{0} / {1} занятий</value>
+  </data>
+  <data name="Attendance_None" xml:space="preserve">
+    <value>Записей пока нет</value>
+  </data>
+  <data name="Attendance_Present" xml:space="preserve">
+    <value>Присутствовал</value>
+  </data>
+  <data name="Attendance_Absent" xml:space="preserve">
+    <value>Отсутствовал</value>
+  </data>
+
+
+
+
+
+  <data name="Upload_LeaveTitle" xml:space="preserve">
+    <value>Загрузка идёт</value>
+  </data>
+  <data name="Upload_LeaveText" xml:space="preserve">
+    <value>Если вы уйдёте со страницы, загрузка прервётся. Выйти?</value>
+  </data>
+  <data name="Upload_LeaveConfirm" xml:space="preserve">
+    <value>Да, выйти</value>
+  </data>
+  <data name="Upload_ResumeTitle" xml:space="preserve">
+    <value>Незавершённая загрузка</value>
+  </data>
+  <data name="Upload_ResumeHint" xml:space="preserve">
+    <value>{0} — выберите тот же файл, чтобы продолжить</value>
+  </data>
+  <data name="Upload_ResumePick" xml:space="preserve">
+    <value>Продолжить</value>
+  </data>
+  <data name="Upload_ResumeMismatch" xml:space="preserve">
+    <value>Файл не совпадает — выберите тот же файл</value>
+  </data>
+  <data name="Upload_Interrupted" xml:space="preserve">
+    <value>Загрузка прервана из-за ухода со страницы — выберите файл заново.</value>
+  </data>
+  <data name="Upload_Preparing" xml:space="preserve">
+    <value>{0} загружается</value>
+  </data>
+  <data name="Upload_Done" xml:space="preserve">
+    <value>Загрузка завершена</value>
+  </data>
+  <data name="Upload_Failed" xml:space="preserve">
+    <value>Загрузка не удалась</value>
+  </data>
+  <data name="Upload_Remaining" xml:space="preserve">
+    <value>осталось {0}</value>
+  </data>
+  <data name="Common_UploadDone" xml:space="preserve">
+    <value>Успешно загружено</value>
+  </data>
+  <data name="Common_Uploading" xml:space="preserve">
+    <value>Загрузка…</value>
+  </data>
+  <data name="Js_FileTooLarge" xml:space="preserve">
+    <value>Файл не удалось загрузить напрямую, и он слишком велик для отправки через сервер. Проверьте настройки CORS бакета.</value>
+  </data>
+  <data name="Js_NoStudents" xml:space="preserve">
+    <value>В этой группе нет учеников</value>
+  </data>
+  <data name="Nav_GroupStats" xml:space="preserve">
+    <value>Статистика групп</value>
+  </data>
+  <data name="Nav_Students" xml:space="preserve">
+    <value>Ученики</value>
+  </data>
+  <data name="Nav_Users" xml:space="preserve">
+    <value>Пользователи</value>
+  </data>
+  <data name="Nav_Tenants" xml:space="preserve">
+    <value>Арендаторы</value>
+  </data>
+  <data name="Nav_Notifications" xml:space="preserve">
+    <value>Уведомления</value>
+  </data>
+  <data name="Nav_Banners" xml:space="preserve">
+    <value>Истории</value>
+  </data>
+  <data name="Nav_Certificates" xml:space="preserve">
+    <value>Сертификаты</value>
+  </data>
+  <data name="Nav_Settings" xml:space="preserve">
+    <value>Настройки</value>
+  </data>
+  <data name="Nav_Privacy" xml:space="preserve">
+    <value>Конфиденциальность</value>
+  </data>
+  <data name="Sidebar_SectionMain" xml:space="preserve">
+    <value>Общее</value>
+  </data>
+  <data name="Sidebar_SectionTeaching" xml:space="preserve">
+    <value>Обучение</value>
+  </data>
+  <data name="Sidebar_SectionManagement" xml:space="preserve">
+    <value>Управление</value>
+  </data>
+  <data name="Sidebar_SectionFinance" xml:space="preserve">
+    <value>Финансы</value>
+  </data>
+  <data name="Sidebar_SectionContent" xml:space="preserve">
+    <value>Контент</value>
+  </data>
+  <data name="Sidebar_SectionPlatform" xml:space="preserve">
+    <value>Платформа</value>
+  </data>
+  <data name="Sidebar_Customize" xml:space="preserve">
+    <value>Настроить меню</value>
+  </data>
+  <data name="Sidebar_CustomizeDone" xml:space="preserve">
+    <value>Готово</value>
+  </data>
+  <data name="Sidebar_HideItem" xml:space="preserve">
+    <value>Скрыть</value>
+  </data>
+  <data name="Sidebar_ShowItem" xml:space="preserve">
+    <value>Показать</value>
+  </data>
+  <data name="Sidebar_SectionSystem" xml:space="preserve">
+    <value>Система</value>
+  </data>
+  <data name="Sidebar_AdminPanel" xml:space="preserve">
+    <value>Панель управления</value>
+  </data>
+  <data name="Role_SuperAdmin" xml:space="preserve">
+    <value>SuperAdmin</value>
+  </data>
+  <data name="Role_Admin" xml:space="preserve">
+    <value>Админ</value>
+  </data>
+  <data name="Role_Student" xml:space="preserve">
+    <value>Ученик</value>
+  </data>
+  <data name="User_HidePassword" xml:space="preserve">
+    <value>Скрыть пароль</value>
+  </data>
+  <data name="User_ShowPassword" xml:space="preserve">
+    <value>Показать пароль</value>
+  </data>
+  <data name="User_GeneratePassword" xml:space="preserve">
+    <value>Сгенерировать пароль</value>
+  </data>
+  <data name="Role_Teacher" xml:space="preserve">
+    <value>Учитель</value>
+  </data>
+  <data name="Common_User" xml:space="preserve">
+    <value>Пользователь</value>
+  </data>
+  <data name="Common_Logout" xml:space="preserve">
+    <value>Выйти</value>
+  </data>
+  <data name="Common_Email" xml:space="preserve">
+    <value>Эл. почта</value>
+  </data>
+  <data name="Common_Password" xml:space="preserve">
+    <value>Пароль</value>
+  </data>
+  <data name="Common_SignIn" xml:space="preserve">
+    <value>Войти</value>
+  </data>
+  <data name="Common_Next" xml:space="preserve">
+    <value>Далее</value>
+  </data>
+  <data name="Common_Back" xml:space="preserve">
+    <value>Назад</value>
+  </data>
+  <data name="Group_StepInfoHint" xml:space="preserve">
+    <value>Название, преподаватель и фото</value>
+  </data>
+  <data name="Group_StepSubjectsHint" xml:space="preserve">
+    <value>Предметы группы</value>
+  </data>
+  <data name="Group_StepStudentsHint" xml:space="preserve">
+    <value>Выберите или сгенерируйте учеников</value>
+  </data>
+  <data name="Group_StepQuizzesHint" xml:space="preserve">
+    <value>Выберите экзамены</value>
+  </data>
+  <data name="Group_WillGenerate" xml:space="preserve">
+    <value>После сохранения группы {0} учеников будут созданы в фоне</value>
+  </data>
+  <data name="Group_PickSubjectsFirst" xml:space="preserve">
+    <value>Сначала выберите предметы</value>
+  </data>
+  <data name="Group_StepInfo" xml:space="preserve">
+    <value>Информация</value>
+  </data>
+  <data name="Group_StepSubjects" xml:space="preserve">
+    <value>Предметы</value>
+  </data>
+  <data name="Group_StepStudents" xml:space="preserve">
+    <value>Студенты</value>
+  </data>
+  <data name="Group_StepQuizzes" xml:space="preserve">
+    <value>Экзамены</value>
+  </data>
+  <data name="Group_SelectAll" xml:space="preserve">
+    <value>Выбрать все</value>
+  </data>
+  <data name="Common_RequiredFields" xml:space="preserve">
+    <value>Заполните обязательные поля</value>
+  </data>
+  <data name="Common_Generate" xml:space="preserve">
+    <value>Сгенерировать</value>
+  </data>
+  <data name="Students_EmailDomain" xml:space="preserve">
+    <value>Домен эл. почты</value>
+  </data>
+  <data name="Students_SendCredentials" xml:space="preserve">
+    <value>Отправить данные по почте</value>
+  </data>
+  <data name="Students_PasswordOptional" xml:space="preserve">
+    <value>Пароль (оставьте пустым — случайный надёжный пароль)</value>
+  </data>
+  <data name="Validation_PasswordLetter" xml:space="preserve">
+    <value>Пароль должен содержать хотя бы одну букву</value>
+  </data>
+  <data name="Validation_PasswordDigit" xml:space="preserve">
+    <value>Пароль должен содержать хотя бы одну цифру</value>
+  </data>
+  <data name="Common_Save" xml:space="preserve">
+    <value>Сохранить</value>
+  </data>
+  <data name="Common_Cancel" xml:space="preserve">
+    <value>Отмена</value>
+  </data>
+  <data name="Common_CurrentFile" xml:space="preserve">
+    <value>Текущий файл</value>
+  </data>
+  <data name="Common_Fullscreen" xml:space="preserve">
+    <value>На весь экран</value>
+  </data>
+  <data name="Common_Close" xml:space="preserve">
+    <value>Закрыть</value>
+  </data>
+  <data name="Common_SearchPlaceholder" xml:space="preserve">
+    <value>Поиск...</value>
+  </data>
+  <data name="Common_Tenant" xml:space="preserve">
+    <value>Организация</value>
+  </data>
+  <data name="Common_Delete" xml:space="preserve">
+    <value>Удалить</value>
+  </data>
+  <data name="Common_Restore" xml:space="preserve">
+    <value>Восстановить</value>
+  </data>
+  <data name="Common_Active" xml:space="preserve">
+    <value>Активно</value>
+  </data>
+  <data name="Common_Inactive" xml:space="preserve">
+    <value>Неактивно</value>
+  </data>
+  <data name="Login_Title" xml:space="preserve">
+    <value>Вход</value>
+  </data>
+  <data name="Sort_Newest" xml:space="preserve">
+    <value>Сначала новые</value>
+  </data>
+  <data name="Sort_Oldest" xml:space="preserve">
+    <value>Сначала старые</value>
+  </data>
+  <data name="Sort_NameAsc" xml:space="preserve">
+    <value>Название (А–Я)</value>
+  </data>
+  <data name="Sort_NameDesc" xml:space="preserve">
+    <value>Название (Я–А)</value>
+  </data>
+  <data name="Sort_Manual" xml:space="preserve">
+    <value>Ручной порядок</value>
+  </data>
+  <data name="Sort_Title" xml:space="preserve">
+    <value>Сортировка</value>
+  </data>
+  <data name="Sort_Hint" xml:space="preserve">
+    <value>Перетащите элементы для сортировки — изменения сохраняются автоматически.</value>
+  </data>
+  <data name="Common_Actions" xml:space="preserve">
+    <value>Действия</value>
+  </data>
+  <data name="Common_DeletedItems" xml:space="preserve">
+    <value>Удалённые</value>
+  </data>
+  <data name="Common_Search" xml:space="preserve">
+    <value>Поиск</value>
+  </data>
+  <data name="Common_LoadingResults" xml:space="preserve">
+    <value>Загрузка результатов...</value>
+  </data>
+  <data name="Common_All" xml:space="preserve">
+    <value>Все</value>
+  </data>
+  <data name="Common_Archived" xml:space="preserve">
+    <value>В архиве</value>
+  </data>
+  <data name="Common_Status" xml:space="preserve">
+    <value>Статус</value>
+  </data>
+  <data name="Common_NoData" xml:space="preserve">
+    <value>Нет данных</value>
+  </data>
+  <data name="Common_Subject" xml:space="preserve">
+    <value>Предмет</value>
+  </data>
+  <data name="Common_Order" xml:space="preserve">
+    <value>Порядок</value>
+  </data>
+  <data name="Dashboard_Videos" xml:space="preserve">
+    <value>Видео</value>
+  </data>
+  <data name="Dashboard_Files" xml:space="preserve">
+    <value>Файлы</value>
+  </data>
+  <data name="Dashboard_Voices" xml:space="preserve">
+    <value>Аудиозаписи</value>
+  </data>
+  <data name="Dashboard_Amount" xml:space="preserve">
+    <value>Сумма</value>
+  </data>
+  <data name="Dashboard_PlanStatus" xml:space="preserve">
+    <value>Платежи по плану</value>
+  </data>
+  <data name="Dashboard_Greeting" xml:space="preserve">
+    <value>Здравствуйте</value>
+  </data>
+  <data name="Dashboard_NewThisWeek" xml:space="preserve">
+    <value>новых за 7 дней</value>
+  </data>
+  <data name="Dashboard_ActiveRatio" xml:space="preserve">
+    <value>{0}% активных</value>
+  </data>
+  <data name="Dashboard_PerGroup" xml:space="preserve">
+    <value>в среднем {0} учеников</value>
+  </data>
+  <data name="Dashboard_AttendanceToday" xml:space="preserve">
+    <value>Посещаемость сегодня</value>
+  </data>
+  <data name="Dashboard_AttendanceRecords" xml:space="preserve">
+    <value>{0} записей</value>
+  </data>
+  <data name="Dashboard_NoAttendance" xml:space="preserve">
+    <value>Записей пока нет</value>
+  </data>
+  <data name="Dashboard_QuickActions" xml:space="preserve">
+    <value>Быстрые действия</value>
+  </data>
+  <data name="Dashboard_NewGroup" xml:space="preserve">
+    <value>Новая группа</value>
+  </data>
+  <data name="Dashboard_AddStudent" xml:space="preserve">
+    <value>Добавить ученика</value>
+  </data>
+  <data name="Dashboard_OpenKassa" xml:space="preserve">
+    <value>Перейти в кассу</value>
+  </data>
+  <data name="Dashboard_Finance" xml:space="preserve">
+    <value>Касса</value>
+  </data>
+  <data name="Dashboard_Last12" xml:space="preserve">
+    <value>Последние 12 месяцев</value>
+  </data>
+  <data name="Dashboard_ThisMonth" xml:space="preserve">
+    <value>Собрано за месяц</value>
+  </data>
+  <data name="Dashboard_Today" xml:space="preserve">
+    <value>Сегодня</value>
+  </data>
+  <data name="Dashboard_Expected" xml:space="preserve">
+    <value>Ожидается за месяц</value>
+  </data>
+  <data name="Dashboard_Overdue" xml:space="preserve">
+    <value>Просрочено</value>
+  </data>
+  <data name="Dashboard_Projected" xml:space="preserve">
+    <value>Следующий месяц (прогноз)</value>
+  </data>
+  <data name="Dashboard_ActivePlans" xml:space="preserve">
+    <value>Активные планы</value>
+  </data>
+  <data name="Dashboard_DueSoon" xml:space="preserve">
+    <value>Истекают через 7 дней</value>
+  </data>
+  <data name="Dashboard_PayingStudents" xml:space="preserve">
+    <value>Платящие ученики</value>
+  </data>
+  <data name="Dashboard_RecentPayments" xml:space="preserve">
+    <value>Последние платежи</value>
+  </data>
+  <data name="Dashboard_NoPayments" xml:space="preserve">
+    <value>Платежей пока нет</value>
+  </data>
+  <data name="Dashboard_VsLastMonth" xml:space="preserve">
+    <value>{0}% к прошлому месяцу</value>
+  </data>
+  <data name="Dashboard_SeeAll" xml:space="preserve">
+    <value>Все</value>
+  </data>
+  <data name="Dashboard_New7d" xml:space="preserve">
+    <value>Новые (7 дней)</value>
+  </data>
+  <data name="Dashboard_ActiveStudentCount" xml:space="preserve">
+    <value>Активные ученики</value>
+  </data>
+  <data name="Dashboard_Subtitle" xml:space="preserve">
+    <value>Обзор состояния платформы.</value>
+  </data>
+  <data name="Dashboard_QuizAttempts" xml:space="preserve">
+    <value>Попытки тестов (30 дней)</value>
+  </data>
+  <data name="Dashboard_ActiveStudents" xml:space="preserve">
+    <value>Ученики, сдающие тесты (30 дней)</value>
+  </data>
+  <data name="Dashboard_Content" xml:space="preserve">
+    <value>Содержимое</value>
+  </data>
+  <data name="Dashboard_TopSubjects" xml:space="preserve">
+    <value>Топ предметов</value>
+  </data>
+  <data name="Dashboard_RecentStudents" xml:space="preserve">
+    <value>Последние ученики</value>
+  </data>
+  <data name="Subject_Subtitle" xml:space="preserve">
+    <value>Управляйте предметами.</value>
+  </data>
+  <data name="Subject_Create" xml:space="preserve">
+    <value>Новый предмет</value>
+  </data>
+  <data name="Subject_Total" xml:space="preserve">
+    <value>Всего предметов</value>
+  </data>
+  <data name="Subject_Shared" xml:space="preserve">
+    <value>Видно всем учителям</value>
+  </data>
+  <data name="Subject_SharedBadge" xml:space="preserve">
+    <value>Общий</value>
+  </data>
+  <data name="Subject_Search" xml:space="preserve">
+    <value>Поиск по названию предмета...</value>
+  </data>
+  <data name="Lesson_Subtitle" xml:space="preserve">
+    <value>Создавайте и упорядочивайте уроки.</value>
+  </data>
+  <data name="Lesson_Create" xml:space="preserve">
+    <value>Новый урок</value>
+  </data>
+  <data name="Lesson_Total" xml:space="preserve">
+    <value>Всего уроков</value>
+  </data>
+  <data name="Lesson_Search" xml:space="preserve">
+    <value>Поиск по названию урока или учителю...</value>
+  </data>
+  <data name="Common_Show" xml:space="preserve">
+    <value>Показать</value>
+  </data>
+  <data name="Common_Title" xml:space="preserve">
+    <value>Заголовок</value>
+  </data>
+  <data name="Common_Lesson" xml:space="preserve">
+    <value>Урок</value>
+  </data>
+  <data name="Common_Type" xml:space="preserve">
+    <value>Тип</value>
+  </data>
+  <data name="Common_Teacher" xml:space="preserve">
+    <value>Учитель</value>
+  </data>
+  <data name="Common_Student" xml:space="preserve">
+    <value>Ученик</value>
+  </data>
+  <data name="Nav_Profile" xml:space="preserve">
+    <value>Профиль</value>
+  </data>
+  <data name="Common_Surname" xml:space="preserve">
+    <value>Фамилия</value>
+  </data>
+  <data name="Profile_Title" xml:space="preserve">
+    <value>Профиль</value>
+  </data>
+  <data name="Profile_Subtitle" xml:space="preserve">
+    <value>Управляйте личными данными и паролем</value>
+  </data>
+  <data name="Profile_Personal" xml:space="preserve">
+    <value>Личные данные</value>
+  </data>
+  <data name="Profile_Password" xml:space="preserve">
+    <value>Пароль</value>
+  </data>
+  <data name="Profile_CurrentPassword" xml:space="preserve">
+    <value>Текущий пароль</value>
+  </data>
+  <data name="Profile_NewPassword" xml:space="preserve">
+    <value>Новый пароль</value>
+  </data>
+  <data name="Profile_ConfirmPassword" xml:space="preserve">
+    <value>Подтвердите пароль</value>
+  </data>
+  <data name="Profile_ChangePassword" xml:space="preserve">
+    <value>Изменить пароль</value>
+  </data>
+  <data name="Profile_PasswordMismatch" xml:space="preserve">
+    <value>Пароли не совпадают</value>
+  </data>
+  <data name="Common_Name" xml:space="preserve">
+    <value>Название</value>
+  </data>
+  <data name="Common_Phone" xml:space="preserve">
+    <value>Телефон</value>
+  </data>
+  <data name="Common_Group" xml:space="preserve">
+    <value>Группа</value>
+  </data>
+  <data name="Common_General" xml:space="preserve">
+    <value>Общее</value>
+  </data>
+  <data name="Common_Question" xml:space="preserve">
+    <value>Вопрос</value>
+  </data>
+  <data name="Common_Image" xml:space="preserve">
+    <value>Изображение</value>
+  </data>
+  <data name="Common_Content" xml:space="preserve">
+    <value>Содержимое</value>
+  </data>
+  <data name="Common_Date" xml:space="preserve">
+    <value>Дата</value>
+  </data>
+  <data name="Common_Contact" xml:space="preserve">
+    <value>Связь</value>
+  </data>
+  <data name="Common_Body" xml:space="preserve">
+    <value>Текст</value>
+  </data>
+  <data name="Common_NewMaterial" xml:space="preserve">
+    <value>Новый материал</value>
+  </data>
+  <data name="Common_LessonExams" xml:space="preserve">
+    <value>Экзамены уроков</value>
+  </data>
+  <data name="Common_SelectGroup" xml:space="preserve">
+    <value>Выберите группу</value>
+  </data>
+  <data name="LessonContent_Subtitle" xml:space="preserve">
+    <value>Управляйте видео, файлами и аудио уроков.</value>
+  </data>
+  <data name="Question_Create" xml:space="preserve">
+    <value>Новый вопрос</value>
+  </data>
+  <data name="Question_Correct" xml:space="preserve">
+    <value>Правильный</value>
+  </data>
+  <data name="Question_Search" xml:space="preserve">
+    <value>Поиск по тексту вопроса...</value>
+  </data>
+  <data name="Question_Subtitle" xml:space="preserve">
+    <value>Управляйте тестовыми вопросами по предметам.</value>
+  </data>
+  <data name="Quiz_Create" xml:space="preserve">
+    <value>Новый экзамен</value>
+  </data>
+  <data name="Quiz_Duration" xml:space="preserve">
+    <value>Длительность</value>
+  </data>
+  <data name="Quiz_Subtitle" xml:space="preserve">
+    <value>Управляйте уроками, экзаменами и выбором вопросов.</value>
+  </data>
+  <data name="Group_Create" xml:space="preserve">
+    <value>Новая группа</value>
+  </data>
+  <data name="Group_Search" xml:space="preserve">
+    <value>Поиск по названию группы...</value>
+  </data>
+  <data name="Group_Subtitle" xml:space="preserve">
+    <value>Управляйте группами учеников, учителями и участниками.</value>
+  </data>
+  <data name="GroupStat_Attempt" xml:space="preserve">
+    <value>Попытка</value>
+  </data>
+  <data name="GroupStat_Wrong" xml:space="preserve">
+    <value>Неверный</value>
+  </data>
+  <data name="GroupStat_Subtitle" xml:space="preserve">
+    <value>Просматривайте результаты экзаменов по группам и экспортируйте в Excel.</value>
+  </data>
+  <data name="Students_Subtitle" xml:space="preserve">
+    <value>Управляйте аккаунтами учеников, статусами и устройствами.</value>
+  </data>
+  <data name="Students_Search" xml:space="preserve">
+    <value>Поиск по имени / email / телефону...</value>
+  </data>
+  <data name="User_Create" xml:space="preserve">
+    <value>Новый пользователь</value>
+  </data>
+  <data name="User_Search" xml:space="preserve">
+    <value>Поиск по имени / email...</value>
+  </data>
+  <data name="User_Subtitle" xml:space="preserve">
+    <value>Управляйте аккаунтами админов и учителей.</value>
+  </data>
+  <data name="Nav_PlatformSettings" xml:space="preserve">
+    <value>Настройки платформы</value>
+  </data>
+  <data name="Platform_Subtitle" xml:space="preserve">
+    <value>Контакты платформы (показываются ниже контактов курса в приложении).</value>
+  </data>
+  <data name="Tenant_Switch" xml:space="preserve">
+    <value>Войти</value>
+  </data>
+  <data name="Tenant_SwitchOff" xml:space="preserve">
+    <value>Выйти из арендатора</value>
+  </data>
+  <data name="Tenant_Create" xml:space="preserve">
+    <value>Новый арендатор</value>
+  </data>
+  <data name="Tenant_Subtitle" xml:space="preserve">
+    <value>Управляйте арендаторами для отдельных организаций.</value>
+  </data>
+  <data name="Notification_Create" xml:space="preserve">
+    <value>Новое уведомление</value>
+  </data>
+  <data name="Notification_Target" xml:space="preserve">
+    <value>Получатели</value>
+  </data>
+  <data name="Notification_Subtitle" xml:space="preserve">
+    <value>Управляйте уведомлениями для учеников.</value>
+  </data>
+  <data name="Banner_ActiveUntil" xml:space="preserve">
+    <value>Дата окончания</value>
+  </data>
+  <data name="Banner_Always" xml:space="preserve">
+    <value>Без срока</value>
+  </data>
+  <data name="Banner_Create" xml:space="preserve">
+    <value>Новая история</value>
+  </data>
+  <data name="Banner_Total" xml:space="preserve">
+    <value>Всего историй</value>
+  </data>
+  <data name="Banner_Search" xml:space="preserve">
+    <value>Поиск по названию истории...</value>
+  </data>
+  <data name="Banner_Subtitle" xml:space="preserve">
+    <value>Управляйте историями на главном экране приложения.</value>
+  </data>
+  <data name="Certificate_Create" xml:space="preserve">
+    <value>Новый сертификат</value>
+  </data>
+  <data name="Certificate_Signature" xml:space="preserve">
+    <value>Подпись</value>
+  </data>
+  <data name="Certificate_Total" xml:space="preserve">
+    <value>Всего сертификатов</value>
+  </data>
+  <data name="Certificate_Search" xml:space="preserve">
+    <value>Поиск по заголовку...</value>
+  </data>
+  <data name="Certificate_Template" xml:space="preserve">
+    <value>Шаблон</value>
+  </data>
+  <data name="Certificate_Subtitle" xml:space="preserve">
+    <value>Выберите шаблон, заполните текст и подпись.</value>
+  </data>
+  <data name="Privacy_Create" xml:space="preserve">
+    <value>Новый документ</value>
+  </data>
+  <data name="Privacy_Title" xml:space="preserve">
+    <value>Конфиденциальность и условия</value>
+  </data>
+  <data name="Privacy_Subtitle" xml:space="preserve">
+    <value>Редактируйте юридические документы приложения.</value>
+  </data>
+  <data name="Setting_ClearCache" xml:space="preserve">
+    <value>Очистить кеш</value>
+  </data>
+  <data name="Setting_AndroidMin" xml:space="preserve">
+    <value>Минимальная версия Android</value>
+  </data>
+  <data name="Setting_IosMin" xml:space="preserve">
+    <value>Минимальная версия iOS</value>
+  </data>
+  <data name="Setting_ContactNumber" xml:space="preserve">
+    <value>Контактный номер {0}</value>
+  </data>
+  <data name="Setting_Logo" xml:space="preserve">
+    <value>Логотип</value>
+  </data>
+  <data name="Setting_Subtitle" xml:space="preserve">
+    <value>Управляйте брендингом, контактами и требованиями к версии.</value>
+  </data>
+  <data name="Setting_CourseProfile" xml:space="preserve">
+    <value>Профиль курса</value>
+  </data>
+  <data name="Setting_NoTenant" xml:space="preserve">
+    <value>Нет контекста арендатора. Войдите как администратор курса, чтобы изменить настройки.</value>
+  </data>
+  <data name="Setting_CourseInfo" xml:space="preserve">
+    <value>Информация о курсе</value>
+  </data>
+  <data name="Setting_CourseName" xml:space="preserve">
+    <value>Название курса</value>
+  </data>
+  <data name="Setting_About" xml:space="preserve">
+    <value>О курсе</value>
+  </data>
+  <data name="Setting_AboutPlaceholder" xml:space="preserve">
+    <value>Краткое описание вашего курса...</value>
+  </data>
+  <data name="Setting_Address" xml:space="preserve">
+    <value>Адрес</value>
+  </data>
+  <data name="Setting_Branding" xml:space="preserve">
+    <value>Брендинг</value>
+  </data>
+  <data name="Setting_AppVersions" xml:space="preserve">
+    <value>Версии приложения</value>
+  </data>
+  <data name="Common_Create" xml:space="preserve">
+    <value>Создать</value>
+  </data>
+  <data name="Common_Send" xml:space="preserve">
+    <value>Отправить</value>
+  </data>
+  <data name="Common_Add" xml:space="preserve">
+    <value>Добавить</value>
+  </data>
+  <data name="Common_Text" xml:space="preserve">
+    <value>Текст</value>
+  </data>
+  <data name="Common_Description" xml:space="preserve">
+    <value>Описание</value>
+  </data>
+  <data name="Common_File" xml:space="preserve">
+    <value>Файл</value>
+  </data>
+  <data name="Common_Manage" xml:space="preserve">
+    <value>Управление</value>
+  </data>
+  <data name="Common_Questions" xml:space="preserve">
+    <value>Вопросы</value>
+  </data>
+  <data name="Type_Video" xml:space="preserve">
+    <value>Видео</value>
+  </data>
+  <data name="Type_Voice" xml:space="preserve">
+    <value>Аудио</value>
+  </data>
+  <data name="Quiz_DurationMin" xml:space="preserve">
+    <value>Длительность (мин)</value>
+  </data>
+  <data name="Quiz_Repeat" xml:space="preserve">
+    <value>Разрешить повтор</value>
+  </data>
+  <data name="Common_LessonExam" xml:space="preserve">
+    <value>Экзамен урока</value>
+  </data>
+  <data name="User_Surname" xml:space="preserve">
+    <value>Фамилия</value>
+  </data>
+  <data name="User_PasswordHint" xml:space="preserve">
+    <value>Если оставить пустым, пароль не изменится.</value>
+  </data>
+  <data name="Tenant_Slug" xml:space="preserve">
+    <value>Slug (уникальный, строчные)</value>
+  </data>
+  <data name="Group_NoTeacher" xml:space="preserve">
+    <value>— Учитель не выбран —</value>
+  </data>
+  <data name="Group_SubjectLogs" xml:space="preserve">
+    <value>Журнал предметов</value>
+  </data>
+  <data name="Group_SubjectLogsHint" xml:space="preserve">
+    <value>История назначения/удаления предметов (сначала новые).</value>
+  </data>
+  <data name="Notification_SendToAll" xml:space="preserve">
+    <value>Отправить всем</value>
+  </data>
+  <data name="Notification_StudentsHint" xml:space="preserve">
+    <value>Ученики</value>
+  </data>
+  <data name="Certificate_SignaturePng" xml:space="preserve">
+    <value>Подпись (PNG)</value>
+  </data>
+  <data name="Certificate_TitlePlaceholder" xml:space="preserve">
+    <value>Напр. Сертификат достижений</value>
+  </data>
+  <data name="Privacy_TypeHint" xml:space="preserve">
+    <value>Тип (privacy / terms / about)</value>
+  </data>
+  <data name="Privacy_ContentHtml" xml:space="preserve">
+    <value>Содержимое (HTML)</value>
+  </data>
+  <data name="Question_TitleType" xml:space="preserve">
+    <value>Тип заголовка</value>
+  </data>
+  <data name="Question_VariantType" xml:space="preserve">
+    <value>Тип варианта</value>
+  </data>
+  <data name="Question_CorrectAnswer" xml:space="preserve">
+    <value>Правильный ответ</value>
+  </data>
+  <data name="Question_TitleText" xml:space="preserve">
+    <value>Текст вопроса</value>
+  </data>
+  <data name="Question_ImageLabel" xml:space="preserve">
+    <value>Изображение вопроса</value>
+  </data>
+  <data name="LessonContent_TypeFile" xml:space="preserve">
+    <value>Файл (pdf/документ)</value>
+  </data>
+  <data name="Lesson_SettingsTitle" xml:space="preserve">
+    <value>Переключатели контента</value>
+  </data>
+  <data name="Lesson_SettingsHint" xml:space="preserve">
+    <value>Выберите, какие разделы видит ученик.</value>
+  </data>
+  <data name="Lesson_SetLiveVideo" xml:space="preserve">
+    <value>Живое видео</value>
+  </data>
+  <data name="Lesson_SetTopicExam" xml:space="preserve">
+    <value>Экзамен по теме</value>
+  </data>
+  <data name="Lesson_SetTopicExplanation" xml:space="preserve">
+    <value>Объяснение темы</value>
+  </data>
+  <data name="Lesson_SetGeneralExam" xml:space="preserve">
+    <value>Общий экзамен</value>
+  </data>
+  <data name="Students_Devices" xml:space="preserve">
+    <value>Устройства</value>
+  </data>
+  <data name="Students_ResetDevice" xml:space="preserve">
+    <value>Сбросить устройство (разблокировать)</value>
+  </data>
+  <data name="Students_GenerateTitle" xml:space="preserve">
+    <value>Сгенерировать учеников</value>
+  </data>
+  <data name="Students_GeneratePrefix" xml:space="preserve">
+    <value>Префикс имени</value>
+  </data>
+  <data name="Students_GenerateCount" xml:space="preserve">
+    <value>Количество</value>
+  </data>
+  <data name="Common_ChooseFile" xml:space="preserve">
+    <value>Выберите файл</value>
+  </data>
+  <data name="Common_ActiveLessons" xml:space="preserve">
+    <value>Активные уроки</value>
+  </data>
+  <data name="Common_TotalMaterials" xml:space="preserve">
+    <value>Всего материалов</value>
+  </data>
+  <data name="Common_Exam" xml:space="preserve">
+    <value>Экзамен</value>
+  </data>
+  <data name="Common_NoResults" xml:space="preserve">
+    <value>Нет результатов</value>
+  </data>
+  <data name="Subject_DetailsSubtitle" xml:space="preserve">
+    <value>Уроки по этому предмету.</value>
+  </data>
+  <data name="Subject_LessonsPage" xml:space="preserve">
+    <value>Страница уроков</value>
+  </data>
+  <data name="Subject_NoLessons" xml:space="preserve">
+    <value>Пока нет уроков</value>
+  </data>
+  <data name="Subject_NoLessonsHint" xml:space="preserve">
+    <value>Добавьте первый урок к этому предмету.</value>
+  </data>
+  <data name="Student_TabSubjects" xml:space="preserve">
+    <value>По предметам</value>
+  </data>
+  <data name="Student_TabLessons" xml:space="preserve">
+    <value>По урокам</value>
+  </data>
+  <data name="Student_TabExams" xml:space="preserve">
+    <value>Результаты экзаменов</value>
+  </data>
+  <data name="Student_TabViolations" xml:space="preserve">
+    <value>Нарушения экрана</value>
+  </data>
+  <data name="Student_NextMaterial" xml:space="preserve">
+    <value>Следующий материал</value>
+  </data>
+  <data name="Student_CorrectOverTotal" xml:space="preserve">
+    <value>Верно / Вопросы</value>
+  </data>
+  <data name="Student_Page" xml:space="preserve">
+    <value>Страница</value>
+  </data>
+  <data name="Student_UserAgent" xml:space="preserve">
+    <value>User agent</value>
+  </data>
+  <data name="Student_NoViolations" xml:space="preserve">
+    <value>Нарушения не зафиксированы</value>
+  </data>
+  <data name="Js_ConfirmDeleteBanner" xml:space="preserve">
+    <value>Удалить эту историю?</value>
+  </data>
+  <data name="Js_ConfirmDeleteNotification" xml:space="preserve">
+    <value>Удалить это уведомление?</value>
+  </data>
+  <data name="Js_ConfirmDeleteLesson" xml:space="preserve">
+    <value>Удалить этот урок?</value>
+  </data>
+  <data name="Js_ConfirmDeleteSubject" xml:space="preserve">
+    <value>Удалить этот предмет?</value>
+  </data>
+  <data name="Js_ConfirmDeleteQuiz" xml:space="preserve">
+    <value>Удалить этот экзамен?</value>
+  </data>
+  <data name="Js_ConfirmDeleteUser" xml:space="preserve">
+    <value>Удалить этого пользователя?</value>
+  </data>
+  <data name="Js_ConfirmDeleteMaterial" xml:space="preserve">
+    <value>Удалить этот материал?</value>
+  </data>
+  <data name="Js_ConfirmDeleteGroup" xml:space="preserve">
+    <value>Удалить эту группу?</value>
+  </data>
+  <data name="Js_ConfirmDeleteStudent" xml:space="preserve">
+    <value>Удалить этого ученика?</value>
+  </data>
+  <data name="Js_ConfirmDeleteCertificate" xml:space="preserve">
+    <value>Удалить этот сертификат?</value>
+  </data>
+  <data name="Js_ConfirmDeleteQuestion" xml:space="preserve">
+    <value>Удалить этот вопрос?</value>
+  </data>
+  <data name="Js_Irreversible" xml:space="preserve">
+    <value>Это действие нельзя отменить.</value>
+  </data>
+  <data name="Js_AreYouSure" xml:space="preserve">
+    <value>Вы уверены?</value>
+  </data>
+  <data name="Js_ConfirmResetDevice" xml:space="preserve">
+    <value>Разблокировать устройство?</value>
+  </data>
+  <data name="Js_ConfirmRemove" xml:space="preserve">
+    <value>Удалить?</value>
+  </data>
+  <data name="Js_ConfirmRestore" xml:space="preserve">
+    <value>Восстановить?</value>
+  </data>
+  <data name="Js_NothingSelected" xml:space="preserve">
+    <value>Ничего не выбрано</value>
+  </data>
+  <data name="Js_Added" xml:space="preserve">
+    <value>Добавлено</value>
+  </data>
+  <data name="Js_Updated" xml:space="preserve">
+    <value>Обновлено</value>
+  </data>
+  <data name="Js_Created" xml:space="preserve">
+    <value>Создано</value>
+  </data>
+  <data name="Js_Restored" xml:space="preserve">
+    <value>Восстановлено</value>
+  </data>
+  <data name="Js_StatusChanged" xml:space="preserve">
+    <value>Статус изменён</value>
+  </data>
+  <data name="Js_Sent" xml:space="preserve">
+    <value>Отправлено</value>
+  </data>
+  <data name="Js_Removed" xml:space="preserve">
+    <value>Удалено</value>
+  </data>
+  <data name="Js_Unlocked" xml:space="preserve">
+    <value>Разблокировано</value>
+  </data>
+  <data name="Js_CacheCleared" xml:space="preserve">
+    <value>Кеш очищен</value>
+  </data>
+  <data name="Js_Saved" xml:space="preserve">
+    <value>Сохранено</value>
+  </data>
+  <data name="Js_Applied" xml:space="preserve">
+    <value>Применено</value>
+  </data>
+  <data name="Js_OrderUpdated" xml:space="preserve">
+    <value>Порядок обновлён</value>
+  </data>
+  <data name="Js_ErrorOccured" xml:space="preserve">
+    <value>Произошла ошибка</value>
+  </data>
+  <data name="Js_AdjustSearch" xml:space="preserve">
+    <value>Измените условия поиска и попробуйте снова</value>
+  </data>
+  <data name="Js_EditBanner" xml:space="preserve">
+    <value>Редактировать историю</value>
+  </data>
+  <data name="Js_EditLesson" xml:space="preserve">
+    <value>Редактирование урока</value>
+  </data>
+  <data name="Js_EditSubject" xml:space="preserve">
+    <value>Редактирование предмета</value>
+  </data>
+  <data name="Js_EditQuiz" xml:space="preserve">
+    <value>Редактирование экзамена</value>
+  </data>
+  <data name="Js_EditUser" xml:space="preserve">
+    <value>Редактирование пользователя</value>
+  </data>
+  <data name="Js_EditMaterial" xml:space="preserve">
+    <value>Редактирование материала</value>
+  </data>
+  <data name="Js_EditGroup" xml:space="preserve">
+    <value>Редактирование группы</value>
+  </data>
+  <data name="Js_EditCertificate" xml:space="preserve">
+    <value>Редактирование сертификата</value>
+  </data>
+  <data name="Js_EditQuestion" xml:space="preserve">
+    <value>Редактирование вопроса</value>
+  </data>
+  <data name="Js_SortLessons" xml:space="preserve">
+    <value>Сортировать уроки</value>
+  </data>
+  <data name="Js_SortLessonsSubject" xml:space="preserve">
+    <value>Сортировать уроки (выбранный предмет)</value>
+  </data>
+  <data name="Js_SortQuizzes" xml:space="preserve">
+    <value>Сортировать экзамены</value>
+  </data>
+  <data name="Js_SortMaterials" xml:space="preserve">
+    <value>Сортировать материалы</value>
+  </data>
+  <data name="Js_SelectLessonFirst" xml:space="preserve">
+    <value>Сначала выберите урок</value>
+  </data>
+  <data name="Js_Details" xml:space="preserve">
+    <value>Подробности</value>
+  </data>
+  <data name="Js_Activate" xml:space="preserve">
+    <value>Активировать</value>
+  </data>
+  <data name="Js_Deactivate" xml:space="preserve">
+    <value>Деактивировать</value>
+  </data>
+  <data name="Common_ResultCount" xml:space="preserve">
+    <value>Всего {0} результатов</value>
+  </data>
+  <data name="GroupStat_Completed" xml:space="preserve">
+    <value>Пройдено вопросов</value>
+  </data>
+  <data name="GroupStat_Score" xml:space="preserve">
+    <value>Балл %</value>
+  </data>
+  <data name="Js_Deleted" xml:space="preserve">
+    <value>Удалено</value>
+  </data>
+  <data name="Js_NoResults" xml:space="preserve">
+    <value>Ничего не найдено</value>
+  </data>
+  <data name="Js_SelectedCount" xml:space="preserve">
+    <value>Выбрано: {0}</value>
+  </data>
+  <data name="Js_ConfirmBulkDelete" xml:space="preserve">
+    <value>Будет удалено элементов: {0}.</value>
+  </data>
+  <data name="Feedback_Title" xml:space="preserve">
+    <value>Обратная связь</value>
+  </data>
+  <data name="Feedback_Empty" xml:space="preserve">
+    <value>Пока нет отзывов</value>
+  </data>
+  <data name="Feedback_MarkRead" xml:space="preserve">
+    <value>Отметить как прочитанное</value>
+  </data>
+  <data name="Feedback_New" xml:space="preserve">
+    <value>Новый отзыв</value>
+  </data>
+  <data name="Feedback_Placeholder" xml:space="preserve">
+    <value>Опишите проблему или предложение…</value>
+  </data>
+  <data name="Feedback_Send" xml:space="preserve">
+    <value>Отправить</value>
+  </data>
+  <data name="Feedback_Sent" xml:space="preserve">
+    <value>Спасибо! Ваш отзыв отправлен</value>
+  </data>
+  <data name="Feedback_Error" xml:space="preserve">
+    <value>Не удалось отправить отзыв</value>
+  </data>
+  <data name="Common_ChooseOne" xml:space="preserve">
+    <value>Выберите</value>
+  </data>
+  <data name="Feedback_PickThread" xml:space="preserve">
+    <value>Выберите диалог</value>
+  </data>
+  <data name="Feedback_ReplyPlaceholder" xml:space="preserve">
+    <value>Напишите ответ…</value>
+  </data>
+  <data name="Feedback_Read" xml:space="preserve">
+    <value>Прочитано</value>
+  </data>
+  <data name="Common_FullName" xml:space="preserve">
+    <value>Имя и фамилия</value>
+  </data>
+  <data name="Common_None" xml:space="preserve">
+    <value>Нет</value>
+  </data>
+  <data name="Students_Create" xml:space="preserve">
+    <value>Новый ученик</value>
+  </data>
+  <data name="Students_ResetPassword" xml:space="preserve">
+    <value>Сбросить пароль</value>
+  </data>
+  <data name="Students_NewPassword" xml:space="preserve">
+    <value>Новый пароль</value>
+  </data>
+  <data name="Students_NewPasswordHint" xml:space="preserve">
+    <value>Оставьте пустым для случайного пароля</value>
+  </data>
+  <data name="Students_PasswordReset" xml:space="preserve">
+    <value>Пароль обновлён</value>
+  </data>
+  <data name="Js_Edit" xml:space="preserve">
+    <value>Редактировать</value>
+  </data>
+  <data name="Js_Old" xml:space="preserve">
+    <value>Старый</value>
+  </data>
+  <data name="Js_Selected" xml:space="preserve">
+    <value>Выбранные</value>
+  </data>
+  <data name="Js_All" xml:space="preserve">
+    <value>Всем</value>
+  </data>
+  <data name="Js_EditPrefix" xml:space="preserve">
+    <value>Редактирование: </value>
+  </data>
+  <data name="Js_ManageSuffix" xml:space="preserve">
+    <value> — управление</value>
+  </data>
+  <data name="Js_ContentKeysSuffix" xml:space="preserve">
+    <value> — переключатели контента</value>
+  </data>
+  <data name="Js_StudentsCreated" xml:space="preserve">
+    <value> учеников создано</value>
+  </data>
+  <data name="Js_Empty" xml:space="preserve">
+    <value>Пусто</value>
+  </data>
+  <data name="Js_View" xml:space="preserve">
+    <value>Просмотр</value>
+  </data>
+  <data name="Js_NothingToSort" xml:space="preserve">
+    <value>Нет элементов для сортировки</value>
+  </data>
+  <data name="Js_Voice" xml:space="preserve">
+    <value>Аудио</value>
+  </data>
+  <data name="Js_EditDelete" xml:space="preserve">
+    <value>Редактировать / Удалить</value>
+  </data>
+  <data name="Js_QuizCount" xml:space="preserve">
+    <value>Кол-во экзаменов</value>
+  </data>
+  <data name="Js_StudentCount" xml:space="preserve">
+    <value>Кол-во учеников</value>
+  </data>
+  <data name="Js_TotalQuestions" xml:space="preserve">
+    <value>Всего вопросов</value>
+  </data>
+  <data name="Nav_Nodes" xml:space="preserve">
+    <value>Dönüştürme cihazları</value>
+  </data>
+  <data name="Node_Title" xml:space="preserve">
+    <value>Dönüştürme düğümleri</value>
+  </data>
+  <data name="Node_Devices" xml:space="preserve">
+    <value>Cihazlar</value>
+  </data>
+  <data name="Node_Codes" xml:space="preserve">
+    <value>Kayıt kodları</value>
+  </data>
+  <data name="Node_Jobs" xml:space="preserve">
+    <value>Görevler</value>
+  </data>
+  <data name="Node_Name" xml:space="preserve">
+    <value>Ad</value>
+  </data>
+  <data name="Node_Status" xml:space="preserve">
+    <value>Durum</value>
+  </data>
+  <data name="Node_Platform" xml:space="preserve">
+    <value>Platform</value>
+  </data>
+  <data name="Node_Cpu" xml:space="preserve">
+    <value>CPU</value>
+  </data>
+  <data name="Node_Ram" xml:space="preserve">
+    <value>RAM</value>
+  </data>
+  <data name="Node_Disk" xml:space="preserve">
+    <value>Disk</value>
+  </data>
+  <data name="Node_Encoders" xml:space="preserve">
+    <value>Kodlayıcılar</value>
+  </data>
+  <data name="Node_Gpu" xml:space="preserve">
+    <value>GPU</value>
+  </data>
+  <data name="Node_Benchmark" xml:space="preserve">
+    <value>Benchmark</value>
+  </data>
+  <data name="Node_Score" xml:space="preserve">
+    <value>Puan</value>
+  </data>
+  <data name="Node_LastSeen" xml:space="preserve">
+    <value>Son görülme</value>
+  </data>
+  <data name="Node_Registered" xml:space="preserve">
+    <value>Kayıt</value>
+  </data>
+  <data name="Node_Online" xml:space="preserve">
+    <value>Çevrimiçi</value>
+  </data>
+  <data name="Node_Offline" xml:space="preserve">
+    <value>Çevrimdışı</value>
+  </data>
+  <data name="Node_Disabled" xml:space="preserve">
+    <value>Devre dışı</value>
+  </data>
+  <data name="Node_GenerateCode" xml:space="preserve">
+    <value>Yeni kod</value>
+  </data>
+  <data name="Node_Code" xml:space="preserve">
+    <value>Kod</value>
+  </data>
+  <data name="Node_Note" xml:space="preserve">
+    <value>Not</value>
+  </data>
+  <data name="Node_Expires" xml:space="preserve">
+    <value>Sona erme</value>
+  </data>
+  <data name="Node_NoExpiry" xml:space="preserve">
+    <value>Süresiz</value>
+  </data>
+  <data name="Node_Used" xml:space="preserve">
+    <value>Kullanıldı</value>
+  </data>
+  <data name="Node_Unused" xml:space="preserve">
+    <value>Kullanılmadı</value>
+  </data>
+  <data name="Node_ExpiresHours" xml:space="preserve">
+    <value>Geçerlilik (saat)</value>
+  </data>
+  <data name="Node_Revoke" xml:space="preserve">
+    <value>Erişimi iptal et</value>
+  </data>
+  <data name="Node_Enable" xml:space="preserve">
+    <value>Etkinleştir</value>
+  </data>
+  <data name="Node_Disable" xml:space="preserve">
+    <value>Devre dışı bırak</value>
+  </data>
+  <data name="Node_NoDevices" xml:space="preserve">
+    <value>Henüz cihaz bağlanmadı</value>
+  </data>
+  <data name="Node_NoCodes" xml:space="preserve">
+    <value>Kayıt kodu yok</value>
+  </data>
+  <data name="Node_ConfirmRevoke" xml:space="preserve">
+    <value>Bu cihazın erişimi iptal edilsin mi? Yeni kayıt kodu gerekecek.</value>
+  </data>
+  <data name="Node_Total" xml:space="preserve">
+    <value>Cihazlar</value>
+  </data>
+  <data name="Node_ActiveJobs" xml:space="preserve">
+    <value>Çalışan görevler</value>
+  </data>
+  <data name="Node_PendingJobs" xml:space="preserve">
+    <value>Kuyrukta</value>
+  </data>
+  <data name="Node_CompletedJobs" xml:space="preserve">
+    <value>Tamamlanan</value>
+  </data>
+  <data name="Node_FailedJobs" xml:space="preserve">
+    <value>Başarısız</value>
+  </data>
+  <data name="Node_VideosProcessing" xml:space="preserve">
+    <value>İşlenen videolar</value>
+  </data>
+  <data name="Node_Requeue" xml:space="preserve">
+    <value>Yeniden kuyruğa</value>
+  </data>
+  <data name="Node_ConfirmRequeue" xml:space="preserve">
+    <value>Görev yeniden kuyruğa alınsın mı? Video baştan dönüştürülecek.</value>
+  </data>
+  <data name="Job_Resolution" xml:space="preserve">
+    <value>Çözünürlük</value>
+  </data>
+  <data name="Job_Progress" xml:space="preserve">
+    <value>İlerleme</value>
+  </data>
+  <data name="Job_Attempts" xml:space="preserve">
+    <value>Denemeler</value>
+  </data>
+  <data name="Job_Node" xml:space="preserve">
+    <value>Cihaz</value>
+  </data>
+  <data name="Job_Video" xml:space="preserve">
+    <value>Video</value>
+  </data>
+  <data name="Job_Created" xml:space="preserve">
+    <value>Oluşturuldu</value>
+  </data>
+  <data name="Job_Error" xml:space="preserve">
+    <value>Hata</value>
+  </data>
+  <data name="Node_All" xml:space="preserve">
+    <value>Tümü</value>
+  </data>
+  <data name="Node_Copied" xml:space="preserve">
+    <value>Kod kopyalandı</value>
+  </data>
+  <data name="Node_Subtitle" xml:space="preserve">
+    <value>Yüklenen videoları HLS'e dönüştüren cihazlar</value>
+  </data>
+  <data name="Node_NotePlaceholder" xml:space="preserve">
+    <value>örn. Ofis bilgisayarı</value>
+  </data>
+  <data name="Node_Expired" xml:space="preserve">
+    <value>Süresi geçti</value>
+  </data>
+  <data name="Node_AutoRefresh" xml:space="preserve">
+    <value>Otomatik yenileme</value>
+  </data>
+  <data name="Lesson_Shared" xml:space="preserve">
+    <value>Доступно всем учителям</value>
+  </data>
+  <data name="Limit_Title" xml:space="preserve">
+    <value>Лимит плана исчерпан</value>
+  </data>
+  <data name="Limit_Buy" xml:space="preserve">
+    <value>Увеличить лимит</value>
+  </data>
+  <data name="Limit_Confirmed" xml:space="preserve">
+    <value>Лимит увеличен — повторите попытку</value>
+  </data>
+  <data name="Limit_ContactAdmin" xml:space="preserve">
+    <value>Свяжитесь с администратором, чтобы увеличить лимит.</value>
+  </data>
+  <data name="Limit_NoOffer" xml:space="preserve">
+    <value>Для этого ресурса нет дополнительного пакета. Свяжитесь с администратором для повышения плана.</value>
+  </data>
+  <data name="Limit_Packs" xml:space="preserve">
+    <value>Количество</value>
+  </data>
+  <data name="Tenant_AccountType" xml:space="preserve">
+    <value>Тип аккаунта</value>
+  </data>
+  <data name="Tenant_AccountTypeCourse" xml:space="preserve">
+    <value>Курс</value>
+  </data>
+  <data name="Tenant_AccountTypeTeacher" xml:space="preserve">
+    <value>Частный преподаватель</value>
+  </data>
+  <data name="Tenant_AccountTypeHint" xml:space="preserve">
+    <value>Аккаунт курса — это администратор, который добавляет преподавателей. Частный преподаватель ведёт свои уроки сам.</value>
+  </data>
+  <data name="Tenant_RegisterSectionAccount" xml:space="preserve">
+    <value>Личные данные</value>
+  </data>
+  <data name="Homework_GroupDeadlineRequired" xml:space="preserve">
+    <value>Для каждой выбранной группы нужны срок и максимальный балл</value>
+  </data>
+  <data name="Homework_GroupSettingsHint" xml:space="preserve">
+    <value>После выбора группы укажите для неё срок и максимальный балл.</value>
+  </data>
+  <data name="Homework_GroupRequired" xml:space="preserve">
+    <value>Нужно выбрать хотя бы одну группу</value>
+  </data>
+  <data name="Homework_GroupNotFound" xml:space="preserve">
+    <value>Выбранная группа не найдена</value>
+  </data>
+  <data name="Homework_QuizNotFound" xml:space="preserve">
+    <value>Выбранный тест не найден</value>
+  </data>
+  <data name="Homework_PublishedTargetsLocked" xml:space="preserve">
+    <value>После публикации нельзя менять группы, тесты, сроки и максимальный балл</value>
+  </data>
+  <data name="Homework_NotPublished" xml:space="preserve">
+    <value>Задание ещё не опубликовано</value>
+  </data>
+  <data name="Homework_NotSubmitted" xml:space="preserve">
+    <value>Ученик ещё не отправил ответ</value>
+  </data>
+  <data name="Homework_ScoreOutOfRange" xml:space="preserve">
+    <value>Балл должен быть от 0 до {0}</value>
+  </data>
+  <data name="Homework_AlreadyGraded" xml:space="preserve">
+    <value>Оценённое задание нельзя отправить повторно</value>
+  </data>
+  <data name="Homework_TextTooLong" xml:space="preserve">
+    <value>Ответ слишком длинный (максимум 10000 символов)</value>
+  </data>
+  <data name="Homework_LinkInvalid" xml:space="preserve">
+    <value>Ссылка должна быть корректным адресом http или https</value>
+  </data>
+  <data name="Homework_EmptySubmission" xml:space="preserve">
+    <value>Добавьте текст, ссылку или хотя бы один файл</value>
+  </data>
+  <data name="Homework_MaxScoreInvalid" xml:space="preserve">
+    <value>Максимальный балл должен быть больше 0</value>
+  </data>
+  <data name="Homework_DueDateRequired" xml:space="preserve">
+    <value>Требуется срок сдачи</value>
+  </data>
+  <data name="Homework_TooManyFiles" xml:space="preserve">
+    <value>Можно добавить не более 5 файлов</value>
+  </data>
+  <data name="Homework_FileTooLarge" xml:space="preserve">
+    <value>Каждый файл — не более 10 МБ</value>
+  </data>
+  <data name="Homework_NotifyPublishedTitle" xml:space="preserve">
+    <value>Новое домашнее задание</value>
+  </data>
+  <data name="Homework_NotifyPublishedBody" xml:space="preserve">
+    <value>Назначено новое домашнее задание: «{0}»</value>
+  </data>
+  <data name="Homework_NotifyGradedTitle" xml:space="preserve">
+    <value>Домашнее задание оценено</value>
+  </data>
+  <data name="Homework_NotifyGradedBody" xml:space="preserve">
+    <value>Ваше задание «{0}» оценено</value>
+  </data>
+  <data name="Homework_NotifyReturnedTitle" xml:space="preserve">
+    <value>Задание возвращено</value>
+  </data>
+  <data name="Homework_NotifyReturnedBody" xml:space="preserve">
+    <value>Ваше задание «{0}» возвращено на доработку</value>
+  </data>
+  <data name="Nav_Homework" xml:space="preserve">
+    <value>Домашние задания</value>
+  </data>
+  <data name="Homework_Create" xml:space="preserve">
+    <value>Новое домашнее задание</value>
+  </data>
+  <data name="Homework_Edit" xml:space="preserve">
+    <value>Редактировать задание</value>
+  </data>
+  <data name="Homework_Title" xml:space="preserve">
+    <value>Заголовок</value>
+  </data>
+  <data name="Homework_GroupOptionalHint" xml:space="preserve">
+    <value>Можно оставить пустым (черновик) — перед публикацией нужно выбрать группу.</value>
+  </data>
+  <data name="Homework_Description" xml:space="preserve">
+    <value>Описание</value>
+  </data>
+  <data name="Homework_MaxScore" xml:space="preserve">
+    <value>Макс. балл</value>
+  </data>
+  <data name="Homework_DueDate" xml:space="preserve">
+    <value>Срок сдачи</value>
+  </data>
+  <data name="Homework_Groups" xml:space="preserve">
+    <value>Группы</value>
+  </data>
+  <data name="Homework_Quizzes" xml:space="preserve">
+    <value>Тесты</value>
+  </data>
+  <data name="Homework_Publish" xml:space="preserve">
+    <value>Опубликовать</value>
+  </data>
+  <data name="Homework_SaveDraft" xml:space="preserve">
+    <value>Сохранить как черновик</value>
+  </data>
+  <data name="Homework_Published" xml:space="preserve">
+    <value>Опубликовано</value>
+  </data>
+  <data name="Homework_Draft" xml:space="preserve">
+    <value>Черновик</value>
+  </data>
+  <data name="Homework_Manage" xml:space="preserve">
+    <value>Сдачи</value>
+  </data>
+  <data name="Homework_Submissions" xml:space="preserve">
+    <value>Сдачи</value>
+  </data>
+  <data name="Homework_StatusAssigned" xml:space="preserve">
+    <value>Назначено</value>
+  </data>
+  <data name="Homework_StatusSubmitted" xml:space="preserve">
+    <value>Отправлено</value>
+  </data>
+  <data name="Homework_StatusGraded" xml:space="preserve">
+    <value>Оценено</value>
+  </data>
+  <data name="Homework_StatusReturned" xml:space="preserve">
+    <value>Возвращено</value>
+  </data>
+  <data name="Homework_Late" xml:space="preserve">
+    <value>С опозданием</value>
+  </data>
+  <data name="Homework_Score" xml:space="preserve">
+    <value>Балл</value>
+  </data>
+  <data name="Homework_Feedback" xml:space="preserve">
+    <value>Комментарий</value>
+  </data>
+  <data name="Homework_Review" xml:space="preserve">
+    <value>Просмотр</value>
+  </data>
+  <data name="Homework_Grade" xml:space="preserve">
+    <value>Оценить</value>
+  </data>
+  <data name="Homework_ReturnForRevision" xml:space="preserve">
+    <value>Вернуть на доработку</value>
+  </data>
+  <data name="Homework_NoSubmissions" xml:space="preserve">
+    <value>Нет сдач</value>
+  </data>
+  <data name="Homework_SubmittedAt" xml:space="preserve">
+    <value>Отправлено</value>
+  </data>
+  <data name="Homework_Answer" xml:space="preserve">
+    <value>Ответ</value>
+  </data>
+  <data name="Homework_Attachments" xml:space="preserve">
+    <value>Файлы</value>
+  </data>
+  <data name="Homework_NoFiles" xml:space="preserve">
+    <value>Файлов нет</value>
+  </data>
+  <data name="Homework_NotCompleted" xml:space="preserve">
+    <value>Не пройдено</value>
+  </data>
+  <data name="Homeworks_Search" xml:space="preserve">
+    <value>Поиск по заголовку...</value>
+  </data>
+  <data name="Js_ConfirmDeleteHomework" xml:space="preserve">
+    <value>Удалить это задание?</value>
+  </data>
+  <data name="Js_ConfirmPublishHomework" xml:space="preserve">
+    <value>Отправить задание ученикам выбранных групп? После этого группы и тесты изменить нельзя.</value>
+  </data>
+  <data name="Js_Published" xml:space="preserve">
+    <value>Задание опубликовано</value>
+  </data>
+  <data name="Group_SelectLessons" xml:space="preserve">
+    <value>Выберите уроки</value>
+  </data>
+  <data name="Group_SelectLessonsHint" xml:space="preserve">
+    <value>Предмет добавляется в группу. Выберите, какие уроки будут доступны группе.</value>
+  </data>
+  <data name="Lesson_AddToGroups" xml:space="preserve">
+    <value>Добавить также в существующие группы предмета</value>
+  </data>
+  <data name="Quiz_DurationInvalid" xml:space="preserve">
+    <value>Длительность должна быть от 1 до 600 минут</value>
+  </data>
+  <data name="Validation_TokenRequired" xml:space="preserve">
+    <value>Требуется токен</value>
+  </data>
+  <data name="Validation_TokenMaxLength" xml:space="preserve">
+    <value>Токен должен содержать не более 500 символов</value>
+  </data>
+  <data name="Validation_DeviceTypeMaxLength" xml:space="preserve">
+    <value>Тип устройства должен содержать не более 20 символов</value>
+  </data>
+  <data name="DatePicker_PickDate" xml:space="preserve">
+    <value>Выберите дату</value>
+  </data>
+  <data name="DatePicker_PickDateTime" xml:space="preserve">
+    <value>Выберите дату и время</value>
+  </data>
+  <data name="DatePicker_Today" xml:space="preserve">
+    <value>Сегодня</value>
+  </data>
+  <data name="DatePicker_Clear" xml:space="preserve">
+    <value>Очистить</value>
+  </data>
+  <data name="DatePicker_Apply" xml:space="preserve">
+    <value>Применить</value>
+  </data>
+  <data name="DatePicker_Time" xml:space="preserve">
+    <value>Время</value>
+  </data>
+  <data name="DatePicker_PrevMonth" xml:space="preserve">
+    <value>Предыдущий месяц</value>
+  </data>
+  <data name="DatePicker_NextMonth" xml:space="preserve">
+    <value>Следующий месяц</value>
+  </data>
+</root>

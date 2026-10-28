@@ -1,0 +1,23 @@
+// Modul abstraksiyaları (interfeyslər) — qlobal using
+global using Edutor.Core.Modules.Auth.Abstractions;
+global using Edutor.Core.Modules.Attendance.Abstractions;
+global using Edutor.Core.Modules.Banner.Abstractions;
+global using Edutor.Core.Modules.Group.Abstractions;
+global using Edutor.Core.Modules.Homework.Abstractions;
+global using Edutor.Core.Modules.Lesson.Abstractions;
+global using Edutor.Core.Modules.LessonContent.Abstractions;
+global using Edutor.Core.Modules.Notification.Abstractions;
+global using Edutor.Core.Modules.PrivacyPolicy.Abstractions;
+global using Edutor.Core.Modules.Progress.Abstractions;
+global using Edutor.Core.Modules.Question.Abstractions;
+global using Edutor.Core.Modules.Quiz.Abstractions;
+global using Edutor.Core.Modules.Setting.Abstractions;
+global using Edutor.Core.Modules.StudentApp.Abstractions;
+global using Edutor.Core.Modules.Subject.Abstractions;
+global using Edutor.Core.Modules.Tenant.Abstractions;
+global using Edutor.Core.Modules.User.Abstractions;
+global using Edutor.Core.Modules.Dashboard.Abstractions;
+global using Edutor.Core.Modules.Students.Abstractions;
+global using Edutor.Core.Modules.Media.Abstractions;
+global using Edutor.Core.Modules.Payments.Abstractions;
+global using Edutor.Core.Modules.SystemNotification.Abstractions;

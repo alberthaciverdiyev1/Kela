@@ -1,0 +1,35 @@
+namespace Edutor.Core.Modules.Setting.Entities;
+
+public class Setting
+{
+    public long Id { get; set; }
+
+    public long TenantId { get; set; }
+
+    public string? Logo { get; set; }
+
+    /// <summary>Kurs haqqında məlumat (info/about).</summary>
+    public string? Description { get; set; }
+
+    public string? Email { get; set; }
+
+    public string? Address { get; set; }
+
+    public string? WhatsappNumber { get; set; }
+
+    public string? ContactNumber1 { get; set; }
+
+    public string? ContactNumber2 { get; set; }
+
+    public string? ContactNumber3 { get; set; }
+
+    public string? ContactNumber4 { get; set; }
+
+    public string? InstagramUrl { get; set; }
+
+    public string? FacebookUrl { get; set; }
+
+    public string? AndroidMinVersion { get; set; }
+
+    public string? IosMinVersion { get; set; }
+}

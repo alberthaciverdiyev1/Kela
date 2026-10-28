@@ -1,0 +1,176 @@
+@inherits RefreshablePage
+@using Edutor.App.Shared.Services.Localization
+@inject Localizer L
+@page "/"
+@inject AppApi Api
+@inject AuthState Auth
+
+<PageTitle>Edutor</PageTitle>
+
+@if (_loading)
+{
+    <div>
+        <header class="sticky top-0 z-20 flex h-[68px] items-center justify-between border-b border-brand-086 bg-brand-022/95 px-5 backdrop-blur md:hidden lg:px-10">
+            <div class="flex items-center gap-2.5">
+                <Skeleton Class="size-8 rounded-full"/>
+                <Skeleton Class="h-3.5 w-32 rounded-md"/>
+            </div>
+            <Skeleton Class="size-[22px] rounded-md"/>
+        </header>
+
+        <main class="mx-auto w-full max-w-full px-5 pb-28 pt-8 lg:px-10 lg:pb-12 lg:pt-12">
+            <div class="mb-3 flex items-center justify-between">
+                <Skeleton Class="h-3 w-36 rounded-md"/>
+                <Skeleton Class="h-3 w-24 rounded-md"/>
+            </div>
+            <div class="flex gap-4 pt-2">
+                @for (var i = 0; i < 5; i++)
+                {
+                    <div class="flex w-[66px] shrink-0 flex-col items-center gap-2">
+                        <Skeleton Class="size-[60px] rounded-full"/>
+                        <Skeleton Class="h-2.5 w-14 rounded-md"/>
+                    </div>
+                }
+            </div>
+
+            <div class="mt-10 grid gap-8 lg:grid-cols-[minmax(0,1.7fr)_minmax(0,1fr)] lg:items-start">
+                <div>
+                    <Skeleton Class="h-6 w-52 rounded-md"/>
+                    <SkeletonCardGrid Count="3"/>
+                    <Skeleton Class="mt-10 h-6 w-60 rounded-md"/>
+                    <SkeletonCardGrid Count="3"/>
+                </div>
+                <aside class="space-y-4">
+                    <div class="rounded-xl border border-brand-104 bg-white p-5">
+                        <Skeleton Class="h-4 w-36 rounded-md"/>
+                        <Skeleton Class="mt-2 h-3 w-24 rounded-md"/>
+                        <Skeleton Class="mt-5 h-12 w-full rounded-lg"/>
+                        <Skeleton Class="mt-4 h-12 w-full rounded-lg"/>
+                    </div>
+                    <div class="rounded-xl bg-brand-836 p-5">
+                        <Skeleton Class="h-3 w-32 rounded-md bg-white/20"/>
+                        <Skeleton Class="mt-6 h-10 w-24 rounded-md bg-white/20"/>
+                        <Skeleton Class="mt-3 h-3 w-40 rounded-md bg-white/20"/>
+                        <Skeleton Class="mt-6 h-1.5 w-full rounded-full bg-white/20"/>
+                    </div>
+                </aside>
+            </div>
+        </main>
+    </div>
+}
+else
+{
+    <header class="sticky top-0 z-20 flex h-[68px] items-center justify-between border-b border-brand-086 bg-brand-022/95 px-5 backdrop-blur md:hidden lg:px-10">
+        <div class="flex items-center gap-2.5">
+            <div class="flex size-8 items-center justify-center rounded-full bg-brand-103 text-[13px] font-bold text-brand-835">@(Auth.User?.Initial ?? "L")</div>
+            <span class="text-[13px] font-semibold text-brand-722">@(Auth.User?.FullName ?? L["Common_Student"])</span>
+        </div>
+        @if (false)
+        {
+            <a href="/notifications" class="relative rounded-lg p-2 text-sage-498" aria-label="@L["Notifications_Aria"]">
+                <Icon Name="bell" Class="size-[18px]" />
+            </a>
+        }
+    </header>
+
+    <main @key="_loading" class="mx-auto w-full max-w-full px-5 pb-28 pt-8 lg:px-10 lg:pb-12 lg:pt-12 @(!_loading ? "page-fade" : null)">
+        <section class="mt-1">
+            <div class="mb-3 flex items-center justify-between">
+                <p class="text-[11px] font-bold uppercase tracking-[0.18em] text-brand-671">@L["Home_LearningStories"]</p>
+                <span class="text-[11px] text-sage-382">@L["Home_SwipeExplore"]</span>
+            </div>
+            <div class="-mx-5 flex gap-4 overflow-x-auto px-5 pb-2 [scrollbar-width:none]">
+                @for (var i = 0; i < _banners.Count; i++)
+                {
+                    var idx = i;
+                    var b = _banners[i];
+                    <button type="button" class="flex w-[66px] shrink-0 flex-col items-center gap-2 text-center pt-2"
+                            @onclick="() => OpenStory(idx)">
+                        <span class="rounded-full p-[3px] ring-2 ring-offset-2 ring-offset-brand-022 @(b.IsNew && !_seenStories.Contains(b.Id) ? "ring-brand-671" : "ring-brand-149")">
+                            <img src="@b.Image" alt="" class="size-[54px] rounded-full object-cover" />
+                        </span>
+                        <span class="w-full truncate text-[10px] font-semibold text-sage-561">@b.Title</span>
+                    </button>
+                }
+                @if (_banners.Count == 0)
+                {
+                    <span class="self-center text-[11px] text-sage-382">@L["Home_NoBanners"]</span>
+                }
+            </div>
+        </section>
+
+        <div class="mt-10 grid gap-8 lg:grid-cols-[minmax(0,1.7fr)_minmax(0,1fr)] lg:items-start">
+            <div>
+                @if (_continue.Count > 0)
+                {
+                    <section>
+                <div class="mb-4">
+                    <h2 class="mt-1 text-[22px] font-semibold tracking-[-0.04em]">@L["Home_ContinueTitle"]</h2>
+                </div>
+                <div class="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
+                    @foreach (var item in _continue)
+                    {
+                        <ContinueCard Item="item"/>
+                    }
+                </div>
+            </section>
+        }
+
+        <section class="mt-10">
+            <div class="mb-4 flex items-end justify-between">
+                <div>
+                    <h2 class="mt-1 text-[22px] font-semibold tracking-[-0.04em]">@L["Home_ContinueLearning"]</h2>
+                </div>
+                <a href="/groups" class="flex items-center gap-1 text-[12px] font-semibold text-brand-671">@L["Home_ViewAll"] <Icon Name="chevron-right" Class="size-3.5" /></a>
+            </div>
+            <div class="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
+                @foreach (var g in _studentGroups)
+                {
+                    <GroupProgressCard Group="g"/>
+                }
+                @if (_studentGroups.Count == 0)
+                {
+                    <p class="text-[12px] text-sage-410">@L["Groups_Empty"]</p>
+                }
+            </div>
+                </section>
+            </div>
+
+            <aside class="space-y-4">
+                <div class="rounded-xl border border-brand-104 bg-white p-5">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <h2 class="text-[15px] font-semibold">@L["Home_Upcoming"]</h2>
+                        <p class="mt-1 text-[11px] text-sage-410">@L["Home_ThisWeek"]</p>
+                    </div>
+                    <Icon Name="calendar" Class="size-[18px] text-sage-486" />
+                </div>
+                @if (false)
+                {
+                <div class="mt-5 flex items-center gap-3 border-t border-sage-059 pt-4">
+                    <div class="w-10 shrink-0 text-center"><p class="text-[10px] font-bold uppercase text-brand-671">May</p><p class="text-lg font-semibold leading-5">24</p></div>
+                    <div class="min-w-0 flex-1"><p class="truncate text-[13px] font-semibold">@L["Home_DemoWorkshop"]</p><p class="mt-1 flex items-center gap-1 text-[11px] text-sage-410"><Icon Name="clock" Class="size-3" /> 10:00 AM · 60 min</p></div>
+                </div>
+                <div class="mt-4 flex items-center gap-3 border-t border-sage-059 pt-4">
+                    <div class="w-10 shrink-0 text-center"><p class="text-[10px] font-bold uppercase text-sun-482">May</p><p class="text-lg font-semibold leading-5">27</p></div>
+                    <div class="min-w-0 flex-1"><p class="truncate text-[13px] font-semibold">@L["Home_DemoQuizDeadline"]</p><p class="mt-1 flex items-center gap-1 text-[11px] text-sage-410"><Icon Name="file" Class="size-3" /> @string.Format(L["Home_ExamCount"], _quizCount)</p></div>
+                </div>
+                }
+            </div>
+            <div class="rounded-xl bg-brand-836 p-5 text-white">
+                <p class="text-[11px] font-bold uppercase tracking-[0.16em] text-brand-253">@L["Home_OverallProgress"]</p>
+                <p class="mt-6 text-4xl font-semibold tracking-[-0.06em]">@_overallPercent%</p>
+                <p class="mt-2 text-[12px] leading-5 text-brand-286">@string.Format(L["Home_ProgressText"], _completedContents, _totalContents)</p>
+                <div class="mt-6 h-1.5 w-full overflow-hidden rounded-full bg-brand-667">
+                    <div class="h-full rounded-full bg-brand-341" style="width:@(_overallPercent)%"></div>
+                </div>
+            </div>
+            </aside>
+        </div>
+    </main>
+
+    @if (_storyOpen && _banners.Count > 0)
+    {
+        <StoryViewer Banners="_banners" StartIndex="_storyIndex" OnViewed="MarkStorySeenAsync" OnClose="CloseStory" />
+    }
+}

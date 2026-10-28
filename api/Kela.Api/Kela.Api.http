@@ -1,6 +1,0 @@
-@Kela.Api_HostAddress = http://localhost:5208
-
-GET {{Kela.Api_HostAddress}}/weatherforecast/
-Accept: application/json
-
-###

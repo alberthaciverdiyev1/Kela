@@ -14,7 +14,7 @@ Hər tenant öz qovluğunda (tenant-ın `slug`-ı ilə):
 {tenant}/files/{guid}.pdf
 ```
 
-Məsələn tenant "Kela Academy" (slug `kela`) üçün: `kela/videos/raw/0dc9....mp4`.
+Məsələn tenant "Edutor Academy" (slug `edutor`) üçün: `kela/videos/raw/0dc9....mp4`.
 
 > Qovluq adı tenant-ın **slug**-ıdır, adı deyil — ad boşluq və Azərbaycan hərfləri
 > daşıya bilər, slug isə URL-təhlükəsizdir. Tenant adı dəyişsə də mövcud fayllar

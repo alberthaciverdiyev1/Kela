@@ -1,0 +1,35 @@
+@inherits LayoutComponentBase
+@implements IDisposable
+@inject AuthState Auth
+@inject ApiClient ApiClient
+@inject AppApi Api
+@inject TokenStore Store
+@inject IScreenGuard ScreenGuard
+@inject PushTokenService Push
+
+@using Edutor.App.Shared.Services.Localization
+@inject Localizer Lang
+
+@if (!_ready)
+{
+    <Loader/>
+}
+else if (!Auth.IsAuthenticated)
+{
+    <Login InviteToken="@_inviteToken"/>
+}
+else
+{
+    <div class="min-h-screen bg-brand-102 text-brand-836">
+        <TopNav/>
+        <div class="mx-auto min-h-screen w-full max-w-[430px] overflow-x-hidden bg-brand-022 shadow-[0_0_60px_rgba(23,77,58,0.12)] md:max-w-none md:px-8 md:shadow-none">
+            @* Səhifə keçidində və dil dəyişəndə məzmun yenidən render olunur (animasiya üçün) *@
+            <div @key="RenderKey" class="@TransitionClass">
+                @Body
+            </div>
+            <FeedbackButton/>
+            <BottomNav/>
+            <AudioPlayerBar/>
+        </div>
+    </div>
+}

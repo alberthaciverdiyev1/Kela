@@ -1,0 +1,38 @@
+    @inject Edutor.Core.Modules.Auth.Abstractions.ITokenService TokenService
+@inject Microsoft.Extensions.Configuration.IConfiguration configuration
+@{
+    ViewData["Title"] = L["Feedback_Title"];
+
+    // Hub bağlantısı üçün JWT (browser Authorization header göndərə bilmir).
+    var uid = long.TryParse(User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value, out var parsedId) ? parsedId : 0;
+    var tenantId = long.TryParse(User.FindFirst("tenant_id")?.Value, out var parsedTenant) ? parsedTenant : 0;
+    var email = User.FindFirst(System.Security.Claims.ClaimTypes.Email)?.Value ?? "";
+    var name = User.Identity?.Name ?? L["Common_User"];
+    var role = User.FindFirst(System.Security.Claims.ClaimTypes.Role)?.Value ?? "";
+    var token = TokenService.CreateToken(uid, email, name, role, tenantId);
+    var apiUrl = (configuration["Api:BaseUrl"] ?? "").TrimEnd('/');
+}
+<section class="admin-page">
+    <partial name="Ui/_PageHeader" model="@(new PageHeaderModel())" />
+
+    <div class="grid gap-4 lg:grid-cols-[340px_1fr]">
+        <div class="admin-card overflow-hidden">
+            <div id="fbThreads" class="max-h-[70vh] space-y-2 overflow-y-auto p-3"></div>
+        </div>
+
+        <div class="admin-card flex min-h-[55vh] flex-col overflow-hidden">
+            <div id="fbConversation" class="min-h-0 flex-1 space-y-2 overflow-y-auto p-4"></div>
+            <form id="fbReplyForm" class="hidden items-end gap-2 border-t border-border p-3">
+                <textarea id="fbReply" rows="2" class="admin-field flex-1 resize-none" placeholder="@L["Feedback_ReplyPlaceholder"]"></textarea>
+                <button type="submit" class="admin-button-primary">@L["Feedback_Send"]</button>
+            </form>
+        </div>
+    </div>
+</section>
+
+<script src="https://cdn.jsdelivr.net/npm/@@microsoft/signalr@8.0.7/dist/browser/signalr.min.js"></script>
+<script>
+    window.FEEDBACK_CONFIG = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(new { apiUrl, hubUrl = apiUrl + "/hubs/feedback", token }));
+</script>
+
+<form id="antiforgery">@Html.AntiForgeryToken()</form>

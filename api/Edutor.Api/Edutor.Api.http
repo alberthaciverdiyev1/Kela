@@ -1,0 +1,6 @@
+@Edutor.Api_HostAddress = http://localhost:5208
+
+GET {{Edutor.Api_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

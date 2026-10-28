@@ -1,0 +1,79 @@
+@using Edutor.App.Shared.Services.Localization
+@inject Localizer L
+<div role="status"
+     aria-label="@L["Common_LoadingAria"]"
+     class="flex min-h-screen flex-col items-center justify-center bg-[#F7FAF7]">
+
+    <div class="relative flex h-[88px] w-[88px] items-center justify-center">
+
+        <div class="absolute inset-0 rounded-full border-[1.5px] border-transparent border-t-[#2D8063] border-r-[#A5CEB6] loader-spin"></div>
+
+        <div class="absolute inset-[11px] rounded-full border-[1.5px] border-transparent border-b-[#61AB85] border-l-[#C0DECC] loader-spin-reverse"></div>
+
+        <div class="loader-pulse flex h-[37px] w-[37px] items-center justify-center rounded-[13px] bg-gradient-to-br from-[#439C76] to-[#246D50] shadow-lg">
+
+            <svg width="21" height="21"
+                 viewBox="0 0 24 24"
+                 fill="none"
+                 stroke="white"
+                 stroke-width="1.8"
+                 stroke-linecap="round"
+                 stroke-linejoin="round">
+                <path d="M12 20V11M12 14C7 14 5 10 5 5c5 0 7 3 7 7M12 16c0-5 2-8 7-8 0 5-2 8-7 8" />
+            </svg>
+
+        </div>
+    </div>
+
+    <p class="mt-7 text-[15px] font-semibold tracking-tight text-[#234D3B]">
+        @L["Common_Loading"]
+    </p>
+
+    <p class="mt-1.5 text-xs text-[#8AA598]">
+        @L["Common_PleaseWait"]
+    </p>
+
+    <div class="mt-5 h-[3px] w-28 overflow-hidden rounded-full bg-[#DCE9DF]">
+        <div class="loader-progress h-full w-2/5 rounded-full bg-[#398D68]"></div>
+    </div>
+</div>
+
+<style>
+    .loader-spin {
+        animation: loader-rotate 2.1s linear infinite;
+    }
+
+    .loader-spin-reverse {
+        animation: loader-rotate 2.8s linear infinite reverse;
+    }
+
+    .loader-pulse {
+        animation: loader-breathe 2s ease-in-out infinite;
+    }
+
+    .loader-progress {
+        animation: loader-slide 1.5s ease-in-out infinite;
+    }
+
+    @@keyframes loader-rotate {
+        to { transform: rotate(360deg); }
+    }
+
+    @@keyframes loader-breathe {
+        50% { transform: scale(.89); }
+    }
+
+    @@keyframes loader-slide {
+        from { transform: translateX(-110%); }
+        to { transform: translateX(280%); }
+    }
+
+    @@media (prefers-reduced-motion: reduce) {
+        .loader-spin,
+        .loader-spin-reverse,
+        .loader-pulse,
+        .loader-progress {
+            animation: none;
+        }
+    }
+</style>

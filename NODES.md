@@ -1,14 +1,14 @@
-# Kela Nodes — paylanmış video konversiyası
+# Edutor Nodes — paylanmış video konversiyası
 
 Yüklənən videoları HLS-ə çevirən, işi şəbəkədəki cihazlara paylayan sistem.
-Koordinator **mövcud Kela API-nin içindədir** — ayrı backend yoxdur.
+Koordinator **mövcud Edutor API-nin içindədir** — ayrı backend yoxdur.
 
 ```
-Kela.Api ──► Nodes modulu (koordinator)          Kela.Nodes.App (Avalonia UI)
+Edutor.Api ──► Nodes modulu (koordinator)          Edutor.Nodes.App (Avalonia UI)
    │            planlayıcı · lease · doğrulama        │
    │            reconciliation · master playlist        │
    │                                                   ▼
-   └──────── Kela.Nodes.Worker (ffmpeg) ◄────── cihaz worker-i
+   └──────── Edutor.Nodes.Worker (ffmpeg) ◄────── cihaz worker-i
                      │
                      ▼
                  Cloudflare R2
@@ -16,11 +16,11 @@ Kela.Api ──► Nodes modulu (koordinator)          Kela.Nodes.App (Avalonia 
 
 | Layihə | Rol |
 |---|---|
-| `Kela.Core/Modules/Nodes` | koordinator: entity, scheduler, job lifecycle |
-| `Kela.Nodes.Shared` | worker ↔ API arasında ortaq DTO-lar (yalnız BCL) |
-| `Kela.Nodes.Worker` | encoding motoru: ffmpeg, probe, encoder tespiti, benchmark |
-| `Kela.Nodes.App` | Avalonia UI (masaüstü + Android başlığı) |
-| `Kela.Admin` (`/node`) | admin: cihazlar, qeydiyyat kodları, tapşırıqlar |
+| `Edutor.Core/Modules/Nodes` | koordinator: entity, scheduler, job lifecycle |
+| `Edutor.Nodes.Shared` | worker ↔ API arasında ortaq DTO-lar (yalnız BCL) |
+| `Edutor.Nodes.Worker` | encoding motoru: ffmpeg, probe, encoder tespiti, benchmark |
+| `Edutor.Nodes.App` | Avalonia UI (masaüstü + Android başlığı) |
+| `Edutor.Admin` (`/node`) | admin: cihazlar, qeydiyyat kodları, tapşırıqlar |
 
 ## Necə işləyir
 
@@ -126,7 +126,7 @@ videolara dağılmır.
 ### Server
 
 ```bash
-dotnet ef database update --project Kela.Core --startup-project Kela.Api
+dotnet ef database update --project Edutor.Core --startup-project Edutor.Api
 ```
 
 `appsettings.json` → `Nodes` bölməsi (lease müddəti, maks. cəhd, merdiven).
@@ -134,7 +134,7 @@ dotnet ef database update --project Kela.Core --startup-project Kela.Api
 ### Worker
 
 ```bash
-dotnet run --project Kela.Nodes.App --framework net10.0
+dotnet run --project Edutor.Nodes.App --framework net10.0
 ```
 
 1. **Tənzimləmələr** → API ünvanını yaz, yadda saxla.
@@ -142,12 +142,12 @@ dotnet run --project Kela.Nodes.App --framework net10.0
 3. Kodu **Tənzimləmələr → Cihaz qeydiyyatı** sahəsinə yaz, "Qeydiyyatdan keç".
 4. Dashboard → **İşə sal**.
 
-Android: `dotnet build Kela.Nodes.App -p:BuildAndroid=true -f net10.0-android`
+Android: `dotnet build Edutor.Nodes.App -p:BuildAndroid=true -f net10.0-android`
 
 ## Testlər
 
 ```bash
-dotnet test Kela.Tests --filter "FullyQualifiedName~Nodes"
+dotnet test Edutor.Tests --filter "FullyQualifiedName~Nodes"
 ```
 
 - `EncodePlanTests` — upscale olmaması, axın seçimi, GOP hizalanması.

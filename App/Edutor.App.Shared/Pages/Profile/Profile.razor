@@ -1,0 +1,278 @@
+@using Edutor.App.Shared.Services.Localization
+@inject Localizer L
+@page "/profile"
+@inject AppApi Api
+@inject AuthState Auth
+@inject TokenStore Store
+@inject ApiClient ApiClient
+
+<PageTitle>@L["Nav_Profile"]</PageTitle>
+
+<header class="flex h-[68px] items-center justify-between border-b border-brand-096 px-5">
+    <span class="rounded-lg p-2 text-sage-527"></span>
+    <p class="text-[11px] font-bold uppercase tracking-[0.18em] text-sage-500">@L["Nav_Profile"]</p>
+    <span class="rounded-lg p-2 text-sage-527"></span>
+</header>
+
+@if (Auth.User?.MustChangeName == true)
+{
+    <div class="mx-5 mt-4 rounded-2xl border border-[#f0d9a8] bg-[#fdf6e3] px-4 py-3 text-[13px] font-semibold text-[#8a6d1a]">
+        @L["Profile_MustChangeName"]
+    </div>
+}
+
+@if (Auth.User?.MustChangePassword == true)
+{
+    <div class="mx-5 mt-4 rounded-2xl border border-[#f0d9a8] bg-[#fdf6e3] px-4 py-3 text-[13px] font-semibold text-[#8a6d1a]">
+        @L["Profile_MustChangePassword"]
+    </div>
+}
+
+@* --- Profil məlumatı (yalnız oxunur) --- *@
+<section class="border-b border-brand-100 px-5 pb-8 pt-8">
+    <div class="flex items-start gap-4">
+        <div class="relative shrink-0">
+            @if (HasPhoto)
+            {
+                <img src="@Auth.User!.Image" alt="" class="size-[82px] cursor-zoom-in rounded-full object-cover" @onclick="() => _photoOpen = true" />
+            }
+            else
+            {
+                <div class="flex size-[82px] items-center justify-center rounded-full bg-brand-103 text-3xl font-black text-brand-835">@(Auth.User?.Initial ?? "L")</div>
+            }
+            <label class="absolute -bottom-1 -right-1 flex size-7 cursor-pointer items-center justify-center rounded-full bg-brand-743 text-white ring-4 ring-brand-022" aria-label="@L["Profile_ChangePhoto"]">
+                <Icon Name="edit" Class="size-3" />
+                <InputFile OnChange="OnImageSelected" accept="image/*" class="hidden" />
+            </label>
+        </div>
+        <div class="min-w-0 pt-1">
+            <h1 class="text-[24px] font-semibold tracking-[-0.055em]">@(Auth.User?.FullName ?? L["Common_Student"])</h1>
+            <p class="mt-1 text-[13px] text-sage-459">@(Auth.User?.Email ?? "")</p>
+            @if (!string.IsNullOrWhiteSpace(Auth.User?.Phone))
+            {
+                <p class="mt-3 text-[11px] font-medium text-sage-355">@Auth.User!.Phone</p>
+            }
+        </div>
+    </div>
+</section>
+
+@* --- Dərslərə iştirak --- *@
+<section class="border-b border-brand-100 px-5 pb-7 pt-7">
+    <p class="mb-3 text-[10px] font-bold uppercase tracking-[0.18em] text-brand-671">@L["Attendance_MyTitle"]</p>
+
+    @if (_attendanceLoading)
+    {
+        <div class="rounded-2xl border border-brand-090 bg-white p-5">
+            <Skeleton Class="h-8 w-24 rounded-md"/>
+            <Skeleton Class="mt-3 h-3 w-40 rounded-md"/>
+        </div>
+    }
+    else if (_attendance is null || _attendance.TotalCount == 0)
+    {
+        <p class="text-[12px] text-sage-410">@L["Attendance_None"]</p>
+    }
+    else
+    {
+        <div class="rounded-2xl border border-brand-090 bg-white p-5">
+            <div class="flex items-end justify-between gap-4">
+                <div class="min-w-0">
+                    <p class="text-[28px] font-semibold tracking-[-0.06em]">@_attendance.Percent%</p>
+                    <p class="mt-1 text-[11px] text-sage-410">@string.Format(L["Attendance_MyCount"], _attendance.PresentCount, _attendance.TotalCount)</p>
+                </div>
+                <div class="h-1.5 w-28 shrink-0 overflow-hidden rounded-full bg-brand-061">
+                    <div class="h-full rounded-full bg-brand-671" style="width:@(_attendance.Percent)%"></div>
+                </div>
+            </div>
+
+            <div class="mt-4 space-y-2.5 border-t border-brand-090 pt-4">
+                @foreach (var r in _attendance.Recent)
+                {
+                    <div class="flex items-center gap-3">
+                        <span class="flex size-6 shrink-0 items-center justify-center rounded-full text-[11px] font-bold @(r.IsPresent ? "bg-brand-103 text-brand-698" : "bg-[#fdeceb] text-danger-539")">
+                            @(r.IsPresent ? "✓" : "✕")
+                        </span>
+                        <span class="min-w-0 flex-1">
+                            <span class="block truncate text-[12px] font-semibold">@r.GroupName</span>
+                            <span class="block text-[10px] text-sage-410">@r.Date.ToString("dd.MM.yyyy")</span>
+                        </span>
+                    </div>
+                }
+            </div>
+        </div>
+    }
+    <a href="/attendance" class="mt-4 flex items-center justify-center gap-1.5 rounded-xl border border-brand-104 py-2.5 text-[12px] font-bold text-brand-727">
+        @L["Attendance_OpenCalendar"]
+        <Icon Name="chevron-right" Class="size-3.5" />
+    </a>
+</section>
+
+@* --- Hesab əməliyyatları --- *@
+<section class="px-5 pb-28 pt-7">
+    <p class="mb-3 text-[10px] font-bold uppercase tracking-[0.18em] text-brand-671">@L["Profile_Account"]</p>
+
+    <div class="divide-y divide-brand-075 border-y border-brand-075">
+        <button type="button" @onclick="OpenName" class="flex w-full items-center gap-3 py-4 text-left">
+            <span class="flex size-8 items-center justify-center rounded-lg bg-brand-049 text-brand-639"><Icon Name="edit" Class="size-4" /></span>
+            <span class="flex-1"><span class="block text-[13px] font-semibold">@L["Login_FullName"]</span><span class="mt-0.5 block text-[10px] text-sage-410">@(Auth.User?.FullName ?? "")</span></span>
+            <Icon Name="chevron-right" Class="size-4 text-sage-300" />
+        </button>
+
+        @if (!string.IsNullOrWhiteSpace(Auth.User?.Phone))
+        {
+            <button type="button" @onclick="() => OpenPhone()" class="flex w-full items-center gap-3 py-4 text-left">
+                <span class="flex size-8 items-center justify-center rounded-lg bg-brand-049 text-brand-639"><Icon Name="phone" Class="size-4" /></span>
+                <span class="flex-1"><span class="block text-[13px] font-semibold">@L["Profile_ChangePhone"]</span><span class="mt-0.5 block text-[10px] text-sage-410">@Auth.User!.Phone</span></span>
+                <Icon Name="chevron-right" Class="size-4 text-sage-300" />
+            </button>
+        }
+
+        <button type="button" @onclick="() => _passwordOpen = true" class="flex w-full items-center gap-3 py-4 text-left">
+            <span class="flex size-8 items-center justify-center rounded-lg bg-brand-049 text-brand-639"><Icon Name="lock" Class="size-4" /></span>
+            <span class="flex-1"><span class="block text-[13px] font-semibold">@L["Profile_ChangePassword"]</span><span class="mt-0.5 block text-[10px] text-sage-410">@L["Profile_Security"]</span></span>
+            <Icon Name="chevron-right" Class="size-4 text-sage-300" />
+        </button>
+
+        @if (false)
+        {
+            <div class="flex w-full items-center gap-3 py-4">
+                <span class="flex size-8 items-center justify-center rounded-lg bg-brand-049 text-brand-639"><Icon Name="bell" Class="size-4" /></span>
+                <span class="flex-1"><span class="block text-[13px] font-semibold">@L["Nav_Notifications"]</span><span class="mt-0.5 block text-[10px] text-sage-410">@L["Profile_NotifToggle"]</span></span>
+                <button type="button" @onclick="ToggleNotificationsAsync" class="relative h-6 w-11 rounded-full transition @(_notifications ? "bg-brand-671" : "bg-brand-100")">
+                    <span class="absolute top-0.5 size-5 rounded-full bg-white shadow transition-all @(_notifications ? "left-5" : "left-0.5")"></span>
+                </button>
+            </div>
+
+            <a href="/notifications" class="flex w-full items-center gap-3 py-4 text-left">
+                <span class="flex size-8 items-center justify-center rounded-lg bg-brand-049 text-brand-639"><Icon Name="bell" Class="size-4" /></span>
+                <span class="flex-1"><span class="block text-[13px] font-semibold">@L["Profile_NotifList"]</span><span class="mt-0.5 block text-[10px] text-sage-410">@L["Profile_NotifListView"]</span></span>
+                <Icon Name="chevron-right" Class="size-4 text-sage-300" />
+            </a>
+        }
+
+        <a href="/payments" class="flex w-full items-center gap-3 py-4 text-left">
+            <span class="flex size-8 items-center justify-center rounded-lg bg-brand-049 text-brand-639"><Icon Name="chart" Class="size-4" /></span>
+            <span class="flex-1"><span class="block text-[13px] font-semibold">@L["Payments_Title"]</span><span class="mt-0.5 block text-[10px] text-sage-410">@L["Payments_Open"]</span></span>
+            <Icon Name="chevron-right" Class="size-4 text-sage-300" />
+        </a>
+
+        <a href="/contact" class="flex w-full items-center gap-3 py-4 text-left">
+            <span class="flex size-8 items-center justify-center rounded-lg bg-brand-049 text-brand-639"><Icon Name="mail" Class="size-4" /></span>
+            <span class="flex-1"><span class="block text-[13px] font-semibold">@L["Contact_Title"]</span><span class="mt-0.5 block text-[10px] text-sage-410">@L["Profile_ContactDesc"]</span></span>
+            <Icon Name="chevron-right" Class="size-4 text-sage-300" />
+        </a>
+
+        <button type="button" @onclick="OpenPrivacyAsync" class="flex w-full items-center gap-3 py-4 text-left">
+            <span class="flex size-8 items-center justify-center rounded-lg bg-brand-049 text-brand-639"><Icon Name="shield" Class="size-4" /></span>
+            <span class="flex-1"><span class="block text-[13px] font-semibold">@L["Profile_Privacy"]</span><span class="mt-0.5 block text-[10px] text-sage-410">@L["Profile_PrivacyDesc"]</span></span>
+            <Icon Name="chevron-right" Class="size-4 text-sage-300" />
+        </button>
+
+        <div class="flex w-full items-center gap-3 py-4">
+            <span class="flex size-8 items-center justify-center rounded-lg bg-brand-049 text-brand-639"><Icon Name="sliders" Class="size-4" /></span>
+            <span class="flex-1"><span class="block text-[13px] font-semibold">@L["Profile_Language"]</span><span class="mt-0.5 block text-[10px] text-sage-410">az / en / ru / tr</span></span>
+            <select value="@L.Current" @onchange="ChangeLang" aria-label="@L["Profile_Language"]"
+                    class="rounded-lg border border-brand-104 bg-white px-2 py-1 text-[12px] font-semibold text-brand-722 outline-none focus:border-brand-467">
+                @foreach (var c in Localizer.Supported)
+                {
+                    <option value="@c">@c.ToUpperInvariant()</option>
+                }
+            </select>
+        </div>
+
+        @* İşləməyən (yalnız görünən) hesab silmə *@
+        <div class="flex w-full items-center gap-3 py-4 opacity-60" aria-disabled="true">
+            <span class="flex size-8 items-center justify-center rounded-lg bg-danger-043 text-danger-539"><Icon Name="x" Class="size-4" /></span>
+            <span class="flex-1"><span class="block text-[13px] font-semibold text-danger-539">@L["Profile_DeleteAccount"]</span><span class="mt-0.5 block text-[10px] text-sage-410">@L["Profile_DeleteUnavailable"]</span></span>
+        </div>
+    </div>
+
+    @if (_accounts.Count > 0)
+    {
+        <p class="mb-2 mt-6 text-[10px] font-bold uppercase tracking-[0.18em] text-brand-671">@L["Profile_Accounts"]</p>
+        <div class="mb-2 space-y-2">
+            @foreach (var acc in _accounts)
+            {
+                var account = acc;
+                var isCurrent = account.TenantId == ApiClient.TenantId;
+                <button type="button" @onclick="() => SwitchAccountAsync(account)" disabled="@(isCurrent || _accountBusy)"
+                        class="flex w-full items-center gap-3 rounded-2xl border px-4 py-3 text-left @(isCurrent ? "border-brand-467 bg-brand-024" : "border-brand-104 bg-white")">
+                    <span class="grid size-8 shrink-0 place-items-center rounded-lg bg-brand-049 text-brand-639"><Icon Name="sliders" Class="size-4" /></span>
+                    <span class="min-w-0 flex-1">
+                        <span class="block truncate text-[13px] font-semibold">@account.TenantName</span>
+                        <span class="block truncate text-[10px] text-sage-410">@account.Email</span>
+                    </span>
+                    <span class="shrink-0 text-[11px] font-bold @(isCurrent ? "text-brand-671" : "text-sage-410")">
+                        @(isCurrent ? L["Profile_CurrentAccount"] : L["Profile_SwitchAccount"])
+                    </span>
+                </button>
+            }
+        </div>
+    }
+
+    <button type="button" @onclick="() => _logoutOpen = true" class="mt-6 w-full rounded-2xl border border-danger-043 bg-danger-043/40 py-3.5 text-sm font-bold text-danger-539">
+        @L["Profile_Logout"]
+    </button>
+</section>
+
+@* --- Modallar --- *@
+<Modal Open="_nameOpen" Title="@L["Login_FullName"]" OnClose="() => _nameOpen = false">
+    <input @bind="_fullName" placeholder="@L["Profile_FullNamePlaceholder"]" class="w-full rounded-xl border border-brand-104 bg-brand-024 px-4 py-3 text-sm outline-none focus:border-brand-467" />
+    @if (!string.IsNullOrEmpty(_nameError)) { <p class="mt-2 text-xs font-semibold text-danger-539">@_nameError</p> }
+    <button type="button" @onclick="SaveNameAsync" disabled="@_busy" class="mt-4 w-full rounded-xl bg-brand-671 py-3 text-sm font-bold text-white disabled:opacity-60">@L["Common_Save"]</button>
+</Modal>
+
+<Modal Open="_phoneOpen" Title="@L["Profile_ChangePhone"]" OnClose="() => _phoneOpen = false">
+    <input @bind="_phone" placeholder="+994..." class="w-full rounded-xl border border-brand-104 bg-brand-024 px-4 py-3 text-sm outline-none focus:border-brand-467" />
+    @if (_imageBusy) { <p class="mt-2 text-xs text-sage-410">@L["Profile_ImageUploading"]</p> } { <p class="mt-2 text-xs font-semibold text-danger-539">@_phoneError</p> }
+    <button type="button" @onclick="SavePhoneAsync" disabled="@_busy" class="mt-4 w-full rounded-xl bg-brand-671 py-3 text-sm font-bold text-white disabled:opacity-60">@L["Common_Save"]</button>
+</Modal>
+
+<Modal Open="_passwordOpen" Title="@L["Profile_ChangePassword"]" OnClose="() => _passwordOpen = false">
+    <input @bind="_currentPassword" type="password" placeholder="@L["Profile_CurrentPassword"]" class="w-full rounded-xl border border-brand-104 bg-brand-024 px-4 py-3 text-sm outline-none focus:border-brand-467" />
+    <input @bind="_newPassword" type="password" placeholder="@L["Profile_NewPassword"]" class="mt-3 w-full rounded-xl border border-brand-104 bg-brand-024 px-4 py-3 text-sm outline-none focus:border-brand-467" />
+    @if (!string.IsNullOrEmpty(_passwordError)) { <p class="mt-2 whitespace-pre-line text-xs font-semibold text-danger-539">@_passwordError</p> }
+    <button type="button" @onclick="SavePasswordAsync" disabled="@_busy" class="mt-4 w-full rounded-xl bg-brand-671 py-3 text-sm font-bold text-white disabled:opacity-60">@L["Common_Save"]</button>
+</Modal>
+
+<Modal Open="_privacyOpen" Title="@L["Profile_Privacy"]" OnClose="() => _privacyOpen = false">
+    @if (_privacyLoading)
+    {
+        <p class="text-sm text-sage-410">@L["Common_Loading"]</p>
+    }
+    else if (_privacy.Count == 0)
+    {
+        <p class="text-sm text-sage-410">@L["Common_NoData"]</p>
+    }
+    else
+    {
+        <div class="max-h-[60vh] space-y-4 overflow-auto pr-1">
+            @foreach (var p in _privacy)
+            {
+                <div>
+                    <p class="text-[12px] font-bold uppercase tracking-[0.12em] text-brand-639">@p.Type</p>
+                    <div class="mt-1 text-[13px] leading-5 text-brand-755 [&_a]:text-brand-671 [&_a]:underline [&_h2]:mt-3 [&_h2]:text-[15px] [&_h2]:font-bold [&_h2]:text-brand-784 [&_h3]:mt-3 [&_h3]:text-[14px] [&_h3]:font-semibold [&_h3]:text-brand-776 [&_li]:mt-1 [&_p]:mt-2 [&_strong]:font-bold [&_ul]:mt-2 [&_ul]:list-disc [&_ul]:pl-5">@((MarkupString)(p.Content ?? ""))</div>
+                </div>
+            }
+        </div>
+    }
+</Modal>
+
+<Modal Open="_logoutOpen" Title="@L["Profile_Logout"]" OnClose="() => _logoutOpen = false">
+    <p class="text-[13px] leading-5 text-sage-459">@L["Profile_LogoutConfirm"]</p>
+    <div class="mt-5 flex gap-3">
+        <button type="button" @onclick="() => _logoutOpen = false" class="flex-1 rounded-xl border border-brand-104 py-3 text-sm font-bold text-brand-727">@L["Common_Cancel"]</button>
+        <button type="button" @onclick="LogoutAsync" class="flex-1 rounded-xl bg-danger-539 py-3 text-sm font-bold text-white">@L["Profile_Logout"]</button>
+    </div>
+</Modal>
+
+@* Profil fotoğrafı böyük görünüşdə *@
+@if (_photoOpen && HasPhoto)
+{
+    <div class="fixed inset-0 z-50 flex items-center justify-center bg-black/85 p-4" @onclick="() => _photoOpen = false">
+        <img src="@Auth.User!.Image" alt="" class="max-h-[85vh] max-w-full rounded-2xl object-contain shadow-2xl" @onclick:stopPropagation="true" />
+        <button type="button" @onclick="() => _photoOpen = false" aria-label="@L["Common_Close"]"
+                class="absolute right-5 top-5 grid size-10 place-items-center rounded-full bg-white/15 text-white backdrop-blur transition hover:bg-white/25">
+            <Icon Name="x" Class="size-5" />
+        </button>
+    </div>
+}

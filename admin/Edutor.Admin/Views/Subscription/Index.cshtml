@@ -1,0 +1,273 @@
+@model Edutor.Core.Modules.Subscription.Responses.SubscriptionResponse?
+@using Edutor.Core.Modules.Tenant.Responses
+@using Edutor.Admin.Models.Ui
+@{
+    ViewData["Title"] = "Abunəlik";
+    var tenants = ViewData["Tenants"] as IReadOnlyList<TenantResponse>;
+    var selectedTenantId = ViewData["SelectedTenantId"] as long?;
+    var usage = Model?.Usage;
+
+    string Bar(int used, int max) => max <= 0 ? $"{used} / limitsiz" : $"{used} / {max}  ({Math.Min(100, (int)Math.Round(used * 100.0 / max))}%)";
+
+    string Width(long used, long max)
+        => max <= 0 ? "8" : Math.Clamp((int)Math.Round(used * 100.0 / max), 2, 100).ToString();
+
+    string Tone(long used, long max)
+        => max > 0 && used >= max ? "bg-danger" : max > 0 && used * 100 / max >= 80 ? "bg-amber-500" : "bg-primary";
+
+    var statusLabel = usage?.Status switch
+    {
+        "readonly" => ("Oxuma rejimi", "warning"),
+        "suspended" => ("Dayandırılıb", "danger"),
+        _ => ("Aktiv", "success")
+    };
+
+    var tenantSelect = tenants is { Count: > 0 }
+        ? new SelectModel
+        {
+            Id = "subscriptionTenant",
+            Name = "tenant_id",
+            Label = "Tenant",
+            Value = selectedTenantId?.ToString(),
+            ChangeAction = "SubscriptionPage.switchTenant",
+            Options = tenants.Select(t => new SelectOption { Value = t.Id.ToString(), Text = t.Name }).ToList()
+        }
+        : null;
+
+    var gaugeRows = usage is null
+        ? []
+        : new (string Label, int Used, int Max)[]
+        {
+            ("Tələbə", usage.Students, usage.MaxStudents),
+            ("Qrup", usage.Groups, usage.MaxGroups),
+            ("Video (aylıq, saat)", usage.VideoMinutes / 60, usage.MonthlyVideoMinutes / 60)
+        };
+}
+
+@{
+    var plans = ViewData["Plans"] as IReadOnlyList<Edutor.Core.Modules.Subscription.Responses.PlanResponse> ?? [];
+    var whatsapp = ViewData["WhatsAppNumber"] as string ?? "";
+    var tenantName = ViewData["TenantName"] as string ?? "";
+    var currentPlanId = Model?.Plan?.Id;
+    var userEmail = User.FindFirst(System.Security.Claims.ClaimTypes.Email)?.Value ?? "";
+    var userName = User.Identity?.Name ?? "";
+
+    string Limit(int value) => value > 0 ? value.ToString() : "limitsiz";
+    string Storage(long bytes) => bytes > 0 ? $"{Math.Round(bytes / 1073741824.0)} GB" : "limitsiz";
+
+    string UploadList(bool video, bool file, bool audio)
+    {
+        var items = new List<string>();
+        if (video) items.Add("video");
+        if (file) items.Add("PDF");
+        if (audio) items.Add("səs");
+        return items.Count > 0 ? string.Join(", ", items) : "bağlı";
+    }
+
+    var planPayload = plans.Select(p => new
+    {
+        id = p.Id,
+        code = p.Code,
+        name = p.Name,
+        price = p.MonthlyPrice,
+        currency = p.Currency,
+        maxStudents = p.MaxStudents,
+        maxGroups = p.MaxGroups,
+        videoMinutes = p.MonthlyVideoMinutes,
+        storageBytes = p.StorageBytes,
+        maxVideoHeight = p.MaxVideoHeight
+    }).ToList();
+}
+@if (plans.Count > 0)
+{
+    <script>window.SUBSCRIPTION_CONTEXT = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(new
+    {
+        tenantName,
+        currentPlanId,
+        currentPlanName = Model?.Plan?.Name ?? "",
+        userName,
+        userEmail,
+        whatsapp,
+        plans = planPayload
+    }));</script>
+}
+
+<section class="admin-page">
+    <partial name="Ui/_PageHeader" model="@(new PageHeaderModel())" />
+
+    @if (tenantSelect is not null)
+    {
+        <div class="flex justify-end">
+            <div class="w-full sm:w-[22rem]">
+                <partial name="Ui/_Select" model="tenantSelect" />
+            </div>
+        </div>
+    }
+
+    @if (Model?.Plan is null)
+    {
+        <div class="admin-card p-5">
+            <p class="text-sm text-slate-500">
+                @(tenants is { Count: > 0 }
+                    ? "Tenant seçin — seçilmiş tenant-ın planı, limitləri və istifadəsi göstəriləcək."
+                    : "Hələ plan təyin edilməyib. Administratorla əlaqə saxlayın.")
+            </p>
+        </div>
+    }
+    else
+    {
+        var used = usage!;
+        <div class="grid gap-4 sm:grid-cols-3">
+            <div class="admin-card p-5">
+                <p class="text-xs font-semibold uppercase tracking-wide text-slate-400">Cari plan</p>
+                <p class="mt-1 text-2xl font-extrabold text-slate-900">@Model.Plan.Name</p>
+                <p class="mt-1 text-sm text-slate-500">@Model.Plan.MonthlyPrice @Model.Plan.Currency / ay</p>
+                <div class="mt-3">
+                    <span class="badge badge-@statusLabel.Item2">@statusLabel.Item1</span>
+                </div>
+                <p class="mt-3 text-xs font-semibold uppercase tracking-wide text-slate-400">Yükləmə</p>
+                <div class="mt-1 flex flex-wrap gap-1">
+                    @{
+                        var allowedUploads = new (string Label, bool Allowed)[]
+                        {
+                            ("Video", used.AllowVideoUpload),
+                            ("PDF", used.AllowFileUpload),
+                            ("Səs", used.AllowAudioUpload)
+                        };
+                    }
+                    @foreach (var upload in allowedUploads)
+                    {
+                        <span class="badge badge-@(upload.Allowed ? "success" : "danger")">@upload.Label</span>
+                    }
+                </div>
+            </div>
+
+            <div class="admin-card p-5">
+                <p class="text-xs font-semibold uppercase tracking-wide text-slate-400">Müddət</p>
+                @if (used.ExpiresAt is { } expires)
+                {
+                    <p class="mt-1 text-2xl font-extrabold text-slate-900">@expires.ToString("dd.MM.yyyy")</p>
+                    <p class="mt-1 text-sm text-slate-500">@(used.DaysLeft is { } d ? $"{d} gün qalıb" : "—")</p>
+                }
+                else
+                {
+                    <p class="mt-1 text-2xl font-extrabold text-slate-900">Müddətsiz</p>
+                    <p class="mt-1 text-sm text-slate-500">Bitmə tarixi yoxdur</p>
+                }
+            </div>
+
+            <div class="admin-card p-5">
+                <p class="text-xs font-semibold uppercase tracking-wide text-slate-400">Video (bu ay)</p>
+                <p class="mt-1 text-2xl font-extrabold text-slate-900">
+                    @(used.MonthlyVideoMinutes > 0
+                        ? $"{used.VideoMinutes / 60} / {used.MonthlyVideoMinutes / 60}"
+                        : (used.VideoMinutes / 60).ToString())
+                </p>
+                <p class="mt-1 text-sm text-slate-500">saat</p>
+            </div>
+        </div>
+
+        <div class="admin-card p-5">
+            <h3 class="mb-4 text-base font-bold text-slate-900">İstifadə</h3>
+
+            <div class="grid gap-x-8 gap-y-5 sm:grid-cols-2">
+                @foreach (var row in gaugeRows)
+                {
+                    <div>
+                        <div class="flex items-center justify-between text-sm">
+                            <span class="font-medium text-slate-600">@row.Label</span>
+                            <span class="font-semibold text-slate-800">@Bar(row.Used, row.Max)</span>
+                        </div>
+                        <div class="mt-2 h-2 overflow-hidden rounded-full bg-slate-100">
+                            <div class="h-full rounded-full @Tone(row.Used, row.Max)" style="width:@(Width(row.Used, row.Max))%"></div>
+                        </div>
+                    </div>
+                }
+            </div>
+
+        </div>
+
+        @if (used.AddonOffers.Count > 0)
+        {
+            <div class="admin-card p-5">
+                <h3 class="mb-2 text-base font-bold text-slate-900">Limit artırımı</h3>
+                <p class="mb-4 text-sm text-slate-500">
+                    Planı dəyişmədən istənilən sayda əlavə yer ala bilərsiniz.
+                    Əlavə limit cari ay üçün keçərlidir.
+                </p>
+
+                <div class="grid gap-3 sm:grid-cols-3">
+                    @foreach (var offer in used.AddonOffers)
+                    {
+                        <div class="flex flex-col rounded-xl border border-border bg-surface-secondary p-4">
+                            <p class="font-bold text-slate-900">@offer.Label</p>
+                            <p class="mt-1 text-sm text-slate-500">1 @offer.Unit</p>
+                            <p class="mt-2 text-lg font-extrabold text-primary">@offer.UnitPrice @Model.Plan.Currency</p>
+
+                            <button type="button"
+                                    class="admin-button-primary mt-3 w-full"
+                                    data-action="SubscriptionPage.addAddon"
+                                    data-args='["@offer.Kind"]'>
+                                Əlavə et
+                            </button>
+                        </div>
+                    }
+                </div>
+            </div>
+        }
+
+        @if (plans.Count > 0)
+        {
+            <div class="admin-card p-5">
+                <h3 class="mb-1 text-base font-bold text-slate-900">Planlar</h3>
+                <p class="mb-4 text-sm text-slate-500">
+                    Plan seçdikdə müraciət WhatsApp vasitəsilə göndərilir — aktivləşdirmə əl ilə aparılır.
+                </p>
+
+                <div class="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
+                    @foreach (var plan in plans)
+                    {
+                        var isCurrent = plan.Id == currentPlanId;
+                        <div class="flex flex-col rounded-xl border p-4 @(isCurrent ? "border-primary bg-primary-light/40" : "border-border bg-surface-secondary")">
+                            <div class="flex items-center justify-between gap-2">
+                                <p class="font-bold text-slate-900">@plan.Name</p>
+                                @if (isCurrent)
+                                {
+                                    <span class="badge badge-success">Cari plan</span>
+                                }
+                            </div>
+
+                            @if (!string.IsNullOrWhiteSpace(plan.Description))
+                            {
+                                <p class="mt-1 text-xs text-slate-500">@plan.Description</p>
+                            }
+
+                            <p class="mt-2 text-lg font-extrabold text-primary">
+                                @plan.MonthlyPrice @plan.Currency
+                                <span class="text-xs font-medium text-slate-400">/ ay</span>
+                            </p>
+
+                            <ul class="mt-3 space-y-1 text-sm text-slate-600">
+                                <li>@Limit(plan.MaxStudents) tələbə</li>
+                                <li>@Limit(plan.MaxGroups) qrup</li>
+                                <li>@(plan.MonthlyVideoMinutes > 0 ? (plan.MonthlyVideoMinutes / 60).ToString() : "Limitsiz") video saatı / ay</li>
+                                <li>@Storage(plan.StorageBytes) yaddaş</li>
+                                <li>Maks. keyfiyyət: @(plan.MaxVideoHeight > 0 ? $"{plan.MaxVideoHeight}p" : "limitsiz")</li>
+                                <li>Yükləmə: @UploadList(plan.AllowVideoUpload, plan.AllowFileUpload, plan.AllowAudioUpload)</li>
+                            </ul>
+
+                            <button type="button" class="admin-button-primary mt-4 w-full"
+                                    data-action="SubscriptionPage.choosePlan" data-args='[@plan.Id]'
+                                    @(isCurrent ? "disabled" : null)>
+                                @(isCurrent ? "Seçilib" : "Bu planı seç")
+                            </button>
+                        </div>
+                    }
+                </div>
+            </div>
+        }
+
+    }
+</section>
+
+<form id="antiforgery">@Html.AntiForgeryToken()</form>

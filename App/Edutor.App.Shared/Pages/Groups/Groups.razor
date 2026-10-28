@@ -1,0 +1,29 @@
+@inherits RefreshablePage
+@using Edutor.App.Shared.Services.Localization
+@inject Localizer L
+@page "/groups"
+@inject AppApi Api
+
+<PageTitle>@L["Groups_Title"]</PageTitle>
+
+<PageHeader Title="@L["Groups_Title"]" Back="/" />
+
+<div @key="_loading" class="px-5 pb-28 pt-6 @(!_loading ? "page-fade" : null)">
+    @if (_loading)
+    {
+        <SkeletonCardGrid Count="6" Tile="true"/>
+    }
+    else if (_groups.Count == 0)
+    {
+        <EmptyState Text="@L["Groups_Empty"]"/>
+    }
+    else
+    {
+        <section class="mt-5 grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
+            @for (var i = 0; i < _groups.Count; i++)
+            {
+                <GroupCard Group="_groups[i]" Index="i"/>
+            }
+        </section>
+    }
+</div>

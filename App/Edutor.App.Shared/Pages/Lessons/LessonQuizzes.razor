@@ -1,0 +1,31 @@
+@inherits RefreshablePage
+@using Edutor.App.Shared.Services.Localization
+@inject Localizer L
+@page "/lessons/{LessonId:long}/quizzes"
+@inject AppApi Api
+
+<PageTitle>@L["Quizzes_Title"]</PageTitle>
+
+<PageHeader Title="@L["Quizzes_Title"]" Back="@($"/lessons/{LessonId}")"/>
+
+<div @key="_loading" class="px-5 pb-28 pt-5 @(!_loading ? "page-fade" : null)">
+    <h2 class="mt-1 text-2xl font-bold tracking-[-0.04em] text-brand-784">@(Title ?? L["Lesson_Default"])</h2>
+
+    @if (_loading)
+    {
+        <SkeletonCardGrid Count="4"/>
+    }
+    else if (_quizzes.Count == 0)
+    {
+        <EmptyState Text="@L["LessonQuizzes_Empty"]"/>
+    }
+    else
+    {
+        <section class="mt-5 grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
+            @foreach (var q in _quizzes)
+            {
+                <QuizCard Quiz="q"/>
+            }
+        </section>
+    }
+</div>

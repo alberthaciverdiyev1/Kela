@@ -1,0 +1,14 @@
+<Application xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:local="using:Edutor.Nodes.App"
+             x:Class="Edutor.Nodes.App.App"
+             RequestedThemeVariant="Light">
+  <Application.Resources>
+    <local:ToneBrushConverter x:Key="ToneBrush" />
+    <local:FractionConverter x:Key="Fraction" />
+  </Application.Resources>
+  <Application.Styles>
+    <FluentTheme />
+    <StyleInclude Source="avares://Edutor.Nodes.App/Styles/AppStyles.axaml" />
+  </Application.Styles>
+</Application>

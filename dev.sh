@@ -17,9 +17,9 @@ HEALTH_URL="${HEALTH_URL:-$API_URL/openapi/v1.json}"
 
 ARTIFACTS="$ROOT/.dev-artifacts"
 
-TAILWIND="$ROOT/admin/Kela.Admin/node_modules/.bin/tailwindcss"
-MVC_CSS="admin/Kela.Admin/wwwroot/css/app.css"
-APP_CSS="App/Kela.App.Shared/wwwroot/css/app.css"
+TAILWIND="$ROOT/admin/Edutor.Admin/node_modules/.bin/tailwindcss"
+MVC_CSS="admin/Edutor.Admin/wwwroot/css/app.css"
+APP_CSS="App/Edutor.App.Shared/wwwroot/css/app.css"
 
 pids=()
 
@@ -62,7 +62,7 @@ wait_for() {
 
 _own_pids() {
   local pat
-  for pat in "api/Kela.Api" "admin/Kela.Admin" "App/Kela.App.Web" "App/Kela.App.Shared" "tailwindcss"; do
+  for pat in "api/Edutor.Api" "admin/Edutor.Admin" "App/Edutor.App.Web" "App/Edutor.App.Shared" "tailwindcss"; do
     pgrep -f -- "$pat" 2>/dev/null || true
   done | sort -u | grep -vx -e "$$" -e "$PPID" || true
 }
@@ -97,7 +97,7 @@ kill_existing
 # ------------------------------------------------------------------
 if [ ! -x "$TAILWIND" ] && { [ "$ENABLE_WEB" = "1" ] || [ "$ENABLE_APP" = "1" ]; }; then
   echo "==> node_modules / Tailwind CLI yoxdur — 'npm install' çalışdırılır..."
-  ( cd admin/Kela.Admin && npm install )
+  ( cd admin/Edutor.Admin && npm install )
 fi
 
 build_css() { # $1 = input, $2 = output, $3 = ad
@@ -110,10 +110,10 @@ build_css() { # $1 = input, $2 = output, $3 = ad
 # ------------------------------------------------------------------
 if [ "$ENABLE_WEB" = "1" ]; then
   echo "==> [WEB] Tailwind CSS (MVC)"
-  build_css "admin/Kela.Admin/wwwroot/css/input.css" "$MVC_CSS" "app.css"
+  build_css "admin/Edutor.Admin/wwwroot/css/input.css" "$MVC_CSS" "app.css"
 
   echo "==> [WEB] Tailwind (watch, nəzarətçi)"
-  start bash -c "cd '$ROOT/admin/Kela.Admin' || exit 1
+  start bash -c "cd '$ROOT/admin/Edutor.Admin' || exit 1
 while true; do
   '$TAILWIND' -i ./wwwroot/css/input.css -o ./wwwroot/css/app.css --watch
   [ -s wwwroot/css/app.css ] || '$TAILWIND' -i ./wwwroot/css/input.css -o ./wwwroot/css/app.css --minify
@@ -121,10 +121,10 @@ while true; do
 done"
 
   echo "==> [WEB] API (watch): $API_URL"
-  DOTNET_WATCH_SUPPRESS_BROWSER_REFRESH=1 ASPNETCORE_URLS="$API_URL" start dotnet watch --project api/Kela.Api --artifacts-path "$ARTIFACTS/api" run --no-launch-profile
+  DOTNET_WATCH_SUPPRESS_BROWSER_REFRESH=1 ASPNETCORE_URLS="$API_URL" start dotnet watch --project api/Edutor.Api --artifacts-path "$ARTIFACTS/api" run --no-launch-profile
 
   echo "==> [WEB] MVC (watch): $MVC_URL"
-  DOTNET_WATCH_SUPPRESS_BROWSER_REFRESH=1 ASPNETCORE_URLS="$MVC_URL" start dotnet watch --project admin/Kela.Admin --artifacts-path "$ARTIFACTS/mvc" run --no-launch-profile
+  DOTNET_WATCH_SUPPRESS_BROWSER_REFRESH=1 ASPNETCORE_URLS="$MVC_URL" start dotnet watch --project admin/Edutor.Admin --artifacts-path "$ARTIFACTS/mvc" run --no-launch-profile
 else
   echo "==> [WEB] atlanır (ENABLE_WEB=0)"
 fi
@@ -135,21 +135,21 @@ fi
 if [ "$ENABLE_APP" = "1" ]; then
   echo "==> [APP] Tailwind CSS (App.Shared)"
   # App.Shared öz node_modules-unu saxlamır — Admin-in CLI-sinə keçid (eyni versiya).
-  [ -e "$ROOT/App/Kela.App.Shared/node_modules/tailwindcss" ] || \
-    ln -sfn "$ROOT/admin/Kela.Admin/node_modules" "$ROOT/App/Kela.App.Shared/node_modules"
-  build_css "App/Kela.App.Shared/wwwroot/css/input.css" "$APP_CSS" "app.css"
+  [ -e "$ROOT/App/Edutor.App.Shared/node_modules/tailwindcss" ] || \
+    ln -sfn "$ROOT/admin/Edutor.Admin/node_modules" "$ROOT/App/Edutor.App.Shared/node_modules"
+  build_css "App/Edutor.App.Shared/wwwroot/css/input.css" "$APP_CSS" "app.css"
 
   echo "==> [APP] Tailwind (watch, nəzarətçi)"
-  start bash -c "cd '$ROOT/App/Kela.App.Shared' || exit 1
+  start bash -c "cd '$ROOT/App/Edutor.App.Shared' || exit 1
 while true; do
   '$TAILWIND' -i ./wwwroot/css/input.css -o ./wwwroot/css/app.css --watch
   [ -s wwwroot/css/app.css ] || '$TAILWIND' -i ./wwwroot/css/input.css -o ./wwwroot/css/app.css --minify
   sleep 1
 done"
 
-  echo "==> [APP] Blazor WASM (Kela.App.Web, watch): $APP_URL"
+  echo "==> [APP] Blazor WASM (Edutor.App.Web, watch): $APP_URL"
   DOTNET_WATCH_SUPPRESS_BROWSER_REFRESH=1 # Blazor WASM + dotnet watch artifacts-path ilə işə düşmür — default bin/obj istifadə olunur.
-  ASPNETCORE_URLS="$APP_URL" start dotnet watch --project App/Kela.App.Web run --no-launch-profile
+  ASPNETCORE_URLS="$APP_URL" start dotnet watch --project App/Edutor.App.Web run --no-launch-profile
 else
   echo "==> [APP] atlanır (ENABLE_APP=0)"
 fi

@@ -1,8 +1,0 @@
-<Window xmlns="https://github.com/avaloniaui"
-        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:views="using:Kela.Nodes.App.Views"
-        x:Class="Kela.Nodes.App.Views.MainWindow"
-        Title="Kela Nodes" Width="1100" Height="760" MinWidth="820" MinHeight="560">
-
-  <views:MainView />
-</Window>

@@ -1,0 +1,436 @@
+using Edutor.Core.Common.Storage;
+using Edutor.Core.Data;
+using Edutor.Core.Modules.Media.Entities;
+using Edutor.Core.Modules.Nodes.Abstractions;
+using Edutor.Nodes.Shared.Contracts;
+using Edutor.Nodes.Shared.Encoding;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
+using Npgsql;
+
+namespace Edutor.Core.Modules.Nodes.Services;
+
+using VideoJob = Edutor.Core.Modules.Nodes.Entities.VideoJob;
+using WorkerNode = Edutor.Core.Modules.Nodes.Entities.WorkerNode;
+
+public sealed class VideoJobScheduler(
+    AppDbContext db,
+    IFileStorage storage,
+    ITenantFolder folders,
+    IOptions<NodeOptions> options,
+    ILogger<VideoJobScheduler> logger) : IVideoJobScheduler
+{
+    private NodeOptions Settings => options.Value;
+
+    public async Task EnsureJobsAsync(long videoId, CancellationToken ct = default)
+    {
+        // Fon xidməti tenant konteksti olmadan işləyir — bütün tenantlar üzrə axtarılır,
+        // tenant sərhədi aşağıda video.TenantId ilə açıq şəkildə qorunur.
+        var video = await db.Videos.IgnoreQueryFilters()
+            .FirstOrDefaultAsync(x => x.Id == videoId && x.DeletedAt == null, ct);
+
+        if (video is null || string.IsNullOrWhiteSpace(video.Path)) return;
+
+        var existing = await db.VideoJobs.IgnoreQueryFilters()
+            .Where(x => x.VideoId == videoId)
+            .ToListAsync(ct);
+
+        var known = existing.Select(x => x.Resolution).ToHashSet(StringComparer.OrdinalIgnoreCase);
+        var sourceHeight = existing.FirstOrDefault(x => x.SourceHeight.HasValue)?.SourceHeight;
+
+        var profiles = VideoLadder.ForSource(Settings.Ladder, sourceHeight);
+        var tenantFolder = await folders.ResolveAsync(video.TenantId, ct);
+        var prefix = NodePaths.OutputPrefix(video.Path, video.Id, video.Title, video.ConversionVersion, tenantFolder);
+
+        var created = new List<VideoJob>();
+
+        foreach (var profile in profiles)
+        {
+            if (known.Contains(profile.Name)) continue;
+
+            created.Add(new VideoJob
+            {
+                VideoId = video.Id,
+                Resolution = profile.Name,
+                TargetHeight = profile.Height,
+                TargetBitrateKbps = profile.VideoBitrateKbps,
+                Status = JobStatus.Pending,
+                MaxAttempts = Settings.MaxAttempts,
+                OutputPrefix = prefix,
+                VariantKey = NodePaths.VariantKey(prefix, profile.Name),
+                SourceHeight = sourceHeight,
+                Priority = profile.Height,
+                TenantId = video.TenantId
+            });
+        }
+
+        if (created.Count == 0) return;
+
+        db.VideoJobs.AddRange(created);
+
+        try
+        {
+            await db.SaveChangesAsync(ct);
+        }
+        catch (DbUpdateException ex) when (IsUniqueViolation(ex))
+        {
+            // Paralel işləyən başqa API nüsxəsi eyni tapşırıqları yaratdı — bu normaldır.
+            db.ChangeTracker.Clear();
+        }
+    }
+
+    public async Task ReapAsync(CancellationToken ct = default)
+    {
+        var reaped = await db.Database.ExecuteSqlRawAsync("""
+            UPDATE video_jobs
+            SET status = CASE WHEN attempts >= max_attempts THEN 'failed' ELSE 'pending' END,
+                error_message = CASE WHEN attempts >= max_attempts
+                                     THEN 'Lease expired — attempts exhausted'
+                                     ELSE 'Lease expired' END,
+                error_kind = 'transient',
+                completed_at = CASE WHEN attempts >= max_attempts THEN now() ELSE NULL END,
+                next_attempt_at = CASE WHEN attempts >= max_attempts THEN NULL
+                                       ELSE now() + (interval '10 second' * power(2, least(attempts, 6))) END,
+                worker_node_id = NULL,
+                attempt_token = NULL,
+                lease_expires_at = NULL,
+                progress = 0,
+                updated_at = now()
+            WHERE deleted_at IS NULL
+              AND status = ANY({0})
+              AND lease_expires_at IS NOT NULL
+              AND (
+                    lease_expires_at < now()
+                    -- Cihaz offline sayılıbsa heç nə icra etmir; tam lease müddətini
+                    -- gözləmək videonu lazımsız yerə yarım saat gecikdirir.
+                    OR EXISTS (
+                        SELECT 1 FROM worker_nodes n
+                        WHERE n.id = video_jobs.worker_node_id
+                          AND n.deleted_at IS NULL
+                          AND (n.status = 'offline' OR n.last_seen_at < now() - make_interval(secs => {1}))
+                    )
+                    -- Cihaz canlıdır, amma iş həddən artıq uzanıb (kilidləmiş ffmpeg):
+                    -- heartbeat lease-i sonsuza qədər uzadardı və video heç vaxt bitməzdi.
+                    OR (started_at IS NOT NULL AND started_at < now() - make_interval(hours => {2}))
+                  )
+            """, [JobStatus.Reclaimable, Settings.OfflineAfterSeconds, Settings.JobTimeoutHours]);
+
+        if (reaped > 0) logger.LogWarning("Reclaimed {Count} expired video jobs", reaped);
+
+        // Cihazların aktiv iş sayını həqiqi vəziyyətdən yenidən hesabla.
+        await db.Database.ExecuteSqlRawAsync("""
+            UPDATE worker_nodes n
+            SET active_jobs = (
+                SELECT count(*) FROM video_jobs j
+                WHERE j.worker_node_id = n.id AND j.deleted_at IS NULL AND j.status = ANY({0})
+            )
+            WHERE n.deleted_at IS NULL
+            """, [JobStatus.Active]);
+
+        var cutoff = DateTimeOffset.UtcNow.AddSeconds(-Settings.OfflineAfterSeconds);
+
+        await db.Database.ExecuteSqlRawAsync("""
+            UPDATE worker_nodes
+            SET status = 'offline', updated_at = now()
+            WHERE deleted_at IS NULL AND status = 'online'
+              AND (last_seen_at IS NULL OR last_seen_at < {0})
+            """, cutoff);
+    }
+
+    public async Task<IReadOnlyList<long>> ReconcileAsync(CancellationToken ct = default)
+    {
+        var active = JobStatus.Active;
+
+        // 1) İşi yarıda qalmış videolar — aktiv tapşırığı yoxdursa yenidən yaradılır.
+        var orphanVideoIds = await db.Videos.IgnoreQueryFilters()
+            .Where(v => v.DeletedAt == null)
+            .Where(v => v.ConversionStatus == VideoStatus.Pending || v.ConversionStatus == VideoStatus.Processing)
+            .Where(v => !db.VideoJobs.IgnoreQueryFilters().Any(j => j.VideoId == v.Id && active.Contains(j.Status)))
+            .OrderBy(v => v.Id)
+            .Select(v => v.Id)
+            .Take(50)
+            .ToListAsync(ct);
+
+        foreach (var videoId in orphanVideoIds)
+        {
+            await EnsureJobsAsync(videoId, ct);
+        }
+
+        // 1b) Əvvəl uğursuz olmuş, amma xətası keçici olan və büdcəsi qalan videolar.
+        // Bunlar başqa heç bir yolla geri qaytarılmır — əvvəlki uğursuzluqdan sonra
+        // heç nə onlara baxmırdı və video əbədi "failed" qalırdı.
+        var recoverable = await db.Videos.IgnoreQueryFilters()
+            .Where(v => v.DeletedAt == null)
+            .Where(v => v.ConversionStatus == VideoStatus.Failed)
+            .Where(v => v.ConversionAttempts < Settings.MaxVideoAttempts)
+            .Where(v => db.VideoJobs.IgnoreQueryFilters().Any(j => j.VideoId == v.Id))
+            .Where(v => !db.VideoJobs.IgnoreQueryFilters()
+                .Any(j => j.VideoId == v.Id && j.Status == JobStatus.Failed && j.ErrorKind == JobErrorKind.Permanent))
+            .Where(v => !db.VideoJobs.IgnoreQueryFilters().Any(j => j.VideoId == v.Id && active.Contains(j.Status)))
+            .OrderBy(v => v.Id)
+            .Select(v => v.Id)
+            .Take(50)
+            .ToListAsync(ct);
+
+        foreach (var videoId in recoverable)
+        {
+            await RequeueVideoAsync(videoId, "Avtomatik bərpa: əvvəlki xəta keçici idi", ct);
+        }
+
+        // 2) Bütün tapşırıqları bitmiş videolar — master playlist yazılmalıdır.
+        return await db.Videos.IgnoreQueryFilters()
+            .Where(v => v.DeletedAt == null)
+            .Where(v => v.ConversionStatus == VideoStatus.Pending || v.ConversionStatus == VideoStatus.Processing)
+            .Where(v => db.VideoJobs.IgnoreQueryFilters().Any(j => j.VideoId == v.Id))
+            .Where(v => !db.VideoJobs.IgnoreQueryFilters().Any(j => j.VideoId == v.Id && active.Contains(j.Status)))
+            .OrderBy(v => v.Id)
+            .Select(v => v.Id)
+            .Take(50)
+            .ToListAsync(ct);
+    }
+
+    public async Task<bool> RequeueVideoAsync(long videoId, string reason, CancellationToken ct = default)
+    {
+        var video = await db.Videos.IgnoreQueryFilters()
+            .FirstOrDefaultAsync(v => v.Id == videoId && v.DeletedAt == null, ct);
+
+        if (video is null) return false;
+        if (video.ConversionAttempts >= Settings.MaxVideoAttempts) return false;
+
+        var jobs = await db.VideoJobs.IgnoreQueryFilters()
+            .Where(j => j.VideoId == videoId)
+            .ToListAsync(ct);
+
+        var failed = jobs.Where(j => j.Status == JobStatus.Failed).ToList();
+
+        // Qalıcı xəta (məsələn mənbə fayl korlanıb) təkrar cəhddə düzəlmir.
+        if (failed.Count > 0 && failed.Any(j => j.ErrorKind == JobErrorKind.Permanent)) return false;
+
+        var resettable = failed.Count > 0
+            ? failed
+            : [.. jobs.Where(j => JobStatus.IsTerminal(j.Status) && !j.Skipped)];
+
+        if (resettable.Count == 0) return false;
+
+        var delay = TimeSpan.FromMinutes(Math.Pow(2, video.ConversionAttempts + 1));
+        var due = DateTimeOffset.UtcNow.Add(delay);
+
+        foreach (var job in resettable)
+        {
+            job.Status = JobStatus.Pending;
+            job.Attempts = 0;
+            job.Progress = 0;
+            job.ErrorMessage = null;
+            job.ErrorKind = null;
+            job.CompletedAt = null;
+            job.NextAttemptAt = due;
+            job.Skipped = false;
+        }
+
+        video.ConversionAttempts += 1;
+        video.ConversionStatus = VideoStatus.Processing;
+        video.ConversionError = Truncate(reason, 500);
+
+        await db.SaveChangesAsync(ct);
+
+        logger.LogWarning("Video {VideoId} yenidən növbəyə salındı ({Count} pillə, {Delay} sonra): {Reason}",
+            videoId, resettable.Count, delay, reason);
+
+        return true;
+    }
+
+    public async Task<IReadOnlyList<JobAssignment>> ClaimAsync(
+        WorkerNode node, int max, long? preferVideoId = null, CancellationToken ct = default)
+    {
+        var capacity = Math.Min(node.MaxConcurrentJobs, Settings.MaxConcurrentJobsPerNode) - node.ActiveJobs;
+        var take = Math.Min(max, capacity);
+        if (take <= 0) return [];
+
+        var lease = DateTimeOffset.UtcNow.AddMinutes(Settings.LeaseMinutes);
+
+        // Abunəlik limiti: planında icazə veriləndən çox eyni vaxtlı konversiyası
+        // olan tenant-ların işləri verilmir (digər tenant-lar davam edir).
+        var saturated = await SaturatedTenantsAsync(ct);
+
+        List<VideoJob> jobs;
+
+        await using (var tx = await db.Database.BeginTransactionAsync(ct))
+        {
+            // Cihaz konkret bir tenant-a bağlanmır: registrasiya kodu tenant-scoped olsa da,
+            // worker sadəcə icra qurğusudur və hansı tenant-ın videosu olsa da işləyə bilər.
+            // İzolyasiya iş səviyyəsindədir — hər cihaz yalnız özünə verilmiş tapşırığı görür.
+            //
+            // FOR UPDATE SKIP LOCKED: paralel işləyən API nüsxələri eyni tapşırığı götürə bilməz.
+            jobs = await db.VideoJobs
+                .FromSql($"""
+                    SELECT * FROM video_jobs
+                    WHERE deleted_at IS NULL
+                      AND status = ANY({new[] { JobStatus.Pending, JobStatus.Queued }})
+                      AND (next_attempt_at IS NULL OR next_attempt_at <= now())
+                      AND tenant_id <> ALL({saturated.ToArray()})
+                    -- Əvvəlcə ən köhnə video bitirilir, sonra növbəti. Beləliklə
+                    -- bir videonun bütün pillələri paralel paylanır və video tam
+                    -- hazır olur; əvvəlki sıralamada bütün 1080p-lər əvvəl
+                    -- götürüldüyü üçün heç bir video tamamlanmırdı.
+                    ORDER BY
+                        CASE WHEN {preferVideoId}::bigint IS NOT NULL AND video_id = {preferVideoId} THEN 0 ELSE 1 END,
+                        video_id,
+                        priority DESC,
+                        id
+                    LIMIT {take}
+                    FOR UPDATE SKIP LOCKED
+                    """)
+                .IgnoreQueryFilters()
+                .ToListAsync(ct);
+
+            if (jobs.Count == 0)
+            {
+                await tx.CommitAsync(ct);
+                return [];
+            }
+
+            foreach (var job in jobs)
+            {
+                job.Status = JobStatus.Assigned;
+                job.WorkerNodeId = node.Id;
+                job.AttemptToken = Guid.NewGuid().ToString("N");
+                job.Attempts += 1;
+                job.LeaseExpiresAt = lease;
+                job.NextAttemptAt = null;
+                job.StartedAt ??= DateTimeOffset.UtcNow;
+                job.Progress = 0;
+                job.ErrorMessage = null;
+                job.ErrorKind = null;
+                job.TenantId = node.TenantId;
+            }
+
+            node.ActiveJobs += jobs.Count;
+            await db.SaveChangesAsync(ct);
+            await tx.CommitAsync(ct);
+        }
+
+        return await BuildAssignmentsAsync(jobs, ct);
+    }
+
+    private async Task<IReadOnlyList<JobAssignment>> BuildAssignmentsAsync(List<VideoJob> jobs, CancellationToken ct)
+    {
+        var videoIds = jobs.Select(j => j.VideoId).Distinct().ToList();
+        var prefixes = jobs.Select(j => j.OutputPrefix).Distinct().ToList();
+
+        var videos = await db.Videos.IgnoreQueryFilters()
+            .Where(v => videoIds.Contains(v.Id) && v.DeletedAt == null)
+            .Select(v => new { v.Id, v.Path, v.DurationSeconds })
+            .ToListAsync(ct);
+
+        // HEAD sorğusu ilə ölçü öyrənilir: böyük videonu tanımaq üçün lazımdır.
+        var sizes = new Dictionary<long, long>();
+
+        foreach (var video in videos)
+        {
+            if (await storage.GetSizeAsync(video.Path, ct) is { } size) sizes[video.Id] = size;
+        }
+
+        // Merdiven bu versiyanın qardaş tapşırıqlarından qurulur — koordinator master
+        // playlist-i yalnız həqiqətən mövcud olan variantlardan yazır.
+        var siblings = await db.VideoJobs.IgnoreQueryFilters()
+            .Where(j => prefixes.Contains(j.OutputPrefix) && !j.Skipped && j.Status != JobStatus.Cancelled)
+            .Select(j => new { j.OutputPrefix, j.Resolution, j.TargetHeight, j.TargetBitrateKbps })
+            .ToListAsync(ct);
+
+        var expiry = TimeSpan.FromMinutes(Settings.DownloadUrlExpiryMinutes);
+        var result = new List<JobAssignment>(jobs.Count);
+
+        foreach (var job in jobs)
+        {
+            var video = videos.First(v => v.Id == job.VideoId);
+            var sourceUrl = storage.CreatePresignedGetUrl(video.Path, expiry) ?? storage.GetUrl(video.Path);
+
+            var ladder = siblings
+                .Where(s => s.OutputPrefix == job.OutputPrefix)
+                .Select(s => new EncodingProfile
+                {
+                    Name = s.Resolution,
+                    Height = s.TargetHeight,
+                    VideoBitrateKbps = s.TargetBitrateKbps
+                })
+                .OrderBy(p => p.Height)
+                .ToList();
+
+            result.Add(new JobAssignment
+            {
+                JobId = job.Id,
+                VideoId = job.VideoId,
+                Resolution = job.Resolution,
+                AttemptToken = job.AttemptToken!,
+                Attempt = job.Attempts,
+                SourceUrl = sourceUrl,
+                SourceKey = video.Path,
+                OutputPrefix = job.OutputPrefix,
+                MasterKey = NodePaths.MasterKey(job.OutputPrefix),
+                DurationSeconds = video.DurationSeconds,
+                SourceBytes = sizes.TryGetValue(video.Id, out var size) ? size : null,
+                SourceHeight = job.SourceHeight,
+                SourceWidth = job.SourceWidth,
+                SourceFps = job.SourceFps,
+                HasAudio = job.HasAudio,
+                Profile = new EncodingProfile
+                {
+                    Name = job.Resolution,
+                    Height = job.TargetHeight,
+                    VideoBitrateKbps = job.TargetBitrateKbps
+                },
+                Ladder = ladder.Count > 0 ? ladder : [new EncodingProfile
+                {
+                    Name = job.Resolution,
+                    Height = job.TargetHeight,
+                    VideoBitrateKbps = job.TargetBitrateKbps
+                }],
+                LeaseExpiresAt = job.LeaseExpiresAt ?? DateTimeOffset.UtcNow.AddMinutes(Settings.LeaseMinutes)
+            });
+        }
+        return result;
+    }
+
+    /// <summary>Abunəlik planındaki eyni vaxtlı konversiya limitini doldurmuş tenant-lar.</summary>
+    private async Task<List<long>> SaturatedTenantsAsync(CancellationToken ct)
+    {
+        var active = JobStatus.Active;
+
+        var counts = await db.VideoJobs.IgnoreQueryFilters()
+            .Where(j => j.DeletedAt == null && active.Contains(j.Status))
+            .GroupBy(j => j.TenantId)
+            .Select(g => new { TenantId = g.Key, Count = g.Count() })
+            .ToListAsync(ct);
+
+        if (counts.Count == 0) return [];
+
+        var tenants = await db.Tenants.AsNoTracking()
+            .Select(t => new { t.Id, t.PlanId })
+            .ToDictionaryAsync(t => t.Id, t => t.PlanId, ct);
+
+        var plans = await db.SubscriptionPlans.AsNoTracking()
+            .ToDictionaryAsync(p => p.Id, p => p.ConcurrentConversions, ct);
+
+        var saturated = new List<long>();
+
+        foreach (var row in counts)
+        {
+            // Paralellik yalnız AÇIQ plan təyin edilmiş tenant-lara tətbiq olunur:
+            // plan verilməmiş köhnə quraşdırmalar default planla süni şəkildə
+            // məhdudlaşdırılmamalıdır.
+            if (!tenants.TryGetValue(row.TenantId, out var planId) || planId is not long id) continue;
+            if (!plans.TryGetValue(id, out var limit)) continue;
+
+            if (limit > 0 && row.Count >= limit) saturated.Add(row.TenantId);
+        }
+
+        return saturated;
+    }
+
+    private static string? Truncate(string? value, int max)
+        => string.IsNullOrWhiteSpace(value) ? null : value.Length <= max ? value : value[..max];
+
+    private static bool IsUniqueViolation(DbUpdateException ex)
+        => ex.InnerException is PostgresException { SqlState: "23505" };
+}
