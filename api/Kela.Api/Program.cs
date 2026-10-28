@@ -130,16 +130,9 @@ Kela.Core.Common.Configuration.SecretGuard.EnsureProductionSecrets(builder.Confi
 
 var app = builder.Build();
 
-await app.Services.SeedDefaultAdminAsync(app.Configuration);
-await app.Services.SeedSubscriptionPlansAsync();
+await app.Services.MigrateAndSeedAsync(app.Configuration);
 
 app.UseMiddleware<ExceptionHandlingMiddleware>();
-
-if (app.Configuration.GetValue<bool>("Database:MigrateOnStartup"))
-{
-    using var scope = app.Services.CreateScope();
-    await scope.ServiceProvider.GetRequiredService<AppDbContext>().Database.MigrateAsync();
-}
 
 app.UseCors();
 

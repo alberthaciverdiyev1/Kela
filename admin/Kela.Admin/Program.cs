@@ -73,13 +73,11 @@ builder.Services.AddAuthorization(options =>
         .Build();
 });
 
-Kela.Core.Common.Configuration.SecretGuard.EnsureProductionSecrets(
-    builder.Configuration, builder.Environment.IsDevelopment(), requireJwt: false);
+Kela.Core.Common.Configuration.SecretGuard.EnsureProductionSecrets(builder.Configuration, builder.Environment.IsDevelopment());
 
 var app = builder.Build();
 
-await app.Services.SeedDefaultAdminAsync(app.Configuration);
-await app.Services.SeedSubscriptionPlansAsync();
+await app.Services.MigrateAndSeedAsync(app.Configuration);
 
 if (!app.Environment.IsDevelopment())
 {
