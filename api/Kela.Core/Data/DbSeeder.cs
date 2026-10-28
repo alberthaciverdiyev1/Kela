@@ -31,8 +31,8 @@ public static class DbSeeder
         // Superadmin (qlobal, tenant-sız).
         if (!await db.Users.IgnoreQueryFilters().AnyAsync(u => u.Type == UserTypes.SuperAdmin, ct))
         {
-            var email = configuration["Admin:Email"] ?? "superadmin@kela.local";
-            var password = configuration["Admin:Password"] ?? "admin123";
+            var email = Setting(configuration, "Admin:Email", "admin@kela.local");
+            var password = Setting(configuration, "Admin:Password", "admin123");
 
             db.Users.Add(new User
             {
@@ -76,10 +76,10 @@ public static class DbSeeder
     /// <summary>Hər tenant üçün default student və admin hesablarını yaradır (idempotent).</summary>
     private static async Task SeedTenantAccountsAsync(AppDbContext db, IConfiguration configuration, ILogger logger, CancellationToken ct)
     {
-        var studentEmail = configuration["DefaultAccounts:Student:Email"] ?? "student1@kela.az";
-        var studentPassword = configuration["DefaultAccounts:Student:Password"] ?? "student123";
-        var adminEmail = configuration["DefaultAccounts:Admin:Email"] ?? "admin@kela.az";
-        var adminPassword = configuration["DefaultAccounts:Admin:Password"] ?? "admin123";
+        var studentEmail = Setting(configuration, "DefaultAccounts:Student:Email", "student1@kela.az");
+        var studentPassword = Setting(configuration, "DefaultAccounts:Student:Password", "student123");
+        var adminEmail = Setting(configuration, "DefaultAccounts:Admin:Email", "admin@kela.az");
+        var adminPassword = Setting(configuration, "DefaultAccounts:Admin:Password", "admin123");
 
         var tenantIds = await db.Tenants.AsNoTracking().Select(t => t.Id).ToListAsync(ct);
         var added = 0;
@@ -122,4 +122,9 @@ public static class DbSeeder
             logger.LogWarning("{Count} default tenant hesabı yaradıldı ({Student} / {Admin}).", added, studentEmail, adminEmail);
         }
     }
+
+    // Boş dəyər "konfiqurasiya olunmayıb" sayılır — appsettings-də boş qalmış
+    // parol fallback-ı söndürməsin, boş parollu hesab yaranmasın.
+    private static string Setting(IConfiguration configuration, string key, string fallback)
+        => string.IsNullOrWhiteSpace(configuration[key]) ? fallback : configuration[key]!;
 }
