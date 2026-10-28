@@ -1038,3 +1038,43 @@ video:fullscreen {
 #sidebar[data-editing="true"] a[data-nav-key].hidden:hover .nav-eye {
     color: #dc2626;
 }
+
+/* Dashboard — aylıq mədaxil sütunları. */
+.dash-col {
+    display: flex;
+    flex: 1 1 0;
+    flex-direction: column;
+    justify-content: flex-end;
+    gap: 0.3rem;
+    height: 100%;
+    min-width: 0;
+}
+
+.dash-col-track {
+    display: flex;
+    flex: 1;
+    align-items: flex-end;
+    border-radius: 0.5rem;
+    background: #f4f7fa;
+}
+
+.dash-col-fill {
+    width: 100%;
+    border-radius: 0.5rem;
+    background: linear-gradient(180deg, #00c98f, #009e72);
+    transition: height 0.35s ease, filter 0.2s ease;
+}
+
+.dash-col:hover .dash-col-fill {
+    filter: brightness(1.08);
+}
+
+.dash-col-label {
+    overflow: hidden;
+    color: #94a3b8;
+    font-size: 10px;
+    font-weight: 600;
+    text-align: center;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}

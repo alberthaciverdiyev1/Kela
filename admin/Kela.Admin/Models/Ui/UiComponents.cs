@@ -215,6 +215,9 @@ public class StatCardModel
 
     public string ValueClass { get; set; } = "text-slate-950";
 
+    /// <summary>Dəyərin altında göstərilən qısa izah (məs. "3 yeni bu həftə").</summary>
+    public string? Hint { get; set; }
+
     /// <summary>İkonsuz, yığcam kart — çoxlu göstərici sıralandıqda.</summary>
     public bool Compact { get; set; }
 }

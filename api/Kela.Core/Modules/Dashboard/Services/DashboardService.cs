@@ -58,6 +58,20 @@ public sealed class DashboardService(AppDbContext db) : Abstractions.IDashboardS
             await attemptsQuery.CountAsync(x => x.CreatedAt >= from30, ct),
             await attemptsQuery.Where(x => x.CreatedAt >= from30).Select(x => x.StudentId).Distinct().CountAsync(ct));
 
+        var attendanceQuery = db.AttendanceRecords.AsQueryable();
+        if (ownerId is long attendanceOwner)
+        {
+            attendanceQuery = attendanceQuery.Where(a =>
+                db.Groups.Any(g => g.Id == a.GroupId && g.UserId == attendanceOwner));
+        }
+
+        var today = DateOnly.FromDateTime(DateTime.Today);
+        var todayRecords = attendanceQuery.Where(a => a.Date == today);
+        var attendance = new DashboardAttendance(
+            await todayRecords.CountAsync(ct),
+            await todayRecords.CountAsync(a => a.IsPresent, ct),
+            await todayRecords.CountAsync(a => !a.IsPresent, ct));
+
         var lessonCounts = await lessonsQuery
             .AsNoTracking()
             .GroupBy(l => l.SubjectId)
@@ -82,6 +96,6 @@ public sealed class DashboardService(AppDbContext db) : Abstractions.IDashboardS
             .Select(x => new RecentStudent(x.Id, x.FullName, x.CreatedAt))
             .ToListAsync(ct);
 
-        return new DashboardResponse(students, content, activity, topSubjects, recentStudents);
+        return new DashboardResponse(students, content, activity, attendance, topSubjects, recentStudents);
     }
 }

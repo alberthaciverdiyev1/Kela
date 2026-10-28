@@ -780,6 +780,87 @@
   <data name="Dashboard_Voices" xml:space="preserve">
     <value>Səs yazıları</value>
   </data>
+  <data name="Dashboard_Amount" xml:space="preserve">
+    <value>Məbləğ</value>
+  </data>
+  <data name="Dashboard_PlanStatus" xml:space="preserve">
+    <value>Ödəniş planları</value>
+  </data>
+  <data name="Dashboard_Greeting" xml:space="preserve">
+    <value>Salam</value>
+  </data>
+  <data name="Dashboard_NewThisWeek" xml:space="preserve">
+    <value>7 gündə yeni</value>
+  </data>
+  <data name="Dashboard_ActiveRatio" xml:space="preserve">
+    <value>{0}% aktiv</value>
+  </data>
+  <data name="Dashboard_PerGroup" xml:space="preserve">
+    <value>orta {0} şagird</value>
+  </data>
+  <data name="Dashboard_AttendanceToday" xml:space="preserve">
+    <value>Bugün davamiyyət</value>
+  </data>
+  <data name="Dashboard_AttendanceRecords" xml:space="preserve">
+    <value>{0} qeyd</value>
+  </data>
+  <data name="Dashboard_NoAttendance" xml:space="preserve">
+    <value>Hələ qeyd yoxdur</value>
+  </data>
+  <data name="Dashboard_QuickActions" xml:space="preserve">
+    <value>Sürətli keçidlər</value>
+  </data>
+  <data name="Dashboard_NewGroup" xml:space="preserve">
+    <value>Yeni qrup</value>
+  </data>
+  <data name="Dashboard_AddStudent" xml:space="preserve">
+    <value>Şagird əlavə et</value>
+  </data>
+  <data name="Dashboard_OpenKassa" xml:space="preserve">
+    <value>Kassaya keç</value>
+  </data>
+  <data name="Dashboard_Finance" xml:space="preserve">
+    <value>Kassa</value>
+  </data>
+  <data name="Dashboard_Last12" xml:space="preserve">
+    <value>Son 12 ay</value>
+  </data>
+  <data name="Dashboard_ThisMonth" xml:space="preserve">
+    <value>Bu ay yığılıb</value>
+  </data>
+  <data name="Dashboard_Today" xml:space="preserve">
+    <value>Bu gün</value>
+  </data>
+  <data name="Dashboard_Expected" xml:space="preserve">
+    <value>Bu ay gözlənilən</value>
+  </data>
+  <data name="Dashboard_Overdue" xml:space="preserve">
+    <value>Gecikmiş borc</value>
+  </data>
+  <data name="Dashboard_Projected" xml:space="preserve">
+    <value>Gələn ay (proqnoz)</value>
+  </data>
+  <data name="Dashboard_ActivePlans" xml:space="preserve">
+    <value>Aktiv plan</value>
+  </data>
+  <data name="Dashboard_DueSoon" xml:space="preserve">
+    <value>7 gündə bitir</value>
+  </data>
+  <data name="Dashboard_PayingStudents" xml:space="preserve">
+    <value>Ödəyən şagird</value>
+  </data>
+  <data name="Dashboard_RecentPayments" xml:space="preserve">
+    <value>Son ödənişlər</value>
+  </data>
+  <data name="Dashboard_NoPayments" xml:space="preserve">
+    <value>Hələ ödəniş yoxdur</value>
+  </data>
+  <data name="Dashboard_VsLastMonth" xml:space="preserve">
+    <value>keçən aya nisbətən {0}%</value>
+  </data>
+  <data name="Dashboard_SeeAll" xml:space="preserve">
+    <value>Hamısı</value>
+  </data>
   <data name="Dashboard_New7d" xml:space="preserve">
     <value>Yeni (7 gün)</value>
   </data>

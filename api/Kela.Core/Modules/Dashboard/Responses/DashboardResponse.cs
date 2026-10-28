@@ -7,6 +7,8 @@ public record DashboardContent(
 
 public record DashboardActivity(int QuizAttempts30d, int StudentsAttempted30d);
 
+public record DashboardAttendance(int TodayRecords, int TodayPresent, int TodayAbsent);
+
 public record TopSubject(long SubjectId, string Name, int LessonCount);
 
 public record RecentStudent(long Id, string FullName, DateTimeOffset CreatedAt);
@@ -15,5 +17,6 @@ public record DashboardResponse(
     DashboardStudents Students,
     DashboardContent Content,
     DashboardActivity Activity,
+    DashboardAttendance Attendance,
     IReadOnlyList<TopSubject> TopSubjects,
     IReadOnlyList<RecentStudent> RecentStudents);

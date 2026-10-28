@@ -780,6 +780,87 @@
   <data name="Dashboard_Voices" xml:space="preserve">
     <value>Voice notes</value>
   </data>
+  <data name="Dashboard_Amount" xml:space="preserve">
+    <value>Amount</value>
+  </data>
+  <data name="Dashboard_PlanStatus" xml:space="preserve">
+    <value>Payment plans</value>
+  </data>
+  <data name="Dashboard_Greeting" xml:space="preserve">
+    <value>Hello</value>
+  </data>
+  <data name="Dashboard_NewThisWeek" xml:space="preserve">
+    <value>new in 7 days</value>
+  </data>
+  <data name="Dashboard_ActiveRatio" xml:space="preserve">
+    <value>{0}% active</value>
+  </data>
+  <data name="Dashboard_PerGroup" xml:space="preserve">
+    <value>avg. {0} per group</value>
+  </data>
+  <data name="Dashboard_AttendanceToday" xml:space="preserve">
+    <value>Today's attendance</value>
+  </data>
+  <data name="Dashboard_AttendanceRecords" xml:space="preserve">
+    <value>{0} records</value>
+  </data>
+  <data name="Dashboard_NoAttendance" xml:space="preserve">
+    <value>No records yet</value>
+  </data>
+  <data name="Dashboard_QuickActions" xml:space="preserve">
+    <value>Quick actions</value>
+  </data>
+  <data name="Dashboard_NewGroup" xml:space="preserve">
+    <value>New group</value>
+  </data>
+  <data name="Dashboard_AddStudent" xml:space="preserve">
+    <value>Add student</value>
+  </data>
+  <data name="Dashboard_OpenKassa" xml:space="preserve">
+    <value>Open cash desk</value>
+  </data>
+  <data name="Dashboard_Finance" xml:space="preserve">
+    <value>Cash desk</value>
+  </data>
+  <data name="Dashboard_Last12" xml:space="preserve">
+    <value>Last 12 months</value>
+  </data>
+  <data name="Dashboard_ThisMonth" xml:space="preserve">
+    <value>Collected this month</value>
+  </data>
+  <data name="Dashboard_Today" xml:space="preserve">
+    <value>Today</value>
+  </data>
+  <data name="Dashboard_Expected" xml:space="preserve">
+    <value>Expected this month</value>
+  </data>
+  <data name="Dashboard_Overdue" xml:space="preserve">
+    <value>Overdue</value>
+  </data>
+  <data name="Dashboard_Projected" xml:space="preserve">
+    <value>Next month (forecast)</value>
+  </data>
+  <data name="Dashboard_ActivePlans" xml:space="preserve">
+    <value>Active plans</value>
+  </data>
+  <data name="Dashboard_DueSoon" xml:space="preserve">
+    <value>Due within 7 days</value>
+  </data>
+  <data name="Dashboard_PayingStudents" xml:space="preserve">
+    <value>Paying students</value>
+  </data>
+  <data name="Dashboard_RecentPayments" xml:space="preserve">
+    <value>Recent payments</value>
+  </data>
+  <data name="Dashboard_NoPayments" xml:space="preserve">
+    <value>No payments yet</value>
+  </data>
+  <data name="Dashboard_VsLastMonth" xml:space="preserve">
+    <value>{0}% vs last month</value>
+  </data>
+  <data name="Dashboard_SeeAll" xml:space="preserve">
+    <value>View all</value>
+  </data>
   <data name="Dashboard_New7d" xml:space="preserve">
     <value>New (7 days)</value>
   </data>
