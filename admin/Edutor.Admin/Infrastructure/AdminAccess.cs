@@ -13,6 +13,10 @@ public static class AdminAccess
     public static long CurrentTenantId(this ClaimsPrincipal user) =>
         long.TryParse(user.FindFirst("tenant_id")?.Value, out var id) ? id : 0;
 
+    /// <summary>Superadmin heç bir tenant-a keçməyibsə platforma səviyyəsində baxır.</summary>
+    public static bool IsPlatformOwner(this ClaimsPrincipal user) =>
+        user.IsInRole(UserTypes.SuperAdmin) && string.IsNullOrEmpty(user.FindFirst("tenant_name")?.Value);
+
     public static long? CurrentUserId(this ClaimsPrincipal user) =>
         long.TryParse(user.FindFirst(ClaimTypes.NameIdentifier)?.Value, out var id) ? id : null;
 }

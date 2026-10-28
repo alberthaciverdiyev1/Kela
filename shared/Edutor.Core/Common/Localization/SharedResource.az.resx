@@ -2064,4 +2064,133 @@
   <data name="DatePicker_NextMonth" xml:space="preserve">
     <value>Növbəti ay</value>
   </data>
+  <data name="Nav_Plans" xml:space="preserve">
+    <value>Planlar</value>
+  </data>
+  <data name="Nav_PlatformFinance" xml:space="preserve">
+    <value>Platform gəliri</value>
+  </data>
+  <data name="Revenue_Title" xml:space="preserve">
+    <value>Platform gəliri</value>
+  </data>
+  <data name="Revenue_Subtitle" xml:space="preserve">
+    <value>Bütün tenant-lardan yığılan abunəlik və əlavə paket ödənişləri.</value>
+  </data>
+  <data name="Revenue_BackDashboard" xml:space="preserve">
+    <value>İdarə panelinə qayıt</value>
+  </data>
+  <data name="Revenue_Mrr" xml:space="preserve">
+    <value>MRR</value>
+  </data>
+  <data name="Revenue_MrrHint" xml:space="preserve">
+    <value>aylıq təkrar gəlir</value>
+  </data>
+  <data name="Revenue_Arr" xml:space="preserve">
+    <value>ARR</value>
+  </data>
+  <data name="Revenue_ArrHint" xml:space="preserve">
+    <value>illik təkrar gəlir</value>
+  </data>
+  <data name="Revenue_ThisMonth" xml:space="preserve">
+    <value>Bu ay</value>
+  </data>
+  <data name="Revenue_ThisMonthHint" xml:space="preserve">
+    <value>abunəlik + əlavə paketlər</value>
+  </data>
+  <data name="Revenue_LastMonth" xml:space="preserve">
+    <value>Keçən ay</value>
+  </data>
+  <data name="Revenue_LastMonthHint" xml:space="preserve">
+    <value>əvvəlki ay</value>
+  </data>
+  <data name="Revenue_Addons" xml:space="preserve">
+    <value>Əlavə paketlər</value>
+  </data>
+  <data name="Revenue_AddonsHint" xml:space="preserve">
+    <value>bu ay alınan əlavə paketlər</value>
+  </data>
+  <data name="Revenue_AllTime" xml:space="preserve">
+    <value>Ümumi gəlir</value>
+  </data>
+  <data name="Revenue_AllTimeHint" xml:space="preserve">
+    <value>ilk abunəlikdən bəri</value>
+  </data>
+  <data name="Revenue_PayingTenants" xml:space="preserve">
+    <value>Ödəyən tenant</value>
+  </data>
+  <data name="Revenue_PayingTenantsHint" xml:space="preserve">
+    <value>{0} ödəyən tenant</value>
+  </data>
+  <data name="Revenue_ActiveTenants" xml:space="preserve">
+    <value>Aktiv tenant</value>
+  </data>
+  <data name="Revenue_PendingTenants" xml:space="preserve">
+    <value>Gözləyən müraciət</value>
+  </data>
+  <data name="Revenue_TotalTenants" xml:space="preserve">
+    <value>Ümumi tenant</value>
+  </data>
+  <data name="Revenue_TotalTenantsHint" xml:space="preserve">
+    <value>cəmi {0} tenant</value>
+  </data>
+  <data name="Revenue_MonthlyChart" xml:space="preserve">
+    <value>Aylar üzrə gəlir (son 12 ay)</value>
+  </data>
+  <data name="Revenue_SplitHint" xml:space="preserve">
+    <value>Abunəlik + əlavə paketlər, valyuta üzrə</value>
+  </data>
+  <data name="Revenue_PlanBreakdown" xml:space="preserve">
+    <value>Planlar üzrə gəlir</value>
+  </data>
+  <data name="Revenue_TenantRevenue" xml:space="preserve">
+    <value>Tenant-lar üzrə gəlir</value>
+  </data>
+  <data name="Revenue_Tenant" xml:space="preserve">
+    <value>Tenant</value>
+  </data>
+  <data name="Revenue_Plan" xml:space="preserve">
+    <value>Plan</value>
+  </data>
+  <data name="Revenue_MonthlyFee" xml:space="preserve">
+    <value>Aylıq ödəniş</value>
+  </data>
+  <data name="Revenue_TenantCount" xml:space="preserve">
+    <value>Tenant sayı</value>
+  </data>
+  <data name="Revenue_AddonThisMonth" xml:space="preserve">
+    <value>Əlavə paket</value>
+  </data>
+  <data name="Revenue_StartedAt" xml:space="preserve">
+    <value>Başlama</value>
+  </data>
+  <data name="Revenue_ExpiresAt" xml:space="preserve">
+    <value>Bitmə</value>
+  </data>
+  <data name="Revenue_NoPlan" xml:space="preserve">
+    <value>Plan yoxdur</value>
+  </data>
+  <data name="Revenue_GrowthTop" xml:space="preserve">
+    <value>keçən aya nisbətən {0}%</value>
+  </data>
+  <data name="Revenue_StatusActive" xml:space="preserve">
+    <value>Aktiv</value>
+  </data>
+  <data name="Revenue_StatusPending" xml:space="preserve">
+    <value>Gözləyir</value>
+  </data>
+  <data name="Revenue_StatusSuspended" xml:space="preserve">
+    <value>Dayandırılıb</value>
+  </data>
+  <data name="Revenue_StatusExpired" xml:space="preserve">
+    <value>Müddəti bitib</value>
+  </data>
+  <data name="Revenue_PlanDistribution" xml:space="preserve">
+    <value>Planlar üzrə tenant</value>
+  </data>
+  <data name="Revenue_DeltaGrowth" xml:space="preserve">
+    <value>{0}% keçən aya nisbətən</value>
+  </data>
+  <data name="Revenue_NoLastMonth" xml:space="preserve">
+    <value>Keçən ay gəlir olmayıb</value>
+  </data>
 </root>

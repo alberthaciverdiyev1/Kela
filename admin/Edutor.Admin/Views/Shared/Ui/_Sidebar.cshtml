@@ -6,8 +6,9 @@
     var isIndividualTeacher = tenantAccountType == "teacher";
     var isAdmin = User.IsInRole(AuthRoles.Admin) || User.IsInRole(AuthRoles.SuperAdmin);
     var isSuperAdmin = User.IsInRole(AuthRoles.SuperAdmin);
-    var canSeeKassa = isAdmin || isIndividualTeacher;
     var switched = !string.IsNullOrEmpty(User.FindFirst("tenant_name")?.Value);
+    var isPlatformOwner = isSuperAdmin && !switched;
+    var canSeeKassa = (isAdmin || isIndividualTeacher) && !isPlatformOwner;
     var brandLogo = ViewData["BrandLogo"] as string;
 
     // Hər istifadəçi menyunu özünə uyğunlaşdırır — gizlədilən açarlar users.hidden_sidebar_items-də saxlanır.
@@ -156,11 +157,24 @@
 
         <div class="space-y-1">
             <p class="px-3 pb-1 text-[11px] font-bold uppercase tracking-wider text-slate-400">@L["Sidebar_SectionFinance"]</p>
+            @if (isPlatformOwner)
+            {
+                <a href="/platform-finance" data-nav-key="platform-finance"
+                   class="flex h-10 items-center gap-3 rounded-xl px-3 text-[15px] font-medium transition @Active("PlatformFinance") @IsHidden("platform-finance")">
+                    <svg class="h-5 w-5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M3 17l6-6 4 4 8-8M21 7v6h-6"/>
+                    </svg>
+                    @L["Nav_PlatformFinance"]
+                </a>
+            }
+            @if (!isPlatformOwner)
+            {
             <a href="/subscription" data-nav-key="subscription"
                class="flex h-10 items-center gap-3 rounded-xl px-3 text-[15px] font-medium transition @Active("Subscription") @IsHidden("subscription")">
                 <svg class="h-5 w-5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M12 3v18M17 6H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
                 Abunəlik
             </a>
+            }
             @if (isSuperAdmin)
             {
                 <a href="/plan" data-nav-key="plan"
@@ -169,7 +183,7 @@
                     Planlar
                 </a>
             }
-            @if (isAdmin)
+            @if (isAdmin && !isPlatformOwner)
             {
                 <a href="/payment" data-nav-key="payment"
                    class="flex h-10 items-center gap-3 rounded-xl px-3 text-[15px] font-medium transition @Active("Payment") @IsHidden("payment")">

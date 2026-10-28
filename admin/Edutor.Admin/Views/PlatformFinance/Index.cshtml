@@ -1,0 +1,189 @@
+@model Edutor.Core.Modules.Subscription.Responses.PlatformFinanceResponse
+@{
+    ViewData["Title"] = "Platform gəliri";
+
+    var payload = new
+    {
+        currencies = Model.Currencies.Select(c => new
+        {
+            currency = c.Currency,
+            mrr = c.Mrr,
+            arr = c.Arr,
+            thisMonth = c.RevenueThisMonth,
+            lastMonth = c.RevenueLastMonth,
+            addons = c.AddonThisMonth,
+            allTime = c.RevenueAllTime,
+            paying = c.PayingTenants
+        }),
+        monthly = Model.Monthly.Select(m => new { period = m.Period, currency = m.Currency, total = m.Total }),
+        stats = new { total = Model.TotalTenants, active = Model.ActiveTenants, pending = Model.PendingTenants },
+        i18n = new { growth = L["Revenue_DeltaGrowth"].Value, noLastMonth = L["Revenue_NoLastMonth"].Value },
+        tenants = Model.Tenants.Select(t => new
+        {
+            id = t.TenantId,
+            name = t.TenantName,
+            plan = t.PlanName,
+            currency = t.Currency,
+            revenue = t.RevenueThisMonth,
+            status = t.Status
+        })
+    };
+
+    string StatusLabel(string status) => status switch
+    {
+        "active" => L["Revenue_StatusActive"],
+        "pending" => L["Revenue_StatusPending"],
+        "suspended" => L["Revenue_StatusSuspended"],
+        _ => L["Revenue_StatusExpired"]
+    };
+
+    string StatusTone(string status) => status switch
+    {
+        "active" => "badge-success",
+        "pending" => "badge-warning",
+        "suspended" => "badge-neutral",
+        _ => "badge-danger"
+    };
+}
+
+<script>window.PLATFORM_FINANCE = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(payload));</script>
+
+<section class="admin-page space-y-5">
+    <div class="flex flex-wrap items-center justify-between gap-3">
+        <div>
+            <h1 class="text-xl font-extrabold text-slate-900">@L["Revenue_Title"]</h1>
+            <p class="mt-1 text-sm text-slate-500">@L["Revenue_Subtitle"]</p>
+        </div>
+        <div class="flex flex-wrap items-center gap-2">
+            @if (Model.Currencies.Count > 1)
+            {
+                <select id="pfCurrency" class="admin-field w-28">
+                    @foreach (var currency in Model.Currencies)
+                    {
+                        <option value="@currency.Currency">@currency.Currency</option>
+                    }
+                </select>
+            }
+            <a href="/dashboard" class="admin-button-secondary">@L["Revenue_BackDashboard"]</a>
+        </div>
+    </div>
+
+    <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6">
+        @foreach (var card in new (string Id, string Label, string Hint)[]
+        {
+            ("pf-mrr", L["Revenue_Mrr"], L["Revenue_MrrHint"]),
+            ("pf-arr", L["Revenue_Arr"], L["Revenue_ArrHint"]),
+            ("pf-this", L["Revenue_ThisMonth"], L["Revenue_ThisMonthHint"]),
+            ("pf-last", L["Revenue_LastMonth"], L["Revenue_LastMonthHint"]),
+            ("pf-addons", L["Revenue_Addons"], L["Revenue_AddonsHint"]),
+            ("pf-alltime", L["Revenue_AllTime"], L["Revenue_AllTimeHint"])
+        })
+        {
+            <div class="admin-card p-4">
+                <p class="text-xs font-semibold uppercase tracking-wide text-slate-400">@card.Label</p>
+                <p id="@card.Id" class="mt-1 text-xl font-extrabold text-slate-900">—</p>
+                <p class="mt-1 text-xs text-slate-400">@card.Hint</p>
+            </div>
+        }
+    </div>
+
+    <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        @foreach (var card in new (string Id, string Label, string Hint)[]
+        {
+            ("pf-paying", L["Revenue_PayingTenants"], ""),
+            ("pf-active", L["Revenue_ActiveTenants"], ""),
+            ("pf-pending", L["Revenue_PendingTenants"], ""),
+            ("pf-total", L["Revenue_TotalTenants"], "")
+        })
+        {
+            <div class="admin-card p-4">
+                <p class="text-xs font-semibold uppercase tracking-wide text-slate-400">@card.Label</p>
+                <p id="@card.Id" class="mt-1 text-2xl font-extrabold text-slate-900">—</p>
+            </div>
+        }
+    </div>
+
+    <div class="admin-card p-5">
+        <div class="flex flex-wrap items-center justify-between gap-2">
+            <h3 class="text-base font-bold text-slate-900">@L["Revenue_MonthlyChart"]</h3>
+            <span id="pfDelta" class="text-sm font-semibold text-slate-500"></span>
+        </div>
+        <div id="pfChart" class="mt-4 flex h-44 items-end gap-1.5"></div>
+        <p id="pfChartEmpty" class="mt-3 hidden text-sm text-slate-400">@L["Common_NoData"]</p>
+    </div>
+
+    <div class="admin-card">
+        <div class="admin-toolbar">
+            <h3 class="text-base font-bold text-slate-900">@L["Revenue_PlanBreakdown"]</h3>
+        </div>
+        <div class="overflow-x-auto">
+            <table class="admin-table">
+                <thead>
+                    <tr>
+                        <th>@L["Revenue_Plan"]</th>
+                        <th class="text-right">@L["Revenue_MonthlyFee"]</th>
+                        <th class="text-right">@L["Revenue_TenantCount"]</th>
+                        <th class="text-right">@L["Revenue_Mrr"]</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var plan in Model.Plans)
+                    {
+                        <tr>
+                            <td class="font-semibold text-slate-800">@plan.PlanName</td>
+                            <td class="whitespace-nowrap text-right text-slate-700">@plan.MonthlyPrice.ToString("N2") @plan.Currency</td>
+                            <td class="text-right text-slate-700">@plan.Tenants</td>
+                            <td class="whitespace-nowrap text-right font-bold text-slate-900">@plan.Mrr.ToString("N2") @plan.Currency</td>
+                        </tr>
+                    }
+                    @if (Model.Plans.Count == 0)
+                    {
+                        <tr><td colspan="4" class="text-sm text-slate-400">@L["Common_NoData"]</td></tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="admin-card">
+        <div class="admin-toolbar flex flex-wrap items-center justify-between gap-2">
+            <h3 class="text-base font-bold text-slate-900">@L["Revenue_TenantRevenue"]</h3>
+            <a href="/tenant" class="text-sm font-semibold text-primary hover:text-primary-700">@L["Nav_Tenants"] →</a>
+        </div>
+        <div class="overflow-x-auto">
+            <table class="admin-table">
+                <thead>
+                    <tr>
+                        <th>@L["Revenue_Tenant"]</th>
+                        <th>@L["Revenue_Plan"]</th>
+                        <th>@L["Common_Status"]</th>
+                        <th>@L["Revenue_StartedAt"]</th>
+                        <th>@L["Revenue_ExpiresAt"]</th>
+                        <th class="text-right">@L["Revenue_MonthlyFee"]</th>
+                        <th class="text-right">@L["Revenue_AddonThisMonth"]</th>
+                        <th class="text-right">@L["Revenue_ThisMonth"]</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var row in Model.Tenants)
+                    {
+                        <tr>
+                            <td class="font-semibold text-slate-800">@row.TenantName</td>
+                            <td class="text-slate-600">@(row.PlanName ?? L["Revenue_NoPlan"].Value)</td>
+                            <td><span class="badge @StatusTone(row.Status)">@StatusLabel(row.Status)</span></td>
+                            <td class="whitespace-nowrap text-slate-500">@(row.PlanStartedAt?.ToLocalTime().ToString("dd.MM.yyyy") ?? "—")</td>
+                            <td class="whitespace-nowrap text-slate-500">@(row.PlanExpiresAt?.ToLocalTime().ToString("dd.MM.yyyy") ?? "—")</td>
+                            <td class="whitespace-nowrap text-right text-slate-700">@row.MonthlyPrice.ToString("N2") @row.Currency</td>
+                            <td class="whitespace-nowrap text-right text-slate-700">@row.AddonThisMonth.ToString("N2") @row.Currency</td>
+                            <td class="whitespace-nowrap text-right font-bold text-slate-900">@row.RevenueThisMonth.ToString("N2") @row.Currency</td>
+                        </tr>
+                    }
+                    @if (Model.Tenants.Count == 0)
+                    {
+                        <tr><td colspan="8" class="text-sm text-slate-400">@L["Common_NoData"]</td></tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</section>

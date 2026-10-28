@@ -2064,4 +2064,133 @@
   <data name="DatePicker_NextMonth" xml:space="preserve">
     <value>Следующий месяц</value>
   </data>
+  <data name="Nav_Plans" xml:space="preserve">
+    <value>Тарифы</value>
+  </data>
+  <data name="Nav_PlatformFinance" xml:space="preserve">
+    <value>Доход платформы</value>
+  </data>
+  <data name="Revenue_Title" xml:space="preserve">
+    <value>Доход платформы</value>
+  </data>
+  <data name="Revenue_Subtitle" xml:space="preserve">
+    <value>Оплаты подписок и дополнительных пакетов от всех tenant-ов.</value>
+  </data>
+  <data name="Revenue_BackDashboard" xml:space="preserve">
+    <value>Вернуться на панель</value>
+  </data>
+  <data name="Revenue_Mrr" xml:space="preserve">
+    <value>MRR</value>
+  </data>
+  <data name="Revenue_MrrHint" xml:space="preserve">
+    <value>ежемесячный повторяющийся доход</value>
+  </data>
+  <data name="Revenue_Arr" xml:space="preserve">
+    <value>ARR</value>
+  </data>
+  <data name="Revenue_ArrHint" xml:space="preserve">
+    <value>годовой повторяющийся доход</value>
+  </data>
+  <data name="Revenue_ThisMonth" xml:space="preserve">
+    <value>Этот месяц</value>
+  </data>
+  <data name="Revenue_ThisMonthHint" xml:space="preserve">
+    <value>подписки + доп. пакеты</value>
+  </data>
+  <data name="Revenue_LastMonth" xml:space="preserve">
+    <value>Прошлый месяц</value>
+  </data>
+  <data name="Revenue_LastMonthHint" xml:space="preserve">
+    <value>предыдущий месяц</value>
+  </data>
+  <data name="Revenue_Addons" xml:space="preserve">
+    <value>Доп. пакеты</value>
+  </data>
+  <data name="Revenue_AddonsHint" xml:space="preserve">
+    <value>доп. пакеты за этот месяц</value>
+  </data>
+  <data name="Revenue_AllTime" xml:space="preserve">
+    <value>Общий доход</value>
+  </data>
+  <data name="Revenue_AllTimeHint" xml:space="preserve">
+    <value>с первой подписки</value>
+  </data>
+  <data name="Revenue_PayingTenants" xml:space="preserve">
+    <value>Платящие tenant</value>
+  </data>
+  <data name="Revenue_PayingTenantsHint" xml:space="preserve">
+    <value>{0} платящих tenant</value>
+  </data>
+  <data name="Revenue_ActiveTenants" xml:space="preserve">
+    <value>Активные tenant</value>
+  </data>
+  <data name="Revenue_PendingTenants" xml:space="preserve">
+    <value>Ожидающие заявки</value>
+  </data>
+  <data name="Revenue_TotalTenants" xml:space="preserve">
+    <value>Всего tenant</value>
+  </data>
+  <data name="Revenue_TotalTenantsHint" xml:space="preserve">
+    <value>всего {0} tenant</value>
+  </data>
+  <data name="Revenue_MonthlyChart" xml:space="preserve">
+    <value>Доход по месяцам (последние 12)</value>
+  </data>
+  <data name="Revenue_SplitHint" xml:space="preserve">
+    <value>Подписки + доп. пакеты, по валютам</value>
+  </data>
+  <data name="Revenue_PlanBreakdown" xml:space="preserve">
+    <value>Доход по тарифам</value>
+  </data>
+  <data name="Revenue_TenantRevenue" xml:space="preserve">
+    <value>Доход по tenant-ам</value>
+  </data>
+  <data name="Revenue_Tenant" xml:space="preserve">
+    <value>Tenant</value>
+  </data>
+  <data name="Revenue_Plan" xml:space="preserve">
+    <value>Тариф</value>
+  </data>
+  <data name="Revenue_MonthlyFee" xml:space="preserve">
+    <value>Месячная плата</value>
+  </data>
+  <data name="Revenue_TenantCount" xml:space="preserve">
+    <value>Кол-во tenant</value>
+  </data>
+  <data name="Revenue_AddonThisMonth" xml:space="preserve">
+    <value>Доп. пакет</value>
+  </data>
+  <data name="Revenue_StartedAt" xml:space="preserve">
+    <value>Начало</value>
+  </data>
+  <data name="Revenue_ExpiresAt" xml:space="preserve">
+    <value>Окончание</value>
+  </data>
+  <data name="Revenue_NoPlan" xml:space="preserve">
+    <value>Нет тарифа</value>
+  </data>
+  <data name="Revenue_GrowthTop" xml:space="preserve">
+    <value>{0}% к прошлому месяцу</value>
+  </data>
+  <data name="Revenue_StatusActive" xml:space="preserve">
+    <value>Активен</value>
+  </data>
+  <data name="Revenue_StatusPending" xml:space="preserve">
+    <value>Ожидает</value>
+  </data>
+  <data name="Revenue_StatusSuspended" xml:space="preserve">
+    <value>Приостановлен</value>
+  </data>
+  <data name="Revenue_StatusExpired" xml:space="preserve">
+    <value>Истёк</value>
+  </data>
+  <data name="Revenue_PlanDistribution" xml:space="preserve">
+    <value>Tenant по тарифам</value>
+  </data>
+  <data name="Revenue_DeltaGrowth" xml:space="preserve">
+    <value>{0}% к прошлому месяцу</value>
+  </data>
+  <data name="Revenue_NoLastMonth" xml:space="preserve">
+    <value>В прошлом месяце дохода не было</value>
+  </data>
 </root>

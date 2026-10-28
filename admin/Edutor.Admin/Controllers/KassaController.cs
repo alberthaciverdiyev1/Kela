@@ -22,6 +22,9 @@ public sealed class KassaController(
     [HttpGet]
     public async Task<IActionResult> Index(CancellationToken ct)
     {
+        // Platforma sahibi (superadmin, tenant seçməmiş) tenant kassası yerinə platform gəlirini görür.
+        if (User.IsPlatformOwner()) return RedirectToAction("Index", "PlatformFinance");
+
         if (!await CanAccessAsync(ct)) return Forbid();
 
         ViewData["Scripts"] = new[] { "~/js/pages/kassa/index.js" };

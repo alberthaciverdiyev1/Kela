@@ -2064,4 +2064,133 @@
   <data name="DatePicker_NextMonth" xml:space="preserve">
     <value>Next month</value>
   </data>
+  <data name="Nav_Plans" xml:space="preserve">
+    <value>Plans</value>
+  </data>
+  <data name="Nav_PlatformFinance" xml:space="preserve">
+    <value>Platform revenue</value>
+  </data>
+  <data name="Revenue_Title" xml:space="preserve">
+    <value>Platform revenue</value>
+  </data>
+  <data name="Revenue_Subtitle" xml:space="preserve">
+    <value>Subscription and add-on payments collected from all tenants.</value>
+  </data>
+  <data name="Revenue_BackDashboard" xml:space="preserve">
+    <value>Back to dashboard</value>
+  </data>
+  <data name="Revenue_Mrr" xml:space="preserve">
+    <value>MRR</value>
+  </data>
+  <data name="Revenue_MrrHint" xml:space="preserve">
+    <value>recurring monthly revenue</value>
+  </data>
+  <data name="Revenue_Arr" xml:space="preserve">
+    <value>ARR</value>
+  </data>
+  <data name="Revenue_ArrHint" xml:space="preserve">
+    <value>annualised recurring revenue</value>
+  </data>
+  <data name="Revenue_ThisMonth" xml:space="preserve">
+    <value>This month</value>
+  </data>
+  <data name="Revenue_ThisMonthHint" xml:space="preserve">
+    <value>subscriptions + add-ons</value>
+  </data>
+  <data name="Revenue_LastMonth" xml:space="preserve">
+    <value>Last month</value>
+  </data>
+  <data name="Revenue_LastMonthHint" xml:space="preserve">
+    <value>previous month</value>
+  </data>
+  <data name="Revenue_Addons" xml:space="preserve">
+    <value>Add-ons</value>
+  </data>
+  <data name="Revenue_AddonsHint" xml:space="preserve">
+    <value>extra packages this month</value>
+  </data>
+  <data name="Revenue_AllTime" xml:space="preserve">
+    <value>All-time revenue</value>
+  </data>
+  <data name="Revenue_AllTimeHint" xml:space="preserve">
+    <value>since the first subscription</value>
+  </data>
+  <data name="Revenue_PayingTenants" xml:space="preserve">
+    <value>Paying tenants</value>
+  </data>
+  <data name="Revenue_PayingTenantsHint" xml:space="preserve">
+    <value>{0} paying tenants</value>
+  </data>
+  <data name="Revenue_ActiveTenants" xml:space="preserve">
+    <value>Active tenants</value>
+  </data>
+  <data name="Revenue_PendingTenants" xml:space="preserve">
+    <value>Pending requests</value>
+  </data>
+  <data name="Revenue_TotalTenants" xml:space="preserve">
+    <value>Total tenants</value>
+  </data>
+  <data name="Revenue_TotalTenantsHint" xml:space="preserve">
+    <value>{0} tenants in total</value>
+  </data>
+  <data name="Revenue_MonthlyChart" xml:space="preserve">
+    <value>Revenue by month (last 12 months)</value>
+  </data>
+  <data name="Revenue_SplitHint" xml:space="preserve">
+    <value>Subscriptions + add-ons, per currency</value>
+  </data>
+  <data name="Revenue_PlanBreakdown" xml:space="preserve">
+    <value>Revenue by plan</value>
+  </data>
+  <data name="Revenue_TenantRevenue" xml:space="preserve">
+    <value>Revenue by tenant</value>
+  </data>
+  <data name="Revenue_Tenant" xml:space="preserve">
+    <value>Tenant</value>
+  </data>
+  <data name="Revenue_Plan" xml:space="preserve">
+    <value>Plan</value>
+  </data>
+  <data name="Revenue_MonthlyFee" xml:space="preserve">
+    <value>Monthly fee</value>
+  </data>
+  <data name="Revenue_TenantCount" xml:space="preserve">
+    <value>Tenants</value>
+  </data>
+  <data name="Revenue_AddonThisMonth" xml:space="preserve">
+    <value>Add-ons</value>
+  </data>
+  <data name="Revenue_StartedAt" xml:space="preserve">
+    <value>Started</value>
+  </data>
+  <data name="Revenue_ExpiresAt" xml:space="preserve">
+    <value>Expires</value>
+  </data>
+  <data name="Revenue_NoPlan" xml:space="preserve">
+    <value>No plan</value>
+  </data>
+  <data name="Revenue_GrowthTop" xml:space="preserve">
+    <value>{0}% vs last month</value>
+  </data>
+  <data name="Revenue_StatusActive" xml:space="preserve">
+    <value>Active</value>
+  </data>
+  <data name="Revenue_StatusPending" xml:space="preserve">
+    <value>Pending</value>
+  </data>
+  <data name="Revenue_StatusSuspended" xml:space="preserve">
+    <value>Suspended</value>
+  </data>
+  <data name="Revenue_StatusExpired" xml:space="preserve">
+    <value>Expired</value>
+  </data>
+  <data name="Revenue_PlanDistribution" xml:space="preserve">
+    <value>Tenants by plan</value>
+  </data>
+  <data name="Revenue_DeltaGrowth" xml:space="preserve">
+    <value>{0}% vs last month</value>
+  </data>
+  <data name="Revenue_NoLastMonth" xml:space="preserve">
+    <value>No revenue last month</value>
+  </data>
 </root>
