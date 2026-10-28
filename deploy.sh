@@ -199,8 +199,16 @@ build_release() {
     log "publish web (WASM)"
     dotnet publish "$SRC_DIR/web/Edutor.App.Web" -c Release -o "$RELEASE/web" --nologo -v q
 
-    [[ -s $RELEASE/web/wwwroot/_content/Edutor.App.Shared/css/app.css ]] \
-        || fail "web CSS missing from the publish output"
+    local css=$RELEASE/web/wwwroot/_content/Edutor.App.Shared/css/app.css
+    [[ -s $css ]] || fail "web CSS missing from the publish output"
+
+    # Cloudflare and browsers cache static files by URL; without a content hash a
+    # stale or previously-missing app.css keeps being served after a deploy.
+    local css_hash
+    css_hash=$(sha256sum "$css" | cut -c1-10)
+    sed -i "s|_content/Edutor.App.Shared/css/app.css\"|_content/Edutor.App.Shared/css/app.css?v=$css_hash\"|" \
+        "$RELEASE/web/wwwroot/index.html"
+    rm -f "$RELEASE/web/wwwroot/index.html.br" "$RELEASE/web/wwwroot/index.html.gz"
 
     cat > "$RELEASE/web/wwwroot/appsettings.json" <<EOF
 {
