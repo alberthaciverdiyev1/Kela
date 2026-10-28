@@ -29,7 +29,7 @@
         const search = document.getElementById('search').value.trim();
         const status = document.getElementById('filter_status').value;
 
-        const data = await AdminUI.get(`/homework/${homeworkId}/assignments?per_page=500&search=${encodeURIComponent(search)}&status=${encodeURIComponent(status)}`);
+        const data = await AdminUI.get(`/homework/${homeworkId}/assignments?perPage=500&search=${encodeURIComponent(search)}&status=${encodeURIComponent(status)}`);
         assignments = data.data || [];
 
         AdminUI.table('rows', assignments.map((a, i) => [
