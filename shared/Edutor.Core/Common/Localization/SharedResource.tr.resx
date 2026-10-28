@@ -729,6 +729,15 @@
   <data name="Common_Inactive" xml:space="preserve">
     <value>Pasif</value>
   </data>
+  <data name="Login_PickOrg" xml:space="preserve">
+    <value>Kurs veya öğretmen</value>
+  </data>
+  <data name="Login_EmailPlaceholder" xml:space="preserve">
+    <value>E-posta adresiniz</value>
+  </data>
+  <data name="Login_PasswordPlaceholder" xml:space="preserve">
+    <value>Şifreniz</value>
+  </data>
   <data name="Login_Title" xml:space="preserve">
     <value>Giriş</value>
   </data>

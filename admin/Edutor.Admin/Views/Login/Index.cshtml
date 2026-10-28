@@ -9,9 +9,7 @@
     <section class="w-full max-w-[45rem] rounded-2xl bg-white p-6 shadow-sm sm:p-8">
         <div class="mx-auto w-full">
                 <div class="mb-7">
-                    <p class="text-sm font-semibold text-primary">Edutor</p>
-                    <h1 class="mt-1.5 text-2xl font-bold leading-tight text-slate-900">@L["Login_HeroTitle"]</h1>
-                    <p class="mt-2 text-sm leading-relaxed text-slate-500">@L["Login_Subtitle"]</p>
+                    <h1 class="text-2xl font-bold leading-tight text-slate-900">@L["Login_HeroTitle"]</h1>
                 </div>
 
                 @if (ViewData["Error"] is string err)
@@ -23,7 +21,7 @@
                     @Html.AntiForgeryToken()
 
                     <fieldset aria-labelledby="tenantLegend">
-                        <legend id="tenantLegend" class="mb-2 block text-sm font-semibold text-slate-700">@L["Common_Tenant"]</legend>
+                        <legend id="tenantLegend" class="mb-2 block text-sm font-semibold text-slate-700">@L["Login_PickOrg"]</legend>
 
                         @* 2 sətir × 5 kart — ilk 10 tenant. *@
                         <div class="mr-[-20px] flex gap-2 overflow-x-auto pb-2 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden lg:mr-0 lg:flex-wrap lg:overflow-visible">
@@ -70,14 +68,14 @@
                             <label for="email" class="mb-[7px] block text-sm font-[750] text-[#071e27]">@L["Common_Email"]</label>
                             <div class="flex h-12 items-center gap-3 rounded-xl border border-border bg-white px-3 transition focus-within:border-primary">
                                 <svg class="shrink-0 text-[#7d8798]" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2" /><path d="m2 6 10 7 10-7" /></svg>
-                                <input id="email" name="Email" type="email" required autocomplete="email" class="w-full border-0 bg-transparent text-sm text-[#10232c] outline-none placeholder:text-[#a0a8b7]" />
+                                <input id="email" name="Email" type="email" required autocomplete="email" placeholder="@L["Login_EmailPlaceholder"]" class="w-full border-0 bg-transparent text-sm text-[#10232c] outline-none placeholder:text-[#a0a8b7]" />
                             </div>
                         </div>
                         <div>
                             <label for="password" class="mb-[7px] block text-sm font-[750] text-[#071e27]">@L["Common_Password"]</label>
                             <div class="flex h-12 items-center gap-3 rounded-xl border border-border bg-white px-3 transition focus-within:border-primary">
                                 <svg class="shrink-0 text-[#7d8798]" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="10" width="16" height="12" rx="2" /><path d="M8 10V7a4 4 0 0 1 8 0v3" /></svg>
-                                <input id="password" name="Password" type="password" required autocomplete="current-password" class="w-full border-0 bg-transparent text-sm text-[#10232c] outline-none placeholder:text-[#a0a8b7]" />
+                                <input id="password" name="Password" type="password" required autocomplete="current-password" placeholder="@L["Login_PasswordPlaceholder"]" class="w-full border-0 bg-transparent text-sm text-[#10232c] outline-none placeholder:text-[#a0a8b7]" />
                                 <button type="button" id="passwordToggle"
                                         data-show-label="@L["Login_ShowPassword"]"
                                         data-hide-label="@L["Login_HidePassword"]"

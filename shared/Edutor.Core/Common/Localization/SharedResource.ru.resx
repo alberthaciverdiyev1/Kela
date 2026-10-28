@@ -729,6 +729,15 @@
   <data name="Common_Inactive" xml:space="preserve">
     <value>Неактивно</value>
   </data>
+  <data name="Login_PickOrg" xml:space="preserve">
+    <value>Курс или преподаватель</value>
+  </data>
+  <data name="Login_EmailPlaceholder" xml:space="preserve">
+    <value>Ваш адрес эл. почты</value>
+  </data>
+  <data name="Login_PasswordPlaceholder" xml:space="preserve">
+    <value>Ваш пароль</value>
+  </data>
   <data name="Login_Title" xml:space="preserve">
     <value>Вход</value>
   </data>

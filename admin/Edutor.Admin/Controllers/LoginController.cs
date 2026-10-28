@@ -49,7 +49,7 @@ public sealed class LoginController(
         }
         catch (UnauthorizedAccessException)
         {
-            return await LoginViewAsync("Email, şifrə və ya tenant yanlışdır.", ct);
+            return await LoginViewAsync("Kurs, e-poçt və ya şifrə yanlışdır.", ct);
         }
     }
 
