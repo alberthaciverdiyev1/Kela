@@ -73,7 +73,8 @@ builder.Services.AddAuthorization(options =>
         .Build();
 });
 
-Kela.Core.Common.Configuration.SecretGuard.EnsureProductionSecrets(builder.Configuration, builder.Environment.IsDevelopment());
+Kela.Core.Common.Configuration.SecretGuard.EnsureProductionSecrets(
+    builder.Configuration, builder.Environment.IsDevelopment(), requireJwt: false);
 
 var app = builder.Build();
 

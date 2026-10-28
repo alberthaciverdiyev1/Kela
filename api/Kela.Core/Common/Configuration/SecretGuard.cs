@@ -11,17 +11,22 @@ public static class SecretGuard
     private static readonly string[] Placeholders = ["CHANGE_THIS", "please-change-me"];
     private static readonly string[] WeakPasswords = ["admin123", "student123", "password", "12345678"];
 
-    public static void EnsureProductionSecrets(IConfiguration configuration, bool isDevelopment)
+    // requireJwt: true YALNIZ JWT verən host üçün (API). Admin cookie auth işlədir.
+    public static void EnsureProductionSecrets(
+        IConfiguration configuration, bool isDevelopment, bool requireJwt = true)
     {
         if (isDevelopment) return;
 
-        var jwt = configuration["Jwt:Key"];
-        if (string.IsNullOrWhiteSpace(jwt)
-            || jwt.Length < 32
-            || Placeholders.Any(p => jwt.Contains(p, StringComparison.OrdinalIgnoreCase)))
+        if (requireJwt)
         {
-            throw new InvalidOperationException(
-                "Jwt:Key must be a strong secret (at least 32 characters) outside Development.");
+            var jwt = configuration["Jwt:Key"];
+            if (string.IsNullOrWhiteSpace(jwt)
+                || jwt.Length < 32
+                || Placeholders.Any(p => jwt.Contains(p, StringComparison.OrdinalIgnoreCase)))
+            {
+                throw new InvalidOperationException(
+                    "Jwt:Key must be a strong secret (at least 32 characters) outside Development.");
+            }
         }
 
         var connection = configuration.GetConnectionString("Postgres");
