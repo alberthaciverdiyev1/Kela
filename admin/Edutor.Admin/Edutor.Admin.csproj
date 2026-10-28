@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk.Web">
 
   <ItemGroup>
-    <ProjectReference Include="..\..\api\Edutor.Core\Edutor.Core.csproj" />
+    <ProjectReference Include="..\..\shared\Edutor.Core\Edutor.Core.csproj" />
   </ItemGroup>
 
   <PropertyGroup>

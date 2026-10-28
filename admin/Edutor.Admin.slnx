@@ -1,0 +1,9 @@
+<Solution>
+  <Folder Name="/admin/">
+    <Project Path="Edutor.Admin/Edutor.Admin.csproj" />
+  </Folder>
+  <Folder Name="/shared/">
+    <Project Path="../shared/Edutor.Core/Edutor.Core.csproj" />
+    <Project Path="../shared/Edutor.Nodes.Shared/Edutor.Nodes.Shared.csproj" />
+  </Folder>
+</Solution>

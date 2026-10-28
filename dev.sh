@@ -19,7 +19,7 @@ ARTIFACTS="$ROOT/.dev-artifacts"
 
 TAILWIND="$ROOT/admin/Edutor.Admin/node_modules/.bin/tailwindcss"
 MVC_CSS="admin/Edutor.Admin/wwwroot/css/app.css"
-APP_CSS="App/Edutor.App.Shared/wwwroot/css/app.css"
+APP_CSS="web/Edutor.App.Shared/wwwroot/css/app.css"
 
 pids=()
 
@@ -62,7 +62,7 @@ wait_for() {
 
 _own_pids() {
   local pat
-  for pat in "api/Edutor.Api" "admin/Edutor.Admin" "App/Edutor.App.Web" "App/Edutor.App.Shared" "tailwindcss"; do
+  for pat in "api/Edutor.Api" "admin/Edutor.Admin" "web/Edutor.App.Web" "web/Edutor.App.Shared" "tailwindcss"; do
     pgrep -f -- "$pat" 2>/dev/null || true
   done | sort -u | grep -vx -e "$$" -e "$PPID" || true
 }
@@ -135,12 +135,12 @@ fi
 if [ "$ENABLE_APP" = "1" ]; then
   echo "==> [APP] Tailwind CSS (App.Shared)"
   # App.Shared öz node_modules-unu saxlamır — Admin-in CLI-sinə keçid (eyni versiya).
-  [ -e "$ROOT/App/Edutor.App.Shared/node_modules/tailwindcss" ] || \
-    ln -sfn "$ROOT/admin/Edutor.Admin/node_modules" "$ROOT/App/Edutor.App.Shared/node_modules"
-  build_css "App/Edutor.App.Shared/wwwroot/css/input.css" "$APP_CSS" "app.css"
+  [ -e "$ROOT/web/Edutor.App.Shared/node_modules/tailwindcss" ] || \
+    ln -sfn "$ROOT/admin/Edutor.Admin/node_modules" "$ROOT/web/Edutor.App.Shared/node_modules"
+  build_css "web/Edutor.App.Shared/wwwroot/css/input.css" "$APP_CSS" "app.css"
 
   echo "==> [APP] Tailwind (watch, nəzarətçi)"
-  start bash -c "cd '$ROOT/App/Edutor.App.Shared' || exit 1
+  start bash -c "cd '$ROOT/web/Edutor.App.Shared' || exit 1
 while true; do
   '$TAILWIND' -i ./wwwroot/css/input.css -o ./wwwroot/css/app.css --watch
   [ -s wwwroot/css/app.css ] || '$TAILWIND' -i ./wwwroot/css/input.css -o ./wwwroot/css/app.css --minify
@@ -149,7 +149,7 @@ done"
 
   echo "==> [APP] Blazor WASM (Edutor.App.Web, watch): $APP_URL"
   DOTNET_WATCH_SUPPRESS_BROWSER_REFRESH=1 # Blazor WASM + dotnet watch artifacts-path ilə işə düşmür — default bin/obj istifadə olunur.
-  ASPNETCORE_URLS="$APP_URL" start dotnet watch --project App/Edutor.App.Web run --no-launch-profile
+  ASPNETCORE_URLS="$APP_URL" start dotnet watch --project web/Edutor.App.Web run --no-launch-profile
 else
   echo "==> [APP] atlanır (ENABLE_APP=0)"
 fi

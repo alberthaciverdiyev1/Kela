@@ -1,0 +1,5 @@
+<Solution>
+  <Project Path="Edutor.App/Edutor.App.csproj" />
+  <Project Path="Edutor.App.Shared/Edutor.App.Shared.csproj" />
+  <Project Path="Edutor.App.Web/Edutor.App.Web.csproj" />
+</Solution>

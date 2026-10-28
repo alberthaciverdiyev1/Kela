@@ -16,10 +16,10 @@ Edutor.Api ──► Nodes modulu (koordinator)          Edutor.Nodes.App (Avalo
 
 | Layihə | Rol |
 |---|---|
-| `Edutor.Core/Modules/Nodes` | koordinator: entity, scheduler, job lifecycle |
-| `Edutor.Nodes.Shared` | worker ↔ API arasında ortaq DTO-lar (yalnız BCL) |
-| `Edutor.Nodes.Worker` | encoding motoru: ffmpeg, probe, encoder tespiti, benchmark |
-| `Edutor.Nodes.App` | Avalonia UI (masaüstü + Android başlığı) |
+| `shared/Edutor.Core/Modules/Nodes` | koordinator: entity, scheduler, job lifecycle |
+| `shared/Edutor.Nodes.Shared` | worker ↔ API arasında ortaq DTO-lar (yalnız BCL) |
+| `worker/Edutor.Nodes.Worker` | encoding motoru: ffmpeg, probe, encoder tespiti, benchmark |
+| `worker/Edutor.Nodes.App` | Avalonia UI (masaüstü + Android başlığı) |
 | `Edutor.Admin` (`/node`) | admin: cihazlar, qeydiyyat kodları, tapşırıqlar |
 
 ## Necə işləyir
@@ -126,7 +126,7 @@ videolara dağılmır.
 ### Server
 
 ```bash
-dotnet ef database update --project Edutor.Core --startup-project Edutor.Api
+dotnet ef database update --project shared/Edutor.Core --startup-project api/Edutor.Api
 ```
 
 `appsettings.json` → `Nodes` bölməsi (lease müddəti, maks. cəhd, merdiven).
@@ -134,7 +134,7 @@ dotnet ef database update --project Edutor.Core --startup-project Edutor.Api
 ### Worker
 
 ```bash
-dotnet run --project Edutor.Nodes.App --framework net10.0
+dotnet run --project worker/Edutor.Nodes.App --framework net10.0
 ```
 
 1. **Tənzimləmələr** → API ünvanını yaz, yadda saxla.
@@ -142,12 +142,12 @@ dotnet run --project Edutor.Nodes.App --framework net10.0
 3. Kodu **Tənzimləmələr → Cihaz qeydiyyatı** sahəsinə yaz, "Qeydiyyatdan keç".
 4. Dashboard → **İşə sal**.
 
-Android: `dotnet build Edutor.Nodes.App -p:BuildAndroid=true -f net10.0-android`
+Android: `dotnet build worker/Edutor.Nodes.App -p:BuildAndroid=true -f net10.0-android`
 
 ## Testlər
 
 ```bash
-dotnet test Edutor.Tests --filter "FullyQualifiedName~Nodes"
+dotnet test tests/Edutor.Tests --filter "FullyQualifiedName~Nodes"
 ```
 
 - `EncodePlanTests` — upscale olmaması, axın seçimi, GOP hizalanması.

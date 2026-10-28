@@ -19,7 +19,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Edutor.Core\Edutor.Core.csproj" />
+    <ProjectReference Include="..\..\shared\Edutor.Core\Edutor.Core.csproj" />
   </ItemGroup>
 
   <ItemGroup>

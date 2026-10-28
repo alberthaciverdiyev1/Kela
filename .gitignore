@@ -37,7 +37,7 @@ appsettings.Development.json
 
 # Tailwind build outputs (generated)
 admin/Edutor.Admin/wwwroot/css/app.css
-App/Edutor.App.Shared/wwwroot/css/app.css
+web/Edutor.App.Shared/wwwroot/css/app.css
 
 # Şəxsi qeydlər — commit olunmur (CLAUDE.md)
 api/Edutor.Api/ToDo/

@@ -25,9 +25,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Edutor.Api\Edutor.Api.csproj" />
-    <ProjectReference Include="..\Edutor.Core\Edutor.Core.csproj" />
-    <ProjectReference Include="..\..\Worker\Edutor.Nodes.Worker\Edutor.Nodes.Worker.csproj" />
+    <ProjectReference Include="..\..\api\Edutor.Api\Edutor.Api.csproj" />
+    <ProjectReference Include="..\..\shared\Edutor.Core\Edutor.Core.csproj" />
+    <ProjectReference Include="..\..\worker\Edutor.Nodes.Worker\Edutor.Nodes.Worker.csproj" />
   </ItemGroup>
 
 </Project>

@@ -32,13 +32,15 @@ Pragmatik **modular monolith** (dikey dilim). Katmanlar Onion/Clean gibi ayrılm
 Proje tutarsa ileride Domain/Application/Infrastructure olarak ayrılabilir.
 
 ```
-Edutor.Core/
+shared/Edutor.Core/
 ├── Common/{Entities,Responses,Storage}
 ├── Data/            (AppDbContext + Migrations)
 ├── Modules/<Feature>/{Entities,Configurations,Services,Requests,Responses,Validators}
 └── DependencyInjection.cs   (AddCore + UseCoreStorage)
-Edutor.Api/     (Program.cs, Common/{Controllers,Middleware,Validation,Responses}, Modules/<F>/Controllers)
-Edutor.Admin/     (Program.cs, Controllers, Models, Views)
+api/Edutor.Api/   (Program.cs, Common/{Controllers,Middleware,Validation,Responses}, Modules/<F>/Controllers)
+admin/Edutor.Admin/   (Program.cs, Controllers, Models, Views)
+web/Edutor.App*  (Blazor WASM + MAUI istemci)
+worker/Edutor.Nodes.*  (encoding worker + Avalonia UI)
 ```
 
 - API yanıtları **tek envelope**: `{ success, statusCode, message, data, errors }` (`Common/Responses/ApiResponse`).
@@ -128,7 +130,7 @@ Edutor.Admin/     (Program.cs, Controllers, Models, Views)
 ## 5. Durum / Notlar
 
 - 🗄️ DB: `renewLms` (PostgreSQL). `banners` tablosu oluşturuldu (`dotnet ef database update`).
-  Migration komutu: `dotnet ef migrations add <Ad> --project Edutor.Core --startup-project Edutor.Api`
+  Migration komutu: `dotnet ef migrations add <Ad> --project shared/Edutor.Core --startup-project api/Edutor.Api`
 - 🔐 **Auth yok** — Banner uç/sayfaları şimdilik herkese açık; roller sonra bağlanacak.
 - 🖼️ Görsel sıkıştırma yok (referanstaki Intervention Image yerine düz yükleme); BunnyCDN ileride.
 - ⚠️ Ortamda `Microsoft.AspNetCore.App.Ref` pack'i eksik → kök `Directory.Build.props` içinde

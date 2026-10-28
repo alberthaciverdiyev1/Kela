@@ -11,13 +11,19 @@ Bu dosya projede uyulacak kuralları tanımlar. Yeni kural eklendikçe buraya ya
 
 ## Mimari Kurallar
 
-Çözüm üç projeden oluşur (pragmatik modular monolith):
+Repo dört bağımsız uygulama grubuna ayrılmıştır; her grup kendi solution'ı ile açılır/build edilir:
 
-| Proje | Rol |
-|---|---|
-| `Edutor.Core` | domain + uygulama + altyapı: entity, EF config, DbContext, servis, DTO, validator, storage |
-| `Edutor.Api` | sunum — JSON API (controller, `ApiResponse` zarfı, middleware) |
-| `Edutor.Admin` | sunum — Razor MVC + Tailwind (admin paneli) |
+| Qovluq | Solution | Projeler | Rol |
+|---|---|---|---|
+| `api/` | `Edutor.Api.slnx` | `Edutor.Api` | JSON API (controller, `ApiResponse` zarfı, middleware) |
+| `admin/` | `Edutor.Admin.slnx` | `Edutor.Admin` | Razor MVC + Tailwind (admin paneli) |
+| `web/` | `Edutor.Web.slnx` | `Edutor.App` (MAUI), `Edutor.App.Shared`, `Edutor.App.Web` (WASM) | istemci |
+| `worker/` | `Edutor.Worker.slnx` | `Edutor.Nodes.App` (Avalonia), `Edutor.Nodes.Worker` | video encoding worker |
+| `shared/` | — | `Edutor.Core`, `Edutor.Nodes.Shared` | paylaşılan domain/uygulama və kontraktlar |
+| `tests/` | — | `Edutor.Tests` | inteqrasiya testləri |
+
+- Kök `Edutor.slnx` hamısını birlikdə yükləyir; gündəlik işdə sahə solution'ı istifadə olunur.
+- `shared/*` heç bir host-a aid deyil; `api`, `admin`, `worker` ona referans verir.
 
 - **İş mantığı yalnızca Core'da yaşar.** Api ve Admin ince host'lardır; Core'u referans alır.
   Aynı mantık iki yerde **yazılmaz** (hem app hem admin için ayrı sorgu/mantık kopyalanmaz).
@@ -29,7 +35,7 @@ Bu dosya projede uyulacak kuralları tanımlar. Yeni kural eklendikçe buraya ya
 ### Core modül yerleşimi
 Her dosya ilgili alt klasöründe; boşta dosya bırakılmaz.
 ```
-Edutor.Core/Modules/<Feature>/
+shared/Edutor.Core/Modules/<Feature>/
 ├── Entities/<Feature>.cs
 ├── Configurations/<Feature>Configuration.cs   (IEntityTypeConfiguration)
 ├── Abstractions/  (<Feature>Service interfeysləri)

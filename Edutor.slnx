@@ -1,12 +1,24 @@
 <Solution>
-  <Project Path="api/Edutor.Api/Edutor.Api.csproj" />
-  <Project Path="App/Edutor.App/Edutor.App.csproj" />
-  <Project Path="App/Edutor.App.Shared/Edutor.App.Shared.csproj" />
-  <Project Path="App/Edutor.App.Web/Edutor.App.Web.csproj" />
-  <Project Path="api/Edutor.Core/Edutor.Core.csproj" />
-  <Project Path="admin/Edutor.Admin/Edutor.Admin.csproj" />
-  <Project Path="Worker/Edutor.Nodes.App/Edutor.Nodes.App.csproj" />
-  <Project Path="Worker/Edutor.Nodes.Shared/Edutor.Nodes.Shared.csproj" />
-  <Project Path="Worker/Edutor.Nodes.Worker/Edutor.Nodes.Worker.csproj" />
-  <Project Path="api/Edutor.Tests/Edutor.Tests.csproj" />
+  <Folder Name="/api/">
+    <Project Path="api/Edutor.Api/Edutor.Api.csproj" />
+  </Folder>
+  <Folder Name="/admin/">
+    <Project Path="admin/Edutor.Admin/Edutor.Admin.csproj" />
+  </Folder>
+  <Folder Name="/web/">
+    <Project Path="web/Edutor.App/Edutor.App.csproj" />
+    <Project Path="web/Edutor.App.Shared/Edutor.App.Shared.csproj" />
+    <Project Path="web/Edutor.App.Web/Edutor.App.Web.csproj" />
+  </Folder>
+  <Folder Name="/worker/">
+    <Project Path="worker/Edutor.Nodes.App/Edutor.Nodes.App.csproj" />
+    <Project Path="worker/Edutor.Nodes.Worker/Edutor.Nodes.Worker.csproj" />
+  </Folder>
+  <Folder Name="/shared/">
+    <Project Path="shared/Edutor.Core/Edutor.Core.csproj" />
+    <Project Path="shared/Edutor.Nodes.Shared/Edutor.Nodes.Shared.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/Edutor.Tests/Edutor.Tests.csproj" />
+  </Folder>
 </Solution>

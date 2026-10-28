@@ -33,7 +33,7 @@ echo "==> adb reverse tcp:$PORT tcp:$PORT"
 "$ADB" reverse "tcp:$PORT" "tcp:$PORT"
 
 echo "==> Build & deploy ($CONFIG) ..."
-dotnet build "$ROOT/App/Edutor.App/Edutor.App.csproj" \
+dotnet build "$ROOT/web/Edutor.App/Edutor.App.csproj" \
   -f net10.0-android -c "$CONFIG" -t:Run \
   -p:AndroidSdkDirectory="$ANDROID_HOME" \
   -p:JavaSdkDirectory="$JAVA_HOME"
