@@ -1,7 +1,10 @@
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Http;
 using System.Threading.RateLimiting;
 using Edutor.Core;
+using Edutor.Core.Common.Health;
+using Edutor.Core.Common.Http;
 using Edutor.Core.Common.Localization;
+using Microsoft.AspNetCore.DataProtection;
 using Edutor.Core.Data;
 using Edutor.Core.Modules.Auth;
 using Edutor.Core.Modules.Subscription;
@@ -17,6 +20,16 @@ builder.Services.AddControllersWithViews(options =>
     options.Conventions.Add(new RouteTokenTransformerConvention(new KebabCaseParameterTransformer()));
 });
 builder.Services.AddCore(builder.Configuration);
+builder.Services.AddEdutorReverseProxy();
+
+// Cookie-lər restart-da qalmalıdır: anahtarlar fayl sistemində saxlanılır.
+var dataProtection = builder.Services.AddDataProtection().SetApplicationName("Edutor.Admin");
+var dataProtectionKeysPath = builder.Configuration["DataProtection:KeysPath"];
+if (!string.IsNullOrWhiteSpace(dataProtectionKeysPath))
+{
+    Directory.CreateDirectory(dataProtectionKeysPath);
+    dataProtection.PersistKeysToFileSystem(new DirectoryInfo(dataProtectionKeysPath));
+}
 builder.Services.AddEdutorLocalization();
 
 // Public qeydiyyat və digər anonim formlar üçün sadə rate limit.
@@ -77,6 +90,8 @@ Edutor.Core.Common.Configuration.SecretGuard.EnsureProductionSecrets(builder.Con
 
 var app = builder.Build();
 
+app.UseEdutorReverseProxy(app.Configuration);
+
 await app.Services.MigrateAndSeedAsync(app.Configuration);
 
 if (!app.Environment.IsDevelopment())
@@ -101,6 +116,7 @@ app.MapStaticAssets();
 
 app.MapGet("/", () => Results.Redirect("/dashboard"));
 
+app.MapEdutorHealth();
 app.MapControllers();
 
 app.Run();

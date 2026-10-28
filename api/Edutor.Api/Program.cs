@@ -1,4 +1,4 @@
-using System.Text;
+﻿using System.Text;
 using System.Threading.RateLimiting;
 using Edutor.Core.Data;
 using Microsoft.EntityFrameworkCore;
@@ -9,6 +9,8 @@ using Edutor.Api.Common.Validation;
 using Edutor.Api.Modules.Nodes.Auth;
 using Edutor.Api.Modules.Nodes.Services;
 using Edutor.Core;
+using Edutor.Core.Common.Health;
+using Edutor.Core.Common.Http;
 using Edutor.Core.Common.Localization;
 using Edutor.Core.Modules.Auth;
 using Edutor.Core.Modules.Subscription;
@@ -46,6 +48,7 @@ builder.Services.Configure<ApiBehaviorOptions>(options =>
 builder.Services.AddOpenApi();
 
 builder.Services.AddCore(builder.Configuration);
+builder.Services.AddEdutorReverseProxy();
 builder.Services.AddEdutorLocalization();
 
 var corsOrigins = builder.Configuration.GetSection("Cors:Origins").Get<string[]>() ?? [];
@@ -132,6 +135,13 @@ var app = builder.Build();
 
 await app.Services.MigrateAndSeedAsync(app.Configuration);
 
+app.UseEdutorReverseProxy(app.Configuration);
+
+if (!app.Environment.IsDevelopment())
+{
+    app.UseHsts();
+}
+
 app.UseMiddleware<ExceptionHandlingMiddleware>();
 
 app.UseCors();
@@ -163,6 +173,7 @@ app.UseStaticFiles();
 app.UseCoreStorage();
 app.UseAuthentication();
 app.UseAuthorization();
+app.MapEdutorHealth();
 app.MapControllers();
 app.MapHub<Edutor.Api.Modules.Feedback.Hubs.FeedbackHub>("/hubs/feedback");
 
