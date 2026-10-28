@@ -19,6 +19,7 @@ window.PlanPage = (function () {
         AdminUI.table('rows', (plans || []).map(p => [
             { html: `<span class="font-bold text-slate-900">${AdminUI.escapeHtml(p.name)}</span><br><code class="text-xs text-slate-400">${AdminUI.escapeHtml(p.code)}</code>` },
             { html: `<span class="font-semibold">${p.monthlyPrice} ${p.currency}</span>` },
+            { html: p.trialDays > 0 ? `${p.trialDays} gün` : '—' },
             { html: limit(p.maxStudents) },
             { html: limit(p.maxGroups) },
             { html: p.monthlyVideoMinutes > 0 ? Math.round(p.monthlyVideoMinutes / 60) : 'limitsiz' },

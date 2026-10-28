@@ -10,8 +10,8 @@
     <div class="text-center">
         <h1 class="text-2xl font-extrabold tracking-tight text-slate-900">Plan seçin</h1>
         <p class="mx-auto mt-2 max-w-xl text-sm leading-relaxed text-slate-500">
-            @tenantName üçün uyğun planı seçin. Pulsuz plan dərhal açılır; ödənişli planlar
-            seçdiyiniz gün sayı qədər pulsuz sınaqla başlayır.
+            @tenantName üçün uyğun planı seçin. Pulsuz plan dərhal açılır; ödənişli planlarda
+            sınaq müddəti varsa, həmin qədər ödənişsiz istifadə edə bilərsiniz.
         </p>
     </div>
 
@@ -48,9 +48,10 @@
                         <p class="text-2xl font-extrabold text-slate-900">
                             @plan.MonthlyPrice.ToString("N0") <span class="text-sm font-semibold text-slate-400">@plan.Currency / ay</span>
                         </p>
-                        <p class="mt-1 text-xs font-semibold text-emerald-600">
-                            @(plan.TrialDays > 0 ? $"{plan.TrialDays} gün pulsuz sınaq" : "sınaq yoxdur")
-                        </p>
+                        @if (plan.TrialDays > 0)
+                        {
+                            <p class="mt-1 text-xs font-semibold text-emerald-600">@plan.TrialDays gün pulsuz sınaq</p>
+                        }
                     }
                 </div>
 
@@ -85,7 +86,7 @@
                     @Html.AntiForgeryToken()
                     <input type="hidden" name="planId" value="@plan.Id" />
                     <button type="submit" class="admin-button-primary w-full justify-center">
-                        @(isFree ? "Pulsuz başla" : "Sınağı başlat")
+                        @(isFree ? "Pulsuz başla" : plan.TrialDays > 0 ? "Sınağı başlat" : "Planı seç")
                     </button>
                 </form>
             </div>
