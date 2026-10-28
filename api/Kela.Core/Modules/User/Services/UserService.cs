@@ -154,6 +154,33 @@ public sealed class UserService(
         await db.SaveChangesAsync(ct);
     }
 
+    public async Task<List<string>> GetSidebarHiddenAsync(long id, CancellationToken ct = default)
+        => (await FindForPreferencesAsync(id, ct)).HiddenSidebarItems;
+
+    public async Task<List<string>> SetSidebarHiddenAsync(long id, IReadOnlyCollection<string> keys,
+        CancellationToken ct = default)
+    {
+        var user = await FindForPreferencesAsync(id, ct);
+        user.HiddenSidebarItems = NormalizeKeys(keys);
+        await db.SaveChangesAsync(ct);
+        return user.HiddenSidebarItems;
+    }
+
+    // Superadmin tenant dəyişəndə öz sətri başqa tenant filtrinə düşür — filtrsiz oxunur.
+    private async Task<User> FindForPreferencesAsync(long id, CancellationToken ct)
+        => await db.Users.IgnoreQueryFilters(new[] { "SoftDelete", "Tenant" })
+               .FirstOrDefaultAsync(x => x.Id == id && x.DeletedAt == null, ct)
+           ?? throw new KeyNotFoundException($"User not found: {id}");
+
+    // Açarlar kiçik hərf/kebab-case-dir; naməlum və təkrarlanan açarlar buraxılmır.
+    private static List<string> NormalizeKeys(IReadOnlyCollection<string> keys) =>
+        keys.Where(k => !string.IsNullOrWhiteSpace(k))
+            .Select(k => k.Trim().ToLowerInvariant())
+            .Where(k => k.Length <= 40 && k.All(c => char.IsAsciiLetterOrDigit(c) || c == '-'))
+            .Distinct()
+            .Take(100)
+            .ToList();
+
     private async Task EnsureEmailAvailableAsync(string email, long? excludeId, CancellationToken ct)
     {
         var exists = await db.Users.IgnoreQueryFilters(new[] { "SoftDelete" })

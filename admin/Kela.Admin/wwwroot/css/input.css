@@ -956,3 +956,58 @@ video:fullscreen {
 }
 
 .dp-btn:hover { background: var(--primary-hover); }
+
+/* Sidebar fərdiləşdirmə — hər istifadəçi menyu sətirlərini gizlədə/aça bilir. */
+#sidebar a[data-nav-key] {
+    position: relative;
+}
+
+#sidebar .nav-eye {
+    position: absolute;
+    right: 0.55rem;
+    top: 50%;
+    display: none;
+    height: 1.65rem;
+    width: 1.65rem;
+    place-items: center;
+    transform: translateY(-50%);
+    border-radius: 0.5rem;
+    color: #94a3b8;
+}
+
+#sidebar .nav-eye svg {
+    width: 1rem;
+    height: 1rem;
+}
+
+#sidebar[data-editing="true"] .nav-eye {
+    display: grid;
+}
+
+#sidebar[data-editing="true"] a[data-nav-key] {
+    padding-right: 2.5rem;
+    cursor: pointer;
+}
+
+#sidebar[data-editing="true"] a[data-nav-key] > span[id$="Badge"] {
+    display: none;
+}
+
+/* Gizlədilən sətir redaktə rejimində solğun görünür ki, geri qaytarıla bilsin. */
+#sidebar[data-editing="true"] a[data-nav-key].hidden {
+    display: flex;
+    opacity: 0.45;
+}
+
+#sidebar[data-editing="true"] a[data-nav-key].hidden .nav-eye {
+    color: var(--color-primary-600);
+}
+
+#sidebar[data-editing="true"] a[data-nav-key]:hover .nav-eye {
+    background: #fff;
+    color: #475569;
+}
+
+#sidebar[data-editing="true"] a[data-nav-key].hidden:hover .nav-eye {
+    color: var(--color-primary-600);
+}

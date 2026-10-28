@@ -3276,6 +3276,12 @@ namespace Kela.Core.Data.Migrations
                         .HasColumnType("character varying(190)")
                         .HasColumnName("email");
 
+                    b.Property<string>("HiddenSidebarItems")
+                        .IsRequired()
+                        .HasMaxLength(2000)
+                        .HasColumnType("character varying(2000)")
+                        .HasColumnName("hidden_sidebar_items");
+
                     b.Property<string>("Name")
                         .HasMaxLength(190)
                         .HasColumnType("character varying(190)")

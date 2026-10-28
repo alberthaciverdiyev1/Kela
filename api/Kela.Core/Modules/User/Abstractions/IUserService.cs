@@ -21,4 +21,8 @@ public interface IUserService
     Task ChangePasswordAsync(long id, UserChangePasswordRequest request, CancellationToken ct = default);
 
     Task DeleteAsync(long id, CancellationToken ct = default);
+
+    Task<List<string>> GetSidebarHiddenAsync(long id, CancellationToken ct = default);
+
+    Task<List<string>> SetSidebarHiddenAsync(long id, IReadOnlyCollection<string> keys, CancellationToken ct = default);
 }

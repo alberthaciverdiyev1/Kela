@@ -31,6 +31,15 @@ public sealed class ProfileController(IUserService users) : Controller
         return Json(user);
     }
 
+    [HttpGet("sidebar")]
+    public async Task<IActionResult> Sidebar(CancellationToken ct)
+        => Json(await users.GetSidebarHiddenAsync(UserId, ct));
+
+    [HttpPut("sidebar")]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> UpdateSidebar([FromForm] SidebarPreferenceRequest request, CancellationToken ct)
+        => Json(await users.SetSidebarHiddenAsync(UserId, request.Hidden, ct));
+
     [HttpPut("password")]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> ChangePassword([FromForm] UserChangePasswordRequest request, CancellationToken ct)

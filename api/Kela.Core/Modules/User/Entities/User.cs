@@ -15,6 +15,9 @@ public class User : BaseEntity
     public string? PhoneNumber { get; set; }
 
     public string Type { get; set; } = UserTypes.Teacher;
+
+    /// <summary>İstifadəçinin sidebar-da gizlətdiyi menyu açarları.</summary>
+    public List<string> HiddenSidebarItems { get; set; } = [];
 }
 
 public static class UserTypes

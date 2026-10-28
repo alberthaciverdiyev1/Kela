@@ -582,6 +582,18 @@
   <data name="Sidebar_SectionPlatform" xml:space="preserve">
     <value>Платформа</value>
   </data>
+  <data name="Sidebar_Customize" xml:space="preserve">
+    <value>Настроить меню</value>
+  </data>
+  <data name="Sidebar_CustomizeDone" xml:space="preserve">
+    <value>Готово</value>
+  </data>
+  <data name="Sidebar_HideItem" xml:space="preserve">
+    <value>Скрыть</value>
+  </data>
+  <data name="Sidebar_ShowItem" xml:space="preserve">
+    <value>Показать</value>
+  </data>
   <data name="Sidebar_SectionSystem" xml:space="preserve">
     <value>Система</value>
   </data>

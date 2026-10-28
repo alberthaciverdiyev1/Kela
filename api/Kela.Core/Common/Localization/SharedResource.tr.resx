@@ -582,6 +582,18 @@
   <data name="Sidebar_SectionPlatform" xml:space="preserve">
     <value>Platform</value>
   </data>
+  <data name="Sidebar_Customize" xml:space="preserve">
+    <value>Menüyü kişiselleştir</value>
+  </data>
+  <data name="Sidebar_CustomizeDone" xml:space="preserve">
+    <value>Tamam</value>
+  </data>
+  <data name="Sidebar_HideItem" xml:space="preserve">
+    <value>Gizle</value>
+  </data>
+  <data name="Sidebar_ShowItem" xml:space="preserve">
+    <value>Göster</value>
+  </data>
   <data name="Sidebar_SectionSystem" xml:space="preserve">
     <value>Sistem</value>
   </data>
