@@ -172,7 +172,7 @@
     <value>Admin</value>
   </data>
   <data name="Tenant_AcceptTerms" xml:space="preserve">
-    <value>İstifadə şərtləri və məxfilik siyasəti ilə razıyam.</value>
+    <value>Razıyam:</value>
   </data>
   <data name="Tenant_TermsLink" xml:space="preserve">
     <value>İstifadə şərtləri və məxfilik siyasəti</value>

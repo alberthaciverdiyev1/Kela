@@ -172,7 +172,7 @@
     <value>Admin</value>
   </data>
   <data name="Tenant_AcceptTerms" xml:space="preserve">
-    <value>I agree to the terms of use and privacy policy.</value>
+    <value>I agree to the</value>
   </data>
   <data name="Tenant_TermsLink" xml:space="preserve">
     <value>Terms of use and privacy policy</value>

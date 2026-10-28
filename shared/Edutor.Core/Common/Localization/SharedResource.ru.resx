@@ -172,7 +172,7 @@
     <value>Админ</value>
   </data>
   <data name="Tenant_AcceptTerms" xml:space="preserve">
-    <value>Я принимаю условия использования и политику конфиденциальности.</value>
+    <value>Я принимаю</value>
   </data>
   <data name="Tenant_TermsLink" xml:space="preserve">
     <value>Условия использования и политика конфиденциальности</value>
