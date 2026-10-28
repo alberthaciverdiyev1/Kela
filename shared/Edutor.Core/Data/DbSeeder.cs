@@ -31,7 +31,7 @@ public static class DbSeeder
         // Superadmin (qlobal, tenant-sız).
         if (!await db.Users.IgnoreQueryFilters().AnyAsync(u => u.Type == UserTypes.SuperAdmin, ct))
         {
-            var email = Setting(configuration, "Admin:Email", "admin@kela.local");
+            var email = Setting(configuration, "Admin:Email", "admin@edutor.local");
             var password = Setting(configuration, "Admin:Password", "admin123");
 
             db.Users.Add(new User
@@ -76,9 +76,9 @@ public static class DbSeeder
     /// <summary>Hər tenant üçün default student və admin hesablarını yaradır (idempotent).</summary>
     private static async Task SeedTenantAccountsAsync(AppDbContext db, IConfiguration configuration, ILogger logger, CancellationToken ct)
     {
-        var studentEmail = Setting(configuration, "DefaultAccounts:Student:Email", "student1@kela.az");
+        var studentEmail = Setting(configuration, "DefaultAccounts:Student:Email", "student1@edutor.az");
         var studentPassword = Setting(configuration, "DefaultAccounts:Student:Password", "student123");
-        var adminEmail = Setting(configuration, "DefaultAccounts:Admin:Email", "admin@kela.az");
+        var adminEmail = Setting(configuration, "DefaultAccounts:Admin:Email", "admin@edutor.az");
         var adminPassword = Setting(configuration, "DefaultAccounts:Admin:Password", "admin123");
 
         var tenantIds = await db.Tenants.AsNoTracking().Select(t => t.Id).ToListAsync(ct);

@@ -14,7 +14,7 @@ Hər tenant öz qovluğunda (tenant-ın `slug`-ı ilə):
 {tenant}/files/{guid}.pdf
 ```
 
-Məsələn tenant "Edutor Academy" (slug `edutor`) üçün: `kela/videos/raw/0dc9....mp4`.
+Məsələn tenant "Edutor Academy" (slug `edutor`) üçün: `edutor/videos/raw/0dc9....mp4`.
 
 > Qovluq adı tenant-ın **slug**-ıdır, adı deyil — ad boşluq və Azərbaycan hərfləri
 > daşıya bilər, slug isə URL-təhlükəsizdir. Tenant adı dəyişsə də mövcud fayllar
@@ -42,7 +42,7 @@ Baza: `{API}/api/video`. Autentifikasiya: **`X-Worker-Key`** başlığı
 POST /api/video/processing
 X-Worker-Key: <açar>
 
-{ "sourcePath": "kela/videos/raw/0dc9....mp4" }
+{ "sourcePath": "edutor/videos/raw/0dc9....mp4" }
 ```
 
 ### Konversiya bitir
@@ -52,9 +52,9 @@ POST /api/video/processed
 X-Worker-Key: <açar>
 
 {
-  "sourcePath": "kela/videos/raw/0dc9....mp4",
-  "playbackUrl": "kela/videos/m3u8/0dc9.../master.m3u8",
-  "thumbnail": "kela/videos/m3u8/0dc9.../thumb.jpg",
+  "sourcePath": "edutor/videos/raw/0dc9....mp4",
+  "playbackUrl": "edutor/videos/m3u8/0dc9.../master.m3u8",
+  "thumbnail": "edutor/videos/m3u8/0dc9.../thumb.jpg",
   "durationSeconds": 754,
   "status": "ready"
 }
@@ -105,5 +105,5 @@ Worker yazmadan zənciri yoxlamaq:
 ```bash
 curl -X POST {API}/api/video/processed \
   -H "X-Worker-Key: $KEY" -H "Content-Type: application/json" \
-  -d '{"sourcePath":"kela/videos/raw/xxx.mp4","playbackUrl":"kela/videos/m3u8/xxx/master.m3u8","status":"ready"}'
+  -d '{"sourcePath":"edutor/videos/raw/xxx.mp4","playbackUrl":"edutor/videos/m3u8/xxx/master.m3u8","status":"ready"}'
 ```

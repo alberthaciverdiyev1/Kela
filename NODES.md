@@ -55,7 +55,7 @@ heç bir video tam hazır olmurdu.
 ├── 480p/…
 └── 720p/…
 
-Məsələn: kela/videos/m3u8/33-content-video/v1/720p/index.m3u8
+Məsələn: edutor/videos/m3u8/33-content-video/v1/720p/index.m3u8
 
 Qovluqda ID də saxlanılır — iki dərsin adı eyni ola bilər və video sonradan
 adlansa artıq yayımlanmış fayllar yetim qalmasın.
