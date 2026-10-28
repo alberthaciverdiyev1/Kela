@@ -5,27 +5,13 @@
     ViewData["Title"] = L["Login_Title"];
     var tenantList = ViewData["Tenants"] as IReadOnlyList<TenantResponse> ?? new List<TenantResponse>();
 }
-<div class="min-h-screen w-full bg-[#f3f6f3] font-sans text-[#071e27] lg:flex lg:bg-white">
-    <aside class="relative h-[210px] overflow-hidden bg-[#e5eee4] sm:h-[260px] lg:h-screen lg:w-[46%]">
-        <img class="h-full w-full object-cover object-[center_48%]" src="/images/login-hero.jpg" alt="" />
-        <div class="absolute inset-0 bg-gradient-to-t from-[#173d30]/75 via-transparent to-transparent"></div>
-        <div class="absolute bottom-6 left-6 flex items-center gap-3 text-white sm:bottom-8 sm:left-10 lg:bottom-12 lg:left-12">
-            <div class="grid h-11 w-11 place-items-center rounded-xl bg-white/15 backdrop-blur">
-                <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.9"><path stroke-linecap="round" stroke-linejoin="round" d="M4 19V6.5A2.5 2.5 0 0 1 6.5 4H11v15H6.5A2.5 2.5 0 0 0 4 19Zm16 0V6.5A2.5 2.5 0 0 0 17.5 4H13v15h4.5A2.5 2.5 0 0 1 20 19Z" /></svg>
-            </div>
-            <div>
-                <p class="text-lg font-extrabold leading-none tracking-tight">Edutor</p>
-                <p class="mt-1 text-xs font-medium text-white/80">@L["Sidebar_AdminPanel"]</p>
-            </div>
-        </div>
-    </aside>
-
-    <section class="relative z-[1] -mt-5 flex min-h-[calc(100vh-190px)] flex-col rounded-t-[30px] bg-white px-5 pb-10 pt-8 sm:px-10 lg:mt-0 lg:min-h-screen lg:flex-1 lg:justify-center lg:overflow-y-auto lg:rounded-none lg:px-12 xl:px-20">
-        <div class="mx-auto w-full max-w-xl">
+<div class="flex min-h-screen w-full items-center justify-center bg-surface-secondary px-4 py-8 font-sans text-slate-800">
+    <section class="w-full max-w-md rounded-2xl bg-white p-6 shadow-sm sm:p-8">
+        <div class="mx-auto w-full">
                 <div class="mb-7">
-                    <p class="text-[10px] font-bold uppercase tracking-[0.18em] text-[#27815e]">@L["Login_Title"]</p>
-                    <h1 class="mt-1.5 text-[31px] font-extrabold leading-tight tracking-[-1.2px] text-[#071e27] sm:text-3xl">@L["Login_HeroTitle"]</h1>
-                    <p class="mt-2 text-sm leading-relaxed text-[#727c8d]">@L["Login_Subtitle"]</p>
+                    <p class="text-sm font-semibold text-primary">Edutor</p>
+                    <h1 class="mt-1.5 text-2xl font-bold leading-tight text-slate-900">@L["Login_HeroTitle"]</h1>
+                    <p class="mt-2 text-sm leading-relaxed text-slate-500">@L["Login_Subtitle"]</p>
                 </div>
 
                 @if (ViewData["Error"] is string err)
@@ -37,7 +23,7 @@
                     @Html.AntiForgeryToken()
 
                     <fieldset aria-labelledby="tenantLegend">
-                        <legend id="tenantLegend" class="mb-2 block text-sm font-[750] tracking-[-.2px] text-[#071e27]">@L["Common_Tenant"]</legend>
+                        <legend id="tenantLegend" class="mb-2 block text-sm font-semibold text-slate-700">@L["Common_Tenant"]</legend>
 
                         @* 2 sətir × 5 kart — ilk 10 tenant. *@
                         <div class="mr-[-20px] flex gap-2 overflow-x-auto pb-2 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden lg:mr-0 lg:flex-wrap lg:overflow-visible">
@@ -82,14 +68,14 @@
                     <div class="space-y-[15px] border-t border-[#edf1ee] pt-5">
                         <div>
                             <label for="email" class="mb-[7px] block text-sm font-[750] text-[#071e27]">@L["Common_Email"]</label>
-                            <div class="flex h-[52px] items-center gap-3 rounded-[17px] border border-[#d7dce5] bg-gradient-to-br from-white to-[#fbfbfc] px-[15px] transition focus-within:border-[#0d9250] focus-within:shadow-[0_0_0_3px_#0d925018]">
+                            <div class="flex h-12 items-center gap-3 rounded-xl border border-border bg-white px-3 transition focus-within:border-primary">
                                 <svg class="shrink-0 text-[#7d8798]" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2" /><path d="m2 6 10 7 10-7" /></svg>
                                 <input id="email" name="Email" type="email" required autocomplete="email" class="w-full border-0 bg-transparent text-sm text-[#10232c] outline-none placeholder:text-[#a0a8b7]" />
                             </div>
                         </div>
                         <div>
                             <label for="password" class="mb-[7px] block text-sm font-[750] text-[#071e27]">@L["Common_Password"]</label>
-                            <div class="flex h-[52px] items-center gap-3 rounded-[17px] border border-[#d7dce5] bg-gradient-to-br from-white to-[#fbfbfc] px-[15px] transition focus-within:border-[#0d9250] focus-within:shadow-[0_0_0_3px_#0d925018]">
+                            <div class="flex h-12 items-center gap-3 rounded-xl border border-border bg-white px-3 transition focus-within:border-primary">
                                 <svg class="shrink-0 text-[#7d8798]" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="10" width="16" height="12" rx="2" /><path d="M8 10V7a4 4 0 0 1 8 0v3" /></svg>
                                 <input id="password" name="Password" type="password" required autocomplete="current-password" class="w-full border-0 bg-transparent text-sm text-[#10232c] outline-none placeholder:text-[#a0a8b7]" />
                                 <button type="button" id="passwordToggle"
@@ -146,4 +132,3 @@
         </div>
     </div>
 </div>
-
