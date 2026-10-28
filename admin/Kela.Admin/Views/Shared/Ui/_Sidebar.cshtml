@@ -273,15 +273,18 @@
                         @L["Nav_Settings"]
                     </a>
                 }
-                <a href="/privacy-policy"
-                   class="flex h-10 items-center gap-3 rounded-xl px-3 text-[15px] font-medium transition @Active("PrivacyPolicy")">
-                    <svg class="h-5 w-5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"
-                         stroke-width="1.8">
-                        <path stroke-linecap="round" stroke-linejoin="round"
-                              d="M9 12l2 2 4-4m5.6-2A11 11 0 0 1 12 21 11 11 0 0 1 2.4 10 11 11 0 0 1 12 3a11 11 0 0 1 8.6 4Z"/>
-                    </svg>
-                    @L["Nav_Privacy"]
-                </a>
+                @if (isSuperAdmin)
+                {
+                    <a href="/privacy-policy"
+                       class="flex h-10 items-center gap-3 rounded-xl px-3 text-[15px] font-medium transition @Active("PrivacyPolicy")">
+                        <svg class="h-5 w-5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"
+                             stroke-width="1.8">
+                            <path stroke-linecap="round" stroke-linejoin="round"
+                                  d="M9 12l2 2 4-4m5.6-2A11 11 0 0 1 12 21 11 11 0 0 1 2.4 10 11 11 0 0 1 12 3a11 11 0 0 1 8.6 4Z"/>
+                        </svg>
+                        @L["Nav_Privacy"]
+                    </a>
+                }
                 @if (isSuperAdmin && !switched)
                 {
                     <a href="/platform-setting"

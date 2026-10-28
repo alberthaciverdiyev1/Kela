@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Kela.Admin.Controllers;
 
-[Authorize(Policy = AuthPolicies.Admin)]
+[Authorize(Policy = AuthPolicies.SuperAdmin)]
 [Route("[controller]")]
 public sealed class PrivacyPolicyController(IPrivacyPolicyService service) : Controller
 {
