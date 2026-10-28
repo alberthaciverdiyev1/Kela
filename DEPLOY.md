@@ -202,7 +202,42 @@ systemctl enable --now edutor-api edutor-admin
 - [ ] DB backup + `uploads`/R2 backup
 - [ ] Log toplama və uptime alert
 
-## 9. Bilinən məhdudiyyətlər
+## 9. Avtomatik deploy (`deploy.sh`)
+
+Serverdə `deploy.sh` (root) bütün addımları yerinə yetirir: GitHub-dan pull → DB backup →
+yalnız api/admin/web build → yeni release qovluğu → `current` symlink-inin dəyişdirilməsi →
+servislərin restartı → health check. Xəta olarsa əvvəlki release-ə avtomatik qayıdır.
+
+```bash
+/var/www/edutor/deploy.sh                # pull + build + deploy
+/var/www/edutor/deploy.sh --skip-pull    # serverdəki checkout-u deploy et
+/var/www/edutor/deploy.sh --list         # mövcud release-lər
+/var/www/edutor/deploy.sh --rollback     # əvvəlki release-ə qayıt
+/var/www/edutor/deploy.sh --rollback 20261028-1926-7d40a65
+```
+
+Qovluq strukturu:
+
+```
+/var/www/edutor/
+├── src/                     # git checkout (deploy üçün mənbə)
+├── releases/<tarix>-<sha>/  # {api,admin,web} publish çıxışları
+├── current -> releases/...  # systemd və nginx bunu istifadə edir
+└── shared/
+    ├── keys/                # DataProtection açarları
+    └── backups/             # pg_dump -Fc yedəkləri (son 10 saxlanılır)
+```
+
+- Son 3 release saxlanılır (`KEEP_RELEASES`), deploy zamanı `bin/obj` təmizlənir.
+- Rollback yalnız **kodu** geri qaytarır; migration geri alınmır. Migration səbəbli
+  problemdə bazanı `shared/backups`-dakı dump-dan bərpa edin:
+  `pg_restore -h 127.0.0.1 -U edutor -d edutor --clean --if-exists <dump>`.
+- `Seed__SampleTenants=false` hər iki host-un env faylında olmalıdır — əks halda təzə
+  bazada nümunə kurslar yaranır.
+- GitHub Actions üçün: `ssh` ilə serverdə bu skripti çağırmaq kifayətdir (secret-lər
+  serverdə qalır; repo-ya heç bir parol düşmür).
+
+## 10. Bilinən məhdudiyyətlər
 
 - **E-poçt göndərilmir** — OTP ilə şifrə bərpası production-da işləmir; şifrə sıfırlama
   admin panelindən aparılır. Lazım olsa `IEmailSender` implementasiyası əlavə edilməlidir.
