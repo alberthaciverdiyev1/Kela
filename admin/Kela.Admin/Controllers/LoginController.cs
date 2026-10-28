@@ -1,4 +1,5 @@
 using System.Security.Claims;
+using FluentValidation;
 using Kela.Core.Modules.Tenant.Abstractions;
 using Kela.Core.Modules.User.Abstractions;
 using Kela.Core.Modules.User.Entities;
@@ -13,7 +14,10 @@ namespace Kela.Admin.Controllers;
 
 [AllowAnonymous]
 [Route("[controller]")]
-public sealed class LoginController(IUserAuthService service, ITenantService tenants) : Controller
+public sealed class LoginController(
+    IUserAuthService service,
+    ITenantService tenants,
+    IValidator<UserLoginRequest> validator) : Controller
 {
     [HttpGet]
     public async Task<IActionResult> Index(CancellationToken ct)
@@ -30,6 +34,12 @@ public sealed class LoginController(IUserAuthService service, ITenantService ten
     [EnableRateLimiting("login")]
     public async Task<IActionResult> Index(UserLoginRequest request, CancellationToken ct)
     {
+        var validation = await validator.ValidateAsync(request, ct);
+        if (!validation.IsValid)
+        {
+            return await LoginViewAsync(validation.Errors[0].ErrorMessage, ct);
+        }
+
         try
         {
             var result = await service.LoginAsync(request, ct);
@@ -56,11 +66,16 @@ public sealed class LoginController(IUserAuthService service, ITenantService ten
         }
         catch (UnauthorizedAccessException)
         {
-            ViewData["Error"] = "Email, şifrə və ya tenant yanlışdır.";
-            ViewData["Tenants"] = await tenants.ListPublicAsync(ct);
-            ViewData["Scripts"] = new[] { "~/js/pages/login/index.js" };
-            return View();
+            return await LoginViewAsync("Email, şifrə və ya tenant yanlışdır.", ct);
         }
+    }
+
+    private async Task<IActionResult> LoginViewAsync(string error, CancellationToken ct)
+    {
+        ViewData["Error"] = error;
+        ViewData["Tenants"] = await tenants.ListPublicAsync(ct);
+        ViewData["Scripts"] = new[] { "~/js/pages/login/index.js" };
+        return View("Index");
     }
 
     [HttpPost("logout")]
