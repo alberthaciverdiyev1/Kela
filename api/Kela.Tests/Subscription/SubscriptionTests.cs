@@ -271,6 +271,29 @@ public class SubscriptionTests(ApiFactory factory)
 
         await Assert.ThrowsAsync<LimitExceededException>(() => scopedService.EnsureCanUploadAsync());
     }
+
+    [Fact]
+    public async Task A_plan_can_forbid_uploads_of_a_material_kind()
+    {
+        await using var db = Db(0);
+        var service = new SubscriptionService(db);
+
+        var request = Request($"p-{Guid.NewGuid():N}"[..20], 50, 600);
+        request.AllowVideoUpload = false;
+
+        var plan = await service.CreatePlanAsync(request);
+        Assert.False(plan.AllowVideoUpload);
+        Assert.True(plan.AllowFileUpload);
+
+        var tenantId = await TenantAsync(db, plan.Id);
+
+        await using var scoped = Db(tenantId);
+        var scopedService = new SubscriptionService(scoped);
+
+        await Assert.ThrowsAsync<ForbiddenException>(() => scopedService.EnsureCanUploadAsync(UploadKind.Video));
+        await scopedService.EnsureCanUploadAsync(UploadKind.File);
+        await scopedService.EnsureCanUploadAsync(UploadKind.Audio);
+    }
 }
 
 /// <summary>Bucket taraması: tenant-ın tutduğu yer və köhnə orijinalların silinməsi.</summary>

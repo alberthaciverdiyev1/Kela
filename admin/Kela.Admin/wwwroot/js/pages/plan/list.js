@@ -1,6 +1,18 @@
 window.PlanPage = (function () {
     const limit = (value) => value > 0 ? value : 'limitsiz';
 
+    function uploads(plan) {
+        const allowed = [
+            plan.allowVideoUpload && 'video',
+            plan.allowFileUpload && 'PDF',
+            plan.allowAudioUpload && 'səs'
+        ].filter(Boolean);
+
+        return allowed.length
+            ? allowed.map(x => AdminUI.badge(x, 'success')).join(' ')
+            : AdminUI.badge('bağlı', 'danger');
+    }
+
     async function load() {
         const plans = await AdminUI.get('/plan/list');
 
@@ -10,6 +22,7 @@ window.PlanPage = (function () {
             { html: limit(p.maxStudents) },
             { html: limit(p.maxGroups) },
             { html: p.monthlyVideoMinutes > 0 ? Math.round(p.monthlyVideoMinutes / 60) : 'limitsiz' },
+            { html: uploads(p) },
             { html: p.isActive ? AdminUI.badge('Aktiv', 'success') : AdminUI.badge('Deaktiv', 'neutral') },
             {
                 html: `<div class="flex justify-end gap-1">
@@ -17,7 +30,7 @@ window.PlanPage = (function () {
                     <button type="button" class="inline-flex items-center rounded-lg px-2.5 py-1.5 text-sm font-semibold text-danger hover:bg-danger-light" onclick="PlanPage.remove(${p.id})">Sil</button>
                 </div>`, cls: 'text-right'
             }
-        ]), 7, { empty: 'Plan yoxdur' });
+        ]), 8, { empty: 'Plan yoxdur' });
     }
 
     async function remove(id) {

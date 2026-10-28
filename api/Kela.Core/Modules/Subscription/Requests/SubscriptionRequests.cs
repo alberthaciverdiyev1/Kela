@@ -56,6 +56,15 @@ public class PlanRequest
     [FromForm(Name = "original_retention_days")]
     public int OriginalRetentionDays { get; set; } = 30;
 
+    [FromForm(Name = "allow_video_upload")]
+    public bool AllowVideoUpload { get; set; } = true;
+
+    [FromForm(Name = "allow_audio_upload")]
+    public bool AllowAudioUpload { get; set; } = true;
+
+    [FromForm(Name = "allow_file_upload")]
+    public bool AllowFileUpload { get; set; } = true;
+
     /// <summary>Vergüllə ayrılmış açıqlar: certificates,payments,crm,chat,branding,api</summary>
     public string? Features { get; set; }
 

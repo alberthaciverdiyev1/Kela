@@ -32,6 +32,16 @@
     </div>
 
     <div>
+        <p class="mb-1 text-xs font-bold uppercase tracking-wide text-slate-400">Yükləmə icazələri</p>
+        <p class="mb-3 text-sm text-slate-500">Bağlanmış növ bu planı olan tenant-larda yüklənə bilməz.</p>
+        <div class="grid gap-3 sm:grid-cols-3">
+            <partial name="Ui/_Switch" model="@(new SwitchModel { Name = "allow_video_upload", Id = "allow_video_upload", Label = "Video" })" />
+            <partial name="Ui/_Switch" model="@(new SwitchModel { Name = "allow_audio_upload", Id = "allow_audio_upload", Label = "Səs" })" />
+            <partial name="Ui/_Switch" model="@(new SwitchModel { Name = "allow_file_upload", Id = "allow_file_upload", Label = "PDF / fayl" })" />
+        </div>
+    </div>
+
+    <div>
         <p class="mb-2 text-xs font-bold uppercase tracking-wide text-slate-400">Limitlər (0 = limitsiz)</p>
         <div class="grid gap-3 sm:grid-cols-3">
             <partial name="Ui/_Input" model="@(new InputModel { Name = "max_students", Id = "max_students", Label = "Tələbə", Type = "number", Min = "0" })" />

@@ -19,7 +19,8 @@ public interface ISubscriptionService
     Task EnsureCanAddGroupsAsync(int count, CancellationToken ct = default);
     Task EnsureCanAddSubjectsAsync(int count, CancellationToken ct = default);
     Task EnsureCanAddLessonsAsync(int count, CancellationToken ct = default);
-    Task EnsureCanUploadAsync(bool isVideo = true, CancellationToken ct = default);
+    /// <summary>Planın müvafiq material növü üçün yükləməyə icazə verdiyini və video limitini yoxlayır.</summary>
+    Task EnsureCanUploadAsync(Entities.UploadKind kind = Entities.UploadKind.Video, CancellationToken ct = default);
 
     /// <summary>Uğurlu konversiyadan sonra mənbə dəqiqələrini cari dövrə yazır.</summary>
     Task RecordVideoMinutesAsync(long tenantId, int minutes, CancellationToken ct = default);

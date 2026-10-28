@@ -55,6 +55,15 @@
     string Limit(int value) => value > 0 ? value.ToString() : "limitsiz";
     string Storage(long bytes) => bytes > 0 ? $"{Math.Round(bytes / 1073741824.0)} GB" : "limitsiz";
 
+    string UploadList(bool video, bool file, bool audio)
+    {
+        var items = new List<string>();
+        if (video) items.Add("video");
+        if (file) items.Add("PDF");
+        if (audio) items.Add("səs");
+        return items.Count > 0 ? string.Join(", ", items) : "bağlı";
+    }
+
     var planPayload = plans.Select(p => new
     {
         id = p.Id,
@@ -115,6 +124,21 @@
                 <p class="mt-1 text-sm text-slate-500">@Model.Plan.MonthlyPrice @Model.Plan.Currency / ay</p>
                 <div class="mt-3">
                     <span class="badge badge-@statusLabel.Item2">@statusLabel.Item1</span>
+                </div>
+                <p class="mt-3 text-xs font-semibold uppercase tracking-wide text-slate-400">Yükləmə</p>
+                <div class="mt-1 flex flex-wrap gap-1">
+                    @{
+                        var allowedUploads = new (string Label, bool Allowed)[]
+                        {
+                            ("Video", used.AllowVideoUpload),
+                            ("PDF", used.AllowFileUpload),
+                            ("Səs", used.AllowAudioUpload)
+                        };
+                    }
+                    @foreach (var upload in allowedUploads)
+                    {
+                        <span class="badge badge-@(upload.Allowed ? "success" : "danger")">@upload.Label</span>
+                    }
                 </div>
             </div>
 
@@ -200,6 +224,7 @@
                                 <li>@(plan.MonthlyVideoMinutes > 0 ? (plan.MonthlyVideoMinutes / 60).ToString() : "Limitsiz") video saatı / ay</li>
                                 <li>@Storage(plan.StorageBytes) yaddaş</li>
                                 <li>Maks. keyfiyyət: @(plan.MaxVideoHeight > 0 ? $"{plan.MaxVideoHeight}p" : "limitsiz")</li>
+                                <li>Yükləmə: @UploadList(plan.AllowVideoUpload, plan.AllowFileUpload, plan.AllowAudioUpload)</li>
                             </ul>
 
                             <button type="button" class="admin-button-primary mt-4 w-full"

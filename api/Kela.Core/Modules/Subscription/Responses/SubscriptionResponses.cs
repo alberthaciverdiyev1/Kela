@@ -31,6 +31,9 @@ public record SubscriptionUsageResponse(
     long StorageBytes,
     long MaxStorageBytes,
     int MaxVideoHeight,
+    bool AllowVideoUpload,
+    bool AllowAudioUpload,
+    bool AllowFileUpload,
     IReadOnlyList<string> Features,
     IReadOnlyList<AddonOfferResponse> AddonOffers);
 
@@ -65,6 +68,9 @@ public record PlanResponse(
     decimal PricePerGroup,
     decimal PricePerVideoHour,
     int OriginalRetentionDays,
+    bool AllowVideoUpload,
+    bool AllowAudioUpload,
+    bool AllowFileUpload,
     string Features,
     bool IsActive,
     int SortOrder);

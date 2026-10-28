@@ -30,6 +30,9 @@ public sealed class SubscriptionPlanConfiguration : IEntityTypeConfiguration<Sub
         builder.Property(x => x.PricePerGroup).HasColumnName("price_per_group").HasPrecision(12, 2);
         builder.Property(x => x.PricePerVideoHour).HasColumnName("price_per_video_hour").HasPrecision(12, 2);
         builder.Property(x => x.OriginalRetentionDays).HasColumnName("original_retention_days");
+        builder.Property(x => x.AllowVideoUpload).HasColumnName("allow_video_upload").HasDefaultValue(true);
+        builder.Property(x => x.AllowAudioUpload).HasColumnName("allow_audio_upload").HasDefaultValue(true);
+        builder.Property(x => x.AllowFileUpload).HasColumnName("allow_file_upload").HasDefaultValue(true);
         builder.Property(x => x.Features).HasColumnName("features").HasColumnType("jsonb").IsRequired();
         builder.Property(x => x.IsActive).HasColumnName("is_active").HasDefaultValue(true);
         builder.Property(x => x.SortOrder).HasColumnName("sort_order");

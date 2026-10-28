@@ -21,6 +21,7 @@ using Video = Kela.Core.Modules.Media.Entities.Video;
 using VoiceRecord = Kela.Core.Modules.Media.Entities.VoiceRecord;
 using Kela.Core.Common.Queries;
 using Kela.Core.Common.Authorization;
+using Kela.Core.Modules.Subscription.Entities;
 
 public sealed partial class LessonContentService(
     AppDbContext db,
@@ -95,6 +96,13 @@ public sealed partial class LessonContentService(
         return new PagedResponse<LessonContentResponse>(data, page, Paging.LastPage(total, perPage), perPage, total);
     }
 
+    private static UploadKind UploadKindFor(LessonContentType type) => type switch
+    {
+        LessonContentType.Video => UploadKind.Video,
+        LessonContentType.Voice => UploadKind.Audio,
+        _ => UploadKind.File
+    };
+
     private static int EffectiveSort(LessonContent content, long lessonId) =>
         content.LessonId == lessonId
             ? content.SortOrder
@@ -114,7 +122,7 @@ public sealed partial class LessonContentService(
     {
         await EnsureLessonAccessibleAsync(request.LessonId, ownerId, ct);
 
-        await subscription.EnsureCanUploadAsync(request.Type == LessonContentType.Video, ct);
+        await subscription.EnsureCanUploadAsync(UploadKindFor(request.Type), ct);
 
         var folder = await FolderForAsync(request.Type, await LessonTenantAsync(request.LessonId, ct), ct);
         var path = await storage.BuildUniquePathAsync(folder, request.FileName, ct);
@@ -130,6 +138,7 @@ public sealed partial class LessonContentService(
     public async Task<MultipartTicket?> StartMultipartAsync(LessonContentUploadUrlRequest request, long? ownerId = null, CancellationToken ct = default)
     {
         await EnsureLessonAccessibleAsync(request.LessonId, ownerId, ct);
+        await subscription.EnsureCanUploadAsync(UploadKindFor(request.Type), ct);
 
         var folder = await FolderForAsync(request.Type, await LessonTenantAsync(request.LessonId, ct), ct);
         return await storage.StartMultipartAsync(folder, request.FileName, request.ContentType, ct);
@@ -170,6 +179,13 @@ public sealed partial class LessonContentService(
 
         // Teacher yalnız öz və ya adminin dərsinə material əlavə edə bilər.
         if (request.UserId is long ownerId) await EnsureLessonAccessibleAsync(request.LessonId, ownerId, ct);
+
+        // Fayl verilmirsə (defer_file) material dərhal yaradılır — fayl sonra attach ucu ilə
+        // gəlir, orada ayrıca yoxlanılır. Burada yalnız real yükləmə üçün icazə yoxlanılır.
+        if (request.File is not null || !string.IsNullOrWhiteSpace(request.Path))
+        {
+            await subscription.EnsureCanUploadAsync(UploadKindFor(request.Type), ct);
+        }
 
         var path = await ResolvePathAsync(request, ct);
 
@@ -252,6 +268,8 @@ public sealed partial class LessonContentService(
             ?? throw new KeyNotFoundException($"Lesson content not found: {id}");
 
         OwnershipGuard.EnsureOwned(ownerId, content.UserId, "You can only modify your own material");
+
+        await subscription.EnsureCanUploadAsync(UploadKindFor(request.Type), ct);
 
         switch (request.Type)
         {

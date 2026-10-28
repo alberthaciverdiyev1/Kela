@@ -55,6 +55,16 @@ public class SubscriptionPlan
     /// <summary>Orijinal videonun neçə gün saxlanacağı (0 = limitsiz).</summary>
     public int OriginalRetentionDays { get; set; } = 30;
 
+    // ---- Yükləmə icazələri ----
+    /// <summary>Plan video materialların yüklənməsinə icazə verir.</summary>
+    public bool AllowVideoUpload { get; set; } = true;
+
+    /// <summary>Plan səs (voice) materiallarının yüklənməsinə icazə verir.</summary>
+    public bool AllowAudioUpload { get; set; } = true;
+
+    /// <summary>Plan PDF və digər fayl materiallarının yüklənməsinə icazə verir.</summary>
+    public bool AllowFileUpload { get; set; } = true;
+
     /// <summary>JSON: {"certificates":true,"payments":true,"crm":false,"chat":false,"branding":false,"api":false}</summary>
     public string Features { get; set; } = "{}";
 

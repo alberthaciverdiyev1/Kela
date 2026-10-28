@@ -25,7 +25,7 @@ public sealed class SubscriptionService(AppDbContext db) : ISubscriptionService
         {
             return new SubscriptionResponse(null, new SubscriptionUsageResponse(
                 null, "none", "Plan təyin edilməyib", "active", null, null,
-                0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1080, [], []));
+                0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1080, true, true, true, [], []));
         }
 
         // Superadmin tenant-ı dəyişəndə qlobal filtr söndürülür — sayım hər halda
@@ -64,6 +64,9 @@ public sealed class SubscriptionService(AppDbContext db) : ISubscriptionService
                 usage.StorageBytes,
                 plan.StorageBytes,
                 plan.MaxVideoHeight,
+                plan.AllowVideoUpload,
+                plan.AllowAudioUpload,
+                plan.AllowFileUpload,
                 ParseFeatures(plan.Features),
                 Offers(plan)));
     }
@@ -109,10 +112,11 @@ public sealed class SubscriptionService(AppDbContext db) : ISubscriptionService
         => EnsureOpenAsync(ct);
 
     /// <summary>
-    /// Video yükləməzdən əvvəl yoxlanılır. Müddət konversiyadan sonra bilindiyi üçün
-    /// burada yalnız "artıq limit dolubmu" yoxlanılır; cari yükləmə bloklanmır.
+    /// Yükləmədən əvvəl yoxlanılır: plan həmin material növünə icazə verirmi və video
+    /// limiti dolubmu. Video müddəti konversiyadan sonra bilindiyi üçün burada yalnız
+    /// "artıq limit dolubmu" yoxlanılır; cari yükləmə bloklanmır.
     /// </summary>
-    public async Task EnsureCanUploadAsync(bool isVideo = true, CancellationToken ct = default)
+    public async Task EnsureCanUploadAsync(UploadKind kind = UploadKind.Video, CancellationToken ct = default)
     {
         var tenantId = db.CurrentTenantId;
         if (tenantId is not long id) return;
@@ -123,9 +127,10 @@ public sealed class SubscriptionService(AppDbContext db) : ISubscriptionService
         if (plan is null) return;
 
         await EnsureWritableAsync(id, ct);
+        EnsureKindAllowed(plan, kind);
 
         var videoLimit = plan.MonthlyVideoMinutes + usage.AddonVideoMinutes;
-        if (isVideo && videoLimit > 0 && usage.VideoMinutes >= videoLimit)
+        if (kind == UploadKind.Video && videoLimit > 0 && usage.VideoMinutes >= videoLimit)
         {
             throw new LimitExceededException(
                 AddonKinds.Video,
@@ -134,6 +139,22 @@ public sealed class SubscriptionService(AppDbContext db) : ISubscriptionService
                 usage.VideoMinutes, videoLimit);
         }
 
+    }
+
+    private static void EnsureKindAllowed(SubscriptionPlan plan, UploadKind kind)
+    {
+        var (allowed, label) = kind switch
+        {
+            UploadKind.Video => (plan.AllowVideoUpload, "video"),
+            UploadKind.Audio => (plan.AllowAudioUpload, "səs"),
+            _ => (plan.AllowFileUpload, "fayl (PDF)")
+        };
+
+        if (allowed) return;
+
+        throw new ForbiddenException(
+            $"{plan.Name} planında {label} yükləməsinə icazə verilmir. " +
+            "Yükləmə üçün planı yüksəldin.");
     }
 
     public async Task RecordVideoMinutesAsync(long tenantId, int minutes, CancellationToken ct = default)
@@ -454,6 +475,9 @@ public sealed class SubscriptionService(AppDbContext db) : ISubscriptionService
         plan.PricePerGroup = Math.Max(0, request.PricePerGroup);
         plan.PricePerVideoHour = Math.Max(0, request.PricePerVideoHour);
         plan.OriginalRetentionDays = request.OriginalRetentionDays;
+        plan.AllowVideoUpload = request.AllowVideoUpload;
+        plan.AllowAudioUpload = request.AllowAudioUpload;
+        plan.AllowFileUpload = request.AllowFileUpload;
         plan.IsActive = request.IsActive;
         plan.SortOrder = request.SortOrder;
 
@@ -471,6 +495,7 @@ public sealed class SubscriptionService(AppDbContext db) : ISubscriptionService
         x.MaxTeachers, x.MaxStudents, x.MaxGroups, x.MaxSubjects, x.MaxLessons,
         x.MonthlyVideoMinutes, x.StorageBytes, x.ConcurrentConversions, x.MaxVideoHeight,
         x.PricePerStudent, x.PricePerGroup, x.PricePerVideoHour, x.OriginalRetentionDays,
+        x.AllowVideoUpload, x.AllowAudioUpload, x.AllowFileUpload,
         x.Features, x.IsActive, x.SortOrder);
 
     private static TenantAddonResponse ToAddonResponse(TenantAddon x)

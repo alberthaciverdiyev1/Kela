@@ -29,6 +29,10 @@
     window.PlanPage.edit = async function (id) {
         const p = await AdminUI.get(`/plan/${id}`);
 
+        document.getElementById('allow_video_upload').checked = p.allowVideoUpload;
+        document.getElementById('allow_audio_upload').checked = p.allowAudioUpload;
+        document.getElementById('allow_file_upload').checked = p.allowFileUpload;
+
         document.getElementById('planTitle').textContent = `Plan — ${p.name}`;
         document.getElementById('planId').value = p.id;
         document.getElementById('code').value = p.code;
@@ -72,6 +76,9 @@
             fields.forEach(id => fd.append(id, document.getElementById(id).value || ''));
             fd.append('monthly_video_minutes', document.getElementById('monthly_video_minutes').value);
             fd.append('is_active', document.getElementById('is_active').value);
+
+            ['allow_video_upload', 'allow_audio_upload', 'allow_file_upload'].forEach(key =>
+                fd.append(key, document.getElementById(key).checked ? 'true' : 'false'));
 
             const id = document.getElementById('planId').value;
             const res = id
