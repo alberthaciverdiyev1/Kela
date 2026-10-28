@@ -13,8 +13,11 @@ public class AddonRequest : BaseEntity
     /// <summary>Tələbə/qrup sayı, video üçün saat.</summary>
     public int Quantity { get; set; }
 
-    /// <summary>one_time | monthly</summary>
+    /// <summary>one_time | monthly — müraciətdə göstərilmir, superadmin təsdiqdə seçir.</summary>
     public string Mode { get; set; } = AddonModes.OneTime;
+
+    /// <summary>now | with_plan — müraciət edənin seçdiyi ödəniş vaxtı.</summary>
+    public string PaymentTiming { get; set; } = AddonPaymentTimings.Now;
 
     /// <summary>pending | approved | rejected</summary>
     public string Status { get; set; } = AddonRequestStatuses.Pending;

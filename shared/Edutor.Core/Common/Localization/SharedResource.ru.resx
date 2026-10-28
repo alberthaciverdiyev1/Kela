@@ -1827,6 +1827,15 @@
   <data name="Limit_Packs" xml:space="preserve">
     <value>Количество</value>
   </data>
+  <data name="Limit_PayTiming" xml:space="preserve">
+    <value>Срок оплаты</value>
+  </data>
+  <data name="Limit_PayNow" xml:space="preserve">
+    <value>Оплатить сейчас</value>
+  </data>
+  <data name="Limit_PayWithPlan" xml:space="preserve">
+    <value>В конце месяца вместе с планом</value>
+  </data>
   <data name="Limit_RequestMode" xml:space="preserve">
     <value>Тип оплаты</value>
   </data>

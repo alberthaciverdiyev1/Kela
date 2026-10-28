@@ -25,7 +25,7 @@ public sealed class SubscriptionService(AppDbContext db) : ISubscriptionService
         {
             return new SubscriptionResponse(null, new SubscriptionUsageResponse(
                 null, "none", "Plan təyin edilməyib", "active", null, null,
-                0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1080, true, true, true, [], []));
+                0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1080, true, true, true, [], [], false));
         }
 
         // Superadmin tenant-ı dəyişəndə qlobal filtr söndürülür — sayım hər halda
@@ -72,7 +72,8 @@ public sealed class SubscriptionService(AppDbContext db) : ISubscriptionService
                 plan.AllowAudioUpload,
                 plan.AllowFileUpload,
                 ParseFeatures(plan.Features),
-                Offers(plan)));
+                Offers(plan),
+                plan.BillAddonsWithPlan));
     }
 
     public async Task<SubscriptionResponse> GetCurrentAsync(CancellationToken ct = default)
@@ -209,6 +210,9 @@ public sealed class SubscriptionService(AppDbContext db) : ISubscriptionService
         }
 
         var mode = AddonModes.All.Contains(request.Mode) ? request.Mode : AddonModes.OneTime;
+        var timing = mode == AddonModes.Monthly
+            ? AddonPaymentTimings.WithPlan
+            : PaymentTimingOrNow(request.PaymentTiming);
         var quantity = Math.Clamp(request.Quantity, 1, 10000);
 
         var tenant = await db.Tenants.AsNoTracking().FirstOrDefaultAsync(x => x.Id == tenantId, ct)
@@ -218,6 +222,8 @@ public sealed class SubscriptionService(AppDbContext db) : ISubscriptionService
 
         if (plan is null) throw new InvalidOperationException("Plan tapılmadı");
 
+        EnsureBillingAllowed(plan, mode, timing);
+
         var addon = new TenantAddon
         {
             TenantId = tenantId,
@@ -225,6 +231,8 @@ public sealed class SubscriptionService(AppDbContext db) : ISubscriptionService
             Kind = request.Kind,
             Quantity = quantity,
             Mode = mode,
+            PaymentTiming = timing,
+            PaidAt = timing == AddonPaymentTimings.Now ? DateTimeOffset.UtcNow : null,
             Currency = plan.Currency,
             Note = Truncate(request.Note, 190),
             Amount = request.Amount ?? quantity * UnitPrice(plan, request.Kind)
@@ -245,7 +253,7 @@ public sealed class SubscriptionService(AppDbContext db) : ISubscriptionService
             .OrderByDescending(x => x.Id)
             .Take(100)
             .Select(x => new TenantAddonResponse(x.Id, x.Period, x.Kind, x.Quantity,
-                x.Mode, x.Amount, x.Currency, x.Note, x.CreatedAt))
+                x.Mode, x.PaymentTiming, x.PaidAt, x.Amount, x.Currency, x.Note, x.CreatedAt))
             .ToListAsync(ct);
 
     public async Task CancelAddonAsync(long addonId, CancellationToken ct = default)
@@ -267,6 +275,17 @@ public sealed class SubscriptionService(AppDbContext db) : ISubscriptionService
         await db.SaveChangesAsync(ct);
     }
 
+    public async Task<TenantAddonResponse> MarkAddonPaidAsync(long addonId, CancellationToken ct = default)
+    {
+        var addon = await db.TenantAddons.FirstOrDefaultAsync(x => x.Id == addonId, ct)
+            ?? throw new KeyNotFoundException($"Addon not found: {addonId}");
+
+        addon.PaidAt = DateTimeOffset.UtcNow;
+        await db.SaveChangesAsync(ct);
+
+        return ToAddonResponse(addon);
+    }
+
     // ---- Limit artırma müraciətləri ----
 
     public async Task<AddonRequestResponse> CreateAddonRequestAsync(
@@ -277,11 +296,7 @@ public sealed class SubscriptionService(AppDbContext db) : ISubscriptionService
             throw new ArgumentException($"kind must be one of: {string.Join(", ", AddonKinds.All)}");
         }
 
-        if (!AddonModes.All.Contains(request.Mode))
-        {
-            throw new ArgumentException($"mode must be one of: {string.Join(", ", AddonModes.All)}");
-        }
-
+        var timing = PaymentTimingOrNow(request.PaymentTiming);
         var quantity = Math.Clamp(request.Quantity, 1, 10000);
 
         var tenant = await db.Tenants.AsNoTracking().FirstOrDefaultAsync(x => x.Id == tenantId, ct)
@@ -290,12 +305,14 @@ public sealed class SubscriptionService(AppDbContext db) : ISubscriptionService
         var (plan, _, _, _) = await LoadAsync(tenantId, tenant, ct);
         if (plan is null) throw new InvalidOperationException("Plan tapılmadı");
 
+        EnsureBillingAllowed(plan, AddonModes.OneTime, timing);
+
         var entry = new AddonRequest
         {
             TenantId = tenantId,
             Kind = request.Kind,
             Quantity = quantity,
-            Mode = request.Mode,
+            PaymentTiming = timing,
             Currency = plan.Currency,
             Amount = quantity * UnitPrice(plan, request.Kind),
             Note = Truncate(request.Note, 190),
@@ -321,7 +338,7 @@ public sealed class SubscriptionService(AppDbContext db) : ISubscriptionService
             .OrderByDescending(x => x.Id)
             .Take(200)
             .Select(x => new AddonRequestResponse(
-                x.Id, x.TenantId, null, x.Kind, x.Quantity, x.Mode, x.Status,
+                x.Id, x.TenantId, null, x.Kind, x.Quantity, x.Mode, x.PaymentTiming, x.Status,
                 x.Amount, x.Currency, x.Note, x.ReviewNote, x.RequestedByName, x.ReviewedByName,
                 x.ReviewedAt, x.AddonId, x.CreatedAt))
             .ToListAsync(ct);
@@ -332,9 +349,14 @@ public sealed class SubscriptionService(AppDbContext db) : ISubscriptionService
     {
         var entry = await LoadPendingRequestAsync(requestId, ct);
 
+        var mode = AddonModes.All.Contains(request.Mode) ? request.Mode! : AddonModes.OneTime;
+        var timing = mode == AddonModes.Monthly ? AddonPaymentTimings.WithPlan : entry.PaymentTiming;
+
         var tenant = await db.Tenants.AsNoTracking().FirstOrDefaultAsync(x => x.Id == entry.TenantId, ct);
         var (plan, usage, _, _) = await LoadAsync(entry.TenantId, tenant, ct);
         if (plan is null) throw new InvalidOperationException("Plan tapılmadı");
+
+        EnsureBillingAllowed(plan, mode, timing);
 
         var addon = new TenantAddon
         {
@@ -342,18 +364,21 @@ public sealed class SubscriptionService(AppDbContext db) : ISubscriptionService
             Period = Period(),
             Kind = entry.Kind,
             Quantity = entry.Quantity,
-            Mode = entry.Mode,
+            Mode = mode,
+            PaymentTiming = timing,
+            PaidAt = timing == AddonPaymentTimings.Now ? DateTimeOffset.UtcNow : null,
             Amount = entry.Amount,
             Currency = entry.Currency,
             Note = Truncate($"Müraciət #{entry.Id}", 190)
         };
 
-        if (entry.Mode == AddonModes.OneTime) ApplyAddon(usage, entry.Kind, entry.Quantity);
+        if (mode == AddonModes.OneTime) ApplyAddon(usage, entry.Kind, entry.Quantity);
 
         db.TenantAddons.Add(addon);
         await db.SaveChangesAsync(ct);
 
         entry.Status = AddonRequestStatuses.Approved;
+        entry.Mode = mode;
         entry.AddonId = addon.Id;
         entry.ReviewedByUserId = reviewerId;
         entry.ReviewedByName = Truncate(reviewerName, 120);
@@ -388,6 +413,25 @@ public sealed class SubscriptionService(AppDbContext db) : ISubscriptionService
         }
 
         return entry;
+    }
+
+    private static string PaymentTimingOrNow(string? value)
+        => AddonPaymentTimings.All.Contains(value) ? value! : AddonPaymentTimings.Now;
+
+    /// <summary>Planla birlikdə (ay sonunda) ödəniş yalnız plan icazə verəndə mümkündür.</summary>
+    private static void EnsureBillingAllowed(SubscriptionPlan plan, string mode, string timing)
+    {
+        if (plan.BillAddonsWithPlan) return;
+
+        if (mode == AddonModes.Monthly)
+        {
+            throw new ArgumentException("Bu planda aylıq limit paketi verilmir — planla birlikdə ödəniş bağlıdır");
+        }
+
+        if (timing == AddonPaymentTimings.WithPlan)
+        {
+            throw new ArgumentException("Bu planda limit ödənişi planla birlikdə qəbul olunmur — yalnız indi ödəmək olar");
+        }
     }
 
     private static decimal UnitPrice(SubscriptionPlan plan, string kind) => kind switch
@@ -694,6 +738,7 @@ public sealed class SubscriptionService(AppDbContext db) : ISubscriptionService
         plan.PricePerStudent = Math.Max(0, request.PricePerStudent);
         plan.PricePerGroup = Math.Max(0, request.PricePerGroup);
         plan.PricePerVideoHour = Math.Max(0, request.PricePerVideoHour);
+        plan.BillAddonsWithPlan = request.BillAddonsWithPlan;
         plan.OriginalRetentionDays = request.OriginalRetentionDays;
         plan.AllowVideoUpload = request.AllowVideoUpload;
         plan.AllowAudioUpload = request.AllowAudioUpload;
@@ -714,15 +759,16 @@ public sealed class SubscriptionService(AppDbContext db) : ISubscriptionService
         x.Id, x.Code, x.Name, x.Description, x.MonthlyPrice, x.Currency, x.YearlyFreeMonths, x.TrialDays,
         x.MaxTeachers, x.MaxStudents, x.MaxGroups, x.MaxSubjects, x.MaxLessons,
         x.MonthlyVideoMinutes, x.StorageBytes, x.ConcurrentConversions, x.MaxVideoHeight,
-        x.PricePerStudent, x.PricePerGroup, x.PricePerVideoHour, x.OriginalRetentionDays,
+        x.PricePerStudent, x.PricePerGroup, x.PricePerVideoHour, x.BillAddonsWithPlan, x.OriginalRetentionDays,
         x.AllowVideoUpload, x.AllowAudioUpload, x.AllowFileUpload,
         x.Features, x.IsActive, x.SortOrder);
 
     private static TenantAddonResponse ToAddonResponse(TenantAddon x)
-        => new(x.Id, x.Period, x.Kind, x.Quantity, x.Mode, x.Amount, x.Currency, x.Note, x.CreatedAt);
+        => new(x.Id, x.Period, x.Kind, x.Quantity, x.Mode, x.PaymentTiming, x.PaidAt,
+            x.Amount, x.Currency, x.Note, x.CreatedAt);
 
     private static AddonRequestResponse ToRequestResponse(AddonRequest x, string? tenantName)
-        => new(x.Id, x.TenantId, tenantName, x.Kind, x.Quantity, x.Mode, x.Status, x.Amount, x.Currency,
+        => new(x.Id, x.TenantId, tenantName, x.Kind, x.Quantity, x.Mode, x.PaymentTiming, x.Status, x.Amount, x.Currency,
             x.Note, x.ReviewNote, x.RequestedByName, x.ReviewedByName, x.ReviewedAt, x.AddonId, x.CreatedAt);
 
     private static string? Truncate(string? value, int max)

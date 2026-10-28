@@ -57,6 +57,12 @@ public class SubscriptionPlan
     /// <summary>Bir əlavə video saatının qiyməti.</summary>
     public decimal PricePerVideoHour { get; set; }
 
+    /// <summary>
+    /// Limit paketlərinin ödənişi planla birlikdə (ay sonunda) qəbul olunur.
+    /// Bağlıdırsa müştəri yalnız indi ödəyə bilər və aylıq paket verilə bilməz.
+    /// </summary>
+    public bool BillAddonsWithPlan { get; set; }
+
     // ---- Digər ----
     /// <summary>Orijinal videonun neçə gün saxlanacağı (0 = limitsiz).</summary>
     public int OriginalRetentionDays { get; set; } = 30;

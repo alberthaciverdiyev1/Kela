@@ -1,6 +1,7 @@
 window.AddonRequestPage = (function () {
     const kindLabels = { students: 'Tələbə', groups: 'Qrup', video: 'Video saatı' };
-    const modeLabels = { one_time: 'Birdəfəlik', monthly: 'Aylıq' };
+    const timingLabels = { now: 'İndi ödəniş', with_plan: 'Planla birlikdə' };
+    const isSuperAdmin = !!(window.ADMIN && ADMIN.isSuperAdmin);
 
     let status = '';
 
@@ -27,7 +28,7 @@ window.AddonRequestPage = (function () {
             cells.push(
                 { html: kindLabels[r.kind] || r.kind },
                 { html: r.quantity },
-                { html: modeLabels[r.mode] || r.mode },
+                { html: timingLabels[r.paymentTiming] || r.paymentTiming },
                 { html: `<span class="font-semibold">${r.amount} ${r.currency}</span>` },
                 { html: AdminUI.escapeHtml(r.requestedByName || '—') },
                 { html: date(r.createdAt) },
@@ -40,6 +41,10 @@ window.AddonRequestPage = (function () {
     }
 
     function actions(r) {
+        if (!isSuperAdmin) {
+            return `<span class="text-xs text-slate-400">${AdminUI.escapeHtml(r.reviewedByName || '')}</span>`;
+        }
+
         if (r.status === 'pending') {
             return `<div class="flex justify-end gap-1">
                 <button type="button" class="inline-flex items-center rounded-lg px-2.5 py-1.5 text-sm font-semibold text-primary hover:bg-primary-light" onclick="AddonRequestPage.approve(${r.id})">Təsdiq</button>
@@ -55,9 +60,14 @@ window.AddonRequestPage = (function () {
     }
 
     async function approve(id) {
+        // Paketin formasını (birdəfəlik/aylıq) superadmin müəyyən edir — ödəniş
+        // də buna görə hesablanır. Aylıq paket planla birlikdə ödənilir.
         const result = await AdminUI.swal({
             title: 'Müraciəti təsdiqlə',
-            text: 'Təsdiqdən sonra paket dərhal tətbiq olunacaq.',
+            text: 'Paketin formasını seçin. Təsdiqdən sonra limit dərhal artırılacaq.',
+            input: 'select',
+            inputOptions: { one_time: 'Birdəfəlik', monthly: 'Aylıq (planla birlikdə)' },
+            inputValue: 'one_time',
             icon: 'question',
             showCancelButton: true,
             confirmButtonText: 'Təsdiqlə',
@@ -66,7 +76,7 @@ window.AddonRequestPage = (function () {
 
         if (!result.isConfirmed) return;
 
-        const res = await AdminUI.post(`/addon-request/${id}/approve`, {});
+        const res = await AdminUI.post(`/addon-request/${id}/approve`, { mode: result.value || 'one_time' });
         if (res.ok) { AdminUI.notify(L["Js_Saved"]); load(); }
         else AdminUI.error(AdminUI.errText(res));
     }

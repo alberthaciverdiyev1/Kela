@@ -33,6 +33,7 @@
         document.getElementById('allow_video_upload').checked = p.allowVideoUpload;
         document.getElementById('allow_audio_upload').checked = p.allowAudioUpload;
         document.getElementById('allow_file_upload').checked = p.allowFileUpload;
+        document.getElementById('bill_addons_with_plan').checked = p.billAddonsWithPlan;
 
         document.getElementById('planTitle').textContent = `Plan — ${p.name}`;
         document.getElementById('planId').value = p.id;
@@ -79,7 +80,7 @@
             fd.append('monthly_video_minutes', document.getElementById('monthly_video_minutes').value);
             fd.append('is_active', document.getElementById('is_active').value);
 
-            ['allow_video_upload', 'allow_audio_upload', 'allow_file_upload'].forEach(key =>
+            ['allow_video_upload', 'allow_audio_upload', 'allow_file_upload', 'bill_addons_with_plan'].forEach(key =>
                 fd.append(key, document.getElementById(key).checked ? 'true' : 'false'));
 
             const id = document.getElementById('planId').value;

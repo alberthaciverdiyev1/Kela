@@ -35,7 +35,8 @@ public record SubscriptionUsageResponse(
     bool AllowAudioUpload,
     bool AllowFileUpload,
     IReadOnlyList<string> Features,
-    IReadOnlyList<AddonOfferResponse> AddonOffers);
+    IReadOnlyList<AddonOfferResponse> AddonOffers,
+    bool BillAddonsWithPlan);
 
 public record SubscriptionResponse(
     SubscriptionPlanInfo? Plan,
@@ -68,6 +69,7 @@ public record PlanResponse(
     decimal PricePerStudent,
     decimal PricePerGroup,
     decimal PricePerVideoHour,
+    bool BillAddonsWithPlan,
     int OriginalRetentionDays,
     bool AllowVideoUpload,
     bool AllowAudioUpload,
@@ -82,6 +84,8 @@ public record TenantAddonResponse(
     string Kind,
     int Quantity,
     string Mode,
+    string PaymentTiming,
+    DateTimeOffset? PaidAt,
     decimal Amount,
     string Currency,
     string? Note,
@@ -94,6 +98,7 @@ public record AddonRequestResponse(
     string Kind,
     int Quantity,
     string Mode,
+    string PaymentTiming,
     string Status,
     decimal Amount,
     string Currency,

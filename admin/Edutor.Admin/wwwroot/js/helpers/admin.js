@@ -89,10 +89,11 @@ window.AdminUI = window.AdminUI || {};
             const data = await get('/subscription/data');
             return {
                 offers: data?.usage?.addonOffers || [],
-                currency: data?.plan?.currency || ''
+                currency: data?.plan?.currency || '',
+                billWithPlan: data?.usage?.billAddonsWithPlan === true
             };
         } catch (e) {
-            return { offers: [], currency: '' };
+            return { offers: [], currency: '', billWithPlan: false };
         }
     }
 
@@ -111,17 +112,18 @@ window.AdminUI = window.AdminUI || {};
         const modal = document.getElementById('limitModal');
         if (!modal) return Promise.resolve(false);
 
-        // Admin birbaşa paket ala bilər; müəllim/kurs isə yalnız müraciət göndərir
-        // və limit admin təsdiqindən sonra artır.
-        const canManage = !!(window.ADMIN && ADMIN.isAdmin);
+        // Paketin formasını (birdəfəlik/aylıq) yalnız superadmin seçir. Tenant admini
+        // və müəllim müraciət göndərir, ödəniş vaxtını isə plan müəyyən edir.
+        const canManage = !!(window.ADMIN && ADMIN.isSuperAdmin);
 
-        return limitInfo().then(({ offers, currency }) => {
+        return limitInfo().then(({ offers, currency, billWithPlan }) => {
             const offer = offers.find(o => o.kind === info.kind) || null;
             const canBuy = !!offer;
 
             const offerBox = document.getElementById('limitOffer');
             const packsRow = document.getElementById('limitPacksRow');
             const modeRow = document.getElementById('limitModeRow');
+            const timingRow = document.getElementById('limitTimingRow');
             const note = document.getElementById('limitNote');
             const errorBox = document.getElementById('limitError');
             const buy = document.getElementById('limitBuy');
@@ -130,7 +132,15 @@ window.AdminUI = window.AdminUI || {};
 
             offerBox.classList.toggle('hidden', !offer);
             packsRow.classList.toggle('hidden', !canBuy);
-            modeRow.classList.toggle('hidden', !canBuy || canManage);
+            modeRow.classList.toggle('hidden', !canBuy || !canManage);
+            timingRow.classList.toggle('hidden', !canBuy || canManage || !billWithPlan);
+
+            // Planla birlikdə ödəniş bağlıdırsa aylıq paket seçilə bilməz.
+            const monthlyOpt = document.querySelector('#limitMode option[value="monthly"]');
+            if (monthlyOpt) {
+                monthlyOpt.disabled = !billWithPlan;
+                if (monthlyOpt.disabled) document.getElementById('limitMode').value = 'one_time';
+            }
             buy.classList.toggle('hidden', !canBuy);
             errorBox.classList.add('hidden');
 
@@ -158,10 +168,11 @@ window.AdminUI = window.AdminUI || {};
                     buy.classList.add('is-loading');
 
                     const count = Math.max(1, Math.min(10000, parseInt(document.getElementById('limitPacks').value, 10) || 1));
-                    const mode = document.getElementById('limitMode')?.value || 'one_time';
+                    const payload = canManage
+                        ? { kind: offer.kind, quantity: count, mode: document.getElementById('limitMode')?.value || 'one_time' }
+                        : { kind: offer.kind, quantity: count, payment_timing: document.getElementById('limitTiming')?.value || 'now' };
 
-                    const result = await post(canManage ? '/subscription/addons' : '/subscription/addon-requests',
-                        { kind: offer.kind, quantity: count, mode });
+                    const result = await post(canManage ? '/subscription/addons' : '/subscription/addon-requests', payload);
 
                     buy.disabled = false;
                     buy.classList.remove('is-loading');

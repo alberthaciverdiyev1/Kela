@@ -16,6 +16,12 @@ public class TenantAddon : BaseEntity
     /// <summary>one_time | monthly — aylıq paket ləğv edilənə qədər hər ay tətbiq olunur.</summary>
     public string Mode { get; set; } = AddonModes.OneTime;
 
+    /// <summary>now | with_plan — indi ödənilib və ya ay sonunda planla birlikdə.</summary>
+    public string PaymentTiming { get; set; } = AddonPaymentTimings.Now;
+
+    /// <summary>Ödəniş qeydə alınan an. Boşdursa ödəniş hələ gözlənilir.</summary>
+    public DateTimeOffset? PaidAt { get; set; }
+
     public decimal Amount { get; set; }
 
     public string Currency { get; set; } = "AZN";
@@ -30,4 +36,15 @@ public static class AddonKinds
     public const string Video = "video";
 
     public static readonly string[] All = [Students, Groups, Video];
+}
+
+public static class AddonPaymentTimings
+{
+    /// <summary>Paket alınarkən dərhal ödənilir.</summary>
+    public const string Now = "now";
+
+    /// <summary>Ay sonunda planla birlikdə hesablanır.</summary>
+    public const string WithPlan = "with_plan";
+
+    public static readonly string[] All = [Now, WithPlan];
 }

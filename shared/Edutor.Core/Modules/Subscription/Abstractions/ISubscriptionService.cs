@@ -44,6 +44,9 @@ public interface ISubscriptionService
     /// <summary>Aylıq əlavə paketi dayandırır (soft delete) — növbəti aylarda tətbiq olunmur.</summary>
     Task CancelAddonAsync(long addonId, CancellationToken ct = default);
 
+    /// <summary>Ay sonunda planla ödəniləcək paketin ödənişini qeydə alır.</summary>
+    Task<TenantAddonResponse> MarkAddonPaidAsync(long addonId, CancellationToken ct = default);
+
     // ---- Limit artırma müraciətləri ----
     /// <summary>Müəllim/kurs planı dəyişmədən limit artımı üçün müraciət edir.</summary>
     Task<AddonRequestResponse> CreateAddonRequestAsync(

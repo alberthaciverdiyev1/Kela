@@ -60,17 +60,20 @@ public sealed class SubscriptionController(
         return Json(await service.GetAsync(id, ct));
     }
 
-    /// <summary>Əlavə paket — yalnız admin/superadmin (ödəniş əl ilə).</summary>
+    /// <summary>
+    /// Əlavə pakət — yalnız superadmin. Paketin birdəfəlik/aylıq forması və
+    /// ödəniş vaxtı superadmin qərarıdır; tenant admin yalnız müraciət göndərir.
+    /// </summary>
     [HttpPost("addons")]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> AddAddon([FromForm] AddAddonRequest request, CancellationToken ct)
     {
         // Cookie auth-да [Authorize] 302 ilə login-ə yönləndirir və JS xətanı
         // görmür; ona görə aydın 403 JSON qaytarırıq.
-        if (!User.IsInRole(UserTypes.Admin) && !User.IsInRole(UserTypes.SuperAdmin))
+        if (!User.IsInRole(UserTypes.SuperAdmin))
         {
             return StatusCode(StatusCodes.Status403Forbidden,
-                new { message = "Limit artırmaq üçün administratorla əlaqə saxlayın." });
+                new { message = "Limit paketini yalnız platform administratoru əlavə edə bilər." });
         }
 
         var tenantId = request.TenantId
@@ -78,7 +81,14 @@ public sealed class SubscriptionController(
 
         if (tenantId is not > 0) return BadRequest(new { message = "Tenant seçilməyib" });
 
-        return Json(await service.AddAddonAsync(tenantId.Value, request, ct));
+        try
+        {
+            return Json(await service.AddAddonAsync(tenantId.Value, request, ct));
+        }
+        catch (ArgumentException ex)
+        {
+            return BadRequest(new { message = ex.Message });
+        }
     }
 
     [HttpGet("addons")]

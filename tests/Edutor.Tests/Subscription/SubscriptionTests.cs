@@ -72,15 +72,18 @@ public class SubscriptionTests(ApiFactory factory)
         var scopedService = new SubscriptionService(scoped);
 
         var request = await scopedService.CreateAddonRequestAsync(tenantId,
-            new AddonRequestBody { Kind = AddonKinds.Students, Quantity = 10, Mode = AddonModes.OneTime },
+            new AddonRequestBody { Kind = AddonKinds.Students, Quantity = 10 },
             null, "Teacher");
 
         Assert.Equal(AddonRequestStatuses.Pending, request.Status);
         Assert.Equal(10 * 8m, request.Amount);
 
-        var addon = await scopedService.ApproveAddonRequestAsync(request.Id, null, "Admin", new AddonReviewRequest());
+        var addon = await scopedService.ApproveAddonRequestAsync(request.Id, null, "Admin",
+            new AddonReviewRequest { Mode = AddonModes.OneTime });
 
         Assert.Equal(AddonModes.OneTime, addon.Mode);
+        Assert.Equal(AddonPaymentTimings.Now, addon.PaymentTiming);
+        Assert.NotNull(addon.PaidAt);
 
         var current = await scopedService.GetAsync(tenantId);
         Assert.Equal(60, current.Usage.MaxStudents);
@@ -95,17 +98,23 @@ public class SubscriptionTests(ApiFactory factory)
         await using var db = Db(0);
         var service = new SubscriptionService(db);
 
-        var plan = await service.CreatePlanAsync(Request($"p-{Guid.NewGuid():N}"[..20], 50, 600));
+        var plan = await service.CreatePlanAsync(Request($"p-{Guid.NewGuid():N}"[..20], 50, 600, billWithPlan: true));
         var tenantId = await TenantAsync(db, plan.Id);
 
         await using var scoped = Db(tenantId);
         var scopedService = new SubscriptionService(scoped);
 
         var request = await scopedService.CreateAddonRequestAsync(tenantId,
-            new AddonRequestBody { Kind = AddonKinds.Groups, Quantity = 4, Mode = AddonModes.Monthly },
+            new AddonRequestBody { Kind = AddonKinds.Groups, Quantity = 4 },
             null, "Teacher");
 
-        var addon = await scopedService.ApproveAddonRequestAsync(request.Id, null, "Admin", new AddonReviewRequest());
+        // Paketin formasını superadmin təsdiqdə seçir.
+        var addon = await scopedService.ApproveAddonRequestAsync(request.Id, null, "Admin",
+            new AddonReviewRequest { Mode = AddonModes.Monthly });
+
+        Assert.Equal(AddonModes.Monthly, addon.Mode);
+        Assert.Equal(AddonPaymentTimings.WithPlan, addon.PaymentTiming);
+        Assert.Null(addon.PaidAt);
 
         var raised = await scopedService.GetAsync(tenantId);
         Assert.Equal(9, raised.Usage.MaxGroups); // 5 + 4
@@ -129,7 +138,7 @@ public class SubscriptionTests(ApiFactory factory)
         var scopedService = new SubscriptionService(scoped);
 
         var request = await scopedService.CreateAddonRequestAsync(tenantId,
-            new AddonRequestBody { Kind = AddonKinds.Students, Quantity = 100, Mode = AddonModes.OneTime },
+            new AddonRequestBody { Kind = AddonKinds.Students, Quantity = 100 },
             null, "Teacher");
 
         await scopedService.RejectAddonRequestAsync(request.Id, null, "Admin", new AddonReviewRequest { Note = "No" });
@@ -154,7 +163,7 @@ public class SubscriptionTests(ApiFactory factory)
         var scopedService = new SubscriptionService(scoped);
 
         var request = await scopedService.CreateAddonRequestAsync(tenantId,
-            new AddonRequestBody { Kind = AddonKinds.Students, Quantity = 5, Mode = AddonModes.OneTime },
+            new AddonRequestBody { Kind = AddonKinds.Students, Quantity = 5 },
             null, "Teacher");
 
         await scopedService.ApproveAddonRequestAsync(request.Id, null, "Admin", new AddonReviewRequest());
@@ -163,7 +172,54 @@ public class SubscriptionTests(ApiFactory factory)
             scopedService.ApproveAddonRequestAsync(request.Id, null, "Admin", new AddonReviewRequest()));
     }
 
-    private static PlanRequest Request(string code, int maxStudents, int monthlyVideoMinutes) => new()
+    [Fact]
+    public async Task Addon_payment_can_be_bundled_with_the_plan_only_when_the_plan_allows_it()
+    {
+        await using var db = Db(0);
+        var service = new SubscriptionService(db);
+
+        var plain = await service.CreatePlanAsync(Request($"p-{Guid.NewGuid():N}"[..20], 50, 600));
+        var plainTenant = await TenantAsync(db, plain.Id);
+
+        await using (var scoped = Db(plainTenant))
+        {
+            var scopedService = new SubscriptionService(scoped);
+
+            await Assert.ThrowsAsync<ArgumentException>(() => scopedService.CreateAddonRequestAsync(
+                plainTenant,
+                new AddonRequestBody { Kind = AddonKinds.Students, Quantity = 2, PaymentTiming = AddonPaymentTimings.WithPlan },
+                null, "Teacher"));
+
+            // Aylıq paket də planla birlikdə ödəniş tələb edir.
+            await Assert.ThrowsAsync<ArgumentException>(() => scopedService.AddAddonAsync(
+                plainTenant,
+                new AddAddonRequest { Kind = AddonKinds.Students, Quantity = 2, Mode = AddonModes.Monthly }));
+        }
+
+        var bundled = await service.CreatePlanAsync(Request($"p-{Guid.NewGuid():N}"[..20], 50, 600, billWithPlan: true));
+        var bundledTenant = await TenantAsync(db, bundled.Id);
+
+        await using var scopedBundled = Db(bundledTenant);
+        var bundledService = new SubscriptionService(scopedBundled);
+
+        var request = await bundledService.CreateAddonRequestAsync(
+            bundledTenant,
+            new AddonRequestBody { Kind = AddonKinds.Students, Quantity = 2, PaymentTiming = AddonPaymentTimings.WithPlan },
+            null, "Teacher");
+
+        Assert.Equal(AddonPaymentTimings.WithPlan, request.PaymentTiming);
+
+        var addon = await bundledService.ApproveAddonRequestAsync(request.Id, null, "Admin", new AddonReviewRequest());
+
+        // Planla birlikdə ödəniş ay sonuna qalır — təsdiqdə ödənilmiş sayılmır.
+        Assert.Null(addon.PaidAt);
+
+        var paid = await bundledService.MarkAddonPaidAsync(addon.Id);
+        Assert.NotNull(paid.PaidAt);
+    }
+
+    private static PlanRequest Request(
+        string code, int maxStudents, int monthlyVideoMinutes, bool billWithPlan = false) => new()
     {
         Code = code,
         Name = code,
@@ -171,6 +227,7 @@ public class SubscriptionTests(ApiFactory factory)
         Currency = "AZN",
         MaxStudents = maxStudents,
         MonthlyVideoMinutes = monthlyVideoMinutes,
+        BillAddonsWithPlan = billWithPlan,
         StorageGb = 10,
         MaxTeachers = 2,
         MaxGroups = 5,

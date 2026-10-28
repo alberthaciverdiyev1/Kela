@@ -49,6 +49,8 @@ public sealed class AddonRequestController(
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Approve(long id, AddonReviewRequest request, CancellationToken ct)
     {
+        if (!User.IsInRole(AuthRoles.SuperAdmin)) return Denied();
+
         try
         {
             var addon = await subscriptions.ApproveAddonRequestAsync(
@@ -66,6 +68,8 @@ public sealed class AddonRequestController(
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Reject(long id, AddonReviewRequest request, CancellationToken ct)
     {
+        if (!User.IsInRole(AuthRoles.SuperAdmin)) return Denied();
+
         try
         {
             await subscriptions.RejectAddonRequestAsync(
@@ -83,9 +87,25 @@ public sealed class AddonRequestController(
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> CancelAddon(long id, CancellationToken ct)
     {
+        if (!User.IsInRole(AuthRoles.SuperAdmin)) return Denied();
+
         await subscriptions.CancelAddonAsync(id, ct);
         return Json(new { ok = true });
     }
+
+    /// <summary>Ay sonunda planla ödəniləcək paketin ödənişini qeydə alır.</summary>
+    [HttpPost("addons/{id:long}/paid")]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> MarkPaid(long id, CancellationToken ct)
+    {
+        if (!User.IsInRole(AuthRoles.SuperAdmin)) return Denied();
+
+        return Json(await subscriptions.MarkAddonPaidAsync(id, ct));
+    }
+
+    private ObjectResult Denied()
+        => StatusCode(StatusCodes.Status403Forbidden,
+            new { message = "Limit paketləri üzrə qərarı yalnız superadmin verir." });
 
     /// <summary>Superadmin tenant seçmədən bütün müraciətləri görür.</summary>
     private long? ScopeTenantId()

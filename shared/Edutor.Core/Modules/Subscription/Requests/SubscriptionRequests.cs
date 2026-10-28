@@ -1,3 +1,4 @@
+using Edutor.Core.Common.Binding;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Edutor.Core.Modules.Subscription.Requests;
@@ -8,7 +9,7 @@ public class PlanRequest
     public string Name { get; set; } = string.Empty;
     public string? Description { get; set; }
 
-    [FromForm(Name = "monthly_price")]
+    [InvariantDecimal(Name = "monthly_price")]
     public decimal MonthlyPrice { get; set; }
 
     public string Currency { get; set; } = "AZN";
@@ -48,14 +49,18 @@ public class PlanRequest
     [FromForm(Name = "max_video_height")]
     public int MaxVideoHeight { get; set; } = 1080;
 
-    [FromForm(Name = "price_per_student")]
+    [InvariantDecimal(Name = "price_per_student")]
     public decimal PricePerStudent { get; set; }
 
-    [FromForm(Name = "price_per_group")]
+    [InvariantDecimal(Name = "price_per_group")]
     public decimal PricePerGroup { get; set; }
 
-    [FromForm(Name = "price_per_video_hour")]
+    [InvariantDecimal(Name = "price_per_video_hour")]
     public decimal PricePerVideoHour { get; set; }
+
+    /// <summary>Limit ödənişləri planla birlikdə (ay sonunda) qəbul olunur.</summary>
+    [FromForm(Name = "bill_addons_with_plan")]
+    public bool BillAddonsWithPlan { get; set; }
 
     [FromForm(Name = "original_retention_days")]
     public int OriginalRetentionDays { get; set; } = 30;
@@ -101,10 +106,15 @@ public class AddAddonRequest
     [FromForm(Name = "quantity")]
     public int Quantity { get; set; } = 1;
 
-    /// <summary>one_time | monthly</summary>
+    /// <summary>one_time | monthly — yalnız superadmin seçir.</summary>
     [FromForm(Name = "mode")]
     public string Mode { get; set; } = "one_time";
 
+    /// <summary>now | with_plan — paket alınarkən ödənilib, yoxsa ay sonunda planla.</summary>
+    [FromForm(Name = "payment_timing")]
+    public string PaymentTiming { get; set; } = "now";
+
+    [InvariantDecimal(Name = "amount")]
     public decimal? Amount { get; set; }
 
     public string? Note { get; set; }
@@ -118,14 +128,18 @@ public class AddonRequestBody
     /// <summary>Tələbə/qrup sayı, video üçün saat.</summary>
     public int Quantity { get; set; } = 1;
 
-    /// <summary>one_time | monthly</summary>
-    public string Mode { get; set; } = "one_time";
+    /// <summary>now | with_plan — indi ödə, yoxsa ay sonunda planla birlikdə.</summary>
+    [FromForm(Name = "payment_timing")]
+    public string PaymentTiming { get; set; } = "now";
 
     public string? Note { get; set; }
 }
 
 public class AddonReviewRequest
 {
+    /// <summary>one_time | monthly — paketin formasını superadmin müəyyən edir.</summary>
+    public string? Mode { get; set; }
+
     /// <summary>Adminin cavab qeydi (təsdiq və ya rədd səbəbi).</summary>
     public string? Note { get; set; }
 }

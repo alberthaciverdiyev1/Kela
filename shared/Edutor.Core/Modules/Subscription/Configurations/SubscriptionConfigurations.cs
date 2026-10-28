@@ -30,6 +30,7 @@ public sealed class SubscriptionPlanConfiguration : IEntityTypeConfiguration<Sub
         builder.Property(x => x.PricePerStudent).HasColumnName("price_per_student").HasPrecision(12, 2);
         builder.Property(x => x.PricePerGroup).HasColumnName("price_per_group").HasPrecision(12, 2);
         builder.Property(x => x.PricePerVideoHour).HasColumnName("price_per_video_hour").HasPrecision(12, 2);
+        builder.Property(x => x.BillAddonsWithPlan).HasColumnName("bill_addons_with_plan").HasDefaultValue(false);
         builder.Property(x => x.OriginalRetentionDays).HasColumnName("original_retention_days");
         builder.Property(x => x.AllowVideoUpload).HasColumnName("allow_video_upload").HasDefaultValue(true);
         builder.Property(x => x.AllowAudioUpload).HasColumnName("allow_audio_upload").HasDefaultValue(true);
@@ -77,6 +78,8 @@ public sealed class TenantAddonConfiguration : IEntityTypeConfiguration<TenantAd
         builder.Property(x => x.Kind).HasColumnName("kind").HasMaxLength(20).IsRequired();
         builder.Property(x => x.Quantity).HasColumnName("quantity");
         builder.Property(x => x.Mode).HasColumnName("mode").HasMaxLength(20);
+        builder.Property(x => x.PaymentTiming).HasColumnName("payment_timing").HasMaxLength(20);
+        builder.Property(x => x.PaidAt).HasColumnName("paid_at");
         builder.Property(x => x.Amount).HasColumnName("amount").HasPrecision(12, 2);
         builder.Property(x => x.Currency).HasColumnName("currency").HasMaxLength(3).IsRequired();
         builder.Property(x => x.Note).HasColumnName("note").HasMaxLength(190);
@@ -100,6 +103,7 @@ public sealed class AddonRequestConfiguration : IEntityTypeConfiguration<AddonRe
         builder.Property(x => x.Kind).HasColumnName("kind").HasMaxLength(20).IsRequired();
         builder.Property(x => x.Quantity).HasColumnName("quantity");
         builder.Property(x => x.Mode).HasColumnName("mode").HasMaxLength(20).IsRequired();
+        builder.Property(x => x.PaymentTiming).HasColumnName("payment_timing").HasMaxLength(20);
         builder.Property(x => x.Status).HasColumnName("status").HasMaxLength(20).IsRequired();
         builder.Property(x => x.Amount).HasColumnName("amount").HasPrecision(12, 2);
         builder.Property(x => x.Currency).HasColumnName("currency").HasMaxLength(3).IsRequired();

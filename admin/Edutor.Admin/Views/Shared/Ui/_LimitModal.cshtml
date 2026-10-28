@@ -29,6 +29,13 @@
                         <option value="monthly">@L["Limit_Monthly"]</option>
                     </select>
                 </div>
+                <div id="limitTimingRow" class="mt-3 hidden">
+                    <label for="limitTiming" class="mb-1 block text-sm font-semibold text-slate-600">@L["Limit_PayTiming"]</label>
+                    <select id="limitTiming" class="admin-field" data-selected="1">
+                        <option value="now">@L["Limit_PayNow"]</option>
+                        <option value="with_plan">@L["Limit_PayWithPlan"]</option>
+                    </select>
+                </div>
             </div>
 
             <p id="limitNote" class="hidden text-sm text-slate-500"></p>

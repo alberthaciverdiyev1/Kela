@@ -2933,6 +2933,12 @@ namespace Edutor.Core.Data.Migrations
                         .HasColumnType("character varying(190)")
                         .HasColumnName("note");
 
+                    b.Property<string>("PaymentTiming")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("character varying(20)")
+                        .HasColumnName("payment_timing");
+
                     b.Property<int>("Quantity")
                         .HasColumnType("integer")
                         .HasColumnName("quantity");
@@ -3013,6 +3019,12 @@ namespace Edutor.Core.Data.Migrations
                         .HasColumnType("boolean")
                         .HasDefaultValue(true)
                         .HasColumnName("allow_video_upload");
+
+                    b.Property<bool>("BillAddonsWithPlan")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("boolean")
+                        .HasDefaultValue(false)
+                        .HasColumnName("bill_addons_with_plan");
 
                     b.Property<string>("Code")
                         .IsRequired()
@@ -3180,6 +3192,16 @@ namespace Edutor.Core.Data.Migrations
                         .HasMaxLength(190)
                         .HasColumnType("character varying(190)")
                         .HasColumnName("note");
+
+                    b.Property<DateTimeOffset?>("PaidAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("paid_at");
+
+                    b.Property<string>("PaymentTiming")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("character varying(20)")
+                        .HasColumnName("payment_timing");
 
                     b.Property<string>("Period")
                         .IsRequired()

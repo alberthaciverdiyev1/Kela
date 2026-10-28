@@ -63,6 +63,15 @@
         </div>
     </div>
 
+    <div>
+        <p class="mb-1 text-xs font-bold uppercase tracking-wide text-slate-400">Limit ödənişi</p>
+        <p class="mb-3 text-sm text-slate-500">
+            Aktivdirsə limit paketlərinin ödənişi ay sonunda planla birlikdə qəbul olunur və aylıq paket verilə bilər.
+            Bağlıdırsa müştəri yalnız indi ödəyə bilər.
+        </p>
+        <partial name="Ui/_Switch" model="@(new SwitchModel { Name = "bill_addons_with_plan", Id = "bill_addons_with_plan", Label = "Planla birlikdə ödəniş" })" />
+    </div>
+
     <div class="flex justify-end gap-2 border-t border-border pt-4">
         <partial name="Ui/_Button" model="@(new ButtonModel { Text = "Ləğv et", Variant = "secondary", Dismiss = true })" />
         <partial name="Ui/_Button" model="@(new ButtonModel { Text = "Yadda saxla", Type = "submit" })" />

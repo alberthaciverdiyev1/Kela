@@ -1827,6 +1827,15 @@
   <data name="Limit_Packs" xml:space="preserve">
     <value>Miqdar</value>
   </data>
+  <data name="Limit_PayTiming" xml:space="preserve">
+    <value>Ödəniş vaxtı</value>
+  </data>
+  <data name="Limit_PayNow" xml:space="preserve">
+    <value>İndi ödə</value>
+  </data>
+  <data name="Limit_PayWithPlan" xml:space="preserve">
+    <value>Ay sonunda planla birlikdə</value>
+  </data>
   <data name="Limit_RequestMode" xml:space="preserve">
     <value>Ödəniş forması</value>
   </data>
