@@ -51,13 +51,17 @@
                 </div>
             </div>
 
-            <div class="space-y-4 border-t border-border pt-6">
-                <h3 class="text-sm font-bold uppercase tracking-wider text-slate-400">@L["Setting_AppVersions"]</h3>
-                <div class="grid gap-4 sm:grid-cols-2">
-                    <partial name="Ui/_Input" model="@(new InputModel { Name = "androidMinVersion", Id = "androidMinVersion", Label = L["Setting_AndroidMin"], Value = Model.Setting.AndroidMinVersion })" />
-                    <partial name="Ui/_Input" model="@(new InputModel { Name = "iosMinVersion", Id = "iosMinVersion", Label = L["Setting_IosMin"], Value = Model.Setting.IosMinVersion })" />
+            @* Tətbiq versiyaları bütün tenant-lara aiddir — yalnız superadmin idarə edir. *@
+            @if (User.IsInRole(AuthRoles.SuperAdmin))
+            {
+                <div class="space-y-4 border-t border-border pt-6">
+                    <h3 class="text-sm font-bold uppercase tracking-wider text-slate-400">@L["Setting_AppVersions"]</h3>
+                    <div class="grid gap-4 sm:grid-cols-2">
+                        <partial name="Ui/_Input" model="@(new InputModel { Name = "androidMinVersion", Id = "androidMinVersion", Label = L["Setting_AndroidMin"], Value = Model.Setting.AndroidMinVersion })" />
+                        <partial name="Ui/_Input" model="@(new InputModel { Name = "iosMinVersion", Id = "iosMinVersion", Label = L["Setting_IosMin"], Value = Model.Setting.IosMinVersion })" />
+                    </div>
                 </div>
-            </div>
+            }
 
             <div class="flex flex-wrap items-center justify-between gap-3 border-t border-border pt-6">
                 <button type="button" id="clearCacheBtn" class="admin-button-secondary">@L["Setting_ClearCache"]</button>

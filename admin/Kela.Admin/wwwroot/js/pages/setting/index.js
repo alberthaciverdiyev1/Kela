@@ -19,7 +19,11 @@
 
         // 2) Kurs parametrləri (loqo, əlaqə, info, versiya)
         const fd = new FormData();
-        FIELDS.forEach(id => fd.append(id, document.getElementById(id).value || ''));
+        // Superadmin olmayanda versiya sahələri render olunmur — mövcud olanlar göndərilir.
+        FIELDS.forEach(id => {
+            const el = document.getElementById(id);
+            if (el) fd.append(id, el.value || '');
+        });
         fd.append('RemoveLogo', document.getElementById('logo_remove').value === 'true' ? 'true' : 'false');
         const file = document.getElementById('logo').files[0];
         if (file) fd.append('Logo', file);

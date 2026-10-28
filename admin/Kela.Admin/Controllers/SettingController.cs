@@ -28,7 +28,17 @@ public sealed class SettingController(ISettingService service, ITenantService te
     [HttpPut]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Update([FromForm] SettingUpsertRequest request, CancellationToken ct)
-        => Json(await service.UpdateAsync(request, ct));
+    {
+        // Tətbiq versiyaları bütün tenant-lara aiddir — yalnız superadmin dəyişə bilər.
+        if (!User.IsInRole(AuthRoles.SuperAdmin))
+        {
+            var current = await service.GetAsync(ct);
+            request.AndroidMinVersion = current.AndroidMinVersion;
+            request.IosMinVersion = current.IosMinVersion;
+        }
+
+        return Json(await service.UpdateAsync(request, ct));
+    }
 
     /// <summary>Kurs (tenant) adının yenilənməsi — yalnız cari tenant.</summary>
     [HttpPut("profile")]
