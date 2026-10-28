@@ -710,3 +710,249 @@ video:fullscreen {
   max-height: none;
   object-fit: contain;
 }
+
+/* --- Tarix seçici (paylaşılan komponent) ---
+   Sahədə gizli native input qalır; görünən hissə bu stillərlə qurulur. */
+.date-picker {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  height: 46px;
+  width: 100%;
+  padding: 0 12px;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: var(--surface-secondary);
+  color: var(--text-primary);
+  font-size: 14px;
+  cursor: pointer;
+  user-select: none;
+  transition: border-color 140ms ease, box-shadow 140ms ease, background-color 140ms ease;
+}
+
+.date-picker:hover { border-color: #cbd5e1; }
+
+.date-picker:focus-visible,
+.date-picker.is-open,
+.date-picker:focus-within {
+  outline: none;
+  border-color: var(--primary);
+  background: var(--surface);
+  box-shadow: 0 0 0 4px rgba(0, 184, 132, 0.1);
+}
+
+.date-picker:has(.is-invalid) {
+  border-color: var(--danger);
+  box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.15);
+}
+
+.date-picker-input {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.date-picker-text {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.date-picker-text.is-empty { color: #94a3b8; }
+
+.date-picker-icon {
+  flex: none;
+  width: 18px;
+  height: 18px;
+  color: var(--text-secondary);
+}
+
+.date-picker.is-open .date-picker-icon { color: var(--primary); }
+
+.dp-pop {
+  position: fixed;
+  z-index: 80;
+  width: 312px;
+  padding: 12px;
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  background: var(--surface);
+  color: var(--text-primary);
+  box-shadow: 0 24px 60px rgba(15, 23, 42, 0.16);
+  animation: dp-pop-in 130ms ease;
+}
+
+@keyframes dp-pop-in {
+  from { opacity: 0; transform: translateY(-4px) scale(0.985); }
+  to { opacity: 1; transform: none; }
+}
+
+.dp-head {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin-bottom: 6px;
+}
+
+.dp-nav {
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 10px;
+  color: var(--text-secondary);
+  transition: background-color 120ms ease, color 120ms ease;
+}
+
+.dp-nav:hover { background: var(--surface-secondary); color: var(--text-primary); }
+.dp-nav svg { width: 16px; height: 16px; }
+
+.dp-title {
+  flex: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  height: 32px;
+  border-radius: 10px;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--text-primary);
+  transition: background-color 120ms ease;
+}
+
+.dp-title:hover { background: var(--surface-secondary); }
+.dp-title svg { width: 14px; height: 14px; color: var(--text-secondary); }
+
+.dp-week,
+.dp-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+}
+
+.dp-week span {
+  padding: 6px 0;
+  text-align: center;
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--text-secondary);
+}
+
+.dp-grid { gap: 2px; }
+
+.dp-day {
+  height: 34px;
+  border-radius: 10px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-primary);
+  transition: background-color 120ms ease, color 120ms ease;
+}
+
+.dp-day:hover { background: var(--surface-secondary); }
+.dp-day.is-out { color: #cbd5e1; font-weight: 500; }
+.dp-day.is-today { box-shadow: inset 0 0 0 1.5px var(--primary); color: var(--primary); }
+
+.dp-day.is-selected,
+.dp-day.is-selected:hover {
+  background: var(--primary);
+  color: #fff;
+  box-shadow: none;
+}
+
+.dp-months {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 6px;
+  padding: 4px 0;
+}
+
+.dp-month {
+  height: 38px;
+  border-radius: 10px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-primary);
+  transition: background-color 120ms ease, color 120ms ease;
+}
+
+.dp-month:hover { background: var(--surface-secondary); }
+.dp-month.is-selected { background: var(--primary); color: #fff; }
+
+.dp-time {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 10px;
+  padding-top: 10px;
+  border-top: 1px solid var(--border);
+}
+
+.dp-time-label {
+  margin-right: auto;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--text-secondary);
+}
+
+.dp-time select {
+  height: 34px;
+  padding: 0 8px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: var(--surface-secondary);
+  color: var(--text-primary);
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.dp-time-sep { font-weight: 700; color: var(--text-secondary); }
+
+.dp-foot {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 10px;
+  padding-top: 10px;
+  border-top: 1px solid var(--border);
+}
+
+.dp-foot-actions { display: flex; gap: 6px; margin-left: auto; }
+
+.dp-link {
+  padding: 6px 8px;
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--text-secondary);
+}
+
+.dp-link:hover { background: var(--surface-secondary); color: var(--text-primary); }
+
+.dp-btn-ghost {
+  height: 32px;
+  padding: 0 12px;
+  border-radius: 10px;
+  background: var(--primary-light);
+  color: var(--primary);
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.dp-btn {
+  height: 32px;
+  padding: 0 14px;
+  border-radius: 10px;
+  background: var(--primary);
+  color: #fff;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.dp-btn:hover { background: var(--primary-hover); }

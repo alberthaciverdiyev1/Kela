@@ -9,7 +9,7 @@ window.AdminUI = window.AdminUI || {};
         // Sahələr JS ilə doldurulub — açılan siyahıların etiketi təzələnsin.
         modal.querySelectorAll('select[data-enhanced]').forEach(syncSelect);
         UI.syncEditors(modal);
-        modal.dispatchEvent(new CustomEvent('modal:open'));
+        modal.dispatchEvent(new CustomEvent('modal:open', { bubbles: true }));
         modal.classList.remove('hidden');
         modal.classList.add('flex');
     }
@@ -30,7 +30,7 @@ window.AdminUI = window.AdminUI || {};
         const err = modal.querySelector('[data-modal-error]');
         if (err) err.classList.add('hidden');
 
-        modal.dispatchEvent(new CustomEvent('modal:closed'));
+        modal.dispatchEvent(new CustomEvent('modal:closed', { bubbles: true }));
     }
 
     function openModals() {

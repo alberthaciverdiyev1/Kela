@@ -1920,4 +1920,28 @@
   <data name="Validation_DeviceTypeMaxLength" xml:space="preserve">
     <value>Device type must be at most 20 characters</value>
   </data>
+  <data name="DatePicker_PickDate" xml:space="preserve">
+    <value>Pick a date</value>
+  </data>
+  <data name="DatePicker_PickDateTime" xml:space="preserve">
+    <value>Pick date and time</value>
+  </data>
+  <data name="DatePicker_Today" xml:space="preserve">
+    <value>Today</value>
+  </data>
+  <data name="DatePicker_Clear" xml:space="preserve">
+    <value>Clear</value>
+  </data>
+  <data name="DatePicker_Apply" xml:space="preserve">
+    <value>Apply</value>
+  </data>
+  <data name="DatePicker_Time" xml:space="preserve">
+    <value>Time</value>
+  </data>
+  <data name="DatePicker_PrevMonth" xml:space="preserve">
+    <value>Previous month</value>
+  </data>
+  <data name="DatePicker_NextMonth" xml:space="preserve">
+    <value>Next month</value>
+  </data>
 </root>

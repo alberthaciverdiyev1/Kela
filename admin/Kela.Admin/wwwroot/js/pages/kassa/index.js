@@ -108,8 +108,11 @@ window.KassaPage = (function () {
     }
 
     function clearRange() {
-        document.getElementById('kassaFrom').value = '';
-        document.getElementById('kassaTo').value = '';
+        ['kassaFrom', 'kassaTo'].forEach(id => {
+            const el = document.getElementById(id);
+            el.value = '';
+            if (window.DatePicker) DatePicker.sync(el);
+        });
         document.getElementById('kassaRangeTotal').textContent = '';
         renderRecent();
     }

@@ -1920,4 +1920,28 @@
   <data name="Validation_DeviceTypeMaxLength" xml:space="preserve">
     <value>Cihaz türü en fazla 20 karakter olabilir</value>
   </data>
+  <data name="DatePicker_PickDate" xml:space="preserve">
+    <value>Tarih seç</value>
+  </data>
+  <data name="DatePicker_PickDateTime" xml:space="preserve">
+    <value>Tarih ve saat seç</value>
+  </data>
+  <data name="DatePicker_Today" xml:space="preserve">
+    <value>Bugün</value>
+  </data>
+  <data name="DatePicker_Clear" xml:space="preserve">
+    <value>Temizle</value>
+  </data>
+  <data name="DatePicker_Apply" xml:space="preserve">
+    <value>Uygula</value>
+  </data>
+  <data name="DatePicker_Time" xml:space="preserve">
+    <value>Saat</value>
+  </data>
+  <data name="DatePicker_PrevMonth" xml:space="preserve">
+    <value>Önceki ay</value>
+  </data>
+  <data name="DatePicker_NextMonth" xml:space="preserve">
+    <value>Sonraki ay</value>
+  </data>
 </root>

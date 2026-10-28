@@ -34,6 +34,26 @@ public class InputModel
     public string? Id { get; set; }
 }
 
+public class DatePickerModel
+{
+    public string Name { get; set; } = string.Empty;
+    public string? Id { get; set; }
+    public string? Label { get; set; }
+
+    /// <summary>date | datetime-local</summary>
+    public string Type { get; set; } = "date";
+
+    public string? Value { get; set; }
+    public string? Placeholder { get; set; }
+    public bool Required { get; set; }
+    public bool NativeRequired { get; set; }
+
+    /// <summary>Əlavə siniflər (məs. filtrdə !h-9 w-36).</summary>
+    public string? Class { get; set; }
+
+    public string? AriaLabel { get; set; }
+}
+
 public class SelectOption
 {
     public string Value { get; set; } = string.Empty;

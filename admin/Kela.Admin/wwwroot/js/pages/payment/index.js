@@ -96,6 +96,14 @@ function toDateInput(d) {
 }
 
 function today() { return toDateInput(new Date()); }
+
+// JS ilə yazılan tarix sahəsinin göstərişi də yenilənsin (tarix seçici komponenti).
+function setDateValue(id, value) {
+    const el = document.getElementById(id);
+    if (!el) return;
+    el.value = value;
+    if (window.DatePicker) DatePicker.sync(el);
+}
 function nextMonth() {
     const d = new Date();
     d.setMonth(d.getMonth() + 1);
@@ -115,7 +123,7 @@ function recalcDueDate() {
         d.setMonth(d.getMonth() + 1);
     }
 
-    document.getElementById('plan-due').value = toDateInput(d);
+    setDateValue('plan-due', toDateInput(d));
 }
 
 window.openPlan = function (studentId) {
@@ -135,7 +143,7 @@ window.openPlan = function (studentId) {
     document.getElementById('interval-wrap').classList.toggle('hidden', row.frequency !== 'custom');
 
     recalcDueDate();
-    if (row.amount != null && row.nextDueOn) document.getElementById('plan-due').value = row.nextDueOn;
+    if (row.amount != null && row.nextDueOn) setDateValue('plan-due', row.nextDueOn);
 
     // İlk ödəniş yalnız planı olmayan (yeni) tələbə üçün təklif olunur.
     document.getElementById('plan-first-paid-wrap').classList.toggle('hidden', row.amount != null);

@@ -1,0 +1,33 @@
+@model DatePickerModel
+@{
+    var id = Model.Id ?? Model.Name;
+    var mode = Model.Type == "datetime-local" ? "datetime-local" : "date";
+    var placeholder = Model.Placeholder
+        ?? (mode == "datetime-local" ? L["DatePicker_PickDateTime"] : L["DatePicker_PickDate"]);
+    var ariaLabel = Model.AriaLabel ?? Model.Label;
+}
+<div>
+    @if (!string.IsNullOrEmpty(Model.Label))
+    {
+        <label for="@id" class="mb-1 block text-sm font-semibold text-slate-600">
+            @Model.Label
+            @if (Model.Required)
+            {
+                <span class="text-danger">*</span>
+            }
+        </label>
+    }
+    <div class="date-picker @Model.Class" data-datepicker data-mode="@mode" data-placeholder="@placeholder"
+         role="button" tabindex="0" aria-label="@ariaLabel" aria-haspopup="dialog">
+        <input type="@mode" @(string.IsNullOrEmpty(Model.Name) ? null : $"name={Model.Name}") id="@id"
+               value="@Model.Value" class="date-picker-input" data-dp-input
+               @(Model.NativeRequired ? "required" : null) data-required="@(Model.Required ? "true" : "false")"
+               tabindex="-1" aria-hidden="true" />
+        <span class="date-picker-text is-empty" data-dp-text>@placeholder</span>
+        <svg class="date-picker-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
+             stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <rect x="3" y="5" width="18" height="16" rx="3" />
+            <path d="M8 3v4M16 3v4M3 10h18" />
+        </svg>
+    </div>
+</div>

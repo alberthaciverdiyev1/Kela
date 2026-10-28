@@ -103,9 +103,9 @@
                 <p id="kassaRangeTotal" class="text-xs font-semibold text-slate-500"></p>
             </div>
             <div class="ml-auto flex flex-wrap items-center gap-2">
-                <input type="date" id="kassaFrom" class="admin-field !h-9 w-36" aria-label="Başlanğıc tarixi" />
+                <partial name="Ui/_DatePicker" model="@(new DatePickerModel { Id = "kassaFrom", Type = "date", Class = "!h-9 w-36", AriaLabel = "Başlanğıc tarixi" })" />
                 <span class="text-slate-400">–</span>
-                <input type="date" id="kassaTo" class="admin-field !h-9 w-36" aria-label="Son tarix" />
+                <partial name="Ui/_DatePicker" model="@(new DatePickerModel { Id = "kassaTo", Type = "date", Class = "!h-9 w-36", AriaLabel = "Son tarix" })" />
                 <button type="button" class="admin-button-secondary" data-action="KassaPage.applyRange">Filtrələ</button>
                 <button type="button" class="admin-button-ghost" data-action="KassaPage.clearRange">Sıfırla</button>
             </div>

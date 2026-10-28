@@ -50,7 +50,7 @@ Columns = new List<TableColumnModel>
             <select id="planSelect" class="admin-field"></select>
 
             <label class="mb-1 block text-sm font-semibold text-slate-600 mt-3">Bitmə tarixi (boş = müddətsiz)</label>
-            <input id="planExpires" type="date" class="admin-field" />
+            <partial name="Ui/_DatePicker" model="@(new DatePickerModel { Id = "planExpires", Type = "date" })" />
 
             <div class="mt-4 rounded-xl bg-surface-secondary p-3 text-sm text-slate-600">
                 Ödənişdən sonra əlavə paket də əlavə edə bilərsiniz — plan limitinə dərhal təsir edir.

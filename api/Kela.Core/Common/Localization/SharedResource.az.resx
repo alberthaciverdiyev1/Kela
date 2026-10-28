@@ -1920,4 +1920,28 @@
   <data name="Validation_DeviceTypeMaxLength" xml:space="preserve">
     <value>Cihaz növü ən çoxu 20 simvol ola bilər</value>
   </data>
+  <data name="DatePicker_PickDate" xml:space="preserve">
+    <value>Tarix seç</value>
+  </data>
+  <data name="DatePicker_PickDateTime" xml:space="preserve">
+    <value>Tarix və saat seç</value>
+  </data>
+  <data name="DatePicker_Today" xml:space="preserve">
+    <value>Bu gün</value>
+  </data>
+  <data name="DatePicker_Clear" xml:space="preserve">
+    <value>Təmizlə</value>
+  </data>
+  <data name="DatePicker_Apply" xml:space="preserve">
+    <value>Tətbiq et</value>
+  </data>
+  <data name="DatePicker_Time" xml:space="preserve">
+    <value>Saat</value>
+  </data>
+  <data name="DatePicker_PrevMonth" xml:space="preserve">
+    <value>Əvvəlki ay</value>
+  </data>
+  <data name="DatePicker_NextMonth" xml:space="preserve">
+    <value>Növbəti ay</value>
+  </data>
 </root>

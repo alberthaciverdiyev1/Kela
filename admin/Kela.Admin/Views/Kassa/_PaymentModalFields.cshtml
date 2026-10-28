@@ -16,10 +16,7 @@
             <label for="kassaAmount" class="mb-1 block text-sm font-semibold text-slate-600">Məbləğ</label>
             <input id="kassaAmount" type="number" step="0.01" min="0.01" class="admin-field" />
         </div>
-        <div>
-            <label for="kassaPaidOn" class="mb-1 block text-sm font-semibold text-slate-600">Tarix</label>
-            <input id="kassaPaidOn" type="date" class="admin-field" />
-        </div>
+        <partial name="Ui/_DatePicker" model="@(new DatePickerModel { Id = "kassaPaidOn", Type = "date", Label = "Tarix" })" />
     </div>
 
     <div>

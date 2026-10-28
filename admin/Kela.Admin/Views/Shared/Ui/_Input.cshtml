@@ -1,13 +1,31 @@
 @model InputModel
 @{
     var id = Model.Id ?? Model.Name;
+    var isDate = Model.Type is "date" or "datetime-local";
 }
-<div>
-    @if (!string.IsNullOrEmpty(Model.Label))
+@if (isDate)
+{
+    <partial name="Ui/_DatePicker" model="@(new DatePickerModel
     {
-        <label for="@id" class="mb-1 block text-sm font-semibold text-slate-600">@Model.Label @if (Model.Required) { <span class="text-danger">*</span> }</label>
-    }
-    <input type="@Model.Type" name="@Model.Name" id="@id" value="@Model.Value" placeholder="@Model.Placeholder"
-           @(Model.Step is not null ? $"step={Model.Step}" : null) @(Model.Min is not null ? $"min={Model.Min}" : null) @(Model.NativeRequired ? "required" : null) data-required="@(Model.Required ? "true" : "false")"
-           class="admin-field" />
-</div>
+        Name = Model.Name,
+        Id = Model.Id,
+        Label = Model.Label,
+        Type = Model.Type,
+        Value = Model.Value,
+        Placeholder = Model.Placeholder,
+        Required = Model.Required,
+        NativeRequired = Model.NativeRequired
+    })" />
+}
+else
+{
+    <div>
+        @if (!string.IsNullOrEmpty(Model.Label))
+        {
+            <label for="@id" class="mb-1 block text-sm font-semibold text-slate-600">@Model.Label @if (Model.Required) { <span class="text-danger">*</span> }</label>
+        }
+        <input type="@Model.Type" name="@Model.Name" id="@id" value="@Model.Value" placeholder="@Model.Placeholder"
+               @(Model.Step is not null ? $"step={Model.Step}" : null) @(Model.Min is not null ? $"min={Model.Min}" : null) @(Model.NativeRequired ? "required" : null) data-required="@(Model.Required ? "true" : "false")"
+               class="admin-field" />
+    </div>
+}
