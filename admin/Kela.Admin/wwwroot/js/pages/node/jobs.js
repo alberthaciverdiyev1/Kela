@@ -12,8 +12,7 @@ window.JobsPage = (function () {
         }
     };
 
-    async function reload(target) {
-        const pageNo = target || pager.page;
+    async function load(pageNo) {
         const status = document.getElementById('jobStatus').value;
         const data = await AdminUI.get(`/node/jobs?page=${pageNo}&perPage=25${status ? `&status=${status}` : ''}`);
 
@@ -46,6 +45,15 @@ window.JobsPage = (function () {
 
     }
 
+    // Pagination rəqəm səhifə ötürür; filtr dəyişəndə `filterChanged` səhifəni 1-ə qaytarır.
+    function reload(page) {
+        return load(Number.isInteger(page) && page > 0 ? page : pager.page);
+    }
+
+    function filterChanged() {
+        return load(1);
+    }
+
     async function requeue(id) {
         if (!await AdminUI.confirmDelete(L["Node_ConfirmRequeue"])) return;
 
@@ -58,5 +66,5 @@ window.JobsPage = (function () {
         AdminUI.swal({ title: L["Job_Error"], text: decodeURIComponent(message), icon: 'error' });
     }
 
-    return { reload, requeue, error };
+    return { reload, filterChanged, requeue, error };
 })();
