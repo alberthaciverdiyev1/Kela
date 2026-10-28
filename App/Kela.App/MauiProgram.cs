@@ -2,6 +2,8 @@ using Kela.App.Shared.Services;
 using Kela.App.Shared.Services.Api;
 using Kela.App.Shared.Services.Localization;
 using Microsoft.Extensions.Logging;
+using Microsoft.Maui.Storage;
+using Microsoft.Extensions.Configuration;
 
 namespace Kela.App;
 
@@ -15,6 +17,14 @@ public static class MauiProgram
         builder
             .UseMauiApp<App>()
             .ConfigureFonts(fonts => fonts.AddFont("OpenSans-Regular.ttf", "OpenSansRegular"));
+
+        // API ünvanı paketdəki appsettings.json-dan gəlir (Resources/Raw → LogicalName).
+        using (var settings = FileSystem.OpenAppPackageFileAsync("appsettings.json").GetAwaiter().GetResult())
+        {
+            builder.Configuration.AddJsonStream(settings);
+        }
+
+        AppConfig.Load(builder.Configuration);
 
         builder.Services.AddMauiBlazorWebView();
 

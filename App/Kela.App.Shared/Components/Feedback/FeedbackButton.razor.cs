@@ -10,7 +10,6 @@ namespace Kela.App.Shared.Components.Feedback;
 public partial class FeedbackButton : IAsyncDisposable
 {
     [Inject] private ApiClient Api { get; set; } = default!;
-    [Inject] private NavigationManager Nav { get; set; } = default!;
 
     private bool _open;
     private bool _busy;
@@ -114,9 +113,9 @@ public partial class FeedbackButton : IAsyncDisposable
     {
         if (_hub is not null || string.IsNullOrWhiteSpace(Api.Token)) return;
 
-        var baseUrl = Nav.BaseUri.TrimEnd('/');
+        // Hub API hostundadır — app origin-i (Nav.BaseUri) deyil.
         _hub = new HubConnectionBuilder()
-            .WithUrl($"{baseUrl}/hubs/feedback", options => options.AccessTokenProvider = () => Task.FromResult(Api.Token))
+            .WithUrl($"{AppConfig.ApiBaseUrl}/hubs/feedback", options => options.AccessTokenProvider = () => Task.FromResult(Api.Token))
             .WithAutomaticReconnect()
             .Build();
 
