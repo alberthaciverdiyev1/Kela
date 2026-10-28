@@ -181,6 +181,12 @@ build_release() {
     log "admin CSS"
     (cd "$SRC_DIR/admin/Edutor.Admin" && npm ci --no-audit --no-fund --silent && npm run --silent css:build)
 
+    # The MAUI/WASM shared project has no package.json; it reuses the admin Tailwind CLI.
+    log "web CSS"
+    (cd "$SRC_DIR/web/Edutor.App.Shared" && \
+        "$SRC_DIR/admin/Edutor.Admin/node_modules/.bin/tailwindcss" \
+        -i ./wwwroot/css/input.css -o ./wwwroot/css/app.css --minify)
+
     log "publish api"
     dotnet publish "$SRC_DIR/api/Edutor.Api" -c Release -o "$RELEASE/api" --nologo -v q
 
@@ -189,6 +195,9 @@ build_release() {
 
     log "publish web (WASM)"
     dotnet publish "$SRC_DIR/web/Edutor.App.Web" -c Release -o "$RELEASE/web" --nologo -v q
+
+    [[ -s $RELEASE/web/wwwroot/_content/Edutor.App.Shared/css/app.css ]] \
+        || fail "web CSS missing from the publish output"
 
     cat > "$RELEASE/web/wwwroot/appsettings.json" <<EOF
 {

@@ -20,8 +20,12 @@ API və Admin **eyni bazaya** qoşulur. `Storage:Provider=Local` olduqda hər ik
 ## 2. Build və publish
 
 ```bash
-# Admin CSS əvvəlcə (app.css git-ə düşmür)
+# CSS əvvəlcə (app.css faylları git-ə düşmür)
 cd admin/Edutor.Admin && npm ci && npm run css:build && cd ../..
+# Edutor.App.Shared-ın öz package.json-u yoxdur — admin-in CLI-si ilə build olunur
+admin/Edutor.Admin/node_modules/.bin/tailwindcss \
+  -i web/Edutor.App.Shared/wwwroot/css/input.css \
+  -o web/Edutor.App.Shared/wwwroot/css/app.css --minify
 
 dotnet publish api/Edutor.Api        -c Release -o /srv/edutor/api
 dotnet publish admin/Edutor.Admin    -c Release -o /srv/edutor/admin
