@@ -88,3 +88,4 @@ using Banner = Edutor.Core.Modules.Banner.Entities.Banner;
 - Mantık kaynağı: Laravel tabanlı `/home/albert/Downloads/BPA-Backend-main/`.
 - **Yapı değil, yalnızca iş mantığı** taşınır; .NET idiomlarına uyarlanır.
 - Eşleştirme tablosu `PROJECT.md` içinde.
+- Production deployment: `DEPLOY.md` (Docker yoxdur; systemd + nginx).

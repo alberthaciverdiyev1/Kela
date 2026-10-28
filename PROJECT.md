@@ -14,6 +14,8 @@ Edutor — dil öğrenme (LMS) uygulaması. İki istemci, bir çekirdek:
 
 **Mantık kaynağı:** Laravel `BPA-Backend` (`/home/albert/Downloads/BPA-Backend-main/`). Yalnızca iş mantığı taşınır.
 
+**Production:** `DEPLOY.md` — publish, env dəyişənləri, nginx/systemd, migration və yoxlama siyahısı.
+
 ## 2. Teknoloji Yığını
 
 | Katman | Seçim |
