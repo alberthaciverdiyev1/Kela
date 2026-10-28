@@ -13,12 +13,16 @@ public sealed class GroupStatController(
     IGroupService groups) : Controller
 {
     [HttpGet]
-    public async Task<IActionResult> Index(CancellationToken ct)
+    public async Task<IActionResult> Index([FromQuery(Name = "group_id")] long? groupId, CancellationToken ct)
     {
         ViewData["Scripts"] = new[] { "~/js/pages/group-stat/index.js" };
         // Teacher yalnız öz qruplarını görür.
-        ViewData["Groups"] = await groups.ListAsync(
+        var myGroups = await groups.ListAsync(
             new GroupListRequest { PerPage = 500, UserId = User.IsAdmin() ? null : CurrentUserId() }, ct);
+        ViewData["Groups"] = myGroups;
+        // Linkdən gələn qrup (Group/Manage → Statistika) seçili olmalıdır; yoxsa ilk qrup.
+        var selected = myGroups.Data.FirstOrDefault(g => g.Id == groupId) ?? myGroups.Data.FirstOrDefault();
+        ViewData["SelectedGroupId"] = selected?.Id.ToString() ?? string.Empty;
         return View();
     }
 

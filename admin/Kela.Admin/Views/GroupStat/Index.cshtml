@@ -1,8 +1,9 @@
 @{
     ViewData["Title"] = L["Nav_GroupStats"];
     var groups = (PagedResponse<Kela.Core.Modules.Group.Responses.GroupResponse>)ViewData["Groups"]!;
-    // Boş variant yoxdur — səhifə açılan kimi ilk qrup seçili gəlir.
+    // Boş variant yoxdur — linkdən gələn qrup, yoxdursa ilk qrup seçili gəlir.
     var groupOptions = groups.Data.Select(g => new SelectOption { Value = g.Id.ToString(), Text = g.Name }).ToList();
+    var selectedGroupId = ViewData["SelectedGroupId"] as string ?? "";
     var typeOptions = new List<SelectOption>
     {
         new() { Value = "", Text = L["Common_All"] },
@@ -17,7 +18,7 @@
         <partial name="Ui/_FilterBar" model="@(new FilterBarModel {
             SearchPlaceholder = L["Common_SearchPlaceholder"],
             Selects = new List<FilterSelectModel> {
-                new() { WidthClass = "w-44", Select = new SelectModel { Name = "group_id", Id = "group_id", Label = L["Common_Group"], Options = groupOptions } },
+                new() { WidthClass = "w-44", Select = new SelectModel { Name = "group_id", Id = "group_id", Label = L["Common_Group"], Options = groupOptions, Value = selectedGroupId } },
                 new() { WidthClass = "w-36", Select = new SelectModel { Name = "quiz_type", Id = "quiz_type", Label = L["Common_Type"], Options = typeOptions } }
             },
             ButtonText = L["Common_Show"],
