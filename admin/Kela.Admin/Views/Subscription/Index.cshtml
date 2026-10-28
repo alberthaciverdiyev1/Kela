@@ -5,7 +5,7 @@
     ViewData["Title"] = "Abunəlik";
     var tenants = ViewData["Tenants"] as IReadOnlyList<TenantResponse>;
     var selectedTenantId = ViewData["SelectedTenantId"] as long?;
-    var usage = Model?.Usage!;
+    var usage = Model?.Usage;
 
     string Bar(int used, int max) => max <= 0 ? $"{used} / limitsiz" : $"{used} / {max}  ({Math.Min(100, (int)Math.Round(used * 100.0 / max))}%)";
 
@@ -15,7 +15,7 @@
     string Tone(long used, long max)
         => max > 0 && used >= max ? "bg-danger" : max > 0 && used * 100 / max >= 80 ? "bg-amber-500" : "bg-primary";
 
-    var statusLabel = usage.Status switch
+    var statusLabel = usage?.Status switch
     {
         "readonly" => ("Oxuma rejimi", "warning"),
         "suspended" => ("Dayandırılıb", "danger"),
@@ -107,6 +107,7 @@
     }
     else
     {
+        var used = usage!;
         <div class="grid gap-4 sm:grid-cols-3">
             <div class="admin-card p-5">
                 <p class="text-xs font-semibold uppercase tracking-wide text-slate-400">Cari plan</p>
@@ -119,10 +120,10 @@
 
             <div class="admin-card p-5">
                 <p class="text-xs font-semibold uppercase tracking-wide text-slate-400">Müddət</p>
-                @if (usage.ExpiresAt is { } expires)
+                @if (used.ExpiresAt is { } expires)
                 {
                     <p class="mt-1 text-2xl font-extrabold text-slate-900">@expires.ToString("dd.MM.yyyy")</p>
-                    <p class="mt-1 text-sm text-slate-500">@(usage.DaysLeft is { } d ? $"{d} gün qalıb" : "—")</p>
+                    <p class="mt-1 text-sm text-slate-500">@(used.DaysLeft is { } d ? $"{d} gün qalıb" : "—")</p>
                 }
                 else
                 {
@@ -134,9 +135,9 @@
             <div class="admin-card p-5">
                 <p class="text-xs font-semibold uppercase tracking-wide text-slate-400">Video (bu ay)</p>
                 <p class="mt-1 text-2xl font-extrabold text-slate-900">
-                    @(usage.MonthlyVideoMinutes > 0
-                        ? $"{usage.VideoMinutes / 60} / {usage.MonthlyVideoMinutes / 60}"
-                        : (usage.VideoMinutes / 60).ToString())
+                    @(used.MonthlyVideoMinutes > 0
+                        ? $"{used.VideoMinutes / 60} / {used.MonthlyVideoMinutes / 60}"
+                        : (used.VideoMinutes / 60).ToString())
                 </p>
                 <p class="mt-1 text-sm text-slate-500">saat</p>
             </div>
@@ -212,7 +213,7 @@
             </div>
         }
 
-        @if (usage.AddonOffers.Count > 0)
+        @if (used.AddonOffers.Count > 0)
         {
             <div class="admin-card p-5">
                 <h3 class="mb-2 text-base font-bold text-slate-900">Limit artırımı</h3>
@@ -222,7 +223,7 @@
                 </p>
 
                 <div class="grid gap-3 sm:grid-cols-3">
-                    @foreach (var offer in usage.AddonOffers)
+                    @foreach (var offer in used.AddonOffers)
                     {
                         <div class="flex flex-col rounded-xl border border-border bg-surface-secondary p-4">
                             <p class="font-bold text-slate-900">@offer.Label</p>
