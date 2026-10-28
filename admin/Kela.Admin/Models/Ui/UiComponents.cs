@@ -15,6 +15,7 @@ public class ButtonModel
     public bool Dismiss { get; set; }
     public string? Href { get; set; }
     public string? Id { get; set; }
+    public string? Class { get; set; }
 }
 
 public class InputModel

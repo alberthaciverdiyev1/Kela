@@ -13,14 +13,14 @@
 }
 @if (!string.IsNullOrEmpty(Model.Href))
 {
-    <a href="@Model.Href" id="@Model.Id" class="@cls">@Model.Text</a>
+    <a href="@Model.Href" id="@Model.Id" class="@cls @Model.Class">@Model.Text</a>
 }
 else
 {
     @* Null olduqda Razor atributu ümumiyyətlə yazmır. JSON arqumentləri mütləq
        dırnaq içində verilməlidir — əks halda brauzer tək dırnaqları da dəyərə
        daxil edir və dataset.args JSON.parse-da partlayır. *@
-    <button type="@Model.Type" id="@Model.Id" class="@cls"
+    <button type="@Model.Type" id="@Model.Id" class="@cls @Model.Class"
             data-action="@Model.Action"
             data-args="@Model.Args"
             @(Model.Dismiss ? "data-modal-close" : null)>@Model.Text</button>

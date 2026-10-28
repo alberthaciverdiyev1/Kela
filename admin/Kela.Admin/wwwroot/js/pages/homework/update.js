@@ -11,6 +11,9 @@
     window.openEdit = async function (id) {
         const h = await AdminUI.get(`/homework/${id}`);
 
+        document.getElementById('saveBtn').classList.remove('hidden');
+        ['saveDraftBtn', 'publishBtn'].forEach(id => document.getElementById(id).classList.add('hidden'));
+
         document.getElementById('modalTitle').textContent = L["Homework_Edit"];
         document.getElementById('entityId').value = h.id;
         document.getElementById('title').value = h.title;

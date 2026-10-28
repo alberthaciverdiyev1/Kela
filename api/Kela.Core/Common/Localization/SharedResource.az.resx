@@ -1827,6 +1827,9 @@
   <data name="Homework_Publish" xml:space="preserve">
     <value>Yayımla</value>
   </data>
+  <data name="Homework_SaveDraft" xml:space="preserve">
+    <value>Qaralama kimi saxla</value>
+  </data>
   <data name="Homework_Published" xml:space="preserve">
     <value>Yayımlanıb</value>
   </data>

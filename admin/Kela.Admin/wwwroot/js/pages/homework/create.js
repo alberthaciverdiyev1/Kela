@@ -18,7 +18,15 @@
         });
     }
 
+    // Yaradılışda iki seçim: qaralama kimi saxla və ya dərhal yayımla.
+    function setSaveMode(create) {
+        document.getElementById('saveBtn').classList.toggle('hidden', create);
+        document.getElementById('saveDraftBtn').classList.toggle('hidden', !create);
+        document.getElementById('publishBtn').classList.toggle('hidden', !create);
+    }
+
     window.openCreate = function () {
+        setSaveMode(true);
         document.getElementById('modalTitle').textContent = L["Homework_Create"];
         document.getElementById('entityId').value = '';
         document.getElementById('title').value = '';
@@ -66,10 +74,29 @@
         e.preventDefault();
         if (document.getElementById('entityId').value) return; // update.js
 
+        const publish = e.submitter?.id === 'publishBtn';
+
+        // Yayımlamaq üçün ən azı bir qrup lazımdır — əvvəlcədən yoxlanılır ki,
+        // qaralama yaranıb yarımçıq qalmasın.
+        if (publish && !document.getElementById('group_ids').selectedOptions.length) {
+            AdminUI.error(L["Homework_GroupRequired"]);
+            return;
+        }
+
         const res = await AdminUI.postForm('/homework', window.buildHomeworkForm());
         if (!res.ok) { AdminUI.error(AdminUI.errText(res)); return; }
 
-        AdminUI.notify(L["Js_Created"]);
+        if (publish) {
+            const pub = await AdminUI.postForm(`/homework/${res.data.id}/publish`, new FormData());
+            if (!pub.ok) {
+                AdminUI.error(AdminUI.errText(pub));
+                AdminUI.closeModal('modal');
+                loadList(1);
+                return;
+            }
+        }
+
+        AdminUI.notify(publish ? L["Js_Published"] : L["Js_Created"]);
         AdminUI.closeModal('modal');
         loadList(1);
     });

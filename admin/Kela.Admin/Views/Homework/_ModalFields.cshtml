@@ -32,6 +32,8 @@
 
     <div class="flex justify-end gap-3 pt-2">
         <partial name="Ui/_Button" model="@(new ButtonModel { Text = L["Common_Cancel"], Variant = "secondary", Dismiss = true })" />
-        <partial name="Ui/_Button" model="@(new ButtonModel { Text = L["Common_Save"], Type = "submit" })" />
+        <partial name="Ui/_Button" model="@(new ButtonModel { Id = "saveBtn", Text = L["Common_Save"], Type = "submit" })" />
+        <partial name="Ui/_Button" model="@(new ButtonModel { Id = "saveDraftBtn", Text = L["Homework_SaveDraft"], Variant = "secondary", Type = "submit", Class = "hidden" })" />
+        <partial name="Ui/_Button" model="@(new ButtonModel { Id = "publishBtn", Text = L["Homework_Publish"], Type = "submit", Class = "hidden" })" />
     </div>
 </form>
