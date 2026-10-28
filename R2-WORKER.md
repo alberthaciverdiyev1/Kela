@@ -20,6 +20,33 @@ Məsələn tenant "Edutor Academy" (slug `edutor`) üçün: `edutor/videos/raw/0
 > daşıya bilər, slug isə URL-təhlükəsizdir. Tenant adı dəyişsə də mövcud fayllar
 > qırılmır: DB-də tam açar saxlanılır, yalnız yeni yükləmələr yeni qovluğa düşür.
 
+## Bucket CORS (məcburi)
+
+Brauzer faylı birbaşa R2-yə qoyduğu üçün bucket-da CORS icazəsi olmalıdır; olmasa
+`PUT` preflight-da düşür və istifadəçi "Fayl birbaşa yüklənə bilmədi…" xətası alır
+(böyük fayllar serverdən də keçmədiyi üçün yükləmə tam dayanır). Cloudflare paneldə
+**R2 → edutor → Settings → CORS Policy** bölməsinə bu siyasət yazılır:
+
+```json
+[
+  {
+    "AllowedOrigins": [
+      "https://platform-edutor.foxsoft.online",
+      "https://edutor-api.foxsoft.online",
+      "http://localhost:5081",
+      "http://localhost:5091"
+    ],
+    "AllowedMethods": ["GET", "PUT", "HEAD"],
+    "AllowedHeaders": ["*"],
+    "ExposeHeaders": ["ETag"],
+    "MaxAgeSeconds": 3600
+  }
+]
+```
+
+`ETag` xüsusilə vacibdir: çoxhissəli (multipart) yükləmədə hər hissənin cavabından
+`ETag` oxunur.
+
 ## Axın
 
 1. **Admin yükləyir** — brauzer `POST /lesson-content/upload-url` ilə presigned PUT URL-i alır
