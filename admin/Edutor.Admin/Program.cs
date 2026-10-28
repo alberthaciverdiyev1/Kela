@@ -20,8 +20,11 @@ builder.Services.AddControllersWithViews(options =>
     options.Conventions.Add(new RouteTokenTransformerConvention(new KebabCaseParameterTransformer()));
     // Plan seçməmiş tenant admini hər səhifədən plan seçiminə yönləndirilir.
     options.Filters.AddService<PlanSelectionFilter>();
+    // Fərdi müəllim tək işləyir — istifadəçi idarəetməsi bağlıdır.
+    options.Filters.AddService<IndividualTeacherGuardFilter>();
 });
 builder.Services.AddScoped<PlanSelectionFilter>();
+builder.Services.AddScoped<IndividualTeacherGuardFilter>();
 builder.Services.AddCore(builder.Configuration);
 builder.Services.AddEdutorReverseProxy();
 
