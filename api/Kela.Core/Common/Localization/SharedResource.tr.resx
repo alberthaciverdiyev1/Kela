@@ -573,8 +573,14 @@
   <data name="Sidebar_SectionManagement" xml:space="preserve">
     <value>Yönetim</value>
   </data>
-  <data name="Sidebar_SectionContact" xml:space="preserve">
-    <value>İletişim</value>
+  <data name="Sidebar_SectionFinance" xml:space="preserve">
+    <value>Finans</value>
+  </data>
+  <data name="Sidebar_SectionContent" xml:space="preserve">
+    <value>İçerik</value>
+  </data>
+  <data name="Sidebar_SectionPlatform" xml:space="preserve">
+    <value>Platform</value>
   </data>
   <data name="Sidebar_SectionSystem" xml:space="preserve">
     <value>Sistem</value>

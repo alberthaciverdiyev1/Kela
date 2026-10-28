@@ -573,8 +573,14 @@
   <data name="Sidebar_SectionManagement" xml:space="preserve">
     <value>İdarəetmə</value>
   </data>
-  <data name="Sidebar_SectionContact" xml:space="preserve">
-    <value>Rabitə</value>
+  <data name="Sidebar_SectionFinance" xml:space="preserve">
+    <value>Maliyyə</value>
+  </data>
+  <data name="Sidebar_SectionContent" xml:space="preserve">
+    <value>Kontent</value>
+  </data>
+  <data name="Sidebar_SectionPlatform" xml:space="preserve">
+    <value>Platforma</value>
   </data>
   <data name="Sidebar_SectionSystem" xml:space="preserve">
     <value>Sistem</value>

@@ -573,8 +573,14 @@
   <data name="Sidebar_SectionManagement" xml:space="preserve">
     <value>Управление</value>
   </data>
-  <data name="Sidebar_SectionContact" xml:space="preserve">
-    <value>Связь</value>
+  <data name="Sidebar_SectionFinance" xml:space="preserve">
+    <value>Финансы</value>
+  </data>
+  <data name="Sidebar_SectionContent" xml:space="preserve">
+    <value>Контент</value>
+  </data>
+  <data name="Sidebar_SectionPlatform" xml:space="preserve">
+    <value>Платформа</value>
   </data>
   <data name="Sidebar_SectionSystem" xml:space="preserve">
     <value>Система</value>
