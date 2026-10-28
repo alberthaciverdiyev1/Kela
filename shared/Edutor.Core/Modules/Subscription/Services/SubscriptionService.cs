@@ -319,16 +319,46 @@ public sealed class SubscriptionService(AppDbContext db) : ISubscriptionService
         var tenant = await db.Tenants.FirstOrDefaultAsync(x => x.Id == tenantId && x.DeletedAt == null, ct)
             ?? throw new KeyNotFoundException($"Tenant not found: {tenantId}");
 
-        if (!await db.SubscriptionPlans.AnyAsync(x => x.Id == request.PlanId, ct))
-        {
-            throw new ArgumentException($"Plan not found: {request.PlanId}");
-        }
+        var plan = await db.SubscriptionPlans.FirstOrDefaultAsync(x => x.Id == request.PlanId, ct)
+            ?? throw new ArgumentException($"Plan not found: {request.PlanId}");
 
-        tenant.PlanId = request.PlanId;
-        tenant.PlanStartedAt = DateTimeOffset.UtcNow;
-        tenant.PlanExpiresAt = request.ExpiresAt;
+        var now = DateTimeOffset.UtcNow;
+
+        tenant.PlanId = plan.Id;
+        tenant.PlanStartedAt = now;
+        tenant.PlanExpiresAt = request.ExpiresAt ?? TrialEnd(plan, now);
         await db.SaveChangesAsync(ct);
     }
+
+    /// <summary>
+    /// Tenant özü plan seçir (qeydiyyatdan sonra). Pulsuz plan dərhal açılır;
+    /// ödənişli planlar planın sınaq müddəti qədər pulsuz işləyir.
+    /// </summary>
+    public async Task SelectPlanAsync(long tenantId, long planId, CancellationToken ct = default)
+    {
+        var tenant = await db.Tenants.FirstOrDefaultAsync(x => x.Id == tenantId && x.DeletedAt == null, ct)
+            ?? throw new KeyNotFoundException($"Tenant not found: {tenantId}");
+
+        var plan = await db.SubscriptionPlans.AsNoTracking().FirstOrDefaultAsync(x => x.Id == planId, ct)
+            ?? throw new ArgumentException($"Plan not found: {planId}");
+
+        if (!plan.IsActive) throw new ArgumentException("Bu plan hazırda əlçatan deyil");
+
+        var now = DateTimeOffset.UtcNow;
+
+        tenant.PlanId = plan.Id;
+        tenant.PlanStartedAt = now;
+        tenant.PlanExpiresAt = TrialEnd(plan, now);
+        await db.SaveChangesAsync(ct);
+    }
+
+    /// <summary>Pulsuz plan müddətsizdir; ödənişli plan sınaq günü qədər açılır.</summary>
+    private static DateTimeOffset? TrialEnd(SubscriptionPlan plan, DateTimeOffset now)
+        => plan.MonthlyPrice > 0 && plan.TrialDays > 0 ? now.AddDays(plan.TrialDays) : null;
+
+    public async Task<bool> NeedsPlanSelectionAsync(long tenantId, CancellationToken ct = default)
+        => await db.Tenants.AsNoTracking()
+            .AnyAsync(x => x.Id == tenantId && x.DeletedAt == null && x.PlanId == null, ct);
 
     // ---- Daxili ----
 
@@ -375,11 +405,19 @@ public sealed class SubscriptionService(AppDbContext db) : ISubscriptionService
             ? await db.SubscriptionPlans.AsNoTracking().FirstOrDefaultAsync(x => x.Id == planId, ct)
             : null;
 
-        // Plan təyin edilməyibsə ən aşağı (default) plan tətbiq olunur.
-        plan ??= await db.SubscriptionPlans.AsNoTracking()
-            .Where(x => x.IsActive)
-            .OrderBy(x => x.SortOrder).ThenBy(x => x.Id)
-            .FirstOrDefaultAsync(ct);
+        // Plan təyin edilməyibsə ən aşağı ödənişli plan tətbiq olunur — pulsuz plan
+        // yalnız istifadəçi onu özü seçəndə qüvvəyə minir.
+        if (plan is null)
+        {
+            plan = await db.SubscriptionPlans.AsNoTracking()
+                .Where(x => x.IsActive && x.MonthlyPrice > 0)
+                .OrderBy(x => x.SortOrder).ThenBy(x => x.Id)
+                .FirstOrDefaultAsync(ct)
+                ?? await db.SubscriptionPlans.AsNoTracking()
+                    .Where(x => x.IsActive)
+                    .OrderBy(x => x.SortOrder).ThenBy(x => x.Id)
+                    .FirstOrDefaultAsync(ct);
+        }
 
         var usage = await GetOrCreateUsageAsync(tenantId, Period(), ct);
 
@@ -462,6 +500,7 @@ public sealed class SubscriptionService(AppDbContext db) : ISubscriptionService
         plan.MonthlyPrice = request.MonthlyPrice;
         plan.Currency = string.IsNullOrWhiteSpace(request.Currency) ? "AZN" : request.Currency.Trim().ToUpperInvariant();
         plan.YearlyFreeMonths = request.YearlyFreeMonths;
+        plan.TrialDays = Math.Max(0, request.TrialDays);
         plan.MaxTeachers = request.MaxTeachers;
         plan.MaxStudents = request.MaxStudents;
         plan.MaxGroups = request.MaxGroups;
@@ -491,7 +530,7 @@ public sealed class SubscriptionService(AppDbContext db) : ISubscriptionService
     }
 
     private static PlanResponse Map(SubscriptionPlan x) => new(
-        x.Id, x.Code, x.Name, x.Description, x.MonthlyPrice, x.Currency, x.YearlyFreeMonths,
+        x.Id, x.Code, x.Name, x.Description, x.MonthlyPrice, x.Currency, x.YearlyFreeMonths, x.TrialDays,
         x.MaxTeachers, x.MaxStudents, x.MaxGroups, x.MaxSubjects, x.MaxLessons,
         x.MonthlyVideoMinutes, x.StorageBytes, x.ConcurrentConversions, x.MaxVideoHeight,
         x.PricePerStudent, x.PricePerGroup, x.PricePerVideoHour, x.OriginalRetentionDays,

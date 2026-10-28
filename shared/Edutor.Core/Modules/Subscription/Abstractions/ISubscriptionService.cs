@@ -49,4 +49,10 @@ public interface ISubscriptionService
     Task DeletePlanAsync(long id, CancellationToken ct = default);
 
     Task AssignPlanAsync(long tenantId, AssignPlanRequest request, CancellationToken ct = default);
+
+    /// <summary>Tenant özü plan seçir (qeydiyyatdan sonrakı plan seçimi).</summary>
+    Task SelectPlanAsync(long tenantId, long planId, CancellationToken ct = default);
+
+    /// <summary>Tenant hələ plan seçməyib — panel plan seçimi səhifəsinə yönləndirir.</summary>
+    Task<bool> NeedsPlanSelectionAsync(long tenantId, CancellationToken ct = default);
 }

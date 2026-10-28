@@ -55,6 +55,7 @@ public record PlanResponse(
     decimal MonthlyPrice,
     string Currency,
     int YearlyFreeMonths,
+    int TrialDays,
     int MaxTeachers,
     int MaxStudents,
     int MaxGroups,

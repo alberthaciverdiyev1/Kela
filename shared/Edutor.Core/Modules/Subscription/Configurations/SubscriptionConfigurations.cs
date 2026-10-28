@@ -17,6 +17,7 @@ public sealed class SubscriptionPlanConfiguration : IEntityTypeConfiguration<Sub
         builder.Property(x => x.MonthlyPrice).HasColumnName("monthly_price").HasPrecision(12, 2);
         builder.Property(x => x.Currency).HasColumnName("currency").HasMaxLength(3).IsRequired();
         builder.Property(x => x.YearlyFreeMonths).HasColumnName("yearly_free_months");
+        builder.Property(x => x.TrialDays).HasColumnName("trial_days");
         builder.Property(x => x.MaxTeachers).HasColumnName("max_teachers");
         builder.Property(x => x.MaxStudents).HasColumnName("max_students");
         builder.Property(x => x.MaxGroups).HasColumnName("max_groups");

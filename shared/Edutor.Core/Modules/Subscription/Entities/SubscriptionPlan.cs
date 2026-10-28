@@ -23,6 +23,12 @@ public class SubscriptionPlan
     /// <summary>İllik ödənişdə pulsuz ayların sayı (məs. 2 = 10 ay qiyməti).</summary>
     public int YearlyFreeMonths { get; set; } = 2;
 
+    /// <summary>
+    /// Plan seçildikdə verilən pulsuz sınaq müddəti (gün). 0 = sınaq yoxdur.
+    /// Pulsuz plan üçün istifadə olunmur.
+    /// </summary>
+    public int TrialDays { get; set; } = 14;
+
     // ---- Limitlər (0 və ya mənfi = limitsiz) ----
     public int MaxTeachers { get; set; }
     public int MaxStudents { get; set; }

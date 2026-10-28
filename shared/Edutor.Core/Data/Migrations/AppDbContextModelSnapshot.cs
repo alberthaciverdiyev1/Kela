@@ -3013,6 +3013,10 @@ namespace Edutor.Core.Data.Migrations
                         .HasColumnType("bigint")
                         .HasColumnName("storage_bytes");
 
+                    b.Property<int>("TrialDays")
+                        .HasColumnType("integer")
+                        .HasColumnName("trial_days");
+
                     b.Property<DateTimeOffset?>("UpdatedAt")
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("updated_at");

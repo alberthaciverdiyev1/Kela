@@ -6,8 +6,8 @@ using Microsoft.Extensions.DependencyInjection;
 namespace Edutor.Core.Modules.Subscription;
 
 /// <summary>
-/// İlk quraşdırmada 4 standart planı yaradır. Planlar sonradan admin paneldən
-/// dəyişdirilir — seeder yalnız boş cədvəli doldurur, mövcud planlara toxunmur.
+/// İlk quraşdırmada standart planları yaradır. Planlar sonradan admin paneldən
+/// dəyişdirilir — seeder mövcud planlara toxunmur, yalnız pulsuz planı əlavə edir.
 /// </summary>
 public static class SubscriptionSeeder
 {
@@ -18,14 +18,25 @@ public static class SubscriptionSeeder
         using var scope = services.CreateScope();
         var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
 
-        if (await db.SubscriptionPlans.AnyAsync(ct)) return;
+        if (!await db.SubscriptionPlans.AnyAsync(ct))
+        {
+            db.SubscriptionPlans.AddRange(Plans());
+            await db.SaveChangesAsync(ct);
+            return;
+        }
 
-        db.SubscriptionPlans.AddRange(Plans());
-        await db.SaveChangesAsync(ct);
+        // Mövcud bazalarda pulsuz plan yoxdur — qeydiyyatdan sonra seçim üçün əlavə olunur.
+        if (!await db.SubscriptionPlans.AnyAsync(x => x.Code == FreePlan.Code, ct))
+        {
+            db.SubscriptionPlans.Add(FreePlan.Create());
+            await db.SaveChangesAsync(ct);
+        }
     }
 
     private static IEnumerable<SubscriptionPlan> Plans()
     {
+        yield return FreePlan.Create();
+
         yield return new SubscriptionPlan
         {
             Code = "basic", Name = "Basic", Description = "Fərdi müəllim üçün başlanğıc",
@@ -68,6 +79,24 @@ public static class SubscriptionSeeder
             ConcurrentConversions = 16, MaxVideoHeight = 1080, OriginalRetentionDays = 0,
             PricePerStudent = 8, PricePerGroup = 5, PricePerVideoHour = 12,
             Features = """{"certificates":true,"payments":true,"crm":true,"chat":true,"branding":true,"api":true}"""
+        };
+    }
+
+    /// <summary>Pulsuz plan: ödəniş yoxdur, video/səs/fayl yükləməsi bağlıdır.</summary>
+    private static class FreePlan
+    {
+        public const string Code = "free";
+
+        public static SubscriptionPlan Create() => new()
+        {
+            Code = "free", Name = "Free", Description = "Pulsuz — video, səs və fayl yükləməsi olmadan",
+            MonthlyPrice = 0, Currency = "AZN", SortOrder = 0, TrialDays = 0,
+            MaxTeachers = 1, MaxStudents = 30, MaxGroups = 3, MaxSubjects = 2, MaxLessons = 50,
+            MonthlyVideoMinutes = 0, StorageBytes = 0, ConcurrentConversions = 0,
+            MaxVideoHeight = 720, OriginalRetentionDays = 0,
+            PricePerStudent = 0, PricePerGroup = 0, PricePerVideoHour = 0,
+            AllowVideoUpload = false, AllowAudioUpload = false, AllowFileUpload = false,
+            Features = "{}"
         };
     }
 }

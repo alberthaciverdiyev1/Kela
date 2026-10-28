@@ -16,6 +16,10 @@ public class PlanRequest
     [FromForm(Name = "yearly_free_months")]
     public int YearlyFreeMonths { get; set; } = 2;
 
+    /// <summary>Plan seçildikdə verilən pulsuz sınaq müddəti (gün). 0 = sınaq yoxdur.</summary>
+    [FromForm(Name = "trial_days")]
+    public int TrialDays { get; set; } = 14;
+
     [FromForm(Name = "max_teachers")]
     public int MaxTeachers { get; set; }
 
