@@ -58,7 +58,11 @@ public sealed class NotificationService(
         db.Notifications.Add(notification);
         await db.SaveChangesAsync(ct);
 
-        await SendPushAsync(notification, request, ct);
+        // Push hazır deyil (native FCM/APNs provayderi yoxdur) — müvəqqəti söndürülüb.
+        if (false)
+        {
+            await SendPushAsync(notification, request, ct);
+        }
 
         return ToResponse(notification);
     }

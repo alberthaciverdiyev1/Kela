@@ -132,19 +132,22 @@
             <Icon Name="chevron-right" Class="size-4 text-sage-300" />
         </button>
 
-        <div class="flex w-full items-center gap-3 py-4">
-            <span class="flex size-8 items-center justify-center rounded-lg bg-brand-049 text-brand-639"><Icon Name="bell" Class="size-4" /></span>
-            <span class="flex-1"><span class="block text-[13px] font-semibold">@L["Nav_Notifications"]</span><span class="mt-0.5 block text-[10px] text-sage-410">@L["Profile_NotifToggle"]</span></span>
-            <button type="button" @onclick="ToggleNotificationsAsync" class="relative h-6 w-11 rounded-full transition @(_notifications ? "bg-brand-671" : "bg-brand-100")">
-                <span class="absolute top-0.5 size-5 rounded-full bg-white shadow transition-all @(_notifications ? "left-5" : "left-0.5")"></span>
-            </button>
-        </div>
+        @if (false)
+        {
+            <div class="flex w-full items-center gap-3 py-4">
+                <span class="flex size-8 items-center justify-center rounded-lg bg-brand-049 text-brand-639"><Icon Name="bell" Class="size-4" /></span>
+                <span class="flex-1"><span class="block text-[13px] font-semibold">@L["Nav_Notifications"]</span><span class="mt-0.5 block text-[10px] text-sage-410">@L["Profile_NotifToggle"]</span></span>
+                <button type="button" @onclick="ToggleNotificationsAsync" class="relative h-6 w-11 rounded-full transition @(_notifications ? "bg-brand-671" : "bg-brand-100")">
+                    <span class="absolute top-0.5 size-5 rounded-full bg-white shadow transition-all @(_notifications ? "left-5" : "left-0.5")"></span>
+                </button>
+            </div>
 
-        <a href="/notifications" class="flex w-full items-center gap-3 py-4 text-left">
-            <span class="flex size-8 items-center justify-center rounded-lg bg-brand-049 text-brand-639"><Icon Name="bell" Class="size-4" /></span>
-            <span class="flex-1"><span class="block text-[13px] font-semibold">@L["Profile_NotifList"]</span><span class="mt-0.5 block text-[10px] text-sage-410">@L["Profile_NotifListView"]</span></span>
-            <Icon Name="chevron-right" Class="size-4 text-sage-300" />
-        </a>
+            <a href="/notifications" class="flex w-full items-center gap-3 py-4 text-left">
+                <span class="flex size-8 items-center justify-center rounded-lg bg-brand-049 text-brand-639"><Icon Name="bell" Class="size-4" /></span>
+                <span class="flex-1"><span class="block text-[13px] font-semibold">@L["Profile_NotifList"]</span><span class="mt-0.5 block text-[10px] text-sage-410">@L["Profile_NotifListView"]</span></span>
+                <Icon Name="chevron-right" Class="size-4 text-sage-300" />
+            </a>
+        }
 
         <a href="/payments" class="flex w-full items-center gap-3 py-4 text-left">
             <span class="flex size-8 items-center justify-center rounded-lg bg-brand-049 text-brand-639"><Icon Name="chart" Class="size-4" /></span>
