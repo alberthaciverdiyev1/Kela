@@ -11,7 +11,8 @@
         document.getElementById('email').value = u.email;
         document.getElementById('phoneNumber').value = u.phoneNumber ?? '';
         document.getElementById('type').value = u.type;
-        document.getElementById('password').value = '';
+        window.setStudentOptionVisible(false);
+        window.resetPasswordField();
         document.getElementById('passwordHint').classList.remove('hidden');
         AdminUI.openModal('modal');
     };

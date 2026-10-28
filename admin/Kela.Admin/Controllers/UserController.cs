@@ -1,6 +1,8 @@
 using FluentValidation;
 using Kela.Core.Common.Exceptions;
 using Kela.Core.Modules.Auth;
+using Kela.Core.Modules.Students.Abstractions;
+using Kela.Core.Modules.Students.Requests;
 using Kela.Core.Modules.User.Abstractions;
 using Kela.Core.Modules.User.Entities;
 using Kela.Core.Modules.User.Requests;
@@ -14,6 +16,7 @@ namespace Kela.Admin.Controllers;
 [Route("[controller]")]
 public sealed class UserController(
     IUserService service,
+    IStudentManagementService students,
     IValidator<UserUpsertRequest> validator) : AdminControllerBase
 {
     [HttpGet]
@@ -38,6 +41,34 @@ public sealed class UserController(
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Create([FromForm] UserUpsertRequest request, CancellationToken ct)
     {
+        // Şagird ayrı cədvəldə saxlanılır — yaradılması student servisinə ötürülür.
+        if (request.Type == AuthRoles.Student)
+        {
+            try
+            {
+                var created = await students.CreateAsync(new CreateStudentRequest
+                {
+                    FullName = $"{request.Name} {request.Surname}".Trim(),
+                    Email = request.Email,
+                    Phone = request.PhoneNumber,
+                    Password = request.Password
+                }, ct);
+
+                return Json(new
+                {
+                    created.Id,
+                    created.FullName,
+                    created.Email,
+                    created.Password,
+                    Type = AuthRoles.Student
+                });
+            }
+            catch (ArgumentException ex)
+            {
+                return BadRequest(new { message = ex.Message });
+            }
+        }
+
         EnsureCanAssignType(request.Type);
         var result = await validator.ValidateAsync(request, ct);
         if (!result.IsValid) return BadRequest(Invalid(result));
