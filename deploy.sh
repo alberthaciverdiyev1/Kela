@@ -181,8 +181,11 @@ build_release() {
     log "admin CSS"
     (cd "$SRC_DIR/admin/Edutor.Admin" && npm ci --no-audit --no-fund --silent && npm run --silent css:build)
 
-    # The MAUI/WASM shared project has no package.json; it reuses the admin Tailwind CLI.
+    # The MAUI/WASM shared project has no package.json; it reuses the admin Tailwind CLI
+    # and needs a node_modules next to the project so `@import "tailwindcss"` resolves.
     log "web CSS"
+    [ -e "$SRC_DIR/web/Edutor.App.Shared/node_modules/tailwindcss" ] || \
+        ln -sfn "$SRC_DIR/admin/Edutor.Admin/node_modules" "$SRC_DIR/web/Edutor.App.Shared/node_modules"
     (cd "$SRC_DIR/web/Edutor.App.Shared" && \
         "$SRC_DIR/admin/Edutor.Admin/node_modules/.bin/tailwindcss" \
         -i ./wwwroot/css/input.css -o ./wwwroot/css/app.css --minify)
