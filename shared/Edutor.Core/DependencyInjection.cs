@@ -132,6 +132,7 @@ public static class DependencyInjection
         services.Configure<NodeOptions>(configuration.GetSection(NodeOptions.SectionName));
         services.Configure<SubscriptionOptions>(configuration.GetSection(SubscriptionOptions.SectionName));
         services.AddScoped<ISubscriptionService, SubscriptionService>();
+        services.AddScoped<IPlatformFinanceService, PlatformFinanceService>();
         services.AddScoped<IStorageMeteringService, StorageMeteringService>();
         services.AddScoped<INodeService, NodeService>();
         services.AddScoped<IVideoJobScheduler, VideoJobScheduler>();

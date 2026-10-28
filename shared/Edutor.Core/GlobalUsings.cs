@@ -18,6 +18,7 @@ global using Edutor.Core.Modules.Tenant.Abstractions;
 global using Edutor.Core.Modules.User.Abstractions;
 global using Edutor.Core.Modules.Dashboard.Abstractions;
 global using Edutor.Core.Modules.Students.Abstractions;
+global using Edutor.Core.Modules.Subscription.Abstractions;
 global using Edutor.Core.Modules.Media.Abstractions;
 global using Edutor.Core.Modules.Payments.Abstractions;
 global using Edutor.Core.Modules.SystemNotification.Abstractions;
