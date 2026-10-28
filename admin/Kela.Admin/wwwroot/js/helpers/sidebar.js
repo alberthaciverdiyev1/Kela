@@ -2,8 +2,7 @@
 (function () {
     const sidebar = document.getElementById('sidebar');
     const editBtn = document.getElementById('navEditBtn');
-    const doneBtn = document.getElementById('navDoneBtn');
-    if (!sidebar || !editBtn || !doneBtn || !window.AdminUI) return;
+    if (!sidebar || !editBtn || !window.AdminUI) return;
 
     const nav = sidebar.querySelector('nav');
     if (!nav) return;
@@ -34,16 +33,16 @@
             if (!items.length) return;
             const visible = editing || items.some(link => !isHidden(link));
             section.classList.toggle('hidden', !visible);
+            section.classList.toggle('all-hidden', items.every(isHidden));
         });
     }
 
     function setEditing(on) {
         editing = on;
         sidebar.dataset.editing = on ? 'true' : 'false';
-        editBtn.classList.toggle('hidden', on);
-        editBtn.classList.toggle('flex', !on);
-        doneBtn.classList.toggle('hidden', !on);
-        doneBtn.classList.toggle('flex', on);
+        editBtn.title = on ? L['Sidebar_CustomizeDone'] : L['Sidebar_Customize'];
+        editBtn.setAttribute('aria-label', editBtn.title);
+        editBtn.setAttribute('aria-pressed', String(on));
         refreshSections();
     }
 
@@ -71,7 +70,6 @@
         });
     });
 
-    editBtn.addEventListener('click', () => setEditing(true));
-    doneBtn.addEventListener('click', () => setEditing(false));
+    editBtn.addEventListener('click', () => setEditing(!editing));
     refreshSections();
 })();

@@ -957,6 +957,23 @@ video:fullscreen {
 
 .dp-btn:hover { background: var(--primary-hover); }
 
+#sidebar .nav-icon-done {
+    display: none;
+}
+
+#sidebar[data-editing="true"] .nav-icon-edit {
+    display: none;
+}
+
+#sidebar[data-editing="true"] .nav-icon-done {
+    display: block;
+}
+
+#sidebar[data-editing="true"] #navEditBtn {
+    background: var(--color-primary-light);
+    color: var(--color-primary);
+}
+
 /* Sidebar fərdiləşdirmə — hər istifadəçi menyu sətirlərini gizlədə/aça bilir. */
 #sidebar a[data-nav-key] {
     position: relative;
@@ -993,14 +1010,24 @@ video:fullscreen {
     display: none;
 }
 
-/* Gizlədilən sətir redaktə rejimində solğun görünür ki, geri qaytarıla bilsin. */
+/* Gizlədilən (bağlanan) sətir redaktə rejimində qırmızı görünür ki, dərhal seçilsin. */
 #sidebar[data-editing="true"] a[data-nav-key].hidden {
     display: flex;
-    opacity: 0.45;
+    background: #fef2f2;
+    color: #ef4444;
+}
+
+#sidebar[data-editing="true"] a[data-nav-key].hidden svg {
+    color: #ef4444;
 }
 
 #sidebar[data-editing="true"] a[data-nav-key].hidden .nav-eye {
-    color: var(--color-primary-600);
+    color: #ef4444;
+}
+
+/* Bütün sətirləri bağlanmış bölmənin başlığı da qırmızı göstərilir. */
+#sidebar nav > div.all-hidden > p {
+    color: #ef4444;
 }
 
 #sidebar[data-editing="true"] a[data-nav-key]:hover .nav-eye {
@@ -1009,5 +1036,5 @@ video:fullscreen {
 }
 
 #sidebar[data-editing="true"] a[data-nav-key].hidden:hover .nav-eye {
-    color: var(--color-primary-600);
+    color: #dc2626;
 }
