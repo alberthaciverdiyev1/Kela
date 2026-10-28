@@ -115,8 +115,14 @@ window.SubscriptionPage = (function () {
 
     const shortDate = (value) => value ? new Date(value).toLocaleDateString('az-AZ') : '—';
 
+    // Superadmin başqa tenant-a baxırsa sorğulara tenant_id əlavə olunur.
+    function tenantQuery() {
+        const id = selectedTenantId();
+        return id ? `?tenant_id=${encodeURIComponent(id)}` : '';
+    }
+
     async function loadRequests() {
-        const rows = await AdminUI.get('/subscription/addon-requests') || [];
+        const rows = await AdminUI.get(`/subscription/addon-requests${tenantQuery()}`) || [];
 
         AdminUI.table('subscriptionAddonRequests', rows.map(r => [
             { html: shortDate(r.createdAt) },
@@ -129,7 +135,7 @@ window.SubscriptionPage = (function () {
     }
 
     async function loadAddons() {
-        const rows = await AdminUI.get('/subscription/addons') || [];
+        const rows = await AdminUI.get(`/subscription/addons${tenantQuery()}`) || [];
 
         AdminUI.table('subscriptionAddons', rows.map(a => [
             { html: a.period },

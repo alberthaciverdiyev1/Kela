@@ -19,7 +19,7 @@ public sealed class SubscriptionController(
     private const string DefaultWhatsApp = "994709990569";
 
     [HttpGet]
-    public async Task<IActionResult> Index(long? tenantId, CancellationToken ct)
+    public async Task<IActionResult> Index([FromQuery(Name = "tenant_id")] long? tenantId, CancellationToken ct)
     {
         ViewData["Scripts"] = new[] { "~/js/pages/subscription/index.js" };
 
@@ -52,7 +52,7 @@ public sealed class SubscriptionController(
     }
 
     [HttpGet("data")]
-    public async Task<IActionResult> Data(long? tenantId, CancellationToken ct)
+    public async Task<IActionResult> Data([FromQuery(Name = "tenant_id")] long? tenantId, CancellationToken ct)
     {
         var selected = await ResolveTenantAsync(tenantId, ct);
         if (selected is not long id) return BadRequest(new { message = "Tenant seçilməyib" });
@@ -82,7 +82,7 @@ public sealed class SubscriptionController(
     }
 
     [HttpGet("addons")]
-    public async Task<IActionResult> Addons(long? tenantId, CancellationToken ct)
+    public async Task<IActionResult> Addons([FromQuery(Name = "tenant_id")] long? tenantId, CancellationToken ct)
     {
         var selected = await ResolveTenantAsync(tenantId, ct);
         if (selected is not long id) return BadRequest(new { message = "Tenant seçilməyib" });
@@ -112,9 +112,9 @@ public sealed class SubscriptionController(
     }
 
     [HttpGet("addon-requests")]
-    public async Task<IActionResult> AddonRequests(string? status, CancellationToken ct)
+    public async Task<IActionResult> AddonRequests([FromQuery(Name = "tenant_id")] long? tenantId, string? status, CancellationToken ct)
     {
-        var selected = await ResolveTenantAsync(null, ct);
+        var selected = await ResolveTenantAsync(tenantId, ct);
         if (selected is not long id) return BadRequest(new { message = "Tenant seçilməyib" });
 
         return Json(await service.ListAddonRequestsAsync(id, status, ct));
