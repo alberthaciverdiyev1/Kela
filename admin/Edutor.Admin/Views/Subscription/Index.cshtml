@@ -51,6 +51,8 @@
     var currentPlanId = Model?.Plan?.Id;
     var userEmail = User.FindFirst(System.Security.Claims.ClaimTypes.Email)?.Value ?? "";
     var userName = User.Identity?.Name ?? "";
+    // Limit artırımı (əlavə paket) yalnız admin/superadmin səlahiyyətidir.
+    var canManageLimits = User.IsInRole(AuthRoles.Admin) || User.IsInRole(AuthRoles.SuperAdmin);
 
     string Limit(int value) => value > 0 ? value.ToString() : "limitsiz";
     string Storage(long bytes) => bytes > 0 ? $"{Math.Round(bytes / 1073741824.0)} GB" : "limitsiz";
@@ -187,32 +189,43 @@
 
         </div>
 
-        @if (used.AddonOffers.Count > 0)
+        @if (used.AddonOffers.Count > 0 || !canManageLimits)
         {
             <div class="admin-card p-5">
                 <h3 class="mb-2 text-base font-bold text-slate-900">Limit artırımı</h3>
-                <p class="mb-4 text-sm text-slate-500">
-                    Planı dəyişmədən istənilən sayda əlavə yer ala bilərsiniz.
-                    Əlavə limit cari ay üçün keçərlidir.
-                </p>
 
-                <div class="grid gap-3 sm:grid-cols-3">
-                    @foreach (var offer in used.AddonOffers)
-                    {
-                        <div class="flex flex-col rounded-xl border border-border bg-surface-secondary p-4">
-                            <p class="font-bold text-slate-900">@offer.Label</p>
-                            <p class="mt-1 text-sm text-slate-500">1 @offer.Unit</p>
-                            <p class="mt-2 text-lg font-extrabold text-primary">@offer.UnitPrice @Model.Plan.Currency</p>
+                @if (canManageLimits)
+                {
+                    <p class="mb-4 text-sm text-slate-500">
+                        Planı dəyişmədən istənilən sayda əlavə yer ala bilərsiniz.
+                        Əlavə limit cari ay üçün keçərlidir.
+                    </p>
 
-                            <button type="button"
-                                    class="admin-button-primary mt-3 w-full"
-                                    data-action="SubscriptionPage.addAddon"
-                                    data-args='["@offer.Kind"]'>
-                                Əlavə et
-                            </button>
-                        </div>
-                    }
-                </div>
+                    <div class="grid gap-3 sm:grid-cols-3">
+                        @foreach (var offer in used.AddonOffers)
+                        {
+                            <div class="flex flex-col rounded-xl border border-border bg-surface-secondary p-4">
+                                <p class="font-bold text-slate-900">@offer.Label</p>
+                                <p class="mt-1 text-sm text-slate-500">1 @offer.Unit</p>
+                                <p class="mt-2 text-lg font-extrabold text-primary">@offer.UnitPrice @Model.Plan.Currency</p>
+
+                                <button type="button"
+                                        class="admin-button-primary mt-3 w-full"
+                                        data-action="SubscriptionPage.addAddon"
+                                        data-args='["@offer.Kind"]'>
+                                    Əlavə et
+                                </button>
+                            </div>
+                        }
+                    </div>
+                }
+                else
+                {
+                    <p class="text-sm text-slate-500">
+                        Limitlər seçilmiş plana tabedir və yalnız administrator tərəfindən artırılır.
+                        Əlavə limitə ehtiyacınız varsa administratorla əlaqə saxlayın.
+                    </p>
+                }
             </div>
         }
 

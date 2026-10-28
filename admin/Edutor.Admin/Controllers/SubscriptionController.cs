@@ -57,14 +57,31 @@ public sealed class SubscriptionController(
         var selected = await ResolveTenantAsync(tenantId, ct);
         if (selected is not long id) return BadRequest(new { message = "Tenant seçilməyib" });
 
-        return Json(await service.GetAsync(id, ct));
+        var data = await service.GetAsync(id, ct);
+
+        // Limit artırımı yalnız admin/superadmin səlahiyyətidir; müəllimə paket
+        // təklif etmirik (frontend təklif siyahısına baxır).
+        if (!User.IsInRole(UserTypes.Admin) && !User.IsInRole(UserTypes.SuperAdmin))
+        {
+            data = data with { Usage = data.Usage with { AddonOffers = [] } };
+        }
+
+        return Json(data);
     }
 
-    /// <summary>Əlavə paket — hazırda yalnız admin/superadmin əlavə edir (ödəniş əl ilə).</summary>
+    /// <summary>Əlavə paket — yalnız admin/superadmin (ödəniş əl ilə).</summary>
     [HttpPost("addons")]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> AddAddon([FromForm] AddAddonRequest request, CancellationToken ct)
     {
+        // Cookie auth-да [Authorize] 302 ilə login-ə yönləndirir və JS xətanı
+        // görmür; ona görə aydın 403 JSON qaytarırıq.
+        if (!User.IsInRole(UserTypes.Admin) && !User.IsInRole(UserTypes.SuperAdmin))
+        {
+            return StatusCode(StatusCodes.Status403Forbidden,
+                new { message = "Limit artırmaq üçün administratorla əlaqə saxlayın." });
+        }
+
         var tenantId = request.TenantId
             ?? await ResolveTenantAsync(null, ct);
 
