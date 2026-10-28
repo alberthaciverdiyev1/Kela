@@ -1,16 +1,22 @@
+using Edutor.Admin.Infrastructure;
 using Edutor.Core.Modules.PrivacyPolicy.Abstractions;
 using Edutor.Core.Modules.Tenant.Abstractions;
 using Edutor.Core.Modules.Tenant.Requests;
+using Edutor.Core.Modules.User.Abstractions;
+using Edutor.Core.Modules.User.Requests;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Edutor.Admin.Controllers;
 
-/// <summary>Public kurs müraciəti — tenant superadmin təsdiqinə qədər aktiv olmur.</summary>
+/// <summary>Public kurs müraciəti — qeydiyyatdan sonra avtomatik giriş və plan seçimi.</summary>
 [AllowAnonymous]
 [Route("register")]
-public sealed class RegisterController(ITenantService tenants, IPrivacyPolicyService policies) : Controller
+public sealed class RegisterController(
+    ITenantService tenants,
+    IPrivacyPolicyService policies,
+    IUserAuthService auth) : Controller
 {
     [HttpGet]
     public IActionResult Index()
@@ -55,7 +61,23 @@ public sealed class RegisterController(ITenantService tenants, IPrivacyPolicySer
 
         try
         {
-            await tenants.RegisterAsync(request, ct);
+            var tenant = await tenants.RegisterAsync(request, ct);
+
+            // Qeydiyyatdan dərhal sonra daxil edirik — istifadəçi plan seçimini görsün.
+            var login = await auth.LoginAsync(new UserLoginRequest
+            {
+                Email = request.Email,
+                Password = request.Password,
+                TenantId = tenant.Id
+            }, ct);
+
+            await AdminSignIn.SignInAsync(HttpContext, login.User, tenant.Id);
+
+            return RedirectToAction("Index", "PlanChoose");
+        }
+        catch (UnauthorizedAccessException)
+        {
+            // Avtomatik giriş alınmasa hesab yenə yaranıb — adi girişə yönləndiririk.
             ViewData["Success"] = true;
             ViewData["Scripts"] = new[] { "~/js/pages/register/index.js" };
             return View(new RegisterTenantRequest());

@@ -18,7 +18,10 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllersWithViews(options =>
 {
     options.Conventions.Add(new RouteTokenTransformerConvention(new KebabCaseParameterTransformer()));
+    // Plan seçməmiş tenant admini hər səhifədən plan seçiminə yönləndirilir.
+    options.Filters.AddService<PlanSelectionFilter>();
 });
+builder.Services.AddScoped<PlanSelectionFilter>();
 builder.Services.AddCore(builder.Configuration);
 builder.Services.AddEdutorReverseProxy();
 

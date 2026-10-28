@@ -1,8 +1,7 @@
-using System.Security.Claims;
 using FluentValidation;
+using Edutor.Admin.Infrastructure;
 using Edutor.Core.Modules.Tenant.Abstractions;
 using Edutor.Core.Modules.User.Abstractions;
-using Edutor.Core.Modules.User.Entities;
 using Edutor.Core.Modules.User.Requests;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
@@ -43,24 +42,8 @@ public sealed class LoginController(
         try
         {
             var result = await service.LoginAsync(request, ct);
-            var user = result.User;
 
-            var claims = new List<Claim>
-            {
-                new(ClaimTypes.NameIdentifier, user.Id.ToString()),
-                new(ClaimTypes.Name, $"{user.Name} {user.Surname}".Trim()),
-                new(ClaimTypes.Email, user.Email),
-                new(ClaimTypes.Role, user.Type)
-            };
-
-            // Tenant claim — sonrakı sorğularda məlumat yalnız bu tenant-la məhdudlaşır.
-            if (user.Type != UserTypes.SuperAdmin && request.TenantId is > 0)
-            {
-                claims.Add(new Claim("tenant_id", request.TenantId.Value.ToString()));
-            }
-
-            var identity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
-            await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(identity));
+            await AdminSignIn.SignInAsync(HttpContext, result.User, request.TenantId);
 
             return RedirectToAction("Index", "Dashboard");
         }

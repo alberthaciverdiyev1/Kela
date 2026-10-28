@@ -1,6 +1,6 @@
 (function () {
     const fields = [
-        'code', 'name', 'description', 'monthly_price', 'currency', 'yearly_free_months', 'sort_order',
+        'code', 'name', 'description', 'monthly_price', 'currency', 'yearly_free_months', 'trial_days', 'sort_order',
         'max_students', 'max_groups', 'monthly_video_hours',
         'price_per_student', 'price_per_group', 'price_per_video_hour',
         // Görünməyən, amma mövcud planı redaktə edəndə saxlanmalı olan sahələr.
@@ -21,6 +21,7 @@
         document.getElementById('planId').value = '';
         document.getElementById('planTitle').textContent = 'Yeni plan';
         document.getElementById('monthly_price').value = '0';
+        document.getElementById('trial_days').value = '14';
         document.getElementById('monthly_video_minutes').value = '0';
         document.getElementById('is_active').value = 'true';
         window.PlanPage.open();
@@ -41,6 +42,7 @@
         document.getElementById('monthly_price').value = p.monthlyPrice;
         document.getElementById('currency').value = p.currency;
         document.getElementById('yearly_free_months').value = p.yearlyFreeMonths;
+        document.getElementById('trial_days').value = p.trialDays;
         document.getElementById('sort_order').value = p.sortOrder;
         document.getElementById('is_active').value = String(p.isActive);
 

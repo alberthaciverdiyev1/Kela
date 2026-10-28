@@ -18,9 +18,10 @@
 
     <partial name="Ui/_Input" model="@(new InputModel { Name = "description", Id = "description", Label = "Təsvir" })" />
 
-    <div class="grid gap-3 sm:grid-cols-4">
+    <div class="grid gap-3 sm:grid-cols-5">
         <partial name="Ui/_Input" model="@(new InputModel { Name = "currency", Id = "currency", Label = "Valyuta", Value = "AZN" })" />
         <partial name="Ui/_Input" model="@(new InputModel { Name = "yearly_free_months", Id = "yearly_free_months", Label = "İllik pulsuz ay", Type = "number", Min = "0", Value = "2" })" />
+        <partial name="Ui/_Input" model="@(new InputModel { Name = "trial_days", Id = "trial_days", Label = "Sınaq (gün)", Type = "number", Min = "0", Value = "14" })" />
         <partial name="Ui/_Input" model="@(new InputModel { Name = "sort_order", Id = "sort_order", Label = "Sıra", Type = "number", Value = "0" })" />
         <div>
             <label class="mb-1 block text-sm font-semibold text-slate-600">Status</label>

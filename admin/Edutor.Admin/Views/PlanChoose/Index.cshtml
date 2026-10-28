@@ -1,0 +1,98 @@
+@model IReadOnlyList<Edutor.Core.Modules.Subscription.Responses.PlanResponse>
+@{
+    ViewData["Title"] = "Plan seçimi";
+    var tenantName = ViewData["TenantName"] as string;
+    var error = ViewData["Error"] as string;
+    var ordered = Model.OrderBy(x => x.SortOrder).ThenBy(x => x.Id).ToList();
+}
+
+<section class="admin-page space-y-6">
+    <div class="text-center">
+        <h1 class="text-2xl font-extrabold tracking-tight text-slate-900">Plan seçin</h1>
+        <p class="mx-auto mt-2 max-w-xl text-sm leading-relaxed text-slate-500">
+            @tenantName üçün uyğun planı seçin. Pulsuz plan dərhal açılır; ödənişli planlar
+            seçdiyiniz gün sayı qədər pulsuz sınaqla başlayır.
+        </p>
+    </div>
+
+    @if (!string.IsNullOrEmpty(error))
+    {
+        <div class="mx-auto max-w-xl rounded-xl border border-red-100 bg-red-50 px-3.5 py-3 text-center text-sm font-medium text-red-600">@error</div>
+    }
+
+    <div class="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+        @foreach (var plan in ordered)
+        {
+            var isFree = plan.MonthlyPrice <= 0;
+
+            <div class="admin-card flex flex-col p-5 @(isFree ? "ring-2 ring-primary/30" : "")">
+                <div class="flex items-start justify-between gap-2">
+                    <div>
+                        <h2 class="text-lg font-extrabold text-slate-900">@plan.Name</h2>
+                        <p class="mt-1 text-xs text-slate-400">@plan.Description</p>
+                    </div>
+                    @if (isFree)
+                    {
+                        <span class="badge badge-success">Pulsuz</span>
+                    }
+                </div>
+
+                <div class="mt-4">
+                    @if (isFree)
+                    {
+                        <p class="text-2xl font-extrabold text-slate-900">0 @plan.Currency</p>
+                        <p class="mt-1 text-xs font-semibold text-slate-400">müddətsiz</p>
+                    }
+                    else
+                    {
+                        <p class="text-2xl font-extrabold text-slate-900">
+                            @plan.MonthlyPrice.ToString("N0") <span class="text-sm font-semibold text-slate-400">@plan.Currency / ay</span>
+                        </p>
+                        <p class="mt-1 text-xs font-semibold text-emerald-600">
+                            @(plan.TrialDays > 0 ? $"{plan.TrialDays} gün pulsuz sınaq" : "sınaq yoxdur")
+                        </p>
+                    }
+                </div>
+
+                <ul class="mt-4 space-y-2 border-t border-border pt-4 text-sm text-slate-600">
+                    <li class="flex items-center gap-2">
+                        <span class="text-primary">✓</span>
+                        @(plan.MaxStudents > 0 ? $"{plan.MaxStudents} tələbə" : "Limitsiz tələbə")
+                    </li>
+                    <li class="flex items-center gap-2">
+                        <span class="text-primary">✓</span>
+                        @(plan.MaxGroups > 0 ? $"{plan.MaxGroups} qrup" : "Limitsiz qrup")
+                    </li>
+                    <li class="flex items-center gap-2">
+                        <span class="@(plan.MaxTeachers > 0 ? "text-primary" : "text-slate-300")">✓</span>
+                        @(plan.MaxTeachers > 0 ? $"{plan.MaxTeachers} müəllim" : "Limitsiz müəllim")
+                    </li>
+                    <li class="flex items-center gap-2">
+                        <span class="@(plan.AllowVideoUpload ? "text-primary" : "text-slate-300")">@(plan.AllowVideoUpload ? "✓" : "✕")</span>
+                        <span class="@(plan.AllowVideoUpload ? "" : "text-slate-400")">Video yükləmə</span>
+                    </li>
+                    <li class="flex items-center gap-2">
+                        <span class="@(plan.AllowAudioUpload ? "text-primary" : "text-slate-300")">@(plan.AllowAudioUpload ? "✓" : "✕")</span>
+                        <span class="@(plan.AllowAudioUpload ? "" : "text-slate-400")">Səs yükləmə</span>
+                    </li>
+                    <li class="flex items-center gap-2">
+                        <span class="@(plan.AllowFileUpload ? "text-primary" : "text-slate-300")">@(plan.AllowFileUpload ? "✓" : "✕")</span>
+                        <span class="@(plan.AllowFileUpload ? "" : "text-slate-400")">Fayl / PDF yükləmə</span>
+                    </li>
+                </ul>
+
+                <form method="post" action="/plan-choose" class="mt-5 pt-1">
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" name="planId" value="@plan.Id" />
+                    <button type="submit" class="admin-button-primary w-full justify-center">
+                        @(isFree ? "Pulsuz başla" : "Sınağı başlat")
+                    </button>
+                </form>
+            </div>
+        }
+    </div>
+
+    <p class="text-center text-xs text-slate-400">
+        Planı sonradan dəyişmək üçün superadminlə əlaqə saxlayın.
+    </p>
+</section>
