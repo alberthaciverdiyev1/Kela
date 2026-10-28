@@ -1,5 +1,3 @@
-using System.Globalization;
-using System.Text;
 using Kela.Admin.Infrastructure;
 using Kela.Core.Modules.Auth;
 using Kela.Core.Modules.Payments.Abstractions;
@@ -115,26 +113,6 @@ public sealed class KassaController(
 
         await payments.DeletePaymentAsync(id, ct);
         return Json(new { ok = true });
-    }
-
-    [HttpGet("export")]
-    public async Task<IActionResult> Export(CancellationToken ct)
-    {
-        if (!await CanAccessAsync(ct)) return Forbid();
-
-        var rows = await kassa.ListPaymentsAsync(null, null, ct);
-
-        var csv = new StringBuilder("Tarix,Tələbə,Məbləğ,Valyuta,Qeyd\n");
-        foreach (var row in rows)
-        {
-            csv.Append(CultureInfo.InvariantCulture, $"{row.PaidOn:yyyy-MM-dd},")
-               .Append(CultureInfo.InvariantCulture, $"\"{row.StudentName.Replace("\"", "\"\"")}\",")
-               .Append(CultureInfo.InvariantCulture, $"{row.Amount:0.00},{row.Currency},")
-               .Append(CultureInfo.InvariantCulture, $"\"{row.Note?.Replace("\"", "\"\"")}\"\n");
-        }
-
-        // BOM Excel-də Azərbaycan hərflərinin düzgün açılması üçün.
-        return File(Encoding.UTF8.GetBytes("﻿" + csv), "text/csv", $"kassa-{DateTime.Today:yyyyMMdd}.csv");
     }
 
     private async Task<bool> CanAccessAsync(CancellationToken ct)
