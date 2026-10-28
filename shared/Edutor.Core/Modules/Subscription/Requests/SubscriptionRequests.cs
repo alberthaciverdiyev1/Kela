@@ -101,7 +101,31 @@ public class AddAddonRequest
     [FromForm(Name = "quantity")]
     public int Quantity { get; set; } = 1;
 
+    /// <summary>one_time | monthly</summary>
+    [FromForm(Name = "mode")]
+    public string Mode { get; set; } = "one_time";
+
     public decimal? Amount { get; set; }
 
+    public string? Note { get; set; }
+}
+
+public class AddonRequestBody
+{
+    /// <summary>students | groups | video</summary>
+    public string Kind { get; set; } = string.Empty;
+
+    /// <summary>Tələbə/qrup sayı, video üçün saat.</summary>
+    public int Quantity { get; set; } = 1;
+
+    /// <summary>one_time | monthly</summary>
+    public string Mode { get; set; } = "one_time";
+
+    public string? Note { get; set; }
+}
+
+public class AddonReviewRequest
+{
+    /// <summary>Adminin cavab qeydi (təsdiq və ya rədd səbəbi).</summary>
     public string? Note { get; set; }
 }

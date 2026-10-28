@@ -36,9 +36,13 @@ public sealed class SubscriptionService(AppDbContext db) : ISubscriptionService
         var subjects = await db.Subjects.CountAsync(x => x.TenantId == tenantId, ct);
         var lessons = await db.Lessons.CountAsync(x => x.TenantId == tenantId, ct);
 
-        var maxStudents = plan.MaxStudents + usage.AddonStudents;
-        var maxGroups = plan.MaxGroups + usage.AddonGroups;
-        var maxVideo = plan.MonthlyVideoMinutes + usage.AddonVideoMinutes;
+        // Aylıq (təkrarlanan) paketlər istifadə sayğaclarına yazılmır — hər ay
+        // limitə canlı əlavə olunur, ləğv ediləndə avtomatik çıxır.
+        // Plan limiti 0 = limitsiz; əlavə paketlər onu məhdudlaşdırmır.
+        var recurring = await RecurringAddonsAsync(tenantId, ct);
+        var maxStudents = plan.MaxStudents <= 0 ? 0 : plan.MaxStudents + usage.AddonStudents + recurring.Students;
+        var maxGroups = plan.MaxGroups <= 0 ? 0 : plan.MaxGroups + usage.AddonGroups + recurring.Groups;
+        var maxVideo = plan.MonthlyVideoMinutes <= 0 ? 0 : plan.MonthlyVideoMinutes + usage.AddonVideoMinutes + recurring.VideoMinutes;
 
         return new SubscriptionResponse(
             new SubscriptionPlanInfo(plan.Id, plan.Code, plan.Name, plan.MonthlyPrice, plan.Currency, plan.YearlyFreeMonths),
@@ -130,6 +134,7 @@ public sealed class SubscriptionService(AppDbContext db) : ISubscriptionService
         EnsureKindAllowed(plan, kind);
 
         var videoLimit = plan.MonthlyVideoMinutes + usage.AddonVideoMinutes;
+        if (videoLimit > 0) videoLimit += (await RecurringAddonsAsync(id, ct)).VideoMinutes;
         if (kind == UploadKind.Video && videoLimit > 0 && usage.VideoMinutes >= videoLimit)
         {
             throw new LimitExceededException(
@@ -203,6 +208,7 @@ public sealed class SubscriptionService(AppDbContext db) : ISubscriptionService
             throw new ArgumentException($"kind must be one of: {string.Join(", ", AddonKinds.All)}");
         }
 
+        var mode = AddonModes.All.Contains(request.Mode) ? request.Mode : AddonModes.OneTime;
         var quantity = Math.Clamp(request.Quantity, 1, 10000);
 
         var tenant = await db.Tenants.AsNoTracking().FirstOrDefaultAsync(x => x.Id == tenantId, ct)
@@ -218,30 +224,14 @@ public sealed class SubscriptionService(AppDbContext db) : ISubscriptionService
             Period = Period(),
             Kind = request.Kind,
             Quantity = quantity,
+            Mode = mode,
             Currency = plan.Currency,
-            Note = Truncate(request.Note, 190)
+            Note = Truncate(request.Note, 190),
+            Amount = request.Amount ?? quantity * UnitPrice(plan, request.Kind)
         };
 
-        switch (request.Kind)
-        {
-            case AddonKinds.Students:
-                if (plan.PricePerStudent <= 0) throw new ArgumentException("Bu plan üçün əlavə tələbə yeri satılmır");
-                usage.AddonStudents += quantity;
-                addon.Amount = request.Amount ?? quantity * plan.PricePerStudent;
-                break;
-
-            case AddonKinds.Groups:
-                if (plan.PricePerGroup <= 0) throw new ArgumentException("Bu plan üçün əlavə qrup satılmır");
-                usage.AddonGroups += quantity;
-                addon.Amount = request.Amount ?? quantity * plan.PricePerGroup;
-                break;
-
-            default:
-                if (plan.PricePerVideoHour <= 0) throw new ArgumentException("Bu plan üçün əlavə video saatı satılmır");
-                usage.AddonVideoMinutes += quantity * 60;
-                addon.Amount = request.Amount ?? quantity * plan.PricePerVideoHour;
-                break;
-        }
+        // Aylıq paketlər sayğaca yazılmır — limit hər ay canlı hesablanır.
+        if (mode == AddonModes.OneTime) ApplyAddon(usage, request.Kind, quantity);
 
         db.TenantAddons.Add(addon);
         await db.SaveChangesAsync(ct);
@@ -255,8 +245,193 @@ public sealed class SubscriptionService(AppDbContext db) : ISubscriptionService
             .OrderByDescending(x => x.Id)
             .Take(100)
             .Select(x => new TenantAddonResponse(x.Id, x.Period, x.Kind, x.Quantity,
-                x.Amount, x.Currency, x.Note, x.CreatedAt))
+                x.Mode, x.Amount, x.Currency, x.Note, x.CreatedAt))
             .ToListAsync(ct);
+
+    public async Task CancelAddonAsync(long addonId, CancellationToken ct = default)
+    {
+        var addon = await db.TenantAddons.FirstOrDefaultAsync(x => x.Id == addonId, ct)
+            ?? throw new KeyNotFoundException($"Addon not found: {addonId}");
+
+        // Bir dəfəlik paket cari ayın sayğacından çıxarılır; aylıq paket isə
+        // yalnız silinir — limit artıq canlı hesablanmır.
+        if (addon.Mode == AddonModes.OneTime && addon.Period == Period())
+        {
+            var usage = await db.TenantUsages.FirstOrDefaultAsync(
+                x => x.TenantId == addon.TenantId && x.Period == addon.Period, ct);
+
+            if (usage is not null) ApplyAddon(usage, addon.Kind, -addon.Quantity);
+        }
+
+        addon.DeletedAt = DateTimeOffset.UtcNow;
+        await db.SaveChangesAsync(ct);
+    }
+
+    // ---- Limit artırma müraciətləri ----
+
+    public async Task<AddonRequestResponse> CreateAddonRequestAsync(
+        long tenantId, AddonRequestBody request, long? userId, string? userName, CancellationToken ct = default)
+    {
+        if (!AddonKinds.All.Contains(request.Kind))
+        {
+            throw new ArgumentException($"kind must be one of: {string.Join(", ", AddonKinds.All)}");
+        }
+
+        if (!AddonModes.All.Contains(request.Mode))
+        {
+            throw new ArgumentException($"mode must be one of: {string.Join(", ", AddonModes.All)}");
+        }
+
+        var quantity = Math.Clamp(request.Quantity, 1, 10000);
+
+        var tenant = await db.Tenants.AsNoTracking().FirstOrDefaultAsync(x => x.Id == tenantId, ct)
+            ?? throw new KeyNotFoundException($"Tenant not found: {tenantId}");
+
+        var (plan, _, _, _) = await LoadAsync(tenantId, tenant, ct);
+        if (plan is null) throw new InvalidOperationException("Plan tapılmadı");
+
+        var entry = new AddonRequest
+        {
+            TenantId = tenantId,
+            Kind = request.Kind,
+            Quantity = quantity,
+            Mode = request.Mode,
+            Currency = plan.Currency,
+            Amount = quantity * UnitPrice(plan, request.Kind),
+            Note = Truncate(request.Note, 190),
+            RequestedByUserId = userId,
+            RequestedByName = Truncate(userName, 120)
+        };
+
+        db.AddonRequests.Add(entry);
+        await db.SaveChangesAsync(ct);
+
+        return ToRequestResponse(entry, null);
+    }
+
+    public async Task<IReadOnlyList<AddonRequestResponse>> ListAddonRequestsAsync(
+        long? tenantId, string? status = null, CancellationToken ct = default)
+    {
+        var query = db.AddonRequests.AsNoTracking();
+
+        if (tenantId is long id) query = query.Where(x => x.TenantId == id);
+        if (status is not null && AddonRequestStatuses.All.Contains(status)) query = query.Where(x => x.Status == status);
+
+        return await query
+            .OrderByDescending(x => x.Id)
+            .Take(200)
+            .Select(x => new AddonRequestResponse(
+                x.Id, x.TenantId, null, x.Kind, x.Quantity, x.Mode, x.Status,
+                x.Amount, x.Currency, x.Note, x.ReviewNote, x.RequestedByName, x.ReviewedByName,
+                x.ReviewedAt, x.AddonId, x.CreatedAt))
+            .ToListAsync(ct);
+    }
+
+    public async Task<TenantAddonResponse> ApproveAddonRequestAsync(
+        long requestId, long? reviewerId, string? reviewerName, AddonReviewRequest request, CancellationToken ct = default)
+    {
+        var entry = await LoadPendingRequestAsync(requestId, ct);
+
+        var tenant = await db.Tenants.AsNoTracking().FirstOrDefaultAsync(x => x.Id == entry.TenantId, ct);
+        var (plan, usage, _, _) = await LoadAsync(entry.TenantId, tenant, ct);
+        if (plan is null) throw new InvalidOperationException("Plan tapılmadı");
+
+        var addon = new TenantAddon
+        {
+            TenantId = entry.TenantId,
+            Period = Period(),
+            Kind = entry.Kind,
+            Quantity = entry.Quantity,
+            Mode = entry.Mode,
+            Amount = entry.Amount,
+            Currency = entry.Currency,
+            Note = Truncate($"Müraciət #{entry.Id}", 190)
+        };
+
+        if (entry.Mode == AddonModes.OneTime) ApplyAddon(usage, entry.Kind, entry.Quantity);
+
+        db.TenantAddons.Add(addon);
+        await db.SaveChangesAsync(ct);
+
+        entry.Status = AddonRequestStatuses.Approved;
+        entry.AddonId = addon.Id;
+        entry.ReviewedByUserId = reviewerId;
+        entry.ReviewedByName = Truncate(reviewerName, 120);
+        entry.ReviewedAt = DateTimeOffset.UtcNow;
+        entry.ReviewNote = Truncate(request.Note, 190);
+        await db.SaveChangesAsync(ct);
+
+        return ToAddonResponse(addon);
+    }
+
+    public async Task RejectAddonRequestAsync(
+        long requestId, long? reviewerId, string? reviewerName, AddonReviewRequest request, CancellationToken ct = default)
+    {
+        var entry = await LoadPendingRequestAsync(requestId, ct);
+
+        entry.Status = AddonRequestStatuses.Rejected;
+        entry.ReviewedByUserId = reviewerId;
+        entry.ReviewedByName = Truncate(reviewerName, 120);
+        entry.ReviewedAt = DateTimeOffset.UtcNow;
+        entry.ReviewNote = Truncate(request.Note, 190);
+        await db.SaveChangesAsync(ct);
+    }
+
+    private async Task<AddonRequest> LoadPendingRequestAsync(long requestId, CancellationToken ct)
+    {
+        var entry = await db.AddonRequests.FirstOrDefaultAsync(x => x.Id == requestId, ct)
+            ?? throw new KeyNotFoundException($"Addon request not found: {requestId}");
+
+        if (entry.Status != AddonRequestStatuses.Pending)
+        {
+            throw new ArgumentException("Müraciət artıq baxılıb");
+        }
+
+        return entry;
+    }
+
+    private static decimal UnitPrice(SubscriptionPlan plan, string kind) => kind switch
+    {
+        AddonKinds.Students when plan.PricePerStudent > 0 => plan.PricePerStudent,
+        AddonKinds.Groups when plan.PricePerGroup > 0 => plan.PricePerGroup,
+        AddonKinds.Video when plan.PricePerVideoHour > 0 => plan.PricePerVideoHour,
+        AddonKinds.Students => throw new ArgumentException("Bu plan üçün əlavə tələbə yeri satılmır"),
+        AddonKinds.Groups => throw new ArgumentException("Bu plan üçün əlavə qrup satılmır"),
+        _ => throw new ArgumentException("Bu plan üçün əlavə video saatı satılmır")
+    };
+
+    /// <summary>Bir dəfəlik paketi cari dövrün sayğaclarına yazır (mənfi = çıxarır).</summary>
+    private static void ApplyAddon(TenantUsage usage, string kind, int quantity)
+    {
+        switch (kind)
+        {
+            case AddonKinds.Students:
+                usage.AddonStudents = Math.Max(0, usage.AddonStudents + quantity);
+                break;
+            case AddonKinds.Groups:
+                usage.AddonGroups = Math.Max(0, usage.AddonGroups + quantity);
+                break;
+            default:
+                usage.AddonVideoMinutes = Math.Max(0, usage.AddonVideoMinutes + quantity * 60);
+                break;
+        }
+    }
+
+    /// <summary>Aylıq paketlərin cari dövrə əlavə etdiyi limit (video dəqiqə ilə).</summary>
+    private async Task<(int Students, int Groups, int VideoMinutes)> RecurringAddonsAsync(
+        long tenantId, CancellationToken ct)
+    {
+        var rows = await db.TenantAddons.AsNoTracking()
+            .Where(x => x.TenantId == tenantId && x.Mode == AddonModes.Monthly)
+            .Select(x => new { x.Kind, x.Quantity })
+            .ToListAsync(ct);
+
+        var students = rows.Where(x => x.Kind == AddonKinds.Students).Sum(x => x.Quantity);
+        var groups = rows.Where(x => x.Kind == AddonKinds.Groups).Sum(x => x.Quantity);
+        var video = rows.Where(x => x.Kind == AddonKinds.Video).Sum(x => x.Quantity) * 60;
+
+        return (students, groups, video);
+    }
 
     // ---- Plan idarəetməsi ----
 
@@ -381,11 +556,17 @@ public sealed class SubscriptionService(AppDbContext db) : ISubscriptionService
 
         await EnsureWritableAsync(id, ct);
 
-        var (used, limit, label, kind) = rule switch
-        {
-            Rule.Students => (await db.Students.CountAsync(ct), plan.MaxStudents + usage.AddonStudents, "tələbə", AddonKinds.Students),
-            _ => (await db.Groups.CountAsync(ct), plan.MaxGroups + usage.AddonGroups, "qrup", AddonKinds.Groups)
-        };
+        var recurring = await RecurringAddonsAsync(id, ct);
+
+        var (used, planLimit, addonStudents, addonGroups) = rule == Rule.Students
+            ? (await db.Students.CountAsync(ct), plan.MaxStudents, usage.AddonStudents + recurring.Students, 0)
+            : (await db.Groups.CountAsync(ct), plan.MaxGroups, 0, usage.AddonGroups + recurring.Groups);
+
+        // Plan limitsizdir (0) — əlavə paketlər limiti məhdudlaşdırmır.
+        var limit = planLimit <= 0 ? 0 : planLimit + (rule == Rule.Students ? addonStudents : addonGroups);
+        var (label, kind) = rule == Rule.Students
+            ? ("tələbə", AddonKinds.Students)
+            : ("qrup", AddonKinds.Groups);
 
         if (limit <= 0) return; // 0 = limitsiz
         if (used + count <= limit) return;
@@ -538,7 +719,11 @@ public sealed class SubscriptionService(AppDbContext db) : ISubscriptionService
         x.Features, x.IsActive, x.SortOrder);
 
     private static TenantAddonResponse ToAddonResponse(TenantAddon x)
-        => new(x.Id, x.Period, x.Kind, x.Quantity, x.Amount, x.Currency, x.Note, x.CreatedAt);
+        => new(x.Id, x.Period, x.Kind, x.Quantity, x.Mode, x.Amount, x.Currency, x.Note, x.CreatedAt);
+
+    private static AddonRequestResponse ToRequestResponse(AddonRequest x, string? tenantName)
+        => new(x.Id, x.TenantId, tenantName, x.Kind, x.Quantity, x.Mode, x.Status, x.Amount, x.Currency,
+            x.Note, x.ReviewNote, x.RequestedByName, x.ReviewedByName, x.ReviewedAt, x.AddonId, x.CreatedAt);
 
     private static string? Truncate(string? value, int max)
         => string.IsNullOrWhiteSpace(value) ? null : value.Length <= max ? value : value[..max];

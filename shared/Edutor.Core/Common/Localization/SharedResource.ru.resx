@@ -1827,6 +1827,21 @@
   <data name="Limit_Packs" xml:space="preserve">
     <value>Количество</value>
   </data>
+  <data name="Limit_RequestMode" xml:space="preserve">
+    <value>Тип оплаты</value>
+  </data>
+  <data name="Limit_OneTime" xml:space="preserve">
+    <value>Разово</value>
+  </data>
+  <data name="Limit_Monthly" xml:space="preserve">
+    <value>Ежемесячно</value>
+  </data>
+  <data name="Limit_RequestSend" xml:space="preserve">
+    <value>Отправить заявку</value>
+  </data>
+  <data name="Limit_RequestSent" xml:space="preserve">
+    <value>Заявка отправлена — лимит будет увеличен после одобрения администратором.</value>
+  </data>
   <data name="Tenant_AccountType" xml:space="preserve">
     <value>Тип аккаунта</value>
   </data>

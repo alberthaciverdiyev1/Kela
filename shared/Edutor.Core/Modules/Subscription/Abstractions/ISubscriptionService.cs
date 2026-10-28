@@ -41,6 +41,24 @@ public interface ISubscriptionService
     Task<TenantAddonResponse> AddAddonAsync(long tenantId, AddAddonRequest request, CancellationToken ct = default);
     Task<IReadOnlyList<TenantAddonResponse>> ListAddonsAsync(long tenantId, CancellationToken ct = default);
 
+    /// <summary>Aylıq əlavə paketi dayandırır (soft delete) — növbəti aylarda tətbiq olunmur.</summary>
+    Task CancelAddonAsync(long addonId, CancellationToken ct = default);
+
+    // ---- Limit artırma müraciətləri ----
+    /// <summary>Müəllim/kurs planı dəyişmədən limit artımı üçün müraciət edir.</summary>
+    Task<AddonRequestResponse> CreateAddonRequestAsync(
+        long tenantId, AddonRequestBody request, long? userId, string? userName, CancellationToken ct = default);
+
+    /// <summary>Müraciətlər — tenant verilməzsə bütün tenantlar (superadmin).</summary>
+    Task<IReadOnlyList<AddonRequestResponse>> ListAddonRequestsAsync(
+        long? tenantId, string? status = null, CancellationToken ct = default);
+
+    Task<TenantAddonResponse> ApproveAddonRequestAsync(
+        long requestId, long? reviewerId, string? reviewerName, AddonReviewRequest request, CancellationToken ct = default);
+
+    Task RejectAddonRequestAsync(
+        long requestId, long? reviewerId, string? reviewerName, AddonReviewRequest request, CancellationToken ct = default);
+
     // ---- Plan idarəetməsi (superadmin) ----
     Task<IReadOnlyList<PlanResponse>> ListPlansAsync(bool onlyActive = false, CancellationToken ct = default);
     Task<PlanResponse> GetPlanAsync(long id, CancellationToken ct = default);

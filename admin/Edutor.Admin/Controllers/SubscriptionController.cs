@@ -57,16 +57,7 @@ public sealed class SubscriptionController(
         var selected = await ResolveTenantAsync(tenantId, ct);
         if (selected is not long id) return BadRequest(new { message = "Tenant seçilməyib" });
 
-        var data = await service.GetAsync(id, ct);
-
-        // Limit artırımı yalnız admin/superadmin səlahiyyətidir; müəllimə paket
-        // təklif etmirik (frontend təklif siyahısına baxır).
-        if (!User.IsInRole(UserTypes.Admin) && !User.IsInRole(UserTypes.SuperAdmin))
-        {
-            data = data with { Usage = data.Usage with { AddonOffers = [] } };
-        }
-
-        return Json(data);
+        return Json(await service.GetAsync(id, ct));
     }
 
     /// <summary>Əlavə paket — yalnız admin/superadmin (ödəniş əl ilə).</summary>
@@ -97,6 +88,36 @@ public sealed class SubscriptionController(
         if (selected is not long id) return BadRequest(new { message = "Tenant seçilməyib" });
 
         return Json(await service.ListAddonsAsync(id, ct));
+    }
+
+    /// <summary>Limit artırma müraciəti — müəllim və kurs (admin) müraciət edə bilər.</summary>
+    [HttpPost("addon-requests")]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> CreateAddonRequest([FromForm] AddonRequestBody request, CancellationToken ct)
+    {
+        var tenantId = User.CurrentTenantId();
+        if (tenantId <= 0) return BadRequest(new { message = "Tenant seçilməyib" });
+
+        try
+        {
+            var created = await service.CreateAddonRequestAsync(
+                tenantId, request, User.CurrentUserId(), User.Identity?.Name, ct);
+
+            return Json(created);
+        }
+        catch (ArgumentException ex)
+        {
+            return BadRequest(new { message = ex.Message });
+        }
+    }
+
+    [HttpGet("addon-requests")]
+    public async Task<IActionResult> AddonRequests(string? status, CancellationToken ct)
+    {
+        var selected = await ResolveTenantAsync(null, ct);
+        if (selected is not long id) return BadRequest(new { message = "Tenant seçilməyib" });
+
+        return Json(await service.ListAddonRequestsAsync(id, status, ct));
     }
 
     private static string NormalizeWhatsApp(string? value)

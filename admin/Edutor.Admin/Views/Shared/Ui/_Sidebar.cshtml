@@ -175,6 +175,14 @@
                 Abunəlik
             </a>
             }
+            @if (isAdmin)
+            {
+                <a href="/addon-request" data-nav-key="addon-request"
+                   class="flex h-10 items-center gap-3 rounded-xl px-3 text-[15px] font-medium transition @Active("AddonRequest") @IsHidden("addon-request")">
+                    <svg class="h-5 w-5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M12 5v14M5 12h14"/></svg>
+                    Limit müraciətləri
+                </a>
+            }
             @if (isSuperAdmin)
             {
                 <a href="/plan" data-nav-key="plan"

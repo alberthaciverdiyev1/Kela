@@ -59,6 +59,110 @@ public class SubscriptionTests(ApiFactory factory)
         return tenant.Id;
     }
 
+    [Fact]
+    public async Task An_approved_one_time_request_raises_the_limit_for_the_current_period()
+    {
+        await using var db = Db(0);
+        var service = new SubscriptionService(db);
+
+        var plan = await service.CreatePlanAsync(Request($"p-{Guid.NewGuid():N}"[..20], 50, 600));
+        var tenantId = await TenantAsync(db, plan.Id);
+
+        await using var scoped = Db(tenantId);
+        var scopedService = new SubscriptionService(scoped);
+
+        var request = await scopedService.CreateAddonRequestAsync(tenantId,
+            new AddonRequestBody { Kind = AddonKinds.Students, Quantity = 10, Mode = AddonModes.OneTime },
+            null, "Teacher");
+
+        Assert.Equal(AddonRequestStatuses.Pending, request.Status);
+        Assert.Equal(10 * 8m, request.Amount);
+
+        var addon = await scopedService.ApproveAddonRequestAsync(request.Id, null, "Admin", new AddonReviewRequest());
+
+        Assert.Equal(AddonModes.OneTime, addon.Mode);
+
+        var current = await scopedService.GetAsync(tenantId);
+        Assert.Equal(60, current.Usage.MaxStudents);
+
+        var reviewed = Assert.Single(await scopedService.ListAddonRequestsAsync(tenantId, AddonRequestStatuses.Approved));
+        Assert.Equal(addon.Id, reviewed.AddonId);
+    }
+
+    [Fact]
+    public async Task A_monthly_request_raises_the_limit_until_cancelled()
+    {
+        await using var db = Db(0);
+        var service = new SubscriptionService(db);
+
+        var plan = await service.CreatePlanAsync(Request($"p-{Guid.NewGuid():N}"[..20], 50, 600));
+        var tenantId = await TenantAsync(db, plan.Id);
+
+        await using var scoped = Db(tenantId);
+        var scopedService = new SubscriptionService(scoped);
+
+        var request = await scopedService.CreateAddonRequestAsync(tenantId,
+            new AddonRequestBody { Kind = AddonKinds.Groups, Quantity = 4, Mode = AddonModes.Monthly },
+            null, "Teacher");
+
+        var addon = await scopedService.ApproveAddonRequestAsync(request.Id, null, "Admin", new AddonReviewRequest());
+
+        var raised = await scopedService.GetAsync(tenantId);
+        Assert.Equal(9, raised.Usage.MaxGroups); // 5 + 4
+
+        await scopedService.CancelAddonAsync(addon.Id);
+
+        var afterCancel = await scopedService.GetAsync(tenantId);
+        Assert.Equal(5, afterCancel.Usage.MaxGroups);
+    }
+
+    [Fact]
+    public async Task A_rejected_request_does_not_change_the_limit()
+    {
+        await using var db = Db(0);
+        var service = new SubscriptionService(db);
+
+        var plan = await service.CreatePlanAsync(Request($"p-{Guid.NewGuid():N}"[..20], 50, 600));
+        var tenantId = await TenantAsync(db, plan.Id);
+
+        await using var scoped = Db(tenantId);
+        var scopedService = new SubscriptionService(scoped);
+
+        var request = await scopedService.CreateAddonRequestAsync(tenantId,
+            new AddonRequestBody { Kind = AddonKinds.Students, Quantity = 100, Mode = AddonModes.OneTime },
+            null, "Teacher");
+
+        await scopedService.RejectAddonRequestAsync(request.Id, null, "Admin", new AddonReviewRequest { Note = "No" });
+
+        var current = await scopedService.GetAsync(tenantId);
+        Assert.Equal(50, current.Usage.MaxStudents);
+
+        var reviewed = Assert.Single(await scopedService.ListAddonRequestsAsync(tenantId, AddonRequestStatuses.Rejected));
+        Assert.Equal("No", reviewed.ReviewNote);
+    }
+
+    [Fact]
+    public async Task The_same_request_cannot_be_reviewed_twice()
+    {
+        await using var db = Db(0);
+        var service = new SubscriptionService(db);
+
+        var plan = await service.CreatePlanAsync(Request($"p-{Guid.NewGuid():N}"[..20], 50, 600));
+        var tenantId = await TenantAsync(db, plan.Id);
+
+        await using var scoped = Db(tenantId);
+        var scopedService = new SubscriptionService(scoped);
+
+        var request = await scopedService.CreateAddonRequestAsync(tenantId,
+            new AddonRequestBody { Kind = AddonKinds.Students, Quantity = 5, Mode = AddonModes.OneTime },
+            null, "Teacher");
+
+        await scopedService.ApproveAddonRequestAsync(request.Id, null, "Admin", new AddonReviewRequest());
+
+        await Assert.ThrowsAsync<ArgumentException>(() =>
+            scopedService.ApproveAddonRequestAsync(request.Id, null, "Admin", new AddonReviewRequest()));
+    }
+
     private static PlanRequest Request(string code, int maxStudents, int monthlyVideoMinutes) => new()
     {
         Code = code,

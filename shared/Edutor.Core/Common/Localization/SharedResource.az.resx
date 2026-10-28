@@ -1827,6 +1827,21 @@
   <data name="Limit_Packs" xml:space="preserve">
     <value>Miqdar</value>
   </data>
+  <data name="Limit_RequestMode" xml:space="preserve">
+    <value>Ödəniş forması</value>
+  </data>
+  <data name="Limit_OneTime" xml:space="preserve">
+    <value>Birdəfəlik</value>
+  </data>
+  <data name="Limit_Monthly" xml:space="preserve">
+    <value>Aylıq</value>
+  </data>
+  <data name="Limit_RequestSend" xml:space="preserve">
+    <value>Müraciət göndər</value>
+  </data>
+  <data name="Limit_RequestSent" xml:space="preserve">
+    <value>Müraciət göndərildi — administrator təsdiqindən sonra limit artırılacaq.</value>
+  </data>
   <data name="Tenant_AccountType" xml:space="preserve">
     <value>Hesab növü</value>
   </data>

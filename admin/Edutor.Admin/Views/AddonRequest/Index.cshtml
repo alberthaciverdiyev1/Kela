@@ -1,0 +1,48 @@
+@{
+    ViewData["Title"] = "Limit müraciətləri";
+    var isSuperAdmin = User.IsInRole(AuthRoles.SuperAdmin);
+}
+
+<section class="admin-page space-y-5">
+    <div class="flex flex-wrap items-center justify-between gap-3">
+        <div>
+            <h1 class="text-2xl font-extrabold tracking-tight text-slate-900">Limit müraciətləri</h1>
+            <p class="mt-1 text-sm text-slate-500">
+                Müəllim və kursların planı dəyişmədən limit artırma müraciətləri. Təsdiqdən sonra paket dərhal qüvvəyə minir.
+            </p>
+        </div>
+
+        <div class="flex flex-wrap gap-2">
+            <button type="button" class="admin-button-secondary" data-filter="">Hamısı</button>
+            <button type="button" class="admin-button-secondary" data-filter="pending">Gözləyən</button>
+            <button type="button" class="admin-button-secondary" data-filter="approved">Təsdiqlənən</button>
+            <button type="button" class="admin-button-secondary" data-filter="rejected">Rədd edilən</button>
+        </div>
+    </div>
+
+    <div class="admin-card overflow-hidden">
+        <div class="overflow-x-auto">
+            <table class="admin-table">
+                <thead>
+                <tr>
+                    @if (isSuperAdmin)
+                    {
+                        <th>Tenant</th>
+                    }
+                    <th>Növ</th>
+                    <th>Miqdar</th>
+                    <th>Ödəniş</th>
+                    <th>Məbləğ</th>
+                    <th>Müraciət edən</th>
+                    <th>Tarix</th>
+                    <th>Status</th>
+                    <th class="text-right">Əməliyyat</th>
+                </tr>
+                </thead>
+                <tbody id="addonRequestRows">
+                <tr><td colspan="9" class="p-6 text-center text-sm text-slate-400">Yüklənir…</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</section>

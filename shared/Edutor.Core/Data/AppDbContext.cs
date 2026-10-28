@@ -127,6 +127,8 @@ public sealed class AppDbContext : DbContext
 
     public DbSet<Modules.Subscription.Entities.TenantAddon> TenantAddons => Set<Modules.Subscription.Entities.TenantAddon>();
 
+    public DbSet<Modules.Subscription.Entities.AddonRequest> AddonRequests => Set<Modules.Subscription.Entities.AddonRequest>();
+
     public DbSet<Modules.Homework.Entities.Homework> Homeworks => Set<Modules.Homework.Entities.Homework>();
 
     public DbSet<Modules.Homework.Entities.HomeworkGroup> HomeworkGroups => Set<Modules.Homework.Entities.HomeworkGroup>();

@@ -81,7 +81,26 @@ public record TenantAddonResponse(
     string Period,
     string Kind,
     int Quantity,
+    string Mode,
     decimal Amount,
     string Currency,
     string? Note,
+    DateTimeOffset CreatedAt);
+
+public record AddonRequestResponse(
+    long Id,
+    long TenantId,
+    string? TenantName,
+    string Kind,
+    int Quantity,
+    string Mode,
+    string Status,
+    decimal Amount,
+    string Currency,
+    string? Note,
+    string? ReviewNote,
+    string? RequestedByName,
+    string? ReviewedByName,
+    DateTimeOffset? ReviewedAt,
+    long? AddonId,
     DateTimeOffset CreatedAt);

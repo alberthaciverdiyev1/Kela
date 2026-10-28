@@ -68,8 +68,7 @@ public sealed class TenantUsageConfiguration : IEntityTypeConfiguration<TenantUs
 }
 
 public sealed class TenantAddonConfiguration : IEntityTypeConfiguration<TenantAddon>
-{
-    public void Configure(EntityTypeBuilder<TenantAddon> builder)
+{    public void Configure(EntityTypeBuilder<TenantAddon> builder)
     {
         builder.ToTable("tenant_addons");
         builder.HasKey(x => x.Id);
@@ -77,11 +76,43 @@ public sealed class TenantAddonConfiguration : IEntityTypeConfiguration<TenantAd
         builder.Property(x => x.Period).HasColumnName("period").HasMaxLength(7).IsRequired();
         builder.Property(x => x.Kind).HasColumnName("kind").HasMaxLength(20).IsRequired();
         builder.Property(x => x.Quantity).HasColumnName("quantity");
+        builder.Property(x => x.Mode).HasColumnName("mode").HasMaxLength(20);
         builder.Property(x => x.Amount).HasColumnName("amount").HasPrecision(12, 2);
         builder.Property(x => x.Currency).HasColumnName("currency").HasMaxLength(3).IsRequired();
         builder.Property(x => x.Note).HasColumnName("note").HasMaxLength(190);
 
         builder.HasIndex(x => new { x.TenantId, x.Period });
+
+        builder.Property(x => x.CreatedAt).HasColumnName("created_at");
+        builder.Property(x => x.UpdatedAt).HasColumnName("updated_at");
+        builder.Property(x => x.DeletedAt).HasColumnName("deleted_at");
+        builder.HasIndex(x => x.DeletedAt);
+    }
+}
+
+public sealed class AddonRequestConfiguration : IEntityTypeConfiguration<AddonRequest>
+{
+    public void Configure(EntityTypeBuilder<AddonRequest> builder)
+    {
+        builder.ToTable("addon_requests");
+        builder.HasKey(x => x.Id);
+        builder.Property(x => x.Id).HasColumnName("id");
+        builder.Property(x => x.Kind).HasColumnName("kind").HasMaxLength(20).IsRequired();
+        builder.Property(x => x.Quantity).HasColumnName("quantity");
+        builder.Property(x => x.Mode).HasColumnName("mode").HasMaxLength(20).IsRequired();
+        builder.Property(x => x.Status).HasColumnName("status").HasMaxLength(20).IsRequired();
+        builder.Property(x => x.Amount).HasColumnName("amount").HasPrecision(12, 2);
+        builder.Property(x => x.Currency).HasColumnName("currency").HasMaxLength(3).IsRequired();
+        builder.Property(x => x.Note).HasColumnName("note").HasMaxLength(190);
+        builder.Property(x => x.ReviewNote).HasColumnName("review_note").HasMaxLength(190);
+        builder.Property(x => x.RequestedByUserId).HasColumnName("requested_by_user_id");
+        builder.Property(x => x.RequestedByName).HasColumnName("requested_by_name").HasMaxLength(120);
+        builder.Property(x => x.ReviewedByUserId).HasColumnName("reviewed_by_user_id");
+        builder.Property(x => x.ReviewedByName).HasColumnName("reviewed_by_name").HasMaxLength(120);
+        builder.Property(x => x.ReviewedAt).HasColumnName("reviewed_at");
+        builder.Property(x => x.AddonId).HasColumnName("addon_id");
+
+        builder.HasIndex(x => new { x.TenantId, x.Status });
 
         builder.Property(x => x.CreatedAt).HasColumnName("created_at");
         builder.Property(x => x.UpdatedAt).HasColumnName("updated_at");

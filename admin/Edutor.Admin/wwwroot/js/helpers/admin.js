@@ -111,21 +111,26 @@ window.AdminUI = window.AdminUI || {};
         const modal = document.getElementById('limitModal');
         if (!modal) return Promise.resolve(false);
 
+        // Admin birbaşa paket ala bilər; müəllim/kurs isə yalnız müraciət göndərir
+        // və limit admin təsdiqindən sonra artır.
+        const canManage = !!(window.ADMIN && ADMIN.isAdmin);
+
         return limitInfo().then(({ offers, currency }) => {
             const offer = offers.find(o => o.kind === info.kind) || null;
             const canBuy = !!offer;
 
             const offerBox = document.getElementById('limitOffer');
             const packsRow = document.getElementById('limitPacksRow');
+            const modeRow = document.getElementById('limitModeRow');
             const note = document.getElementById('limitNote');
             const errorBox = document.getElementById('limitError');
             const buy = document.getElementById('limitBuy');
-            const packs = document.getElementById('limitPacks');
 
             document.getElementById('limitMessage').textContent = info.message || L["Js_ErrorOccured"];
 
             offerBox.classList.toggle('hidden', !offer);
             packsRow.classList.toggle('hidden', !canBuy);
+            modeRow.classList.toggle('hidden', !canBuy || canManage);
             buy.classList.toggle('hidden', !canBuy);
             errorBox.classList.add('hidden');
 
@@ -133,9 +138,11 @@ window.AdminUI = window.AdminUI || {};
                 document.getElementById('limitOfferLabel').textContent = offer.label;
                 document.getElementById('limitOfferDetail').textContent = `1 ${offer.unit}`;
                 document.getElementById('limitOfferPrice').textContent = `${offer.unitPrice} ${currency}`;
-                packs.value = 1;
-                packs.max = 10000;
+                document.getElementById('limitPacks').value = 1;
+                document.getElementById('limitPacks').max = 10000;
             }
+
+            buy.textContent = canManage ? L["Limit_Buy"] : L["Limit_RequestSend"];
 
             note.classList.toggle('hidden', canBuy);
             if (!canBuy) {
@@ -150,20 +157,28 @@ window.AdminUI = window.AdminUI || {};
                     buy.disabled = true;
                     buy.classList.add('is-loading');
 
-                    const count = Math.max(1, Math.min(10000, parseInt(packs.value, 10) || 1));
-                    const added = await post('/subscription/addons', { kind: offer.kind, quantity: count });
+                    const count = Math.max(1, Math.min(10000, parseInt(document.getElementById('limitPacks').value, 10) || 1));
+                    const mode = document.getElementById('limitMode')?.value || 'one_time';
+
+                    const result = await post(canManage ? '/subscription/addons' : '/subscription/addon-requests',
+                        { kind: offer.kind, quantity: count, mode });
 
                     buy.disabled = false;
                     buy.classList.remove('is-loading');
 
-                    if (!added.ok) {
-                        errorBox.textContent = errText(added);
+                    if (!result.ok) {
+                        errorBox.textContent = errText(result);
                         errorBox.classList.remove('hidden');
                         return;
                     }
 
-                    notify(L["Limit_Confirmed"]);
-                    finishLimit(true);
+                    if (canManage) {
+                        notify(L["Limit_Confirmed"]);
+                        finishLimit(true);
+                    } else {
+                        notify(L["Limit_RequestSent"]);
+                        finishLimit(false);
+                    }
                 };
 
                 // Bağlama düyməsi, ESC və ya fona klik — sorğu təkrar göndərilmir.

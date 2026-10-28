@@ -1827,6 +1827,21 @@
   <data name="Limit_Packs" xml:space="preserve">
     <value>Miktar</value>
   </data>
+  <data name="Limit_RequestMode" xml:space="preserve">
+    <value>Ödeme biçimi</value>
+  </data>
+  <data name="Limit_OneTime" xml:space="preserve">
+    <value>Tek seferlik</value>
+  </data>
+  <data name="Limit_Monthly" xml:space="preserve">
+    <value>Aylık</value>
+  </data>
+  <data name="Limit_RequestSend" xml:space="preserve">
+    <value>Talep gönder</value>
+  </data>
+  <data name="Limit_RequestSent" xml:space="preserve">
+    <value>Talep gönderildi — yönetici onayladıktan sonra limit artırılacak.</value>
+  </data>
   <data name="Tenant_AccountType" xml:space="preserve">
     <value>Hesap türü</value>
   </data>

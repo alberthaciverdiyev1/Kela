@@ -23,26 +23,38 @@ window.SubscriptionPage = (function () {
     async function addAddon(kind) {
         const labels = { students: 'tələbə', groups: 'qrup', video: 'saat' };
 
-        const result = await Swal.fire({
+        const result = await AdminUI.swal({
             title: 'Limit artırımı',
             text: `Neçə ${labels[kind] || 'vahid'} əlavə edilsin?`,
             input: 'number',
             inputValue: 1,
             inputAttributes: { min: 1, max: 10000 },
             showCancelButton: true,
-            confirmButtonText: 'Əlavə et',
+            confirmButtonText: 'Davam et',
             cancelButtonText: L["Common_Cancel"]
         });
 
         if (!result.isConfirmed) return;
 
-        const payload = { kind, quantity: result.value || 1 };
+        const modeResult = await AdminUI.swal({
+            title: 'Ödəniş forması',
+            input: 'select',
+            inputOptions: { one_time: 'Birdəfəlik', monthly: 'Aylıq' },
+            inputValue: 'one_time',
+            showCancelButton: true,
+            confirmButtonText: 'Əlavə et',
+            cancelButtonText: L["Common_Cancel"]
+        });
+
+        if (!modeResult.isConfirmed) return;
+
+        const payload = { kind, quantity: result.value || 1, mode: modeResult.value || 'one_time' };
         const tenantId = selectedTenantId();
         if (tenantId) payload.tenant_id = tenantId;
 
         const res = await AdminUI.post('/subscription/addons', payload);
 
-        if (res.ok) { AdminUI.notify(L["Js_Saved"]); location.reload(); }
+        if (res.ok) { AdminUI.notify(L["Js_Saved"]); loadAddons(); }
         else AdminUI.error(AdminUI.errText(res));
     }
 
@@ -91,5 +103,85 @@ window.SubscriptionPage = (function () {
         window.open(`https://wa.me/${ctx.whatsapp}?text=${encodeURIComponent(lines.join('\n'))}`, '_blank', 'noopener');
     }
 
-    return { switchTenant, addAddon, choosePlan };
+    // ---- Limit artırma müraciətləri ----
+
+    const kindLabels = { students: 'Tələbə', groups: 'Qrup', video: 'Video saatı' };
+    const modeLabels = { one_time: 'Birdəfəlik', monthly: 'Aylıq' };
+    const requestBadge = (value) => ({
+        pending: AdminUI.badge('Gözləyir', 'warning'),
+        approved: AdminUI.badge('Təsdiqlənib', 'success'),
+        rejected: AdminUI.badge('Rədd edilib', 'danger')
+    }[value] || value);
+
+    const shortDate = (value) => value ? new Date(value).toLocaleDateString('az-AZ') : '—';
+
+    async function loadRequests() {
+        const rows = await AdminUI.get('/subscription/addon-requests') || [];
+
+        AdminUI.table('subscriptionAddonRequests', rows.map(r => [
+            { html: shortDate(r.createdAt) },
+            { html: kindLabels[r.kind] || r.kind },
+            { html: r.quantity },
+            { html: modeLabels[r.mode] || r.mode },
+            { html: requestBadge(r.status) },
+            { html: AdminUI.escapeHtml(r.reviewNote || r.note || '—') }
+        ]), 6, { empty: 'Müraciət yoxdur' });
+    }
+
+    async function loadAddons() {
+        const rows = await AdminUI.get('/subscription/addons') || [];
+
+        AdminUI.table('subscriptionAddons', rows.map(a => [
+            { html: a.period },
+            { html: kindLabels[a.kind] || a.kind },
+            { html: a.quantity },
+            { html: modeLabels[a.mode] || a.mode },
+            { html: `<span class="font-semibold">${a.amount} ${a.currency}</span>` },
+            {
+                html: a.mode === 'monthly'
+                    ? `<button type="button" class="inline-flex items-center rounded-lg px-2.5 py-1.5 text-sm font-semibold text-danger hover:bg-danger-light" onclick="SubscriptionPage.cancelAddon(${a.id})">Dayandır</button>`
+                    : '',
+                cls: 'text-right'
+            }
+        ]), 6, { empty: 'Əlavə paket yoxdur' });
+    }
+
+    async function cancelAddon(id) {
+        if (!await AdminUI.confirmDelete('Aylıq paket dayandırılsın? Növbəti aylarda limitə əlavə olunmayacaq.')) return;
+
+        const res = await AdminUI.del(`/addon-request/addons/${id}`);
+        if (res.ok) { AdminUI.notify(L["Js_Deleted"]); loadAddons(); }
+        else AdminUI.error(AdminUI.errText(res));
+    }
+
+    async function sendRequest(form) {
+        const button = form.querySelector('button[type="submit"]');
+        if (button) { button.disabled = true; button.classList.add('is-loading'); }
+
+        const fd = new FormData(form);
+        const res = await AdminUI.postForm('/subscription/addon-requests', fd);
+
+        if (button) { button.disabled = false; button.classList.remove('is-loading'); }
+
+        if (res.ok) {
+            AdminUI.notify('Müraciət göndərildi. Administrator təsdiqindən sonra limit artırılacaq.');
+            loadRequests();
+        } else {
+            AdminUI.error(AdminUI.errText(res));
+        }
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        document.querySelectorAll('form[data-addon-request]').forEach(form => {
+            form.addEventListener('submit', (e) => {
+                e.preventDefault();
+                sendRequest(form);
+            });
+        });
+
+        if (document.getElementById('subscriptionAddonRequests')) loadRequests();
+        if (document.getElementById('subscriptionAddons')) loadAddons();
+    });
+
+    return { switchTenant, addAddon, choosePlan, cancelAddon, sendRequest };
 })();

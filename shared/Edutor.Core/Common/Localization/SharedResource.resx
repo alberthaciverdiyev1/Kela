@@ -1827,6 +1827,21 @@
   <data name="Limit_Packs" xml:space="preserve">
     <value>Quantity</value>
   </data>
+  <data name="Limit_RequestMode" xml:space="preserve">
+    <value>Payment type</value>
+  </data>
+  <data name="Limit_OneTime" xml:space="preserve">
+    <value>One-time</value>
+  </data>
+  <data name="Limit_Monthly" xml:space="preserve">
+    <value>Monthly</value>
+  </data>
+  <data name="Limit_RequestSend" xml:space="preserve">
+    <value>Send request</value>
+  </data>
+  <data name="Limit_RequestSent" xml:space="preserve">
+    <value>Request sent — the limit will increase after the administrator approves it.</value>
+  </data>
   <data name="Tenant_AccountType" xml:space="preserve">
     <value>Account type</value>
   </data>
