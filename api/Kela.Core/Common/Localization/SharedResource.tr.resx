@@ -1911,4 +1911,13 @@
   <data name="Quiz_DurationInvalid" xml:space="preserve">
     <value>Süre 1 ile 600 dakika arasında olmalıdır</value>
   </data>
+  <data name="Validation_TokenRequired" xml:space="preserve">
+    <value>Token gerekli</value>
+  </data>
+  <data name="Validation_TokenMaxLength" xml:space="preserve">
+    <value>Token en fazla 500 karakter olabilir</value>
+  </data>
+  <data name="Validation_DeviceTypeMaxLength" xml:space="preserve">
+    <value>Cihaz türü en fazla 20 karakter olabilir</value>
+  </data>
 </root>

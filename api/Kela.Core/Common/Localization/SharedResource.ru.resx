@@ -1911,4 +1911,13 @@
   <data name="Quiz_DurationInvalid" xml:space="preserve">
     <value>Длительность должна быть от 1 до 600 минут</value>
   </data>
+  <data name="Validation_TokenRequired" xml:space="preserve">
+    <value>Требуется токен</value>
+  </data>
+  <data name="Validation_TokenMaxLength" xml:space="preserve">
+    <value>Токен должен содержать не более 500 символов</value>
+  </data>
+  <data name="Validation_DeviceTypeMaxLength" xml:space="preserve">
+    <value>Тип устройства должен содержать не более 20 символов</value>
+  </data>
 </root>

@@ -106,8 +106,11 @@ public sealed class NotificationService(
 
     public async Task SaveTokenAsync(long studentId, SaveNotificationTokenRequest request, CancellationToken ct = default)
     {
+        // Token dəyəri qlobal unikaldır (cihaz tokeni tenant-a bağlı deyil), ona görə
+        // tenant filtri də keçilməlidir — yoxsa başqa tenant-da olan token yenidən
+        // yazılmağa çalışılır və unikal indeks pozulur (500).
         var token = await db.NotificationTokens
-            .IgnoreQueryFilters(new[] { "SoftDelete" })
+            .IgnoreQueryFilters(new[] { "SoftDelete", "Tenant" })
             .FirstOrDefaultAsync(t => t.Token == request.Token, ct);
 
         if (token is null)
@@ -128,6 +131,9 @@ public sealed class NotificationService(
             token.IsActive = true;
             token.LastUsedAt = DateTimeOffset.UtcNow;
             token.DeletedAt = null;
+
+            // Cihaz başqa tenant-ın istifadəçisindən keçibsə, sətir də cari tenant-a keçməlidir.
+            if (db.CurrentTenantId is { } tenantId) token.TenantId = tenantId;
         }
 
         await db.SaveChangesAsync(ct);
@@ -136,6 +142,7 @@ public sealed class NotificationService(
     public async Task DeactivateTokenAsync(long studentId, string token, CancellationToken ct = default)
     {
         var existing = await db.NotificationTokens
+            .IgnoreQueryFilters(new[] { "SoftDelete", "Tenant" })
             .FirstOrDefaultAsync(t => t.Token == token && t.StudentId == studentId, ct);
 
         if (existing is not null)
