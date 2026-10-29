@@ -172,7 +172,12 @@
             <a href="/subscription" data-nav-key="subscription"
                class="flex h-10 items-center gap-3 rounded-xl px-3 text-[15px] font-medium transition @Active("Subscription") @IsHidden("subscription")">
                 <svg class="h-5 w-5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M12 3v18M17 6H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
-                Abunəlik
+                Limitlər
+            </a>
+            <a href="/plan-catalog" data-nav-key="plan-catalog"
+               class="flex h-10 items-center gap-3 rounded-xl px-3 text-[15px] font-medium transition @Active("PlanCatalog") @IsHidden("plan-catalog")">
+                <svg class="h-5 w-5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h10M4 18h7"/></svg>
+                Planlar
             </a>
             }
             @if (isAdmin)
@@ -188,7 +193,7 @@
                 <a href="/plan" data-nav-key="plan"
                    class="flex h-10 items-center gap-3 rounded-xl px-3 text-[15px] font-medium transition @Active("Plan") @IsHidden("plan")">
                     <svg class="h-5 w-5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h10M4 18h7"/></svg>
-                    Planlar
+                    Plan idarəetməsi
                 </a>
             }
             @if (isAdmin && !isPlatformOwner)

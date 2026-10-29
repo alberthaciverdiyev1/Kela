@@ -82,51 +82,6 @@ window.SubscriptionPage = (function () {
         else AdminUI.error(AdminUI.errText(res));
     }
 
-    function limitLabel(value) {
-        return value > 0 ? String(value) : 'limitsiz';
-    }
-
-    function storageLabel(bytes) {
-        return bytes > 0 ? Math.round(bytes / 1073741824) + ' GB' : 'limitsiz';
-    }
-
-    // Plan seçimi hazırda WhatsApp müraciəti kimi göndərilir (aktivləşdirmə əl ilə).
-    async function choosePlan(planId) {
-        const ctx = window.SUBSCRIPTION_CONTEXT;
-        const plan = ctx?.plans?.find(p => p.id === Number(planId));
-        if (!plan) return;
-
-        const result = await AdminUI.swal({
-            title: 'Plan seçimi',
-            text: `«${plan.name}» planı üçün WhatsApp ilə müraciət göndərilsin?`,
-            icon: 'question',
-            showCancelButton: true,
-            confirmButtonText: 'Göndər',
-            cancelButtonText: L["Common_Cancel"]
-        });
-
-        if (!result.isConfirmed) return;
-
-        const lines = [
-            'Salam! Abunəlik planı dəyişikliyi üçün müraciət:',
-            '',
-            `Müəssisə: ${ctx.tenantName || '—'}`,
-            `Müraciət edən: ${ctx.userName || '—'}`,
-            `E-poçt: ${ctx.userEmail || '—'}`,
-            `Cari plan: ${ctx.currentPlanName || '—'}`,
-            `Seçilmiş plan: ${plan.name} (${plan.code})`,
-            `Qiymət: ${plan.price} ${plan.currency}/ay`,
-            `Tələbə limiti: ${limitLabel(plan.maxStudents)}`,
-            `Qrup limiti: ${limitLabel(plan.maxGroups)}`,
-            `Video (aylıq): ${plan.videoMinutes > 0 ? Math.round(plan.videoMinutes / 60) + ' saat' : 'limitsiz'}`,
-            `Yaddaş: ${storageLabel(plan.storageBytes)}`,
-            `Maks. video keyfiyyəti: ${plan.maxVideoHeight > 0 ? plan.maxVideoHeight + 'p' : 'limitsiz'}`,
-            `Tarix: ${new Date().toLocaleString('az')}`
-        ];
-
-        window.open(`https://wa.me/${ctx.whatsapp}?text=${encodeURIComponent(lines.join('\n'))}`, '_blank', 'noopener');
-    }
-
     // ---- Limit artırma müraciətləri ----
 
     const kindLabels = { students: 'Tələbə', groups: 'Qrup', video: 'Video saatı' };
@@ -243,5 +198,5 @@ window.SubscriptionPage = (function () {
         if (document.getElementById('subscriptionAddons')) loadAddons();
     });
 
-    return { switchTenant, addAddon, choosePlan, cancelAddon, markPaid, sendRequest };
+    return { switchTenant, addAddon, cancelAddon, markPaid, sendRequest };
 })();
