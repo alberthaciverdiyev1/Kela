@@ -45,6 +45,10 @@ public interface IGroupService
     /// <summary>Linklə qoşulma müraciətləri (teacher yalnız öz qrupu).</summary>
     Task<IReadOnlyList<GroupJoinRequestResponse>> ListJoinRequestsAsync(long groupId, long? ownerId = null, CancellationToken ct = default);
 
+    /// <summary>Bütün qruplar üzrə müraciətlər (teacher yalnız öz qrupları, admin hamısı).</summary>
+    Task<IReadOnlyList<GroupJoinRequestInboxResponse>> ListJoinRequestsInboxAsync(
+        long? ownerId = null, string? status = null, CancellationToken ct = default);
+
     /// <summary>Müraciəti təsdiqlə (üzvlük yaranır) və ya rədd et.</summary>
     Task DecideJoinRequestAsync(long groupId, long requestId, bool approve, long? ownerId = null, CancellationToken ct = default);
 

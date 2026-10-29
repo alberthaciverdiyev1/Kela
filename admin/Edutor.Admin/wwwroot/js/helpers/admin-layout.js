@@ -1,6 +1,6 @@
 // Edutor admin panel — layout: sidebar, menyular və sidebar badge-ləri.
 (function () {
-    // Gözləyən qoşulma müraciətləri — sidebar-dakı Qruplar yanında qırmızı badge.
+    // Gözləyən qoşulma müraciətləri — sidebar-dakı Qrup müraciətləri yanında qırmızı badge.
     async function refreshGroupJoinBadge() {
         try {
             const res = await fetch('/group/join-request-count');

@@ -19,6 +19,7 @@ using MainCategoryAssignmentLog = Edutor.Core.Modules.Group.Entities.MainCategor
 using GroupSubject = Edutor.Core.Modules.Group.Entities.GroupSubject;
 using GroupLesson = Edutor.Core.Modules.Group.Entities.GroupLesson;
 using StudentGroup = Edutor.Core.Modules.Group.Entities.StudentGroup;
+using GroupJoinStatus = Edutor.Core.Modules.Group.Entities.GroupJoinStatus;
 using Subject = Edutor.Core.Modules.Subject.Entities.Subject;
 using Edutor.Core.Common.Queries;
 using Edutor.Core.Common.Authorization;
@@ -388,6 +389,38 @@ public sealed class GroupService(
             .OrderByDescending(x => x.CreatedAt)
             .Select(x => new GroupJoinRequestResponse(
                 x.Id,
+                x.StudentId,
+                x.Student!.FullName,
+                x.Student!.Email,
+                x.Status,
+                x.CreatedAt,
+                x.DecidedAt))
+            .ToListAsync(ct);
+    }
+
+    public async Task<IReadOnlyList<GroupJoinRequestInboxResponse>> ListJoinRequestsInboxAsync(
+        long? ownerId = null, string? status = null, CancellationToken ct = default)
+    {
+        var query = db.GroupJoinRequests.AsNoTracking();
+
+        if (ownerId.HasValue)
+        {
+            query = query.Where(x => db.Groups.Any(g => g.Id == x.GroupId && g.UserId == ownerId));
+        }
+
+        if (!string.IsNullOrWhiteSpace(status)
+            && status is GroupJoinStatus.Pending or GroupJoinStatus.Approved or GroupJoinStatus.Rejected)
+        {
+            query = query.Where(x => x.Status == status);
+        }
+
+        return await query
+            .OrderByDescending(x => x.CreatedAt)
+            .Take(200)
+            .Select(x => new GroupJoinRequestInboxResponse(
+                x.Id,
+                x.GroupId,
+                x.Group!.Name,
                 x.StudentId,
                 x.Student!.FullName,
                 x.Student!.Email,

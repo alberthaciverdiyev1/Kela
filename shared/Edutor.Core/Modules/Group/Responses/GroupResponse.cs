@@ -20,6 +20,18 @@ public record GroupJoinRequestResponse(
     DateTimeOffset CreatedAt,
     DateTimeOffset? DecidedAt);
 
+/// <summary>Bütün qruplar üzrə qoşulma müraciəti — sidebar-dakı müraciət səhifəsi üçün.</summary>
+public record GroupJoinRequestInboxResponse(
+    long Id,
+    long GroupId,
+    string GroupName,
+    long StudentId,
+    string FullName,
+    string Email,
+    string Status,
+    DateTimeOffset CreatedAt,
+    DateTimeOffset? DecidedAt);
+
 public record GroupMemberResponse(
     long StudentId,
     string FullName,
