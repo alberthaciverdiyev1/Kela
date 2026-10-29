@@ -327,11 +327,12 @@ public sealed class SubscriptionService(AppDbContext db) : ISubscriptionService
     }
 
     public async Task<IReadOnlyList<AddonRequestResponse>> ListAddonRequestsAsync(
-        long? tenantId, string? status = null, CancellationToken ct = default)
+        long? tenantId, string? status = null, long? requestedByUserId = null, CancellationToken ct = default)
     {
         var query = db.AddonRequests.AsNoTracking();
 
         if (tenantId is long id) query = query.Where(x => x.TenantId == id);
+        if (requestedByUserId is long userId) query = query.Where(x => x.RequestedByUserId == userId);
         if (status is not null && AddonRequestStatuses.All.Contains(status)) query = query.Where(x => x.Status == status);
 
         return await query

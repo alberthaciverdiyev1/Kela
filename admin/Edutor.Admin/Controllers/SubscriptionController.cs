@@ -110,7 +110,10 @@ public sealed class SubscriptionController(
         var selected = await ResolveTenantAsync(tenantId, ct);
         if (selected is not long id) return BadRequest(new { message = "Tenant seçilməyib" });
 
-        return Json(await service.ListAddonRequestsAsync(id, status, ct));
+        // Admin/müəllim yalnız öz müraciətlərini görür; superadmin hamısını.
+        var ownUserId = User.IsInRole(UserTypes.SuperAdmin) ? null : User.CurrentUserId();
+
+        return Json(await service.ListAddonRequestsAsync(id, status, ownUserId, ct));
     }
 
     private Task<long?> ResolveTenantAsync(long? tenantId, CancellationToken ct)

@@ -8,8 +8,9 @@
         <div>
             <h1 class="text-2xl font-extrabold tracking-tight text-slate-900">Limit müraciətləri</h1>
             <p class="mt-1 text-sm text-slate-500">
-                Müəllim və kursların planı dəyişmədən limit artırma müraciətləri. Paketin birdəfəlik/aylıq formasını
-                və ödəniş vaxtını superadmin təsdiq zamanı müəyyən edir.
+                @(isSuperAdmin
+                    ? "Bütün tenantların planı dəyişmədən limit artırma müraciətləri. Paketin birdəfəlik/aylıq formasını və ödəniş vaxtını superadmin təsdiq zamanı müəyyən edir."
+                    : "Planı dəyişmədən limit artırmaq üçün göndərdiyiniz müraciətlər. Paketin formasını və ödəniş vaxtını platform administratoru təsdiq zamanı müəyyən edir.")
             </p>
         </div>
 

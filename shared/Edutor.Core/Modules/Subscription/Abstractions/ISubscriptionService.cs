@@ -52,9 +52,12 @@ public interface ISubscriptionService
     Task<AddonRequestResponse> CreateAddonRequestAsync(
         long tenantId, AddonRequestBody request, long? userId, string? userName, CancellationToken ct = default);
 
-    /// <summary>Müraciətlər — tenant verilməzsə bütün tenantlar (superadmin).</summary>
+    /// <summary>
+    /// Müraciətlər — tenant verilməzsə bütün tenantlar (superadmin).
+    /// <paramref name="requestedByUserId"/> verilsə yalnız həmin istifadəçinin müraciətləri.
+    /// </summary>
     Task<IReadOnlyList<AddonRequestResponse>> ListAddonRequestsAsync(
-        long? tenantId, string? status = null, CancellationToken ct = default);
+        long? tenantId, string? status = null, long? requestedByUserId = null, CancellationToken ct = default);
 
     Task<TenantAddonResponse> ApproveAddonRequestAsync(
         long requestId, long? reviewerId, string? reviewerName, AddonReviewRequest request, CancellationToken ct = default);

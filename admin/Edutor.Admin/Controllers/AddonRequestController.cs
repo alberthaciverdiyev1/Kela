@@ -29,7 +29,10 @@ public sealed class AddonRequestController(
     public async Task<IActionResult> List(string? status, CancellationToken ct)
     {
         var tenantId = ScopeTenantId();
-        var rows = await subscriptions.ListAddonRequestsAsync(tenantId, status, ct);
+
+        // Admin yalnız öz göndərdiyi müraciətləri görür; superadmin hamısını.
+        var ownUserId = User.IsInRole(AuthRoles.SuperAdmin) ? null : User.CurrentUserId();
+        var rows = await subscriptions.ListAddonRequestsAsync(tenantId, status, ownUserId, ct);
 
         // Superadmin bütün tenantları görür — adları burada qoşuruq.
         if (tenantId is null && rows.Count > 0)
