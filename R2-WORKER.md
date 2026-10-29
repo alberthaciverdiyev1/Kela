@@ -33,6 +33,7 @@ Brauzer faylı birbaşa R2-yə qoyduğu üçün bucket-da CORS icazəsi olmalıd
     "AllowedOrigins": [
       "https://platform-edutor.foxsoft.online",
       "https://edutor-api.foxsoft.online",
+      "https://web-edutor.foxsoft.online",
       "http://localhost:5081",
       "http://localhost:5091"
     ],
