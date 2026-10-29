@@ -395,10 +395,12 @@ public sealed class VideoJobScheduler(
     /// <summary>Abunəlik planındaki eyni vaxtlı konversiya limitini doldurmuş tenant-lar.</summary>
     private async Task<List<long>> SaturatedTenantsAsync(CancellationToken ct)
     {
-        var active = JobStatus.Active;
+        // Yalnız həqiqətən icra olunan işlər sayılır: gözləyən (pending/queued) tapşırıqlar da
+        // sayılsaydı, limitə çatmış tenant-ın heç bir işi götürülməzdi və növbə özünü bloklayardı.
+        var running = JobStatus.Reclaimable;
 
         var counts = await db.VideoJobs.IgnoreQueryFilters()
-            .Where(j => j.DeletedAt == null && active.Contains(j.Status))
+            .Where(j => j.DeletedAt == null && running.Contains(j.Status))
             .GroupBy(j => j.TenantId)
             .Select(g => new { TenantId = g.Key, Count = g.Count() })
             .ToListAsync(ct);
