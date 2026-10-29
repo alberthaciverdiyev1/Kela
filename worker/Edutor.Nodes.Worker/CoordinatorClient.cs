@@ -52,7 +52,7 @@ public sealed class CoordinatorClient(HttpClient http, WorkerSettings settings, 
     {
         try
         {
-            using var response = await http.GetAsync(new Uri($"{settings.ApiUrl.TrimEnd('/')}/openapi/v1.json"), ct);
+            using var response = await http.GetAsync(new Uri($"{settings.ApiUrl.TrimEnd('/')}/health"), ct);
             return response.IsSuccessStatusCode;
         }
         catch (Exception ex) when (ex is HttpRequestException or TaskCanceledException)
