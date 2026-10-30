@@ -13,6 +13,10 @@ window.PlanPage = (function () {
             : AdminUI.badge('bağlı', 'danger');
     }
 
+    function features(plan) {
+        try { return JSON.parse(plan.features || '{}'); } catch { return {}; }
+    }
+
     async function load() {
         const plans = await AdminUI.get('/plan/list');
 
@@ -24,6 +28,7 @@ window.PlanPage = (function () {
             { html: limit(p.maxGroups) },
             { html: p.monthlyVideoMinutes > 0 ? Math.round(p.monthlyVideoMinutes / 60) : 'limitsiz' },
             { html: uploads(p) },
+            { html: features(p).paymentTemplates === true ? AdminUI.badge('açıq', 'success') : AdminUI.badge('bağlı', 'neutral') },
             { html: p.isActive ? AdminUI.badge('Aktiv', 'success') : AdminUI.badge('Deaktiv', 'neutral') },
             {
                 html: `<div class="flex justify-end gap-1">
@@ -31,7 +36,7 @@ window.PlanPage = (function () {
                     <button type="button" class="inline-flex items-center rounded-lg px-2.5 py-1.5 text-sm font-semibold text-danger hover:bg-danger-light" onclick="PlanPage.remove(${p.id})">Sil</button>
                 </div>`, cls: 'text-right'
             }
-        ]), 8, { empty: 'Plan yoxdur' });
+        ]), 10, { empty: 'Plan yoxdur' });
     }
 
     async function remove(id) {

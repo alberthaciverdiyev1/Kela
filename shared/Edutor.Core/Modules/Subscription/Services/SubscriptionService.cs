@@ -14,7 +14,11 @@ public sealed class SubscriptionService(AppDbContext db) : ISubscriptionService
     /// <summary>Plan bitəndən sonra tam bağlanana qədər yalnız oxuma rejimi.</summary>
     private static readonly TimeSpan ReadOnlyGrace = TimeSpan.FromDays(7);
 
-    private static readonly string[] FeatureKeys = ["certificates", "payments", "crm", "chat", "branding", "api"];
+    private static readonly string[] FeatureKeys =
+    [
+        SubscriptionFeatures.Certificates, SubscriptionFeatures.Payments, SubscriptionFeatures.PaymentTemplates,
+        SubscriptionFeatures.Crm, SubscriptionFeatures.Chat, SubscriptionFeatures.Branding, SubscriptionFeatures.Api
+    ];
 
     public async Task<SubscriptionResponse> GetAsync(long tenantId, CancellationToken ct = default)
     {
@@ -82,6 +86,16 @@ public sealed class SubscriptionService(AppDbContext db) : ISubscriptionService
             ?? throw new InvalidOperationException("Tenant context is required");
 
         return await GetAsync(tenantId, ct);
+    }
+
+    public async Task<bool> HasFeatureAsync(string feature, CancellationToken ct = default)
+    {
+        if (db.CurrentTenantId is not long tenantId) return true;
+
+        var tenant = await db.Tenants.AsNoTracking().FirstOrDefaultAsync(x => x.Id == tenantId, ct);
+        var plan = await ResolvePlanAsync(tenant, ct);
+
+        return plan is not null && ParseFeatures(plan.Features).Contains(feature);
     }
 
     public async Task EnsureWritableAsync(long tenantId, CancellationToken ct = default)
@@ -634,28 +648,31 @@ public sealed class SubscriptionService(AppDbContext db) : ISubscriptionService
     private async Task<(SubscriptionPlan? Plan, TenantUsage Usage, string Status, int? DaysLeft)> LoadAsync(
         long tenantId, Core.Modules.Tenant.Entities.Tenant? tenant, CancellationToken ct)
     {
+        var plan = await ResolvePlanAsync(tenant, ct);
+        var usage = await GetOrCreateUsageAsync(tenantId, Period(), ct);
+
+        var (status, daysLeft) = Status(tenant);
+        return (plan, usage, status, daysLeft);
+    }
+
+    private async Task<SubscriptionPlan?> ResolvePlanAsync(
+        Core.Modules.Tenant.Entities.Tenant? tenant, CancellationToken ct)
+    {
         var plan = tenant?.PlanId is long planId
             ? await db.SubscriptionPlans.AsNoTracking().FirstOrDefaultAsync(x => x.Id == planId, ct)
             : null;
 
         // Plan təyin edilməyibsə ən aşağı ödənişli plan tətbiq olunur — pulsuz plan
         // yalnız istifadəçi onu özü seçəndə qüvvəyə minir.
-        if (plan is null)
-        {
-            plan = await db.SubscriptionPlans.AsNoTracking()
+        return plan
+            ?? await db.SubscriptionPlans.AsNoTracking()
                 .Where(x => x.IsActive && x.MonthlyPrice > 0)
                 .OrderBy(x => x.SortOrder).ThenBy(x => x.Id)
                 .FirstOrDefaultAsync(ct)
-                ?? await db.SubscriptionPlans.AsNoTracking()
-                    .Where(x => x.IsActive)
-                    .OrderBy(x => x.SortOrder).ThenBy(x => x.Id)
-                    .FirstOrDefaultAsync(ct);
-        }
-
-        var usage = await GetOrCreateUsageAsync(tenantId, Period(), ct);
-
-        var (status, daysLeft) = Status(tenant);
-        return (plan, usage, status, daysLeft);
+            ?? await db.SubscriptionPlans.AsNoTracking()
+                .Where(x => x.IsActive)
+                .OrderBy(x => x.SortOrder).ThenBy(x => x.Id)
+                .FirstOrDefaultAsync(ct);
     }
 
     private static (string Status, int? DaysLeft) Status(Core.Modules.Tenant.Entities.Tenant? tenant)

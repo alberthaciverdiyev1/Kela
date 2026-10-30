@@ -11,6 +11,12 @@ public interface ISubscriptionService
 
     Task<SubscriptionResponse> GetCurrentAsync(CancellationToken ct = default);
 
+    /// <summary>
+    /// Cari tenant-ın planında modul açıqdırmı. Tenant konteksti yoxdursa (superadmin)
+    /// true qaytarır — platform sahibi bütün modulları görür.
+    /// </summary>
+    Task<bool> HasFeatureAsync(string feature, CancellationToken ct = default);
+
     /// <summary>Yazma əməliyyatına icazə varmı (plan bitibsə read-only).</summary>
     Task EnsureWritableAsync(long tenantId, CancellationToken ct = default);
 

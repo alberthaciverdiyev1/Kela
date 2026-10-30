@@ -56,7 +56,7 @@ public static class SubscriptionSeeder
             MonthlyVideoMinutes = 80 * 60, StorageBytes = 150 * Gb,
             ConcurrentConversions = 4, MaxVideoHeight = 1080, OriginalRetentionDays = 90,
             PricePerStudent = 8, PricePerGroup = 5, PricePerVideoHour = 12,
-            Features = """{"certificates":true,"payments":true}"""
+            Features = """{"certificates":true,"payments":true,"paymentTemplates":true}"""
         };
 
         yield return new SubscriptionPlan
@@ -67,7 +67,7 @@ public static class SubscriptionSeeder
             MonthlyVideoMinutes = 250 * 60, StorageBytes = 500 * Gb,
             ConcurrentConversions = 8, MaxVideoHeight = 1080, OriginalRetentionDays = 180,
             PricePerStudent = 8, PricePerGroup = 5, PricePerVideoHour = 12,
-            Features = """{"certificates":true,"payments":true,"crm":true,"chat":true,"branding":true}"""
+            Features = """{"certificates":true,"payments":true,"paymentTemplates":true,"crm":true,"chat":true,"branding":true}"""
         };
 
         yield return new SubscriptionPlan
@@ -78,7 +78,7 @@ public static class SubscriptionSeeder
             MonthlyVideoMinutes = 800 * 60, StorageBytes = 2 * 1024 * Gb,
             ConcurrentConversions = 16, MaxVideoHeight = 1080, OriginalRetentionDays = 0,
             PricePerStudent = 8, PricePerGroup = 5, PricePerVideoHour = 12,
-            Features = """{"certificates":true,"payments":true,"crm":true,"chat":true,"branding":true,"api":true}"""
+            Features = """{"certificates":true,"payments":true,"paymentTemplates":true,"crm":true,"chat":true,"branding":true,"api":true}"""
         };
     }
 

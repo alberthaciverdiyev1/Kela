@@ -24,6 +24,21 @@
         return items.Count > 0 ? string.Join(", ", items) : "bağlı";
     }
 
+    bool HasTemplates(string? featuresJson)
+    {
+        try
+        {
+            using var document = System.Text.Json.JsonDocument.Parse(featuresJson ?? "{}");
+            return document.RootElement.TryGetProperty(
+                Edutor.Core.Modules.Subscription.SubscriptionFeatures.PaymentTemplates, out var on)
+                && on.ValueKind == System.Text.Json.JsonValueKind.True;
+        }
+        catch (System.Text.Json.JsonException)
+        {
+            return false;
+        }
+    }
+
     var tenantSelect = tenants is { Count: > 0 }
         ? new SelectModel
         {
@@ -124,6 +139,7 @@
                             <li>@Storage(plan.StorageBytes) yaddaş</li>
                             <li>Maks. keyfiyyət: @(plan.MaxVideoHeight > 0 ? $"{plan.MaxVideoHeight}p" : "limitsiz")</li>
                             <li>Yükləmə: @UploadList(plan.AllowVideoUpload, plan.AllowFileUpload, plan.AllowAudioUpload)</li>
+                            <li>Plan şablonları: @(HasTemplates(plan.Features) ? "açıq" : "bağlı")</li>
                         </ul>
 
                         <button type="button" class="admin-button-primary mt-4 w-full"

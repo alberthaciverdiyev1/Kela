@@ -1,6 +1,9 @@
+using Edutor.Core.Common.Exceptions;
 using Edutor.Core.Modules.Auth;
 using Edutor.Core.Modules.Payments.Abstractions;
 using Edutor.Core.Modules.Payments.Requests;
+using Edutor.Core.Modules.Subscription;
+using Edutor.Core.Modules.Subscription.Abstractions;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -9,34 +12,55 @@ namespace Edutor.Admin.Controllers;
 /// <summary>Tələbəyə ödəniş planı təyin edərkən seçilən hazır plan şablonları.</summary>
 [Route("[controller]")]
 [Authorize(Policy = AuthPolicies.Admin)]
-public sealed class PaymentPlanController(IStudentPaymentService payments) : Controller
+public sealed class PaymentPlanController(IStudentPaymentService payments, ISubscriptionService subscriptions)
+    : Controller
 {
     [HttpGet]
-    public IActionResult Index()
+    public async Task<IActionResult> Index(CancellationToken ct)
     {
+        var enabled = await subscriptions.HasFeatureAsync(SubscriptionFeatures.PaymentTemplates, ct);
+
         ViewData["Title"] = "Plan şablonları";
-        ViewData["Scripts"] = new[] { "~/js/pages/payment-plan/index.js" };
+        ViewData["TemplatesEnabled"] = enabled;
+
+        if (enabled)
+        {
+            ViewData["Scripts"] = new[] { "~/js/pages/payment-plan/index.js" };
+        }
+
         return View();
     }
 
     [HttpGet("list")]
     public async Task<IActionResult> List(CancellationToken ct)
-        => Json(await payments.ListTemplatesAsync(ct));
+    {
+        await EnsureEnabledAsync(ct);
+        return Json(await payments.ListTemplatesAsync(ct));
+    }
 
     [HttpPost]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Create([FromBody] SavePaymentPlanTemplateRequest request, CancellationToken ct)
     {
-        try { await payments.SaveTemplateAsync(request, ct); return Json(new { ok = true }); }
-        catch (ArgumentException ex) { return BadRequest(new { message = ex.Message }); }
-        catch (KeyNotFoundException ex) { return NotFound(new { message = ex.Message }); }
+        await EnsureEnabledAsync(ct);
+        await payments.SaveTemplateAsync(request, ct);
+        return Json(new { ok = true });
     }
 
     [HttpDelete("{id:long}")]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Delete(long id, CancellationToken ct)
     {
+        await EnsureEnabledAsync(ct);
         await payments.DeleteTemplateAsync(id, ct);
         return Json(new { ok = true });
+    }
+
+    private async Task EnsureEnabledAsync(CancellationToken ct)
+    {
+        if (!await subscriptions.HasFeatureAsync(SubscriptionFeatures.PaymentTemplates, ct))
+        {
+            throw new ForbiddenException("Plan şablonları cari abunəlik planında yoxdur. Planı yüksəldin.");
+        }
     }
 }

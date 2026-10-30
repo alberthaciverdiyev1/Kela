@@ -1,10 +1,13 @@
 @using Edutor.Core.Modules.Payments.Entities
 <form id="plan-form" class="space-y-4 p-6">
     <input type="hidden" id="plan-student-id" />
-    <partial name="Ui/_Select" model="@(new SelectModel {
-        Name = "plan_template", Id = "plan-template", Label = "Şablon plan seç",
-        Options = new List<SelectOption> { new() { Value = "", Text = "— Əl ilə daxil et —" } }
-    })" />
+    @if (ViewData["TemplatesEnabled"] is true)
+    {
+        <partial name="Ui/_Select" model="@(new SelectModel {
+            Name = "plan_template", Id = "plan-template", Label = "Şablon plan seç",
+            Options = new List<SelectOption> { new() { Value = "", Text = "— Əl ilə daxil et —" } }
+        })" />
+    }
     <div class="grid gap-4 sm:grid-cols-2">
         <partial name="Ui/_Input" model="@(new InputModel { NativeRequired = true, Name = "plan_joined", Id = "plan-joined", Label = "Qoşulma tarixi", Type = "date", Required = true })" />
         <partial name="Ui/_Input" model="@(new InputModel { NativeRequired = true, Name = "plan_due", Id = "plan-due", Label = "Növbəti ödəniş", Type = "date", Required = true })" />

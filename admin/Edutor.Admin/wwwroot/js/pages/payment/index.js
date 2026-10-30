@@ -23,16 +23,16 @@ const STATUS = {
 
 
 async function loadTemplateOptions() {
+    const sel = document.getElementById('plan-template');
+    if (!sel) return; // Plan şablonları abunəlik planında yoxdur — yalnız əl ilə daxil etmə.
+
     try {
         const items = await AdminUI.get('/payment-plan/list');
         TEMPLATES.length = 0;
         items.forEach(t => TEMPLATES.push(t));
 
-        const sel = document.getElementById('plan-template');
-        if (sel) {
-            sel.innerHTML = '<option value="">— Əl ilə daxil et —</option>' +
-                items.map(t => `<option value="${t.id}">${AdminUI.escapeHtml(t.name)}</option>`).join('');
-        }
+        sel.innerHTML = '<option value="">— Əl ilə daxil et —</option>' +
+            items.map(t => `<option value="${t.id}">${AdminUI.escapeHtml(t.name)}</option>`).join('');
     } catch { /* şablon yoxdursa əl ilə */ }
 }
 
@@ -160,7 +160,7 @@ document.getElementById('plan-frequency').addEventListener('change', e => {
 document.getElementById('plan-joined').addEventListener('change', recalcDueDate);
 document.getElementById('plan-interval').addEventListener('input', recalcDueDate);
 
-document.getElementById('plan-template').addEventListener('change', e => {
+document.getElementById('plan-template')?.addEventListener('change', e => {
     const t = TEMPLATES.find(x => String(x.id) === e.target.value);
     if (!t) return;
 

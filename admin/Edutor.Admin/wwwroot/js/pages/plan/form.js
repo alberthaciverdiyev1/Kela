@@ -1,4 +1,16 @@
 (function () {
+    // Plan şablonları modulu — digər modullar hələ UI-da idarə olunmur, JSON-da saxlanılır.
+    const PAYMENT_TEMPLATES = 'paymentTemplates';
+
+    const featureKeys = () => (document.getElementById('features').value || '')
+        .split(',').map(k => k.trim()).filter(Boolean);
+
+    function setFeature(key, on) {
+        const keys = featureKeys().filter(k => k !== key);
+        if (on) keys.push(key);
+        document.getElementById('features').value = keys.join(',');
+    }
+
     const fields = [
         'code', 'name', 'description', 'monthly_price', 'currency', 'yearly_free_months', 'trial_days', 'sort_order',
         'max_students', 'max_groups', 'monthly_video_hours',
@@ -24,6 +36,8 @@
         document.getElementById('trial_days').value = '14';
         document.getElementById('monthly_video_minutes').value = '0';
         document.getElementById('is_active').value = 'true';
+        document.getElementById('features').value = '';
+        document.getElementById('feature_payment_templates').checked = false;
         window.PlanPage.open();
     };
 
@@ -64,6 +78,7 @@
         document.getElementById('original_retention_days').value = p.originalRetentionDays;
         document.getElementById('features').value = Object.entries(JSON.parse(p.features || '{}'))
             .filter(([, on]) => on).map(([key]) => key).join(',');
+        document.getElementById('feature_payment_templates').checked = featureKeys().includes(PAYMENT_TEMPLATES);
 
         window.PlanPage.open();
     };
@@ -74,6 +89,7 @@
 
             const hours = parseFloat(document.getElementById('monthly_video_hours').value) || 0;
             document.getElementById('monthly_video_minutes').value = Math.round(hours * 60);
+            setFeature(PAYMENT_TEMPLATES, document.getElementById('feature_payment_templates').checked);
 
             const fd = new FormData();
             fields.forEach(id => fd.append(id, document.getElementById(id).value || ''));

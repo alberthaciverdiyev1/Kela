@@ -2,6 +2,8 @@ using Edutor.Core.Modules.Auth;
 using Edutor.Core.Modules.Payments.Abstractions;
 using Edutor.Core.Modules.Students.Abstractions;
 using Edutor.Core.Modules.Payments.Requests;
+using Edutor.Core.Modules.Subscription;
+using Edutor.Core.Modules.Subscription.Abstractions;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -9,13 +11,17 @@ namespace Edutor.Admin.Controllers;
 
 [Route("[controller]")]
 [Authorize(Policy = AuthPolicies.Admin)]
-public sealed class PaymentController(IStudentPaymentService payments, IStudentManagementService students) : Controller
+public sealed class PaymentController(
+    IStudentPaymentService payments,
+    IStudentManagementService students,
+    ISubscriptionService subscriptions) : Controller
 {
     [HttpGet]
-    public IActionResult Index()
+    public async Task<IActionResult> Index(CancellationToken ct)
     {
         ViewData["Title"] = "Ödənişlər";
         ViewData["Scripts"] = new[] { "~/js/pages/payment/index.js" };
+        ViewData["TemplatesEnabled"] = await subscriptions.HasFeatureAsync(SubscriptionFeatures.PaymentTemplates, ct);
         return View();
     }
 
