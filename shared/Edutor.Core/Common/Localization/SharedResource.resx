@@ -2241,4 +2241,58 @@
   <data name="Attendance_PointInvalid" xml:space="preserve">
     <value>Point must be between 0 and 100.</value>
   </data>
+  <data name="Validation_TitleTooLong" xml:space="preserve">
+    <value>Title may not be longer than 190 characters</value>
+  </data>
+  <data name="Validation_TextTooLong" xml:space="preserve">
+    <value>Text may not be longer than 2000 characters</value>
+  </data>
+  <data name="Nav_Notes" xml:space="preserve">
+    <value>Notes</value>
+  </data>
+  <data name="Nav_Calendar" xml:space="preserve">
+    <value>Calendar</value>
+  </data>
+  <data name="Note_Create" xml:space="preserve">
+    <value>New note</value>
+  </data>
+  <data name="Note_Search" xml:space="preserve">
+    <value>Search notes</value>
+  </data>
+  <data name="Note_Body" xml:space="preserve">
+    <value>Text</value>
+  </data>
+  <data name="Note_BodyPlaceholder" xml:space="preserve">
+    <value>Write the note</value>
+  </data>
+  <data name="Note_Date" xml:space="preserve">
+    <value>Date (optional)</value>
+  </data>
+  <data name="Note_Done" xml:space="preserve">
+    <value>Done</value>
+  </data>
+  <data name="Note_Pending" xml:space="preserve">
+    <value>Pending</value>
+  </data>
+  <data name="Note_TitlePlaceholder" xml:space="preserve">
+    <value>Note title</value>
+  </data>
+  <data name="Calendar_NoEvents" xml:space="preserve">
+    <value>No events this month.</value>
+  </data>
+  <data name="Calendar_NoDayEvents" xml:space="preserve">
+    <value>No events on this day.</value>
+  </data>
+  <data name="Calendar_SelectDay" xml:space="preserve">
+    <value>Pick a day</value>
+  </data>
+  <data name="Calendar_Homework" xml:space="preserve">
+    <value>Homework</value>
+  </data>
+  <data name="Calendar_Note" xml:space="preserve">
+    <value>Note</value>
+  </data>
+  <data name="Calendar_Summary" xml:space="preserve">
+    <value>{0} events</value>
+  </data>
 </root>

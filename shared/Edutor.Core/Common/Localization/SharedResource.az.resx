@@ -2241,4 +2241,58 @@
   <data name="Attendance_PointInvalid" xml:space="preserve">
     <value>Bal 0–100 arasında olmalıdır.</value>
   </data>
+  <data name="Validation_TitleTooLong" xml:space="preserve">
+    <value>Başlıq 190 simvoldan çox ola bilməz</value>
+  </data>
+  <data name="Validation_TextTooLong" xml:space="preserve">
+    <value>Mətn 2000 simvoldan çox ola bilməz</value>
+  </data>
+  <data name="Nav_Notes" xml:space="preserve">
+    <value>Qeydlər</value>
+  </data>
+  <data name="Nav_Calendar" xml:space="preserve">
+    <value>Təqvim</value>
+  </data>
+  <data name="Note_Create" xml:space="preserve">
+    <value>Yeni qeyd</value>
+  </data>
+  <data name="Note_Search" xml:space="preserve">
+    <value>Qeyd axtar</value>
+  </data>
+  <data name="Note_Body" xml:space="preserve">
+    <value>Mətn</value>
+  </data>
+  <data name="Note_BodyPlaceholder" xml:space="preserve">
+    <value>Qeydin məzmunu</value>
+  </data>
+  <data name="Note_Date" xml:space="preserve">
+    <value>Tarix (istəyə bağlı)</value>
+  </data>
+  <data name="Note_Done" xml:space="preserve">
+    <value>Tamamlandı</value>
+  </data>
+  <data name="Note_Pending" xml:space="preserve">
+    <value>Gözləyir</value>
+  </data>
+  <data name="Note_TitlePlaceholder" xml:space="preserve">
+    <value>Qeydin başlığı</value>
+  </data>
+  <data name="Calendar_NoEvents" xml:space="preserve">
+    <value>Bu ay üçün hadisə yoxdur.</value>
+  </data>
+  <data name="Calendar_NoDayEvents" xml:space="preserve">
+    <value>Bu gün üçün hadisə yoxdur.</value>
+  </data>
+  <data name="Calendar_SelectDay" xml:space="preserve">
+    <value>Gün seçin</value>
+  </data>
+  <data name="Calendar_Homework" xml:space="preserve">
+    <value>Ev tapşırığı</value>
+  </data>
+  <data name="Calendar_Note" xml:space="preserve">
+    <value>Qeyd</value>
+  </data>
+  <data name="Calendar_Summary" xml:space="preserve">
+    <value>{0} hadisə</value>
+  </data>
 </root>

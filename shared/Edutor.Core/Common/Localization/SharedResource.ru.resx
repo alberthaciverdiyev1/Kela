@@ -2241,4 +2241,58 @@
   <data name="Attendance_PointInvalid" xml:space="preserve">
     <value>Балл должен быть от 0 до 100.</value>
   </data>
+  <data name="Validation_TitleTooLong" xml:space="preserve">
+    <value>Заголовок не должен превышать 190 символов</value>
+  </data>
+  <data name="Validation_TextTooLong" xml:space="preserve">
+    <value>Текст не должен превышать 2000 символов</value>
+  </data>
+  <data name="Nav_Notes" xml:space="preserve">
+    <value>Notlar</value>
+  </data>
+  <data name="Nav_Calendar" xml:space="preserve">
+    <value>Takvim</value>
+  </data>
+  <data name="Note_Create" xml:space="preserve">
+    <value>Yeni not</value>
+  </data>
+  <data name="Note_Search" xml:space="preserve">
+    <value>Not ara</value>
+  </data>
+  <data name="Note_Body" xml:space="preserve">
+    <value>Metin</value>
+  </data>
+  <data name="Note_BodyPlaceholder" xml:space="preserve">
+    <value>Notun içeriği</value>
+  </data>
+  <data name="Note_Date" xml:space="preserve">
+    <value>Tarih (isteğe bağlı)</value>
+  </data>
+  <data name="Note_Done" xml:space="preserve">
+    <value>Tamamlandı</value>
+  </data>
+  <data name="Note_Pending" xml:space="preserve">
+    <value>Bekliyor</value>
+  </data>
+  <data name="Note_TitlePlaceholder" xml:space="preserve">
+    <value>Not başlığı</value>
+  </data>
+  <data name="Calendar_NoEvents" xml:space="preserve">
+    <value>Bu ay için etkinlik yok.</value>
+  </data>
+  <data name="Calendar_NoDayEvents" xml:space="preserve">
+    <value>Bu gün için etkinlik yok.</value>
+  </data>
+  <data name="Calendar_SelectDay" xml:space="preserve">
+    <value>Bir gün seçin</value>
+  </data>
+  <data name="Calendar_Homework" xml:space="preserve">
+    <value>Ev ödevi</value>
+  </data>
+  <data name="Calendar_Note" xml:space="preserve">
+    <value>Not</value>
+  </data>
+  <data name="Calendar_Summary" xml:space="preserve">
+    <value>{0} etkinlik</value>
+  </data>
 </root>

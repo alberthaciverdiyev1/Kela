@@ -1,0 +1,40 @@
+@{
+    ViewData["Title"] = L["Nav_Notes"];
+}
+<section class="admin-page">
+    <partial name="Ui/_PageHeader" model="@(new PageHeaderModel { CreateText = L["Note_Create"] })" />
+
+    <div class="admin-card">
+        <partial name="Ui/_FilterBar" model="@(new FilterBarModel {
+            SearchPlaceholder = L["Note_Search"],
+            ShowButton = true,
+            ButtonText = L["Common_Search"]
+        })" />
+
+        <partial name="Ui/_Table" model="@(new TableModel
+        {
+            Columns = new List<TableColumnModel>
+            {
+                new() { Label = L["Common_Title"] },
+                new() { Label = L["Common_Date"], WidthClass = "w-36" },
+                new() { Label = L["Common_Status"], WidthClass = "w-32" },
+                new() { Label = L["Common_Actions"], Right = true }
+            }
+        })" />
+    </div>
+</section>
+
+@{
+    var modalBody = await Html.PartialAsync("_ModalFields");
+}
+
+<partial name="Ui/_Modal" model="@(new ModalModel
+{
+    Id = "modal",
+    TitleId = "modalTitle",
+    Title = L["Note_Create"],
+    WidthClass = "max-w-lg",
+    Body = modalBody
+})" />
+
+<form id="antiforgery">@Html.AntiForgeryToken()</form>

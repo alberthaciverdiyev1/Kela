@@ -2241,4 +2241,58 @@
   <data name="Attendance_PointInvalid" xml:space="preserve">
     <value>Puan 0–100 arasında olmalıdır.</value>
   </data>
+  <data name="Validation_TitleTooLong" xml:space="preserve">
+    <value>Başlık 190 karakterden uzun olamaz</value>
+  </data>
+  <data name="Validation_TextTooLong" xml:space="preserve">
+    <value>Metin 2000 karakterden uzun olamaz</value>
+  </data>
+  <data name="Nav_Notes" xml:space="preserve">
+    <value>Заметки</value>
+  </data>
+  <data name="Nav_Calendar" xml:space="preserve">
+    <value>Календарь</value>
+  </data>
+  <data name="Note_Create" xml:space="preserve">
+    <value>Новая заметка</value>
+  </data>
+  <data name="Note_Search" xml:space="preserve">
+    <value>Поиск заметок</value>
+  </data>
+  <data name="Note_Body" xml:space="preserve">
+    <value>Текст</value>
+  </data>
+  <data name="Note_BodyPlaceholder" xml:space="preserve">
+    <value>Содержание заметки</value>
+  </data>
+  <data name="Note_Date" xml:space="preserve">
+    <value>Дата (необязательно)</value>
+  </data>
+  <data name="Note_Done" xml:space="preserve">
+    <value>Выполнено</value>
+  </data>
+  <data name="Note_Pending" xml:space="preserve">
+    <value>Ожидает</value>
+  </data>
+  <data name="Note_TitlePlaceholder" xml:space="preserve">
+    <value>Заголовок заметки</value>
+  </data>
+  <data name="Calendar_NoEvents" xml:space="preserve">
+    <value>В этом месяце событий нет.</value>
+  </data>
+  <data name="Calendar_NoDayEvents" xml:space="preserve">
+    <value>На этот день событий нет.</value>
+  </data>
+  <data name="Calendar_SelectDay" xml:space="preserve">
+    <value>Выберите день</value>
+  </data>
+  <data name="Calendar_Homework" xml:space="preserve">
+    <value>Домашнее задание</value>
+  </data>
+  <data name="Calendar_Note" xml:space="preserve">
+    <value>Заметка</value>
+  </data>
+  <data name="Calendar_Summary" xml:space="preserve">
+    <value>{0} событий</value>
+  </data>
 </root>

@@ -1,6 +1,8 @@
 // Modul abstraksiyaları (interfeyslər) — qlobal using
 global using Edutor.Core.Modules.Auth.Abstractions;
 global using Edutor.Core.Modules.Attendance.Abstractions;
+global using Edutor.Core.Modules.TeacherNote.Abstractions;
+global using Edutor.Core.Modules.Calendar.Abstractions;
 global using Edutor.Core.Modules.Banner.Abstractions;
 global using Edutor.Core.Modules.Group.Abstractions;
 global using Edutor.Core.Modules.Homework.Abstractions;

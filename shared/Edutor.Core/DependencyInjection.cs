@@ -134,6 +134,8 @@ public static class DependencyInjection
         services.AddScoped<IUserAuthService, UserAuthService>();
         services.AddScoped<IGroupService, GroupService>();
         services.AddScoped<IAttendanceService, AttendanceService>();
+        services.AddScoped<ITeacherNoteService, Edutor.Core.Modules.TeacherNote.Services.TeacherNoteService>();
+        services.AddScoped<ICalendarService, Edutor.Core.Modules.Calendar.Services.CalendarService>();
         services.AddScoped<IVideoProcessingService, VideoProcessingService>();
         services.AddScoped<ITenantFolder, TenantFolder>();
 
