@@ -44,6 +44,11 @@ public sealed class ExceptionHandlingMiddleware(
         {
             await WriteAsync(context, HttpStatusCode.BadRequest, ex.Message);
         }
+        catch (OperationCanceledException) when (context.RequestAborted.IsCancellationRequested)
+        {
+            // İstifadəçi səhifəni bağlayıb və ya naviqasiya edib — cavabı göndərəcək kimsə yoxdur.
+            logger.LogDebug("Request aborted by the client");
+        }
         catch (Exception ex)
         {
             logger.LogError(ex, "Unexpected error");
@@ -60,9 +65,10 @@ public sealed class ExceptionHandlingMiddleware(
         }
     }
 
+    // Form POST-ları da səhifə naviqasiyasıdır: brauzerə JSON yox, xəta səhifəsi qaytarılmalıdır.
+    // JS fetch çağırışları Accept: */* göndərir və JSON olaraq qalır.
     private static bool WantsHtml(HttpContext context)
-        => HttpMethods.IsGet(context.Request.Method)
-           && context.Request.Headers.Accept.ToString().Contains("text/html", StringComparison.OrdinalIgnoreCase);
+        => context.Request.Headers.Accept.ToString().Contains("text/html", StringComparison.OrdinalIgnoreCase);
 
     private static async Task WriteAsync(
         HttpContext context, HttpStatusCode status, string message,
