@@ -180,9 +180,9 @@ public sealed partial class LessonContentService(
         // Teacher yalnız öz və ya adminin dərsinə material əlavə edə bilər.
         if (request.UserId is long ownerId) await EnsureLessonAccessibleAsync(request.LessonId, ownerId, ct);
 
-        // Fayl verilmirsə (defer_file) material dərhal yaradılır — fayl sonra attach ucu ilə
-        // gəlir, orada ayrıca yoxlanılır. Burada yalnız real yükləmə üçün icazə yoxlanılır.
-        if (request.File is not null || !string.IsNullOrWhiteSpace(request.Path))
+        // defer_file halında da icazə burada yoxlanılır: yoxlanmasa material yaranır,
+        // yükləmə isə sonradan plan tərəfindən rədd olunur və faylsız sətir qalır.
+        if (request.File is not null || !string.IsNullOrWhiteSpace(request.Path) || request.DeferFile)
         {
             await subscription.EnsureCanUploadAsync(UploadKindFor(request.Type), ct);
         }

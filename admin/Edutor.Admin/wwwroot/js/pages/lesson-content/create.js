@@ -222,8 +222,8 @@
                 status: xhr.status,
                 etag: xhr.getResponseHeader('ETag')
             });
-            xhr.onerror = () => reject(new Error('network'));
-            xhr.onabort = () => reject(new Error('aborted'));
+            xhr.onerror = () => reject(new Error(L["Upload_NetworkFailed"]));
+            xhr.onabort = () => reject(new Error(L["Upload_NetworkFailed"]));
             xhr.send(blob);
         });
     }
@@ -243,7 +243,8 @@
             fd.append('contentType', contentType);
 
             const startRes = await AdminUI.postForm('/lesson-content/upload/multipart/start', fd);
-            if (!startRes.ok || !startRes.data?.uploadId) return null;
+            if (!startRes.ok) throw new Error(AdminUI.errText(startRes));
+            if (!startRes.data?.uploadId) throw new Error(L["Js_ErrorOccured"]);
 
             ({ path, uploadId, partSize } = startRes.data);
         }
@@ -259,7 +260,7 @@
             const urlsRes = missing.length
                 ? await AdminUI.postJson('/lesson-content/upload/multipart/parts', { path, uploadId, partNumbers: missing })
                 : { ok: true, data: [] };
-            if (!urlsRes.ok) throw new Error('parts');
+            if (!urlsRes.ok) throw new Error(AdminUI.errText(urlsRes));
 
             const parts = new Array(total);
             doneParts.forEach(p => { parts[p.partNumber - 1] = p; });
@@ -289,7 +290,7 @@
                             if (onProgress) onProgress(done, file.size);
                         });
 
-                    if (!put.ok) throw new Error('part ' + u.partNumber + ': ' + put.status);
+                    if (!put.ok) throw new Error(directUploadError(put.status));
 
                     loaded[i] = blob.size;
                     parts[u.partNumber - 1] = { partNumber: u.partNumber, eTag: put.etag };
@@ -305,7 +306,7 @@
 
             const finish = await AdminUI.postJson('/lesson-content/upload/multipart/complete',
                 { path, uploadId, parts });
-            if (!finish.ok) throw new Error('complete');
+            if (!finish.ok) throw new Error(AdminUI.errText(finish));
 
             return path;
         } catch (err) {
@@ -447,10 +448,18 @@
 
         const urlRes = await AdminUI.post('/lesson-content/upload-url',
             { lessonId, type: 'video', fileName: file.name, contentType });
-        if (!urlRes.ok || !urlRes.data?.uploadUrl) return null;
+        if (!urlRes.ok) throw new Error(AdminUI.errText(urlRes));
+        if (!urlRes.data?.uploadUrl) throw new Error(L["Js_ErrorOccured"]);
 
         const put = await putWithProgress(urlRes.data.uploadUrl, file, contentType, onProgress);
-        return put.ok ? urlRes.data.path : null;
+        if (!put.ok) throw new Error(directUploadError(put.status));
+        return urlRes.data.path;
+    }
+
+    // R2 cavabı xəta olanda istifadəçiyə status göstərilir — əvvəl bütün hallar
+    // ümumi "CORS" mesajına düşürdü və əsl səbəb (plan limiti, yetki və s.) itirdi.
+    function directUploadError(status) {
+        return (L["Upload_DirectFailed"] || '{0}').replace('{0}', status || '?');
     }
 
     form.addEventListener('submit', async (e) => {
@@ -493,6 +502,10 @@
                     showError(AdminUI.errText(res));
                     return;
                 }
+            } else if (urlRes.status === 403) {
+                // Plan/yetki rəddi — serverə ehtiyat göndəriş də eyni xətanı verərdi.
+                showError(AdminUI.errText(urlRes));
+                return;
             }
 
             // Ehtiyat: faylı serverə göndər — yalnız limitə sığan fayllar üçün
@@ -550,8 +563,6 @@
                 speed = measureSpeed(loaded) || speed;
                 widgetProgress(loaded, total, speed);
             }, uploadSession);
-
-            if (!path) { widgetFail(L["Js_FileTooLarge"]); return; }
 
             // Yükləmə bitdi — faylı materiala bağlayırıq.
             // Form göndərilir: 'type' enum-dur və form binder onu adından çözür,
@@ -629,8 +640,6 @@
                 speed = measureSpeed(loaded) || speed;
                 widgetProgress(loaded, total, speed);
             }, session);
-
-            if (!path) { widgetFail(L["Js_FileTooLarge"]); return; }
 
             const attached = await AdminUI.post(`/lesson-content/${session.contentId}/file`,
                 { path, type: 'video' });

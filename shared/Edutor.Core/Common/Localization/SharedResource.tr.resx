@@ -522,6 +522,12 @@
   <data name="Upload_Failed" xml:space="preserve">
     <value>Yükleme başarısız</value>
   </data>
+  <data name="Upload_DirectFailed" xml:space="preserve">
+    <value>Dosya doğrudan depolamaya yüklenemedi (HTTP {0}).</value>
+  </data>
+  <data name="Upload_NetworkFailed" xml:space="preserve">
+    <value>Yükleme sunucusuna ulaşılamadı — ağ veya CORS sorunu.</value>
+  </data>
   <data name="Upload_Remaining" xml:space="preserve">
     <value>{0} kaldı</value>
   </data>

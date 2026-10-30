@@ -522,6 +522,12 @@
   <data name="Upload_Failed" xml:space="preserve">
     <value>Загрузка не удалась</value>
   </data>
+  <data name="Upload_DirectFailed" xml:space="preserve">
+    <value>Не удалось загрузить файл напрямую в хранилище (HTTP {0}).</value>
+  </data>
+  <data name="Upload_NetworkFailed" xml:space="preserve">
+    <value>Не удалось подключиться к серверу загрузки — сеть или CORS.</value>
+  </data>
   <data name="Upload_Remaining" xml:space="preserve">
     <value>осталось {0}</value>
   </data>
