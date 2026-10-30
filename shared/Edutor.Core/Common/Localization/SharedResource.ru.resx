@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <root>
   <resheader name="resmimetype"><value>text/microsoft-resx</value></resheader>
   <resheader name="version"><value>2.0</value></resheader>
@@ -2231,5 +2231,14 @@
   </data>
   <data name="Revenue_NoLastMonth" xml:space="preserve">
     <value>В прошлом месяце дохода не было</value>
+  </data>
+  <data name="Attendance_Point" xml:space="preserve">
+    <value>Балл</value>
+  </data>
+  <data name="Attendance_Note" xml:space="preserve">
+    <value>Заметка</value>
+  </data>
+  <data name="Attendance_PointInvalid" xml:space="preserve">
+    <value>Балл должен быть от 0 до 100.</value>
   </data>
 </root>

@@ -14,4 +14,8 @@ public class SaveAttendanceItem
     public long StudentId { get; set; }
 
     public bool IsPresent { get; set; }
+
+    public int? Point { get; set; }
+
+    public string? Note { get; set; }
 }

@@ -51,6 +51,15 @@ namespace Edutor.Core.Data.Migrations
                         .HasColumnType("boolean")
                         .HasColumnName("is_present");
 
+                    b.Property<string>("Note")
+                        .HasMaxLength(500)
+                        .HasColumnType("character varying(500)")
+                        .HasColumnName("note");
+
+                    b.Property<int?>("Point")
+                        .HasColumnType("integer")
+                        .HasColumnName("point");
+
                     b.Property<long>("StudentId")
                         .HasColumnType("bigint")
                         .HasColumnName("student_id");

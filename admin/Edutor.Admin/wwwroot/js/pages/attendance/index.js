@@ -169,16 +169,22 @@ async function loadDay() {
         </div>
         <div class="mt-4 space-y-2">
             ${data.students.map(s => `
-                <label class="att-row flex items-center gap-3 rounded-xl border px-3 py-2 transition"
+                <div class="att-row flex flex-wrap items-center gap-3 rounded-xl border px-3 py-2 transition"
                        data-student="${s.studentId}">
                     <input type="checkbox" class="att-check size-4" data-student="${s.studentId}"
                            data-recorded="${s.isRecorded ? '1' : '0'}" ${s.isPresent ? 'checked' : ''} />
-                    <span class="min-w-0 flex-1">
+                    <span class="min-w-0 flex-1 basis-40">
                         <span class="block truncate text-sm font-medium text-slate-800">${AdminUI.escapeHtml(s.fullName)}</span>
                         <span class="block truncate text-xs text-slate-400">${AdminUI.escapeHtml(s.email)}</span>
                     </span>
+                    <input type="number" min="0" max="100" step="1" class="att-point w-20 shrink-0 rounded-xl border border-slate-200 px-2 py-1.5 text-sm"
+                           placeholder="${AdminUI.escapeHtml(L["Attendance_Point"])}" aria-label="${AdminUI.escapeHtml(L["Attendance_Point"])}"
+                           value="${s.point ?? ''}" />
+                    <input type="text" maxlength="500" class="att-note min-w-0 flex-1 basis-40 rounded-xl border border-slate-200 px-2 py-1.5 text-sm"
+                           placeholder="${AdminUI.escapeHtml(L["Attendance_Note"])}" aria-label="${AdminUI.escapeHtml(L["Attendance_Note"])}"
+                           value="${AdminUI.escapeHtml(s.note ?? '')}" />
                     <span class="att-state shrink-0 text-xs font-semibold"></span>
-                </label>`).join('')}
+                </div>`).join('')}
         </div>`;
 
     // İşarə "qayıb" deməkdir, ona görə vəziyyət canlı göstərilir ki,
@@ -216,10 +222,16 @@ function markAll(present) {
 async function saveDay() {
     if (!groupId || !selected) return;
 
-    const students = Array.from(document.querySelectorAll('.att-check')).map(c => ({
-        studentId: Number(c.dataset.student),
-        isPresent: c.checked
-    }));
+    const students = Array.from(document.querySelectorAll('.att-row')).map(row => {
+        const point = row.querySelector('.att-point').value.trim();
+        const note = row.querySelector('.att-note').value.trim();
+        return {
+            studentId: Number(row.dataset.student),
+            isPresent: row.querySelector('.att-check').checked,
+            point: point === '' ? null : Number(point),
+            note: note === '' ? null : note
+        };
+    });
 
     const btn = document.getElementById('saveBtn');
     if (btn) btn.disabled = true;

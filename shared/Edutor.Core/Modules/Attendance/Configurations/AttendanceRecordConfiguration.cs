@@ -17,6 +17,8 @@ public sealed class AttendanceRecordConfiguration : IEntityTypeConfiguration<Att
         builder.Property(x => x.StudentId).HasColumnName("student_id");
         builder.Property(x => x.Date).HasColumnName("date");
         builder.Property(x => x.IsPresent).HasColumnName("is_present");
+        builder.Property(x => x.Point).HasColumnName("point");
+        builder.Property(x => x.Note).HasColumnName("note").HasMaxLength(500);
 
         builder.HasOne(x => x.Group).WithMany().HasForeignKey(x => x.GroupId).OnDelete(DeleteBehavior.Cascade);
         builder.HasOne(x => x.Student).WithMany().HasForeignKey(x => x.StudentId).OnDelete(DeleteBehavior.Cascade);

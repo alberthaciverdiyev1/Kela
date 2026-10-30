@@ -2,7 +2,14 @@ namespace Edutor.Core.Modules.Attendance.Responses;
 
 /// <summary>IsRecorded: bu gün üçün qeyd varmı. IsPresent yalnız qeyd varsa mənalıdır —
 /// beləcə "qayıb" ilə "qeyd olunmayıb" bir-birindən ayrılır.</summary>
-public record AttendanceStudentItem(long StudentId, string FullName, string Email, bool IsPresent, bool IsRecorded);
+public record AttendanceStudentItem(
+    long StudentId,
+    string FullName,
+    string Email,
+    bool IsPresent,
+    bool IsRecorded,
+    int? Point,
+    string? Note);
 
 public record AttendanceDayResponse(
     long GroupId,

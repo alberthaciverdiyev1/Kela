@@ -17,13 +17,20 @@ public sealed class AttendanceService(AppDbContext db) : IAttendanceService
         var members = await MembersAsync(groupId, ct);
         var saved = await db.AttendanceRecords.AsNoTracking()
             .Where(x => x.GroupId == groupId && x.Date == date)
-            .ToDictionaryAsync(x => x.StudentId, x => x.IsPresent, ct);
+            .ToDictionaryAsync(x => x.StudentId, ct);
 
         var students = members
             .Select(m =>
             {
-                var recorded = saved.TryGetValue(m.StudentId, out var present);
-                return new AttendanceStudentItem(m.StudentId, m.FullName, m.Email, recorded && present, recorded);
+                var recorded = saved.TryGetValue(m.StudentId, out var row);
+                return new AttendanceStudentItem(
+                    m.StudentId,
+                    m.FullName,
+                    m.Email,
+                    recorded && row!.IsPresent,
+                    recorded,
+                    recorded ? row!.Point : null,
+                    recorded ? row!.Note : null);
             })
             .ToList();
 
@@ -48,6 +55,8 @@ public sealed class AttendanceService(AppDbContext db) : IAttendanceService
             if (existing.TryGetValue(item.StudentId, out var row))
             {
                 row.IsPresent = item.IsPresent;
+                row.Point = item.Point;
+                row.Note = string.IsNullOrWhiteSpace(item.Note) ? null : item.Note.Trim();
             }
             else
             {
@@ -56,7 +65,9 @@ public sealed class AttendanceService(AppDbContext db) : IAttendanceService
                     GroupId = request.GroupId,
                     StudentId = item.StudentId,
                     Date = request.Date,
-                    IsPresent = item.IsPresent
+                    IsPresent = item.IsPresent,
+                    Point = item.Point,
+                    Note = string.IsNullOrWhiteSpace(item.Note) ? null : item.Note.Trim()
                 });
             }
         }
