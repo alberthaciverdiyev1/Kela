@@ -14,7 +14,7 @@
 
     <partial name="Ui/_Select" model="@(new SelectModel { Name = "subject_id", Id = "subject_id", Label = L["Common_Subject"], Required = true, Options = subjectOptions })" />
 
-    <div class="grid grid-cols-2 gap-4">
+    <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
         <partial name="Ui/_Select" model="@(new SelectModel { Name = "title_type", Id = "title_type", Label = L["Question_TitleType"], Options = textImage })" />
         <partial name="Ui/_Select" model="@(new SelectModel { Name = "variant_type", Id = "variant_type", Label = L["Question_VariantType"], Options = textImage })" />
     </div>
@@ -39,7 +39,7 @@
         }
     </div>
 
-    <div class="grid grid-cols-2 gap-4">
+    <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
         <partial name="Ui/_Select" model="@(new SelectModel { Name = "correct_answer", Id = "correct_answer", Label = L["Question_CorrectAnswer"], Options = answers })" />
     </div>
 

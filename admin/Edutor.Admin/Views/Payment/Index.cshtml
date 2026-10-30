@@ -13,7 +13,7 @@
     <form id="antiforgery">@Html.AntiForgeryToken()</form>
     <partial name="Ui/_PageHeader" model="@(new PageHeaderModel())" />
 
-    <div class="mb-4 grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
+    <div class="mb-4 grid grid-cols-2 gap-3 xl:grid-cols-4">
         <partial name="Ui/_StatCard" model="@(new StatCardModel { Id = "count-upcoming", Label = "Yaxınlaşan", Value = "0", Compact = true, ValueClass = "text-warning" })" />
         <partial name="Ui/_StatCard" model="@(new StatCardModel { Id = "count-overdue", Label = "Gecikən", Value = "0", Compact = true, ValueClass = "text-danger" })" />
         <partial name="Ui/_StatCard" model="@(new StatCardModel { Id = "count-unpaid", Label = "Plan yoxdur", Value = "0", Compact = true, ValueClass = "text-slate-700" })" />

@@ -13,6 +13,43 @@ window.AdminUI = window.AdminUI || {};
         return ((page || 1) - 1) * (perPage || 20) + index + 1;
     }
 
+    // Mobil görünüşdə cədvəl kartlara çevrilir; hər hüceyrənin başlığı
+    // ::before ilə göstərilir. Etiket mənbəyi thead-dır — səhifələr heç nə etmir.
+    function decorateTable(table) {
+        const headRow = table?.tHead?.rows?.[0];
+        if (!headRow) return;
+        const labels = [...headRow.cells].map(th => (th.textContent || '').trim());
+        table.querySelectorAll('tbody tr').forEach(tr => {
+            const cells = [...tr.cells];
+            if (cells.length === 1 && cells[0].hasAttribute('colspan')) return;
+            cells.forEach((td, i) => {
+                const label = labels[i] || '';
+                if (label) td.dataset.label = label;
+                else td.removeAttribute('data-label');
+            });
+        });
+    }
+
+    function decorateTables(root) {
+        (root || document).querySelectorAll('table.admin-table').forEach(decorateTable);
+    }
+
+    // Siyahılar JS ilə yenidən çəkilir — yeni sətirlər də etiket alsın.
+    let decorateQueued = false;
+    function queueDecorate() {
+        if (decorateQueued) return;
+        decorateQueued = true;
+        requestAnimationFrame(() => {
+            decorateQueued = false;
+            decorateTables();
+        });
+    }
+
+    if (typeof MutationObserver === 'function') {
+        new MutationObserver(queueDecorate).observe(document.documentElement, { childList: true, subtree: true });
+    }
+    document.addEventListener('DOMContentLoaded', queueDecorate);
+
     function table(tbodyId, rows, colspan, opts) {
         const tbody = document.getElementById(tbodyId);
         if (!tbody) return;
@@ -64,6 +101,7 @@ window.AdminUI = window.AdminUI || {};
         });
 
         if (selectable) wireSelection();
+        decorateTable(tbody.closest('table'));
         updateBulkBar();
     }
 
@@ -357,5 +395,5 @@ window.AdminUI = window.AdminUI || {};
         return { loadList, pager, state };
     }
 
-    Object.assign(UI, { rowNo, table, setInfo, pagination, createPager, listPage, openListSort, wireSelection, syncCheckAll, selectedIds, updateBulkBar, bulkDo, sortToggle, openSort, closeSort, renderSort, wireSortDnD, persistSort, addSort });
+    Object.assign(UI, { rowNo, table, setInfo, pagination, createPager, listPage, openListSort, wireSelection, syncCheckAll, selectedIds, updateBulkBar, bulkDo, sortToggle, openSort, closeSort, renderSort, wireSortDnD, persistSort, addSort, decorateTable, decorateTables });
 })(window.AdminUI);

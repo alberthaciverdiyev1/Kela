@@ -12,7 +12,7 @@
 }
 <form id="entityForm" class="space-y-4 p-6">
     <input type="hidden" id="entityId" />
-    <div class="grid grid-cols-2 gap-4">
+    <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
         <partial name="Ui/_Input" model="@(new InputModel { Name = "name", Id = "name", Label = L["Common_Name"] })" />
         <partial name="Ui/_Input" model="@(new InputModel { Name = "surname", Id = "surname", Label = L["User_Surname"] })" />
     </div>

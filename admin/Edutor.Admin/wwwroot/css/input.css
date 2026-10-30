@@ -1078,3 +1078,90 @@ video:fullscreen {
     text-overflow: ellipsis;
     white-space: nowrap;
 }
+
+/* ---------- Mobil (≤767px) ----------
+   Cədvəllər kart görünüşünə keçir: thead gizlədilir, hər hüceyrə
+   başlığını data-label-dən alır (JS: AdminUI.decorateTables). */
+@media (max-width: 767px) {
+  .admin-table { display: block; }
+  .admin-table thead { display: none; }
+  .admin-table tbody { display: block; }
+
+  .admin-table tbody tr {
+    display: block;
+    margin: 10px 12px;
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    background: var(--surface);
+    overflow: hidden;
+  }
+
+  .admin-table tbody tr:first-child { margin-top: 4px; }
+  .admin-table tbody tr:hover { background: var(--surface); }
+
+  .admin-table tbody td {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 14px;
+    min-width: 0;
+    padding: 9px 12px;
+    border-top: 1px solid #f1f5f9;
+    text-align: left;
+    overflow-wrap: anywhere;
+  }
+
+  .admin-table tbody td:first-child { border-top: 0; }
+
+  .admin-table tbody td::before {
+    content: attr(data-label);
+    flex: 0 0 auto;
+    max-width: 45%;
+    padding-top: 2px;
+    color: #64748b;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+
+  .admin-table tbody td:not([data-label])::before,
+  .admin-table tbody td[data-label=""]::before { content: none; }
+
+  .admin-table tbody td[colspan] {
+    display: block;
+    padding: 0;
+    border-top: 0;
+  }
+
+  .admin-table tbody td[colspan]::before { content: none; }
+
+  /* Son sütun (əməliyyatlar) eni tutur və düymələr sola yığılır. */
+  .admin-table tbody td:last-child { display: block; }
+  .admin-table tbody td:last-child > .admin-row-actions,
+  .admin-table tbody td:last-child .admin-row-actions {
+    justify-content: flex-start;
+    flex-wrap: wrap;
+  }
+
+  .admin-table tbody td:last-child::before { display: block; margin-bottom: 6px; }
+
+  /* Filtr paneli: bütün elementlər tam en. */
+  .admin-toolbar {
+    align-items: stretch;
+    padding: 14px;
+    gap: 10px;
+  }
+
+  .admin-toolbar > * {
+    flex: 1 1 100%;
+    width: 100%;
+    min-width: 0;
+  }
+
+  .admin-toolbar > .grow { flex-basis: 100%; }
+
+  .admin-toolbar > button { width: 100%; }
+
+  .admin-table-footer { padding: 12px; }
+}
