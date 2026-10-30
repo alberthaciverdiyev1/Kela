@@ -1,0 +1,29 @@
+@{
+    ViewData["Title"] = L["Nav_Config"];
+}
+<section class="admin-page">
+    <partial name="Ui/_PageHeader" model="@(new PageHeaderModel())" />
+
+    <form id="configForm" class="admin-card w-full space-y-6 p-6 sm:p-7">
+        <div class="space-y-1">
+            <h3 class="text-sm font-bold uppercase tracking-wider text-slate-400">@L["Config_PaymentTitle"]</h3>
+            <p class="text-sm text-slate-500">@L["Config_PaymentHint"]</p>
+        </div>
+
+        <div id="blockModes" class="grid gap-3 sm:grid-cols-3"></div>
+
+        <div id="groupsBox" class="hidden space-y-3 border-t border-border pt-6">
+            <div class="flex flex-wrap items-center justify-between gap-3">
+                <h3 class="text-sm font-bold uppercase tracking-wider text-slate-400">@L["Config_BlockedGroups"]</h3>
+                <button type="button" id="checkAll" class="text-sm font-semibold text-primary hover:underline">@L["Js_All"]</button>
+            </div>
+            <div id="groupList" class="grid max-h-80 gap-2 overflow-y-auto sm:grid-cols-2 lg:grid-cols-3">
+                <p class="text-sm text-slate-400">@L["Js_Empty"]</p>
+            </div>
+        </div>
+
+        <div class="flex justify-end border-t border-border pt-6">
+            <partial name="Ui/_Button" model="@(new ButtonModel { Text = L["Common_Save"], Type = "submit" })" />
+        </div>
+    </form>
+</section>

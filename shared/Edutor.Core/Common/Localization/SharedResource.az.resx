@@ -2295,4 +2295,112 @@
   <data name="Calendar_Summary" xml:space="preserve">
     <value>{0} hadisə</value>
   </data>
+  <data name="Nav_Config" xml:space="preserve">
+    <value>Konfiqurasiya</value>
+  </data>
+  <data name="Nav_StudentPanel" xml:space="preserve">
+    <value>Şagird paneli</value>
+  </data>
+  <data name="Config_PaymentTitle" xml:space="preserve">
+    <value>Ödəniş siyasəti</value>
+  </data>
+  <data name="Config_PaymentHint" xml:space="preserve">
+    <value>Növbəti ödəniş tarixi keçmiş şagirdlərə tətbiq olunur.</value>
+  </data>
+  <data name="Config_ModeNone" xml:space="preserve">
+    <value>Məhdudiyyət yoxdur</value>
+  </data>
+  <data name="Config_ModeNoneHint" xml:space="preserve">
+    <value>Ödənişi gecikən şagird sistemə tam girə bilir.</value>
+  </data>
+  <data name="Config_ModeAll" xml:space="preserve">
+    <value>Bütün sistemə girişi bağla</value>
+  </data>
+  <data name="Config_ModeAllHint" xml:space="preserve">
+    <value>Ödənişi gecikən şagird yalnız ödəniş və bildirişləri görür.</value>
+  </data>
+  <data name="Config_ModeGroups" xml:space="preserve">
+    <value>Seçilmiş qrupları bağla</value>
+  </data>
+  <data name="Config_ModeGroupsHint" xml:space="preserve">
+    <value>Ödənişi gecikən şagird yalnız seçilmiş qruplara girə bilmir.</value>
+  </data>
+  <data name="Config_BlockedGroups" xml:space="preserve">
+    <value>Bağlanan qruplar</value>
+  </data>
+  <data name="Config_BlockedGroupsRequired" xml:space="preserve">
+    <value>Ən azı bir qrup seçin.</value>
+  </data>
+  <data name="Config_BlockModeInvalid" xml:space="preserve">
+    <value>Ödəniş siyasəti yanlışdır.</value>
+  </data>
+  <data name="Payment_AccessBlocked" xml:space="preserve">
+    <value>Ödəniş gecikdirildiyi üçün giriş məhdudlaşdırılıb.</value>
+  </data>
+  <data name="Panel_SelectStudent" xml:space="preserve">
+    <value>Şagird</value>
+  </data>
+  <data name="Panel_SearchStudent" xml:space="preserve">
+    <value>Ad və ya e-poçt ilə şagird axtar</value>
+  </data>
+  <data name="Panel_NoStudent" xml:space="preserve">
+    <value>Panelini görmək üçün şagird seçin.</value>
+  </data>
+  <data name="Panel_OpenStudent" xml:space="preserve">
+    <value>Şagird kartı</value>
+  </data>
+  <data name="Panel_Groups" xml:space="preserve">
+    <value>Qruplar</value>
+  </data>
+  <data name="Panel_Subjects" xml:space="preserve">
+    <value>Fənlər</value>
+  </data>
+  <data name="Panel_Homeworks" xml:space="preserve">
+    <value>Ev tapşırıqları</value>
+  </data>
+  <data name="Panel_Attendance" xml:space="preserve">
+    <value>Davamiyyət</value>
+  </data>
+  <data name="Panel_Payments" xml:space="preserve">
+    <value>Ödənişlər</value>
+  </data>
+  <data name="Panel_Progress" xml:space="preserve">
+    <value>İrəliləyiş</value>
+  </data>
+  <data name="Panel_StudentCount" xml:space="preserve">
+    <value>şagird</value>
+  </data>
+  <data name="Panel_Lessons" xml:space="preserve">
+    <value>Dərslər</value>
+  </data>
+  <data name="Panel_Contents" xml:space="preserve">
+    <value>Materiallar</value>
+  </data>
+  <data name="Panel_NextDue" xml:space="preserve">
+    <value>Növbəti ödəniş</value>
+  </data>
+  <data name="Panel_LastPaid" xml:space="preserve">
+    <value>Son ödəniş</value>
+  </data>
+  <data name="Panel_Amount" xml:space="preserve">
+    <value>Məbləğ</value>
+  </data>
+  <data name="Panel_History" xml:space="preserve">
+    <value>Ödəniş tarixçəsi</value>
+  </data>
+  <data name="Panel_Completion" xml:space="preserve">
+    <value>Tamamlanma</value>
+  </data>
+  <data name="Payment_StatusCurrent" xml:space="preserve">
+    <value>Aktiv plan</value>
+  </data>
+  <data name="Payment_StatusUpcoming" xml:space="preserve">
+    <value>Yaxınlaşır</value>
+  </data>
+  <data name="Payment_StatusOverdue" xml:space="preserve">
+    <value>Gecikib</value>
+  </data>
+  <data name="Payment_StatusUnpaid" xml:space="preserve">
+    <value>Plan yoxdur</value>
+  </data>
 </root>

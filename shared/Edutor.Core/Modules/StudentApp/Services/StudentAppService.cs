@@ -22,9 +22,12 @@ public sealed class StudentAppService(
 {
     public async Task<IReadOnlyList<StudentGroupResponse>> ListGroupsAsync(long studentId, CancellationToken ct = default)
     {
+        var blocked = await access.BlockedGroupIdsAsync(studentId, ct);
+
         var groups = await db.Groups
             .AsNoTracking()
-            .Where(g => db.StudentGroups.Any(sg => sg.GroupId == g.Id && sg.StudentId == studentId))
+            .Where(g => db.StudentGroups.Any(sg => sg.GroupId == g.Id && sg.StudentId == studentId)
+                        && !blocked.Contains(g.Id))
             .Include(g => g.Memberships)
             .OrderByDescending(g => g.Id)
             .ToListAsync(ct);
@@ -245,8 +248,10 @@ public sealed class StudentAppService(
 
         // Qrup fənnlə birlikdə dərs seçibsə yalnız onlar görünür. Seçim etməyən
         // qruplar (köhnə məlumat) üçün bütün dərslər açıq qalır.
+        var blocked = await access.BlockedGroupIdsAsync(studentId, ct);
         var groupIds = await db.StudentGroups.AsNoTracking()
             .Where(sg => sg.StudentId == studentId
+                && !blocked.Contains(sg.GroupId)
                 && db.GroupSubjects.Any(gs => gs.GroupId == sg.GroupId && gs.SubjectId == subjectId))
             .Select(sg => sg.GroupId)
             .ToListAsync(ct);
@@ -339,8 +344,10 @@ public sealed class StudentAppService(
 
     public async Task<IReadOnlyList<SubjectResponse>> ListAllSubjectsAsync(long studentId, CancellationToken ct = default)
     {
+        var blocked = await access.BlockedGroupIdsAsync(studentId, ct);
+
         var subjectIds = await db.StudentGroups.AsNoTracking()
-            .Where(sg => sg.StudentId == studentId)
+            .Where(sg => sg.StudentId == studentId && !blocked.Contains(sg.GroupId))
             .Join(db.GroupSubjects.AsNoTracking(), sg => sg.GroupId, gs => gs.GroupId, (_, gs) => gs.SubjectId)
             .Distinct()
             .ToListAsync(ct);
@@ -355,8 +362,11 @@ public sealed class StudentAppService(
     public async Task<IReadOnlyList<QuizResponse>> ListQuizzesAsync(
         long studentId, long? subjectId = null, long? lessonId = null, bool general = false, CancellationToken ct = default)
     {
+        var blocked = await access.BlockedGroupIdsAsync(studentId, ct);
+
         var quizzes = db.GroupQuizzes.AsNoTracking()
-            .Where(gq => db.StudentGroups.Any(sg => sg.GroupId == gq.GroupId && sg.StudentId == studentId))
+            .Where(gq => db.StudentGroups.Any(sg => sg.GroupId == gq.GroupId && sg.StudentId == studentId)
+                         && !blocked.Contains(gq.GroupId))
             .Join(db.Quizzes.AsNoTracking(), gq => gq.QuizId, q => q.Id, (_, q) => q);
 
         if (lessonId is long lid)
@@ -384,10 +394,13 @@ public sealed class StudentAppService(
 
     public async Task<IReadOnlyList<QuizResponse>> ListLessonQuizzesAsync(long studentId, long lessonId, CancellationToken ct = default)
     {
+        var blocked = await access.BlockedGroupIdsAsync(studentId, ct);
+
         return await (from gq in db.GroupQuizzes.AsNoTracking()
                       join q in db.Quizzes.AsNoTracking() on gq.QuizId equals q.Id
                       where q.LessonId == lessonId
                             && db.StudentGroups.Any(sg => sg.GroupId == gq.GroupId && sg.StudentId == studentId)
+                            && !blocked.Contains(gq.GroupId)
                       orderby gq.Id
                       select new QuizResponse(
                           q.Id, q.LessonId, q.Title, q.DurationMinutes, q.Type, q.IsActive, q.IsRepeat, q.SortOrder,

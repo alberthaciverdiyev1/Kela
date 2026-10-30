@@ -2295,4 +2295,112 @@
   <data name="Calendar_Summary" xml:space="preserve">
     <value>{0} events</value>
   </data>
+  <data name="Nav_Config" xml:space="preserve">
+    <value>Configuration</value>
+  </data>
+  <data name="Nav_StudentPanel" xml:space="preserve">
+    <value>Student panel</value>
+  </data>
+  <data name="Config_PaymentTitle" xml:space="preserve">
+    <value>Payment policy</value>
+  </data>
+  <data name="Config_PaymentHint" xml:space="preserve">
+    <value>Applies to students whose next payment date has passed.</value>
+  </data>
+  <data name="Config_ModeNone" xml:space="preserve">
+    <value>No restriction</value>
+  </data>
+  <data name="Config_ModeNoneHint" xml:space="preserve">
+    <value>Overdue students keep full access.</value>
+  </data>
+  <data name="Config_ModeAll" xml:space="preserve">
+    <value>Block all access</value>
+  </data>
+  <data name="Config_ModeAllHint" xml:space="preserve">
+    <value>Overdue students see only payments and notifications.</value>
+  </data>
+  <data name="Config_ModeGroups" xml:space="preserve">
+    <value>Block selected groups</value>
+  </data>
+  <data name="Config_ModeGroupsHint" xml:space="preserve">
+    <value>Overdue students lose access to the chosen groups only.</value>
+  </data>
+  <data name="Config_BlockedGroups" xml:space="preserve">
+    <value>Blocked groups</value>
+  </data>
+  <data name="Config_BlockedGroupsRequired" xml:space="preserve">
+    <value>Select at least one group.</value>
+  </data>
+  <data name="Config_BlockModeInvalid" xml:space="preserve">
+    <value>Invalid payment policy.</value>
+  </data>
+  <data name="Payment_AccessBlocked" xml:space="preserve">
+    <value>Access is blocked due to an overdue payment.</value>
+  </data>
+  <data name="Panel_SelectStudent" xml:space="preserve">
+    <value>Student</value>
+  </data>
+  <data name="Panel_SearchStudent" xml:space="preserve">
+    <value>Search student by name or email</value>
+  </data>
+  <data name="Panel_NoStudent" xml:space="preserve">
+    <value>Pick a student to view their panel.</value>
+  </data>
+  <data name="Panel_OpenStudent" xml:space="preserve">
+    <value>Student card</value>
+  </data>
+  <data name="Panel_Groups" xml:space="preserve">
+    <value>Groups</value>
+  </data>
+  <data name="Panel_Subjects" xml:space="preserve">
+    <value>Subjects</value>
+  </data>
+  <data name="Panel_Homeworks" xml:space="preserve">
+    <value>Homeworks</value>
+  </data>
+  <data name="Panel_Attendance" xml:space="preserve">
+    <value>Attendance</value>
+  </data>
+  <data name="Panel_Payments" xml:space="preserve">
+    <value>Payments</value>
+  </data>
+  <data name="Panel_Progress" xml:space="preserve">
+    <value>Progress</value>
+  </data>
+  <data name="Panel_StudentCount" xml:space="preserve">
+    <value>students</value>
+  </data>
+  <data name="Panel_Lessons" xml:space="preserve">
+    <value>Lessons</value>
+  </data>
+  <data name="Panel_Contents" xml:space="preserve">
+    <value>Materials</value>
+  </data>
+  <data name="Panel_NextDue" xml:space="preserve">
+    <value>Next due</value>
+  </data>
+  <data name="Panel_LastPaid" xml:space="preserve">
+    <value>Last paid</value>
+  </data>
+  <data name="Panel_Amount" xml:space="preserve">
+    <value>Amount</value>
+  </data>
+  <data name="Panel_History" xml:space="preserve">
+    <value>Payment history</value>
+  </data>
+  <data name="Panel_Completion" xml:space="preserve">
+    <value>Completion</value>
+  </data>
+  <data name="Payment_StatusCurrent" xml:space="preserve">
+    <value>Current plan</value>
+  </data>
+  <data name="Payment_StatusUpcoming" xml:space="preserve">
+    <value>Upcoming</value>
+  </data>
+  <data name="Payment_StatusOverdue" xml:space="preserve">
+    <value>Overdue</value>
+  </data>
+  <data name="Payment_StatusUnpaid" xml:space="preserve">
+    <value>No plan</value>
+  </data>
 </root>

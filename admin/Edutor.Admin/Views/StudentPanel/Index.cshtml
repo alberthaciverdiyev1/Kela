@@ -1,0 +1,26 @@
+@{
+    ViewData["Title"] = L["Nav_StudentPanel"];
+}
+<section class="admin-page">
+    <partial name="Ui/_PageHeader" model="@(new PageHeaderModel())" />
+
+    <div class="admin-card p-5">
+        <label for="studentSearch" class="mb-1 block text-sm font-semibold text-slate-600">@L["Panel_SelectStudent"]</label>
+        <div class="relative">
+            <input type="search" id="studentSearch" class="admin-field" autocomplete="off"
+                   placeholder="@L["Panel_SearchStudent"]" />
+            <div id="studentResults"
+                 class="absolute inset-x-0 top-full z-20 mt-1 hidden max-h-72 overflow-y-auto rounded-xl border border-border bg-white shadow-lg"></div>
+        </div>
+    </div>
+
+    <div id="panel" class="hidden space-y-4">
+        <div id="profile" class="admin-card p-5"></div>
+        <div id="tabs" class="flex gap-2 overflow-x-auto pb-1 [scrollbar-width:none]"></div>
+        <div id="tabBody" class="admin-card p-5"></div>
+    </div>
+
+    <div id="panelEmpty" class="admin-card admin-empty">
+        <p>@L["Panel_NoStudent"]</p>
+    </div>
+</section>

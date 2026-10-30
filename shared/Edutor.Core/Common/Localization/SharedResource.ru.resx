@@ -2295,4 +2295,112 @@
   <data name="Calendar_Summary" xml:space="preserve">
     <value>{0} etkinlik</value>
   </data>
+  <data name="Nav_Config" xml:space="preserve">
+    <value>Конфигурация</value>
+  </data>
+  <data name="Nav_StudentPanel" xml:space="preserve">
+    <value>Панель ученика</value>
+  </data>
+  <data name="Config_PaymentTitle" xml:space="preserve">
+    <value>Политика оплаты</value>
+  </data>
+  <data name="Config_PaymentHint" xml:space="preserve">
+    <value>Применяется к ученикам с просроченной датой оплаты.</value>
+  </data>
+  <data name="Config_ModeNone" xml:space="preserve">
+    <value>Без ограничений</value>
+  </data>
+  <data name="Config_ModeNoneHint" xml:space="preserve">
+    <value>Ученик с просрочкой сохраняет полный доступ.</value>
+  </data>
+  <data name="Config_ModeAll" xml:space="preserve">
+    <value>Заблокировать весь доступ</value>
+  </data>
+  <data name="Config_ModeAllHint" xml:space="preserve">
+    <value>Ученик видит только платежи и уведомления.</value>
+  </data>
+  <data name="Config_ModeGroups" xml:space="preserve">
+    <value>Заблокировать выбранные группы</value>
+  </data>
+  <data name="Config_ModeGroupsHint" xml:space="preserve">
+    <value>Ученик теряет доступ только к выбранным группам.</value>
+  </data>
+  <data name="Config_BlockedGroups" xml:space="preserve">
+    <value>Заблокированные группы</value>
+  </data>
+  <data name="Config_BlockedGroupsRequired" xml:space="preserve">
+    <value>Выберите хотя бы одну группу.</value>
+  </data>
+  <data name="Config_BlockModeInvalid" xml:space="preserve">
+    <value>Недопустимая политика оплаты.</value>
+  </data>
+  <data name="Payment_AccessBlocked" xml:space="preserve">
+    <value>Доступ заблокирован из-за просроченной оплаты.</value>
+  </data>
+  <data name="Panel_SelectStudent" xml:space="preserve">
+    <value>Ученик</value>
+  </data>
+  <data name="Panel_SearchStudent" xml:space="preserve">
+    <value>Поиск ученика по имени или email</value>
+  </data>
+  <data name="Panel_NoStudent" xml:space="preserve">
+    <value>Выберите ученика, чтобы увидеть его панель.</value>
+  </data>
+  <data name="Panel_OpenStudent" xml:space="preserve">
+    <value>Карточка ученика</value>
+  </data>
+  <data name="Panel_Groups" xml:space="preserve">
+    <value>Группы</value>
+  </data>
+  <data name="Panel_Subjects" xml:space="preserve">
+    <value>Предметы</value>
+  </data>
+  <data name="Panel_Homeworks" xml:space="preserve">
+    <value>Домашние задания</value>
+  </data>
+  <data name="Panel_Attendance" xml:space="preserve">
+    <value>Посещаемость</value>
+  </data>
+  <data name="Panel_Payments" xml:space="preserve">
+    <value>Платежи</value>
+  </data>
+  <data name="Panel_Progress" xml:space="preserve">
+    <value>Прогресс</value>
+  </data>
+  <data name="Panel_StudentCount" xml:space="preserve">
+    <value>учеников</value>
+  </data>
+  <data name="Panel_Lessons" xml:space="preserve">
+    <value>Уроки</value>
+  </data>
+  <data name="Panel_Contents" xml:space="preserve">
+    <value>Материалы</value>
+  </data>
+  <data name="Panel_NextDue" xml:space="preserve">
+    <value>Следующая оплата</value>
+  </data>
+  <data name="Panel_LastPaid" xml:space="preserve">
+    <value>Последняя оплата</value>
+  </data>
+  <data name="Panel_Amount" xml:space="preserve">
+    <value>Сумма</value>
+  </data>
+  <data name="Panel_History" xml:space="preserve">
+    <value>История платежей</value>
+  </data>
+  <data name="Panel_Completion" xml:space="preserve">
+    <value>Завершено</value>
+  </data>
+  <data name="Payment_StatusCurrent" xml:space="preserve">
+    <value>Действующий план</value>
+  </data>
+  <data name="Payment_StatusUpcoming" xml:space="preserve">
+    <value>Скоро оплата</value>
+  </data>
+  <data name="Payment_StatusOverdue" xml:space="preserve">
+    <value>Просрочено</value>
+  </data>
+  <data name="Payment_StatusUnpaid" xml:space="preserve">
+    <value>Нет плана</value>
+  </data>
 </root>

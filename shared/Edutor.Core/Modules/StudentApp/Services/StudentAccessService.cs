@@ -1,19 +1,39 @@
 using Edutor.Core.Data;
+using Edutor.Core.Modules.Payments.Abstractions;
 using Microsoft.EntityFrameworkCore;
 
 namespace Edutor.Core.Modules.StudentApp.Services;
 
-public sealed class StudentAccessService(AppDbContext db) : IStudentAccessService
+public sealed class StudentAccessService(AppDbContext db, IPaymentAccessService paymentAccess) : IStudentAccessService
 {
-    public Task<bool> IsGroupMemberAsync(long studentId, long groupId, CancellationToken ct = default)
-        => db.StudentGroups.AnyAsync(sg => sg.GroupId == groupId && sg.StudentId == studentId, ct);
+    public async Task<IReadOnlyList<long>> BlockedGroupIdsAsync(long studentId, CancellationToken ct = default)
+    {
+        var state = await paymentAccess.GetAsync(studentId, ct);
+        if (state.BlockAll)
+        {
+            return await db.StudentGroups.AsNoTracking()
+                .Where(sg => sg.StudentId == studentId)
+                .Select(sg => sg.GroupId)
+                .ToListAsync(ct);
+        }
 
-    public Task<List<long>> AccessibleSubjectIdsAsync(long studentId, CancellationToken ct = default)
-        => db.GroupSubjects
-            .Where(gs => db.StudentGroups.Any(sg => sg.GroupId == gs.GroupId && sg.StudentId == studentId))
+        return state.BlockedGroupIds;
+    }
+
+    public async Task<bool> IsGroupMemberAsync(long studentId, long groupId, CancellationToken ct = default)
+        => await db.StudentGroups.AnyAsync(sg => sg.GroupId == groupId && sg.StudentId == studentId, ct)
+           && !(await BlockedGroupIdsAsync(studentId, ct)).Contains(groupId);
+
+    public async Task<List<long>> AccessibleSubjectIdsAsync(long studentId, CancellationToken ct = default)
+    {
+        var blocked = await BlockedGroupIdsAsync(studentId, ct);
+        return await db.GroupSubjects
+            .Where(gs => db.StudentGroups.Any(sg => sg.GroupId == gs.GroupId && sg.StudentId == studentId)
+                         && !blocked.Contains(gs.GroupId))
             .Select(gs => gs.SubjectId)
             .Distinct()
             .ToListAsync(ct);
+    }
 
     public async Task<bool> HasSubjectAccessAsync(long studentId, long subjectId, CancellationToken ct = default)
         => (await AccessibleSubjectIdsAsync(studentId, ct)).Contains(subjectId);
@@ -27,9 +47,12 @@ public sealed class StudentAccessService(AppDbContext db) : IStudentAccessServic
 
         if (lesson is null) return false;
 
+        var blocked = await BlockedGroupIdsAsync(studentId, ct);
+
         var links = await db.GroupSubjects.AsNoTracking()
             .Where(gs => gs.SubjectId == lesson.SubjectId
-                && db.StudentGroups.Any(sg => sg.GroupId == gs.GroupId && sg.StudentId == studentId))
+                && db.StudentGroups.Any(sg => sg.GroupId == gs.GroupId && sg.StudentId == studentId)
+                && !blocked.Contains(gs.GroupId))
             .Select(gs => new { gs.GroupId, gs.LessonsConfigured })
             .ToListAsync(ct);
 

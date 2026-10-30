@@ -3483,6 +3483,49 @@ namespace Edutor.Core.Data.Migrations
                     b.ToTable("tenants", (string)null);
                 });
 
+            modelBuilder.Entity("Edutor.Core.Modules.TenantConfig.Entities.TenantConfig", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint")
+                        .HasColumnName("id");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
+
+                    b.Property<DateTimeOffset>("CreatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_at");
+
+                    b.Property<DateTimeOffset?>("DeletedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("deleted_at");
+
+                    b.Property<string>("PaymentBlockMode")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("character varying(20)")
+                        .HasColumnName("payment_block_mode");
+
+                    b.Property<string>("PaymentBlockedGroupIds")
+                        .HasMaxLength(2000)
+                        .HasColumnType("character varying(2000)")
+                        .HasColumnName("payment_blocked_group_ids");
+
+                    b.Property<long>("TenantId")
+                        .HasColumnType("bigint")
+                        .HasColumnName("tenant_id");
+
+                    b.Property<DateTimeOffset?>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("updated_at");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("TenantId", "DeletedAt");
+
+                    b.ToTable("tenant_configs", (string)null);
+                });
+
             modelBuilder.Entity("Edutor.Core.Modules.User.Entities.User", b =>
                 {
                     b.Property<long>("Id")

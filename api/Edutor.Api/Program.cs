@@ -187,6 +187,7 @@ app.UseStaticFiles();
 app.UseCoreStorage();
 app.UseAuthentication();
 app.UseAuthorization();
+app.UseMiddleware<PaymentAccessMiddleware>();
 app.MapEdutorHealth();
 app.MapControllers();
 app.MapHub<Edutor.Api.Modules.Feedback.Hubs.FeedbackHub>("/hubs/feedback");
