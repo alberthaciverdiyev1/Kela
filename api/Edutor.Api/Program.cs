@@ -12,6 +12,7 @@ using Edutor.Core;
 using Edutor.Core.Common.Health;
 using Edutor.Core.Common.Http;
 using Edutor.Core.Common.Localization;
+using Edutor.Core.Common.Logging;
 using Edutor.Core.Modules.Auth;
 using Edutor.Core.Modules.Subscription;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -22,6 +23,7 @@ using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.Localization;
 
 var builder = WebApplication.CreateBuilder(args);
+builder.UseEdutorLogging("api");
 
 builder.Services.AddControllers(options =>
 {

@@ -59,6 +59,7 @@ secret-lər env ilə verilir (`__` = bölmə ayırıcısı).
 | `DataProtection__KeysPath` | Admin | məs. `/var/lib/edutor/keys` |
 | `Api__BaseUrl` | Admin | admin JS-in müraciət etdiyi API ünvanı |
 | `App__BaseUrl` | Admin | mobil tətbiqə yönləndirmə linkləri |
+| `Logging__File__Path` | | gündəlik log qovluğu, məs. `/var/www/edutor/shared/logs` (boş olsa fayla yazılmır) |
 
 Nümunə `/etc/edutor/api.env`:
 
@@ -229,6 +230,7 @@ Qovluq strukturu:
 ├── current -> releases/...  # systemd və nginx bunu istifadə edir
 └── shared/
     ├── keys/                # DataProtection açarları
+    ├── logs/                # gündəlik loglar: {admin,api}-YYYYMMDD.log (son 30 gün)
     └── backups/             # pg_dump -Fc yedəkləri (son 10 saxlanılır)
 ```
 

@@ -4,6 +4,7 @@ using Edutor.Core;
 using Edutor.Core.Common.Health;
 using Edutor.Core.Common.Http;
 using Edutor.Core.Common.Localization;
+using Edutor.Core.Common.Logging;
 using Microsoft.AspNetCore.DataProtection;
 using Edutor.Core.Data;
 using Edutor.Core.Modules.Auth;
@@ -14,6 +15,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc.ApplicationModels;
 
 var builder = WebApplication.CreateBuilder(args);
+builder.UseEdutorLogging("admin");
 
 builder.Services.AddControllersWithViews(options =>
 {
