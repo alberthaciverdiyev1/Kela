@@ -125,7 +125,8 @@ public sealed class TenantService(
 
     public async Task<TenantResponse> RegisterAsync(RegisterTenantRequest request, CancellationToken ct = default)
     {
-        var adminName = request.AdminName.Trim();
+        // Formdan gələn sahələr boş buraxıla bilər — null gələndə 500 deyil, validasiya xətası qaytarılır.
+        var adminName = request.AdminName?.Trim() ?? string.Empty;
         if (adminName.Length == 0) throw new ArgumentException(L["Tenant_AdminNameRequired"]);
 
         // Fərdi müəllim öz adı ilə tək nəfərlik tenant kimi qeydiyyatdan keçir.
@@ -134,7 +135,7 @@ public sealed class TenantService(
 
         var courseName = isTeacher
             ? $"{adminName} {surname}".Trim()
-            : request.CourseName.Trim();
+            : request.CourseName?.Trim() ?? string.Empty;
 
         if (courseName.Length == 0) throw new ArgumentException(L["Tenant_CourseNameRequired"]);
         if (courseName.Length > 190) courseName = courseName[..190];
@@ -143,18 +144,19 @@ public sealed class TenantService(
         if (baseSlug.Length == 0) baseSlug = isTeacher ? "muellim" : "kurs";
         var slug = await UniqueSlugAsync(baseSlug, ct);
 
-        var phone = request.PhoneNumber.Trim();
+        var phone = request.PhoneNumber?.Trim() ?? string.Empty;
         if (phone.Length == 0) throw new ArgumentException(L["Validation_PhoneRequired"]);
 
-        var email = request.Email.Trim().ToLowerInvariant();
+        var email = request.Email?.Trim().ToLowerInvariant() ?? string.Empty;
         if (email.Length == 0 || !email.Contains('@') || email.StartsWith('@') || email.EndsWith('@'))
         {
             throw new ArgumentException(L["Validation_EmailInvalid"]);
         }
 
-        if (request.Password.Length < 8
-            || !request.Password.Any(char.IsLetter)
-            || !request.Password.Any(char.IsDigit))
+        var password = request.Password ?? string.Empty;
+        if (password.Length < 8
+            || !password.Any(char.IsLetter)
+            || !password.Any(char.IsDigit))
         {
             throw new ArgumentException(L["Tenant_PasswordRequirements"]);
         }
@@ -190,7 +192,7 @@ public sealed class TenantService(
             Surname = surname,
             Email = email,
             PhoneNumber = phone,
-            PasswordHash = BCrypt.Net.BCrypt.HashPassword(request.Password),
+            PasswordHash = BCrypt.Net.BCrypt.HashPassword(password),
             // Qeydiyyatdan keçən şəxs həmişə öz tenant-ının adminidir — fərdi müəllim də
             // kiçik kursunu idarə edə bilsin. Müəllim görünüşü tenant-ın AccountType-ı ilə gəlir.
             Type = UserTypes.Admin
