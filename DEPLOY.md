@@ -56,6 +56,7 @@ secret-lər env ilə verilir (`__` = bölmə ayırıcısı).
 | `Database__MigrateOnStartup` | | `true` və ya migration əl ilə |
 | `ReverseProxy__Enabled` | ✅ | nginx arxasındadırsa `true` |
 | `ReverseProxy__KnownProxies__0` | | proxy başqa maşında olsa onun IP-si |
+| `WebPush__Subject/PublicKey/PrivateKey` | Push | hər iki host-da (API + Admin) **eyni** açarlar; `npx web-push generate-vapid-keys` |
 | `DataProtection__KeysPath` | Admin | məs. `/var/lib/edutor/keys` |
 | `Api__BaseUrl` | Admin | admin JS-in müraciət etdiyi API ünvanı |
 | `App__BaseUrl` | Admin | mobil tətbiqə yönləndirmə linkləri |
@@ -81,6 +82,9 @@ R2__AccessKeyId=...
 R2__SecretAccessKey=...
 R2__BucketName=edutor
 R2__PublicBaseUrl=https://cdn.example.com
+WebPush__Subject=mailto:info@example.com
+WebPush__PublicKey=<vapid public>
+WebPush__PrivateKey=<vapid private>
 Cors__Origins__0=https://app.example.com
 ReverseProxy__Enabled=true
 Database__MigrateOnStartup=false

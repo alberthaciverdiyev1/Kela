@@ -16,7 +16,11 @@ public sealed partial class AppApi
     public Task<string> SaveNotificationTokenAsync(string token, string? deviceType)
         => _api.PostAsync<string>("/api/student/notifications/token", new { token, deviceType });
 
-    /// <summary>Cihazın push tokenini serverdən silir.</summary>
-    public Task<string> RemoveNotificationTokenAsync(string token)
-        => _api.DeleteAsync<string>($"/api/student/notifications/token?token={Uri.EscapeDataString(token)}");
+    /// <summary>Brauzer abunəliyinin VAPID public key-i (provayder qurulmayıbsa boş).</summary>
+    public Task<string> WebPushKeyAsync()
+        => _api.GetAsync<string>("/api/student/notifications/web-push");
+
+    /// <summary>Web Push abunəlik JSON-u uzundur — silmə body ilə göndərilir.</summary>
+    public Task<string> RemoveNotificationTokenByBodyAsync(string token)
+        => _api.PostAsync<string>("/api/student/notifications/token/remove", new { token });
 }

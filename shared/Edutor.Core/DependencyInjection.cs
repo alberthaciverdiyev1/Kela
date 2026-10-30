@@ -121,7 +121,15 @@ public static class DependencyInjection
         services.AddScoped<ITenantProvider, HttpTenantProvider>();
 
         services.Configure<FcmOptions>(configuration.GetSection(FcmOptions.SectionName));
-        services.AddSingleton<IPushSender, NoOpPushSender>();
+        services.Configure<WebPushOptions>(configuration.GetSection(WebPushOptions.SectionName));
+        // VAPID açarları yoxdursa push sükutla söndürülür (NoOp) — app yenə işləyir.
+        services.AddSingleton<IPushSender>(sp =>
+        {
+            var options = sp.GetRequiredService<Microsoft.Extensions.Options.IOptions<WebPushOptions>>();
+            return options.Value.IsConfigured
+                ? ActivatorUtilities.CreateInstance<WebPushSender>(sp)
+                : ActivatorUtilities.CreateInstance<NoOpPushSender>(sp);
+        });
         services.AddScoped<IUserService, UserService>();
         services.AddScoped<IUserAuthService, UserAuthService>();
         services.AddScoped<IGroupService, GroupService>();

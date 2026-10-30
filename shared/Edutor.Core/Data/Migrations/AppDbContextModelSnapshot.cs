@@ -2062,8 +2062,8 @@ namespace Edutor.Core.Data.Migrations
 
                     b.Property<string>("Token")
                         .IsRequired()
-                        .HasMaxLength(500)
-                        .HasColumnType("character varying(500)")
+                        .HasMaxLength(1000)
+                        .HasColumnType("character varying(1000)")
                         .HasColumnName("token");
 
                     b.Property<DateTimeOffset?>("UpdatedAt")

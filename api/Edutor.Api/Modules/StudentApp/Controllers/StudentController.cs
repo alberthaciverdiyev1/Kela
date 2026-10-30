@@ -108,4 +108,19 @@ public sealed class StudentController(IStudentAppService service, INotificationS
         await notifications.DeactivateTokenAsync(StudentId, token, ct);
         return SuccessMessage(L["Api_TokenRemoved"]);
     }
+
+    // Web push subscription JSON-u uzundur — query string yerinə body ilə silinir.
+    [HttpPost("notifications/token/remove")]
+    public async Task<ActionResult<ApiResponse<string>>> RemoveTokenFromBody(
+        [FromBody] SaveNotificationTokenRequest request, CancellationToken ct)
+    {
+        await notifications.DeactivateTokenAsync(StudentId, request.Token, ct);
+        return SuccessMessage(L["Api_TokenRemoved"]);
+    }
+
+    /// <summary>Brauzer abunəliyi üçün VAPID public key; provayder qurulmayıbsa boş.</summary>
+    [HttpGet("notifications/web-push")]
+    public ActionResult<ApiResponse<string>> WebPushKey(
+        [FromServices] Microsoft.Extensions.Options.IOptions<Edutor.Core.Common.Push.WebPushOptions> options)
+        => Success(options.Value.PublicKey);
 }

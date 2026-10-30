@@ -1,5 +1,6 @@
 using System.Text.Json;
 using Microsoft.AspNetCore.Components;
+using Microsoft.JSInterop;
 using Edutor.App.Shared.Dtos.Notification;
 using Edutor.App.Shared.Services.Api;
 
@@ -11,6 +12,8 @@ public partial class Notifications
 
     private bool _loading = true;
     private bool _busy;
+    private bool _pushBusy;
+    private string _pushState = "hidden"; // hidden | prompt | blocked
     private int _page;
     private int _lastPage = 1;
     private readonly List<NotificationDto> _items = new();
@@ -23,7 +26,74 @@ public partial class Notifications
         await FetchAsync();
     });
 
-    protected override Task OnInitializedAsync() => FetchAsync();
+    protected override async Task OnInitializedAsync()
+    {
+        await CheckPushAsync();
+        await FetchAsync();
+    }
+
+    private async Task CheckPushAsync()
+    {
+        try
+        {
+            if (!await JS.InvokeAsync<bool>("edutorPush.supported")) return;
+
+            var permission = await JS.InvokeAsync<string>("edutorPush.permission");
+            if (permission == "denied")
+            {
+                _pushState = "blocked";
+                return;
+            }
+
+            // İcazə verilib, amma abunəlik yoxdursa (brauzer yaddaşı təmizlənib) yenidən abunə olunmalıdır.
+            if (permission == "granted")
+            {
+                var subscription = await JS.InvokeAsync<string?>("edutorPush.current");
+                _pushState = string.IsNullOrWhiteSpace(subscription) ? "prompt" : "hidden";
+                return;
+            }
+
+            _pushState = "prompt";
+        }
+        catch
+        {
+            /* JS hazır deyil (native host) */
+        }
+    }
+
+    private async Task EnablePushAsync()
+    {
+        if (_pushBusy) return;
+        _pushBusy = true;
+
+        try
+        {
+            var key = await Api.WebPushKeyAsync();
+            if (string.IsNullOrWhiteSpace(key))
+            {
+                _pushState = "hidden";
+                return;
+            }
+
+            var subscription = await JS.InvokeAsync<string?>("edutorPush.subscribe", key);
+            if (string.IsNullOrWhiteSpace(subscription))
+            {
+                _pushState = await JS.InvokeAsync<string>("edutorPush.permission") == "denied" ? "blocked" : "prompt";
+                return;
+            }
+
+            await Api.SaveNotificationTokenAsync(subscription, "web");
+            _pushState = "hidden";
+        }
+        catch
+        {
+            /* sükutla — push qeydiyyatı kritik deyil */
+        }
+        finally
+        {
+            _pushBusy = false;
+        }
+    }
 
     /// <summary>Növbəti səhifəni çəkir (ilk səhifədə siyahını sıfırlayır).</summary>
     /// <summary>Bildirişin Data sahəsindəki təhlükəsiz daxili route (yalnız /homeworks/...).</summary>

@@ -3,12 +3,33 @@
 @inject Localizer L
 @page "/notifications"
 @inject AppApi Api
+@inject IJSRuntime JS
 
 <PageTitle>@L["Nav_Notifications"]</PageTitle>
 
 <PageHeader Title="@L["Nav_Notifications"]" Back="/"/>
 
 <div @key="_loading" class="px-5 pb-28 pt-6 lg:px-10 lg:pb-12 @(!_loading ? "page-fade" : null)">
+    @if (_pushState is "prompt" or "blocked")
+    {
+        <section class="mb-4 flex items-start gap-3 rounded-2xl border border-brand-104 bg-brand-081 p-4">
+            <span class="flex size-10 shrink-0 items-center justify-center rounded-xl bg-white text-brand-671"><Icon Name="bell" Class="size-5" /></span>
+            <div class="min-w-0 flex-1">
+                <p class="text-[14px] font-semibold leading-5 text-brand-776">@L["Push_EnableTitle"]</p>
+                <p class="mt-1 text-[12px] leading-5 text-sage-459">
+                    @(_pushState == "blocked" ? L["Push_Blocked"] : L["Push_EnableBody"])
+                </p>
+                @if (_pushState == "prompt")
+                {
+                    <button type="button" @onclick="EnablePushAsync" disabled="@_pushBusy"
+                            class="mt-2 rounded-xl bg-brand-671 px-4 py-2 text-[12px] font-bold text-white disabled:opacity-60">
+                        @L["Push_EnableButton"]
+                    </button>
+                }
+            </div>
+        </section>
+    }
+
     @if (_loading)
     {
         <SkeletonList Count="5"/>

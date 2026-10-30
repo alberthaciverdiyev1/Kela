@@ -13,7 +13,7 @@ public sealed class NotificationTokenConfiguration : IEntityTypeConfiguration<No
         builder.HasKey(x => x.Id);
         builder.Property(x => x.Id).HasColumnName("id");
         builder.Property(x => x.StudentId).HasColumnName("student_id");
-        builder.Property(x => x.Token).HasColumnName("token").HasMaxLength(500).IsRequired();
+        builder.Property(x => x.Token).HasColumnName("token").HasMaxLength(1000).IsRequired();
         builder.HasIndex(x => x.Token).IsUnique();
         builder.Property(x => x.DeviceType).HasColumnName("device_type").HasMaxLength(20);
         builder.Property(x => x.IsActive).HasColumnName("is_active").HasDefaultValue(true);
