@@ -6,9 +6,9 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Edutor.Core.Modules.Payments.Services;
 
-public sealed class KassaService(AppDbContext db) : IKassaService
+public sealed class CashboxService(AppDbContext db) : ICashboxService
 {
-    public async Task<KassaOverviewResponse> GetOverviewAsync(CancellationToken ct = default)
+    public async Task<CashboxOverviewResponse> GetOverviewAsync(CancellationToken ct = default)
     {
         var today = DateOnly.FromDateTime(DateTime.Today);
         var monthStart = new DateOnly(today.Year, today.Month, 1);
@@ -44,7 +44,7 @@ public sealed class KassaService(AppDbContext db) : IKassaService
             var paid = payments.Where(p => p.Currency == currency).ToList();
             var activePlans = plans.Where(p => p.Currency == currency && activeSet.Contains(p.StudentId)).ToList();
 
-            return new KassaCurrencyStats(
+            return new CashboxCurrencyStats(
                 currency,
                 Today: paid.Where(p => p.PaidOn == today).Sum(p => p.Amount),
                 ThisMonth: paid.Where(p => p.PaidOn >= monthStart && p.PaidOn < nextMonthStart).Sum(p => p.Amount),
@@ -59,7 +59,7 @@ public sealed class KassaService(AppDbContext db) : IKassaService
                        let periodStart = historyStart.AddMonths(offset)
                        let periodEnd = periodStart.AddMonths(1)
                        from currency in currencyCodes
-                       select new KassaMonthStats(
+                       select new CashboxMonthStats(
                            periodStart.ToString("yyyy-MM"),
                            currency,
                            payments.Where(p => p.Currency == currency && p.PaidOn >= periodStart && p.PaidOn < periodEnd).Sum(p => p.Amount)))
@@ -72,13 +72,13 @@ public sealed class KassaService(AppDbContext db) : IKassaService
         var recent = payments
             .OrderByDescending(p => p.PaidOn).ThenByDescending(p => p.Id)
             .Take(15)
-            .Select(p => new KassaPaymentRow(
+            .Select(p => new CashboxPaymentRow(
                 p.Id,
                 studentNames.GetValueOrDefault(p.StudentId, $"#{p.StudentId}"),
                 p.PaidOn, p.Amount, p.Currency, p.Note))
             .ToList();
 
-        return new KassaOverviewResponse(
+        return new CashboxOverviewResponse(
             stats,
             monthly,
             recent,
@@ -89,7 +89,7 @@ public sealed class KassaService(AppDbContext db) : IKassaService
             PayingStudents: plans.Where(p => activeSet.Contains(p.StudentId)).Select(p => p.StudentId).Distinct().Count());
     }
 
-    public async Task<IReadOnlyList<KassaPaymentRow>> ListPaymentsAsync(
+    public async Task<IReadOnlyList<CashboxPaymentRow>> ListPaymentsAsync(
         DateOnly? from, DateOnly? to, CancellationToken ct = default)
     {
         var query = db.Set<StudentPayment>().AsNoTracking();
@@ -109,7 +109,7 @@ public sealed class KassaService(AppDbContext db) : IKassaService
             .ToDictionaryAsync(x => x.Id, x => x.FullName, ct);
 
         return rows
-            .Select(r => new KassaPaymentRow(
+            .Select(r => new CashboxPaymentRow(
                 r.Id, names.GetValueOrDefault(r.StudentId, $"#{r.StudentId}"),
                 r.PaidOn, r.Amount, r.Currency, r.Note))
             .ToList();

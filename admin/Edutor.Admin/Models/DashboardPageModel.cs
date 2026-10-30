@@ -7,8 +7,8 @@ public class DashboardPageModel
 {
     public DashboardResponse Stats { get; set; } = default!;
 
-    /// <summary>Kassa yalnız admin-lərə və fərdi müəllim tenant-ına görünür.</summary>
-    public KassaOverviewResponse? Finance { get; set; }
+    /// <summary>Cashbox yalnız admin-lərə və fərdi müəllim tenant-ına görünür.</summary>
+    public CashboxOverviewResponse? Finance { get; set; }
 
     public string UserName { get; set; } = string.Empty;
 }

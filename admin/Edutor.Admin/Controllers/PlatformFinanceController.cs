@@ -8,7 +8,7 @@ namespace Edutor.Admin.Controllers;
 
 /// <summary>
 /// Superadmin üçün platforma gəliri — bütün tenant-lardan gələn abunəlik və əlavə paket ödənişləri.
-/// Tenant kassasından (tələbə ödənişləri) ayrı səhifədir.
+/// Tenant cashboxsından (tələbə ödənişləri) ayrı səhifədir.
 /// </summary>
 [Authorize(Policy = AuthPolicies.SuperAdmin)]
 [Route("[controller]")]

@@ -1,6 +1,6 @@
-@model Edutor.Core.Modules.Payments.Responses.KassaOverviewResponse
+@model Edutor.Core.Modules.Payments.Responses.CashboxOverviewResponse
 @{
-    ViewData["Title"] = "Kassa";
+    ViewData["Title"] = "Cashbox";
 
     var payload = new
     {
@@ -28,31 +28,31 @@
     };
 }
 
-<script>window.KASSA = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(payload));</script>
+<script>window.CASHBOX = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(payload));</script>
 
 <section class="admin-page">
     <div class="flex flex-wrap items-center justify-between gap-3">
         <div>
-            <h1 class="text-xl font-extrabold text-slate-900">Kassa</h1>
+            <h1 class="text-xl font-extrabold text-slate-900">Cashbox</h1>
             <p class="mt-1 text-sm text-slate-500">Tələbələrdən daxil olan ödənişlər və aylıq gəlir.</p>
         </div>
         <div class="flex flex-wrap items-center gap-2">
             @if (Model.Currencies.Select(c => c.Currency).Distinct().Count() > 1)
             {
-                <select id="kassaCurrency" class="admin-field w-28">
+                <select id="cashboxCurrency" class="admin-field w-28">
                     @foreach (var code in Model.Currencies.Select(c => c.Currency).Distinct())
                     {
                         <option value="@code">@code</option>
                     }
                 </select>
             }
-            <button type="button" class="admin-button-primary" data-action="KassaPage.openPayment">
+            <button type="button" class="admin-button-primary" data-action="CashboxPage.openPayment">
                 Ödəniş qeyd et
             </button>
         </div>
     </div>
 
-    <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+    <div class="grid grid-cols-2 gap-4 lg:grid-cols-3">
         @foreach (var card in new (string Id, string Label, string Hint)[]
         {
             ("k-today", "Bu gün", "bugünkü mədaxil"),
@@ -74,12 +74,12 @@
     <div class="admin-card p-5">
         <div class="flex flex-wrap items-center justify-between gap-2">
             <h3 class="text-base font-bold text-slate-900">Son 12 ay</h3>
-            <span id="kassaDelta" class="text-sm font-semibold text-slate-500"></span>
+            <span id="cashboxDelta" class="text-sm font-semibold text-slate-500"></span>
         </div>
-        <div id="kassaMonths" class="mt-4 flex h-36 items-end gap-1.5"></div>
+        <div id="cashboxMonths" class="mt-4 flex h-36 items-end gap-1.5"></div>
     </div>
 
-    <div class="grid gap-4 sm:grid-cols-2 xl:grid-cols-5">
+    <div class="grid grid-cols-2 gap-4 xl:grid-cols-5">
         @foreach (var cell in new (string Label, int Value, string Tone)[]
         {
             ("Aktiv plan", Model.ActivePlans, "text-slate-900"),
@@ -100,14 +100,14 @@
         <div class="admin-toolbar flex flex-wrap items-center gap-2">
             <div class="min-w-0">
                 <h3 class="text-base font-bold text-slate-900">Son ödənişlər</h3>
-                <p id="kassaRangeTotal" class="text-xs font-semibold text-slate-500"></p>
+                <p id="cashboxRangeTotal" class="text-xs font-semibold text-slate-500"></p>
             </div>
             <div class="ml-auto flex flex-wrap items-center gap-2">
-                <partial name="Ui/_DatePicker" model="@(new DatePickerModel { Id = "kassaFrom", Type = "date", Class = "!h-9 w-36", AriaLabel = "Başlanğıc tarixi" })" />
+                <partial name="Ui/_DatePicker" model="@(new DatePickerModel { Id = "cashboxFrom", Type = "date", Class = "!h-9 w-36", AriaLabel = "Başlanğıc tarixi" })" />
                 <span class="text-slate-400">–</span>
-                <partial name="Ui/_DatePicker" model="@(new DatePickerModel { Id = "kassaTo", Type = "date", Class = "!h-9 w-36", AriaLabel = "Son tarix" })" />
-                <button type="button" class="admin-button-secondary" data-action="KassaPage.applyRange">Filtrələ</button>
-                <button type="button" class="admin-button-ghost" data-action="KassaPage.clearRange">Sıfırla</button>
+                <partial name="Ui/_DatePicker" model="@(new DatePickerModel { Id = "cashboxTo", Type = "date", Class = "!h-9 w-36", AriaLabel = "Son tarix" })" />
+                <button type="button" class="admin-button-secondary" data-action="CashboxPage.applyRange">Filtrələ</button>
+                <button type="button" class="admin-button-ghost" data-action="CashboxPage.clearRange">Sıfırla</button>
             </div>
         </div>
         <div class="overflow-x-auto">
@@ -121,7 +121,7 @@
                         <th class="text-right">Əməliyyat</th>
                     </tr>
                 </thead>
-                <tbody id="kassaRecent">
+                <tbody id="cashboxRecent">
                     <tr><td colspan="5" class="text-sm text-slate-400">Yüklənir...</td></tr>
                 </tbody>
             </table>
@@ -135,8 +135,8 @@
 
 <partial name="Ui/_Modal" model="@(new ModalModel
 {
-    Id = "kassaPaymentModal",
-    TitleId = "kassaPaymentTitle",
+    Id = "cashboxPaymentModal",
+    TitleId = "cashboxPaymentTitle",
     Title = "Ödəniş qeyd et",
     WidthClass = "max-w-lg",
     ShowError = false,

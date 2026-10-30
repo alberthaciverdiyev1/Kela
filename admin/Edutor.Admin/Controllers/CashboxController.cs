@@ -9,26 +9,26 @@ using Microsoft.AspNetCore.Mvc;
 namespace Edutor.Admin.Controllers;
 
 /// <summary>
-/// Kassa: tələbələrdən daxil olan ödənişlər, aylıq gəlir və proqnoz.
+/// Cashbox: tələbələrdən daxil olan ödənişlər, aylıq gəlir və proqnoz.
 /// Admin həmişə, müəllim isə yalnız fərdi müəllim (kurs olmayan) tenant-da görür.
 /// </summary>
 [Route("[controller]")]
 [Authorize(Policy = AuthPolicies.Teacher)]
-public sealed class KassaController(
-    IKassaService kassa,
+public sealed class CashboxController(
+    ICashboxService cashbox,
     IStudentPaymentService payments,
     ITenantService tenants) : AdminControllerBase
 {
     [HttpGet]
     public async Task<IActionResult> Index(CancellationToken ct)
     {
-        // Platforma sahibi (superadmin, tenant seçməmiş) tenant kassası yerinə platform gəlirini görür.
+        // Platforma sahibi (superadmin, tenant seçməmiş) tenant cashboxsı yerinə platform gəlirini görür.
         if (User.IsPlatformOwner()) return RedirectToAction("Index", "PlatformFinance");
 
         if (!await CanAccessAsync(ct)) return Forbid();
 
-        ViewData["Scripts"] = new[] { "~/js/pages/kassa/index.js" };
-        return View(await kassa.GetOverviewAsync(ct));
+        ViewData["Scripts"] = new[] { "~/js/pages/cashbox/index.js" };
+        return View(await cashbox.GetOverviewAsync(ct));
     }
 
     [HttpGet("students")]
@@ -67,7 +67,7 @@ public sealed class KassaController(
     {
         if (!await CanAccessAsync(ct)) return Forbid();
 
-        return Json(await kassa.ListPaymentsAsync(from, to, ct));
+        return Json(await cashbox.ListPaymentsAsync(from, to, ct));
     }
 
     [HttpPost("plan")]

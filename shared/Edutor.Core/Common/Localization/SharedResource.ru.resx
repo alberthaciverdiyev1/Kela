@@ -843,11 +843,11 @@
   <data name="Dashboard_AddStudent" xml:space="preserve">
     <value>Добавить ученика</value>
   </data>
-  <data name="Dashboard_OpenKassa" xml:space="preserve">
-    <value>Перейти в кассу</value>
+  <data name="Dashboard_OpenCashbox" xml:space="preserve">
+    <value>Перейти в Cashbox</value>
   </data>
   <data name="Dashboard_Finance" xml:space="preserve">
-    <value>Касса</value>
+    <value>Cashbox</value>
   </data>
   <data name="Dashboard_Last12" xml:space="preserve">
     <value>Последние 12 месяцев</value>

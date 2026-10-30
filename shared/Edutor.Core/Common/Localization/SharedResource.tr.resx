@@ -843,11 +843,11 @@
   <data name="Dashboard_AddStudent" xml:space="preserve">
     <value>Öğrenci ekle</value>
   </data>
-  <data name="Dashboard_OpenKassa" xml:space="preserve">
-    <value>Kasaya git</value>
+  <data name="Dashboard_OpenCashbox" xml:space="preserve">
+    <value>Cashbox'a git</value>
   </data>
   <data name="Dashboard_Finance" xml:space="preserve">
-    <value>Kasa</value>
+    <value>Cashbox</value>
   </data>
   <data name="Dashboard_Last12" xml:space="preserve">
     <value>Son 12 ay</value>

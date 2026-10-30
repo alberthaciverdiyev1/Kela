@@ -1,30 +1,30 @@
-<form id="kassaPaymentForm" class="space-y-4 p-6">
+<form id="cashboxPaymentForm" class="space-y-4 p-6">
     <partial name="Ui/_Select" model="@(new SelectModel
     {
-        Name = "student_id", Id = "kassaStudent", Label = "Tələbə",
+        Name = "student_id", Id = "cashboxStudent", Label = "Tələbə",
         Options = new List<SelectOption>()
     })" />
 
     <partial name="Ui/_Select" model="@(new SelectModel
     {
-        Name = "plan_id", Id = "kassaPlan", Label = "Ödəniş planı",
+        Name = "plan_id", Id = "cashboxPlan", Label = "Ödəniş planı",
         Options = new List<SelectOption>()
     })" />
 
     <div class="grid gap-4 sm:grid-cols-2">
         <div>
-            <label for="kassaAmount" class="mb-1 block text-sm font-semibold text-slate-600">Məbləğ</label>
-            <input id="kassaAmount" type="number" step="0.01" min="0.01" class="admin-field" />
+            <label for="cashboxAmount" class="mb-1 block text-sm font-semibold text-slate-600">Məbləğ</label>
+            <input id="cashboxAmount" type="number" step="0.01" min="0.01" class="admin-field" />
         </div>
-        <partial name="Ui/_DatePicker" model="@(new DatePickerModel { Id = "kassaPaidOn", Type = "date", Label = "Tarix" })" />
+        <partial name="Ui/_DatePicker" model="@(new DatePickerModel { Id = "cashboxPaidOn", Type = "date", Label = "Tarix" })" />
     </div>
 
     <div>
-        <label for="kassaNote" class="mb-1 block text-sm font-semibold text-slate-600">Qeyd</label>
-        <input id="kassaNote" type="text" class="admin-field" placeholder="İstəyə bağlı" />
+        <label for="cashboxNote" class="mb-1 block text-sm font-semibold text-slate-600">Qeyd</label>
+        <input id="cashboxNote" type="text" class="admin-field" placeholder="İstəyə bağlı" />
     </div>
 
-    <p id="kassaStudentHint" class="text-xs text-slate-400"></p>
+    <p id="cashboxStudentHint" class="text-xs text-slate-400"></p>
 
     <div class="flex justify-end gap-3 pt-2">
         <partial name="Ui/_Button" model="@(new ButtonModel { Text = L["Common_Cancel"], Variant = "secondary", Dismiss = true })" />

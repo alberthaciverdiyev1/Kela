@@ -1,6 +1,6 @@
 namespace Edutor.Core.Modules.Payments.Responses;
 
-public sealed record KassaCurrencyStats(
+public sealed record CashboxCurrencyStats(
     string Currency,
     decimal Today,
     decimal ThisMonth,
@@ -12,15 +12,15 @@ public sealed record KassaCurrencyStats(
     decimal OverdueAmount,
     int ActivePlans);
 
-public sealed record KassaMonthStats(string Period, string Currency, decimal Amount);
+public sealed record CashboxMonthStats(string Period, string Currency, decimal Amount);
 
-public sealed record KassaPaymentRow(
+public sealed record CashboxPaymentRow(
     long Id, string StudentName, DateOnly PaidOn, decimal Amount, string Currency, string? Note);
 
-public sealed record KassaOverviewResponse(
-    IReadOnlyList<KassaCurrencyStats> Currencies,
-    IReadOnlyList<KassaMonthStats> Monthly,
-    IReadOnlyList<KassaPaymentRow> Recent,
+public sealed record CashboxOverviewResponse(
+    IReadOnlyList<CashboxCurrencyStats> Currencies,
+    IReadOnlyList<CashboxMonthStats> Monthly,
+    IReadOnlyList<CashboxPaymentRow> Recent,
     int ActivePlans,
     int OverduePlans,
     int DueSoonPlans,

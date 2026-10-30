@@ -11,7 +11,7 @@ namespace Edutor.Admin.Controllers;
 [Route("[controller]")]
 public sealed class DashboardController(
     IDashboardService dashboard,
-    IKassaService kassa,
+    ICashboxService cashbox,
     IPlatformFinanceService platformFinance,
     ITenantService tenants) : Controller
 {
@@ -41,14 +41,14 @@ public sealed class DashboardController(
 
         var ownerId = User.IsAdmin() ? null : User.CurrentUserId();
 
-        // Kassa sidebar-dakı eyni qayda ilə görünür: admin və ya fərdi müəllim kursu.
+        // Cashbox sidebar-dakı eyni qayda ilə görünür: admin və ya fərdi müəllim kursu.
         var canSeeFinance = User.IsAdmin()
             || await tenants.GetCurrentAccountTypeAsync() == IndividualTeacherAccount;
 
         return View(new DashboardPageModel
         {
             Stats = await dashboard.GetAsync(ownerId, ct),
-            Finance = canSeeFinance ? await kassa.GetOverviewAsync(ct) : null,
+            Finance = canSeeFinance ? await cashbox.GetOverviewAsync(ct) : null,
             UserName = userName
         });
     }

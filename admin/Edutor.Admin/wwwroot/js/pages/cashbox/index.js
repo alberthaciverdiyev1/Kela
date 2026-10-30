@@ -1,5 +1,5 @@
-window.KassaPage = (function () {
-    const data = window.KASSA || { currencies: [], monthly: [], recent: [] };
+window.CashboxPage = (function () {
+    const data = window.CASHBOX || { currencies: [], monthly: [], recent: [] };
     const esc = (v) => AdminUI.escapeHtml(v);
 
     let currency = data.currencies[0]?.currency || 'AZN';
@@ -42,7 +42,7 @@ window.KassaPage = (function () {
         document.getElementById('k-projection').textContent = amountText(s.projected, currency);
         document.getElementById('k-overdue').textContent = amountText(s.overdue, currency);
 
-        const deltaBox = document.getElementById('kassaDelta');
+        const deltaBox = document.getElementById('cashboxDelta');
         if (!s.lastMonth) {
             deltaBox.textContent = s.thisMonth ? 'Keçən ay ödəniş olmayıb' : '';
             return;
@@ -55,7 +55,7 @@ window.KassaPage = (function () {
 
     function renderMonths() {
         const rows = data.monthly.filter(m => m.currency === currency);
-        const box = document.getElementById('kassaMonths');
+        const box = document.getElementById('cashboxMonths');
         const max = Math.max(...rows.map(r => r.amount), 1);
 
         box.innerHTML = rows.map(r => {
@@ -68,7 +68,7 @@ window.KassaPage = (function () {
     }
 
     function renderPayments(rows, emptyText) {
-        const box = document.getElementById('kassaRecent');
+        const box = document.getElementById('cashboxRecent');
 
         box.innerHTML = rows.length
             ? rows.map(r => `<tr>
@@ -77,7 +77,7 @@ window.KassaPage = (function () {
                     <td class="whitespace-nowrap text-right font-semibold text-slate-800">${amountText(r.amount, r.currency)}</td>
                     <td class="text-slate-500">${esc(r.note || '—')}</td>
                     <td class="text-right">
-                        <button type="button" class="admin-row-action is-danger" data-action="KassaPage.removePayment" data-args='[${r.id}]'>Sil</button>
+                        <button type="button" class="admin-row-action is-danger" data-action="CashboxPage.removePayment" data-args='[${r.id}]'>Sil</button>
                     </td>
                 </tr>`).join('')
             : `<tr><td colspan="5" class="p-4 text-sm text-slate-400">${emptyText}</td></tr>`;
@@ -88,14 +88,14 @@ window.KassaPage = (function () {
     }
 
     async function applyRange() {
-        const from = document.getElementById('kassaFrom').value;
-        const to = document.getElementById('kassaTo').value;
+        const from = document.getElementById('cashboxFrom').value;
+        const to = document.getElementById('cashboxTo').value;
 
         const query = new URLSearchParams();
         if (from) query.set('from', from);
         if (to) query.set('to', to);
 
-        const rows = await AdminUI.get('/kassa/payments' + (query.toString() ? '?' + query : ''));
+        const rows = await AdminUI.get('/cashbox/payments' + (query.toString() ? '?' + query : ''));
         renderPayments(rows, 'Seçilmiş aralıqda ödəniş yoxdur.');
 
         const totals = rows.reduce((acc, r) => {
@@ -104,21 +104,21 @@ window.KassaPage = (function () {
         }, {});
 
         const text = Object.entries(totals).map(([code, total]) => amountText(total, code)).join(' · ');
-        document.getElementById('kassaRangeTotal').textContent = text ? `Aralıq mədaxili: ${text}` : '';
+        document.getElementById('cashboxRangeTotal').textContent = text ? `Aralıq mədaxili: ${text}` : '';
     }
 
     function clearRange() {
-        ['kassaFrom', 'kassaTo'].forEach(id => {
+        ['cashboxFrom', 'cashboxTo'].forEach(id => {
             const el = document.getElementById(id);
             el.value = '';
             if (window.DatePicker) DatePicker.sync(el);
         });
-        document.getElementById('kassaRangeTotal').textContent = '';
+        document.getElementById('cashboxRangeTotal').textContent = '';
         renderRecent();
     }
 
     function fillStudentSelect() {
-        const select = document.getElementById('kassaStudent');
+        const select = document.getElementById('cashboxStudent');
 
         select.innerHTML = '<option value="">Tələbə seçin</option>' + students.map(s => {
             const plan = s.amount ? ` — ${money(s.amount)} ${s.currency}` : '';
@@ -132,7 +132,7 @@ window.KassaPage = (function () {
     // və avtomatik seçilir; yeni plan seçilsə, ödənişdən əvvəl təyin olunur.
     function refreshPlanOptions() {
         const student = selectedStudent();
-        const select = document.getElementById('kassaPlan');
+        const select = document.getElementById('cashboxPlan');
 
         let html = '';
 
@@ -154,24 +154,24 @@ window.KassaPage = (function () {
     }
 
     function selectedStudent() {
-        const id = document.getElementById('kassaStudent').value;
+        const id = document.getElementById('cashboxStudent').value;
         return students?.find(s => String(s.id) === id);
     }
 
     function selectedPlan() {
-        const id = document.getElementById('kassaPlan').value;
+        const id = document.getElementById('cashboxPlan').value;
         return planTemplates?.find(t => String(t.id) === id);
     }
 
     function keepsCurrentPlan() {
-        return document.getElementById('kassaPlan').value === 'current';
+        return document.getElementById('cashboxPlan').value === 'current';
     }
 
     function syncStudentHint() {
         const student = selectedStudent();
         const plan = selectedPlan();
-        const hint = document.getElementById('kassaStudentHint');
-        const amount = document.getElementById('kassaAmount');
+        const hint = document.getElementById('cashboxStudentHint');
+        const amount = document.getElementById('cashboxAmount');
 
         if (plan) {
             amount.value = plan.amount;
@@ -197,14 +197,14 @@ window.KassaPage = (function () {
     }
 
     async function openPayment() {
-        document.getElementById('kassaPaidOn').value = today();
-        document.getElementById('kassaNote').value = '';
-        document.getElementById('kassaStudentHint').textContent = '';
+        document.getElementById('cashboxPaidOn').value = today();
+        document.getElementById('cashboxNote').value = '';
+        document.getElementById('cashboxStudentHint').textContent = '';
 
         if (!students || !planTemplates) {
             const [s, p] = await Promise.all([
-                students ? Promise.resolve(students) : AdminUI.get('/kassa/students'),
-                planTemplates ? Promise.resolve(planTemplates) : AdminUI.get('/kassa/plans')
+                students ? Promise.resolve(students) : AdminUI.get('/cashbox/students'),
+                planTemplates ? Promise.resolve(planTemplates) : AdminUI.get('/cashbox/plans')
             ]);
             students = s;
             planTemplates = p;
@@ -213,36 +213,36 @@ window.KassaPage = (function () {
         fillStudentSelect();
         refreshPlanOptions();
 
-        document.getElementById('kassaStudent').value = '';
-        document.getElementById('kassaAmount').value = '';
+        document.getElementById('cashboxStudent').value = '';
+        document.getElementById('cashboxAmount').value = '';
 
-        AdminUI.syncSelect(document.getElementById('kassaStudent'));
-        AdminUI.syncSelect(document.getElementById('kassaPlan'));
+        AdminUI.syncSelect(document.getElementById('cashboxStudent'));
+        AdminUI.syncSelect(document.getElementById('cashboxPlan'));
 
-        AdminUI.openModal('kassaPaymentModal');
+        AdminUI.openModal('cashboxPaymentModal');
     }
 
     async function removePayment(id) {
         if (!await AdminUI.confirmDelete('Bu ödəniş silinsin? Planın vade tarixi yenidən hesablanacaq.')) return;
 
-        const res = await AdminUI.del(`/kassa/payments/${id}`);
+        const res = await AdminUI.del(`/cashbox/payments/${id}`);
         if (res.ok) { AdminUI.notify(L["Js_Deleted"]); location.reload(); }
         else AdminUI.error(AdminUI.errText(res));
     }
 
-    document.getElementById('kassaStudent')?.addEventListener('change', () => {
+    document.getElementById('cashboxStudent')?.addEventListener('change', () => {
         refreshPlanOptions();
         syncStudentHint();
     });
-    document.getElementById('kassaPlan')?.addEventListener('change', syncStudentHint);
+    document.getElementById('cashboxPlan')?.addEventListener('change', syncStudentHint);
 
-    document.getElementById('kassaPaymentForm')?.addEventListener('submit', async (e) => {
+    document.getElementById('cashboxPaymentForm')?.addEventListener('submit', async (e) => {
         e.preventDefault();
 
         const student = selectedStudent();
         const plan = selectedPlan();
-        const amount = Number(document.getElementById('kassaAmount').value);
-        const paidOn = document.getElementById('kassaPaidOn').value || today();
+        const amount = Number(document.getElementById('cashboxAmount').value);
+        const paidOn = document.getElementById('cashboxPaidOn').value || today();
 
         if (!student) { AdminUI.error('Tələbə seçin'); return; }
         if (!(amount > 0)) { AdminUI.error('Məbləğ sıfırdan böyük olmalıdır'); return; }
@@ -256,7 +256,7 @@ window.KassaPage = (function () {
                 ? addDays(paidOn, plan.intervalDays || 30)
                 : addMonths(paidOn, 1);
 
-            const planRes = await AdminUI.postJson('/kassa/plan', {
+            const planRes = await AdminUI.postJson('/cashbox/plan', {
                 studentId: student.id,
                 joinedOn: paidOn,
                 nextDueOn,
@@ -270,23 +270,23 @@ window.KassaPage = (function () {
             if (!planRes.ok) { AdminUI.error(AdminUI.errText(planRes)); return; }
         }
 
-        const res = await AdminUI.postJson('/kassa/payments', {
+        const res = await AdminUI.postJson('/cashbox/payments', {
             studentId: student.id,
             paidOn,
             amount,
-            note: document.getElementById('kassaNote').value.trim()
+            note: document.getElementById('cashboxNote').value.trim()
         });
 
         if (res.ok) {
             AdminUI.notify(L["Js_Saved"]);
-            AdminUI.closeModal('kassaPaymentModal');
+            AdminUI.closeModal('cashboxPaymentModal');
             location.reload();
         } else {
             AdminUI.error(AdminUI.errText(res));
         }
     });
 
-    document.getElementById('kassaCurrency')?.addEventListener('change', (e) => {
+    document.getElementById('cashboxCurrency')?.addEventListener('change', (e) => {
         currency = e.target.value;
         renderStats();
         renderMonths();

@@ -109,7 +109,7 @@ public static class DependencyInjection
         services.AddScoped<ITenantService, TenantService>();        services.AddScoped<IDashboardService, DashboardService>();
         services.AddScoped<IStudentManagementService, StudentManagementService>();
         services.AddScoped<Edutor.Core.Modules.Payments.Abstractions.IStudentPaymentService, Edutor.Core.Modules.Payments.Services.StudentPaymentService>();
-        services.AddScoped<Edutor.Core.Modules.Payments.Abstractions.IKassaService, Edutor.Core.Modules.Payments.Services.KassaService>();
+        services.AddScoped<Edutor.Core.Modules.Payments.Abstractions.ICashboxService, Edutor.Core.Modules.Payments.Services.CashboxService>();
 
         services.AddHttpContextAccessor();
         services.AddScoped<ITenantScope, TenantScope>();
