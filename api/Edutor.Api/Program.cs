@@ -170,7 +170,9 @@ if (app.Environment.IsDevelopment())
     app.MapOpenApi().AllowAnonymous();
 }
 
-app.UseHttpsRedirection();
+// TLS-i nginx həll edir — proxy arxasında yönləndirmə heç vaxt işləmir, yalnız xəbərdarlıq yazır.
+if (!app.Configuration.GetValue<bool>("ReverseProxy:Enabled")) app.UseHttpsRedirection();
+
 app.UseStaticFiles();
 app.UseCoreStorage();
 app.UseAuthentication();
