@@ -16,6 +16,7 @@ using Edutor.Core.Common.Logging;
 using Edutor.Core.Modules.Auth;
 using Edutor.Core.Modules.Subscription;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.DataProtection;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ApplicationModels;
@@ -48,6 +49,15 @@ builder.Services.Configure<ApiBehaviorOptions>(options =>
 });
 
 builder.Services.AddOpenApi();
+
+// Açarlar fayl sistemində saxlanmalıdır — əks halda restart onları itirir.
+var dataProtection = builder.Services.AddDataProtection().SetApplicationName("Edutor.Api");
+var dataProtectionKeysPath = builder.Configuration["DataProtection:KeysPath"];
+if (!string.IsNullOrWhiteSpace(dataProtectionKeysPath))
+{
+    Directory.CreateDirectory(dataProtectionKeysPath);
+    dataProtection.PersistKeysToFileSystem(new DirectoryInfo(dataProtectionKeysPath));
+}
 
 builder.Services.AddCore(builder.Configuration);
 builder.Services.AddEdutorReverseProxy();
