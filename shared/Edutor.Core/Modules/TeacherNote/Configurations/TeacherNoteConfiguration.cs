@@ -20,6 +20,10 @@ public sealed class TeacherNoteConfiguration : IEntityTypeConfiguration<TeacherN
         builder.Property(x => x.Body).HasColumnName("body").HasMaxLength(2000);
         builder.Property(x => x.Date).HasColumnName("date");
         builder.Property(x => x.IsDone).HasColumnName("is_done").HasDefaultValue(false);
+        builder.Property(x => x.ContentId).HasColumnName("content_id");
+        builder.Property(x => x.PositionSeconds).HasColumnName("position_seconds");
+        builder.Property(x => x.Visibility).HasColumnName("visibility").HasMaxLength(16).IsRequired()
+            .HasDefaultValue(TeacherNoteVisibility.Private);
 
         builder.Property(x => x.CreatedAt).HasColumnName("created_at");
         builder.Property(x => x.UpdatedAt).HasColumnName("updated_at");
@@ -27,5 +31,11 @@ public sealed class TeacherNoteConfiguration : IEntityTypeConfiguration<TeacherN
 
         builder.HasIndex(x => x.DeletedAt);
         builder.HasIndex(x => new { x.UserId, x.Date });
+        builder.HasIndex(x => x.ContentId);
+
+        builder.HasOne<Edutor.Core.Modules.LessonContent.Entities.LessonContent>()
+            .WithMany()
+            .HasForeignKey(x => x.ContentId)
+            .OnDelete(DeleteBehavior.SetNull);
     }
 }

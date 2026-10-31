@@ -18,6 +18,7 @@ public sealed class TeacherNoteController(
     {
         ViewData["Scripts"] = new[]
         {
+            "~/js/pages/teacher-note/pickers.js",
             "~/js/pages/teacher-note/list.js",
             "~/js/pages/teacher-note/create.js",
             "~/js/pages/teacher-note/update.js"
@@ -28,6 +29,14 @@ public sealed class TeacherNoteController(
     [HttpGet("list")]
     public async Task<IActionResult> List([FromQuery] TeacherNoteListRequest request, CancellationToken ct)
         => Json(await service.ListAsync(UserId, request, ct));
+
+    [HttpGet("users")]
+    public async Task<IActionResult> Users([FromQuery] string? search, CancellationToken ct)
+        => Json(await service.ListShareTargetsAsync(UserId, search, ct));
+
+    [HttpGet("contents")]
+    public async Task<IActionResult> Contents([FromQuery] string? search, CancellationToken ct)
+        => Json(await service.ListContentOptionsAsync(search, ct));
 
     [HttpGet("{id:long}")]
     public async Task<IActionResult> Get(long id, CancellationToken ct)

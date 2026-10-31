@@ -117,6 +117,7 @@ public sealed class AppDbContext : DbContext
     public DbSet<Modules.Attendance.Entities.AttendanceRecord> AttendanceRecords => Set<Modules.Attendance.Entities.AttendanceRecord>();
 
     public DbSet<Modules.TeacherNote.Entities.TeacherNote> TeacherNotes => Set<Modules.TeacherNote.Entities.TeacherNote>();
+    public DbSet<Modules.TeacherNote.Entities.TeacherNoteShare> TeacherNoteShares => Set<Modules.TeacherNote.Entities.TeacherNoteShare>();
 
     public DbSet<Modules.StudentNote.Entities.StudentNote> StudentNotes => Set<Modules.StudentNote.Entities.StudentNote>();
 

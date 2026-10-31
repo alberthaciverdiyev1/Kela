@@ -2,7 +2,6 @@ using Edutor.Core.Common.Entities;
 
 namespace Edutor.Core.Modules.TeacherNote.Entities;
 
-/// <summary>Müəllimin şəxsi qeydi. Tarix verilirsə təqvimdə də görünür.</summary>
 public class TeacherNote : BaseEntity
 {
     public long UserId { get; set; }
@@ -14,4 +13,18 @@ public class TeacherNote : BaseEntity
     public DateOnly? Date { get; set; }
 
     public bool IsDone { get; set; }
+
+    public long? ContentId { get; set; }
+
+    public int? PositionSeconds { get; set; }
+
+    public string Visibility { get; set; } = TeacherNoteVisibility.Private;
+
+    public ICollection<TeacherNoteShare> Shares { get; set; } = new List<TeacherNoteShare>();
+}
+
+public static class TeacherNoteVisibility
+{
+    public const string Private = "private";
+    public const string Shared = "shared";
 }

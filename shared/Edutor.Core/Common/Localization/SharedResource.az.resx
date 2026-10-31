@@ -2430,4 +2430,64 @@
   <data name="Payment_StatusUnpaid" xml:space="preserve">
     <value>Plan yoxdur</value>
   </data>
+  <data name="Note_Share" xml:space="preserve">
+    <value>Paylaşım</value>
+  </data>
+  <data name="Note_Private" xml:space="preserve">
+    <value>Şəxsi</value>
+  </data>
+  <data name="Note_Shared" xml:space="preserve">
+    <value>Paylaşılan</value>
+  </data>
+  <data name="Note_ShareWith" xml:space="preserve">
+    <value>Kimlərlə paylaşılsın</value>
+  </data>
+  <data name="Note_SearchUsers" xml:space="preserve">
+    <value>İstifadəçi axtar</value>
+  </data>
+  <data name="Note_ShareTargetRequired" xml:space="preserve">
+    <value>Ən azı bir istifadəçi seçin</value>
+  </data>
+  <data name="Note_ShareTargetInvalid" xml:space="preserve">
+    <value>Seçilmiş istifadəçilərdən bəziləri mövcud deyil</value>
+  </data>
+  <data name="Note_InvalidVisibility" xml:space="preserve">
+    <value>Yanlış paylaşım rejimi</value>
+  </data>
+  <data name="Note_InvalidPosition" xml:space="preserve">
+    <value>Yanlış vaxt dəyəri</value>
+  </data>
+  <data name="Note_Material" xml:space="preserve">
+    <value>Material</value>
+  </data>
+  <data name="Note_SearchMaterial" xml:space="preserve">
+    <value>Material axtar</value>
+  </data>
+  <data name="Note_NoMaterial" xml:space="preserve">
+    <value>Material seçilməyib</value>
+  </data>
+  <data name="Note_Position" xml:space="preserve">
+    <value>Vaxt (saniyə)</value>
+  </data>
+  <data name="Note_Author" xml:space="preserve">
+    <value>Müəllif</value>
+  </data>
+  <data name="Note_SharedBy" xml:space="preserve">
+    <value>Paylaşan</value>
+  </data>
+  <data name="Note_MineFilter" xml:space="preserve">
+    <value>Mənim</value>
+  </data>
+  <data name="Note_SharedFilter" xml:space="preserve">
+    <value>Mənimlə paylaşılan</value>
+  </data>
+  <data name="Note_SharedWith" xml:space="preserve">
+    <value>Paylaşılıb</value>
+  </data>
+  <data name="Note_NoShareTargets" xml:space="preserve">
+    <value>İstifadəçi tapılmadı</value>
+  </data>
+  <data name="Note_ScopeAll" xml:space="preserve">
+    <value>Hamısı</value>
+  </data>
 </root>

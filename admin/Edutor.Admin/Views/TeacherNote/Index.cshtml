@@ -7,6 +7,20 @@
     <div class="admin-card">
         <partial name="Ui/_FilterBar" model="@(new FilterBarModel {
             SearchPlaceholder = L["Note_Search"],
+            Selects = new List<FilterSelectModel>
+            {
+                new() { Select = new SelectModel
+                {
+                    Id = "scope",
+                    Name = "scope",
+                    Options = new List<SelectOption>
+                    {
+                        new() { Value = "", Text = L["Note_ScopeAll"] },
+                        new() { Value = "mine", Text = L["Note_MineFilter"] },
+                        new() { Value = "shared", Text = L["Note_SharedFilter"] }
+                    }
+                } }
+            },
             ShowButton = true,
             ButtonText = L["Common_Search"]
         })" />
@@ -16,6 +30,7 @@
             Columns = new List<TableColumnModel>
             {
                 new() { Label = L["Common_Title"] },
+                new() { Label = L["Note_Material"], WidthClass = "w-64" },
                 new() { Label = L["Common_Date"], WidthClass = "w-36" },
                 new() { Label = L["Common_Status"], WidthClass = "w-32" },
                 new() { Label = L["Common_Actions"], Right = true }
@@ -33,7 +48,7 @@
     Id = "modal",
     TitleId = "modalTitle",
     Title = L["Note_Create"],
-    WidthClass = "max-w-lg",
+    WidthClass = "max-w-2xl",
     Body = modalBody
 })" />
 

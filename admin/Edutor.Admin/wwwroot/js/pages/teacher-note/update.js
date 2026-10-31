@@ -12,6 +12,7 @@
         document.getElementById('isDone').checked = data.isDone;
         errBox.classList.add('hidden');
         AdminUI.openModal('modal');
+        await noteForm.init(data);
     };
 
     form.addEventListener('submit', async (e) => {
@@ -19,11 +20,16 @@
         const id = document.getElementById('entityId').value;
         if (!id) return;
 
+        const extra = noteForm.payload();
         const fd = new FormData();
         fd.append('title', document.getElementById('title').value);
         fd.append('body', document.getElementById('body').value);
         fd.append('date', document.getElementById('date').value);
         fd.append('isDone', document.getElementById('isDone').checked ? 'true' : 'false');
+        fd.append('contentId', extra.contentId);
+        fd.append('positionSeconds', extra.positionSeconds);
+        fd.append('visibility', extra.visibility);
+        extra.sharedWithUserIds.forEach(uid => fd.append('sharedWithUserIds', uid));
 
         const res = await AdminUI.putForm(`/teacher-note/${id}`, fd);
         if (res.ok) { AdminUI.notify(L["Js_Updated"]); AdminUI.closeModal('modal'); loadList(pager.page); return; }

@@ -2430,4 +2430,64 @@
   <data name="Payment_StatusUnpaid" xml:space="preserve">
     <value>Plan yok</value>
   </data>
+  <data name="Note_Share" xml:space="preserve">
+    <value>Доступ</value>
+  </data>
+  <data name="Note_Private" xml:space="preserve">
+    <value>Личная</value>
+  </data>
+  <data name="Note_Shared" xml:space="preserve">
+    <value>Общая</value>
+  </data>
+  <data name="Note_ShareWith" xml:space="preserve">
+    <value>Кому доступна</value>
+  </data>
+  <data name="Note_SearchUsers" xml:space="preserve">
+    <value>Поиск пользователя</value>
+  </data>
+  <data name="Note_ShareTargetRequired" xml:space="preserve">
+    <value>Выберите хотя бы одного пользователя</value>
+  </data>
+  <data name="Note_ShareTargetInvalid" xml:space="preserve">
+    <value>Некоторые из выбранных пользователей недоступны</value>
+  </data>
+  <data name="Note_InvalidVisibility" xml:space="preserve">
+    <value>Недопустимый режим доступа</value>
+  </data>
+  <data name="Note_InvalidPosition" xml:space="preserve">
+    <value>Недопустимое значение времени</value>
+  </data>
+  <data name="Note_Material" xml:space="preserve">
+    <value>Материал</value>
+  </data>
+  <data name="Note_SearchMaterial" xml:space="preserve">
+    <value>Поиск материала</value>
+  </data>
+  <data name="Note_NoMaterial" xml:space="preserve">
+    <value>Материал не выбран</value>
+  </data>
+  <data name="Note_Position" xml:space="preserve">
+    <value>Время (секунды)</value>
+  </data>
+  <data name="Note_Author" xml:space="preserve">
+    <value>Автор</value>
+  </data>
+  <data name="Note_SharedBy" xml:space="preserve">
+    <value>Поделился</value>
+  </data>
+  <data name="Note_MineFilter" xml:space="preserve">
+    <value>Мои</value>
+  </data>
+  <data name="Note_SharedFilter" xml:space="preserve">
+    <value>Со мной поделились</value>
+  </data>
+  <data name="Note_SharedWith" xml:space="preserve">
+    <value>Доступно</value>
+  </data>
+  <data name="Note_NoShareTargets" xml:space="preserve">
+    <value>Пользователи не найдены</value>
+  </data>
+  <data name="Note_ScopeAll" xml:space="preserve">
+    <value>Все</value>
+  </data>
 </root>

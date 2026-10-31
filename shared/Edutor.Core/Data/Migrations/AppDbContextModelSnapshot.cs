@@ -3448,6 +3448,10 @@ namespace Edutor.Core.Data.Migrations
                         .HasColumnType("character varying(2000)")
                         .HasColumnName("body");
 
+                    b.Property<long?>("ContentId")
+                        .HasColumnType("bigint")
+                        .HasColumnName("content_id");
+
                     b.Property<DateTimeOffset>("CreatedAt")
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("created_at");
@@ -3465,6 +3469,10 @@ namespace Edutor.Core.Data.Migrations
                         .HasColumnType("boolean")
                         .HasDefaultValue(false)
                         .HasColumnName("is_done");
+
+                    b.Property<int?>("PositionSeconds")
+                        .HasColumnType("integer")
+                        .HasColumnName("position_seconds");
 
                     b.Property<long>("TenantId")
                         .HasColumnType("bigint")
@@ -3484,13 +3492,68 @@ namespace Edutor.Core.Data.Migrations
                         .HasColumnType("bigint")
                         .HasColumnName("user_id");
 
+                    b.Property<string>("Visibility")
+                        .IsRequired()
+                        .ValueGeneratedOnAdd()
+                        .HasMaxLength(16)
+                        .HasColumnType("character varying(16)")
+                        .HasDefaultValue("private")
+                        .HasColumnName("visibility");
+
                     b.HasKey("Id");
+
+                    b.HasIndex("ContentId");
 
                     b.HasIndex("DeletedAt");
 
                     b.HasIndex("UserId", "Date");
 
                     b.ToTable("teacher_notes", (string)null);
+                });
+
+            modelBuilder.Entity("Edutor.Core.Modules.TeacherNote.Entities.TeacherNoteShare", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint")
+                        .HasColumnName("id");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
+
+                    b.Property<DateTimeOffset>("CreatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_at");
+
+                    b.Property<DateTimeOffset?>("DeletedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("deleted_at");
+
+                    b.Property<long>("TeacherNoteId")
+                        .HasColumnType("bigint")
+                        .HasColumnName("teacher_note_id");
+
+                    b.Property<long>("TenantId")
+                        .HasColumnType("bigint")
+                        .HasColumnName("tenant_id");
+
+                    b.Property<DateTimeOffset?>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("updated_at");
+
+                    b.Property<long>("UserId")
+                        .HasColumnType("bigint")
+                        .HasColumnName("user_id");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("DeletedAt");
+
+                    b.HasIndex("UserId");
+
+                    b.HasIndex("TeacherNoteId", "UserId")
+                        .IsUnique();
+
+                    b.ToTable("teacher_note_shares", (string)null);
                 });
 
             modelBuilder.Entity("Edutor.Core.Modules.Tenant.Entities.Tenant", b =>
@@ -4117,6 +4180,29 @@ namespace Edutor.Core.Data.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("Edutor.Core.Modules.TeacherNote.Entities.TeacherNote", b =>
+                {
+                    b.HasOne("Edutor.Core.Modules.LessonContent.Entities.LessonContent", null)
+                        .WithMany()
+                        .HasForeignKey("ContentId")
+                        .OnDelete(DeleteBehavior.SetNull);
+                });
+
+            modelBuilder.Entity("Edutor.Core.Modules.TeacherNote.Entities.TeacherNoteShare", b =>
+                {
+                    b.HasOne("Edutor.Core.Modules.TeacherNote.Entities.TeacherNote", null)
+                        .WithMany("Shares")
+                        .HasForeignKey("TeacherNoteId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Edutor.Core.Modules.User.Entities.User", null)
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("Edutor.Core.Modules.Feedback.Entities.Feedback", b =>
                 {
                     b.Navigation("Messages");
@@ -4163,6 +4249,11 @@ namespace Edutor.Core.Data.Migrations
             modelBuilder.Entity("Edutor.Core.Modules.Quiz.Entities.StudentQuiz", b =>
                 {
                     b.Navigation("Answers");
+                });
+
+            modelBuilder.Entity("Edutor.Core.Modules.TeacherNote.Entities.TeacherNote", b =>
+                {
+                    b.Navigation("Shares");
                 });
 #pragma warning restore 612, 618
         }
