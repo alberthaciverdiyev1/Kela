@@ -152,12 +152,12 @@ worker/Edutor.Nodes.*  (encoding worker + Avalonia UI)
 - [x] Admin panel — Dashboard, CRUD, sort (drag&drop), avtomatik filtrlər, search, i18n (az/en/tr/ru)
 - [x] **Multi-tenancy** — hər cədvəldə `tenant_id`, adlı query filter, login-də tenant seçimi, superadmin tenant switch
 - [x] **Profil** — hər istifadəçi öz ad/email/telefon/şifrəsini dəyişir
-- [ ] Push bildiriş (FCM) — `IPushSender` NoOp
+- [x] Web Push bildiriş — VAPID (`WebPushSender`); mobil üçün FCM hələ açıqdır
 - [ ] SMTP e-poçt konfiqurasiyası (OTP)
-- [ ] Video/HLS konvertasiya (m3u8), şəkil sıxışdırma
+- [x] Video/HLS konvertasiya (m3u8), şəkil sıxışdırma (`ImageOptimizer`, SkiaSharp)
 - [ ] Certificate — app tərəfi + API endpoint
-- [ ] Media/mətn preview modalı (lesson materialları) — ✅ əlavə olundu
-- [ ] Feedback (SignalR) float button — planlandı
+- [x] Media/mətn preview modalı (lesson materialları)
+- [x] Feedback (SignalR) float button
 
 ---
 _En son güncelleme: Adım 66 — Admin Permission + Tenant — Admin login (cookie auth) + bootstrap admin — Admin Setting + PrivacyPolicy — Admin User səhifəsi — Admin Notification səhifəsi — Admin Students səhifəsi — Admin Quiz səhifəsi — Admin Question səhifəsi + fayl preview/X — Group idarəetməsi (tab-lar) — Admin Group səhifəsi — Admin LessonContent səhifəsi — Admin Lesson səhifəsi — Admin Subject səhifəsi (list + CRUD modal + JS).
