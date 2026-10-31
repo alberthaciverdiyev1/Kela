@@ -136,7 +136,7 @@ public sealed class ImageOptimizer(IConfiguration configuration, ILogger<ImageOp
             }
 
             canvas.Translate(-bitmap.Width / 2f, -bitmap.Height / 2f);
-            canvas.DrawBitmap(bitmap, 0, 0);
+            canvas.DrawBitmap(bitmap, 0, 0, new SKSamplingOptions(SKFilterMode.Nearest));
         }
 
         return rotated;
