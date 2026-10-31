@@ -166,6 +166,16 @@ public sealed class TenantService(
             throw new ArgumentException(L["Tenant_PasswordMismatch"]);
         }
 
+        // Admin panel girişi tenant seçimi olmadan email ilə işləyir — email bütün
+        // tenant-larda unikal olmalıdır, əks halda hesab başqa tenant-a bağlanardı.
+        var emailInUse = await db.Users.IgnoreQueryFilters()
+            .AnyAsync(x => x.Email == email && x.DeletedAt == null, ct);
+
+        if (emailInUse)
+        {
+            throw new ArgumentException(L["Tenant_EmailInUse"]);
+        }
+
         if (!request.AcceptTerms)
         {
             throw new ArgumentException(L["Tenant_TermsRequired"]);

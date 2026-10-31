@@ -6,57 +6,49 @@ using Edutor.Core.Modules.User.Entities;
 using Edutor.Core.Modules.User.Requests;
 using Edutor.Core.Modules.User.Responses;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
 
 namespace Edutor.Core.Modules.User.Services;
 
 using User = Edutor.Core.Modules.User.Entities.User;
 
-public sealed class UserAuthService(AppDbContext db, ITokenService tokens, ITenantProvider tenantProvider, IConfiguration config) : IUserAuthService
+public sealed class UserAuthService(AppDbContext db, ITokenService tokens, ITenantProvider tenantProvider) : IUserAuthService
 {
-    private bool StrictTenant => config.GetValue<bool>("Tenancy:Strict");
-
     public async Task<UserAuthResponse> LoginAsync(UserLoginRequest request, CancellationToken ct = default)
     {
         var email = request.Email.Trim().ToLowerInvariant();
         var requestedTenant = request.TenantId ?? tenantProvider.TenantId;
 
-        // Email tenant-a görə unikaldır → sorğu tenant ilə məhdudlaşdırılır
-        // (superadmin qlobal olduğu üçün tenant 0-da axtarılır).
-        var scopeTenant = requestedTenant ?? 0L;
-        // Açıq şəkildə tenant verilibsə həmin tenant-ın hesabı üstün tutulur — eyni
-        // email superadmin-də də varsa, qeydiyyatdan sonra yanlış hesaba düşməsin.
-        var user = await db.Users.IgnoreQueryFilters()
-            .Where(x => x.Email == email && x.DeletedAt == null && (x.TenantId == 0 || x.TenantId == scopeTenant))
-            .OrderByDescending(x => x.TenantId == scopeTenant)
-            .ThenByDescending(x => x.TenantId == 0)
-            .FirstOrDefaultAsync(ct);
+        // Tenant açıq verilməyibsə (admin panel girişi) hesab email ilə bütün
+        // tenant-larda axtarılır; qeydiyyat email-in qlobal unikal olmasını təmin edir.
+        var user = requestedTenant is long scopeTenant
+            ? await db.Users.IgnoreQueryFilters()
+                .Where(x => x.Email == email && x.DeletedAt == null && (x.TenantId == 0 || x.TenantId == scopeTenant))
+                .OrderByDescending(x => x.TenantId == scopeTenant)
+                .ThenByDescending(x => x.TenantId == 0)
+                .FirstOrDefaultAsync(ct)
+            : await db.Users.IgnoreQueryFilters()
+                .Where(x => x.Email == email && x.DeletedAt == null)
+                .OrderByDescending(x => x.TenantId == 0)
+                .ThenBy(x => x.Id)
+                .FirstOrDefaultAsync(ct);
 
         if (user is null || !BCrypt.Net.BCrypt.Verify(request.Password, user.PasswordHash))
         {
             throw new UnauthorizedAccessException("Email or password is incorrect");
         }
 
-        // Superadmin qlobal hesabdır — tenant tələb olunmur. Digərləri yalnız öz tenant-ında.
+        // Superadmin qlobal hesabdır — tenant tələb olunmur. Digərləri yalnız öz tenant-ında
+        // və tenant aktiv olduqda giriş edə bilər.
         if (user.Type != UserTypes.SuperAdmin)
         {
-            var tenantId = request.TenantId ?? tenantProvider.TenantId;
-
-            if (tenantId is null)
+            if (requestedTenant is long tenantId && user.TenantId != tenantId)
             {
-                if (StrictTenant) throw new UnauthorizedAccessException("Tenant is required");
+                throw new UnauthorizedAccessException("Email or password is incorrect");
             }
-            else
-            {
-                if (!await db.Tenants.AnyAsync(t => t.Id == tenantId.Value && t.IsActive, ct))
-                {
-                    throw new UnauthorizedAccessException("Tenant is not active");
-                }
 
-                if (user.TenantId != tenantId.Value)
-                {
-                    throw new UnauthorizedAccessException("Email or password is incorrect");
-                }
+            if (user.TenantId <= 0 || !await db.Tenants.AnyAsync(t => t.Id == user.TenantId && t.IsActive, ct))
+            {
+                throw new UnauthorizedAccessException("Tenant is not active");
             }
         }
 
@@ -73,5 +65,5 @@ public sealed class UserAuthService(AppDbContext db, ITokenService tokens, ITena
     }
 
     private static UserResponse ToResponse(User user) =>
-        new(user.Id, user.Name, user.Surname, user.Email, user.PhoneNumber, user.Type);
+        new(user.Id, user.Name, user.Surname, user.Email, user.PhoneNumber, user.Type, user.TenantId);
 }

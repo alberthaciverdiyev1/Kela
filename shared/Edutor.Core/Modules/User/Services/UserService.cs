@@ -183,8 +183,9 @@ public sealed class UserService(
 
     private async Task EnsureEmailAvailableAsync(string email, long? excludeId, CancellationToken ct)
     {
-        var exists = await db.Users.IgnoreQueryFilters(new[] { "SoftDelete" })
-            .AnyAsync(x => x.Email == email && (excludeId == null || x.Id != excludeId), ct);
+        // Email admin panel girişində qlobal açar olduğu üçün bütün tenant-larda yoxlanılır.
+        var exists = await db.Users.IgnoreQueryFilters()
+            .AnyAsync(x => x.Email == email && x.DeletedAt == null && (excludeId == null || x.Id != excludeId), ct);
 
         if (exists)
         {
@@ -193,5 +194,5 @@ public sealed class UserService(
     }
 
     private static UserResponse ToResponse(User user) =>
-        new(user.Id, user.Name, user.Surname, user.Email, user.PhoneNumber, user.Type);
+        new(user.Id, user.Name, user.Surname, user.Email, user.PhoneNumber, user.Type, user.TenantId);
 }

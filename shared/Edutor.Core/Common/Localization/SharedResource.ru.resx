@@ -171,6 +171,9 @@
   <data name="Tenant_PasswordMismatch" xml:space="preserve">
     <value>Пароли не совпадают</value>
   </data>
+  <data name="Tenant_EmailInUse" xml:space="preserve">
+    <value>Аккаунт с таким e-mail уже существует</value>
+  </data>
   <data name="Banner_Owner" xml:space="preserve">
     <value>Владелец</value>
   </data>

@@ -171,6 +171,9 @@
   <data name="Tenant_PasswordMismatch" xml:space="preserve">
     <value>Passwords do not match</value>
   </data>
+  <data name="Tenant_EmailInUse" xml:space="preserve">
+    <value>An account with this email already exists</value>
+  </data>
   <data name="Banner_Owner" xml:space="preserve">
     <value>Owner</value>
   </data>

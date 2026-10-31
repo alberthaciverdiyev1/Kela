@@ -1,6 +1,5 @@
 using FluentValidation;
 using Edutor.Admin.Infrastructure;
-using Edutor.Core.Modules.Tenant.Abstractions;
 using Edutor.Core.Modules.User.Abstractions;
 using Edutor.Core.Modules.User.Requests;
 using Microsoft.AspNetCore.Authentication;
@@ -15,15 +14,13 @@ namespace Edutor.Admin.Controllers;
 [Route("[controller]")]
 public sealed class LoginController(
     IUserAuthService service,
-    ITenantService tenants,
     IValidator<UserLoginRequest> validator) : Controller
 {
     [HttpGet]
-    public async Task<IActionResult> Index(CancellationToken ct)
+    public IActionResult Index(CancellationToken ct)
     {
         if (User.Identity?.IsAuthenticated == true) return RedirectToAction("Index", "Dashboard");
 
-        ViewData["Tenants"] = await tenants.ListPublicAsync(ct);
         ViewData["Scripts"] = new[] { "~/js/pages/login/index.js" };
         return View();
     }
@@ -36,27 +33,26 @@ public sealed class LoginController(
         var validation = await validator.ValidateAsync(request, ct);
         if (!validation.IsValid)
         {
-            return await LoginViewAsync(validation.Errors[0].ErrorMessage, ct);
+            return LoginView(validation.Errors[0].ErrorMessage);
         }
 
         try
         {
             var result = await service.LoginAsync(request, ct);
 
-            await AdminSignIn.SignInAsync(HttpContext, result.User, request.TenantId);
+            await AdminSignIn.SignInAsync(HttpContext, result.User, result.User.TenantId);
 
             return RedirectToAction("Index", "Dashboard");
         }
         catch (UnauthorizedAccessException)
         {
-            return await LoginViewAsync("Kurs, e-poçt və ya şifrə yanlışdır.", ct);
+            return LoginView("E-poçt və ya şifrə yanlışdır.");
         }
     }
 
-    private async Task<IActionResult> LoginViewAsync(string error, CancellationToken ct)
+    private IActionResult LoginView(string error)
     {
         ViewData["Error"] = error;
-        ViewData["Tenants"] = await tenants.ListPublicAsync(ct);
         ViewData["Scripts"] = new[] { "~/js/pages/login/index.js" };
         return View("Index");
     }

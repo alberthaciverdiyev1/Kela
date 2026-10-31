@@ -171,6 +171,9 @@
   <data name="Tenant_PasswordMismatch" xml:space="preserve">
     <value>Şifrələr uyğun gəlmir</value>
   </data>
+  <data name="Tenant_EmailInUse" xml:space="preserve">
+    <value>Bu e-poçt ilə hesab artıq mövcuddur</value>
+  </data>
   <data name="Banner_Owner" xml:space="preserve">
     <value>Sahibi</value>
   </data>

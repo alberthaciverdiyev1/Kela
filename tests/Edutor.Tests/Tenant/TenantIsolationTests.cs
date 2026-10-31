@@ -174,4 +174,94 @@ public class TenantRegistrationTests(ApiFactory factory)
                 AcceptTerms = true
             }));
     }
+
+    [Fact]
+    public async Task Registration_rejects_an_email_used_in_another_tenant()
+    {
+        using var scope = factory.Services.CreateScope();
+        var service = scope.ServiceProvider.GetRequiredService<Edutor.Core.Modules.Tenant.Abstractions.ITenantService>();
+
+        var localizer = scope.ServiceProvider
+            .GetRequiredService<Microsoft.Extensions.Localization.IStringLocalizer<Edutor.Core.Common.Localization.SharedResource>>();
+
+        var email = $"dup-{Guid.NewGuid():N}@test.local";
+        await service.RegisterAsync(TeacherRequest(email, "Birinci"));
+
+        var error = await Assert.ThrowsAsync<ArgumentException>(() => service.RegisterAsync(TeacherRequest(email, "Ikinci")));
+        Assert.Equal(localizer["Tenant_EmailInUse"].Value, error.Message);
+    }
+
+    private static Edutor.Core.Modules.Tenant.Requests.RegisterTenantRequest TeacherRequest(string email, string name) =>
+        new()
+        {
+            AccountType = "teacher",
+            AdminName = name,
+            Email = email,
+            PhoneNumber = "0500000000",
+            Password = "Password1",
+            ConfirmPassword = "Password1",
+            AcceptTerms = true
+        };
+}
+
+[Collection("api")]
+public class TenantAgnosticLoginTests(ApiFactory factory)
+{
+    private readonly HttpClient _client = factory.CreateClient();
+
+    [Fact]
+    public async Task Admin_login_without_tenant_selection_finds_the_account()
+    {
+        using var scope = factory.Services.CreateScope();
+        var service = scope.ServiceProvider.GetRequiredService<Edutor.Core.Modules.Tenant.Abstractions.ITenantService>();
+
+        var email = $"admin-{Guid.NewGuid():N}@test.local";
+        var tenant = await service.RegisterAsync(TeacherRequest(email, "Aysel"));
+
+        var login = await _client.PostAsJsonAsync("/api/user-auth/login", new { email, password = "Password1" });
+
+        Assert.Equal(HttpStatusCode.OK, login.StatusCode);
+        var json = await login.Content.ReadAsStringAsync();
+        Assert.Equal(tenant.Id, TenantClaimOf(json));
+    }
+
+    [Fact]
+    public async Task Login_is_rejected_when_the_tenant_is_inactive()
+    {
+        using var scope = factory.Services.CreateScope();
+        var service = scope.ServiceProvider.GetRequiredService<Edutor.Core.Modules.Tenant.Abstractions.ITenantService>();
+        var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+
+        var email = $"inactive-{Guid.NewGuid():N}@test.local";
+        var tenant = await service.RegisterAsync(TeacherRequest(email, "Aysel"));
+
+        var entity = await db.Tenants.IgnoreQueryFilters().FirstAsync(t => t.Id == tenant.Id);
+        entity.IsActive = false;
+        await db.SaveChangesAsync();
+
+        var login = await _client.PostAsJsonAsync("/api/user-auth/login", new { email, password = "Password1" });
+
+        Assert.Equal(HttpStatusCode.Unauthorized, login.StatusCode);
+    }
+
+    private static Edutor.Core.Modules.Tenant.Requests.RegisterTenantRequest TeacherRequest(string email, string name) =>
+        new()
+        {
+            AccountType = "teacher",
+            AdminName = name,
+            Email = email,
+            PhoneNumber = "0500000000",
+            Password = "Password1",
+            ConfirmPassword = "Password1",
+            AcceptTerms = true
+        };
+
+    private static long TenantClaimOf(string json)
+    {
+        var token = JsonDocument.Parse(json).RootElement.GetProperty("data").GetProperty("token").GetString()!;
+        var payload = token.Split('.')[1].Replace('-', '+').Replace('_', '/');
+        payload = payload.PadRight(payload.Length + (4 - payload.Length % 4) % 4, '=');
+        var claims = JsonDocument.Parse(Encoding.UTF8.GetString(Convert.FromBase64String(payload))).RootElement;
+        return long.Parse(claims.GetProperty("tenant_id").GetString()!);
+    }
 }
