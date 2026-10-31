@@ -1,4 +1,5 @@
 using FluentValidation;
+using Microsoft.Extensions.Logging;
 using Edutor.Core.Common.Storage;
 using Edutor.Core.Data;
 using Edutor.Core.Modules.Banner.Services;
@@ -69,12 +70,16 @@ public static class DependencyInjection
 
             var storageProvider = config["Storage:Provider"] ?? "Local";
 
-            return string.Equals(storageProvider, "R2", StringComparison.OrdinalIgnoreCase)
+            IFileStorage storage = string.Equals(storageProvider, "R2", StringComparison.OrdinalIgnoreCase)
                 ? new R2FileStorage(Microsoft.Extensions.Options.Options.Create(options))
                 : new LocalFileStorage(
                     provider.GetRequiredService<IWebHostEnvironment>(),
                     config,
                     provider.GetRequiredService<IHttpContextAccessor>());
+
+            // Şəkil sıxışdırma bütün yükləmə yollarına tətbiq olunsun deyə dekore edilir.
+            return new ImageOptimizingFileStorage(storage, new ImageOptimizer(
+                config, provider.GetRequiredService<ILogger<ImageOptimizer>>()));
         });
 
         services.Configure<WorkerOptions>(configuration.GetSection(WorkerOptions.SectionName));

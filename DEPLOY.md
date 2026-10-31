@@ -51,6 +51,10 @@ secret-lər env ilə verilir (`__` = bölmə ayırıcısı).
 | `Worker__ApiKey` | ✅ | node callback-ləri üçün |
 | `Storage__Provider` | ✅ | `Local` / `R2` |
 | `Storage__RootPath` | Local | məs. `/var/lib/edutor/uploads` |
+| `Storage__Images__Enabled` | | şəkilləri yükləmə zamanı optimallaşdır (default `true`) |
+| `Storage__Images__MaxDimension` | | uzun tərəfin maks. pikseli (default `1920`) |
+| `Storage__Images__JpegQuality` | | JPEG keyfiyyəti 1–100 (default `82`) |
+| `Storage__Images__MinSizeKb` | | bundan kiçik şəkillərə toxunulmur (default `24`) |
 | `R2__AccountId/AccessKeyId/SecretAccessKey/BucketName/PublicBaseUrl` | R2 | |
 | `Cors__Origins__0` | ✅ | WASM tətbiqinin domeni (boş olsa API hər origin-ə açıqdır) |
 | `Database__MigrateOnStartup` | | `true` və ya migration əl ilə |

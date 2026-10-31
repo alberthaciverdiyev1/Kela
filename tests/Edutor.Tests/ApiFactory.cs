@@ -46,7 +46,9 @@ public sealed class ApiFactory : WebApplicationFactory<Program>, IAsyncLifetime
         using (var guard = Services.CreateScope())
         {
             var storage = guard.ServiceProvider.GetRequiredService<IFileStorage>();
-            if (storage is not LocalFileStorage)
+            // Şəkil optimallaşdırması storage-ı dekore edir — əsl provayder içəridədir.
+            var provider = storage is ImageOptimizingFileStorage decorated ? decorated.Inner : storage;
+            if (provider is not LocalFileStorage)
             {
                 throw new InvalidOperationException(
                     $"Testlər '{storage.GetType().Name}' istifadə edir — real bucket-a yazmağın qarşısı alındı.");
