@@ -141,7 +141,8 @@ public sealed class R2FileStorage : IFileStorage, IDisposable
                 ContinuationToken = token
             }, ct);
 
-            keys.AddRange(response.S3Objects.Select(o => o.Key));
+            // Boş bucket/prefiks üçün S3Objects null gəlir.
+            keys.AddRange((response.S3Objects ?? []).Select(o => o.Key));
             token = response.IsTruncated == true ? response.NextContinuationToken : null;
         }
         while (token is not null);
@@ -163,7 +164,7 @@ public sealed class R2FileStorage : IFileStorage, IDisposable
                 ContinuationToken = token
             }, ct);
 
-            objects.AddRange(response.S3Objects.Select(o => new StoredObject(
+            objects.AddRange((response.S3Objects ?? []).Select(o => new StoredObject(
                 o.Key,
                 o.Size ?? 0,
                 new DateTimeOffset(o.LastModified?.ToUniversalTime() ?? DateTime.UtcNow, TimeSpan.Zero))));
