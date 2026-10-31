@@ -190,6 +190,28 @@ build_release() {
         "$SRC_DIR/admin/Edutor.Admin/node_modules/.bin/tailwindcss" \
         -i ./wwwroot/css/input.css -o ./wwwroot/css/app.css --minify)
 
+    # Production only: every class in both bundles becomes a random name and the
+    # markup that uses it is rewritten to match. The sources are restored when this
+    # function exits, so the checkout keeps the readable names.
+    local class_backup=$RELEASE/.class-backup
+    restore_sources() {
+        [[ -d $class_backup ]] || return 0
+        node "$SRC_DIR/tools/mangle-classes.mjs" --restore "$class_backup" \
+            || warn "sources left with mangled classes — next deploy resets them"
+    }
+    if [[ ${MANGLE_CLASSES:-1} != 0 ]]; then
+        trap restore_sources EXIT
+        log "mangling class names"
+        node "$SRC_DIR/tools/mangle-classes.mjs" \
+            --css "$SRC_DIR/admin/Edutor.Admin/wwwroot/css/app.css" \
+            --css "$SRC_DIR/web/Edutor.App.Shared/wwwroot/css/app.css" \
+            --root "$SRC_DIR/admin/Edutor.Admin" \
+            --root "$SRC_DIR/web/Edutor.App.Shared" \
+            --root "$SRC_DIR/web/Edutor.App.Web/wwwroot" \
+            --map "$RELEASE/class-map.json" \
+            --backup "$class_backup"
+    fi
+
     log "publish api"
     dotnet publish "$SRC_DIR/api/Edutor.Api" -c Release -o "$RELEASE/api" --nologo -v q
 

@@ -27,10 +27,28 @@ admin/Edutor.Admin/node_modules/.bin/tailwindcss \
   -i web/Edutor.App.Shared/wwwroot/css/input.css \
   -o web/Edutor.App.Shared/wwwroot/css/app.css --minify
 
+# Class adlarını random kodlara çevir (yalnız production). Skript həm app.css
+# selektorlarını, həm də onları istifadə edən .cshtml/.razor/.js/.html fayllarını
+# dəyişir; publish-dən sonra `--restore <backup>` ilə mənbələr geri qaytarılır.
+node tools/mangle-classes.mjs \
+  --css admin/Edutor.Admin/wwwroot/css/app.css \
+  --css web/Edutor.App.Shared/wwwroot/css/app.css \
+  --root admin/Edutor.Admin --root web/Edutor.App.Shared \
+  --root web/Edutor.App.Web/wwwroot \
+  --map /srv/edutor/class-map.json --backup /tmp/edutor-class-backup
+
 dotnet publish api/Edutor.Api        -c Release -o /srv/edutor/api
 dotnet publish admin/Edutor.Admin    -c Release -o /srv/edutor/admin
 dotnet publish web/Edutor.App.Web    -c Release -o /srv/edutor/web
+
+node tools/mangle-classes.mjs --restore /tmp/edutor-class-backup
 ```
+
+Class mangling yalnız `deploy.sh` (və yuxarıdakı manual axın) daxilində işləyir — `dev.sh` və
+adi `dotnet run`/`dotnet build` zamanı adlar olduğu kimi qalır. Skript yalnız həm bundle-da
+selektor, həm də mənbələrdə istifadə olunan sinifləri dəyişir; dinamik qurulan
+(`badge-${x}`), vendor kitabxanalarına aid və DOM xassəsi kimi işlənən (`el.hidden`) adlar
+toxunulmaz qalır. `MANGLE_CLASSES=0 ./deploy.sh` ilə söndürülə bilər.
 
 WASM istemcisinin API ünvanı publish-dən **əvvəl** `web/Edutor.App.Web/wwwroot/appsettings.json`
 içində production dəyərinə qoyulmalıdır (`Api:BaseUrl`). MAUI üçün eyni dəyər
