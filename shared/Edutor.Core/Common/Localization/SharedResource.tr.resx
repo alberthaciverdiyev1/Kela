@@ -96,6 +96,15 @@
   <data name="Api_ValidationFailed" xml:space="preserve">
     <value>Doğrulama başarısız</value>
   </data>
+  <data name="Api_Created" xml:space="preserve">
+    <value>Oluşturuldu</value>
+  </data>
+  <data name="Api_Updated" xml:space="preserve">
+    <value>Güncellendi</value>
+  </data>
+  <data name="Api_Deleted" xml:space="preserve">
+    <value>Silindi</value>
+  </data>
   <data name="Api_CurrentPasswordIncorrect" xml:space="preserve">
     <value>Mevcut şifre yanlış</value>
   </data>
@@ -395,6 +404,15 @@
   </data>
   <data name="Validation_BodyTextRequired" xml:space="preserve">
     <value>Metin gereklidir</value>
+  </data>
+  <data name="StudentNote_GroupRequired" xml:space="preserve">
+    <value>Notu paylaşmak için bir grup gerekli</value>
+  </data>
+  <data name="StudentNote_NotGroupMember" xml:space="preserve">
+    <value>Bu grubun üyesi değilsiniz</value>
+  </data>
+  <data name="StudentNote_InvalidVisibility" xml:space="preserve">
+    <value>Geçersiz görünürlük seçimi</value>
   </data>
   <data name="Nav_Dashboard" xml:space="preserve">
     <value>Panel</value>

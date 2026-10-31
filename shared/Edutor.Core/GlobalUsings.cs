@@ -16,6 +16,7 @@ global using Edutor.Core.Modules.Question.Abstractions;
 global using Edutor.Core.Modules.Quiz.Abstractions;
 global using Edutor.Core.Modules.Setting.Abstractions;
 global using Edutor.Core.Modules.StudentApp.Abstractions;
+global using Edutor.Core.Modules.StudentNote.Abstractions;
 global using Edutor.Core.Modules.Subject.Abstractions;
 global using Edutor.Core.Modules.Tenant.Abstractions;
 global using Edutor.Core.Modules.User.Abstractions;

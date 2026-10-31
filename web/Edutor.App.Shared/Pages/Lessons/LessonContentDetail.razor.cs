@@ -5,6 +5,7 @@ using Edutor.App.Shared.Dtos;
 using Edutor.App.Shared.Dtos.Auth;
 using Edutor.App.Shared.Dtos.Progress;
 using Edutor.App.Shared.Dtos.Quiz;
+using Edutor.App.Shared.Dtos.StudentNote;
 using Edutor.App.Shared.Services;
 using Edutor.App.Shared.Services.Api;
 
@@ -22,6 +23,19 @@ public partial class LessonContentDetail
     private ElementReference _videoRef;
     private string? _url;
     private long? _attachedKey;
+
+    private List<StudentNoteDto> _notes = new();
+    private List<GroupDto> _noteGroups = new();
+    private bool _noteFormOpen;
+    private string _noteTitle = "";
+    private string _noteBody = "";
+    private string _noteVisibility = "private";
+    private long? _noteGroupId;
+    private int? _noteAt;
+    private string? _noteError;
+    private bool _noteSaving;
+
+    private record AudioState(double current, double duration, bool paused, double rate);
 
     private bool IsVideo => _content?.Type == "video";
     private bool IsVoice => _content?.Type == "voice";
@@ -50,6 +64,8 @@ public partial class LessonContentDetail
         _loading = true;
         _done = false;
         _attachedKey = null;
+        _noteFormOpen = false;
+        _notes = new();
         try
         {
             var all = await Api.ContentsAsync(LessonId);
@@ -58,6 +74,12 @@ public partial class LessonContentDetail
                 ? new()
                 : all.Where(c => c.Id != ContentId && c.Type == _content.Type).ToList();
             _url = Absolute(_content?.PlaybackUrl ?? _content?.Url);
+
+            if (_content is not null && (IsVideo || IsVoice))
+            {
+                try { _notes = await Api.NotesAsync(contentId: ContentId); }
+                catch { }
+            }
         }
         catch { }
         _loading = false;
@@ -99,6 +121,124 @@ public partial class LessonContentDetail
         }
         catch { }
     }
+
+    private async Task StartNoteAsync()
+    {
+        _noteAt = await CurrentSecondsAsync();
+        _noteTitle = "";
+        _noteBody = "";
+        _noteVisibility = "private";
+        _noteGroupId = null;
+        _noteError = null;
+        _noteFormOpen = true;
+
+        if (_noteGroups.Count == 0)
+        {
+            try { _noteGroups = await Api.StudentGroupsAsync(); }
+            catch { }
+            _noteGroupId = _noteGroups.FirstOrDefault()?.Id;
+        }
+    }
+
+    private void SetNoteVisibility(string visibility)
+    {
+        _noteVisibility = visibility;
+        if (visibility == "group" && _noteGroupId is null) _noteGroupId = _noteGroups.FirstOrDefault()?.Id;
+    }
+
+    private async Task<int?> CurrentSecondsAsync()
+    {
+        try
+        {
+            if (IsVideo)
+            {
+                var t = await JS.InvokeAsync<double>("lmsVideoPlayer.time");
+                return t > 0.5 ? (int)t : null;
+            }
+
+            if (IsVoice && Player.IsActive)
+            {
+                var st = await JS.InvokeAsync<AudioState>("lmsAudio.state");
+                return st.current > 0.5 ? (int)st.current : null;
+            }
+        }
+        catch { }
+        return null;
+    }
+
+    private async Task SaveNoteAsync()
+    {
+        if (_noteSaving) return;
+        if (string.IsNullOrWhiteSpace(_noteBody))
+        {
+            _noteError = L["Notes_BodyRequired"];
+            return;
+        }
+
+        _noteSaving = true;
+        _noteError = null;
+        try
+        {
+            var dto = new StudentNoteUpsertDto(
+                ContentId,
+                _noteAt,
+                string.IsNullOrWhiteSpace(_noteTitle) ? null : _noteTitle.Trim(),
+                _noteBody.Trim(),
+                _noteVisibility,
+                _noteVisibility == "group" ? _noteGroupId : null);
+
+            var created = await Api.CreateNoteAsync(dto);
+            _notes.Insert(0, created);
+            _noteFormOpen = false;
+        }
+        catch (ApiException ex)
+        {
+            _noteError = ex.Message;
+        }
+        catch (Exception ex)
+        {
+            _noteError = ex.Message;
+        }
+        finally
+        {
+            _noteSaving = false;
+        }
+    }
+
+    private async Task JumpAsync(StudentNoteDto note)
+    {
+        if (note.PositionSeconds is not int seconds) return;
+        try
+        {
+            if (IsVideo)
+            {
+                await JS.InvokeVoidAsync("lmsVideoPlayer.seek", seconds);
+            }
+            else if (IsVoice && _content is not null && !string.IsNullOrEmpty(_url))
+            {
+                if (Player.Url != _url) Player.Play(_url, _content.Title);
+                Player.RequestSeek(seconds);
+            }
+        }
+        catch { }
+    }
+
+    private async Task DeleteNoteAsync(StudentNoteDto note)
+    {
+        try
+        {
+            await Api.DeleteNoteAsync(note.Id);
+            _notes.RemoveAll(n => n.Id == note.Id);
+        }
+        catch (ApiException ex)
+        {
+            _noteError = ex.Message;
+        }
+        catch { }
+    }
+
+    private static string FormatTime(int seconds)
+        => TimeSpan.FromSeconds(seconds).ToString(seconds >= 3600 ? @"h\:mm\:ss" : @"m\:ss");
 
     private static string Absolute(string? url)
     {

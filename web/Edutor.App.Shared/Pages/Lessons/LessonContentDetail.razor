@@ -82,6 +82,128 @@
                 @(_done ? L["Lesson_Completed"] : L["Lesson_MarkCompleted"])
             </button>
         </div>
+
+        @if (IsVideo || IsVoice)
+        {
+            <section class="mt-6 rounded-2xl border border-brand-090 bg-white p-4">
+                <div class="flex flex-wrap items-center justify-between gap-2">
+                    <h3 class="text-[13px] font-bold text-brand-784">@L["Notes_ContentTitle"]</h3>
+                    <button type="button" @onclick="StartNoteAsync"
+                            class="inline-flex items-center gap-1 rounded-full bg-brand-081 px-3 py-1.5 text-[12px] font-bold text-brand-671">
+                        <Icon Name="plus" Class="size-3.5" />
+                        @L["Notes_AddHere"]
+                        @if (_noteAt is int at)
+                        {
+                            <span>· @FormatTime(at)</span>
+                        }
+                    </button>
+                </div>
+
+                @if (_noteError is not null && !_noteFormOpen)
+                {
+                    <p class="mt-2 text-[11px] font-semibold text-danger-539">@_noteError</p>
+                }
+
+                @if (_noteFormOpen)
+                {
+                    <div class="mt-3 rounded-xl bg-brand-027 p-3">
+                        <input @bind="_noteTitle" type="text" maxlength="190" placeholder="@L["Notes_TitlePlaceholder"]"
+                               class="w-full rounded-lg border border-brand-104 bg-white px-3 py-2 text-[13px] outline-none focus:border-brand-467" />
+                        <textarea @bind="_noteBody" rows="3" maxlength="4000" placeholder="@L["Notes_BodyPlaceholder"]"
+                                  class="mt-2 w-full resize-none rounded-lg border border-brand-104 bg-white px-3 py-2 text-[13px] outline-none focus:border-brand-467"></textarea>
+
+                        <div class="mt-2 flex flex-wrap items-center gap-1.5">
+                            <button type="button" @onclick='() => SetNoteVisibility("private")'
+                                    class="rounded-full px-2.5 py-1 text-[11px] font-bold @(_noteVisibility == "private" ? "bg-brand-671 text-white" : "bg-brand-081 text-brand-669")">
+                                @L["Notes_Private"]
+                            </button>
+                            <button type="button" @onclick='() => SetNoteVisibility("group")'
+                                    class="rounded-full px-2.5 py-1 text-[11px] font-bold @(_noteVisibility == "group" ? "bg-brand-671 text-white" : "bg-brand-081 text-brand-669")">
+                                @L["Notes_Group"]
+                            </button>
+                            @if (_noteVisibility == "group" && _noteGroups.Count > 0)
+                            {
+                                <select @bind="_noteGroupId" class="rounded-full border border-brand-104 bg-white px-2.5 py-1 text-[11px] font-semibold text-brand-722 outline-none focus:border-brand-467">
+                                    @foreach (var g in _noteGroups)
+                                    {
+                                        <option value="@g.Id">@g.Name</option>
+                                    }
+                                </select>
+                            }
+                        </div>
+
+                        @if (_noteError is not null)
+                        {
+                            <p class="mt-2 text-[11px] font-semibold text-danger-539">@_noteError</p>
+                        }
+
+                        <div class="mt-3 flex items-center gap-2">
+                            <button type="button" @onclick="SaveNoteAsync" disabled="@_noteSaving"
+                                    class="rounded-lg bg-brand-671 px-3 py-2 text-[12px] font-bold text-white disabled:opacity-60">
+                                @L["Common_Save"]
+                            </button>
+                            <button type="button" @onclick="() => _noteFormOpen = false"
+                                    class="rounded-lg px-3 py-2 text-[12px] font-bold text-sage-459">
+                                @L["Common_Cancel"]
+                            </button>
+                        </div>
+                    </div>
+                }
+
+                @if (_notes.Count == 0)
+                {
+                    <p class="mt-3 text-[12px] text-sage-410">@L["Notes_NoNotes"]</p>
+                }
+                else
+                {
+                    <ul class="mt-3 grid gap-2">
+                        @foreach (var note in _notes)
+                        {
+                            <li class="rounded-xl border border-brand-080 p-3">
+                                <div class="flex items-start gap-2">
+                                    <div class="min-w-0 flex-1">
+                                        @if (!string.IsNullOrWhiteSpace(note.Title))
+                                        {
+                                            <p class="truncate text-[12px] font-bold text-brand-784">@note.Title</p>
+                                        }
+                                        <p class="mt-0.5 whitespace-pre-line text-[12px] leading-5 text-sage-459">@note.Body</p>
+                                    </div>
+                                    @if (note.IsMine)
+                                    {
+                                        <button type="button" @onclick="() => DeleteNoteAsync(note)" class="rounded-lg p-1.5 text-sage-478" aria-label="@L["Common_Delete"]">
+                                            <Icon Name="x" Class="size-3.5" />
+                                        </button>
+                                    }
+                                </div>
+                                <div class="mt-2 flex flex-wrap items-center gap-1.5 text-[10px] font-bold">
+                                    @if (note.PositionSeconds is int seconds)
+                                    {
+                                        <button type="button" @onclick="() => JumpAsync(note)"
+                                                class="rounded-full bg-brand-081 px-2 py-0.5 tabular-nums text-brand-671" title="@L["Notes_Jump"]">
+                                            @FormatTime(seconds)
+                                        </button>
+                                    }
+                                    <span class="rounded-full px-2 py-0.5 @(note.Visibility == "group" ? "bg-brand-103 text-brand-698" : "bg-brand-081 text-sage-410")">
+                                        @(note.Visibility == "group"
+                                            ? string.Format(L["Notes_SharedWith"], note.GroupName)
+                                            : L["Notes_Private"])
+                                    </span>
+                                    @if (!note.IsMine)
+                                    {
+                                        <span class="rounded-full bg-brand-081 px-2 py-0.5 text-brand-669">@note.AuthorName</span>
+                                    }
+                                </div>
+                            </li>
+                        }
+                    </ul>
+                }
+
+                <a href="/notes" class="mt-3 inline-flex items-center gap-1 text-[11px] font-bold text-brand-671">
+                    @L["Notes_AllNotes"]
+                    <Icon Name="chevron-right" Class="size-3.5" />
+                </a>
+            </section>
+        }
             </div>
 
             @if (_siblings.Count > 0)

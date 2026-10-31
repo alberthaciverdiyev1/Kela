@@ -96,6 +96,15 @@
   <data name="Api_ValidationFailed" xml:space="preserve">
     <value>Doğrulama uğursuz oldu</value>
   </data>
+  <data name="Api_Created" xml:space="preserve">
+    <value>Yaradıldı</value>
+  </data>
+  <data name="Api_Updated" xml:space="preserve">
+    <value>Yeniləndi</value>
+  </data>
+  <data name="Api_Deleted" xml:space="preserve">
+    <value>Silindi</value>
+  </data>
   <data name="Api_CurrentPasswordIncorrect" xml:space="preserve">
     <value>Cari şifrə yanlışdır</value>
   </data>
@@ -395,6 +404,15 @@
   </data>
   <data name="Validation_BodyTextRequired" xml:space="preserve">
     <value>Mətn tələb olunur</value>
+  </data>
+  <data name="StudentNote_GroupRequired" xml:space="preserve">
+    <value>Qeydi paylaşmaq üçün qrup tələb olunur</value>
+  </data>
+  <data name="StudentNote_NotGroupMember" xml:space="preserve">
+    <value>Bu qrupun üzvü deyilsiniz</value>
+  </data>
+  <data name="StudentNote_InvalidVisibility" xml:space="preserve">
+    <value>Yanlış görünürlük seçimi</value>
   </data>
   <data name="Nav_Dashboard" xml:space="preserve">
     <value>Dashboard</value>

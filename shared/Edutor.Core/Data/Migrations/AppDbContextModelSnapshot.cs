@@ -2841,6 +2841,85 @@ namespace Edutor.Core.Data.Migrations
                     b.ToTable("settings", (string)null);
                 });
 
+            modelBuilder.Entity("Edutor.Core.Modules.StudentNote.Entities.StudentNote", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint")
+                        .HasColumnName("id");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
+
+                    b.Property<string>("Body")
+                        .IsRequired()
+                        .HasMaxLength(4000)
+                        .HasColumnType("character varying(4000)")
+                        .HasColumnName("body");
+
+                    b.Property<DateTimeOffset>("CreatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_at");
+
+                    b.Property<DateTimeOffset?>("DeletedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("deleted_at");
+
+                    b.Property<long?>("GroupId")
+                        .HasColumnType("bigint")
+                        .HasColumnName("group_id");
+
+                    b.Property<long?>("LessonContentId")
+                        .HasColumnType("bigint")
+                        .HasColumnName("lesson_content_id");
+
+                    b.Property<long?>("LessonId")
+                        .HasColumnType("bigint")
+                        .HasColumnName("lesson_id");
+
+                    b.Property<int?>("PositionSeconds")
+                        .HasColumnType("integer")
+                        .HasColumnName("position_seconds");
+
+                    b.Property<long>("StudentId")
+                        .HasColumnType("bigint")
+                        .HasColumnName("student_id");
+
+                    b.Property<long>("TenantId")
+                        .HasColumnType("bigint")
+                        .HasColumnName("tenant_id");
+
+                    b.Property<string>("Title")
+                        .HasMaxLength(190)
+                        .HasColumnType("character varying(190)")
+                        .HasColumnName("title");
+
+                    b.Property<DateTimeOffset?>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("updated_at");
+
+                    b.Property<string>("Visibility")
+                        .IsRequired()
+                        .HasMaxLength(16)
+                        .HasColumnType("character varying(16)")
+                        .HasColumnName("visibility");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("DeletedAt");
+
+                    b.HasIndex("GroupId");
+
+                    b.HasIndex("LessonContentId");
+
+                    b.HasIndex("LessonId");
+
+                    b.HasIndex("StudentId");
+
+                    b.HasIndex("Visibility", "GroupId");
+
+                    b.ToTable("student_notes", (string)null);
+                });
+
             modelBuilder.Entity("Edutor.Core.Modules.Subject.Entities.Subject", b =>
                 {
                     b.Property<long>("Id")
@@ -3998,6 +4077,30 @@ namespace Edutor.Core.Data.Migrations
 
             modelBuilder.Entity("Edutor.Core.Modules.ScreenGuard.Entities.ScreenViolation", b =>
                 {
+                    b.HasOne("Edutor.Core.Modules.Auth.Entities.Student", null)
+                        .WithMany()
+                        .HasForeignKey("StudentId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Edutor.Core.Modules.StudentNote.Entities.StudentNote", b =>
+                {
+                    b.HasOne("Edutor.Core.Modules.Group.Entities.Group", null)
+                        .WithMany()
+                        .HasForeignKey("GroupId")
+                        .OnDelete(DeleteBehavior.SetNull);
+
+                    b.HasOne("Edutor.Core.Modules.LessonContent.Entities.LessonContent", null)
+                        .WithMany()
+                        .HasForeignKey("LessonContentId")
+                        .OnDelete(DeleteBehavior.SetNull);
+
+                    b.HasOne("Edutor.Core.Modules.Lesson.Entities.Lesson", null)
+                        .WithMany()
+                        .HasForeignKey("LessonId")
+                        .OnDelete(DeleteBehavior.SetNull);
+
                     b.HasOne("Edutor.Core.Modules.Auth.Entities.Student", null)
                         .WithMany()
                         .HasForeignKey("StudentId")

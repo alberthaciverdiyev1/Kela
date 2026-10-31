@@ -27,11 +27,22 @@ public partial class AudioPlayerBar
     protected override void OnInitialized()
     {
         Player.Changed += OnChanged;
+        Player.SeekRequested += OnSeekRequested;
         _ = InvokeAsync(SyncAsync);
         StartPolling();
     }
 
     private void OnChanged() => _ = InvokeAsync(async () => { await SyncAsync(); StateHasChanged(); });
+
+    private void OnSeekRequested(double seconds) => _ = InvokeAsync(async () =>
+    {
+        if (!Player.IsActive) return;
+        _loadedUrl = Player.Url;
+        _paused = false;
+        try { await JS.InvokeVoidAsync("lmsAudio.loadAt", Player.Url, seconds); }
+        catch { /* JS hazır deyil */ }
+        StateHasChanged();
+    });
 
     private void StartPolling()
     {
@@ -140,6 +151,7 @@ public partial class AudioPlayerBar
     public void Dispose()
     {
         Player.Changed -= OnChanged;
+        Player.SeekRequested -= OnSeekRequested;
         _cts?.Cancel();
         _cts?.Dispose();
     }

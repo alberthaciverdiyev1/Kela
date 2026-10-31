@@ -96,6 +96,15 @@
   <data name="Api_ValidationFailed" xml:space="preserve">
     <value>Проверка не пройдена</value>
   </data>
+  <data name="Api_Created" xml:space="preserve">
+    <value>Создано</value>
+  </data>
+  <data name="Api_Updated" xml:space="preserve">
+    <value>Обновлено</value>
+  </data>
+  <data name="Api_Deleted" xml:space="preserve">
+    <value>Удалено</value>
+  </data>
   <data name="Api_CurrentPasswordIncorrect" xml:space="preserve">
     <value>Текущий пароль неверен</value>
   </data>
@@ -395,6 +404,15 @@
   </data>
   <data name="Validation_BodyTextRequired" xml:space="preserve">
     <value>Текст обязателен</value>
+  </data>
+  <data name="StudentNote_GroupRequired" xml:space="preserve">
+    <value>Для публикации заметки требуется группа</value>
+  </data>
+  <data name="StudentNote_NotGroupMember" xml:space="preserve">
+    <value>Вы не участник этой группы</value>
+  </data>
+  <data name="StudentNote_InvalidVisibility" xml:space="preserve">
+    <value>Неверный вариант видимости</value>
   </data>
   <data name="Nav_Dashboard" xml:space="preserve">
     <value>Панель</value>

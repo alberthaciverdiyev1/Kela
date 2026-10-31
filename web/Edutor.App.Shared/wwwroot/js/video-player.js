@@ -1,11 +1,13 @@
 // In-app video player köməkçisi — m3u8 (HLS) dəstəyi ilə.
 window.lmsVideoPlayer = {
     _hls: null,
+    _el: null,
 
     attach: function (video, url) {
         this.destroy();
         if (!video || !url) return;
 
+        this._el = video;
         var isHls = /\.m3u8(\?|$)/i.test(url);
 
         if (!isHls) {
@@ -26,6 +28,14 @@ window.lmsVideoPlayer = {
         } else {
             video.src = url;
         }
+    },
+
+    time: function () {
+        return this._el ? (this._el.currentTime || 0) : 0;
+    },
+
+    seek: function (t) {
+        try { if (this._el) this._el.currentTime = t || 0; } catch (e) { /* noop */ }
     },
 
     destroy: function () {
@@ -213,6 +223,21 @@ window.lmsAudio = {
     play: function () { return this._get().play(); },
     pause: function () { this._get().pause(); },
     seek: function (t) { try { this._get().currentTime = t || 0; } catch (e) { /* noop */ } },
+    loadAt: function (url, t) {
+        var a = this._get();
+        a.pause();
+        var seekTo = function () {
+            try { a.currentTime = t || 0; } catch (e) { /* noop */ }
+            try { a.play(); } catch (e) { /* noop */ }
+        };
+        if (a.getAttribute('src') !== url) {
+            a.addEventListener('loadedmetadata', seekTo, { once: true });
+            a.src = url;
+            a.load();
+        } else {
+            seekTo();
+        }
+    },
     setRate: function (r) { try { this._get().playbackRate = r || 1; } catch (e) { /* noop */ } },
     stop: function () {
         var a = this._get();

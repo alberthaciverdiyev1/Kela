@@ -118,6 +118,8 @@ public sealed class AppDbContext : DbContext
 
     public DbSet<Modules.TeacherNote.Entities.TeacherNote> TeacherNotes => Set<Modules.TeacherNote.Entities.TeacherNote>();
 
+    public DbSet<Modules.StudentNote.Entities.StudentNote> StudentNotes => Set<Modules.StudentNote.Entities.StudentNote>();
+
     public DbSet<Modules.TenantConfig.Entities.TenantConfig> TenantConfigs => Set<Modules.TenantConfig.Entities.TenantConfig>();
 
     public DbSet<Modules.Nodes.Entities.WorkerNode> WorkerNodes => Set<Modules.Nodes.Entities.WorkerNode>();

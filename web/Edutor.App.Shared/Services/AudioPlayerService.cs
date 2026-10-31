@@ -8,8 +8,11 @@ public sealed class AudioPlayerService
 
     public event Action? Changed;
     public event Action? Ended;
+    public event Action<double>? SeekRequested;
 
     public void NotifyEnded() => Ended?.Invoke();
+
+    public void RequestSeek(double seconds) => SeekRequested?.Invoke(seconds);
 
     public void Play(string url, string? title)
     {
