@@ -2013,6 +2013,15 @@
   <data name="Homework_Late" xml:space="preserve">
     <value>Gecikmiş</value>
   </data>
+  <data name="Homework_Expired" xml:space="preserve">
+    <value>Süresi doldu</value>
+  </data>
+  <data name="Homework_QuizSubmissionOnly" xml:space="preserve">
+    <value>Bu ödev sınavlarıyla tamamlanır</value>
+  </data>
+  <data name="Homework_QuizSubmissionNote" xml:space="preserve">
+    <value>Bu ödev sınavlarıyla tamamlanır; tüm sınavlar bitince otomatik teslim edilir.</value>
+  </data>
   <data name="Homework_Score" xml:space="preserve">
     <value>Puan</value>
   </data>

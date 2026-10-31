@@ -110,6 +110,7 @@ public static class DependencyInjection
         services.AddScoped<INotificationService, NotificationService>();
         services.AddScoped<IHomeworkService, Edutor.Core.Modules.Homework.Services.HomeworkService>();
         services.AddScoped<IStudentHomeworkService, Edutor.Core.Modules.Homework.Services.StudentHomeworkService>();
+        services.AddScoped<IHomeworkQuizSubmissionService, Edutor.Core.Modules.Homework.Services.HomeworkQuizSubmissionService>();
         services.AddScoped<IPrivacyPolicyService, PrivacyPolicyService>();
         services.AddScoped<ITenantService, TenantService>();        services.AddScoped<IDashboardService, DashboardService>();
         services.AddScoped<IStudentManagementService, StudentManagementService>();

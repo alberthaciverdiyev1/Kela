@@ -344,6 +344,46 @@ public class HomeworkTests(ApiFactory factory)
         Assert.Equal(50, result.ScorePercent);
     }
 
+    [Fact]
+    public async Task Completing_all_attached_quizzes_submits_the_homework()
+    {
+        var teacherA = await CreateTeacherAsync("Teacher A");
+        var studentId = await RegisterStudentAsync("Quiz-only Student");
+        var group = await CreateGroupAsync(teacherA, studentId);
+
+        var quiz = await With<IQuizService, Core.Modules.Quiz.Responses.QuizResponse>(s => s.CreateAsync(new QuizUpsertRequest
+        {
+            Title = $"Q-{Guid.NewGuid():N}",
+            UserId = teacherA,
+            DurationMinutes = 5
+        }));
+
+        using var scope = factory.Services.CreateScope();
+        var homeworkService = scope.ServiceProvider.GetRequiredService<IHomeworkService>();
+        var studentService = scope.ServiceProvider.GetRequiredService<IStudentHomeworkService>();
+        var studentQuizService = scope.ServiceProvider.GetRequiredService<IStudentQuizService>();
+
+        var homework = await homeworkService.CreateAsync(Request(group, quiz.Id), teacherA);
+        await homeworkService.PublishAsync(homework.Id, teacherA);
+
+        var before = await studentService.GetAsync(studentId, homework.Id);
+        Assert.Equal("assigned", before.Status);
+        Assert.False(before.CanSubmit);
+
+        var start = await studentQuizService.StartAsync(studentId, new StartQuizRequest { QuizId = quiz.Id });
+        await studentQuizService.CompleteAsync(studentId, new CompleteQuizRequest { AttemptId = start.AttemptId });
+
+        var after = await studentService.GetAsync(studentId, homework.Id);
+        Assert.Equal("submitted", after.Status);
+        Assert.False(after.CanSubmit);
+
+        await Assert.ThrowsAsync<ArgumentException>(() =>
+            studentService.SubmitAsync(studentId, homework.Id, new SubmitHomeworkRequest { Text = "text" }));
+
+        var results = await studentQuizService.ListResultsAsync(studentId);
+        Assert.DoesNotContain(results, r => r.QuizId == quiz.Id);
+    }
+
     private HttpClient StudentClient(long studentId, string email)
     {
         using var scope = factory.Services.CreateScope();

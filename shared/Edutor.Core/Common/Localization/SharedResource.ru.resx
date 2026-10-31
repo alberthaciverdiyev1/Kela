@@ -2013,6 +2013,15 @@
   <data name="Homework_Late" xml:space="preserve">
     <value>С опозданием</value>
   </data>
+  <data name="Homework_Expired" xml:space="preserve">
+    <value>Срок истёк</value>
+  </data>
+  <data name="Homework_QuizSubmissionOnly" xml:space="preserve">
+    <value>Это задание выполняется через тесты</value>
+  </data>
+  <data name="Homework_QuizSubmissionNote" xml:space="preserve">
+    <value>Это задание выполняется через тесты; оно отправляется автоматически после прохождения всех тестов.</value>
+  </data>
   <data name="Homework_Score" xml:space="preserve">
     <value>Балл</value>
   </data>

@@ -2013,6 +2013,15 @@
   <data name="Homework_Late" xml:space="preserve">
     <value>Late</value>
   </data>
+  <data name="Homework_Expired" xml:space="preserve">
+    <value>Expired</value>
+  </data>
+  <data name="Homework_QuizSubmissionOnly" xml:space="preserve">
+    <value>This homework is completed through its quizzes</value>
+  </data>
+  <data name="Homework_QuizSubmissionNote" xml:space="preserve">
+    <value>This homework is completed through its quizzes; it is submitted automatically when all quizzes are done.</value>
+  </data>
   <data name="Homework_Score" xml:space="preserve">
     <value>Score</value>
   </data>

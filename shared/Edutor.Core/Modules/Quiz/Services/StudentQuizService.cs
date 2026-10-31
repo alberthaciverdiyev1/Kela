@@ -14,7 +14,8 @@ using StudentQuizQuestion = Edutor.Core.Modules.Quiz.Entities.StudentQuizQuestio
 public sealed class StudentQuizService(
     AppDbContext db,
     IStudentAccessService access,
-    IFileStorage storage) : IStudentQuizService
+    IFileStorage storage,
+    IHomeworkQuizSubmissionService homeworkSubmissions) : IStudentQuizService
 {
     public async Task<StartQuizResponse> StartAsync(long studentId, StartQuizRequest request, CancellationToken ct = default)
     {
@@ -123,6 +124,8 @@ public sealed class StudentQuizService(
         attempt.EndDate = DateTimeOffset.UtcNow;
         await db.SaveChangesAsync(ct);
 
+        await homeworkSubmissions.SyncAfterQuizCompletionAsync(studentId, attempt.QuizId, ct);
+
         return new CompleteQuizResponse(
             attempt.Id,
             attempt.TotalQuestionCount,
@@ -136,6 +139,9 @@ public sealed class StudentQuizService(
     {
         var query = db.StudentQuizzes.AsNoTracking()
             .Where(a => a.StudentId == studentId && a.IsCompleted);
+
+        // Ev tapşırığına bağlanmış quizlər "yaptığım quizlər" siyahısında görünmür — onlar tapşırığın tərkibidir.
+        query = query.Where(a => !db.HomeworkQuizzes.Any(hq => hq.QuizId == a.QuizId));
 
         if (from is not null)
         {

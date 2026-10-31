@@ -21,6 +21,7 @@ public sealed class StudentHomeworkService(
     IFileStorage storage,
     ITenantFolder folders,
     ISubscriptionService subscription,
+    IHomeworkQuizSubmissionService quizSubmissions,
     IStringLocalizer<SharedResource> L) : IStudentHomeworkService
 {
     public async Task<IReadOnlyList<StudentHomeworkSummaryResponse>> ListAsync(long studentId, CancellationToken ct = default)
@@ -67,6 +68,9 @@ public sealed class StudentHomeworkService(
 
     public async Task<StudentHomeworkDetailResponse> GetAsync(long studentId, long homeworkId, CancellationToken ct = default)
     {
+        // Quizlər əvvəldən tamamlanıbsa (məs. tapşırıq yayımlanmadan əvvəl), vəziyyət açılışda sinxronlaşdırılır.
+        await quizSubmissions.SyncHomeworkAsync(studentId, homeworkId, ct);
+
         var assignment = await LoadAssignmentAsync(studentId, homeworkId, tracked: false, ct);
         return await BuildDetailAsync(assignment, ct);
     }
@@ -93,7 +97,9 @@ public sealed class StudentHomeworkService(
         if (files.Count > 0) HomeworkFileRules.Validate(files);
 
         var hasQuizzes = await db.HomeworkQuizzes.AnyAsync(x => x.HomeworkId == homeworkId, ct);
-        if (!hasQuizzes && text is null && link is null && files.Count == 0)
+        if (hasQuizzes) throw new ArgumentException(L["Homework_QuizSubmissionOnly"]);
+
+        if (text is null && link is null && files.Count == 0)
         {
             throw new ArgumentException(L["Homework_EmptySubmission"]);
         }
@@ -243,6 +249,7 @@ public sealed class StudentHomeworkService(
             quizResults,
             quizResults.Count > 0,
             quizResults.All(x => x.Completed),
-            assignment.Status != HomeworkStatus.Graded);
+            // Quizli tapşırıqda ayrıca mətn/link/fayl təqdimatı tələb olunmur.
+            quizResults.Count == 0 && assignment.Status != HomeworkStatus.Graded);
     }
 }

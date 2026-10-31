@@ -46,6 +46,10 @@
                         {
                             <span class="rounded-full bg-[#fdecef] px-2.5 py-1 text-danger-539">@L["Homework_Late"]</span>
                         }
+                        else if (IsExpired(h))
+                        {
+                            <span class="rounded-full bg-[#fdecef] px-2.5 py-1 text-danger-539">@L["Homework_Expired"]</span>
+                        }
                     </div>
                 </a>
             }
@@ -70,6 +74,9 @@
         try { _homeworks = await Api.HomeworksAsync(); }
         catch { }
     }
+
+    private static bool IsExpired(Edutor.App.Shared.Dtos.Homework.StudentHomeworkSummaryDto h)
+        => h.Status == "assigned" && h.DueDate < DateTimeOffset.UtcNow;
 
     private string StatusLabel(string status) => status switch
     {
