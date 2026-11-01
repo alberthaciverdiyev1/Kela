@@ -26,6 +26,20 @@ const SKIP_PATHS = [
     '.min.js',
 ];
 
+// Tailwind utilities that double as C# keywords (`static`, `fixed`, `inline`, `table`,
+// `block`, `hidden`). Inline `@code` blocks are not parsed, so these keep their names.
+const CSHARP_KEYWORDS = new Set([
+    'abstract', 'as', 'base', 'bool', 'break', 'byte', 'case', 'catch', 'char', 'checked',
+    'class', 'const', 'continue', 'decimal', 'default', 'delegate', 'do', 'double', 'else',
+    'enum', 'event', 'explicit', 'extern', 'false', 'finally', 'fixed', 'float', 'for',
+    'foreach', 'goto', 'if', 'implicit', 'in', 'int', 'interface', 'internal', 'is', 'lock',
+    'long', 'namespace', 'new', 'null', 'object', 'operator', 'out', 'override', 'params',
+    'private', 'protected', 'public', 'readonly', 'ref', 'return', 'sbyte', 'sealed',
+    'short', 'sizeof', 'stackalloc', 'static', 'string', 'struct', 'switch', 'this', 'throw',
+    'true', 'try', 'typeof', 'uint', 'ulong', 'unchecked', 'unsafe', 'ushort', 'using',
+    'virtual', 'void', 'volatile', 'while',
+]);
+
 const args = process.argv.slice(2);
 const options = { css: [], roots: [], map: null, backup: null, restore: null, explain: [], seed: crypto.randomBytes(8).toString('hex') };
 
@@ -216,6 +230,128 @@ function classPattern(map) {
     return new RegExp(`(?<![\\w-])(${names.map(escapeRegExp).join('|')})(?![\\w.-])`, 'g');
 }
 
+// C# sources: only string literal contents may be rewritten — a CSS name can also be an
+// identifier or keyword in code (`private static readonly`, `var fixed`). Interpolation
+// holes (`$"{value}"`) are expressions and stay untouched.
+function rewriteCsStrings(text, pattern, map) {
+    const parts = [];
+    let segmentStart = 0;
+
+    const emit = (start, end, replaceable) => {
+        const body = text.slice(start, end);
+        parts.push(text.slice(segmentStart, start),
+            replaceable ? body.replace(pattern, (_, name) => map.get(name)) : body);
+        segmentStart = end;
+    };
+
+    let i = 0;
+    while (i < text.length) {
+        const ch = text[i];
+
+        if (ch === '/' && text[i + 1] === '/') {
+            const end = text.indexOf('\n', i);
+            i = end < 0 ? text.length : end + 1;
+            continue;
+        }
+        if (ch === '/' && text[i + 1] === '*') {
+            const end = text.indexOf('*/', i + 2);
+            i = end < 0 ? text.length : end + 2;
+            continue;
+        }
+        if (ch === "'") {
+            i = skipCsQuoted(text, i, "'");
+            continue;
+        }
+
+        let j = i;
+        let verbatim = false;
+        let interpolated = false;
+        while (j < text.length && (text[j] === '$' || text[j] === '@')) {
+            if (text[j] === '@') verbatim = true; else interpolated = true;
+            j++;
+        }
+        if (text[j] !== '"') {
+            i = j > i ? j : i + 1;
+            continue;
+        }
+
+        let quotes = 0;
+        while (text[j + quotes] === '"') quotes++;
+
+        if (quotes >= 3) {
+            const close = text.indexOf('"'.repeat(quotes), j + quotes);
+            const end = close < 0 ? text.length : close;
+            emit(j + quotes, end, true);
+            i = close < 0 ? text.length : close + quotes;
+            continue;
+        }
+
+        const contentStart = j + 1;
+        const close = skipCsQuoted(text, contentStart - 1, '"', verbatim);
+        const contentEnd = Math.min(close, text.length);
+
+        // Class lists never start with `/`; route strings (`$"/api/x/{id}/contents"`) do,
+        // and renaming a path segment would break the request.
+        const firstHole = text.indexOf('{', contentStart);
+        const headEnd = interpolated && firstHole >= 0 && firstHole < contentEnd ? firstHole : contentEnd;
+        if (/^\s*(\/|https?:\/\/)/.test(text.slice(contentStart, headEnd))) {
+            emit(contentStart, contentEnd, false);
+            i = close >= text.length ? text.length : close + 1;
+            continue;
+        }
+
+        if (!interpolated) {
+            emit(contentStart, contentEnd, true);
+        } else {
+            // Split the literal into plain runs and `{...}` holes.
+            let runStart = contentStart;
+            let k = contentStart;
+            while (k < contentEnd) {
+                if (!verbatim && text[k] === '\\') { k += 2; continue; }
+                if (verbatim && text[k] === '"' && text[k + 1] === '"') { k += 2; continue; }
+                if (text[k] === '{' && text[k + 1] === '{') { k += 2; continue; }
+                if (text[k] !== '{') { k++; continue; }
+                let depth = 1;
+                let h = k + 1;
+                while (h < contentEnd && depth > 0) {
+                    const c = text[h];
+                    if (c === '"') { h = skipCsQuoted(text, h, '"') + 1; continue; }
+                    if (c === "'") { h = skipCsQuoted(text, h, "'") + 1; continue; }
+                    if (c === '{') depth++;
+                    else if (c === '}') depth--;
+                    h++;
+                }
+                emit(runStart, k, true);
+                emit(k, h, false);
+                runStart = h;
+                k = h;
+            }
+            emit(runStart, contentEnd, true);
+        }
+
+        i = close >= text.length ? text.length : close + 1;
+    }
+
+    parts.push(text.slice(segmentStart));
+    return parts.join('');
+}
+
+// Returns the index of the delimiter closing the literal opened at `open`
+// (`open` itself may be the quote or the first content char index passed as quote-1).
+function skipCsQuoted(text, open, quote, verbatim = false) {
+    let i = open + 1;
+    while (i < text.length) {
+        const ch = text[i];
+        if (ch === '\\' && !verbatim) { i += 2; continue; }
+        if (ch === quote) {
+            if (quote === '"' && verbatim && text[i + 1] === '"') { i += 2; continue; }
+            return i;
+        }
+        i++;
+    }
+    return text.length;
+}
+
 // Everything between two boundaries is emitted verbatim except selector preludes, so
 // strings and comments only need to be stepped over — never emitted separately.
 function rewriteCss(css, map) {
@@ -301,6 +437,7 @@ const dynamicPrefixes = [...protectedNames.keys()].filter(name => name.endsWith(
 const candidates = [...classNames].filter(name => {
     if (!used.has(name)) return false;
     if (protectedNames.has(name)) return false;
+    if (CSHARP_KEYWORDS.has(name)) return false;
     return !dynamicPrefixes.some(prefix => name.startsWith(prefix));
 });
 
@@ -323,7 +460,9 @@ for (const bundle of bundles) {
 const pattern = classPattern(map);
 
 for (const source of sources) {
-    const rewritten = source.text.replace(pattern, (_, name) => map.get(name));
+    const rewritten = source.file.endsWith('.cs')
+        ? rewriteCsStrings(source.text, pattern, map)
+        : source.text.replace(pattern, (_, name) => map.get(name));
     if (rewritten === source.text) continue;
     if (backupDir) backupFile(backupDir, source.file);
     fs.writeFileSync(source.file, rewritten);
