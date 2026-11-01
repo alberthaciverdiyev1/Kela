@@ -18,7 +18,7 @@ public sealed class TenantController(ITenantService service, ISubscriptionServic
     [HttpGet]
     public IActionResult Index()
     {
-        ViewData["Scripts"] = new[] { "~/js/pages/tenant/list.js", "~/js/pages/tenant/create.js", "~/js/pages/tenant/plan.js" };
+        ViewData["Scripts"] = new[] { "~/js/pages/tenant/list.js", "~/js/pages/tenant/create.js", "~/js/helpers/plan-modal.js" };
         return View();
     }
 

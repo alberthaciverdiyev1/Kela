@@ -17,7 +17,7 @@ public sealed class SubscriptionController(
     [HttpGet]
     public async Task<IActionResult> Index([FromQuery(Name = "tenant_id")] long? tenantId, CancellationToken ct)
     {
-        ViewData["Scripts"] = new[] { "~/js/pages/subscription/index.js" };
+        ViewData["Scripts"] = new[] { "~/js/pages/subscription/index.js", "~/js/helpers/plan-modal.js" };
 
         var selected = await ResolveTenantAsync(tenantId, ct);
 

@@ -455,6 +455,45 @@ public class SubscriptionTests(ApiFactory factory)
         await scopedService.EnsureCanUploadAsync(UploadKind.File);
         await scopedService.EnsureCanUploadAsync(UploadKind.Audio);
     }
+
+    [Fact]
+    public async Task Assigning_a_plan_renews_an_expired_subscription()
+    {
+        await using var db = Db(0);
+        var service = new SubscriptionService(db);
+
+        var plan = await service.CreatePlanAsync(Request($"p-{Guid.NewGuid():N}"[..20], 50, 600));
+        var next = await service.CreatePlanAsync(Request($"s-{Guid.NewGuid():N}"[..20], 200, 900));
+
+        var tenantId = await TenantAsync(db, plan.Id, DateTimeOffset.UtcNow.AddDays(-30));
+        Assert.Equal("suspended", (await service.GetAsync(tenantId)).Usage.Status);
+
+        var expires = new DateTimeOffset(DateTime.UtcNow.AddDays(30).Date, TimeSpan.Zero);
+        await service.AssignPlanAsync(tenantId, new AssignPlanRequest { PlanId = next.Id, ExpiresAt = expires });
+
+        await using var scoped = Db(tenantId);
+        var subscription = await new SubscriptionService(scoped).GetAsync(tenantId);
+
+        Assert.Equal(next.Id, subscription.Plan!.Id);
+        Assert.Equal("active", subscription.Usage.Status);
+        // Seçilən tarix günün sonuna qədər uzadılır.
+        Assert.Equal(expires.AddDays(1), subscription.Usage.ExpiresAt!.Value);
+    }
+
+    [Fact]
+    public async Task Assigning_a_plan_requires_a_plan_id()
+    {
+        await using var db = Db(0);
+        var service = new SubscriptionService(db);
+
+        var plan = await service.CreatePlanAsync(Request($"p-{Guid.NewGuid():N}"[..20], 50, 600));
+        var tenantId = await TenantAsync(db, plan.Id);
+
+        var ex = await Assert.ThrowsAsync<ArgumentException>(() =>
+            service.AssignPlanAsync(tenantId, new AssignPlanRequest { PlanId = 0 }));
+
+        Assert.Equal("Plan seçin", ex.Message);
+    }
 }
 
 /// <summary>Bucket taraması: tenant-ın tutduğu yer və köhnə orijinalların silinməsi.</summary>

@@ -553,6 +553,8 @@ public sealed class SubscriptionService(AppDbContext db) : ISubscriptionService
         var tenant = await db.Tenants.FirstOrDefaultAsync(x => x.Id == tenantId && x.DeletedAt == null, ct)
             ?? throw new KeyNotFoundException($"Tenant not found: {tenantId}");
 
+        if (request.PlanId <= 0) throw new ArgumentException("Plan seçin");
+
         var plan = await db.SubscriptionPlans.FirstOrDefaultAsync(x => x.Id == request.PlanId, ct)
             ?? throw new ArgumentException($"Plan not found: {request.PlanId}");
 

@@ -78,6 +78,16 @@
                     ? "Tenant seçin — seçilmiş tenant-ın planı, limitləri və istifadəsi göstəriləcək."
                     : "Hələ plan təyin edilməyib. Administratorla əlaqə saxlayın.")
             </p>
+
+            @if (canManageLimits && selectedTenantId is long planlessTenantId)
+            {
+                <button type="button"
+                        class="admin-button-primary mt-4"
+                        data-action="PlanModal.open"
+                        data-args='[@planlessTenantId, null, ""]'>
+                    Plan təyin et
+                </button>
+            }
         </div>
     }
     else
@@ -91,6 +101,16 @@
                 <div class="mt-3">
                     <span class="badge badge-@statusLabel.Item2">@statusLabel.Item1</span>
                 </div>
+
+                @if (canManageLimits && selectedTenantId is long currentTenantId)
+                {
+                    <button type="button"
+                            class="admin-button admin-button-secondary mt-3 w-full justify-center"
+                            data-action="PlanModal.open"
+                            data-args='[@currentTenantId, @Model.Plan.Id, "@(used.ExpiresAt?.ToString("yyyy-MM-dd"))"]'>
+                        Planı yenilə / dəyiş
+                    </button>
+                }
                 <p class="mt-3 text-xs font-semibold uppercase tracking-wide text-slate-400">Yükləmə</p>
                 <div class="mt-1 flex flex-wrap gap-1">
                     @{
@@ -113,7 +133,7 @@
                 @if (used.ExpiresAt is { } expires)
                 {
                     <p class="mt-1 text-2xl font-extrabold text-slate-900">@expires.ToString("dd.MM.yyyy")</p>
-                    <p class="mt-1 text-sm text-slate-500">@(used.DaysLeft is { } d ? $"{d} gün qalıb" : "—")</p>
+                    <p class="mt-1 text-sm text-slate-500">@(used.DaysLeft is { } d && d > 0 ? $"{d} gün qalıb" : "Müddəti bitib — planı yeniləyin")</p>
                 }
                 else
                 {
@@ -287,5 +307,7 @@
         }
     }
 </section>
+
+<partial name="Ui/_PlanModal" />
 
 <form id="antiforgery">@Html.AntiForgeryToken()</form>
