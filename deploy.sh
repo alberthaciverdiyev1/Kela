@@ -193,10 +193,11 @@ build_release() {
     # Production only: every class in both bundles becomes a random name and the
     # markup that uses it is rewritten to match. The sources are restored when this
     # function exits, so the checkout keeps the readable names.
-    local class_backup=$RELEASE/.class-backup
+    # Global, not local: the EXIT trap outlives build_release's scope (`set -u`).
+    CLASS_BACKUP=$RELEASE/.class-backup
     restore_sources() {
-        [[ -d $class_backup ]] || return 0
-        node "$SRC_DIR/tools/mangle-classes.mjs" --restore "$class_backup" \
+        [[ -d $CLASS_BACKUP ]] || return 0
+        node "$SRC_DIR/tools/mangle-classes.mjs" --restore "$CLASS_BACKUP" \
             || warn "sources left with mangled classes — next deploy resets them"
     }
     if [[ ${MANGLE_CLASSES:-1} != 0 ]]; then
@@ -209,7 +210,7 @@ build_release() {
             --root "$SRC_DIR/web/Edutor.App.Shared" \
             --root "$SRC_DIR/web/Edutor.App.Web/wwwroot" \
             --map "$RELEASE/class-map.json" \
-            --backup "$class_backup"
+            --backup "$CLASS_BACKUP"
     fi
 
     log "publish api"
