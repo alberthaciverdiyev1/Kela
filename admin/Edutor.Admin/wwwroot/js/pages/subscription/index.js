@@ -145,6 +145,48 @@ window.SubscriptionPage = (function () {
         return `<div class="flex justify-end gap-1">${paid}${cancel}</div>`;
     }
 
+    // ---- Abunəliyin dayandırılması / bərpası ----
+
+    async function toggleSuspend(id, active) {
+        const result = await AdminUI.swal({
+            title: active ? 'Abunəlik dayandırılsın?' : 'Abunəlik davam etdirilsin?',
+            text: active
+                ? 'Tenant istifadəçiləri giriş edə bilməyəcək. Məlumat silinmir — abunəlik bərpa ediləndə hər şey yerində qalır.'
+                : 'Tenant yenidən aktivləşdiriləcək və istifadəçilər giriş edə biləcək.',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: active ? 'Dayandır' : 'Davam etdir',
+            cancelButtonText: L["Common_Cancel"]
+        });
+
+        if (!result.isConfirmed) return;
+
+        const res = await AdminUI.putJson(`/tenant/${id}/status`, { isActive: !active });
+
+        if (res.ok) { AdminUI.notify(L["Js_Saved"]); setTimeout(() => location.reload(), 400); }
+        else AdminUI.error(AdminUI.errText(res));
+    }
+
+    // ---- Aylıq istifadə tarixçəsi ----
+
+    const gb = (bytes) => `${(bytes / 1073741824).toFixed(2)} GB`;
+
+    async function loadHistory() {
+        const id = selectedTenantId();
+        if (!id) return;
+
+        const rows = await AdminUI.get(`/subscription/${id}/usage-history`) || [];
+
+        AdminUI.table('subscriptionUsageHistory', rows.map(r => [
+            { html: r.period },
+            { html: Math.round(r.videoMinutes / 60) },
+            { html: gb(r.storageBytes) },
+            { html: r.addonStudents },
+            { html: r.addonGroups },
+            { html: Math.round(r.addonVideoMinutes / 60) }
+        ]), 6, { empty: 'İstifadə qeydi yoxdur' });
+    }
+
     async function markPaid(id) {
         const result = await AdminUI.swal({
             title: 'Ödəniş qeydə alınsın?',
@@ -196,7 +238,8 @@ window.SubscriptionPage = (function () {
 
         if (document.getElementById('subscriptionAddonRequests')) loadRequests();
         if (document.getElementById('subscriptionAddons')) loadAddons();
+        if (document.getElementById('subscriptionUsageHistory')) loadHistory();
     });
 
-    return { switchTenant, addAddon, cancelAddon, markPaid, sendRequest };
+    return { switchTenant, addAddon, cancelAddon, markPaid, sendRequest, toggleSuspend, loadHistory };
 })();

@@ -43,10 +43,14 @@ public sealed class SubscriptionService(AppDbContext db) : ISubscriptionService
         // Aylıq (təkrarlanan) paketlər istifadə sayğaclarına yazılmır — hər ay
         // limitə canlı əlavə olunur, ləğv ediləndə avtomatik çıxır.
         // Plan limiti 0 = limitsiz; əlavə paketlər onu məhdudlaşdırmır.
+        var overrides = ParseOverrides(tenant?.LimitOverridesJson);
         var recurring = await RecurringAddonsAsync(tenantId, ct);
-        var maxStudents = plan.MaxStudents <= 0 ? 0 : plan.MaxStudents + usage.AddonStudents + recurring.Students;
-        var maxGroups = plan.MaxGroups <= 0 ? 0 : plan.MaxGroups + usage.AddonGroups + recurring.Groups;
-        var maxVideo = plan.MonthlyVideoMinutes <= 0 ? 0 : plan.MonthlyVideoMinutes + usage.AddonVideoMinutes + recurring.VideoMinutes;
+        var maxStudents = Limit(overrides.MaxStudents, plan.MaxStudents);
+        var maxGroups = Limit(overrides.MaxGroups, plan.MaxGroups);
+        var maxVideo = Limit(overrides.MaxVideoMinutes, plan.MonthlyVideoMinutes);
+        maxStudents = maxStudents <= 0 ? 0 : maxStudents + usage.AddonStudents + recurring.Students;
+        maxGroups = maxGroups <= 0 ? 0 : maxGroups + usage.AddonGroups + recurring.Groups;
+        maxVideo = maxVideo <= 0 ? 0 : maxVideo + usage.AddonVideoMinutes + recurring.VideoMinutes;
 
         return new SubscriptionResponse(
             new SubscriptionPlanInfo(plan.Id, plan.Code, plan.Name, plan.MonthlyPrice, plan.Currency, plan.YearlyFreeMonths),
@@ -70,7 +74,7 @@ public sealed class SubscriptionService(AppDbContext db) : ISubscriptionService
                 usage.VideoMinutes,
                 maxVideo,
                 usage.StorageBytes,
-                plan.StorageBytes,
+                StorageLimit(overrides, plan),
                 plan.MaxVideoHeight,
                 plan.AllowVideoUpload,
                 plan.AllowAudioUpload,
@@ -148,7 +152,8 @@ public sealed class SubscriptionService(AppDbContext db) : ISubscriptionService
         await EnsureWritableAsync(id, ct);
         EnsureKindAllowed(plan, kind);
 
-        var videoLimit = plan.MonthlyVideoMinutes + usage.AddonVideoMinutes;
+        var videoBase = Limit(ParseOverrides(tenant?.LimitOverridesJson).MaxVideoMinutes, plan.MonthlyVideoMinutes);
+        var videoLimit = videoBase <= 0 ? 0 : videoBase + usage.AddonVideoMinutes;
         if (videoLimit > 0) videoLimit += (await RecurringAddonsAsync(id, ct)).VideoMinutes;
         if (kind == UploadKind.Video && videoLimit > 0 && usage.VideoMinutes >= videoLimit)
         {
@@ -599,6 +604,48 @@ public sealed class SubscriptionService(AppDbContext db) : ISubscriptionService
     private static DateTimeOffset? TrialEnd(SubscriptionPlan plan, DateTimeOffset now)
         => plan.MonthlyPrice > 0 && plan.TrialDays > 0 ? now.AddDays(plan.TrialDays) : null;
 
+    public async Task<LimitOverridesResponse> GetLimitOverridesAsync(long tenantId, CancellationToken ct = default)
+    {
+        var json = await db.Tenants.AsNoTracking()
+            .Where(x => x.Id == tenantId && x.DeletedAt == null)
+            .Select(x => x.LimitOverridesJson)
+            .FirstOrDefaultAsync(ct);
+
+        return ParseOverrides(json);
+    }
+
+    public async Task SetLimitOverridesAsync(long tenantId, LimitOverridesRequest request, CancellationToken ct = default)
+    {
+        var tenant = await db.Tenants.FirstOrDefaultAsync(x => x.Id == tenantId && x.DeletedAt == null, ct)
+            ?? throw new KeyNotFoundException($"Tenant not found: {tenantId}");
+
+        if (request.MaxStudents is < 0 || request.MaxGroups is < 0
+            || request.MaxVideoMinutes is < 0 || request.MaxStorageGb is < 0)
+        {
+            throw new ArgumentException("Limit mənfi ola bilməz");
+        }
+
+        var value = new LimitOverridesResponse(
+            request.MaxStudents, request.MaxGroups, request.MaxVideoMinutes, request.MaxStorageGb);
+
+        tenant.LimitOverridesJson = value.IsEmpty ? null : System.Text.Json.JsonSerializer.Serialize(value, OverridesJson);
+        await db.SaveChangesAsync(ct);
+    }
+
+    public async Task<IReadOnlyList<UsageHistoryResponse>> ListUsageHistoryAsync(
+        long tenantId, int months = 12, CancellationToken ct = default)
+    {
+        var take = Math.Clamp(months, 1, 60);
+
+        return await db.TenantUsages.IgnoreQueryFilters()
+            .Where(x => x.TenantId == tenantId && x.DeletedAt == null)
+            .OrderByDescending(x => x.Period)
+            .Take(take)
+            .Select(x => new UsageHistoryResponse(
+                x.Period, x.VideoMinutes, x.StorageBytes, x.AddonStudents, x.AddonVideoMinutes, x.AddonGroups))
+            .ToListAsync(ct);
+    }
+
     public async Task<bool> NeedsPlanSelectionAsync(long tenantId, CancellationToken ct = default)
         => await db.Tenants.AsNoTracking()
             .AnyAsync(x => x.Id == tenantId && x.DeletedAt == null && x.PlanId == null, ct);
@@ -625,10 +672,11 @@ public sealed class SubscriptionService(AppDbContext db) : ISubscriptionService
         await EnsureWritableAsync(id, ct);
 
         var recurring = await RecurringAddonsAsync(id, ct);
+        var overrides = ParseOverrides(tenant?.LimitOverridesJson);
 
         var (used, planLimit, addonStudents, addonGroups) = rule == Rule.Students
-            ? (await db.Students.CountAsync(ct), plan.MaxStudents, usage.AddonStudents + recurring.Students, 0)
-            : (await db.Groups.CountAsync(ct), plan.MaxGroups, 0, usage.AddonGroups + recurring.Groups);
+            ? (await db.Students.CountAsync(ct), Limit(overrides.MaxStudents, plan.MaxStudents), usage.AddonStudents + recurring.Students, 0)
+            : (await db.Groups.CountAsync(ct), Limit(overrides.MaxGroups, plan.MaxGroups), 0, usage.AddonGroups + recurring.Groups);
 
         // Plan limitsizdir (0) — əlavə paketlər limiti məhdudlaşdırmır.
         var limit = planLimit <= 0 ? 0 : planLimit + (rule == Rule.Students ? addonStudents : addonGroups);
@@ -705,6 +753,30 @@ public sealed class SubscriptionService(AppDbContext db) : ISubscriptionService
     }
 
     private static string Period() => DateTimeOffset.UtcNow.ToString("yyyy-MM");
+
+    private static readonly System.Text.Json.JsonSerializerOptions OverridesJson =
+        new(System.Text.Json.JsonSerializerDefaults.Web);
+
+    private static LimitOverridesResponse ParseOverrides(string? json)
+    {
+        if (string.IsNullOrWhiteSpace(json)) return LimitOverridesResponse.Empty;
+
+        try
+        {
+            return System.Text.Json.JsonSerializer.Deserialize<LimitOverridesResponse>(json, OverridesJson)
+                ?? LimitOverridesResponse.Empty;
+        }
+        catch (System.Text.Json.JsonException)
+        {
+            return LimitOverridesResponse.Empty;
+        }
+    }
+
+    // Fərdi limit plandan üstün tutulur; 0 limitsiz deməkdir (plan ilə eyni qayda).
+    private static int Limit(int? custom, int planValue) => custom ?? planValue;
+
+    private static long StorageLimit(LimitOverridesResponse overrides, SubscriptionPlan plan)
+        => overrides.MaxStorageGb is int gb ? Math.Max(0, gb) * 1024L * 1024 * 1024 : plan.StorageBytes;
 
     private static IReadOnlyList<string> ParseFeatures(string json)
     {

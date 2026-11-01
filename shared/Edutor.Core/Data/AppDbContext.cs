@@ -244,7 +244,9 @@ public sealed class AppDbContext : DbContext
 
             if (entry.State == EntityState.Added)
             {
-                if (hasTenant && CurrentTenantId.HasValue)
+                // Tenant bilinmədikdə (0/null) açıq verilmiş TenantId saxlanılır —
+                // əks halda tenant-siz kontekstdə yazılan sətirlər bir-birinin üstünə düşür.
+                if (hasTenant && CurrentTenantId is > 0)
                 {
                     entry.Property("TenantId").CurrentValue = CurrentTenantId.Value;
                 }

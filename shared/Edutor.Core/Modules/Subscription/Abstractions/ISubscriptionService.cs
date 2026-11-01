@@ -85,4 +85,14 @@ public interface ISubscriptionService
 
     /// <summary>Tenant hələ plan seçməyib — panel plan seçimi səhifəsinə yönləndirir.</summary>
     Task<bool> NeedsPlanSelectionAsync(long tenantId, CancellationToken ct = default);
+
+    // ---- Fərdi limitlər (superadmin) ----
+    /// <summary>Tenant-a xüsusi limitlər; boş sahə plan limitinin qüvvədə olduğunu bildirir.</summary>
+    Task<LimitOverridesResponse> GetLimitOverridesAsync(long tenantId, CancellationToken ct = default);
+
+    Task SetLimitOverridesAsync(long tenantId, LimitOverridesRequest request, CancellationToken ct = default);
+
+    /// <summary>Aylıq istifadə tarixçəsi (ən yeni dövr əvvəldə).</summary>
+    Task<IReadOnlyList<UsageHistoryResponse>> ListUsageHistoryAsync(
+        long tenantId, int months = 12, CancellationToken ct = default);
 }

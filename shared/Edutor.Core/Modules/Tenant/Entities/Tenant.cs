@@ -29,4 +29,7 @@ public class Tenant
 
     /// <summary>Planın bitmə tarixi. Null = müddətsiz.</summary>
     public DateTimeOffset? PlanExpiresAt { get; set; }
+
+    /// <summary>Müştəriyə xüsusi limitlər (plan standartını üstələyir). JSON, null = plan limiti.</summary>
+    public string? LimitOverridesJson { get; set; }
 }

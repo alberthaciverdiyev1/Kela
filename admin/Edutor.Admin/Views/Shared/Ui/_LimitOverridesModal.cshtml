@@ -1,0 +1,39 @@
+<div id="limitsModal" data-modal class="fixed inset-0 z-40 hidden items-center justify-center bg-slate-950/40 p-4">
+    <div data-modal-panel class="w-full max-w-md rounded-2xl border border-border bg-white p-5 shadow-xl">
+        <h3 class="mb-1 text-lg font-bold text-slate-900">Fərdi limitlər</h3>
+        <p class="mb-4 text-sm text-slate-500">
+            Bu müştəriyə plan limitindən fərqli limit verin. Boş sahə plan limitini saxlayır, 0 = limitsiz.
+        </p>
+
+        <form id="limitsForm">
+            <input type="hidden" id="limitsTenantId" />
+
+            <div class="grid gap-3 sm:grid-cols-2">
+                <label class="block text-sm font-semibold text-slate-600">
+                    Tələbə limiti
+                    <input id="limitsStudents" name="max_students" type="number" min="0" class="admin-field mt-1" />
+                </label>
+
+                <label class="block text-sm font-semibold text-slate-600">
+                    Qrup limiti
+                    <input id="limitsGroups" name="max_groups" type="number" min="0" class="admin-field mt-1" />
+                </label>
+
+                <label class="block text-sm font-semibold text-slate-600">
+                    Aylıq video (dəqiqə)
+                    <input id="limitsVideoMinutes" name="max_video_minutes" type="number" min="0" class="admin-field mt-1" />
+                </label>
+
+                <label class="block text-sm font-semibold text-slate-600">
+                    Depolama (GB)
+                    <input id="limitsStorageGb" name="max_storage_gb" type="number" min="0" class="admin-field mt-1" />
+                </label>
+            </div>
+
+            <div class="mt-5 flex justify-end gap-2">
+                <button type="button" onclick="LimitOverridesModal.close()" class="admin-button admin-button-secondary">Ləğv et</button>
+                <button type="submit" class="admin-button admin-button-primary">Yadda saxla</button>
+            </div>
+        </form>
+    </div>
+</div>

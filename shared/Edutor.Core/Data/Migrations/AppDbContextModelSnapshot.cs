@@ -3593,6 +3593,10 @@ namespace Edutor.Core.Data.Migrations
                         .HasDefaultValue(false)
                         .HasColumnName("is_pending");
 
+                    b.Property<string>("LimitOverridesJson")
+                        .HasColumnType("text")
+                        .HasColumnName("limit_overrides_json");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(190)

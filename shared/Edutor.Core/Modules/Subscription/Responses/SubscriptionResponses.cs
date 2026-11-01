@@ -42,6 +42,26 @@ public record SubscriptionResponse(
     SubscriptionPlanInfo? Plan,
     SubscriptionUsageResponse Usage);
 
+/// <summary>Tenant-a xüsusi limitlər; boş sahə plan limitinin qüvvədə olduğunu bildirir.</summary>
+public record LimitOverridesResponse(
+    int? MaxStudents,
+    int? MaxGroups,
+    int? MaxVideoMinutes,
+    int? MaxStorageGb)
+{
+    public static readonly LimitOverridesResponse Empty = new(null, null, null, null);
+
+    public bool IsEmpty => MaxStudents is null && MaxGroups is null && MaxVideoMinutes is null && MaxStorageGb is null;
+}
+
+public record UsageHistoryResponse(
+    string Period,
+    int VideoMinutes,
+    long StorageBytes,
+    int AddonStudents,
+    int AddonVideoMinutes,
+    int AddonGroups);
+
 public record AddonOfferResponse(
     string Kind,
     string Label,

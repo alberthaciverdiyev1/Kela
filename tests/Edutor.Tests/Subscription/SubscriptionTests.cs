@@ -4,6 +4,7 @@ using Edutor.Core.Data;
 using Edutor.Core.Modules.Subscription;
 using Edutor.Core.Modules.Subscription.Entities;
 using Edutor.Core.Modules.Subscription.Requests;
+using Edutor.Core.Modules.Subscription.Responses;
 using Edutor.Core.Modules.Subscription.Services;
 using Edutor.Core.Modules.Subscription.Abstractions;
 using Microsoft.EntityFrameworkCore;
@@ -478,6 +479,74 @@ public class SubscriptionTests(ApiFactory factory)
         Assert.Equal("active", subscription.Usage.Status);
         // Seçilən tarix günün sonuna qədər uzadılır.
         Assert.Equal(expires.AddDays(1), subscription.Usage.ExpiresAt!.Value);
+    }
+
+    [Fact]
+    public async Task Limit_overrides_replace_the_plan_limits_for_one_tenant()
+    {
+        await using var db = Db(0);
+        var service = new SubscriptionService(db);
+
+        var plan = await service.CreatePlanAsync(Request($"p-{Guid.NewGuid():N}"[..20], 50, 600));
+        var tenantId = await TenantAsync(db, plan.Id);
+        var otherTenantId = await TenantAsync(db, plan.Id);
+
+        Assert.Equal(50, (await service.GetAsync(tenantId)).Usage.MaxStudents);
+
+        await service.SetLimitOverridesAsync(tenantId, new LimitOverridesRequest
+        {
+            MaxStudents = 75,
+            MaxGroups = 12,
+            MaxVideoMinutes = 1200,
+            MaxStorageGb = 200
+        });
+
+        var custom = (await service.GetAsync(tenantId)).Usage;
+        Assert.Equal(75, custom.MaxStudents);
+        Assert.Equal(12, custom.MaxGroups);
+        Assert.Equal(1200, custom.MonthlyVideoMinutes);
+        Assert.Equal(200L * 1024 * 1024 * 1024, custom.MaxStorageBytes);
+
+        // Fərdi limit yalnız həmin tenant-a aiddir.
+        Assert.Equal(50, (await service.GetAsync(otherTenantId)).Usage.MaxStudents);
+
+        // Boş sahələrlə yenidən yazmaq override-ı plan limitinə qaytarır.
+        await service.SetLimitOverridesAsync(tenantId, new LimitOverridesRequest());
+        Assert.Equal(LimitOverridesResponse.Empty, await service.GetLimitOverridesAsync(tenantId));
+        Assert.Equal(50, (await service.GetAsync(tenantId)).Usage.MaxStudents);
+    }
+
+    [Fact]
+    public async Task Limit_overrides_cannot_be_negative()
+    {
+        await using var db = Db(0);
+        var service = new SubscriptionService(db);
+
+        var plan = await service.CreatePlanAsync(Request($"p-{Guid.NewGuid():N}"[..20], 50, 600));
+        var tenantId = await TenantAsync(db, plan.Id);
+
+        await Assert.ThrowsAsync<ArgumentException>(() =>
+            service.SetLimitOverridesAsync(tenantId, new LimitOverridesRequest { MaxGroups = -1 }));
+    }
+
+    [Fact]
+    public async Task Usage_history_returns_the_current_period()
+    {
+        await using var db = Db(0);
+        var service = new SubscriptionService(db);
+
+        var plan = await service.CreatePlanAsync(Request($"p-{Guid.NewGuid():N}"[..20], 50, 600));
+        var tenantId = await TenantAsync(db, plan.Id);
+
+        await using var scoped = Db(tenantId);
+        var scopedService = new SubscriptionService(scoped);
+        await scopedService.RecordVideoMinutesAsync(tenantId, 90);
+
+        var history = await scopedService.ListUsageHistoryAsync(tenantId);
+
+        var current = Assert.Single(history);
+        Assert.Equal(DateTimeOffset.UtcNow.ToString("yyyy-MM"), current.Period);
+        Assert.Equal(90, current.VideoMinutes);
     }
 
     [Fact]

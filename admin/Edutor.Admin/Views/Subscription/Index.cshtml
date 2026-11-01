@@ -47,6 +47,23 @@
     // tenant admini və müəllim plan limitini satın almaq üçün müraciət göndərir.
     var canManageLimits = User.IsInRole(AuthRoles.SuperAdmin);
     var billWithPlan = Model?.Usage.BillAddonsWithPlan == true;
+    var tenantActive = ViewData["TenantActive"] as bool?;
+
+    // Yumşaq hədd (80%): limit dolmadan əvvəl xəbərdarlıq.
+    var alerts = new List<string>();
+    if (usage is not null)
+    {
+        var gauges = new (string Label, int Used, int Max)[]
+        {
+            ("Tələbə", usage.Students, usage.MaxStudents),
+            ("Qrup", usage.Groups, usage.MaxGroups),
+            ("Video (aylıq, saat)", usage.VideoMinutes / 60, usage.MonthlyVideoMinutes / 60)
+        };
+
+        alerts.AddRange(gauges
+            .Where(g => g.Max > 0 && g.Used * 100 / g.Max >= 80)
+            .Select(g => $"{g.Label}: {g.Used} / {g.Max}"));
+    }
 }
 
 @if (usage is not null)
@@ -67,6 +84,16 @@
             <div class="w-full sm:w-[22rem]">
                 <partial name="Ui/_Select" model="tenantSelect" />
             </div>
+        </div>
+    }
+
+    @if (alerts.Count > 0)
+    {
+        <div class="admin-card border border-warning/40 bg-warning-bg p-4">
+            <p class="text-sm font-bold text-warning">Limitlərə yaxınlaşır</p>
+            <p class="mt-1 text-sm text-slate-700">
+                @string.Join(" · ", alerts) — limit dolanda yeni əlavə bloklanır, mövcud məlumat silinmir.
+            </p>
         </div>
     }
 
@@ -140,6 +167,16 @@
                     <p class="mt-1 text-2xl font-extrabold text-slate-900">Müddətsiz</p>
                     <p class="mt-1 text-sm text-slate-500">Bitmə tarixi yoxdur</p>
                 }
+
+                @if (canManageLimits && selectedTenantId is long statusTenantId && tenantActive is bool isActive)
+                {
+                    <button type="button"
+                            class="admin-button @(isActive ? "admin-button-danger" : "admin-button-secondary") mt-4 w-full justify-center"
+                            data-action="SubscriptionPage.toggleSuspend"
+                            data-args='[@statusTenantId, @(isActive ? "true" : "false")]'>
+                        @(isActive ? "Abunəliyi dayandır" : "Abunəliyi davam etdir")
+                    </button>
+                }
             </div>
 
             <div class="admin-card p-5">
@@ -154,7 +191,19 @@
         </div>
 
         <div class="admin-card p-5">
-            <h3 class="mb-4 text-base font-bold text-slate-900">İstifadə</h3>
+            <div class="mb-4 flex flex-wrap items-center justify-between gap-2">
+                <h3 class="text-base font-bold text-slate-900">İstifadə</h3>
+
+                @if (canManageLimits && selectedTenantId is long limitsTenantId)
+                {
+                    <button type="button"
+                            class="admin-button admin-button-secondary"
+                            data-action="LimitOverridesModal.open"
+                            data-args='[@limitsTenantId]'>
+                        Limitləri fərdiləşdir
+                    </button>
+                }
+            </div>
 
             <div class="grid gap-x-8 gap-y-5 sm:grid-cols-2">
                 @foreach (var row in gaugeRows)
@@ -304,10 +353,32 @@
                     </table>
                 </div>
             </div>
+
+            <div class="admin-card p-5">
+                <h3 class="mb-3 text-base font-bold text-slate-900">İstifadə tarixçəsi</h3>
+                <div class="overflow-x-auto">
+                    <table class="admin-table">
+                        <thead>
+                        <tr>
+                            <th>Dövr</th>
+                            <th>Video (saat)</th>
+                            <th>Depolama</th>
+                            <th>Əlavə tələbə</th>
+                            <th>Əlavə qrup</th>
+                            <th>Əlavə video saatı</th>
+                        </tr>
+                        </thead>
+                        <tbody id="subscriptionUsageHistory">
+                        <tr><td colspan="6" class="p-4 text-center text-sm text-slate-400">Yüklənir…</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
         }
     }
 </section>
 
 <partial name="Ui/_PlanModal" />
+<partial name="Ui/_LimitOverridesModal" />
 
 <form id="antiforgery">@Html.AntiForgeryToken()</form>

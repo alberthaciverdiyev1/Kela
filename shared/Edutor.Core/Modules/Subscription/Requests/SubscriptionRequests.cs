@@ -93,6 +93,21 @@ public class AssignPlanRequest
     public DateTimeOffset? ExpiresAt { get; set; }
 }
 
+public class LimitOverridesRequest
+{
+    [FromForm(Name = "max_students")]
+    public int? MaxStudents { get; set; }
+
+    [FromForm(Name = "max_groups")]
+    public int? MaxGroups { get; set; }
+
+    [FromForm(Name = "max_video_minutes")]
+    public int? MaxVideoMinutes { get; set; }
+
+    [FromForm(Name = "max_storage_gb")]
+    public int? MaxStorageGb { get; set; }
+}
+
 public class AddAddonRequest
 {
     /// <summary>Superadmin başqa tenant üçün əlavə edirsə. Boşdursa cari tenant.</summary>
