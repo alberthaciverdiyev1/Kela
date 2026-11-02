@@ -1,9 +1,10 @@
-// Google Keep üslubunda şəxsi qeydlər: lövhə + inline redaktor.
+// Şəxsi qeydlər: admin dizaynına uyğun kartlar + zəngin mətn redaktoru.
 (function () {
-    const COLORS = {
-        default: '#ffffff', red: '#f8b4b4', orange: '#fdd9a0', yellow: '#fff3a3',
-        green: '#c9f2b2', teal: '#a9efe4', blue: '#bfe3fb', purple: '#dcc9f7',
-        pink: '#f9c9e0', gray: '#e2e5e9', brown: '#e3cbb0'
+    // Qeyd rəngi yalnız kartın yuxarı zolağında istifadə olunur.
+    const ACCENTS = {
+        default: '#94a3b8', red: '#ef4444', orange: '#f59e0b', yellow: '#eab308',
+        green: '#10b981', teal: '#14b8a6', blue: '#3b82f6', purple: '#8b5cf6',
+        pink: '#ec4899', gray: '#64748b', brown: '#a16207'
     };
 
     let notes = [];
@@ -15,16 +16,22 @@
     const el = (id) => document.getElementById(id);
 
     function colorName(value) {
-        return COLORS[value] ? value : 'default';
+        return ACCENTS[value] ? value : 'default';
     }
 
-    function paletteButtons(active, action, id) {
-        return Object.keys(COLORS).map(color => {
-            const ring = color === active ? ' ring-2 ring-slate-500 ring-offset-1' : '';
-            const args = id === undefined ? `"${color}"` : `[${id},"${color}"]`;
-            return `<button type="button" class="h-5 w-5 rounded-full border border-black/10${ring}"
-                        style="background:${COLORS[color]}" title="${color}"
-                        data-action="${action}" data-args='${args}' aria-label="${color}"></button>`;
+    function accent(value) {
+        return ACCENTS[colorName(value)];
+    }
+
+    function paletteButtons(active) {
+        return Object.keys(ACCENTS).map(color => {
+            const ring = color === active
+                ? ' ring-2 ring-primary ring-offset-2'
+                : ' hover:scale-110';
+            return `<button type="button" class="h-6 w-6 rounded-full border border-black/10 transition${ring}"
+                        style="background:${ACCENTS[color]}" title="${color}"
+                        data-action="TeacherNotes.setDraftColor" data-args='["${color}"]'
+                        aria-label="${color}" aria-pressed="${color === active}"></button>`;
         }).join('');
     }
 
@@ -42,36 +49,41 @@
         return value;
     }
 
+    const iconButton = 'grid h-8 w-8 place-items-center rounded-lg text-slate-400 transition hover:bg-surface-secondary hover:text-slate-700';
+
     function card(note) {
-        const pinned = note.isPinned
+        const pinnedIcon = note.isPinned
             ? `<svg class="h-4 w-4" viewBox="0 0 24 24" fill="currentColor"><path d="M14.5 2 22 9.5l-2 2-2.5-.5-4.4 4.4.9 3-1.5 1.5-4-4L3.9 21H3v-.9l5.1-5.1-4-4L5.5 9.5l3 .9L12.9 6l-.5-2.5 2-2Z"/></svg>`
             : `<svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M14.5 3 21 9.5l-2 2-2.5-.5-4.4 4.4.9 3-1.5 1.5-4-4L3.9 21H3v-.9l5.1-5.1-4-4L5.5 9.5l3 .9L12.9 6l-.5-2.5 2-2Z"/></svg>`;
 
         return `
-            <article class="group mb-3 break-inside-avoid overflow-hidden rounded-xl border border-black/5 shadow-sm transition hover:shadow-md"
-                     style="background:${COLORS[colorName(note.color)]}">
-                <div class="p-3">
+            <article class="admin-card flex flex-col overflow-hidden">
+                <span class="h-1.5 w-full shrink-0" style="background:${accent(note.color)}"></span>
+                <div class="flex flex-1 flex-col p-4">
                     <div class="flex items-start gap-2">
-                        <h3 class="min-w-0 flex-1 break-words text-sm font-bold text-slate-800">${AdminUI.escapeHtml(note.title)}</h3>
-                        <button type="button" class="shrink-0 rounded-md p-1 text-slate-500 hover:bg-black/5"
-                                title="${note.isPinned ? AdminUI.escapeHtml(L["Note_Unpin"]) : AdminUI.escapeHtml(L["Note_Pin"])}"
-                                data-action="TeacherNotes.togglePin" data-args='[${note.id}, ${note.isPinned ? 'false' : 'true'}]'>${pinned}</button>
+                        <h3 class="min-w-0 flex-1 break-words text-sm font-bold text-slate-900">${AdminUI.escapeHtml(note.title)}</h3>
+                        <button type="button"
+                                class="${iconButton} ${note.isPinned ? '!text-primary' : ''}"
+                                title="${AdminUI.escapeHtml(note.isPinned ? L["Note_Unpin"] : L["Note_Pin"])}"
+                                data-action="TeacherNotes.togglePin" data-args='[${note.id}, ${note.isPinned ? 'false' : 'true'}]'>${pinnedIcon}</button>
                     </div>
-                    <div class="note-card-body mt-1 break-words text-[13px] leading-5 text-slate-700">${bodyHtml(note.body)}</div>
-                    <div class="mt-2 flex flex-wrap items-center gap-1.5 opacity-60 transition group-hover:opacity-100">
-                        ${paletteButtons(colorName(note.color), 'TeacherNotes.setColor', note.id)}
+                    <div class="note-card-body mt-2 max-h-56 overflow-hidden break-words">${bodyHtml(note.body)}</div>
+                    <div class="mt-4 flex items-center justify-between border-t border-border pt-3">
+                        <div class="flex items-center gap-2">
+                            <span class="h-2 w-2 rounded-full" style="background:${accent(note.color)}"></span>
+                            <span class="text-[11px] font-medium text-slate-400">${AdminUI.escapeHtml(new Date(note.createdAt).toLocaleDateString())}</span>
+                        </div>
+                        <div class="flex items-center gap-1">
+                            <button type="button" class="${iconButton}" title="${AdminUI.escapeHtml(L["Js_Edit"])}"
+                                    data-action="TeacherNotes.edit" data-args='[${note.id}]'>
+                                <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="m16.5 3.5 4 4L8 20H4v-4L16.5 3.5Z"/></svg>
+                            </button>
+                            <button type="button" class="${iconButton} hover:!text-danger" title="${AdminUI.escapeHtml(L["Common_Delete"])}"
+                                    data-action="TeacherNotes.remove" data-args='[${note.id}]'>
+                                <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M4 7h16M9 7V5h6v2m-8 0 1 13h8l1-13"/></svg>
+                            </button>
+                        </div>
                     </div>
-                </div>
-                <div class="flex items-center justify-end gap-1 px-2 pb-2 text-slate-500">
-                    <span class="mr-auto pl-1 text-[10px] font-medium text-slate-500">${AdminUI.escapeHtml(new Date(note.createdAt).toLocaleDateString())}</span>
-                    <button type="button" class="rounded-md p-1.5 hover:bg-black/5" title="${AdminUI.escapeHtml(L["Js_Edit"])}"
-                            data-action="TeacherNotes.edit" data-args='[${note.id}]'>
-                        <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="m16.5 3.5 4 4L8 20H4v-4L16.5 3.5Z"/></svg>
-                    </button>
-                    <button type="button" class="rounded-md p-1.5 hover:bg-black/5" title="${AdminUI.escapeHtml(L["Common_Delete"])}"
-                            data-action="TeacherNotes.remove" data-args='[${note.id}]'>
-                        <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M4 7h16M9 7V5h6v2m-8 0 1 13h8l1-13"/></svg>
-                    </button>
                 </div>
             </article>`;
     }
@@ -79,8 +91,10 @@
     function section(title, items) {
         if (!items.length) return '';
         return `
-            <p class="mb-2 mt-4 text-[11px] font-bold uppercase tracking-wide text-slate-400">${AdminUI.escapeHtml(title)}</p>
-            <div class="columns-1 gap-3 sm:columns-2 lg:columns-3">${items.map(card).join('')}</div>`;
+            <section>
+                <p class="mb-2 text-[11px] font-bold uppercase tracking-wider text-slate-400">${AdminUI.escapeHtml(title)}</p>
+                <div class="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">${items.map(card).join('')}</div>
+            </section>`;
     }
 
     function render() {
@@ -91,7 +105,7 @@
             : notes;
 
         if (!visible.length) {
-            board.innerHTML = `<div class="admin-empty py-12 text-center text-sm text-slate-400">
+            board.innerHTML = `<div class="admin-card py-14 text-center text-sm text-slate-400">
                 ${AdminUI.escapeHtml(term ? L["Note_NoMatch"] : L["Note_Empty"])}</div>`;
             return;
         }
@@ -107,8 +121,14 @@
         render();
     }
 
-    function setExpanded(on) {
-        el('noteComposerBody').classList.toggle('hidden', !on);
+    function renderDraftPalette() {
+        el('notePalette').innerHTML = paletteButtons(draftColor);
+    }
+
+    function paintPin() {
+        el('notePinLabel').textContent = draftPinned ? L["Note_Unpin"] : L["Note_Pin"];
+        el('notePinToggle').setAttribute('aria-pressed', String(draftPinned));
+        el('notePinIcon').classList.toggle('text-primary', draftPinned);
     }
 
     function resetDraft() {
@@ -117,22 +137,21 @@
         draftPinned = false;
         AdminUI.resetForm('noteComposer');
         el('noteTitle').value = '';
-        el('notePinLabel').textContent = L["Note_Pin"];
+        AdminUI.syncEditors(el('noteComposer'));
         renderDraftPalette();
+        paintPin();
     }
 
-    function renderDraftPalette() {
-        el('notePalette').innerHTML = paletteButtons(draftColor, 'TeacherNotes.setDraftColor');
-    }
-
-    function expandComposer() {
-        setExpanded(true);
+    function openComposer() {
+        resetDraft();
+        el('noteComposerWrap').classList.remove('hidden');
         el('noteTitle').focus();
+        el('noteComposerWrap').scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
 
     function cancelComposer() {
+        el('noteComposerWrap').classList.add('hidden');
         resetDraft();
-        setExpanded(false);
     }
 
     function setDraftColor(color) {
@@ -142,7 +161,7 @@
 
     function toggleDraftPin() {
         draftPinned = !draftPinned;
-        el('notePinLabel').textContent = draftPinned ? L["Note_Unpin"] : L["Note_Pin"];
+        paintPin();
     }
 
     function edit(id) {
@@ -156,21 +175,15 @@
 
         el('noteTitle').value = note.title;
         el('noteBody').value = note.body || '';
-        el('notePinLabel').textContent = draftPinned ? L["Note_Unpin"] : L["Note_Pin"];
         renderDraftPalette();
-        setExpanded(true);
+        paintPin();
+        el('noteComposerWrap').classList.remove('hidden');
         AdminUI.syncEditors(el('noteComposer'));
-        el('noteComposer').scrollIntoView({ behavior: 'smooth', block: 'start' });
+        el('noteComposerWrap').scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
 
     async function togglePin(id, pinned) {
         const res = await AdminUI.putJson(`/teacher-note/${id}/pin`, { pinned });
-        if (!res.ok) { AdminUI.error(AdminUI.errText(res)); return; }
-        await load();
-    }
-
-    async function setColor(id, color) {
-        const res = await AdminUI.putJson(`/teacher-note/${id}/color`, { color });
         if (!res.ok) { AdminUI.error(AdminUI.errText(res)); return; }
         await load();
     }
@@ -182,12 +195,13 @@
         else AdminUI.error(AdminUI.errText(res));
     }
 
-    window.TeacherNotes = { expandComposer, cancelComposer, setDraftColor, toggleDraftPin, edit, togglePin, setColor, remove };
+    window.TeacherNotes = { openComposer, cancelComposer, setDraftColor, toggleDraftPin, edit, togglePin, remove };
 
     document.addEventListener('DOMContentLoaded', () => {
         renderDraftPalette();
+        paintPin();
         el('noteSearch').addEventListener('input', (e) => { search = e.target.value; render(); });
-        el('noteTitle').addEventListener('focus', () => setExpanded(true));
+        el('noteNew').addEventListener('click', openComposer);
 
         el('noteComposer').addEventListener('submit', async (e) => {
             e.preventDefault();
