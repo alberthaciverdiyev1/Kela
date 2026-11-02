@@ -22,9 +22,16 @@
 
         <div class="admin-card flex min-h-[55vh] flex-col overflow-hidden">
             <div id="fbConversation" class="min-h-0 flex-1 space-y-2 overflow-y-auto p-4"></div>
-            <form id="fbReplyForm" class="hidden items-end gap-2 border-t border-border p-3">
-                <textarea id="fbReply" rows="2" class="admin-field flex-1 resize-none" placeholder="@L["Feedback_ReplyPlaceholder"]"></textarea>
-                <button type="submit" class="admin-button-primary">@L["Feedback_Send"]</button>
+            <form id="fbReplyForm" class="hidden border-t border-border p-3">
+                <partial name="Ui/_Editor" model="@(new EditorModel {
+                    Id = "fbReply",
+                    Name = "message",
+                    Placeholder = L["Feedback_ReplyPlaceholder"],
+                    Compact = true
+                })" />
+                <div class="mt-2 flex justify-end">
+                    <button type="submit" class="admin-button-primary">@L["Feedback_Send"]</button>
+                </div>
             </form>
         </div>
     </div>

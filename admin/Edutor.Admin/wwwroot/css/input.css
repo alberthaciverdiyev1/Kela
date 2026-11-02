@@ -88,6 +88,13 @@
     box-shadow: 0 0 0 4px rgba(0, 184, 132, 0.1);
   }
 
+  .admin-field::placeholder,
+  input::placeholder,
+  textarea::placeholder {
+    color: #9aa6b2;
+    opacity: 1;
+  }
+
   .admin-button-primary {
     display: inline-flex;
     min-height: 44px;
@@ -496,13 +503,37 @@
 }
 
 .admin-editor .ql-editor.ql-blank::before {
-  color: #94a3b8;
+  color: #9aa6b2;
   font-style: normal;
   left: 16px;
   right: 16px;
 }
 
+.admin-editor.is-compact .ql-editor {
+  min-height: 96px;
+  max-height: 220px;
+}
+
 .admin-editor .ql-editor img { max-width: 100%; height: auto; border-radius: 10px; }
+
+/* Qeyd kartlarında zəngin mətn — redaktordan gələn HTML. */
+.note-card-body { font-size: 13px; line-height: 1.65; color: #475569; }
+.note-card-body p { margin: 0 0 6px; }
+.note-card-body ul, .note-card-body ol { margin: 4px 0 6px; padding-left: 18px; }
+.note-card-body ul { list-style: disc; }
+.note-card-body ol { list-style: decimal; }
+.note-card-body a { color: var(--primary); text-decoration: underline; }
+.note-card-body img { max-width: 100%; height: auto; border-radius: 10px; }
+.note-card-body h2 { margin: 8px 0 4px; font-size: 15px; font-weight: 700; }
+.note-card-body h3 { margin: 8px 0 4px; font-size: 14px; font-weight: 700; }
+
+/* Geri bildiriş söhbətində admin mesajının zəngin mətni. */
+.fb-rich p { margin: 0 0 4px; }
+.fb-rich p:last-child { margin-bottom: 0; }
+.fb-rich ul, .fb-rich ol { margin: 4px 0; padding-left: 18px; }
+.fb-rich ul { list-style: disc; }
+.fb-rich ol { list-style: decimal; }
+.fb-rich a { text-decoration: underline; }
 
 /* Redaktə olunmayan rich mətn — ev tapşırığı təsviri və s. */
 .admin-rich-text {

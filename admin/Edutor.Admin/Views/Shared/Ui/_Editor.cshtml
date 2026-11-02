@@ -5,9 +5,12 @@
 @* Quill redaktoru məzmunu gizli textarea-ya yazır, ona görə formanın göndərilməsi
    dəyişmir (JS: AdminUI.initEditors). *@
 <div>
-    <label for="@id" class="mb-1 block text-sm font-semibold text-slate-600">@Model.Label</label>
-    <div class="admin-editor" data-for="@id">
+    @if (!string.IsNullOrEmpty(Model.Label))
+    {
+        <label for="@id" class="mb-1 block text-sm font-semibold text-slate-600">@Model.Label</label>
+    }
+    <div class="admin-editor @(Model.Compact ? "is-compact" : null)" data-for="@id" data-placeholder="@Model.Placeholder">
         <div class="admin-editor-body"></div>
     </div>
-    <textarea id="@id" name="@Model.Name" class="hidden"></textarea>
+    <textarea id="@id" name="@Model.Name" class="hidden">@Model.Value</textarea>
 </div>

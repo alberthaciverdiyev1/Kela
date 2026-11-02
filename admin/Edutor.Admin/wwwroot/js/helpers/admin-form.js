@@ -86,6 +86,7 @@ window.AdminUI = window.AdminUI || {};
 
             const quill = new window.Quill(mount, {
                 theme: 'snow',
+                placeholder: editor.dataset.placeholder || '',
                 modules: {
                     toolbar: {
                         container: [
@@ -105,6 +106,9 @@ window.AdminUI = window.AdminUI || {};
                 const html = quill.root.innerHTML.trim();
                 field.value = html === '<p><br></p>' ? '' : html;
             });
+
+            // Server tərəfindən yazılmış ilkin məzmunu redaktora yüklə.
+            if (field.value) quill.clipboard.dangerouslyPasteHTML(field.value);
         });
     }
 

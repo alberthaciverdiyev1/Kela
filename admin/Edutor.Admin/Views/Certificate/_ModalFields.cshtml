@@ -25,11 +25,13 @@
         </div>
     </div>
 
-    <div>
-        <label for="bodyText" class="mb-1 block text-sm font-semibold text-slate-600">@L["Common_Text"]</label>
-        <textarea id="bodyText" name="bodyText" rows="4" class="admin-field"
-                  placeholder="A certificate is awarded to an individual who has attained a specific accomplishment or achievement..."></textarea>
-    </div>
+    <partial name="Ui/_Editor" model="@(new EditorModel {
+        Id = "bodyText",
+        Name = "bodyText",
+        Label = L["Common_Text"],
+        Placeholder = "A certificate is awarded to an individual who has attained a specific accomplishment or achievement...",
+        Compact = true
+    })" />
 
     <partial name="Ui/_FileUpload" model="@(new FileUploadModel { Name = "signature", Id = "signature", Label = L["Certificate_SignaturePng"], Accept = ".png", Hint = "png, max 5MB" })" />
 

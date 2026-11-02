@@ -115,6 +115,15 @@ public class EditorModel
     public string? Id { get; set; }
 
     public string Label { get; set; } = string.Empty;
+
+    /// <summary>Redaktorun boş halda göstərdiyi mətn.</summary>
+    public string? Placeholder { get; set; }
+
+    /// <summary>Server tərəfindən gələn ilkin HTML.</summary>
+    public string? Value { get; set; }
+
+    /// <summary>Qısa qeydlər üçün yığcam hündürlük.</summary>
+    public bool Compact { get; set; }
 }
 
 public class ModalModel

@@ -17,10 +17,14 @@
                 <partial name="Ui/_Input" model="@(new InputModel { Name = "email", Id = "email", Label = L["Common_Email"], Type = "email", Value = Model.Email })" />
                 <partial name="Ui/_Input" model="@(new InputModel { Name = "address", Id = "address", Label = L["Setting_Address"], Value = Model.Address })" />
             </div>
-            <div>
-                <label for="description" class="mb-1 block text-sm font-semibold text-slate-600">@L["Setting_About"]</label>
-                <textarea id="description" name="description" rows="3" class="admin-field" placeholder="@L["Setting_AboutPlaceholder"]">@Model.Description</textarea>
-            </div>
+            <partial name="Ui/_Editor" model="@(new EditorModel {
+                Id = "description",
+                Name = "description",
+                Label = L["Setting_About"],
+                Placeholder = L["Setting_AboutPlaceholder"],
+                Value = Model.Description,
+                Compact = true
+            })" />
         </div>
 
         <div class="space-y-4 border-t border-border pt-6">

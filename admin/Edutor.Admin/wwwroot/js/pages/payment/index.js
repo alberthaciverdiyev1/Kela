@@ -169,6 +169,7 @@ document.getElementById('plan-template')?.addEventListener('change', e => {
     document.getElementById('plan-frequency').value = t.frequency;
     document.getElementById('plan-interval').value = t.intervalDays || 30;
     document.getElementById('plan-note').value = t.note || '';
+    AdminUI.syncEditors(document.getElementById('planModal'));
     document.getElementById('interval-wrap').classList.toggle('hidden', t.frequency !== 'custom');
     document.getElementById('plan-frequency').dispatchEvent(new Event('change'));
     recalcDueDate();
