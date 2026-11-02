@@ -167,12 +167,35 @@ function walk(dir, files) {
 // Same shape the rewriter accepts, so `lg:shrink-0` counts as used, not `lg` + `shrink-0`.
 const classToken = /[A-Za-z0-9_!:/[\].%#&>~*-]+/g;
 
+// CSS declarations inside markup/JS (`display: flex`, `'display:flex'`). A CSS value
+// can be a Tailwind class name too (`flex`, `relative`, `ease-in-out`); renaming it
+// would corrupt the stylesheet text itself.
+const cssDeclaration = /(?:^|[;{\s'"`])(?:display|position|align-items|justify-content|flex-direction|flex-wrap|margin(?:-[a-z]+)?|padding(?:-[a-z]+)?|border(?:-[a-z]+)?|background(?:-[a-z]+)?|color|font(?:-[a-z]+)?|width|height|min-height|max-height|min-width|max-width|inset|top|right|bottom|left|animation(?:-[a-z-]+)?|transition(?:-[a-z-]+)?|transform|overflow(?:-[a-z])?|opacity|flex|gap|z-index|box-shadow|text-align|line-height|white-space|pointer-events|user-select|cursor|content)\s*:/i;
+
+function protectCssValues(text, classNames, protectedNames) {
+    const protect = chunk => {
+        for (const match of chunk.matchAll(classToken)) {
+            // `display:flex` is one token; the class name is its value part.
+            for (const part of match[0].split(/[;:]/)) {
+                if (classNames.has(part)) protectedNames.set(part, 'CSS value in markup');
+            }
+        }
+    };
+
+    for (const match of text.matchAll(/<style\b[^>]*>([\s\S]*?)<\/style>/gi)) protect(match[1]);
+
+    for (const match of text.matchAll(/(['"`])((?:\\.|(?!\1)[\s\S])*?)\1/g)) {
+        if (cssDeclaration.test(match[2])) protect(match[2]);
+    }
+}
+
 function scanDiscovery(texts, classNames) {
     const used = new Set();
     const protectedNames = new Map();
 
     for (const { file, text } of texts) {
         for (const match of text.matchAll(classToken)) used.add(match[0].replace(/^[[.]+/, ''));
+        protectCssValues(text, classNames, protectedNames);
 
         // A declared variable that is also a class name keeps the class name: the rewriter
         // replaces bare words, so `const collapse = ...` would be renamed while
