@@ -101,6 +101,8 @@
     html {
         /* WebView-da scroll sərhədində lastik band / parıltı native olmayan hiss verir */
         overscroll-behavior: none;
+        /* Mobilde iki dəfə toxunma zoom-u söndürür; pan/skroll qalır */
+        touch-action: manipulation;
     }
 
     body {
