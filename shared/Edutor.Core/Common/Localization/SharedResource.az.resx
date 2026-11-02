@@ -723,6 +723,9 @@
   <data name="Validation_PasswordDigit" xml:space="preserve">
     <value>Şifrədə ən azı bir rəqəm olmalıdır</value>
   </data>
+  <data name="Common_Soon" xml:space="preserve">
+    <value>Tezlikdə</value>
+  </data>
   <data name="Common_Save" xml:space="preserve">
     <value>Yadda saxla</value>
   </data>
@@ -865,10 +868,10 @@
     <value>Şagird əlavə et</value>
   </data>
   <data name="Dashboard_OpenCashbox" xml:space="preserve">
-    <value>Cashbox-a keç</value>
+    <value>Kassaya keç</value>
   </data>
   <data name="Dashboard_Finance" xml:space="preserve">
-    <value>Cashbox</value>
+    <value>Kassa</value>
   </data>
   <data name="Dashboard_Last12" xml:space="preserve">
     <value>Son 12 ay</value>

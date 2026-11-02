@@ -729,6 +729,9 @@
   <data name="Validation_PasswordDigit" xml:space="preserve">
     <value>Пароль должен содержать хотя бы одну цифру</value>
   </data>
+  <data name="Common_Soon" xml:space="preserve">
+    <value>Скоро</value>
+  </data>
   <data name="Common_Save" xml:space="preserve">
     <value>Сохранить</value>
   </data>
@@ -871,10 +874,10 @@
     <value>Добавить ученика</value>
   </data>
   <data name="Dashboard_OpenCashbox" xml:space="preserve">
-    <value>Перейти в Cashbox</value>
+    <value>Перейти в кассу</value>
   </data>
   <data name="Dashboard_Finance" xml:space="preserve">
-    <value>Cashbox</value>
+    <value>Касса</value>
   </data>
   <data name="Dashboard_Last12" xml:space="preserve">
     <value>Последние 12 месяцев</value>

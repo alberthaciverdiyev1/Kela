@@ -729,6 +729,9 @@
   <data name="Validation_PasswordDigit" xml:space="preserve">
     <value>Parola en az bir rakam içermelidir</value>
   </data>
+  <data name="Common_Soon" xml:space="preserve">
+    <value>Yakında</value>
+  </data>
   <data name="Common_Save" xml:space="preserve">
     <value>Kaydet</value>
   </data>
@@ -871,10 +874,10 @@
     <value>Öğrenci ekle</value>
   </data>
   <data name="Dashboard_OpenCashbox" xml:space="preserve">
-    <value>Cashbox'a git</value>
+    <value>Kassa'ya git</value>
   </data>
   <data name="Dashboard_Finance" xml:space="preserve">
-    <value>Cashbox</value>
+    <value>Kassa</value>
   </data>
   <data name="Dashboard_Last12" xml:space="preserve">
     <value>Son 12 ay</value>

@@ -729,6 +729,9 @@
   <data name="Validation_PasswordDigit" xml:space="preserve">
     <value>Password must contain at least one digit</value>
   </data>
+  <data name="Common_Soon" xml:space="preserve">
+    <value>Soon</value>
+  </data>
   <data name="Common_Save" xml:space="preserve">
     <value>Save</value>
   </data>
@@ -871,10 +874,10 @@
     <value>Add student</value>
   </data>
   <data name="Dashboard_OpenCashbox" xml:space="preserve">
-    <value>Go to Cashbox</value>
+    <value>Go to Cash desk</value>
   </data>
   <data name="Dashboard_Finance" xml:space="preserve">
-    <value>Cashbox</value>
+    <value>Cash desk</value>
   </data>
   <data name="Dashboard_Last12" xml:space="preserve">
     <value>Last 12 months</value>
