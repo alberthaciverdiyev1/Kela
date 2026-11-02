@@ -1332,6 +1332,15 @@
   <data name="LessonContent_TypeFile" xml:space="preserve">
     <value>File (pdf/document)</value>
   </data>
+  <data name="LessonContent_OnlyVideo" xml:space="preserve">
+    <value>Only video files can be selected for video material.</value>
+  </data>
+  <data name="LessonContent_OnlyAudio" xml:space="preserve">
+    <value>Only audio files can be selected for voice material.</value>
+  </data>
+  <data name="LessonContent_NoMedia" xml:space="preserve">
+    <value>Video and audio files cannot be selected for file material.</value>
+  </data>
   <data name="Lesson_SettingsTitle" xml:space="preserve">
     <value>Content toggles</value>
   </data>

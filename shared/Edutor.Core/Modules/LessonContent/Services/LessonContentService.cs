@@ -122,6 +122,7 @@ public sealed partial class LessonContentService(
     {
         await EnsureLessonAccessibleAsync(request.LessonId, ownerId, ct);
 
+        LessonContentMediaTypes.EnsureAllowed(request.Type, request.FileName, request.ContentType);
         await subscription.EnsureCanUploadAsync(UploadKindFor(request.Type), ct);
 
         var folder = await FolderForAsync(request.Type, await LessonTenantAsync(request.LessonId, ct), ct);
@@ -138,6 +139,7 @@ public sealed partial class LessonContentService(
     public async Task<MultipartTicket?> StartMultipartAsync(LessonContentUploadUrlRequest request, long? ownerId = null, CancellationToken ct = default)
     {
         await EnsureLessonAccessibleAsync(request.LessonId, ownerId, ct);
+        LessonContentMediaTypes.EnsureAllowed(request.Type, request.FileName, request.ContentType);
         await subscription.EnsureCanUploadAsync(UploadKindFor(request.Type), ct);
 
         var folder = await FolderForAsync(request.Type, await LessonTenantAsync(request.LessonId, ct), ct);
@@ -269,6 +271,7 @@ public sealed partial class LessonContentService(
 
         OwnershipGuard.EnsureOwned(ownerId, content.UserId, "You can only modify your own material");
 
+        LessonContentMediaTypes.EnsureAllowed(request.Type, request.Path);
         await subscription.EnsureCanUploadAsync(UploadKindFor(request.Type), ct);
 
         switch (request.Type)
@@ -404,12 +407,16 @@ public sealed partial class LessonContentService(
         // birbaşa R2-yə yüklənibsə path verilir; əks halda API-dən keçərək yükləyirik
         if (request.File is not null)
         {
+            LessonContentMediaTypes.EnsureAllowed(request.Type, request.File.FileName, request.File.ContentType);
+
             var folder = await FolderForAsync(request.Type, await LessonTenantAsync(request.LessonId, ct), ct);
             return await storage.UploadAsync(request.File, folder, ct);
         }
 
         if (!string.IsNullOrWhiteSpace(request.Path))
         {
+            LessonContentMediaTypes.EnsureAllowed(request.Type, request.Path);
+
             // İstemci birbaşa R2-yə yükləyir; yolun həqiqətən orada olduğunu yoxlamasaq,
             // yükləmə yarımçıq qalsa DB-də mövcud olmayan fayl qeyd olunardı.
             if (!await storage.ExistsAsync(request.Path, ct))

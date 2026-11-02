@@ -1332,6 +1332,15 @@
   <data name="LessonContent_TypeFile" xml:space="preserve">
     <value>Dosya (pdf/belge)</value>
   </data>
+  <data name="LessonContent_OnlyVideo" xml:space="preserve">
+    <value>Video materyali için yalnızca video dosyası seçilebilir.</value>
+  </data>
+  <data name="LessonContent_OnlyAudio" xml:space="preserve">
+    <value>Ses materyali için yalnızca ses dosyası seçilebilir.</value>
+  </data>
+  <data name="LessonContent_NoMedia" xml:space="preserve">
+    <value>Dosya materyali için video ve ses dosyası seçilemez.</value>
+  </data>
   <data name="Lesson_SettingsTitle" xml:space="preserve">
     <value>İçerik anahtarları</value>
   </data>

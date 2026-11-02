@@ -9,6 +9,75 @@
     function showError(message) { errBox.textContent = message; errBox.classList.remove('hidden'); }
     function done() { AdminUI.notify(L["Js_Added"]); AdminUI.closeModal('modal'); loadList(1); }
 
+    // ---- Material növünə uyğun fayl filtri ----
+    // Video yalnız video, səs yalnız səs, "fayl" isə video/səsdən başqa hər şey.
+    // Brauzer seçicidə "video/səsdən başqa hər şey" filtrini ifadə edə bilmir,
+    // ona görə "fayl" növündə seçim ayrıca yoxlanılır.
+    const typeSelect = document.getElementById('type');
+    const fileInput = document.getElementById('file');
+    const fileRules = document.getElementById('fileTypeRules');
+
+    function splitList(value) {
+        return (value || '').split(',').map(x => x.trim()).filter(Boolean);
+    }
+
+    function typeKey(type, prefix) {
+        return prefix + type.charAt(0).toUpperCase() + type.slice(1);
+    }
+
+    function fileAllowed(type, file) {
+        const name = (file.name || '').toLowerCase();
+        const dot = name.lastIndexOf('.');
+        const extension = dot >= 0 ? name.slice(dot) : '';
+        const mime = (file.type || '').toLowerCase();
+
+        const videoExtensions = splitList(fileRules?.dataset.extVideo);
+        const audioExtensions = splitList(fileRules?.dataset.extVoice);
+
+        const isVideo = videoExtensions.includes(extension) || mime.startsWith('video/');
+        const isAudio = audioExtensions.includes(extension) || mime.startsWith('audio/');
+
+        if (type === 'video') return isVideo && !isAudio;
+        if (type === 'voice') return isAudio;
+        return !isVideo && !isAudio;
+    }
+
+    function mismatchMessage(type) {
+        if (type === 'video') return L["LessonContent_OnlyVideo"];
+        if (type === 'voice') return L["LessonContent_OnlyAudio"];
+        return L["LessonContent_NoMedia"];
+    }
+
+    function applyFileFilter() {
+        if (!typeSelect || !fileInput || !fileRules) return;
+
+        const type = typeSelect.value;
+        fileInput.accept = fileRules.dataset[typeKey(type, 'accept')] || '';
+
+        const nameEl = document.getElementById('fileName');
+        if (nameEl) nameEl.dataset.hint = fileRules.dataset[typeKey(type, 'hint')] || '';
+
+        // Növ dəyişdi və əvvəl seçilmiş fayl artıq uyğun deyil — sıfırla.
+        if (fileInput.files.length && !fileAllowed(type, fileInput.files[0])) {
+            AdminUI.fileReset('file');
+            AdminUI.error(mismatchMessage(type));
+            return;
+        }
+
+        if (nameEl && !fileInput.files.length) nameEl.textContent = nameEl.dataset.hint || '';
+    }
+
+    if (typeSelect) typeSelect.addEventListener('change', applyFileFilter);
+    if (fileInput) {
+        fileInput.addEventListener('change', function () {
+            const file = fileInput.files[0];
+            if (!file || fileAllowed(typeSelect.value, file)) return;
+            AdminUI.fileReset('file');
+            AdminUI.error(mismatchMessage(typeSelect.value));
+        });
+    }
+    applyFileFilter();
+
     function selectedLessonIds() {
         return [...document.getElementById('lesson_ids').selectedOptions].map(o => o.value);
     }
@@ -59,6 +128,7 @@
 
         document.getElementById('title').value = '';
         document.getElementById('type').value = 'video';
+        applyFileFilter();
         document.getElementById('is_active').checked = true;
         // Fayl girdisi ilə yanaşı önizləmə də sıfırlanmalıdır, əks halda əvvəlki
         // videonun kadrı modalda qalır.

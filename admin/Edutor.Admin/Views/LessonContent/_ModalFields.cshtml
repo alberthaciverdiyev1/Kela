@@ -1,3 +1,5 @@
+@using Edutor.Core.Modules.LessonContent
+@using Edutor.Core.Modules.LessonContent.Entities
 @{
     var lessons = (PagedResponse<LessonResponse>)ViewData["Lessons"]!;
     var typeOptions = new List<SelectOption>
@@ -24,7 +26,17 @@
     <partial name="Ui/_Select" model="@(new SelectModel { Name = "type", Id = "type", Label = L["Common_Type"], Options = typeOptions })" />
     <div id="currentFile" class="hidden"></div>
     <div id="fileBlock">
-        <partial name="Ui/_FileUpload" model="@(new FileUploadModel { Name = "file", Id = "file", Label = L["Common_File"], Hint = "Video böyükdürsə birbaşa R2-yə yüklənir" })" />
+        @* Seçilən növə uyğun fayl filtri — yaratma JS-i (create.js) `type` dəyişəndə yeniləyir. *@
+        <div id="fileTypeRules" class="hidden"
+             data-accept-video="@LessonContentMediaTypes.AcceptFor(LessonContentType.Video)"
+             data-accept-voice="@LessonContentMediaTypes.AcceptFor(LessonContentType.Voice)"
+             data-accept-file=""
+             data-ext-video="@string.Join(",", LessonContentMediaTypes.ExtensionsFor(LessonContentType.Video))"
+             data-ext-voice="@string.Join(",", LessonContentMediaTypes.ExtensionsFor(LessonContentType.Voice))"
+             data-hint-video="Video faylı — mp4, mkv, mov və s."
+             data-hint-voice="Səs faylı — mp3, wav, m4a və s."
+             data-hint-file="pdf, sənəd, şəkil, arxiv (video və səs seçilə bilməz)"></div>
+        <partial name="Ui/_FileUpload" model="@(new FileUploadModel { Name = "file", Id = "file", Label = L["Common_File"], Accept = LessonContentMediaTypes.AcceptFor(LessonContentType.Video), Hint = "Video böyükdürsə birbaşa R2-yə yüklənir" })" />
     </div>
     <partial name="Ui/_Switch" model="@(new SwitchModel { Name = "is_active", Id = "is_active", Label = L["Common_Active"], Checked = true })" />
 
