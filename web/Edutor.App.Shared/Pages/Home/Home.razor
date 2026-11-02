@@ -65,12 +65,9 @@ else
             <div class="flex size-8 items-center justify-center rounded-full bg-brand-103 text-[13px] font-bold text-brand-835">@(Auth.User?.Initial ?? "L")</div>
             <span class="text-[13px] font-semibold text-brand-722">@(Auth.User?.FullName ?? L["Common_Student"])</span>
         </div>
-        @if (false)
-        {
-            <a href="/notifications" class="relative rounded-lg p-2 text-sage-498" aria-label="@L["Notifications_Aria"]">
-                <Icon Name="bell" Class="size-[18px]" />
-            </a>
-        }
+        <a href="/notifications" class="relative rounded-lg p-2 text-sage-498" aria-label="@L["Notifications_Aria"]">
+            <Icon Name="bell" Class="size-[18px]" />
+        </a>
     </header>
 
     <main @key="_loading" class="mx-auto w-full max-w-full px-5 pb-28 pt-8 lg:px-10 lg:pb-12 lg:pt-12 @(!_loading ? "page-fade" : null)">

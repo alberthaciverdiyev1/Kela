@@ -3,7 +3,9 @@
 @inject AuthState Auth
 @inject Localizer L
 
-<header class="sticky top-0 z-30 hidden h-[68px] grid-cols-[auto_1fr_auto] items-center gap-6 border-b border-brand-086 bg-brand-022/95 px-8 backdrop-blur md:grid">
+@* backdrop-blur yoxdur: backdrop-filter başlığı fixed uşaqlar üçün containing block edir
+   və avatar menyusunun örtüyü yalnız başlığın hündürlüyünü tuturdu. *@
+<header class="sticky top-0 z-30 hidden h-[68px] grid-cols-[auto_1fr_auto] items-center gap-6 border-b border-brand-086 bg-brand-022/95 px-8 md:grid">
     <a href="/" class="flex shrink-0 items-center gap-2.5">
         <div class="flex size-8 items-center justify-center rounded-lg bg-brand-743 text-white">
             <Icon Name="book" Class="size-4" />
@@ -30,7 +32,7 @@
         <div class="relative">
             <button type="button" @onclick="() => _moreOpen = true" aria-label="@L["Nav_More"]"
                     aria-haspopup="true" aria-expanded="@_moreOpen"
-                    class="block rounded-full outline-none ring-brand-253 transition focus-visible:ring-2 @(_moreOpen ? "ring-2" : null)">
+                    class="flex items-center gap-1 rounded-full py-0.5 pl-0.5 pr-2 outline-none ring-brand-253 transition hover:bg-brand-041 focus-visible:ring-2 @(_moreOpen ? "ring-2" : null)">
                 @if (!string.IsNullOrWhiteSpace(Auth.User?.Image))
                 {
                     <img src="@Auth.User!.Image" alt="" class="size-9 rounded-full object-cover" />
@@ -39,6 +41,7 @@
                 {
                     <span class="grid size-9 place-items-center rounded-full bg-brand-103 text-[13px] font-bold text-brand-835">@(Auth.User?.Initial ?? "L")</span>
                 }
+                <Icon Name="chevron-down" Class="@($"size-3.5 text-sage-473 {(_moreOpen ? "rotate-180" : "")}")" />
             </button>
             <MoreMenu Sheet="false" Open="_moreOpen" OnClose="() => _moreOpen = false" />
         </div>
