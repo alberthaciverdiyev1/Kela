@@ -1,4 +1,6 @@
+using Edutor.Core.Common.Content;
 using Edutor.Core.Common.Localization;
+using Edutor.Core.Common.Notes;
 using Edutor.Core.Common.Pagination;
 using Edutor.Core.Common.Queries;
 using Edutor.Core.Common.Responses;
@@ -34,7 +36,8 @@ public sealed class TeacherNoteService(AppDbContext db, IStringLocalizer<SharedR
         else if (request.Scope == "shared") query = query.Where(x => x.UserId != userId);
 
         query = query
-            .OrderBy(x => x.Date == null)
+            .OrderByDescending(x => x.IsPinned)
+            .ThenBy(x => x.Date == null)
             .ThenBy(x => x.Date)
             .ThenByDescending(x => x.CreatedAt);
 
@@ -86,6 +89,24 @@ public sealed class TeacherNoteService(AppDbContext db, IStringLocalizer<SharedR
         var note = await FindAsync(userId, id, ct);
         note.DeletedAt = DateTimeOffset.UtcNow;
         await db.SaveChangesAsync(ct);
+    }
+
+    public async Task<TeacherNoteResponse> SetPinnedAsync(
+        long userId, long id, bool pinned, CancellationToken ct = default)
+    {
+        var note = await FindAsync(userId, id, ct);
+        note.IsPinned = pinned;
+        await db.SaveChangesAsync(ct);
+        return (await MapAsync([note], userId, ct))[0];
+    }
+
+    public async Task<TeacherNoteResponse> SetColorAsync(
+        long userId, long id, string? color, CancellationToken ct = default)
+    {
+        var note = await FindAsync(userId, id, ct);
+        note.Color = NoteColors.Normalize(color);
+        await db.SaveChangesAsync(ct);
+        return (await MapAsync([note], userId, ct))[0];
     }
 
     public async Task<IReadOnlyList<TeacherNoteUserResponse>> ListShareTargetsAsync(
@@ -141,9 +162,12 @@ public sealed class TeacherNoteService(AppDbContext db, IStringLocalizer<SharedR
             : Entities.TeacherNoteVisibility.Private;
 
         note.Title = request.Title.Trim();
-        note.Body = string.IsNullOrWhiteSpace(request.Body) ? null : request.Body.Trim();
+        // Mətn zəngin redaktordan HTML kimi gəlir — script/on* atributları təmizlənir.
+        note.Body = string.IsNullOrWhiteSpace(request.Body) ? null : SafeHtml.Sanitize(request.Body.Trim());
         note.Date = request.Date;
         note.IsDone = request.IsDone;
+        if (request.Color is not null) note.Color = NoteColors.Normalize(request.Color);
+        if (request.IsPinned is bool pinned) note.IsPinned = pinned;
         note.ContentId = await ResolveContentAsync(request.ContentId, ct);
         note.PositionSeconds = note.ContentId is not null && request.PositionSeconds is >= 0
             ? request.PositionSeconds
@@ -244,6 +268,8 @@ public sealed class TeacherNoteService(AppDbContext db, IStringLocalizer<SharedR
                 n.Body,
                 n.Date,
                 n.IsDone,
+                n.Color,
+                n.IsPinned,
                 n.ContentId,
                 content?.Title,
                 content?.LessonId,

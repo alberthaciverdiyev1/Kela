@@ -21,6 +21,10 @@ public class StudentNote : BaseEntity
 
     public string Body { get; set; } = string.Empty;
 
+    public string Color { get; set; } = Common.Notes.NoteColors.Default;
+
+    public bool IsPinned { get; set; }
+
     public string Visibility { get; set; } = StudentNoteVisibility.Private;
 
     /// <summary>Paylaşılan qeyd üçün həmin qrupun üzvləri qeydi görür.</summary>

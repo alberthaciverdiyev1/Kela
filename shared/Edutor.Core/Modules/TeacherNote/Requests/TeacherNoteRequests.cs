@@ -23,6 +23,10 @@ public class TeacherNoteUpsertRequest
 
     public bool IsDone { get; set; }
 
+    public string? Color { get; set; }
+
+    public bool? IsPinned { get; set; }
+
     public long? ContentId { get; set; }
 
     public int? PositionSeconds { get; set; }

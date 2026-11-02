@@ -11,6 +11,8 @@ public record StudentNoteResponse(
     int? PositionSeconds,
     string? Title,
     string Body,
+    string Color,
+    bool IsPinned,
     string Visibility,
     long? GroupId,
     string? GroupName,

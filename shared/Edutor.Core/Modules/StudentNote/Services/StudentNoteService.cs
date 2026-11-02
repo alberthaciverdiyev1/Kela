@@ -1,5 +1,6 @@
 using Edutor.Core.Common.Exceptions;
 using Edutor.Core.Common.Localization;
+using Edutor.Core.Common.Notes;
 using Edutor.Core.Data;
 using Edutor.Core.Modules.StudentApp.Abstractions;
 using Edutor.Core.Modules.StudentNote.Abstractions;
@@ -38,7 +39,8 @@ public sealed class StudentNoteService(
         else if (request.Scope == "shared") query = query.Where(x => x.StudentId != studentId);
 
         var notes = await query
-            .OrderByDescending(x => x.CreatedAt)
+            .OrderByDescending(x => x.IsPinned)
+            .ThenByDescending(x => x.CreatedAt)
             .ThenByDescending(x => x.Id)
             .ToListAsync(ct);
 
@@ -66,6 +68,8 @@ public sealed class StudentNoteService(
             PositionSeconds = request.PositionSeconds is >= 0 ? request.PositionSeconds : null,
             Title = string.IsNullOrWhiteSpace(request.Title) ? null : request.Title.Trim(),
             Body = request.Body.Trim(),
+            Color = NoteColors.Normalize(request.Color),
+            IsPinned = request.IsPinned ?? false,
             Visibility = visibility,
             GroupId = groupId
         };
@@ -97,6 +101,8 @@ public sealed class StudentNoteService(
         note.PositionSeconds = request.PositionSeconds is >= 0 ? request.PositionSeconds : null;
         note.Title = string.IsNullOrWhiteSpace(request.Title) ? null : request.Title.Trim();
         note.Body = request.Body.Trim();
+        if (request.Color is not null) note.Color = NoteColors.Normalize(request.Color);
+        if (request.IsPinned is bool pinned) note.IsPinned = pinned;
         note.Visibility = visibility;
         note.GroupId = groupId;
 
@@ -112,6 +118,28 @@ public sealed class StudentNoteService(
         note.DeletedAt = DateTimeOffset.UtcNow;
         await db.SaveChangesAsync(ct);
     }
+
+    public async Task<StudentNoteResponse> SetPinnedAsync(
+        long studentId, long id, bool pinned, CancellationToken ct = default)
+    {
+        var note = await FindOwnAsync(studentId, id, ct);
+        note.IsPinned = pinned;
+        await db.SaveChangesAsync(ct);
+        return (await MapAsync([note], studentId, ct))[0];
+    }
+
+    public async Task<StudentNoteResponse> SetColorAsync(
+        long studentId, long id, string? color, CancellationToken ct = default)
+    {
+        var note = await FindOwnAsync(studentId, id, ct);
+        note.Color = NoteColors.Normalize(color);
+        await db.SaveChangesAsync(ct);
+        return (await MapAsync([note], studentId, ct))[0];
+    }
+
+    private async Task<StudentNote> FindOwnAsync(long studentId, long id, CancellationToken ct)
+        => await db.StudentNotes.FirstOrDefaultAsync(x => x.Id == id && x.StudentId == studentId, ct)
+            ?? throw new KeyNotFoundException($"Note not found: {id}");
 
     private static string NormalizeVisibility(string? visibility)
         => visibility == StudentNoteVisibility.Group ? StudentNoteVisibility.Group : StudentNoteVisibility.Private;
@@ -208,6 +236,8 @@ public sealed class StudentNoteService(
             n.PositionSeconds,
             n.Title,
             n.Body,
+            n.Color,
+            n.IsPinned,
             n.Visibility,
             n.GroupId,
             n.GroupId is long gid ? groups.GetValueOrDefault(gid) : null,

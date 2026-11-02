@@ -2,54 +2,46 @@
     ViewData["Title"] = L["Nav_Notes"];
 }
 <section class="admin-page">
-    <partial name="Ui/_PageHeader" model="@(new PageHeaderModel { CreateText = L["Note_Create"] })" />
+    <div class="mb-5 flex flex-wrap items-center gap-3">
+        <h1 class="text-2xl font-bold text-slate-900">@L["Nav_Notes"]</h1>
 
-    <div class="admin-card">
-        <partial name="Ui/_FilterBar" model="@(new FilterBarModel {
-            SearchPlaceholder = L["Note_Search"],
-            Selects = new List<FilterSelectModel>
-            {
-                new() { Select = new SelectModel
-                {
-                    Id = "scope",
-                    Name = "scope",
-                    Options = new List<SelectOption>
-                    {
-                        new() { Value = "", Text = L["Note_ScopeAll"] },
-                        new() { Value = "mine", Text = L["Note_MineFilter"] },
-                        new() { Value = "shared", Text = L["Note_SharedFilter"] }
-                    }
-                } }
-            },
-            ShowButton = true,
-            ButtonText = L["Common_Search"]
-        })" />
-
-        <partial name="Ui/_Table" model="@(new TableModel
-        {
-            Columns = new List<TableColumnModel>
-            {
-                new() { Label = L["Common_Title"] },
-                new() { Label = L["Note_Material"], WidthClass = "w-64" },
-                new() { Label = L["Common_Date"], WidthClass = "w-36" },
-                new() { Label = L["Common_Status"], WidthClass = "w-32" },
-                new() { Label = L["Common_Actions"], Right = true }
-            }
-        })" />
+        <div class="relative ml-auto w-full sm:w-72">
+            <svg class="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400"
+                 fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="m21 21-4.35-4.35M17 10.5A6.5 6.5 0 1 1 4 10.5a6.5 6.5 0 0 1 13 0Z" />
+            </svg>
+            <input id="noteSearch" type="search" class="admin-field pl-9" placeholder="@L["Note_Search"]" />
+        </div>
     </div>
+
+    <form id="noteComposer" class="mx-auto mb-7 max-w-2xl rounded-2xl border border-border bg-white shadow-sm">
+        <div class="flex items-start gap-2 px-4 py-3">
+            <input id="noteTitle" type="text" maxlength="190" placeholder="@L["Note_TitlePlaceholder"]"
+                   class="min-w-0 flex-1 bg-transparent text-sm font-semibold text-slate-800 outline-none" />
+            <button type="button" id="noteExpand" class="shrink-0 rounded-lg px-2 py-1 text-xs font-bold text-slate-400 hover:bg-slate-100"
+                    data-action="TeacherNotes.expandComposer">@L["Note_OpenComposer"]</button>
+        </div>
+
+        <div id="noteComposerBody" class="hidden border-t border-border px-4 pb-3 pt-3">
+            <partial name="Ui/_Editor" model="@(new EditorModel { Id = "noteBody", Name = "body", Label = L["Note_Body"] })" />
+
+            <div class="mt-3 flex flex-wrap items-center gap-2">
+                <div id="notePalette" class="flex flex-wrap items-center gap-1.5"></div>
+                <button type="button" id="notePinToggle" class="ml-3 rounded-lg px-2 py-1 text-xs font-bold text-slate-500 hover:bg-slate-100"
+                        data-action="TeacherNotes.toggleDraftPin">
+                    <span id="notePinLabel">@L["Note_Pin"]</span>
+                </button>
+
+                <div class="ml-auto flex items-center gap-2">
+                    <button type="button" id="noteCancel" class="rounded-xl px-3 py-2 text-sm font-bold text-slate-500 hover:bg-slate-100"
+                            data-action="TeacherNotes.cancelComposer">@L["Common_Cancel"]</button>
+                    <button type="submit" class="admin-button admin-button-primary">@L["Common_Save"]</button>
+                </div>
+            </div>
+        </div>
+    </form>
+
+    <div id="noteBoard" class="mx-auto max-w-5xl"></div>
 </section>
-
-@{
-    var modalBody = await Html.PartialAsync("_ModalFields");
-}
-
-<partial name="Ui/_Modal" model="@(new ModalModel
-{
-    Id = "modal",
-    TitleId = "modalTitle",
-    Title = L["Note_Create"],
-    WidthClass = "max-w-2xl",
-    Body = modalBody
-})" />
 
 <form id="antiforgery">@Html.AntiForgeryToken()</form>

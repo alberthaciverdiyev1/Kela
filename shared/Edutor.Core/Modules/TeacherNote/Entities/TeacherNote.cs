@@ -14,6 +14,10 @@ public class TeacherNote : BaseEntity
 
     public bool IsDone { get; set; }
 
+    public string Color { get; set; } = Common.Notes.NoteColors.Default;
+
+    public bool IsPinned { get; set; }
+
     public long? ContentId { get; set; }
 
     public int? PositionSeconds { get; set; }

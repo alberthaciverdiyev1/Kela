@@ -25,4 +25,10 @@ public sealed partial class AppApi
 
     public Task<string> DeleteNoteAsync(long id)
         => _api.DeleteAsync<string>($"/api/student-note/{id}");
+
+    public Task<StudentNoteDto> PinNoteAsync(long id, bool pinned)
+        => _api.PutAsync<StudentNoteDto>($"/api/student-note/{id}/pin", new { pinned });
+
+    public Task<StudentNoteDto> SetNoteColorAsync(long id, string color)
+        => _api.PutAsync<StudentNoteDto>($"/api/student-note/{id}/color", new { color });
 }

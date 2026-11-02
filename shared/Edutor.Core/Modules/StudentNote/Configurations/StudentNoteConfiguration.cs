@@ -19,6 +19,8 @@ public sealed class StudentNoteConfiguration : IEntityTypeConfiguration<StudentN
         builder.Property(x => x.PositionSeconds).HasColumnName("position_seconds");
         builder.Property(x => x.Title).HasColumnName("title").HasMaxLength(190);
         builder.Property(x => x.Body).HasColumnName("body").HasMaxLength(4000).IsRequired();
+        builder.Property(x => x.Color).HasColumnName("color").HasMaxLength(20).IsRequired().HasDefaultValue("default");
+        builder.Property(x => x.IsPinned).HasColumnName("is_pinned").HasDefaultValue(false);
         builder.Property(x => x.Visibility).HasColumnName("visibility").HasMaxLength(16).IsRequired();
         builder.Property(x => x.GroupId).HasColumnName("group_id");
 

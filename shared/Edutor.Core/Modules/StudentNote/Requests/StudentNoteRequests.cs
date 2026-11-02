@@ -23,6 +23,11 @@ public class StudentNoteUpsertRequest
 
     public string Body { get; set; } = string.Empty;
 
+    /// <summary>Null olduqda mövcud rəng saxlanılır (sürətli rəng dəyişməsi ayrıca endpoint-dən gəlir).</summary>
+    public string? Color { get; set; }
+
+    public bool? IsPinned { get; set; }
+
     public string Visibility { get; set; } = Entities.StudentNoteVisibility.Private;
 
     public long? GroupId { get; set; }

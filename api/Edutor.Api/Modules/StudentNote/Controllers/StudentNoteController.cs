@@ -2,6 +2,7 @@ using System.Security.Claims;
 using Edutor.Api.Common.Controllers;
 using Edutor.Api.Common.Responses;
 using Edutor.Core.Common.Localization;
+using Edutor.Core.Common.Notes;
 using Edutor.Core.Modules.Auth;
 using Edutor.Core.Modules.StudentNote.Requests;
 using Edutor.Core.Modules.StudentNote.Responses;
@@ -42,6 +43,16 @@ public sealed class StudentNoteController(IStudentNoteService service, IStringLo
     public async Task<ActionResult<ApiResponse<StudentNoteResponse>>> Update(
         long id, [FromBody] StudentNoteUpsertRequest request, CancellationToken ct)
         => Success(await service.UpdateAsync(StudentId, id, request, ct), L["Api_Updated"]);
+
+    [HttpPut("{id:long}/pin")]
+    public async Task<ActionResult<ApiResponse<StudentNoteResponse>>> Pin(
+        long id, [FromBody] NotePinRequest request, CancellationToken ct)
+        => Success(await service.SetPinnedAsync(StudentId, id, request.Pinned, ct));
+
+    [HttpPut("{id:long}/color")]
+    public async Task<ActionResult<ApiResponse<StudentNoteResponse>>> Color(
+        long id, [FromBody] NoteColorRequest request, CancellationToken ct)
+        => Success(await service.SetColorAsync(StudentId, id, request.Color, ct));
 
     [HttpDelete("{id:long}")]
     public async Task<ActionResult<ApiResponse<string>>> Delete(long id, CancellationToken ct)

@@ -17,6 +17,10 @@ public interface ITeacherNoteService
 
     Task DeleteAsync(long userId, long id, CancellationToken ct = default);
 
+    Task<TeacherNoteResponse> SetPinnedAsync(long userId, long id, bool pinned, CancellationToken ct = default);
+
+    Task<TeacherNoteResponse> SetColorAsync(long userId, long id, string? color, CancellationToken ct = default);
+
     /// <summary>Qeydi paylaşmaq üçün seçilə bilən həmkar siyahısı (şagirdlər daxil deyil).</summary>
     Task<IReadOnlyList<TeacherNoteUserResponse>> ListShareTargetsAsync(
         long userId, string? search = null, CancellationToken ct = default);

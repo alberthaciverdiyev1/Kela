@@ -14,7 +14,7 @@ public sealed class TeacherNoteUpsertRequestValidator : AbstractValidator<Teache
             .NotEmpty().WithMessage(L["Validation_TitleRequired"])
             .MaximumLength(190).WithMessage(L["Validation_TitleTooLong"]);
 
-        RuleFor(x => x.Body).MaximumLength(2000).WithMessage(L["Validation_TextTooLong"]);
+        RuleFor(x => x.Body).MaximumLength(20000).WithMessage(L["Validation_TextTooLong"]);
 
         RuleFor(x => x.Visibility)
             .Must(v => v is TeacherNoteVisibility.Private or TeacherNoteVisibility.Shared)

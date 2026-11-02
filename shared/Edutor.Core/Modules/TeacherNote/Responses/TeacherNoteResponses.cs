@@ -12,6 +12,8 @@ public record TeacherNoteResponse(
     string? Body,
     DateOnly? Date,
     bool IsDone,
+    string Color,
+    bool IsPinned,
     long? ContentId,
     string? ContentTitle,
     long? LessonId,

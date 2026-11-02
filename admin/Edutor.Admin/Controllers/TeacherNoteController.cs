@@ -1,5 +1,6 @@
 using FluentValidation;
 using Edutor.Admin.Infrastructure;
+using Edutor.Core.Common.Notes;
 using Edutor.Core.Modules.TeacherNote.Abstractions;
 using Edutor.Core.Modules.TeacherNote.Requests;
 using Microsoft.AspNetCore.Mvc;
@@ -16,13 +17,7 @@ public sealed class TeacherNoteController(
     [HttpGet]
     public IActionResult Index()
     {
-        ViewData["Scripts"] = new[]
-        {
-            "~/js/pages/teacher-note/pickers.js",
-            "~/js/pages/teacher-note/list.js",
-            "~/js/pages/teacher-note/create.js",
-            "~/js/pages/teacher-note/update.js"
-        };
+        ViewData["Scripts"] = new[] { "~/js/pages/teacher-note/index.js" };
         return View();
     }
 
@@ -61,6 +56,16 @@ public sealed class TeacherNoteController(
 
         return Json(await service.UpdateAsync(UserId, id, request, ct));
     }
+
+    [HttpPut("{id:long}/pin")]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> Pin(long id, [FromBody] NotePinRequest request, CancellationToken ct)
+        => Json(await service.SetPinnedAsync(UserId, id, request.Pinned, ct));
+
+    [HttpPut("{id:long}/color")]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> Color(long id, [FromBody] NoteColorRequest request, CancellationToken ct)
+        => Json(await service.SetColorAsync(UserId, id, request.Color, ct));
 
     [HttpDelete("{id:long}")]
     [ValidateAntiForgeryToken]

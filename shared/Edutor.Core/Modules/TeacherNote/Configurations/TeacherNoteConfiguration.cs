@@ -17,9 +17,11 @@ public sealed class TeacherNoteConfiguration : IEntityTypeConfiguration<TeacherN
         builder.Property(x => x.TenantId).HasColumnName("tenant_id");
         builder.Property(x => x.UserId).HasColumnName("user_id");
         builder.Property(x => x.Title).HasColumnName("title").HasMaxLength(190).IsRequired();
-        builder.Property(x => x.Body).HasColumnName("body").HasMaxLength(2000);
+        builder.Property(x => x.Body).HasColumnName("body").HasMaxLength(20000);
         builder.Property(x => x.Date).HasColumnName("date");
         builder.Property(x => x.IsDone).HasColumnName("is_done").HasDefaultValue(false);
+        builder.Property(x => x.Color).HasColumnName("color").HasMaxLength(20).IsRequired().HasDefaultValue("default");
+        builder.Property(x => x.IsPinned).HasColumnName("is_pinned").HasDefaultValue(false);
         builder.Property(x => x.ContentId).HasColumnName("content_id");
         builder.Property(x => x.PositionSeconds).HasColumnName("position_seconds");
         builder.Property(x => x.Visibility).HasColumnName("visibility").HasMaxLength(16).IsRequired()

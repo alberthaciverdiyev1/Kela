@@ -15,4 +15,8 @@ public interface IStudentNoteService
         long studentId, long id, StudentNoteUpsertRequest request, CancellationToken ct = default);
 
     Task DeleteAsync(long studentId, long id, CancellationToken ct = default);
+
+    Task<StudentNoteResponse> SetPinnedAsync(long studentId, long id, bool pinned, CancellationToken ct = default);
+
+    Task<StudentNoteResponse> SetColorAsync(long studentId, long id, string? color, CancellationToken ct = default);
 }

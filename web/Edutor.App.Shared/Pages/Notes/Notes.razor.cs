@@ -14,17 +14,36 @@ public partial class Notes
         ("Notes_Shared", "shared")
     ];
 
+    // Klientdə kart rəngləri — server yalnız açar sözü saxlayır.
+    private static readonly (string Key, string Hex)[] Palette =
+    [
+        ("default", "#ffffff"),
+        ("red", "#f8b4b4"),
+        ("orange", "#fdd9a0"),
+        ("yellow", "#fff3a3"),
+        ("green", "#c9f2b2"),
+        ("teal", "#a9efe4"),
+        ("blue", "#bfe3fb"),
+        ("purple", "#dcc9f7"),
+        ("pink", "#f9c9e0"),
+        ("gray", "#e2e5e9"),
+        ("brown", "#e3cbb0")
+    ];
+
     private bool _loading = true;
     private List<StudentNoteDto> _notes = new();
     private List<GroupDto> _groups = new();
 
     private string _scope = "";
-    private bool _formOpen;
+    private string _search = "";
+    private bool _composerOpen;
     private long? _editingId;
     private string _title = "";
     private string _body = "";
     private string _visibility = "private";
     private long? _groupId;
+    private string _draftColor = "default";
+    private bool _draftPinned;
     private long? _formContentId;
     private int? _formPosition;
     private bool _saving;
@@ -37,6 +56,20 @@ public partial class Notes
     {
         await LoadAsync();
         _loading = false;
+    }
+
+    private static string Bg(string? color)
+        => Palette.FirstOrDefault(p => p.Key == color).Hex ?? Palette[0].Hex;
+
+    private List<StudentNoteDto> FilteredNotes()
+    {
+        var term = _search.Trim();
+        if (term.Length == 0) return _notes;
+
+        return _notes
+            .Where(n => (n.Title ?? "").Contains(term, StringComparison.OrdinalIgnoreCase)
+                        || n.Body.Contains(term, StringComparison.OrdinalIgnoreCase))
+            .ToList();
     }
 
     private async Task LoadAsync()
@@ -66,10 +99,10 @@ public partial class Notes
         _loading = false;
     }
 
-    private void StartCreate()
+    private void OpenComposer()
     {
-        ResetForm();
-        _formOpen = true;
+        ResetDraft();
+        _composerOpen = true;
     }
 
     private void StartEdit(StudentNoteDto note)
@@ -79,35 +112,41 @@ public partial class Notes
         _body = note.Body;
         _visibility = note.Visibility;
         _groupId = note.GroupId;
+        _draftColor = note.Color;
+        _draftPinned = note.IsPinned;
         _formContentId = note.ContentId;
         _formPosition = note.PositionSeconds;
         _error = null;
-        _formOpen = true;
+        _composerOpen = true;
     }
 
-    private void CancelForm()
+    private void CancelComposer()
     {
-        ResetForm();
-        _formOpen = false;
+        ResetDraft();
+        _composerOpen = false;
     }
 
-    private void ResetForm()
+    private void ResetDraft()
     {
         _editingId = null;
         _title = "";
         _body = "";
         _visibility = "private";
         _groupId = _groups.FirstOrDefault()?.Id;
+        _draftColor = "default";
+        _draftPinned = false;
         _formContentId = null;
         _formPosition = null;
         _error = null;
     }
 
-    private void SetVisibilityAsync(string visibility)
+    private void SetVisibility(string visibility)
     {
         _visibility = visibility;
         if (visibility == "group" && _groupId is null) _groupId = _groups.FirstOrDefault()?.Id;
     }
+
+    private void ToggleDraftPin() => _draftPinned = !_draftPinned;
 
     private async Task SaveAsync()
     {
@@ -126,15 +165,17 @@ public partial class Notes
             string.IsNullOrWhiteSpace(_title) ? null : _title.Trim(),
             _body.Trim(),
             _visibility,
-            _visibility == "group" ? _groupId : null);
+            _visibility == "group" ? _groupId : null,
+            _draftColor,
+            _draftPinned);
 
         try
         {
             if (_editingId is long id) await Api.UpdateNoteAsync(id, dto);
             else await Api.CreateNoteAsync(dto);
 
-            _formOpen = false;
-            ResetForm();
+            _composerOpen = false;
+            ResetDraft();
             _loading = true;
             await LoadAsync();
             _loading = false;
@@ -151,6 +192,38 @@ public partial class Notes
         {
             _saving = false;
         }
+    }
+
+    private async Task TogglePinAsync(StudentNoteDto note)
+    {
+        try
+        {
+            var updated = await Api.PinNoteAsync(note.Id, !note.IsPinned);
+            Replace(updated);
+        }
+        catch (ApiException ex)
+        {
+            _error = ex.Message;
+        }
+    }
+
+    private async Task SetColorAsync(StudentNoteDto note, string color)
+    {
+        try
+        {
+            var updated = await Api.SetNoteColorAsync(note.Id, color);
+            Replace(updated);
+        }
+        catch (ApiException ex)
+        {
+            _error = ex.Message;
+        }
+    }
+
+    private void Replace(StudentNoteDto updated)
+    {
+        var index = _notes.FindIndex(n => n.Id == updated.Id);
+        if (index >= 0) _notes[index] = updated;
     }
 
     private void AskDelete(long id) => _confirmDeleteId = id;
