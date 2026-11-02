@@ -2,7 +2,7 @@
     <p class="text-sm text-slate-500">@L["Lesson_SettingsHint"]</p>
     <div class="grid gap-3 sm:grid-cols-2">
         <partial name="Ui/_Switch" model="@(new SwitchModel { Name = "topic_explain", Id = "s_topic_explain", Label = L["Lesson_SetTopicExplanation"], Checked = true })" />
-        <partial name="Ui/_Switch" model="@(new SwitchModel { Name = "live_video", Id = "s_live_video", Label = L["Lesson_SetLiveVideo"], Checked = true })" />
+        <partial name="Ui/_Switch" model="@(new SwitchModel { Name = "live_video", Id = "s_live_video", Label = L["Lesson_SetLiveVideo"], Checked = true, Disabled = true, Badge = L["Common_Soon"] })" />
         <partial name="Ui/_Switch" model="@(new SwitchModel { Name = "pdf", Id = "s_pdf", Label = "PDF", Checked = true })" />
         <partial name="Ui/_Switch" model="@(new SwitchModel { Name = "voice_record", Id = "s_voice_record", Label = L["Type_Voice"], Checked = true })" />
         <partial name="Ui/_Switch" model="@(new SwitchModel { Name = "topic_quiz", Id = "s_topic_quiz", Label = L["Lesson_SetTopicExam"], Checked = true })" />

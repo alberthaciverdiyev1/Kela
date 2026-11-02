@@ -88,6 +88,8 @@ public class SwitchModel
     public string? Label { get; set; }
     public bool Checked { get; set; } = true;
     public string? Id { get; set; }
+    public bool Disabled { get; set; }
+    public string? Badge { get; set; }
 }
 
 public class FileUploadModel

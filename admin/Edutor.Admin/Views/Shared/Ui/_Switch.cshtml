@@ -2,14 +2,18 @@
 @{
     var id = Model.Id ?? Model.Name;
 }
-<label for="@id" class="inline-flex cursor-pointer items-center gap-3">
+<label for="@id" class="inline-flex items-center gap-3 @(Model.Disabled ? "cursor-not-allowed opacity-60" : "cursor-pointer")">
     <span class="relative">
-        <input id="@id" name="@Model.Name" type="checkbox" checked="@Model.Checked" class="peer sr-only" />
-        <span class="block h-6 w-11 rounded-full bg-slate-300 transition-colors peer-checked:bg-primary"></span>
-        <span class="absolute left-0.5 top-0.5 h-5 w-5 rounded-full bg-white shadow transition-transform peer-checked:translate-x-5"></span>
+        <input id="@id" name="@Model.Name" type="checkbox" checked="@Model.Checked" disabled="@Model.Disabled" class="peer sr-only" />
+        <span class="block h-6 w-11 rounded-full bg-slate-300 transition-colors @(Model.Disabled ? "" : "peer-checked:bg-primary")"></span>
+        <span class="absolute left-0.5 top-0.5 h-5 w-5 rounded-full bg-white shadow transition-transform @(Model.Disabled ? "" : "peer-checked:translate-x-5")"></span>
     </span>
     @if (!string.IsNullOrEmpty(Model.Label))
     {
         <span class="text-sm font-medium text-slate-700">@Model.Label</span>
+    }
+    @if (!string.IsNullOrEmpty(Model.Badge))
+    {
+        <span class="rounded-full bg-amber-100 px-2 py-0.5 text-[11px] font-bold text-amber-700">@Model.Badge</span>
     }
 </label>
