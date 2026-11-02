@@ -54,6 +54,14 @@ public record LimitOverridesResponse(
     public bool IsEmpty => MaxStudents is null && MaxGroups is null && MaxVideoMinutes is null && MaxStorageGb is null;
 }
 
+public record RenewalResultResponse(
+    long TenantId,
+    long? PlanId,
+    string? PlanName,
+    DateTimeOffset? StartedAt,
+    DateTimeOffset? ExpiresAt,
+    int? DaysLeft);
+
 public record UsageHistoryResponse(
     string Period,
     int VideoMinutes,

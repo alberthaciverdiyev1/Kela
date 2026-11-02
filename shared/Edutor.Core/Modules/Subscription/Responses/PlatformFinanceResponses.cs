@@ -37,7 +37,11 @@ public sealed record PlatformTenantRow(
     DateTimeOffset? PlanExpiresAt,
     string Status,
     decimal AddonThisMonth,
-    decimal RevenueThisMonth);
+    decimal RevenueThisMonth,
+    long? PlanId = null,
+    int? DaysLeft = null,
+    bool IsActive = true,
+    bool IsPending = false);
 
 public sealed record PlatformFinanceResponse(
     IReadOnlyList<PlatformCurrencyTotals> Currencies,

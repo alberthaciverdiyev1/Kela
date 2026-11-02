@@ -571,6 +571,56 @@ public sealed class SubscriptionService(AppDbContext db) : ISubscriptionService
         await db.SaveChangesAsync(ct);
     }
 
+    public async Task<RenewalResultResponse> RenewAsync(
+        long tenantId, RenewSubscriptionRequest request, CancellationToken ct = default)
+    {
+        var tenant = await db.Tenants.FirstOrDefaultAsync(x => x.Id == tenantId && x.DeletedAt == null, ct)
+            ?? throw new KeyNotFoundException($"Tenant not found: {tenantId}");
+
+        var months = Math.Clamp(request.Months, 0, 36);
+        var days = Math.Clamp(request.Days ?? 0, 0, 3660);
+        if (months == 0 && days == 0) throw new ArgumentException("Ən azı bir ay və ya gün seçin");
+
+        var planChanged = false;
+
+        if (request.PlanId is long planId)
+        {
+            var plan = await db.SubscriptionPlans.AsNoTracking()
+                .FirstOrDefaultAsync(x => x.Id == planId, ct)
+                ?? throw new ArgumentException($"Plan not found: {planId}");
+
+            if (plan.Id != tenant.PlanId)
+            {
+                tenant.PlanId = plan.Id;
+                planChanged = true;
+            }
+        }
+
+        var now = DateTimeOffset.UtcNow;
+        var reset = string.Equals(request.Mode, "reset", StringComparison.OrdinalIgnoreCase);
+
+        // Yeniləmə bugündən sayılır; uzatma mövcud tarixə əlavə edir. Vaxtı keçmiş
+        // abunəliyi uzatmaq da bugündən başlayır — əks halda dərhal bitmiş olardı.
+        var baseDate = reset || tenant.PlanExpiresAt is not { } expires || expires <= now ? now : expires;
+
+        tenant.PlanExpiresAt = baseDate.AddMonths(months).AddDays(days);
+        tenant.PlanStartedAt = reset || planChanged ? now : tenant.PlanStartedAt ?? now;
+
+        await db.SaveChangesAsync(ct);
+
+        var planName = tenant.PlanId is long id
+            ? await db.SubscriptionPlans.AsNoTracking()
+                .Where(x => x.Id == id)
+                .Select(x => x.Name)
+                .FirstOrDefaultAsync(ct)
+            : null;
+
+        var daysLeft = (int)Math.Ceiling((tenant.PlanExpiresAt.Value - now).TotalDays);
+
+        return new RenewalResultResponse(
+            tenant.Id, tenant.PlanId, planName, tenant.PlanStartedAt, tenant.PlanExpiresAt, daysLeft);
+    }
+
     // Formdan yalnız tarix seçilir (saat 00:00) — plan həmin günün sonuna qədər qüvvədə qalsın.
     private static DateTimeOffset? EndOfDayUtc(DateTimeOffset? value)
         => value is { } v

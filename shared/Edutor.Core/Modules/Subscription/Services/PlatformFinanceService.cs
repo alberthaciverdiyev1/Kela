@@ -155,7 +155,11 @@ public sealed class PlatformFinanceService(AppDbContext db) : IPlatformFinanceSe
                 tenant.PlanExpiresAt,
                 Status(tenant.IsActive, tenant.IsPending, tenant.PlanExpiresAt, now),
                 addonThisMonth,
-                (paying ? plan!.MonthlyPrice : 0) + addonThisMonth);
+                (paying ? plan!.MonthlyPrice : 0) + addonThisMonth,
+                tenant.PlanId,
+                tenant.PlanExpiresAt is { } expiry ? (int)Math.Ceiling((expiry - now).TotalDays) : null,
+                tenant.IsActive,
+                tenant.IsPending);
         })
             .OrderByDescending(x => x.RevenueThisMonth)
             .ThenBy(x => x.TenantName)

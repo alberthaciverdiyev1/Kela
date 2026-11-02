@@ -80,6 +80,12 @@ public interface ISubscriptionService
 
     Task AssignPlanAsync(long tenantId, AssignPlanRequest request, CancellationToken ct = default);
 
+    /// <summary>
+    /// Superadmin abunəliyi yeniləyir: planı dəyişə, bugündən yeni dövr aça
+    /// və ya mövcud bitmə tarixindən əlavə ay/gün uzada bilər.
+    /// </summary>
+    Task<RenewalResultResponse> RenewAsync(long tenantId, RenewSubscriptionRequest request, CancellationToken ct = default);
+
     /// <summary>Tenant özü plan seçir (qeydiyyatdan sonrakı plan seçimi).</summary>
     Task SelectPlanAsync(long tenantId, long planId, CancellationToken ct = default);
 

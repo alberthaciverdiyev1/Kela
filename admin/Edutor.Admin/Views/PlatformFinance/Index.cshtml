@@ -23,7 +23,14 @@
             id = t.TenantId,
             name = t.TenantName,
             plan = t.PlanName,
+            planId = t.PlanId,
             currency = t.Currency,
+            price = t.MonthlyPrice,
+            startedAt = t.PlanStartedAt,
+            expiresAt = t.PlanExpiresAt,
+            daysLeft = t.DaysLeft,
+            isActive = t.IsActive,
+            isPending = t.IsPending,
             revenue = t.RevenueThisMonth,
             status = t.Status
         })
@@ -101,6 +108,47 @@
                 <p id="@card.Id" class="mt-1 text-2xl font-extrabold text-slate-900">—</p>
             </div>
         }
+    </div>
+
+
+    <div class="admin-card">
+        <div class="admin-toolbar flex flex-wrap items-center justify-between gap-2">
+            <div>
+                <h3 class="text-base font-bold text-slate-900">@L["SubMgmt_Title"]</h3>
+                <p class="mt-1 text-sm text-slate-500">@L["SubMgmt_Subtitle"]</p>
+            </div>
+            <div class="flex flex-wrap items-center gap-2">
+                <input id="subMgmtSearch" type="search" placeholder="@L["SubMgmt_Search"]" class="admin-field w-56" />
+                <div class="flex overflow-hidden rounded-xl border border-border text-sm font-semibold">
+                    @foreach (var (key, label) in new (string Key, string Label)[]
+                    {
+                        ("all", L["SubMgmt_All"]), ("expiring", L["SubMgmt_Expiring"]),
+                        ("expired", L["SubMgmt_Expired"]), ("none", L["SubMgmt_NoPlan"])
+                    })
+                    {
+                        <button type="button" data-sub-filter="@key" class="sub-filter-btn px-3 py-1.5 @(key == "all" ? "bg-primary text-white" : "text-slate-600 hover:bg-slate-100")">@label</button>
+                    }
+                </div>
+            </div>
+        </div>
+        <div class="overflow-x-auto">
+            <table class="admin-table">
+                <thead>
+                    <tr>
+                        <th>@L["SubMgmt_Tenant"]</th>
+                        <th>@L["SubMgmt_Plan"]</th>
+                        <th>@L["SubMgmt_Status"]</th>
+                        <th>@L["SubMgmt_ExpiresAt"]</th>
+                        <th class="text-right">@L["SubMgmt_DaysLeft"]</th>
+                        <th class="text-right">@L["SubMgmt_Monthly"]</th>
+                        <th class="text-right">@L["Common_Actions"]</th>
+                    </tr>
+                </thead>
+                <tbody id="pfSubscriptions">
+                    <tr><td colspan="7" class="p-4 text-center text-sm text-slate-400">Yüklənir…</td></tr>
+                </tbody>
+            </table>
+        </div>
     </div>
 
     <div class="admin-card p-5">
@@ -187,3 +235,63 @@
         </div>
     </div>
 </section>
+
+<div id="renewModal" data-modal class="fixed inset-0 z-40 hidden items-center justify-center bg-slate-950/40 p-4">
+    <div data-modal-panel class="w-full max-w-md rounded-2xl border border-border bg-white p-5 shadow-xl">
+        <div class="mb-4 flex items-start justify-between gap-3">
+            <div>
+                <h3 class="text-lg font-bold text-slate-900">@L["SubMgmt_RenewTitle"]</h3>
+                <p id="renewTenant" class="mt-1 text-sm font-semibold text-primary"></p>
+                <p id="renewCurrent" class="text-xs text-slate-500"></p>
+            </div>
+            <button type="button" data-modal-close class="grid h-8 w-8 shrink-0 place-items-center rounded-lg text-slate-400 hover:bg-slate-100">✕</button>
+        </div>
+
+        <form id="renewForm" class="space-y-3">
+            <input type="hidden" id="renewTenantId" />
+
+            <div id="renewError" class="hidden rounded-xl bg-danger-bg px-3 py-2 text-sm font-semibold text-danger"></div>
+
+            <div>
+                <label for="renewPlan" class="mb-1 block text-sm font-semibold text-slate-600">@L["SubMgmt_Plan"]</label>
+                <select id="renewPlan" class="admin-field"></select>
+            </div>
+
+            <div>
+                <label for="renewMode" class="mb-1 block text-sm font-semibold text-slate-600">@L["SubMgmt_Mode"]</label>
+                <select id="renewMode" class="admin-field">
+                    <option value="extend">@L["SubMgmt_ModeExtend"]</option>
+                    <option value="reset">@L["SubMgmt_ModeReset"]</option>
+                </select>
+            </div>
+
+            <div class="grid grid-cols-2 gap-3">
+                <div>
+                    <label for="renewMonths" class="mb-1 block text-sm font-semibold text-slate-600">@L["SubMgmt_Months"]</label>
+                    <select id="renewMonths" class="admin-field">
+                        <option value="1">1</option>
+                        <option value="3">3</option>
+                        <option value="6">6</option>
+                        <option value="12">12</option>
+                        <option value="0">0</option>
+                    </select>
+                </div>
+                <div>
+                    <label for="renewDays" class="mb-1 block text-sm font-semibold text-slate-600">@L["SubMgmt_ExtraDays"]</label>
+                    <input id="renewDays" type="number" min="0" max="3660" value="0" class="admin-field" />
+                </div>
+            </div>
+
+            <div class="rounded-xl bg-surface-secondary p-3 text-sm text-slate-600">
+                <span class="font-semibold">@L["SubMgmt_NewExpiry"]:</span>
+                <span id="renewPreview" class="font-bold text-slate-900">—</span>
+            </div>
+
+            <div class="flex justify-end gap-2 pt-1">
+                <button type="button" data-modal-close class="admin-button admin-button-secondary">@L["Common_Cancel"]</button>
+                <button type="submit" class="admin-button admin-button-primary">@L["Common_Save"]</button>
+            </div>
+        </form>
+    </div>
+</div>
+

@@ -93,6 +93,25 @@ public class AssignPlanRequest
     public DateTimeOffset? ExpiresAt { get; set; }
 }
 
+/// <summary>Superadmin abunəliyi yeniləyir və ya müddətini uzadır.</summary>
+public class RenewSubscriptionRequest
+{
+    /// <summary>Keçid ediləcək plan; boş olduqda mövcud plan saxlanılır.</summary>
+    [FromForm(Name = "plan_id")]
+    public long? PlanId { get; set; }
+
+    /// <summary>"extend" — mövcud bitmə tarixindən əlavə; "reset" — bugündən yeni dövr.</summary>
+    [FromForm(Name = "mode")]
+    public string Mode { get; set; } = "extend";
+
+    [FromForm(Name = "months")]
+    public int Months { get; set; } = 1;
+
+    /// <summary>Əlavə gün (məsələn ayın ortasında uzatmaq üçün).</summary>
+    [FromForm(Name = "days")]
+    public int? Days { get; set; }
+}
+
 public class LimitOverridesRequest
 {
     [FromForm(Name = "max_students")]
