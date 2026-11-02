@@ -127,6 +127,16 @@
     [aria-disabled="true"] {
         cursor: not-allowed;
     }
+
+    /* iOS klaviatura açılanda 16px-dən kiçik sahələri avtomatik zoom edir.
+       !important lazımdır: Tailwind-in text-[13px] kimi utility-si daha güclüdür. */
+    @media (max-width: 767px) {
+        input:not([type="checkbox"]):not([type="radio"]):not([type="range"]),
+        select,
+        textarea {
+            font-size: 16px !important;
+        }
+    }
 }
 
 /* Səhifə keçidi: sağdan sola tam genişlikdə sürüşmə (native push hissi).
