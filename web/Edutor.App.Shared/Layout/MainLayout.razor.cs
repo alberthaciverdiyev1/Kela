@@ -19,6 +19,9 @@ public partial class MainLayout
 
     private bool _ready;
     private bool _pushPrompted;
+    private bool _pushPromptOpen;
+    private bool _pushBusy;
+    private string _webPushKey = string.Empty;
     private readonly List<string> _trail = [];
     private NavKind _kind = NavKind.Forward;
     private bool _instant;
@@ -96,7 +99,7 @@ public partial class MainLayout
             if (!_pushPrompted)
             {
                 _pushPrompted = true;
-                _ = RequestPushPermissionAsync();
+                _ = CheckPushAccessAsync();
             }
         }
         else
@@ -106,18 +109,61 @@ public partial class MainLayout
         }
     }
 
-    /// <summary>Tətbiq açılanda brauzerdən bildiriş icazəsi soruşur və abunəliyi serverdə saxlayır.</summary>
-    private async Task RequestPushPermissionAsync()
+    /// <summary>
+    /// Tətbiq açılanda bildiriş vəziyyətini yoxlayır. İcazə soruşulmayıbsa tətbiqdaxili
+    /// pəncərə açılır — brauzer sorğunu yalnız istifadəçi hərəkəti ilə göstərir.
+    /// </summary>
+    private async Task CheckPushAccessAsync()
     {
         try
         {
             if (!await JS.InvokeAsync<bool>("edutorPush.supported")) return;
-            if (await JS.InvokeAsync<string>("edutorPush.permission") != "default") return;
 
-            var key = await Api.WebPushKeyAsync();
-            if (string.IsNullOrWhiteSpace(key)) return;
+            var permission = await JS.InvokeAsync<string>("edutorPush.permission");
 
-            var subscription = await JS.InvokeAsync<string?>("edutorPush.request", key);
+            if (permission == "default")
+            {
+                // Bildirişlər səhifəsində öz aktivləşdirmə paneli var — təkrarlamırıq.
+                if (Nav.ToBaseRelativePath(Nav.Uri).StartsWith("notifications", StringComparison.OrdinalIgnoreCase)) return;
+
+                // Açar əvvəlcədən alınır ki, "İcazə ver" klikində sorğu jest daxilində getsin.
+                _webPushKey = await Api.WebPushKeyAsync();
+                if (string.IsNullOrWhiteSpace(_webPushKey)) return;
+
+                _pushPromptOpen = true;
+                await InvokeAsync(StateHasChanged);
+                return;
+            }
+
+            // İcazə var, amma abunəlik yoxdursa (brauzer yaddaşı təmizlənib) bərpa olunur.
+            if (permission == "granted" && string.IsNullOrWhiteSpace(await JS.InvokeAsync<string?>("edutorPush.current")))
+            {
+                var key = await Api.WebPushKeyAsync();
+                if (string.IsNullOrWhiteSpace(key)) return;
+
+                var subscription = await JS.InvokeAsync<string?>("edutorPush.subscribe", key);
+                if (!string.IsNullOrWhiteSpace(subscription))
+                {
+                    await Api.SaveNotificationTokenAsync(subscription, "web");
+                }
+            }
+        }
+        catch
+        {
+            /* native hostda edutorPush yoxdur */
+        }
+    }
+
+    private async Task AllowPushAsync()
+    {
+        if (_pushBusy) return;
+        _pushBusy = true;
+
+        try
+        {
+            // İlk await məhz JS sorğusudur: Safari icazə pəncərəsini yalnız birbaşa
+            // klik müddətində göstərir, əvvəlcədən HTTP gözləməsi jesti itirir.
+            var subscription = await JS.InvokeAsync<string?>("edutorPush.request", _webPushKey);
             if (!string.IsNullOrWhiteSpace(subscription))
             {
                 await Api.SaveNotificationTokenAsync(subscription, "web");
@@ -125,7 +171,12 @@ public partial class MainLayout
         }
         catch
         {
-            /* native hostda edutorPush yoxdur */
+            /* sükutla */
+        }
+        finally
+        {
+            _pushBusy = false;
+            _pushPromptOpen = false;
         }
     }
 

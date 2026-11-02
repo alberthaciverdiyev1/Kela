@@ -31,5 +31,22 @@ else
             <BottomNav/>
             <AudioPlayerBar/>
         </div>
+
+        <Modal Open="_pushPromptOpen" Title="@Lang["Push_PromptTitle"]" OnClose="() => _pushPromptOpen = false">
+            <div class="flex items-start gap-3">
+                <span class="flex size-10 shrink-0 items-center justify-center rounded-xl bg-brand-081 text-brand-671"><Icon Name="bell" Class="size-5" /></span>
+                <p class="text-[13px] leading-5 text-brand-755">@Lang["Push_PromptBody"]</p>
+            </div>
+            <div class="mt-4 flex gap-2">
+                <button type="button" @onclick="() => _pushPromptOpen = false"
+                        class="flex-1 rounded-xl border border-brand-104 py-3 text-sm font-bold text-brand-727">
+                    @Lang["Push_PromptLater"]
+                </button>
+                <button type="button" @onclick="AllowPushAsync" disabled="@_pushBusy"
+                        class="flex-1 rounded-xl bg-brand-671 py-3 text-sm font-bold text-white disabled:opacity-60">
+                    @Lang["Push_PromptAllow"]
+                </button>
+            </div>
+        </Modal>
     </div>
 }

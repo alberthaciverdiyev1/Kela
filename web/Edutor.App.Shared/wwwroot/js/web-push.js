@@ -24,6 +24,23 @@ window.edutorPush = (function () {
         return sub ? JSON.stringify(sub.toJSON()) : null;
     }
 
+    async function subscribeNow(publicKey) {
+        if (!supported() || !publicKey) return null;
+        try {
+            const reg = await ensureRegistration();
+            let sub = await reg.pushManager.getSubscription();
+            if (!sub) {
+                sub = await reg.pushManager.subscribe({
+                    userVisibleOnly: true,
+                    applicationServerKey: decode(publicKey)
+                });
+            }
+            return JSON.stringify(sub.toJSON());
+        } catch {
+            return null;
+        }
+    }
+
     return {
         supported,
 
@@ -36,59 +53,19 @@ window.edutorPush = (function () {
         },
 
         // Yalnız istifadəçi hərəkəti ilə çağırılmalıdır — brauzer icazə pəncərəsini göstərir.
-        subscribe: async function (publicKey) {
-            if (!supported() || !publicKey) return null;
-            try {
-                const reg = await ensureRegistration();
-                let sub = await reg.pushManager.getSubscription();
-                if (!sub) {
-                    sub = await reg.pushManager.subscribe({
-                        userVisibleOnly: true,
-                        applicationServerKey: decode(publicKey)
-                    });
-                }
-                return JSON.stringify(sub.toJSON());
-            } catch {
-                return null;
-            }
-        },
+        subscribe: subscribeNow,
 
-        // Səhifə açılışında icazə soruşur. Chrome/Safari icazə pəncərəsini istifadəçi
-        // hərəkəti olmadan göstərməyə bilər; bu halda ilk toxunuş/klikdə bir dəfə
-        // yenidən cəhd edilir. Abunəlik yaranarsa JSON, əks halda null qaytarır.
+        // İstifadəçi klikindən ÇAĞIRILMALIDIR: ilk await birbaşa brauzer icazə
+        // sorğusudur, əvvəlcədən HTTP gözləməsi klik jestini itirir (xüsusən Safari).
         request: async function (publicKey) {
             if (!supported() || !publicKey) return null;
 
-            async function attempt() {
-                if (Notification.permission !== 'default') return null;
+            if (Notification.permission === 'default') {
                 try { await Notification.requestPermission(); } catch { return null; }
-                if (Notification.permission !== 'granted') return null;
-                try {
-                    await ensureRegistration();
-                    let sub = await registration.pushManager.getSubscription();
-                    if (!sub) {
-                        sub = await registration.pushManager.subscribe({
-                            userVisibleOnly: true,
-                            applicationServerKey: decode(publicKey)
-                        });
-                    }
-                    return JSON.stringify(sub.toJSON());
-                } catch { return null; }
             }
+            if (Notification.permission !== 'granted') return null;
 
-            const immediate = await attempt();
-            if (immediate) return immediate;
-            if (Notification.permission !== 'default') return null;
-
-            return await new Promise(resolve => {
-                const retry = async () => {
-                    document.removeEventListener('pointerdown', retry, true);
-                    document.removeEventListener('keydown', retry, true);
-                    resolve(await attempt());
-                };
-                document.addEventListener('pointerdown', retry, true);
-                document.addEventListener('keydown', retry, true);
-            });
+            return await subscribeNow(publicKey);
         },
 
         unsubscribe: async function () {

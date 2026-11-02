@@ -15,6 +15,7 @@ public partial class Notifications
     private bool _pushBusy;
     private string _pushState = "hidden"; // hidden | prompt | blocked
     private bool _deniedModalOpen;
+    private string _webPushKey = string.Empty;
     private int _page;
     private int _lastPage = 1;
     private readonly List<NotificationDto> _items = new();
@@ -48,6 +49,10 @@ public partial class Notifications
                 return;
             }
 
+            // Açar əvvəlcədən yüklənir ki, "aktivləşdir" klikində JS sorğusu jest
+            // daxilində — heç bir HTTP gözləməsi olmadan — başlasın.
+            _webPushKey = await Api.WebPushKeyAsync();
+
             // İcazə verilib, amma abunəlik yoxdursa (brauzer yaddaşı təmizlənib) yenidən abunə olunmalıdır.
             if (permission == "granted")
             {
@@ -71,14 +76,15 @@ public partial class Notifications
 
         try
         {
-            var key = await Api.WebPushKeyAsync();
-            if (string.IsNullOrWhiteSpace(key))
+            if (string.IsNullOrWhiteSpace(_webPushKey))
             {
                 _pushState = "hidden";
                 return;
             }
 
-            var subscription = await JS.InvokeAsync<string?>("edutorPush.subscribe", key);
+            // İlk await JS sorğusudur: brauzer icazə pəncərəsini yalnız klik jesti
+            // daxilində göstərir; əvvəlcədən HTTP gözləməsi jesti itirir.
+            var subscription = await JS.InvokeAsync<string?>("edutorPush.request", _webPushKey);
             if (string.IsNullOrWhiteSpace(subscription))
             {
                 if (await JS.InvokeAsync<string>("edutorPush.permission") == "denied")
