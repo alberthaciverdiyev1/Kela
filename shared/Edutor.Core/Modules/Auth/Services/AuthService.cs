@@ -213,6 +213,16 @@ public sealed class AuthService(
     {
         var student = await GetStudentAsync(studentId, ct);
         student.NotificationStatus = request.Enabled;
+
+        // Söndürüləndə cihaz tokenləri deaktiv edilir ki, push göndərilməsin.
+        if (!request.Enabled)
+        {
+            var tokens = await db.NotificationTokens
+                .Where(t => t.StudentId == studentId && t.IsActive)
+                .ToListAsync(ct);
+            foreach (var token in tokens) token.IsActive = false;
+        }
+
         await db.SaveChangesAsync(ct);
         return ToResponse(student);
     }

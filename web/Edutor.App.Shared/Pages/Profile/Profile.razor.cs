@@ -131,6 +131,9 @@ public partial class Profile
             var user = await Api.NotificationStatusAsync(!_notifications);
             Auth.SetUser(user);
             _notifications = user.NotificationsEnabled;
+
+            // Yenidən aktivləşdirildikdə cihaz tokeni serverdə bərpa olunur.
+            if (_notifications) await Push.RegisterAsync();
         }
         catch { /* səssiz */ }
         finally { _notifBusy = false; }
