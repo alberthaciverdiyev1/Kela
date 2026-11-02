@@ -9,4 +9,8 @@ public record BannerResponse(
     DateOnly? ActiveUntil = null,
     /// <summary>Bannerin sahibi. Null — admin tərəfindən yaradılıb.</summary>
     long? UserId = null,
-    string? OwnerName = null);
+    string? OwnerName = null,
+    /// <summary>Bannerin aid olduğu tenant (kurs). Superadmin hansı kursun olduğunu görsün deyə.</summary>
+    long TenantId = 0,
+    string? TenantName = null,
+    string Scope = "tenant");

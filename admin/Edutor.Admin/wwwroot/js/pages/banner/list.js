@@ -19,7 +19,7 @@ AdminUI.listPage({
     bulkUrl: '/banner/bulk',
     deleteBase: '/banner',
     confirmKey: 'Js_ConfirmDeleteBanner',
-    columns: 6,
+    columns: 7,
     selectable: true,
     selectableIds: canEdit,
     onLoaded: data => {
@@ -34,6 +34,11 @@ AdminUI.listPage({
                 : '<span class="text-slate-400">—</span>'
         },
         { html: b.title, cls: 'font-semibold text-slate-800' },
+        {
+            html: b.tenantName
+                ? `<span class="text-sm text-slate-600">${AdminUI.escapeHtml(b.tenantName)}</span>`
+                : `<span class="text-sm text-slate-400">${b.scope === 'global' ? L["Banner_Global"] : '—'}</span>`
+        },
         { html: ownerCell(b) },
         {
             html: ctx.showDeleted ? AdminUI.badge(L["Js_Deleted"], 'danger')
