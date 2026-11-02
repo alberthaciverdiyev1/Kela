@@ -29,7 +29,14 @@
                 {
                     <div class="flex @(m.SenderRole == "admin" ? "justify-start" : "justify-end")">
                         <div class="max-w-[82%] rounded-2xl px-3 py-2 text-[14px] @(m.SenderRole == "admin" ? "bg-brand-081 text-brand-784" : "bg-brand-671 text-white")">
-                            <p class="whitespace-pre-wrap break-words">@m.Body</p>
+                            @if (m.SenderRole == "admin")
+                            {
+                                <div class="break-words [&_a]:underline [&_ol]:list-decimal [&_ol]:pl-4 [&_p]:m-0 [&_ul]:list-disc [&_ul]:pl-4">@((MarkupString)(m.Body ?? ""))</div>
+                            }
+                            else
+                            {
+                                <p class="whitespace-pre-wrap break-words">@m.Body</p>
+                            }
                             @if (!string.IsNullOrWhiteSpace(m.ImageUrl))
                             {
                                 <a href="@m.ImageUrl" target="_blank" rel="noopener">

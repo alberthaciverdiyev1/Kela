@@ -27,13 +27,14 @@ public partial class LessonContentDetail
     private List<StudentNoteDto> _notes = new();
     private List<GroupDto> _noteGroups = new();
     private bool _noteFormOpen;
-    private string _noteTitle = "";
     private string _noteBody = "";
     private string _noteVisibility = "private";
     private long? _noteGroupId;
     private int? _noteAt;
     private string? _noteError;
     private bool _noteSaving;
+    private StudentNoteDto? _noteToDelete;
+    private bool _noteDeleting;
 
     private record AudioState(double current, double duration, bool paused, double rate);
 
@@ -125,7 +126,6 @@ public partial class LessonContentDetail
     private async Task StartNoteAsync()
     {
         _noteAt = await CurrentSecondsAsync();
-        _noteTitle = "";
         _noteBody = "";
         _noteVisibility = "private";
         _noteGroupId = null;
@@ -182,7 +182,7 @@ public partial class LessonContentDetail
             var dto = new StudentNoteUpsertDto(
                 ContentId,
                 _noteAt,
-                string.IsNullOrWhiteSpace(_noteTitle) ? null : _noteTitle.Trim(),
+                null,
                 _noteBody.Trim(),
                 _noteVisibility,
                 _noteVisibility == "group" ? _noteGroupId : null);
@@ -223,18 +223,32 @@ public partial class LessonContentDetail
         catch { }
     }
 
-    private async Task DeleteNoteAsync(StudentNoteDto note)
+    private async Task ConfirmDeleteNoteAsync()
     {
+        if (_noteToDelete is null || _noteDeleting) return;
+
+        var note = _noteToDelete;
+        _noteDeleting = true;
+        _noteError = null;
         try
         {
             await Api.DeleteNoteAsync(note.Id);
             _notes.RemoveAll(n => n.Id == note.Id);
+            _noteToDelete = null;
         }
         catch (ApiException ex)
         {
             _noteError = ex.Message;
+            _noteToDelete = null;
         }
-        catch { }
+        catch
+        {
+            _noteToDelete = null;
+        }
+        finally
+        {
+            _noteDeleting = false;
+        }
     }
 
     private static string FormatTime(int seconds)

@@ -94,7 +94,7 @@
                 </div>
                 @if (!string.IsNullOrWhiteSpace(_homework.Feedback))
                 {
-                    <p class="mt-2 whitespace-pre-wrap text-[14px] leading-6 text-brand-755">@_homework.Feedback</p>
+                    <div class="mt-2 text-[14px] leading-6 text-brand-755 [&_a]:text-brand-671 [&_a]:underline [&_li]:mt-1 [&_ol]:mt-2 [&_ol]:list-decimal [&_ol]:pl-5 [&_p]:mt-2 [&_strong]:font-bold [&_ul]:mt-2 [&_ul]:list-disc [&_ul]:pl-5">@((MarkupString)(_homework.Feedback ?? ""))</div>
                 }
             </section>
         }

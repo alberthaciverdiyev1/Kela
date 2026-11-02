@@ -106,19 +106,21 @@
 
                 @if (_noteFormOpen)
                 {
-                    <div class="mt-3 rounded-xl bg-brand-027 p-3">
-                        <input @bind="_noteTitle" type="text" maxlength="190" placeholder="@L["Notes_TitlePlaceholder"]"
-                               class="w-full rounded-lg border border-brand-104 bg-white px-3 py-2 text-[13px] outline-none focus:border-brand-467" />
+                    <div class="mt-3 rounded-2xl border border-brand-104 bg-brand-027 p-3.5">
                         <textarea @bind="_noteBody" rows="3" maxlength="4000" placeholder="@L["Notes_BodyPlaceholder"]"
-                                  class="mt-2 w-full resize-none rounded-lg border border-brand-104 bg-white px-3 py-2 text-[13px] outline-none focus:border-brand-467"></textarea>
+                                  class="w-full resize-none rounded-xl border border-brand-104 bg-white px-3.5 py-2.5 text-[13px] leading-5 outline-none transition focus:border-brand-467"></textarea>
 
-                        <div class="mt-2 flex flex-wrap items-center gap-1.5">
+                        <div class="mt-2.5 flex flex-wrap items-center gap-1.5">
+                            @if (_noteAt is int noteAt)
+                            {
+                                <span class="mr-1 rounded-full bg-white px-2 py-1 text-[11px] font-bold tabular-nums text-brand-671">@FormatTime(noteAt)</span>
+                            }
                             <button type="button" @onclick='() => SetNoteVisibility("private")'
-                                    class="rounded-full px-2.5 py-1 text-[11px] font-bold @(_noteVisibility == "private" ? "bg-brand-671 text-white" : "bg-brand-081 text-brand-669")">
+                                    class="rounded-full px-3 py-1 text-[11px] font-bold transition @(_noteVisibility == "private" ? "bg-brand-671 text-white" : "bg-white text-brand-669")">
                                 @L["Notes_Private"]
                             </button>
                             <button type="button" @onclick='() => SetNoteVisibility("group")'
-                                    class="rounded-full px-2.5 py-1 text-[11px] font-bold @(_noteVisibility == "group" ? "bg-brand-671 text-white" : "bg-brand-081 text-brand-669")">
+                                    class="rounded-full px-3 py-1 text-[11px] font-bold transition @(_noteVisibility == "group" ? "bg-brand-671 text-white" : "bg-white text-brand-669")">
                                 @L["Notes_Group"]
                             </button>
                             @if (_noteVisibility == "group" && _noteGroups.Count > 0)
@@ -137,14 +139,14 @@
                             <p class="mt-2 text-[11px] font-semibold text-danger-539">@_noteError</p>
                         }
 
-                        <div class="mt-3 flex items-center gap-2">
-                            <button type="button" @onclick="SaveNoteAsync" disabled="@_noteSaving"
-                                    class="rounded-lg bg-brand-671 px-3 py-2 text-[12px] font-bold text-white disabled:opacity-60">
-                                @L["Common_Save"]
-                            </button>
+                        <div class="mt-3 flex items-center justify-end gap-2 border-t border-brand-090 pt-3">
                             <button type="button" @onclick="() => _noteFormOpen = false"
-                                    class="rounded-lg px-3 py-2 text-[12px] font-bold text-sage-459">
+                                    class="rounded-xl px-3 py-2 text-[12px] font-bold text-sage-459">
                                 @L["Common_Cancel"]
+                            </button>
+                            <button type="button" @onclick="SaveNoteAsync" disabled="@_noteSaving"
+                                    class="rounded-xl bg-brand-671 px-4 py-2 text-[12px] font-bold text-white disabled:opacity-60">
+                                @L["Common_Save"]
                             </button>
                         </div>
                     </div>
@@ -170,7 +172,7 @@
                                     </div>
                                     @if (note.IsMine)
                                     {
-                                        <button type="button" @onclick="() => DeleteNoteAsync(note)" class="rounded-lg p-1.5 text-sage-478" aria-label="@L["Common_Delete"]">
+                                        <button type="button" @onclick="() => _noteToDelete = note" class="rounded-lg p-1.5 text-sage-478" aria-label="@L["Common_Delete"]">
                                             <Icon Name="x" Class="size-3.5" />
                                         </button>
                                     }
@@ -249,3 +251,17 @@
         </div>
     }
 </div>
+
+<Modal Open="_noteToDelete is not null" Title="@L["Common_Delete"]" OnClose="() => _noteToDelete = null">
+    <p class="text-[13px] leading-5 text-sage-459">@L["Notes_DeleteConfirm"]</p>
+    <div class="mt-4 flex justify-end gap-2">
+        <button type="button" @onclick="() => _noteToDelete = null"
+                class="rounded-xl px-3 py-2 text-[12px] font-bold text-sage-459">
+            @L["Common_Cancel"]
+        </button>
+        <button type="button" @onclick="ConfirmDeleteNoteAsync" disabled="@_noteDeleting"
+                class="rounded-xl bg-danger-539 px-4 py-2 text-[12px] font-bold text-white disabled:opacity-60">
+            @L["Common_Delete"]
+        </button>
+    </div>
+</Modal>
