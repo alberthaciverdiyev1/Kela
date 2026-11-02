@@ -62,7 +62,7 @@
       html.lms-guard img, html.lms-guard video, html.lms-guard canvas, html.lms-guard svg { -webkit-user-drag: none; user-drag: none; }
       html.lms-guard-blur #app { filter: blur(18px) grayscale(20%); transition: filter .12s ease; pointer-events: none; -webkit-user-select: none; user-select: none; }
       #${WM_ID} {
-        position: fixed; right: 10px; bottom: 84px; z-index: 2147483000; pointer-events: none;
+        position: fixed; right: 10px; bottom: 84px; z-index: 25; pointer-events: none;
         max-width: 70vw; text-align: right; white-space: pre-line;
         font-family: system-ui, -apple-system, sans-serif; font-size: 11px; line-height: 1.5;
         color: rgba(46,88,68,0.55); text-shadow: 0 0 3px rgba(255,255,255,0.65);
