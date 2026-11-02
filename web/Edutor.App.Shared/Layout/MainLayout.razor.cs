@@ -18,6 +18,7 @@ public partial class MainLayout
     [Inject] private RefreshSignal Refresh { get; set; } = default!;
 
     private bool _ready;
+    private bool _pushPrompted;
     private readonly List<string> _trail = [];
     private NavKind _kind = NavKind.Forward;
     private bool _instant;
@@ -91,11 +92,40 @@ public partial class MainLayout
 
             await ScreenGuard.EnableAsync(AppConfig.ShowWatermark ? string.Join('\n', lines) : null);
             await Push.RegisterAsync();
+
+            if (!_pushPrompted)
+            {
+                _pushPrompted = true;
+                _ = RequestPushPermissionAsync();
+            }
         }
         else
         {
             await Push.UnregisterAsync();
             await ScreenGuard.ClearWatermarkAsync();
+        }
+    }
+
+    /// <summary>Tətbiq açılanda brauzerdən bildiriş icazəsi soruşur və abunəliyi serverdə saxlayır.</summary>
+    private async Task RequestPushPermissionAsync()
+    {
+        try
+        {
+            if (!await JS.InvokeAsync<bool>("edutorPush.supported")) return;
+            if (await JS.InvokeAsync<string>("edutorPush.permission") != "default") return;
+
+            var key = await Api.WebPushKeyAsync();
+            if (string.IsNullOrWhiteSpace(key)) return;
+
+            var subscription = await JS.InvokeAsync<string?>("edutorPush.request", key);
+            if (!string.IsNullOrWhiteSpace(subscription))
+            {
+                await Api.SaveNotificationTokenAsync(subscription, "web");
+            }
+        }
+        catch
+        {
+            /* native hostda edutorPush yoxdur */
         }
     }
 

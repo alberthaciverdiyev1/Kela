@@ -14,6 +14,7 @@ public partial class Notifications
     private bool _busy;
     private bool _pushBusy;
     private string _pushState = "hidden"; // hidden | prompt | blocked
+    private bool _deniedModalOpen;
     private int _page;
     private int _lastPage = 1;
     private readonly List<NotificationDto> _items = new();
@@ -41,7 +42,9 @@ public partial class Notifications
             var permission = await JS.InvokeAsync<string>("edutorPush.permission");
             if (permission == "denied")
             {
+                // Hər girişdə xatırladılır: bildirişlər profildən söndürülə bilər.
                 _pushState = "blocked";
+                _deniedModalOpen = true;
                 return;
             }
 
@@ -78,7 +81,15 @@ public partial class Notifications
             var subscription = await JS.InvokeAsync<string?>("edutorPush.subscribe", key);
             if (string.IsNullOrWhiteSpace(subscription))
             {
-                _pushState = await JS.InvokeAsync<string>("edutorPush.permission") == "denied" ? "blocked" : "prompt";
+                if (await JS.InvokeAsync<string>("edutorPush.permission") == "denied")
+                {
+                    _pushState = "blocked";
+                    _deniedModalOpen = true;
+                }
+                else
+                {
+                    _pushState = "prompt";
+                }
                 return;
             }
 

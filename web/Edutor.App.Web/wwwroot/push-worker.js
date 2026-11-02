@@ -7,14 +7,22 @@ self.addEventListener('push', event => {
     }
 
     const title = payload.title || 'Edutor';
-    const options = {
-        body: payload.body || '',
-        icon: payload.image || '/icon-192.png',
-        badge: '/icon-192.png',
-        data: { url: (payload.data && payload.data.url) || '/notifications' }
-    };
 
-    event.waitUntil(self.registration.showNotification(title, options));
+    event.waitUntil((async () => {
+        // Görünən səhifə varsa səs orada çalınır; əks halda OS bildiriş səsi işləyir.
+        // Beləliklə eyni bildiriş üçün iki səs eşidilmir.
+        const windows = await clients.matchAll({ type: 'window', includeUncontrolled: true });
+        const visible = windows.filter(c => c.visibilityState === 'visible');
+        visible.forEach(c => c.postMessage({ type: 'edutor-push' }));
+
+        await self.registration.showNotification(title, {
+            body: payload.body || '',
+            icon: payload.image || '/icon-192.png',
+            badge: '/icon-192.png',
+            silent: visible.length > 0,
+            data: { url: (payload.data && payload.data.url) || '/notifications' }
+        });
+    })());
 });
 
 self.addEventListener('notificationclick', event => {

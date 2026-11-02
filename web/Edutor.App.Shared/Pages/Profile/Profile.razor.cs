@@ -17,6 +17,7 @@ public partial class Profile
     protected override async Task OnInitializedAsync()
     {
         try { _accounts = await Store.GetAccountsAsync(); } catch { /* səssiz */ }
+        _notifications = Auth.User?.NotificationsEnabled ?? true;
 
         // İlk giriş məcburiyyətləri: şifrə və/və ya ad-soyad.
         if (Auth.User?.MustChangeName == true) OpenName();
@@ -32,6 +33,7 @@ public partial class Profile
     private bool _privacyOpen;
     private bool _privacyLoading;
     private bool _notifications = true;
+    private bool _notifBusy;
 
     private string _phone = "";
     private string _fullName = "";
@@ -122,13 +124,16 @@ public partial class Profile
 
     private async Task ToggleNotificationsAsync()
     {
-        var next = !_notifications;
+        if (_notifBusy) return;
+        _notifBusy = true;
         try
         {
-            await Api.NotificationStatusAsync(next);
-            _notifications = next;
+            var user = await Api.NotificationStatusAsync(!_notifications);
+            Auth.SetUser(user);
+            _notifications = user.NotificationsEnabled;
         }
         catch { /* səssiz */ }
+        finally { _notifBusy = false; }
     }
 
     private async Task OpenPrivacyAsync()

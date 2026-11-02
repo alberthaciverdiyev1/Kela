@@ -53,6 +53,44 @@ window.edutorPush = (function () {
             }
         },
 
+        // Səhifə açılışında icazə soruşur. Chrome/Safari icazə pəncərəsini istifadəçi
+        // hərəkəti olmadan göstərməyə bilər; bu halda ilk toxunuş/klikdə bir dəfə
+        // yenidən cəhd edilir. Abunəlik yaranarsa JSON, əks halda null qaytarır.
+        request: async function (publicKey) {
+            if (!supported() || !publicKey) return null;
+
+            async function attempt() {
+                if (Notification.permission !== 'default') return null;
+                try { await Notification.requestPermission(); } catch { return null; }
+                if (Notification.permission !== 'granted') return null;
+                try {
+                    await ensureRegistration();
+                    let sub = await registration.pushManager.getSubscription();
+                    if (!sub) {
+                        sub = await registration.pushManager.subscribe({
+                            userVisibleOnly: true,
+                            applicationServerKey: decode(publicKey)
+                        });
+                    }
+                    return JSON.stringify(sub.toJSON());
+                } catch { return null; }
+            }
+
+            const immediate = await attempt();
+            if (immediate) return immediate;
+            if (Notification.permission !== 'default') return null;
+
+            return await new Promise(resolve => {
+                const retry = async () => {
+                    document.removeEventListener('pointerdown', retry, true);
+                    document.removeEventListener('keydown', retry, true);
+                    resolve(await attempt());
+                };
+                document.addEventListener('pointerdown', retry, true);
+                document.addEventListener('keydown', retry, true);
+            });
+        },
+
         unsubscribe: async function () {
             try {
                 const reg = await navigator.serviceWorker.getRegistration();

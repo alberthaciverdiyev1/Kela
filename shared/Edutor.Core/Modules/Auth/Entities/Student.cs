@@ -16,7 +16,7 @@ public class Student : BaseEntity
 
     public bool IsActive { get; set; } = true;
 
-    public bool NotificationStatus { get; set; }
+    public bool NotificationStatus { get; set; } = true;
 
     /// <summary>İlk girişdə şifrəni dəyişmək məcburiyyəti (təsadüfi şifrə ilə yaradılan şagirdlər).</summary>
     public bool MustChangePassword { get; set; }

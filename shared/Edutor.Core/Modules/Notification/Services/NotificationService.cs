@@ -150,7 +150,8 @@ public sealed class NotificationService(
 
     private async Task SendPushAsync(Notification notification, CreateNotificationRequest request, CancellationToken ct)
     {
-        var tokensQuery = db.NotificationTokens.Where(t => t.IsActive);
+        var tokensQuery = db.NotificationTokens
+            .Where(t => t.IsActive && db.Students.Any(s => s.Id == t.StudentId && s.NotificationStatus));
 
         if (!request.All)
         {

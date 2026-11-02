@@ -187,7 +187,9 @@ namespace Edutor.Core.Data.Migrations
                         .HasColumnName("must_change_password");
 
                     b.Property<bool>("NotificationStatus")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("boolean")
+                        .HasDefaultValue(true)
                         .HasColumnName("notification_status");
 
                     b.Property<string>("PasswordHash")
