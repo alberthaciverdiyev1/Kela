@@ -48,7 +48,7 @@
                 <div class="px-4 py-3" style="background-color:@Bg(_draftColor)">
                     <input @bind="_title" type="text" maxlength="190" placeholder="@L["Notes_TitlePlaceholder"]"
                            class="w-full bg-transparent text-[14px] font-bold text-brand-784 outline-none" />
-                    <textarea @bind="_body" rows="4" maxlength="4000" placeholder="@L["Notes_BodyPlaceholder"]"
+                    <textarea @bind="_body" @onpaste="OnPaste" rows="4" maxlength="4000" placeholder="@L["Notes_BodyPlaceholder"]"
                               class="mt-2 w-full resize-none bg-transparent text-[13px] leading-5 outline-none"></textarea>
 
                     <div class="mt-2 flex flex-wrap items-center gap-2">

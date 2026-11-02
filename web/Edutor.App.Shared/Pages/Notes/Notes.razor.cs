@@ -148,6 +148,8 @@ public partial class Notes
 
     private void ToggleDraftPin() => _draftPinned = !_draftPinned;
 
+    private void OnPaste() => _draftPinned = true;
+
     private async Task SaveAsync()
     {
         if (_saving) return;
