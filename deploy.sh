@@ -200,7 +200,8 @@ build_release() {
         node "$SRC_DIR/tools/mangle-classes.mjs" --restore "$CLASS_BACKUP" \
             || warn "sources left with mangled classes — next deploy resets them"
     }
-    if [[ ${MANGLE_CLASSES:-1} != 0 ]]; then
+    # Disabled for now; run with MANGLE_CLASSES=1 to re-enable.
+    if [[ ${MANGLE_CLASSES:-0} != 0 ]]; then
         trap restore_sources EXIT
         log "mangling class names"
         node "$SRC_DIR/tools/mangle-classes.mjs" \
