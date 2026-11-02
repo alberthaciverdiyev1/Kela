@@ -104,19 +104,19 @@
             }
         </div>
 
-        var visible = FilteredNotes();
+        var visibleNotes = FilteredNotes();
         @if (_notes.Count == 0)
         {
             <EmptyState Class="mt-8 text-center text-[13px] text-sage-410" Text="@L["Notes_Empty"]" />
         }
-        else if (visible.Count == 0)
+        else if (visibleNotes.Count == 0)
         {
             <EmptyState Class="mt-8 text-center text-[13px] text-sage-410" Text="@L["Notes_NoMatch"]" />
         }
         else
         {
-            var pinned = visible.Where(n => n.IsPinned).ToList();
-            var others = visible.Where(n => !n.IsPinned).ToList();
+            var pinned = visibleNotes.Where(n => n.IsPinned).ToList();
+            var others = visibleNotes.Where(n => !n.IsPinned).ToList();
 
             @if (pinned.Count > 0)
             {
