@@ -1104,6 +1104,9 @@
   <data name="Students_Subtitle" xml:space="preserve">
     <value>Manage student accounts, statuses and devices.</value>
   </data>
+  <data name="Students_Panel" xml:space="preserve">
+    <value>Panel</value>
+  </data>
   <data name="Students_Search" xml:space="preserve">
     <value>Search by name / email / phone...</value>
   </data>

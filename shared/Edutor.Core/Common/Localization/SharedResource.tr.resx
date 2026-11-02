@@ -1104,6 +1104,9 @@
   <data name="Students_Subtitle" xml:space="preserve">
     <value>Öğrenci hesaplarını, durumlarını ve cihazlarını yönetin.</value>
   </data>
+  <data name="Students_Panel" xml:space="preserve">
+    <value>Panel</value>
+  </data>
   <data name="Students_Search" xml:space="preserve">
     <value>Ad / e-posta / telefona göre ara...</value>
   </data>

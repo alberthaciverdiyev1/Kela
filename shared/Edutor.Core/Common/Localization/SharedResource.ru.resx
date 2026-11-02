@@ -1104,6 +1104,9 @@
   <data name="Students_Subtitle" xml:space="preserve">
     <value>Управляйте аккаунтами учеников, статусами и устройствами.</value>
   </data>
+  <data name="Students_Panel" xml:space="preserve">
+    <value>Панель</value>
+  </data>
   <data name="Students_Search" xml:space="preserve">
     <value>Поиск по имени / email / телефону...</value>
   </data>
