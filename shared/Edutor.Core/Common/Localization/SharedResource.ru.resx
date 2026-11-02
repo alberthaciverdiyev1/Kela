@@ -180,6 +180,12 @@
   <data name="Banner_OwnerYou" xml:space="preserve">
     <value>Вы</value>
   </data>
+  <data name="Banner_Tenant" xml:space="preserve">
+    <value>Курс</value>
+  </data>
+  <data name="Banner_Global" xml:space="preserve">
+    <value>Глобальный</value>
+  </data>
   <data name="Banner_OwnerAdmin" xml:space="preserve">
     <value>Админ</value>
   </data>
@@ -2558,5 +2564,77 @@
   </data>
   <data name="Calendar_InvalidRange" xml:space="preserve">
     <value>Время окончания должно быть позже времени начала</value>
+  </data>
+  <data name="SubMgmt_Title" xml:space="preserve">
+    <value>Управление подписками</value>
+  </data>
+  <data name="SubMgmt_Subtitle" xml:space="preserve">
+    <value>Смотрите арендаторов с приближающейся оплатой, продлевайте план или срок.</value>
+  </data>
+  <data name="SubMgmt_All" xml:space="preserve">
+    <value>Все</value>
+  </data>
+  <data name="SubMgmt_Expiring" xml:space="preserve">
+    <value>Скоро (30 дней)</value>
+  </data>
+  <data name="SubMgmt_Expired" xml:space="preserve">
+    <value>Просроченные</value>
+  </data>
+  <data name="SubMgmt_NoPlan" xml:space="preserve">
+    <value>Без плана</value>
+  </data>
+  <data name="SubMgmt_Search" xml:space="preserve">
+    <value>Поиск арендатора</value>
+  </data>
+  <data name="SubMgmt_Tenant" xml:space="preserve">
+    <value>Арендатор</value>
+  </data>
+  <data name="SubMgmt_Plan" xml:space="preserve">
+    <value>План</value>
+  </data>
+  <data name="SubMgmt_Status" xml:space="preserve">
+    <value>Статус</value>
+  </data>
+  <data name="SubMgmt_ExpiresAt" xml:space="preserve">
+    <value>Дата окончания</value>
+  </data>
+  <data name="SubMgmt_DaysLeft" xml:space="preserve">
+    <value>Осталось дней</value>
+  </data>
+  <data name="SubMgmt_Monthly" xml:space="preserve">
+    <value>Ежемесячная оплата</value>
+  </data>
+  <data name="SubMgmt_Renew" xml:space="preserve">
+    <value>Продлить</value>
+  </data>
+  <data name="SubMgmt_RenewTitle" xml:space="preserve">
+    <value>Продлить подписку</value>
+  </data>
+  <data name="SubMgmt_Mode" xml:space="preserve">
+    <value>Способ продления</value>
+  </data>
+  <data name="SubMgmt_ModeReset" xml:space="preserve">
+    <value>Новый период с сегодня</value>
+  </data>
+  <data name="SubMgmt_ModeExtend" xml:space="preserve">
+    <value>Добавить к текущей дате</value>
+  </data>
+  <data name="SubMgmt_Months" xml:space="preserve">
+    <value>Период (мес.)</value>
+  </data>
+  <data name="SubMgmt_ExtraDays" xml:space="preserve">
+    <value>Доп. дни</value>
+  </data>
+  <data name="SubMgmt_NewExpiry" xml:space="preserve">
+    <value>Новая дата окончания</value>
+  </data>
+  <data name="SubMgmt_Unlimited" xml:space="preserve">
+    <value>Бессрочно</value>
+  </data>
+  <data name="SubMgmt_Empty" xml:space="preserve">
+    <value>Подходящих арендаторов нет</value>
+  </data>
+  <data name="SubMgmt_DaysUnit" xml:space="preserve">
+    <value>дн.</value>
   </data>
 </root>

@@ -2559,4 +2559,76 @@
   <data name="Calendar_InvalidRange" xml:space="preserve">
     <value>Bitmə vaxtı başlama vaxtından sonra olmalıdır</value>
   </data>
+  <data name="SubMgmt_Title" xml:space="preserve">
+    <value>Abunəlik idarəetməsi</value>
+  </data>
+  <data name="SubMgmt_Subtitle" xml:space="preserve">
+    <value>Ödəniş vaxtı yaxınlaşan tenantları görün, planı yeniləyin və ya müddəti uzadın.</value>
+  </data>
+  <data name="SubMgmt_All" xml:space="preserve">
+    <value>Hamısı</value>
+  </data>
+  <data name="SubMgmt_Expiring" xml:space="preserve">
+    <value>Yaxınlaşan (30 gün)</value>
+  </data>
+  <data name="SubMgmt_Expired" xml:space="preserve">
+    <value>Vaxtı keçmiş</value>
+  </data>
+  <data name="SubMgmt_NoPlan" xml:space="preserve">
+    <value>Plansız</value>
+  </data>
+  <data name="SubMgmt_Search" xml:space="preserve">
+    <value>Tenant axtar</value>
+  </data>
+  <data name="SubMgmt_Tenant" xml:space="preserve">
+    <value>Tenant</value>
+  </data>
+  <data name="SubMgmt_Plan" xml:space="preserve">
+    <value>Plan</value>
+  </data>
+  <data name="SubMgmt_Status" xml:space="preserve">
+    <value>Status</value>
+  </data>
+  <data name="SubMgmt_ExpiresAt" xml:space="preserve">
+    <value>Bitmə tarixi</value>
+  </data>
+  <data name="SubMgmt_DaysLeft" xml:space="preserve">
+    <value>Qalan gün</value>
+  </data>
+  <data name="SubMgmt_Monthly" xml:space="preserve">
+    <value>Aylıq ödəniş</value>
+  </data>
+  <data name="SubMgmt_Renew" xml:space="preserve">
+    <value>Yenilə / uzat</value>
+  </data>
+  <data name="SubMgmt_RenewTitle" xml:space="preserve">
+    <value>Abunəliyi yenilə</value>
+  </data>
+  <data name="SubMgmt_Mode" xml:space="preserve">
+    <value>Yeniləmə üsulu</value>
+  </data>
+  <data name="SubMgmt_ModeReset" xml:space="preserve">
+    <value>Bugündən yeni dövr</value>
+  </data>
+  <data name="SubMgmt_ModeExtend" xml:space="preserve">
+    <value>Mövcud tarixə əlavə et</value>
+  </data>
+  <data name="SubMgmt_Months" xml:space="preserve">
+    <value>Dövr (ay)</value>
+  </data>
+  <data name="SubMgmt_ExtraDays" xml:space="preserve">
+    <value>Əlavə gün</value>
+  </data>
+  <data name="SubMgmt_NewExpiry" xml:space="preserve">
+    <value>Yeni bitmə tarixi</value>
+  </data>
+  <data name="SubMgmt_Unlimited" xml:space="preserve">
+    <value>Müddətsiz</value>
+  </data>
+  <data name="SubMgmt_Empty" xml:space="preserve">
+    <value>Uyğun tenant yoxdur</value>
+  </data>
+  <data name="SubMgmt_DaysUnit" xml:space="preserve">
+    <value>gün</value>
+  </data>
 </root>

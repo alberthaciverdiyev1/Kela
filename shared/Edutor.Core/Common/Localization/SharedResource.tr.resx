@@ -180,6 +180,12 @@
   <data name="Banner_OwnerYou" xml:space="preserve">
     <value>Siz</value>
   </data>
+  <data name="Banner_Tenant" xml:space="preserve">
+    <value>Kurs</value>
+  </data>
+  <data name="Banner_Global" xml:space="preserve">
+    <value>Global</value>
+  </data>
   <data name="Banner_OwnerAdmin" xml:space="preserve">
     <value>Admin</value>
   </data>
@@ -2558,5 +2564,77 @@
   </data>
   <data name="Calendar_InvalidRange" xml:space="preserve">
     <value>Bitiş saati başlangıç saatinden sonra olmalıdır</value>
+  </data>
+  <data name="SubMgmt_Title" xml:space="preserve">
+    <value>Abonelik yönetimi</value>
+  </data>
+  <data name="SubMgmt_Subtitle" xml:space="preserve">
+    <value>Ödeme zamanı yaklaşan tenantları görün, planı yenileyin veya süreyi uzatın.</value>
+  </data>
+  <data name="SubMgmt_All" xml:space="preserve">
+    <value>Tümü</value>
+  </data>
+  <data name="SubMgmt_Expiring" xml:space="preserve">
+    <value>Yaklaşan (30 gün)</value>
+  </data>
+  <data name="SubMgmt_Expired" xml:space="preserve">
+    <value>Süresi geçmiş</value>
+  </data>
+  <data name="SubMgmt_NoPlan" xml:space="preserve">
+    <value>Plansız</value>
+  </data>
+  <data name="SubMgmt_Search" xml:space="preserve">
+    <value>Tenant ara</value>
+  </data>
+  <data name="SubMgmt_Tenant" xml:space="preserve">
+    <value>Tenant</value>
+  </data>
+  <data name="SubMgmt_Plan" xml:space="preserve">
+    <value>Plan</value>
+  </data>
+  <data name="SubMgmt_Status" xml:space="preserve">
+    <value>Durum</value>
+  </data>
+  <data name="SubMgmt_ExpiresAt" xml:space="preserve">
+    <value>Bitiş tarihi</value>
+  </data>
+  <data name="SubMgmt_DaysLeft" xml:space="preserve">
+    <value>Kalan gün</value>
+  </data>
+  <data name="SubMgmt_Monthly" xml:space="preserve">
+    <value>Aylık ödeme</value>
+  </data>
+  <data name="SubMgmt_Renew" xml:space="preserve">
+    <value>Yenile / uzat</value>
+  </data>
+  <data name="SubMgmt_RenewTitle" xml:space="preserve">
+    <value>Aboneliği yenile</value>
+  </data>
+  <data name="SubMgmt_Mode" xml:space="preserve">
+    <value>Yenileme yöntemi</value>
+  </data>
+  <data name="SubMgmt_ModeReset" xml:space="preserve">
+    <value>Bugünden yeni dönem</value>
+  </data>
+  <data name="SubMgmt_ModeExtend" xml:space="preserve">
+    <value>Mevcut tarihe ekle</value>
+  </data>
+  <data name="SubMgmt_Months" xml:space="preserve">
+    <value>Dönem (ay)</value>
+  </data>
+  <data name="SubMgmt_ExtraDays" xml:space="preserve">
+    <value>Ek gün</value>
+  </data>
+  <data name="SubMgmt_NewExpiry" xml:space="preserve">
+    <value>Yeni bitiş tarihi</value>
+  </data>
+  <data name="SubMgmt_Unlimited" xml:space="preserve">
+    <value>Süresiz</value>
+  </data>
+  <data name="SubMgmt_Empty" xml:space="preserve">
+    <value>Uygun tenant yok</value>
+  </data>
+  <data name="SubMgmt_DaysUnit" xml:space="preserve">
+    <value>gün</value>
   </data>
 </root>
