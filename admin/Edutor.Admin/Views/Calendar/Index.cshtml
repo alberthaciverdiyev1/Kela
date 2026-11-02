@@ -36,44 +36,45 @@
 </section>
 
 <div id="eventModal" data-modal class="fixed inset-0 z-50 hidden items-center justify-center bg-slate-950/60 p-4">
-    <div data-modal-panel class="flex max-h-[90vh] w-full max-w-lg flex-col rounded-2xl bg-white shadow-2xl">
-        <div class="flex items-center justify-between border-b border-border p-5">
-            <h3 id="eventModalTitle" class="text-lg font-bold text-slate-900">@L["Calendar_NewEvent"]</h3>
+    <div data-modal-panel class="flex max-h-[90vh] w-full max-w-xl flex-col rounded-2xl border border-border bg-white shadow-2xl">
+        <div class="flex items-center justify-between border-b border-border px-5 py-4">
+            <div>
+                <h3 id="eventModalTitle" class="text-lg font-bold text-slate-900">@L["Calendar_NewEvent"]</h3>
+                <p id="eventModalSubtitle" class="mt-0.5 text-xs text-slate-500"></p>
+            </div>
             <button type="button" data-modal-close aria-label="@L["Common_Close"]"
                     class="grid h-9 w-9 place-items-center rounded-lg border border-danger/25 bg-danger-bg text-danger transition hover:bg-danger hover:text-white">✕</button>
         </div>
 
         <div class="min-h-0 flex-1 overflow-y-auto">
-            <form id="eventForm" class="space-y-4 p-6">
+            <form id="eventForm" class="space-y-5 p-5">
                 <input type="hidden" id="eventId" />
 
                 <div id="eventError" class="hidden rounded-xl bg-danger-bg px-3 py-2 text-sm font-semibold text-danger"></div>
 
                 <partial name="Ui/_Input" model="@(new InputModel { Name = "title", Id = "eventTitle", Label = L["Calendar_Title"], Required = true, Placeholder = L["Calendar_Title"] })" />
 
-                <div>
-                    <label for="eventDescription" class="mb-1 block text-sm font-semibold text-slate-600">@L["Calendar_Description"]</label>
-                    <textarea id="eventDescription" rows="3" maxlength="2000" class="admin-field"
-                              placeholder="@L["Calendar_Description"]"></textarea>
-                </div>
+                <partial name="Ui/_Editor" model="@(new EditorModel { Id = "eventDescription", Name = "description", Label = L["Calendar_Description"], Placeholder = L["Calendar_Description"], Compact = true })" />
 
-                <div class="grid grid-cols-1 gap-3 sm:grid-cols-3">
+                <div class="space-y-3">
                     <partial name="Ui/_Input" model="@(new InputModel { Name = "date", Id = "eventDate", Label = L["Common_Date"], Type = "date", Required = true })" />
-                    <partial name="Ui/_Input" model="@(new InputModel { Name = "start", Id = "eventStart", Label = L["Calendar_Start"], Type = "time", Required = true })" />
-                    <partial name="Ui/_Input" model="@(new InputModel { Name = "end", Id = "eventEnd", Label = L["Calendar_End"], Type = "time", Required = true })" />
+                    <div class="grid grid-cols-2 gap-3">
+                        <partial name="Ui/_Input" model="@(new InputModel { Name = "start", Id = "eventStart", Label = L["Calendar_Start"], Type = "time", Required = true })" />
+                        <partial name="Ui/_Input" model="@(new InputModel { Name = "end", Id = "eventEnd", Label = L["Calendar_End"], Type = "time", Required = true })" />
+                    </div>
                 </div>
 
                 <div>
-                    <span class="mb-1 block text-sm font-semibold text-slate-600">@L["Calendar_Color"]</span>
-                    <div id="eventPalette" class="flex flex-wrap items-center gap-1.5"></div>
+                    <span class="mb-2 block text-sm font-semibold text-slate-600">@L["Calendar_Color"]</span>
+                    <div id="eventPalette" class="flex flex-wrap items-center gap-2"></div>
                 </div>
 
-                <div class="flex items-center justify-between pt-2">
-                    <button type="button" id="eventDelete" class="hidden text-sm font-bold text-danger hover:underline"
+                <div class="flex items-center justify-between border-t border-border pt-4">
+                    <button type="button" id="eventDelete" class="admin-button-ghost hidden !text-danger hover:!bg-danger-bg"
                             data-action="Calendar.deleteEvent">@L["Common_Delete"]</button>
-                    <div class="ml-auto flex justify-end gap-3">
-                        <button type="button" class="admin-button admin-button-secondary" data-modal-close>@L["Common_Cancel"]</button>
-                        <button type="submit" class="admin-button admin-button-primary">@L["Common_Save"]</button>
+                    <div class="ml-auto flex items-center gap-2">
+                        <button type="button" class="admin-button-secondary" data-modal-close>@L["Common_Cancel"]</button>
+                        <button type="submit" class="admin-button-primary">@L["Common_Save"]</button>
                     </div>
                 </div>
             </form>

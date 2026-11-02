@@ -252,10 +252,10 @@
     // ---------------------------------------------------------------- editor
     function renderPalette() {
         el('eventPalette').innerHTML = Object.keys(COLORS).map(color => {
-            const ring = color === draftColor ? ' ring-2 ring-slate-500 ring-offset-1' : '';
-            return `<button type="button" class="h-6 w-6 rounded-full border border-black/10${ring}"
+            const ring = color === draftColor ? ' ring-2 ring-primary ring-offset-2' : ' hover:scale-110';
+            return `<button type="button" class="h-6 w-6 rounded-full border border-black/10 transition${ring}"
                         style="background:${COLORS[color]}" data-action="Calendar.setDraftColor" data-args='["${color}"]'
-                        aria-label="${color}"></button>`;
+                        aria-label="${color}" aria-pressed="${color === draftColor}"></button>`;
         }).join('');
     }
 
@@ -295,7 +295,7 @@
         el('eventModalTitle').textContent = L["Calendar_EditEvent"];
         el('eventId').value = e.id;
         el('eventTitle').value = e.title;
-        el('eventDescription').value = e.description || '';
+        el('eventDescription').value = e.subtitle || '';
         el('eventDate').value = ymd(start);
         el('eventStart').value = hm(start);
         el('eventEnd').value = hm(end);
