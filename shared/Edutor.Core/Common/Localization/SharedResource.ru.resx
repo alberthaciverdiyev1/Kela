@@ -1605,6 +1605,9 @@
   <data name="Feedback_Error" xml:space="preserve">
     <value>Не удалось отправить отзыв</value>
   </data>
+  <data name="Feedback_NetworkError" xml:space="preserve">
+    <value>Не удалось подключиться к серверу. Проверьте соединение и повторите попытку.</value>
+  </data>
   <data name="Common_ChooseOne" xml:space="preserve">
     <value>Выберите</value>
   </data>

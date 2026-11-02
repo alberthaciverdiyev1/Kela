@@ -8,6 +8,13 @@
     const label = (t) => `${t.userName} · ${t.userEmail}`;
     const safeLabel = (t) => AdminUI.escapeHtml(label(t));
 
+    // Siyahıdakı qısa önizləmə üçün HTML-i sadə mətnə çevirir.
+    const plain = (html) => {
+        const box = document.createElement('div');
+        box.innerHTML = html || '';
+        return (box.textContent || '').replace(/\s+/g, ' ').trim();
+    };
+
     function renderThreads() {
         const box = $('fbThreads');
         if (!box) return;
@@ -27,7 +34,7 @@
                     <span class="truncate text-sm font-bold text-slate-800">${safeLabel(t)}</span>
                     ${t.hasUnreadForAdmin ? '<span class="h-2 w-2 shrink-0 rounded-full bg-primary"></span>' : ''}
                 </div>
-                <p class="mt-1 truncate text-xs text-slate-500">${AdminUI.escapeHtml(t.messages[t.messages.length - 1]?.body || '')}</p>
+                <p class="mt-1 truncate text-xs text-slate-500">${AdminUI.escapeHtml(plain(t.messages[t.messages.length - 1]?.body))}</p>
                 <p class="mt-1 text-[11px] text-slate-400">${new Date(t.lastMessageAt).toLocaleString('az')}</p>
             </button>`).join('');
     }
@@ -56,7 +63,9 @@
             ${t.messages.map(m => `
                 <div class="flex ${m.senderRole === 'admin' ? 'justify-end' : 'justify-start'}">
                     <div class="max-w-[75%] rounded-2xl px-3 py-2 text-sm ${m.senderRole === 'admin' ? 'bg-primary text-white' : 'bg-surface-secondary text-slate-800'}">
-                        <p class="whitespace-pre-wrap break-words">${AdminUI.escapeHtml(m.body)}</p>
+                        ${m.senderRole === 'admin'
+                            ? `<div class="fb-rich break-words">${m.body}</div>`
+                            : `<p class="whitespace-pre-wrap break-words">${AdminUI.escapeHtml(m.body)}</p>`}
                         ${m.imageUrl ? `<a href="${AdminUI.escapeHtml(m.imageUrl)}" target="_blank" rel="noopener"><img src="${AdminUI.escapeHtml(m.imageUrl)}" alt="" class="mt-2 max-h-40 rounded-lg object-contain" /></a>` : ''}
                         <span class="mt-1 block text-[10px] ${m.senderRole === 'admin' ? 'text-white/70' : 'text-slate-400'}">
                             ${new Date(m.createdAt).toLocaleString('az')}${m.senderRole === 'admin' && m.isRead ? ' · ' + L["Feedback_Read"] : ''}
@@ -103,22 +112,33 @@
         const cfg = window.FEEDBACK_CONFIG;
         if (!text || !cfg || !activeId) return;
 
-        const fd = new FormData();
-        fd.append('message', text);
+        const button = $('fbReplyForm').querySelector('button[type=submit]');
+        button.disabled = true;
 
-        const res = await fetch(`${cfg.apiUrl}/api/feedback/${activeId}/messages`, {
-            method: 'POST',
-            headers: { Authorization: 'Bearer ' + cfg.token },
-            body: fd
-        });
+        try {
+            const fd = new FormData();
+            fd.append('message', text);
 
-        if (!res.ok) { AdminUI.error(L["Feedback_Error"]); return; }
+            const res = await fetch(`${cfg.apiUrl}/api/feedback/${activeId}/messages`, {
+                method: 'POST',
+                headers: { Authorization: 'Bearer ' + cfg.token },
+                body: fd
+            });
 
-        const payload = await res.json();
-        threads = threads.map(t => t.id === activeId ? payload.data : t);
-        $('fbReply').value = '';
-        renderThreads();
-        renderConversation();
+            if (!res.ok) { AdminUI.error(L["Feedback_Error"]); return; }
+
+            const payload = await res.json();
+            threads = threads.map(t => t.id === activeId ? payload.data : t);
+            $('fbReply').value = '';
+            AdminUI.syncEditors($('fbReplyForm'));
+            renderThreads();
+            renderConversation();
+        } catch {
+            // Şəbəkə/CORS xətası — sorğu ümumiyyətlə göndərilmədi.
+            AdminUI.error(L["Feedback_NetworkError"]);
+        } finally {
+            button.disabled = false;
+        }
     });
 
     function connectHub() {

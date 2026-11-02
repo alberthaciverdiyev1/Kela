@@ -1605,6 +1605,9 @@
   <data name="Feedback_Error" xml:space="preserve">
     <value>Geri bildirim gönderilemedi</value>
   </data>
+  <data name="Feedback_NetworkError" xml:space="preserve">
+    <value>Sunucuya ulaşılamadı. Bağlantıyı kontrol edip tekrar deneyin.</value>
+  </data>
   <data name="Common_ChooseOne" xml:space="preserve">
     <value>Seçin</value>
   </data>

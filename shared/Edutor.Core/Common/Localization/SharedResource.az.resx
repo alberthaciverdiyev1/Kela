@@ -1596,6 +1596,9 @@
   <data name="Feedback_Error" xml:space="preserve">
     <value>Bildiriş göndərilə bilmədi</value>
   </data>
+  <data name="Feedback_NetworkError" xml:space="preserve">
+    <value>Serverə qoşulmaq mümkün olmadı. Bağlantını yoxlayıb yenidən cəhd edin.</value>
+  </data>
   <data name="Common_ChooseOne" xml:space="preserve">
     <value>Seçin</value>
   </data>

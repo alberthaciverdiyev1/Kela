@@ -74,7 +74,7 @@ secret-lər env ilə verilir (`__` = bölmə ayırıcısı).
 | `Storage__Images__JpegQuality` | | JPEG keyfiyyəti 1–100 (default `82`) |
 | `Storage__Images__MinSizeKb` | | bundan kiçik şəkillərə toxunulmur (default `24`) |
 | `R2__AccountId/AccessKeyId/SecretAccessKey/BucketName/PublicBaseUrl` | R2 | |
-| `Cors__Origins__0` | ✅ | WASM tətbiqinin domeni (boş olsa API hər origin-ə açıqdır) |
+| `Cors__Origins__0`, `Cors__Origins__1` | ✅ | WASM tətbiqi **və** admin panel domenləri. Admin səhifələri cavab/qeyd yazarkən birbaşa API-yə `fetch` edir — panel domeni siyahıda yoxdursa brauzer POST-u bloklayır (səssiz xəta). Boş olsa API hər origin-ə açıqdır |
 | `Database__MigrateOnStartup` | | `true` və ya migration əl ilə |
 | `ReverseProxy__Enabled` | ✅ | nginx arxasındadırsa `true` |
 | `ReverseProxy__KnownProxies__0` | | proxy başqa maşında olsa onun IP-si |
@@ -108,6 +108,7 @@ WebPush__Subject=mailto:info@example.com
 WebPush__PublicKey=<vapid public>
 WebPush__PrivateKey=<vapid private>
 Cors__Origins__0=https://app.example.com
+Cors__Origins__1=https://panel.example.com
 ReverseProxy__Enabled=true
 Database__MigrateOnStartup=false
 ```
@@ -223,7 +224,7 @@ systemctl enable --now edutor-api edutor-admin
 - [ ] DNS: `api.*`, `panel.*`, `app.*`
 - [ ] TLS sertifikatları (yenilənmə avtomatik)
 - [ ] PostgreSQL güclü parol, yalnız daxili şəbəkəyə açıq
-- [ ] `Cors__Origins` production domeni ilə dolu
+- [ ] `Cors__Origins` hər iki production domeni ilə dolu (app + panel)
 - [ ] `Storage` qovluğu (`/var/lib/edutor/uploads`) `edutor` istifadəçisinə yazıla bilir
 - [ ] R2 bucket + public URL (və ya paylaşılmış disk)
 - [ ] Migration tətbiq edildi, seed hesablarının parolları dəyişdirildi
