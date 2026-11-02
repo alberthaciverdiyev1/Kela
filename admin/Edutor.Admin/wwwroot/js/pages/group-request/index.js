@@ -15,7 +15,7 @@ window.GroupRequestPage = (function () {
 
         AdminUI.table('groupRequestRows', rows.map(r => [
             { html: `<a href="/group/${r.groupId}/manage" class="font-semibold text-primary hover:underline">${AdminUI.escapeHtml(r.groupName || `#${r.groupId}`)}</a>` },
-            { html: `<a href="/students/${r.studentId}/detail" class="text-slate-700 hover:text-primary hover:underline">${AdminUI.escapeHtml(r.fullName || '—')}</a>` },
+            { html: `<a href="/student-panel/${r.studentId}" class="text-slate-700 hover:text-primary hover:underline">${AdminUI.escapeHtml(r.fullName || '—')}</a>` },
             { html: AdminUI.escapeHtml(r.email || '—') },
             { html: date(r.createdAt) },
             { html: statusBadge(r.status) },

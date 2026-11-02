@@ -2,13 +2,20 @@
     const TABS = [
         { key: 'groups', label: L["Panel_Groups"] },
         { key: 'subjects', label: L["Panel_Subjects"] },
+        { key: 'lessons', label: L["Student_TabLessons"] },
         { key: 'homeworks', label: L["Panel_Homeworks"] },
         { key: 'attendance', label: L["Panel_Attendance"] },
         { key: 'payments', label: L["Panel_Payments"] },
-        { key: 'progress', label: L["Panel_Progress"] }
+        { key: 'progress', label: L["Panel_Progress"] },
+        { key: 'results', label: L["Student_TabExams"] },
+        { key: 'violations', label: L["Student_TabViolations"] }
     ];
 
-    const state = { studentId: null, tab: 'groups', subjectId: null, lessonId: null };
+    const root = document.getElementById('studentPanelRoot');
+    const state = {
+        studentId: root?.dataset.studentId ? Number(root.dataset.studentId) : null,
+        tab: 'groups', subjectId: null, lessonId: null
+    };
 
     const esc = AdminUI.escapeHtml;
     const empty = () => `<p class="text-sm text-slate-400">${esc(L["Common_NoData"])}</p>`;
@@ -31,10 +38,29 @@
                     ${s.isActive
                         ? AdminUI.badge(esc(L["Common_Active"]), 'success')
                         : AdminUI.badge(esc(L["Common_Inactive"]), 'danger')}
-                    <a href="/students" class="admin-button-secondary">${esc(L["Panel_OpenStudent"])}</a>
+                    <a href="/students" class="admin-button-secondary">${esc(L["Nav_Students"])}</a>
                 </div>
             </div>`;
     }
+
+    function renderStats(s) {
+        const o = s.overview || {};
+        const box = document.getElementById('stats');
+        box.innerHTML = AdminUI.statCard(L["Lesson_Total"], o.totalLessons)
+            + AdminUI.statCard(L["Common_TotalMaterials"], o.totalContents)
+            + AdminUI.statCard(L["Panel_Completed"], o.completedContents, 'text-success')
+            + AdminUI.statCard(L["Panel_Completion"], `${o.completionPercent}%`, 'text-primary');
+        box.classList.remove('hidden');
+    }
+
+    const rowNo = (i) => `<td class="text-slate-400">${i + 1}</td>`;
+    const fmtDate = (value) => {
+        if (!value) return '—';
+        const d = new Date(value);
+        if (isNaN(d)) return esc(value);
+        const p = (n) => String(n).padStart(2, '0');
+        return `${p(d.getDate())}.${p(d.getMonth() + 1)}.${d.getFullYear()} ${p(d.getHours())}:${p(d.getMinutes())}`;
+    };
 
     function renderTabs() {
         document.getElementById('tabs').innerHTML = TABS.map(t => `
@@ -234,6 +260,79 @@
             <div class="mt-4 grid gap-3 sm:grid-cols-2">${rows}</div>`;
     }
 
+    function renderLessons(p) {
+        if (!p.items?.length) return empty();
+        return `<div class="overflow-x-auto">
+            <table class="admin-table">
+                <thead><tr>
+                    <th class="w-16">#</th>
+                    <th>${esc(L["Common_Lesson"])}</th>
+                    <th class="w-40">${esc(L["Panel_Completed"])}</th>
+                    <th class="w-40">${esc(L["Panel_Completion"])}</th>
+                    <th>${esc(L["Student_NextMaterial"])}</th>
+                </tr></thead>
+                <tbody>${p.items.map((x, i) => `<tr>
+                    ${rowNo(i)}
+                    <td class="font-semibold text-slate-800">${esc(x.lessonTitle)}</td>
+                    <td class="text-slate-500">${x.completedContents} / ${x.totalContents}</td>
+                    <td>
+                        <div class="flex items-center gap-2">
+                            <div class="h-2 w-24 overflow-hidden rounded-full bg-slate-200"><div class="h-full rounded-full bg-primary" style="width:${Math.min(x.progressPercent, 100)}%"></div></div>
+                            <span class="text-sm font-semibold text-slate-700">${x.progressPercent}%</span>
+                        </div>
+                    </td>
+                    <td class="text-slate-500">${esc(x.nextContent?.title ?? '—')}</td>
+                </tr>`).join('')}</tbody>
+            </table>
+        </div>`;
+    }
+
+    function renderResults(rows) {
+        if (!rows?.length) return `<p class="text-sm text-slate-400">${esc(L["Common_NoResults"])}</p>`;
+        return `<div class="overflow-x-auto">
+            <table class="admin-table">
+                <thead><tr>
+                    <th class="w-16">#</th>
+                    <th>${esc(L["Common_Exam"])}</th>
+                    <th class="w-32">${esc(L["GroupStat_Attempt"])}</th>
+                    <th class="w-40">${esc(L["Student_CorrectOverTotal"])}</th>
+                    <th class="w-32">${esc(L["Panel_Score"])}</th>
+                    <th class="w-44">${esc(L["Common_Date"])}</th>
+                </tr></thead>
+                <tbody>${rows.map((r, i) => `<tr>
+                    ${rowNo(i)}
+                    <td class="font-semibold text-slate-800">${esc(r.quizTitle)}</td>
+                    <td class="text-slate-500">#${r.attemptTime}</td>
+                    <td class="text-slate-500">${r.correctCount} / ${r.totalQuestions}</td>
+                    <td><span class="font-semibold ${r.scorePercent >= 50 ? 'text-emerald-600' : 'text-red-600'}">${r.scorePercent}%</span></td>
+                    <td class="text-slate-500">${fmtDate(r.startDate)}</td>
+                </tr>`).join('')}</tbody>
+            </table>
+        </div>`;
+    }
+
+    function renderViolations(rows) {
+        if (!rows?.length) return `<p class="text-sm text-slate-400">${esc(L["Student_NoViolations"])}</p>`;
+        return `<div class="overflow-x-auto">
+            <table class="admin-table">
+                <thead><tr>
+                    <th class="w-16">#</th>
+                    <th>${esc(L["Common_Type"])}</th>
+                    <th>${esc(L["Student_Page"])}</th>
+                    <th class="w-44">${esc(L["Common_Date"])}</th>
+                    <th>${esc(L["Student_UserAgent"])}</th>
+                </tr></thead>
+                <tbody>${rows.map((v, i) => `<tr>
+                    ${rowNo(i)}
+                    <td><span class="rounded bg-danger-bg px-2 py-0.5 text-xs font-semibold text-danger">${esc(v.type)}</span></td>
+                    <td class="text-slate-500">${esc(v.path ?? '—')}</td>
+                    <td class="text-slate-500">${fmtDate(v.createdAt)}</td>
+                    <td class="max-w-xs truncate text-slate-400" title="${esc(v.userAgent)}">${esc(v.userAgent ?? '—')}</td>
+                </tr>`).join('')}</tbody>
+            </table>
+        </div>`;
+    }
+
     async function loadTab() {
         const body = document.getElementById('tabBody');
         body.innerHTML = `<p class="text-sm text-slate-400">${esc(L["Common_LoadingResults"])}</p>`;
@@ -243,10 +342,13 @@
             switch (state.tab) {
                 case 'groups': html = renderGroups(await AdminUI.get(`/student-panel/${state.studentId}/groups`) || []); break;
                 case 'subjects': html = await renderSubjects(); break;
+                case 'lessons': html = renderLessons(await AdminUI.get(`/student-panel/${state.studentId}/lesson-progress`)); break;
                 case 'homeworks': html = renderHomeworks(await AdminUI.get(`/student-panel/${state.studentId}/homeworks`) || []); break;
                 case 'attendance': html = renderAttendance(await AdminUI.get(`/student-panel/${state.studentId}/attendance`)); break;
                 case 'payments': html = renderPayments(await AdminUI.get(`/student-panel/${state.studentId}/payments`)); break;
                 case 'progress': html = renderProgress(await AdminUI.get(`/student-panel/${state.studentId}/progress`)); break;
+                case 'results': html = renderResults(await AdminUI.get(`/student-panel/${state.studentId}/results`) || []); break;
+                case 'violations': html = renderViolations(await AdminUI.get(`/student-panel/${state.studentId}/violations`) || []); break;
                 default: html = empty();
             }
             body.innerHTML = html;
@@ -273,21 +375,24 @@
         });
     }
 
-    async function openStudent(id) {
+    async function loadPanel(id) {
         state.studentId = id;
-        state.tab = 'groups';
-        state.subjectId = null;
-        state.lessonId = null;
 
-        const profile = await AdminUI.get(`/student-panel/${id}`);
-        document.getElementById('panelEmpty').classList.add('hidden');
+        const [profile, stats] = await Promise.all([
+            AdminUI.get(`/student-panel/${id}/profile`),
+            AdminUI.get(`/student-panel/${id}/progress`)
+        ]);
+        document.getElementById('panelEmpty')?.classList.add('hidden');
         document.getElementById('panel').classList.remove('hidden');
         renderProfile(profile);
+        renderStats(stats);
         renderTabs();
         await loadTab();
+    }
 
-        history.replaceState(null, '', `?student_id=${id}`);
-        document.getElementById('studentResults').classList.add('hidden');
+    function openStudent(id) {
+        if (Number(state.studentId) === id) return;
+        location.href = `/student-panel/${id}`;
     }
 
     async function searchStudents(term) {
@@ -320,7 +425,6 @@
     });
 
     document.addEventListener('DOMContentLoaded', async () => {
-        const id = new URLSearchParams(location.search).get('student_id');
-        if (id) await openStudent(Number(id));
+        if (state.studentId) await loadPanel(state.studentId);
     });
 })();

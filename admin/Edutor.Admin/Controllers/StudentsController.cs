@@ -1,7 +1,4 @@
 using Edutor.Core.Common.Bulk;
-using Edutor.Core.Modules.Progress.Abstractions;
-using Edutor.Core.Modules.Quiz.Abstractions;
-using Edutor.Core.Modules.ScreenGuard.Abstractions;
 using Edutor.Core.Modules.Students.Abstractions;
 using Edutor.Core.Modules.Students.Requests;
 using Microsoft.AspNetCore.Mvc;
@@ -12,10 +9,7 @@ namespace Edutor.Admin.Controllers;
 [Route("[controller]")]
 public sealed class StudentsController(
     IStudentManagementService service,
-    Edutor.Core.Modules.Group.Abstractions.IGroupService groups,
-    IProgressService progress,
-    IStudentQuizService quizzes,
-    IScreenGuardService screenGuard) : Controller
+    Edutor.Core.Modules.Group.Abstractions.IGroupService groups) : Controller
 {
     [HttpGet]
     public async Task<IActionResult> Index(CancellationToken ct)
@@ -36,21 +30,6 @@ public sealed class StudentsController(
 
     private async Task<bool> CanManageAsync(long studentId, CancellationToken ct)
         => User.IsAdmin() || await service.IsInTeacherGroupsAsync(studentId, User.CurrentUserId() ?? 0, ct);
-
-    [HttpGet("{id:long}/detail")]
-    public async Task<IActionResult> Details(long id, CancellationToken ct)
-    {
-        if (!await CanManageAsync(id, ct)) return Forbid();
-
-        var student = await service.GetAsync(id, ct);
-        ViewData["Title"] = student.FullName;
-        ViewData["Student"] = student;
-        ViewData["Statistics"] = await progress.GetStatisticsAsync(id, ct);
-        ViewData["Progress"] = await progress.GetProgressAsync(id, ct);
-        ViewData["Results"] = await quizzes.ListResultsAsync(id, null, null, ct);
-        ViewData["Violations"] = await screenGuard.ListAsync(id, 200, ct);
-        return View();
-    }
 
     [HttpGet("list")]
     public async Task<IActionResult> List([FromQuery] StudentListRequest request, CancellationToken ct)

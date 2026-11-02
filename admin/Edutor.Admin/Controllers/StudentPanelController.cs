@@ -4,6 +4,8 @@ using Edutor.Core.Modules.Auth;
 using Edutor.Core.Modules.Homework.Abstractions;
 using Edutor.Core.Modules.Payments.Abstractions;
 using Edutor.Core.Modules.Progress.Abstractions;
+using Edutor.Core.Modules.Quiz.Abstractions;
+using Edutor.Core.Modules.ScreenGuard.Abstractions;
 using Edutor.Core.Modules.StudentApp.Abstractions;
 using Edutor.Core.Modules.Students.Abstractions;
 using Edutor.Core.Modules.Students.Requests;
@@ -21,11 +23,23 @@ public sealed class StudentPanelController(
     IStudentHomeworkService homework,
     IAttendanceService attendance,
     IStudentPaymentService payments,
-    IProgressService progress) : AdminControllerBase
+    IProgressService progress,
+    IStudentQuizService quizzes,
+    IScreenGuardService screenGuard) : AdminControllerBase
 {
     [HttpGet]
     public IActionResult Index()
     {
+        ViewData["Scripts"] = new[] { "~/js/pages/student-panel/index.js" };
+        return View();
+    }
+
+    [HttpGet("{id:long}")]
+    public async Task<IActionResult> Index(long id, CancellationToken ct)
+    {
+        var student = await students.GetAsync(id, ct);
+        ViewData["Title"] = student.FullName;
+        ViewData["StudentId"] = id;
         ViewData["Scripts"] = new[] { "~/js/pages/student-panel/index.js" };
         return View();
     }
@@ -37,7 +51,7 @@ public sealed class StudentPanelController(
         return Json(result.Data.Select(s => new { id = s.Id, name = s.FullName, email = s.Email }));
     }
 
-    [HttpGet("{id:long}")]
+    [HttpGet("{id:long}/profile")]
     public async Task<IActionResult> Profile(long id, CancellationToken ct)
         => Json(await students.GetAsync(id, ct));
 
@@ -72,4 +86,16 @@ public sealed class StudentPanelController(
     [HttpGet("{id:long}/progress")]
     public async Task<IActionResult> Progress(long id, CancellationToken ct)
         => Json(await progress.GetStatisticsAsync(id, ct));
+
+    [HttpGet("{id:long}/lesson-progress")]
+    public async Task<IActionResult> LessonProgress(long id, CancellationToken ct)
+        => Json(await progress.GetProgressAsync(id, ct));
+
+    [HttpGet("{id:long}/results")]
+    public async Task<IActionResult> Results(long id, CancellationToken ct)
+        => Json(await quizzes.ListResultsAsync(id, null, null, ct));
+
+    [HttpGet("{id:long}/violations")]
+    public async Task<IActionResult> Violations(long id, CancellationToken ct)
+        => Json(await screenGuard.ListAsync(id, 200, ct));
 }

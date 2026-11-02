@@ -2433,6 +2433,12 @@
   <data name="Panel_History" xml:space="preserve">
     <value>История платежей</value>
   </data>
+  <data name="Panel_Completed" xml:space="preserve">
+    <value>Завершено</value>
+  </data>
+  <data name="Panel_Score" xml:space="preserve">
+    <value>Балл</value>
+  </data>
   <data name="Panel_Completion" xml:space="preserve">
     <value>Завершено</value>
   </data>

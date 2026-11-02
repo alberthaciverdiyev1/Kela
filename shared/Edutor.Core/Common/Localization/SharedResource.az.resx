@@ -1101,6 +1101,9 @@
   <data name="Students_Subtitle" xml:space="preserve">
     <value>Şagird hesablarını, statuslarını və cihazlarını idarə edin.</value>
   </data>
+  <data name="Students_Panel" xml:space="preserve">
+    <value>Panel</value>
+  </data>
   <data name="Students_Search" xml:space="preserve">
     <value>Ad / email / telefon üzrə axtar...</value>
   </data>
@@ -2423,6 +2426,12 @@
   </data>
   <data name="Panel_History" xml:space="preserve">
     <value>Ödəniş tarixçəsi</value>
+  </data>
+  <data name="Panel_Completed" xml:space="preserve">
+    <value>Tamamlanan</value>
+  </data>
+  <data name="Panel_Score" xml:space="preserve">
+    <value>Bal</value>
   </data>
   <data name="Panel_Completion" xml:space="preserve">
     <value>Tamamlanma</value>

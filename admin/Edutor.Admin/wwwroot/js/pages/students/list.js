@@ -3,8 +3,7 @@ function studentActions(s, showDeleted) {
         return AdminUI.rowActions([AdminUI.actionButton(L["Common_Restore"], `restoreRow(${s.id})`, { tone: 'primary' })]);
     }
     return AdminUI.rowActions([
-        AdminUI.actionLink(L["Students_Panel"], `/student-panel?student_id=${s.id}`),
-        AdminUI.actionLink(L["Js_Details"], `/students/${s.id}/detail`),
+        AdminUI.actionLink(L["Students_Panel"], `/student-panel/${s.id}`),
         AdminUI.actionButton(s.isActive ? L["Js_Deactivate"] : L["Js_Activate"], `toggleStatus(${s.id}, ${!s.isActive})`, { tone: 'primary' }),
         AdminUI.actionButton(L["Students_Devices"], `openDevices(${s.id})`),
         AdminUI.actionIcon(

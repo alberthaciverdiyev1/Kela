@@ -2433,6 +2433,12 @@
   <data name="Panel_History" xml:space="preserve">
     <value>Payment history</value>
   </data>
+  <data name="Panel_Completed" xml:space="preserve">
+    <value>Completed</value>
+  </data>
+  <data name="Panel_Score" xml:space="preserve">
+    <value>Score</value>
+  </data>
   <data name="Panel_Completion" xml:space="preserve">
     <value>Completion</value>
   </data>
