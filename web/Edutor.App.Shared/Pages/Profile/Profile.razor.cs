@@ -16,18 +16,12 @@ public partial class Profile
 {
     protected override async Task OnInitializedAsync()
     {
-        try { _attendance = await Api.MyAttendanceAsync(); }
-        catch { /* profil qalan hissəsi işləməyə davam etsin */ }
-        _attendanceLoading = false;
-
         try { _accounts = await Store.GetAccountsAsync(); } catch { /* səssiz */ }
 
         // İlk giriş məcburiyyətləri: şifrə və/və ya ad-soyad.
         if (Auth.User?.MustChangeName == true) OpenName();
         if (Auth.User?.MustChangePassword == true) _passwordOpen = true;
     }
-
-    private async Task ChangeLang(ChangeEventArgs e) => await L.SetAsync(e.Value?.ToString() ?? "az");
 
     private bool _busy;
     private bool _phoneOpen;
@@ -36,10 +30,7 @@ public partial class Profile
     private bool _photoOpen;
     private bool _passwordOpen;
     private bool _privacyOpen;
-    private bool _logoutOpen;
     private bool _privacyLoading;
-    private MyAttendanceDto? _attendance;
-    private bool _attendanceLoading = true;
     private bool _notifications = true;
 
     private string _phone = "";
@@ -184,16 +175,4 @@ public partial class Profile
         }
     }
 
-    private async Task LogoutAsync()
-    {
-        try { await Api.LogoutAsync(); } catch { }
-
-        if (ApiClient.TenantId is long tenantId)
-        {
-            try { await Store.RemoveAccountAsync(tenantId); } catch { /* səssiz */ }
-        }
-
-        try { await Store.RemoveAsync(); } catch { }
-        Auth.Clear();
-    }
 }

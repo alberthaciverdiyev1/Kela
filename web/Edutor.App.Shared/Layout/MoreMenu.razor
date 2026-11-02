@@ -1,0 +1,84 @@
+@using Edutor.App.Shared.Services.Localization
+@inject Localizer L
+
+@if (Open)
+{
+    <div class="fixed inset-0 z-[60] bg-brand-836/45" @onclick="Close"></div>
+
+    <div class="@PanelCss" @onclick:stopPropagation="true">
+        @if (Sheet)
+        {
+            <div class="mx-auto mb-4 h-1.5 w-11 rounded-full bg-brand-104"></div>
+        }
+
+        @* Hesab başlığı *@
+        <a href="/profile" @onclick="Close" class="flex items-center gap-3 rounded-2xl bg-brand-027 p-3">
+            @if (HasPhoto)
+            {
+                <img src="@Auth.User!.Image" alt="" class="size-11 shrink-0 rounded-full object-cover" />
+            }
+            else
+            {
+                <span class="grid size-11 shrink-0 place-items-center rounded-full bg-brand-103 text-[15px] font-black text-brand-835">@(Auth.User?.Initial ?? "L")</span>
+            }
+            <span class="min-w-0 flex-1">
+                <span class="block truncate text-[14px] font-semibold text-brand-784">@(Auth.User?.FullName ?? L["Common_Student"])</span>
+                <span class="block truncate text-[11px] text-sage-410">@(Auth.User?.Email ?? "")</span>
+            </span>
+            <Icon Name="chevron-right" Class="size-4 shrink-0 text-sage-300" />
+        </a>
+
+        @* Rəngli ikonlar — altında ad *@
+        <div class="mt-4 grid grid-cols-4 gap-1">
+            @foreach (var item in Items)
+            {
+                <a href="@item.Href" @onclick="Close" class="flex flex-col items-center gap-1.5 rounded-xl px-1 py-2 transition hover:bg-brand-027">
+                    <span class="grid size-11 place-items-center rounded-full" style="background:@Tint(item.Color);color:@item.Color">
+                        <Icon Name="@item.Icon" Class="size-[19px]" />
+                    </span>
+                    <span class="text-center text-[10px] font-semibold leading-tight text-brand-755">@item.Label</span>
+                </a>
+            }
+        </div>
+
+        @* Dil seçimi *@
+        <div class="mt-4 flex items-center gap-2 rounded-2xl border border-brand-090 p-2 pl-3.5">
+            <Icon Name="sliders" Class="size-4 shrink-0 text-sage-410" />
+            <span class="flex-1 text-[12px] font-semibold text-brand-727">@L["Profile_Language"]</span>
+            <div class="flex gap-1">
+                @foreach (var code in Localizer.Supported)
+                {
+                    <button type="button" @onclick="() => ChangeLanguageAsync(code)"
+                            class="rounded-full px-2.5 py-1 text-[11px] font-bold uppercase transition @(L.Current == code ? "bg-brand-671 text-white" : "bg-brand-049 text-brand-669")">
+                        @(code)
+                    </button>
+                }
+            </div>
+        </div>
+
+        @if (!_logoutConfirm)
+        {
+            <button type="button" @onclick="() => _logoutConfirm = true"
+                    class="mt-3 flex w-full items-center justify-center gap-2 rounded-2xl border border-danger-043 bg-danger-043/40 py-3 text-[13px] font-bold text-danger-539">
+                <Icon Name="arrow-left" Class="size-4" />
+                @L["Profile_Logout"]
+            </button>
+        }
+        else
+        {
+            <div class="mt-3 rounded-2xl border border-danger-043 bg-danger-043/25 p-3">
+                <p class="text-center text-[12px] font-semibold text-danger-539">@L["Profile_LogoutConfirm"]</p>
+                <div class="mt-3 flex gap-2">
+                    <button type="button" @onclick="() => _logoutConfirm = false"
+                            class="flex-1 rounded-xl border border-brand-104 bg-white py-2.5 text-[12px] font-bold text-brand-727">
+                        @L["Common_Cancel"]
+                    </button>
+                    <button type="button" @onclick="LogoutAsync" disabled="@_busy"
+                            class="flex-1 rounded-xl bg-danger-539 py-2.5 text-[12px] font-bold text-white disabled:opacity-60">
+                        @L["Profile_Logout"]
+                    </button>
+                </div>
+            </div>
+        }
+    </div>
+}

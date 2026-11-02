@@ -8,11 +8,41 @@
     <BottomItem Href="/groups" Label="@L["Nav_Groups"]" IconName="book" />
     <BottomItem Href="/exams" Label="@L["Nav_Exam"]" IconName="file" />
     <BottomItem Href="/homeworks" Label="@L["Nav_Homeworks"]" IconName="clipboard-check" />
-    <BottomItem Href="/profile" Label="@L["Nav_Profile"]" IconName="users" />
+    <button type="button" @onclick="() => _moreOpen = true"
+            class="flex min-w-16 flex-col items-center gap-1 text-[10px] font-semibold @(MoreActive ? "text-brand-671" : "text-sage-369")">
+        <Icon Name="sliders" Class="size-5" />
+        <span>@L["Nav_More"]</span>
+    </button>
 </nav>
 
+<MoreMenu Sheet="true" Open="_moreOpen" OnClose="() => _moreOpen = false" />
+
 @code {
-    protected override void OnInitialized() => L.Changed += OnChanged;
+    private bool _moreOpen;
+
+    private static readonly string[] MorePaths =
+        ["/profile", "/notes", "/attendance", "/payments", "/results", "/notifications", "/contact"];
+
+    private bool MoreActive => MorePaths.Any(p =>
+        Nav.ToBaseRelativePath(Nav.Uri).Split('?')[0].TrimEnd('/').Equals(p.TrimStart('/'), StringComparison.OrdinalIgnoreCase));
+
+    private void OnLocationChanged(object? sender, Microsoft.AspNetCore.Components.Routing.LocationChangedEventArgs e)
+    {
+        _moreOpen = false;
+        _ = InvokeAsync(StateHasChanged);
+    }
+
+    protected override void OnInitialized()
+    {
+        L.Changed += OnChanged;
+        Nav.LocationChanged += OnLocationChanged;
+    }
+
     private void OnChanged() => InvokeAsync(StateHasChanged);
-    public void Dispose() => L.Changed -= OnChanged;
+
+    public void Dispose()
+    {
+        L.Changed -= OnChanged;
+        Nav.LocationChanged -= OnLocationChanged;
+    }
 }

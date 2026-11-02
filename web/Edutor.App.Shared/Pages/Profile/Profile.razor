@@ -56,56 +56,6 @@
     </div>
 </section>
 
-@* --- Dərslərə iştirak --- *@
-<section class="border-b border-brand-100 px-5 pb-7 pt-7">
-    <p class="mb-3 text-[10px] font-bold uppercase tracking-[0.18em] text-brand-671">@L["Attendance_MyTitle"]</p>
-
-    @if (_attendanceLoading)
-    {
-        <div class="rounded-2xl border border-brand-090 bg-white p-5">
-            <Skeleton Class="h-8 w-24 rounded-md"/>
-            <Skeleton Class="mt-3 h-3 w-40 rounded-md"/>
-        </div>
-    }
-    else if (_attendance is null || _attendance.TotalCount == 0)
-    {
-        <p class="text-[12px] text-sage-410">@L["Attendance_None"]</p>
-    }
-    else
-    {
-        <div class="rounded-2xl border border-brand-090 bg-white p-5">
-            <div class="flex items-end justify-between gap-4">
-                <div class="min-w-0">
-                    <p class="text-[28px] font-semibold tracking-[-0.06em]">@_attendance.Percent%</p>
-                    <p class="mt-1 text-[11px] text-sage-410">@string.Format(L["Attendance_MyCount"], _attendance.PresentCount, _attendance.TotalCount)</p>
-                </div>
-                <div class="h-1.5 w-28 shrink-0 overflow-hidden rounded-full bg-brand-061">
-                    <div class="h-full rounded-full bg-brand-671" style="width:@(_attendance.Percent)%"></div>
-                </div>
-            </div>
-
-            <div class="mt-4 space-y-2.5 border-t border-brand-090 pt-4">
-                @foreach (var r in _attendance.Recent)
-                {
-                    <div class="flex items-center gap-3">
-                        <span class="flex size-6 shrink-0 items-center justify-center rounded-full text-[11px] font-bold @(r.IsPresent ? "bg-brand-103 text-brand-698" : "bg-[#fdeceb] text-danger-539")">
-                            @(r.IsPresent ? "✓" : "✕")
-                        </span>
-                        <span class="min-w-0 flex-1">
-                            <span class="block truncate text-[12px] font-semibold">@r.GroupName</span>
-                            <span class="block text-[10px] text-sage-410">@r.Date.ToString("dd.MM.yyyy")</span>
-                        </span>
-                    </div>
-                }
-            </div>
-        </div>
-    }
-    <a href="/attendance" class="mt-4 flex items-center justify-center gap-1.5 rounded-xl border border-brand-104 py-2.5 text-[12px] font-bold text-brand-727">
-        @L["Attendance_OpenCalendar"]
-        <Icon Name="chevron-right" Class="size-3.5" />
-    </a>
-</section>
-
 @* --- Hesab əməliyyatları --- *@
 <section class="px-5 pb-28 pt-7">
     <p class="mb-3 text-[10px] font-bold uppercase tracking-[0.18em] text-brand-671">@L["Profile_Account"]</p>
@@ -149,41 +99,11 @@
             </a>
         }
 
-        <a href="/notes" class="flex w-full items-center gap-3 py-4 text-left">
-            <span class="flex size-8 items-center justify-center rounded-lg bg-brand-049 text-brand-639"><Icon Name="edit" Class="size-4" /></span>
-            <span class="flex-1"><span class="block text-[13px] font-semibold">@L["Notes_Title"]</span><span class="mt-0.5 block text-[10px] text-sage-410">@L["Profile_NotesDesc"]</span></span>
-            <Icon Name="chevron-right" Class="size-4 text-sage-300" />
-        </a>
-
-        <a href="/payments" class="flex w-full items-center gap-3 py-4 text-left">
-            <span class="flex size-8 items-center justify-center rounded-lg bg-brand-049 text-brand-639"><Icon Name="chart" Class="size-4" /></span>
-            <span class="flex-1"><span class="block text-[13px] font-semibold">@L["Payments_Title"]</span><span class="mt-0.5 block text-[10px] text-sage-410">@L["Payments_Open"]</span></span>
-            <Icon Name="chevron-right" Class="size-4 text-sage-300" />
-        </a>
-
-        <a href="/contact" class="flex w-full items-center gap-3 py-4 text-left">
-            <span class="flex size-8 items-center justify-center rounded-lg bg-brand-049 text-brand-639"><Icon Name="mail" Class="size-4" /></span>
-            <span class="flex-1"><span class="block text-[13px] font-semibold">@L["Contact_Title"]</span><span class="mt-0.5 block text-[10px] text-sage-410">@L["Profile_ContactDesc"]</span></span>
-            <Icon Name="chevron-right" Class="size-4 text-sage-300" />
-        </a>
-
         <button type="button" @onclick="OpenPrivacyAsync" class="flex w-full items-center gap-3 py-4 text-left">
             <span class="flex size-8 items-center justify-center rounded-lg bg-brand-049 text-brand-639"><Icon Name="shield" Class="size-4" /></span>
             <span class="flex-1"><span class="block text-[13px] font-semibold">@L["Profile_Privacy"]</span><span class="mt-0.5 block text-[10px] text-sage-410">@L["Profile_PrivacyDesc"]</span></span>
             <Icon Name="chevron-right" Class="size-4 text-sage-300" />
         </button>
-
-        <div class="flex w-full items-center gap-3 py-4">
-            <span class="flex size-8 items-center justify-center rounded-lg bg-brand-049 text-brand-639"><Icon Name="sliders" Class="size-4" /></span>
-            <span class="flex-1"><span class="block text-[13px] font-semibold">@L["Profile_Language"]</span><span class="mt-0.5 block text-[10px] text-sage-410">az / en / ru / tr</span></span>
-            <select value="@L.Current" @onchange="ChangeLang" aria-label="@L["Profile_Language"]"
-                    class="rounded-lg border border-brand-104 bg-white px-2 py-1 text-[12px] font-semibold text-brand-722 outline-none focus:border-brand-467">
-                @foreach (var c in Localizer.Supported)
-                {
-                    <option value="@c">@c.ToUpperInvariant()</option>
-                }
-            </select>
-        </div>
 
         @* İşləməyən (yalnız görünən) hesab silmə *@
         <div class="flex w-full items-center gap-3 py-4 opacity-60" aria-disabled="true">
@@ -215,9 +135,6 @@
         </div>
     }
 
-    <button type="button" @onclick="() => _logoutOpen = true" class="mt-6 w-full rounded-2xl border border-danger-043 bg-danger-043/40 py-3.5 text-sm font-bold text-danger-539">
-        @L["Profile_Logout"]
-    </button>
 </section>
 
 @* --- Modallar --- *@
@@ -261,14 +178,6 @@
             }
         </div>
     }
-</Modal>
-
-<Modal Open="_logoutOpen" Title="@L["Profile_Logout"]" OnClose="() => _logoutOpen = false">
-    <p class="text-[13px] leading-5 text-sage-459">@L["Profile_LogoutConfirm"]</p>
-    <div class="mt-5 flex gap-3">
-        <button type="button" @onclick="() => _logoutOpen = false" class="flex-1 rounded-xl border border-brand-104 py-3 text-sm font-bold text-brand-727">@L["Common_Cancel"]</button>
-        <button type="button" @onclick="LogoutAsync" class="flex-1 rounded-xl bg-danger-539 py-3 text-sm font-bold text-white">@L["Profile_Logout"]</button>
-    </div>
 </Modal>
 
 @* Profil fotoğrafı böyük görünüşdə *@

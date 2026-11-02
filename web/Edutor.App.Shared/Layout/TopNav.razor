@@ -22,15 +22,6 @@
     </nav>
 
     <div class="flex items-center justify-self-end gap-3">
-        <select value="@L.Current" @onchange="ChangeLang"
-                class="rounded-lg border border-brand-104 bg-white px-2 py-1 text-[12px] font-semibold text-brand-722 outline-none focus:border-brand-467"
-                aria-label="Dil">
-            @foreach (var c in Localizer.Supported)
-            {
-                <option value="@c">@c.ToUpperInvariant()</option>
-            }
-        </select>
-
         @if (false)
         {
             <a href="/notifications" aria-label="@L["Nav_Notifications"]"
@@ -39,22 +30,27 @@
             </a>
         }
         <span class="max-w-[160px] truncate text-[13px] font-semibold text-brand-722">@(Auth.User?.FullName ?? L["Common_Student"])</span>
-        <a href="/profile" aria-label="@L["Nav_Profile"]">
-            @if (!string.IsNullOrWhiteSpace(Auth.User?.Image))
-            {
-                <img src="@Auth.User!.Image" alt="" class="size-9 rounded-full object-cover" />
-            }
-            else
-            {
-                <span class="grid size-9 place-items-center rounded-full bg-brand-103 text-[13px] font-bold text-brand-835">@(Auth.User?.Initial ?? "L")</span>
-            }
-        </a>
+        <div class="relative">
+            <button type="button" @onclick="() => _moreOpen = true" aria-label="@L["Nav_More"]"
+                    aria-haspopup="true" aria-expanded="@_moreOpen"
+                    class="block rounded-full outline-none ring-brand-253 transition focus-visible:ring-2 @(_moreOpen ? "ring-2" : null)">
+                @if (!string.IsNullOrWhiteSpace(Auth.User?.Image))
+                {
+                    <img src="@Auth.User!.Image" alt="" class="size-9 rounded-full object-cover" />
+                }
+                else
+                {
+                    <span class="grid size-9 place-items-center rounded-full bg-brand-103 text-[13px] font-bold text-brand-835">@(Auth.User?.Initial ?? "L")</span>
+                }
+            </button>
+            <MoreMenu Sheet="false" Open="_moreOpen" OnClose="() => _moreOpen = false" />
+        </div>
     </div>
 </header>
 
 @code {
+    private bool _moreOpen;
+
     protected override void OnInitialized() => L.Changed += OnChanged;
     private void OnChanged() => InvokeAsync(StateHasChanged);
-    private async Task ChangeLang(ChangeEventArgs e)
-        => await L.SetAsync(e.Value?.ToString() ?? "az");
 }
