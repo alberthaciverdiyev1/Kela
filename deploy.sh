@@ -231,6 +231,19 @@ build_release() {
     css_hash=$(sha256sum "$css" | cut -c1-10)
     sed -i "s|_content/Edutor.App.Shared/css/app.css\"|_content/Edutor.App.Shared/css/app.css?v=$css_hash\"|" \
         "$RELEASE/web/wwwroot/index.html"
+
+    # The scripts need a version too: an old cached lms-guard.js otherwise runs
+    # against the new CSS and keeps its own (now wrong) z-index/style choices.
+    local srcs src_file src_hash
+    srcs=$(grep -oE 'src="[^"]+"' "$RELEASE/web/wwwroot/index.html" | sed 's/^src="//; s/"$//')
+    while IFS= read -r src; do
+        [[ -z $src || $src == http* || $src == /* || $src == *'#['* ]] && continue
+        src_file=$RELEASE/web/wwwroot/$src
+        [[ -f $src_file ]] || continue
+        src_hash=$(sha256sum "$src_file" | cut -c1-10)
+        sed -i "s|\"$src\"|\"$src?v=$src_hash\"|" "$RELEASE/web/wwwroot/index.html"
+    done <<< "$srcs"
+
     rm -f "$RELEASE/web/wwwroot/index.html.br" "$RELEASE/web/wwwroot/index.html.gz"
 
     cat > "$RELEASE/web/wwwroot/appsettings.json" <<EOF
