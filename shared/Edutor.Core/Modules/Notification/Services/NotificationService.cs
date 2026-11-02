@@ -111,28 +111,47 @@ public sealed class NotificationService(
 
         if (token is null)
         {
-            db.NotificationTokens.Add(new NotificationToken
-            {
-                StudentId = studentId,
-                Token = request.Token,
-                DeviceType = request.DeviceType,
-                IsActive = true,
-                LastUsedAt = DateTimeOffset.UtcNow
-            });
+            token = new NotificationToken { Token = request.Token };
+            db.NotificationTokens.Add(token);
         }
-        else
+
+        ApplyToken(token, studentId, request.DeviceType);
+
+        try
         {
-            token.StudentId = studentId;
-            token.DeviceType = request.DeviceType;
-            token.IsActive = true;
-            token.LastUsedAt = DateTimeOffset.UtcNow;
-            token.DeletedAt = null;
-
-            // Cihaz başqa tenant-ın istifadəçisindən keçibsə, sətir də cari tenant-a keçməlidir.
-            if (db.CurrentTenantId is { } tenantId) token.TenantId = tenantId;
+            await db.SaveChangesAsync(ct);
         }
+        catch (DbUpdateException)
+        {
+            // Eyni abunəlik iki sorğuda eyni anda gələ bilər (app açılışı + səhifə
+            // yenilənməsi) — unikal indeks pozulur. Sətir artıq varsa, üzərinə yazırıq.
+            foreach (var entry in db.ChangeTracker.Entries<NotificationToken>()
+                         .Where(e => e.State == EntityState.Added).ToList())
+            {
+                entry.State = EntityState.Detached;
+            }
 
-        await db.SaveChangesAsync(ct);
+            var existing = await db.NotificationTokens
+                .IgnoreQueryFilters(new[] { "SoftDelete", "Tenant" })
+                .FirstOrDefaultAsync(t => t.Token == request.Token, ct);
+
+            if (existing is null) throw;
+
+            ApplyToken(existing, studentId, request.DeviceType);
+            await db.SaveChangesAsync(ct);
+        }
+    }
+
+    private void ApplyToken(NotificationToken token, long studentId, string? deviceType)
+    {
+        token.StudentId = studentId;
+        token.DeviceType = deviceType;
+        token.IsActive = true;
+        token.LastUsedAt = DateTimeOffset.UtcNow;
+        token.DeletedAt = null;
+
+        // Cihaz başqa tenant-ın istifadəçisindən keçibsə, sətir də cari tenant-a keçməlidir.
+        if (db.CurrentTenantId is { } tenantId) token.TenantId = tenantId;
     }
 
     public async Task DeactivateTokenAsync(long studentId, string token, CancellationToken ct = default)

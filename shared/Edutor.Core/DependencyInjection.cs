@@ -134,9 +134,13 @@ public static class DependencyInjection
         services.AddSingleton<IPushSender>(sp =>
         {
             var options = sp.GetRequiredService<Microsoft.Extensions.Options.IOptions<WebPushOptions>>();
-            return options.Value.IsConfigured
-                ? ActivatorUtilities.CreateInstance<WebPushSender>(sp)
-                : ActivatorUtilities.CreateInstance<NoOpPushSender>(sp);
+            if (options.Value.IsConfigured) return ActivatorUtilities.CreateInstance<WebPushSender>(sp);
+
+            // Bu host bildiriş yaradırsa, səssiz NoOp "push niyə gəlmir?" sualını gizlədir.
+            sp.GetRequiredService<ILoggerFactory>().CreateLogger("Push")
+                .LogWarning("Web push (VAPID) is not configured on this host — notifications created here are not delivered");
+
+            return ActivatorUtilities.CreateInstance<NoOpPushSender>(sp);
         });
         services.AddScoped<IUserService, UserService>();
         services.AddScoped<IUserAuthService, UserAuthService>();
