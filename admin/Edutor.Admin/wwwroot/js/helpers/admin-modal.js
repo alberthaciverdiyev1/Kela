@@ -98,12 +98,12 @@ window.AdminUI = window.AdminUI || {};
 
         modal.classList.toggle('is-fullscreen', on);
 
-        const expand = modal.querySelector('[data-fullscreen-expand]');
-        const collapse = modal.querySelector('[data-fullscreen-collapse]');
+        const expandIcon = modal.querySelector('[data-fullscreen-expand]');
+        const collapseIcon = modal.querySelector('[data-fullscreen-collapse]');
         const button = modal.querySelector('[data-modal-fullscreen]');
 
-        if (expand) expand.classList.toggle('hidden', on);
-        if (collapse) collapse.classList.toggle('hidden', !on);
+        if (expandIcon) expandIcon.classList.toggle('hidden', on);
+        if (collapseIcon) collapseIcon.classList.toggle('hidden', !on);
         if (button) button.setAttribute('aria-pressed', on ? 'true' : 'false');
 
         if (!panel || !first || typeof panel.animate !== 'function') return;

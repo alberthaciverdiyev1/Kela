@@ -167,12 +167,23 @@ function walk(dir, files) {
 // Same shape the rewriter accepts, so `lg:shrink-0` counts as used, not `lg` + `shrink-0`.
 const classToken = /[A-Za-z0-9_!:/[\].%#&>~*-]+/g;
 
-function scanDiscovery(texts) {
+function scanDiscovery(texts, classNames) {
     const used = new Set();
     const protectedNames = new Map();
 
     for (const { file, text } of texts) {
         for (const match of text.matchAll(classToken)) used.add(match[0].replace(/^[[.]+/, ''));
+
+        // A declared variable that is also a class name keeps the class name: the rewriter
+        // replaces bare words, so `const collapse = ...` would be renamed while
+        // `collapse.classList` (one token, `collapse.classList`) stayed intact.
+        if (file.endsWith('.js')) {
+            for (const match of text.matchAll(/(?:\b(?:const|let|var)\s+|\bfunction\s+)([A-Za-z_$][\w$]*)/g)) {
+                if (classNames.has(match[1]) && !protectedNames.has(match[1])) {
+                    protectedNames.set(match[1], `declared variable in ${file}`);
+                }
+            }
+        }
 
         // Lowercase member access (`el.hidden`) would become a renamed property;
         // the same name as a method call (`AdminUI.badge(`) is unrelated.
@@ -430,7 +441,7 @@ const sourceFiles = rootDirs.flatMap(dir => walk(dir, []));
 const sources = sourceFiles.map(file => ({ file, text: fs.readFileSync(file, 'utf8') }));
 
 const classNames = new Set(bundles.flatMap(b => [...b.classes]));
-const { used, protectedNames } = scanDiscovery(sources);
+const { used, protectedNames } = scanDiscovery(sources, classNames);
 
 const dynamicPrefixes = [...protectedNames.keys()].filter(name => name.endsWith('*')).map(name => name.slice(0, -1));
 
