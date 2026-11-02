@@ -8,10 +8,11 @@
     <BottomItem Href="/groups" Label="@L["Nav_Groups"]" IconName="book" />
     <BottomItem Href="/exams" Label="@L["Nav_Exam"]" IconName="file" />
     <BottomItem Href="/homeworks" Label="@L["Nav_Homeworks"]" IconName="clipboard-check" />
+    <BottomItem Href="/notifications" Label="@L["Nav_Notifications"]" IconName="bell" />
     <button type="button" @onclick="() => _moreOpen = true"
-            class="flex min-w-16 flex-col items-center gap-1 text-[10px] font-semibold @(MoreActive ? "text-brand-671" : "text-sage-369")">
+            class="flex min-w-0 flex-1 flex-col items-center gap-1 text-center text-[10px] font-semibold @(MoreActive ? "text-brand-671" : "text-sage-369")">
         <Icon Name="sliders" Class="size-5" />
-        <span>@L["Nav_More"]</span>
+        <span class="w-full truncate">@L["Nav_More"]</span>
     </button>
 </nav>
 
