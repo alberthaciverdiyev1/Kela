@@ -149,6 +149,8 @@ public sealed class AppDbContext : DbContext
 
     public DbSet<Modules.Homework.Entities.HomeworkAssignmentFile> HomeworkAssignmentFiles => Set<Modules.Homework.Entities.HomeworkAssignmentFile>();
 
+    public DbSet<Modules.Sidebar.Entities.SidebarLabel> SidebarLabels => Set<Modules.Sidebar.Entities.SidebarLabel>();
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);

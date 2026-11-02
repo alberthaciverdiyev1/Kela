@@ -1,34 +1,66 @@
-// Edutor admin panel — layout: sidebar, menyular və sidebar badge-ləri.
+// Edutor admin panel — layout: sidebar, menyular və sidebar sayğacları.
 (function () {
-    // Gözləyən qoşulma müraciətləri — sidebar-dakı Qrup müraciətləri yanında qırmızı badge.
-    async function refreshGroupJoinBadge() {
+    // Hər sidebar bölməsi üçün sayğac, "yeni" zəngi və superadmin etiketi.
+    async function refreshSidebar() {
+        let data;
         try {
-            const res = await fetch('/group/join-request-count');
+            const res = await fetch('/sidebar/summary');
             if (!res.ok) return;
-            const data = await res.json();
-            const badge = document.getElementById('groupJoinBadge');
-            if (!badge) return;
-            badge.textContent = data.count;
-            badge.style.display = data.count > 0 ? 'inline-flex' : 'none';
-        } catch (e) { /* səssiz */ }
+            data = await res.json();
+        } catch (e) {
+            return;
+        }
+
+        const counts = data.counts || {};
+        const news = new Set(data.newKeys || []);
+        const labels = data.labels || {};
+
+        document.querySelectorAll('#sidebar [data-sidebar-key]').forEach(host => {
+            const key = host.getAttribute('data-sidebar-key');
+            const count = counts[key] ?? 0;
+            const isNew = news.has(key);
+
+            const countEl = host.querySelector('.sidebar-count');
+            if (countEl) {
+                countEl.textContent = count > 99 ? '99+' : String(count);
+                countEl.classList.toggle('hidden', count === 0);
+                countEl.classList.toggle('bg-danger', isNew);
+                countEl.classList.toggle('text-white', isNew);
+                countEl.classList.toggle('bg-slate-100', !isNew);
+                countEl.classList.toggle('text-slate-500', !isNew);
+            }
+
+            host.querySelector('.sidebar-new')?.classList.toggle('hidden', !isNew);
+
+            const labelEl = host.querySelector('.sidebar-label');
+            if (labelEl) {
+                const label = labels[key] || '';
+                labelEl.textContent = label;
+                labelEl.classList.toggle('hidden', !label);
+            }
+        });
     }
 
-    async function refreshTenantPendingBadge() {
-        const badge = document.getElementById('tenantPendingBadge');
-        if (!badge) return;
-        try {
-            const res = await fetch('/tenant/pending-count');
-            if (!res.ok) return;
-            const data = await res.json();
-            badge.textContent = data.count;
-            badge.style.display = data.count > 0 ? 'inline-flex' : 'none';
-        } catch (e) { /* səssiz */ }
+    // Bölməyə baxış qeyd olunur — növbəti yükləmədə "yeni" işarəsi düşür.
+    function markSeen(key) {
+        fetch('/sidebar/seen/' + encodeURIComponent(key), {
+            method: 'POST',
+            headers: { 'RequestVerificationToken': AdminUI.token() }
+        }).catch(() => { /* səssiz */ });
     }
 
-    window.refreshGroupJoinBadge = refreshGroupJoinBadge;
-    window.refreshTenantPendingBadge = refreshTenantPendingBadge;
-    refreshGroupJoinBadge();
-    refreshTenantPendingBadge();
+    document.addEventListener('click', e => {
+        const link = e.target.closest('#sidebar a[data-nav-key]');
+        if (link) markSeen(link.getAttribute('data-nav-key'));
+    });
+
+    // Köhnə çağırışlar (səhifələr müraciət edir) — artıq vahid yeniləməyə yönəlir.
+    window.refreshGroupJoinBadge = refreshSidebar;
+    window.refreshTenantPendingBadge = refreshSidebar;
+    refreshSidebar();
+    document.addEventListener('visibilitychange', () => {
+        if (document.visibilityState === 'visible') refreshSidebar();
+    });
 
     window.setLang = function (code) {
         document.cookie = ".AspNetCore.Culture=c=" + code + "|uic=" + code + ";path=/;max-age=31536000";

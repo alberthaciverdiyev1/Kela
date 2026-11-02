@@ -2906,6 +2906,43 @@ namespace Edutor.Core.Data.Migrations
                     b.ToTable("settings", (string)null);
                 });
 
+            modelBuilder.Entity("Edutor.Core.Modules.Sidebar.Entities.SidebarLabel", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint")
+                        .HasColumnName("id");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("boolean")
+                        .HasColumnName("is_active");
+
+                    b.Property<string>("Key")
+                        .IsRequired()
+                        .HasMaxLength(60)
+                        .HasColumnType("character varying(60)")
+                        .HasColumnName("key");
+
+                    b.Property<string>("Label")
+                        .IsRequired()
+                        .HasMaxLength(40)
+                        .HasColumnType("character varying(40)")
+                        .HasColumnName("label");
+
+                    b.Property<DateTimeOffset>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("updated_at");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Key")
+                        .IsUnique();
+
+                    b.ToTable("sidebar_labels", (string)null);
+                });
+
             modelBuilder.Entity("Edutor.Core.Modules.StudentNote.Entities.StudentNote", b =>
                 {
                     b.Property<long>("Id")
@@ -3808,6 +3845,12 @@ namespace Edutor.Core.Data.Migrations
                         .HasMaxLength(50)
                         .HasColumnType("character varying(50)")
                         .HasColumnName("phone_number");
+
+                    b.Property<string>("SidebarSeen")
+                        .IsRequired()
+                        .HasMaxLength(4000)
+                        .HasColumnType("character varying(4000)")
+                        .HasColumnName("sidebar_seen");
 
                     b.Property<string>("Surname")
                         .HasMaxLength(190)

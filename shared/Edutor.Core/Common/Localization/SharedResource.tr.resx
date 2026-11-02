@@ -2652,4 +2652,31 @@
   <data name="SubMgmt_DaysUnit" xml:space="preserve">
     <value>gün</value>
   </data>
+  <data name="Nav_SidebarLabels" xml:space="preserve">
+    <value>Menü etiketleri</value>
+  </data>
+  <data name="SidebarLabel_Title" xml:space="preserve">
+    <value>Menü etiketleri</value>
+  </data>
+  <data name="SidebarLabel_Intro" xml:space="preserve">
+    <value>Bir menü bölümü için etiket seçin — tüm tenantlar görür. Yeni özellikleri duyurmak için kullanılır.</value>
+  </data>
+  <data name="SidebarLabel_Menu" xml:space="preserve">
+    <value>Menü öğesi</value>
+  </data>
+  <data name="SidebarLabel_Label" xml:space="preserve">
+    <value>Etiket</value>
+  </data>
+  <data name="SidebarLabel_Active" xml:space="preserve">
+    <value>Göster</value>
+  </data>
+  <data name="SidebarLabel_Placeholder" xml:space="preserve">
+    <value>Örn. Yeni</value>
+  </data>
+  <data name="SidebarLabel_Hint" xml:space="preserve">
+    <value>Etiketi boş bırakırsanız veya «Göster»i kapatırsanız gizlenir.</value>
+  </data>
+  <data name="Sidebar_NewHint" xml:space="preserve">
+    <value>Yeni bilgi var</value>
+  </data>
 </root>

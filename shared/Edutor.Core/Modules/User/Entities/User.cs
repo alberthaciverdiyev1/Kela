@@ -18,6 +18,9 @@ public class User : BaseEntity
 
     /// <summary>İstifadəçinin sidebar-da gizlətdiyi menyu açarları.</summary>
     public List<string> HiddenSidebarItems { get; set; } = [];
+
+    /// <summary>Sidebar bölməsinə son baxış vaxtı (açar → UTC vaxt) — "yeni" işarəsi üçün.</summary>
+    public Dictionary<string, DateTimeOffset> SidebarSeen { get; set; } = [];
 }
 
 public static class UserTypes

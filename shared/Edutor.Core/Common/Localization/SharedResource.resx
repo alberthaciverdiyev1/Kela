@@ -2652,4 +2652,31 @@
   <data name="SubMgmt_DaysUnit" xml:space="preserve">
     <value>gün</value>
   </data>
+  <data name="Nav_SidebarLabels" xml:space="preserve">
+    <value>Menu labels</value>
+  </data>
+  <data name="SidebarLabel_Title" xml:space="preserve">
+    <value>Menu labels</value>
+  </data>
+  <data name="SidebarLabel_Intro" xml:space="preserve">
+    <value>Choose a label for a sidebar section — every tenant sees it. Use it to introduce new features.</value>
+  </data>
+  <data name="SidebarLabel_Menu" xml:space="preserve">
+    <value>Menu item</value>
+  </data>
+  <data name="SidebarLabel_Label" xml:space="preserve">
+    <value>Label</value>
+  </data>
+  <data name="SidebarLabel_Active" xml:space="preserve">
+    <value>Show</value>
+  </data>
+  <data name="SidebarLabel_Placeholder" xml:space="preserve">
+    <value>e.g. New</value>
+  </data>
+  <data name="SidebarLabel_Hint" xml:space="preserve">
+    <value>Leave the label empty or turn Show off to hide it.</value>
+  </data>
+  <data name="Sidebar_NewHint" xml:space="preserve">
+    <value>There is something new</value>
+  </data>
 </root>

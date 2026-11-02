@@ -2652,4 +2652,31 @@
   <data name="SubMgmt_DaysUnit" xml:space="preserve">
     <value>дн.</value>
   </data>
+  <data name="Nav_SidebarLabels" xml:space="preserve">
+    <value>Метки меню</value>
+  </data>
+  <data name="SidebarLabel_Title" xml:space="preserve">
+    <value>Метки меню</value>
+  </data>
+  <data name="SidebarLabel_Intro" xml:space="preserve">
+    <value>Выберите метку для раздела меню — её увидят все tenant-ы. Удобно для анонса новых функций.</value>
+  </data>
+  <data name="SidebarLabel_Menu" xml:space="preserve">
+    <value>Пункт меню</value>
+  </data>
+  <data name="SidebarLabel_Label" xml:space="preserve">
+    <value>Метка</value>
+  </data>
+  <data name="SidebarLabel_Active" xml:space="preserve">
+    <value>Показывать</value>
+  </data>
+  <data name="SidebarLabel_Placeholder" xml:space="preserve">
+    <value>Напр. Новое</value>
+  </data>
+  <data name="SidebarLabel_Hint" xml:space="preserve">
+    <value>Оставьте метку пустой или отключите «Показывать», чтобы скрыть её.</value>
+  </data>
+  <data name="Sidebar_NewHint" xml:space="preserve">
+    <value>Есть новое</value>
+  </data>
 </root>

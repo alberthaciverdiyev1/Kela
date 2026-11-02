@@ -40,6 +40,20 @@ public sealed class UserConfiguration : IEntityTypeConfiguration<User>
                     v => v.Aggregate(0, (hash, item) => HashCode.Combine(hash, item.GetHashCode())),
                     v => v.ToList()));
 
+        builder.Property(x => x.SidebarSeen)
+            .HasColumnName("sidebar_seen")
+            .HasMaxLength(4000)
+            .HasConversion(
+                v => JsonSerializer.Serialize(v, (JsonSerializerOptions?)null),
+                v => string.IsNullOrWhiteSpace(v)
+                    ? new Dictionary<string, DateTimeOffset>()
+                    : JsonSerializer.Deserialize<Dictionary<string, DateTimeOffset>>(v, (JsonSerializerOptions?)null)
+                      ?? new Dictionary<string, DateTimeOffset>(),
+                new ValueComparer<Dictionary<string, DateTimeOffset>>(
+                    (a, b) => a!.Count == b!.Count && !a.Except(b).Any(),
+                    v => v.Aggregate(0, (hash, item) => HashCode.Combine(hash, item.Key.GetHashCode(), item.Value.GetHashCode())),
+                    v => new Dictionary<string, DateTimeOffset>(v)));
+
         builder.Property(x => x.CreatedAt).HasColumnName("created_at");
         builder.Property(x => x.UpdatedAt).HasColumnName("updated_at");
         builder.Property(x => x.DeletedAt).HasColumnName("deleted_at");

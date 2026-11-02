@@ -1,0 +1,55 @@
+@model IReadOnlyList<Edutor.Core.Modules.Sidebar.SidebarKeys.Item>
+@{
+    ViewData["Title"] = L["SidebarLabel_Title"];
+    var labels = ViewData["Labels"] as IReadOnlyList<Edutor.Core.Modules.Sidebar.Responses.SidebarLabelResponse>
+                 ?? new List<Edutor.Core.Modules.Sidebar.Responses.SidebarLabelResponse>();
+}
+<section class="admin-page space-y-4">
+    <partial name="Ui/_PageHeader" model="@(new PageHeaderModel())" />
+
+    <div class="admin-card p-5 sm:p-6">
+        <p class="max-w-3xl text-sm text-slate-500">@L["SidebarLabel_Intro"]</p>
+
+        <div class="mt-5 overflow-x-auto">
+            <table class="admin-table">
+                <thead>
+                <tr>
+                    <th>@L["SidebarLabel_Menu"]</th>
+                    <th>@L["SidebarLabel_Label"]</th>
+                    <th class="w-24">@L["SidebarLabel_Active"]</th>
+                    <th class="w-28 text-right"></th>
+                </tr>
+                </thead>
+                <tbody>
+                @foreach (var item in Model)
+                {
+                    var current = labels.FirstOrDefault(x => x.Key == item.Key);
+                    var name = item.LabelKey is null ? item.Name : L[item.LabelKey].Value;
+                    <tr data-sidebar-label-key="@item.Key">
+                        <td class="font-semibold text-slate-700">@name</td>
+                        <td>
+                            <input type="text" maxlength="40" data-label-input list="sidebarLabelOptions"
+                                   value="@current?.Label" placeholder="@L["SidebarLabel_Placeholder"]"
+                                   class="admin-field w-full max-w-xs" />
+                        </td>
+                        <td>
+                            <input type="checkbox" data-label-active class="h-4 w-4 rounded border-slate-300 text-primary focus:ring-primary"
+                                   checked="@(current is null || current.IsActive)" />
+                        </td>
+                        <td class="text-right">
+                            <button type="button" data-save class="admin-button-primary">@L["Common_Save"]</button>
+                        </td>
+                    </tr>
+                }
+                </tbody>
+            </table>
+        </div>
+
+        <p class="mt-3 text-xs text-slate-400">@L["SidebarLabel_Hint"]</p>
+        <datalist id="sidebarLabelOptions">
+            <option value="Yeni"></option>
+            <option value="Beta"></option>
+            <option value="Tezlikdə"></option>
+        </datalist>
+    </div>
+</section>

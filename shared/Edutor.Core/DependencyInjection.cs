@@ -115,6 +115,7 @@ public static class DependencyInjection
         services.AddScoped<IPrivacyPolicyService, PrivacyPolicyService>();
         services.AddScoped<ITenantService, TenantService>();        services.AddScoped<IDashboardService, DashboardService>();
         services.AddScoped<IStudentManagementService, StudentManagementService>();
+        services.AddScoped<Edutor.Core.Modules.Sidebar.Abstractions.ISidebarService, Edutor.Core.Modules.Sidebar.Services.SidebarService>();
         services.AddScoped<Edutor.Core.Modules.Payments.Abstractions.IStudentPaymentService, Edutor.Core.Modules.Payments.Services.StudentPaymentService>();
         services.AddScoped<Edutor.Core.Modules.Payments.Abstractions.ICashboxService, Edutor.Core.Modules.Payments.Services.CashboxService>();
 
