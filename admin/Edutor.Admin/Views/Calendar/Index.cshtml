@@ -6,18 +6,79 @@
         System.Globalization.CultureInfo.CurrentUICulture.Name));
 </script>
 <section class="admin-page">
-    <partial name="Ui/_PageHeader" model="@(new PageHeaderModel())" />
+    <div class="admin-card flex flex-col overflow-hidden" style="height: calc(100vh - 150px); min-height: 520px">
+        <div class="flex flex-wrap items-center gap-2 border-b border-border px-4 py-3">
+            <button type="button" id="calToday" class="admin-button admin-button-secondary h-9">@L["Calendar_Today"]</button>
+            <div class="flex items-center">
+                <button type="button" id="calPrev" class="rounded-lg p-2 text-slate-500 hover:bg-slate-100" aria-label="previous">‹</button>
+                <button type="button" id="calNext" class="rounded-lg p-2 text-slate-500 hover:bg-slate-100" aria-label="next">›</button>
+            </div>
+            <p id="calLabel" class="text-lg font-bold text-slate-800"></p>
 
-    <div class="grid gap-4 lg:grid-cols-[minmax(0,420px)_minmax(0,1fr)] lg:items-start">
-        <div class="admin-card p-5">
-            <div id="calendar"></div>
-            <p id="monthSummary" class="mt-3 text-center text-sm text-slate-500"></p>
-            <div class="mt-4 flex flex-wrap items-center justify-center gap-4 text-xs text-slate-500">
-                <span class="flex items-center gap-1.5"><i class="cal-dot cal-note"></i>@L["Calendar_Note"]</span>
-                <span class="flex items-center gap-1.5"><i class="cal-dot cal-homework"></i>@L["Calendar_Homework"]</span>
+            <div class="ml-auto flex items-center gap-2">
+                <div id="calViews" class="flex overflow-hidden rounded-xl border border-border">
+                    <button type="button" data-view="month" class="cal-view-btn px-3 py-1.5 text-sm font-semibold">@L["Calendar_Month"]</button>
+                    <button type="button" data-view="week" class="cal-view-btn border-l border-border px-3 py-1.5 text-sm font-semibold">@L["Calendar_Week"]</button>
+                    <button type="button" data-view="day" class="cal-view-btn border-l border-border px-3 py-1.5 text-sm font-semibold">@L["Calendar_Day"]</button>
+                </div>
+                <button type="button" id="calNew" class="admin-button admin-button-primary h-9">@L["Calendar_NewEvent"]</button>
             </div>
         </div>
 
-        <div id="dayPanel" class="admin-card admin-empty p-5">@L["Calendar_SelectDay"]</div>
+        <div class="flex flex-wrap items-center gap-4 border-b border-border px-4 py-1.5 text-[11px] font-semibold text-slate-500">
+            <span class="flex items-center gap-1.5"><i class="h-2.5 w-2.5 rounded-full" style="background:#27815e"></i>@L["Calendar_Event"]</span>
+            <span class="flex items-center gap-1.5"><i class="h-2.5 w-2.5 rounded-full" style="background:#f59e0b"></i>@L["Calendar_Homework"]</span>
+            <span id="calRange" class="ml-auto"></span>
+        </div>
+
+        <div id="calendarGrid" class="min-h-0 flex-1 overflow-auto"></div>
     </div>
 </section>
+
+<div id="eventModal" data-modal class="fixed inset-0 z-50 hidden items-center justify-center bg-slate-950/60 p-4">
+    <div data-modal-panel class="flex max-h-[90vh] w-full max-w-lg flex-col rounded-2xl bg-white shadow-2xl">
+        <div class="flex items-center justify-between border-b border-border p-5">
+            <h3 id="eventModalTitle" class="text-lg font-bold text-slate-900">@L["Calendar_NewEvent"]</h3>
+            <button type="button" data-modal-close aria-label="@L["Common_Close"]"
+                    class="grid h-9 w-9 place-items-center rounded-lg border border-danger/25 bg-danger-bg text-danger transition hover:bg-danger hover:text-white">✕</button>
+        </div>
+
+        <div class="min-h-0 flex-1 overflow-y-auto">
+            <form id="eventForm" class="space-y-4 p-6">
+                <input type="hidden" id="eventId" />
+
+                <div id="eventError" class="hidden rounded-xl bg-danger-bg px-3 py-2 text-sm font-semibold text-danger"></div>
+
+                <partial name="Ui/_Input" model="@(new InputModel { Name = "title", Id = "eventTitle", Label = L["Calendar_Title"], Required = true, Placeholder = L["Calendar_Title"] })" />
+
+                <div>
+                    <label for="eventDescription" class="mb-1 block text-sm font-semibold text-slate-600">@L["Calendar_Description"]</label>
+                    <textarea id="eventDescription" rows="3" maxlength="2000" class="admin-field"
+                              placeholder="@L["Calendar_Description"]"></textarea>
+                </div>
+
+                <div class="grid grid-cols-1 gap-3 sm:grid-cols-3">
+                    <partial name="Ui/_Input" model="@(new InputModel { Name = "date", Id = "eventDate", Label = L["Common_Date"], Type = "date", Required = true })" />
+                    <partial name="Ui/_Input" model="@(new InputModel { Name = "start", Id = "eventStart", Label = L["Calendar_Start"], Type = "time", Required = true })" />
+                    <partial name="Ui/_Input" model="@(new InputModel { Name = "end", Id = "eventEnd", Label = L["Calendar_End"], Type = "time", Required = true })" />
+                </div>
+
+                <div>
+                    <span class="mb-1 block text-sm font-semibold text-slate-600">@L["Calendar_Color"]</span>
+                    <div id="eventPalette" class="flex flex-wrap items-center gap-1.5"></div>
+                </div>
+
+                <div class="flex items-center justify-between pt-2">
+                    <button type="button" id="eventDelete" class="hidden text-sm font-bold text-danger hover:underline"
+                            data-action="Calendar.deleteEvent">@L["Common_Delete"]</button>
+                    <div class="ml-auto flex justify-end gap-3">
+                        <button type="button" class="admin-button admin-button-secondary" data-modal-close>@L["Common_Cancel"]</button>
+                        <button type="submit" class="admin-button admin-button-primary">@L["Common_Save"]</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<form id="antiforgery">@Html.AntiForgeryToken()</form>
