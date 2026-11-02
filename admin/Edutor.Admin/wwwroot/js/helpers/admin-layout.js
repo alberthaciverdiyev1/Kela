@@ -12,31 +12,33 @@
         }
 
         const counts = data.counts || {};
-        const news = new Set(data.newKeys || []);
+        const alerts = new Set(data.alertKeys || []);
         const labels = data.labels || {};
 
         document.querySelectorAll('#sidebar [data-sidebar-key]').forEach(host => {
             const key = host.getAttribute('data-sidebar-key');
             const count = counts[key] ?? 0;
-            const isNew = news.has(key);
+            const isAlert = alerts.has(key) && count > 0;
 
+            // Sadə sayğac: mətnin yanında boz etiket.
             const countEl = host.querySelector('.sidebar-count');
             if (countEl) {
                 countEl.textContent = count > 99 ? '99+' : String(count);
-                countEl.classList.toggle('hidden', count === 0);
-                countEl.classList.toggle('bg-danger', isNew);
-                countEl.classList.toggle('text-white', isNew);
-                countEl.classList.toggle('bg-slate-100', !isNew);
-                countEl.classList.toggle('text-slate-500', !isNew);
+                countEl.classList.toggle('hidden', count === 0 || isAlert);
             }
 
-            host.querySelector('.sidebar-new')?.classList.toggle('hidden', !isNew);
+            // Müraciət/mesaj/bildiriş: zəng işarəsi + qırmızı sayğac.
+            host.querySelector('.sidebar-new')?.classList.toggle('hidden', !isAlert);
+            const alertEl = host.querySelector('.sidebar-alert-count');
+            if (alertEl) {
+                alertEl.textContent = count > 99 ? '99+' : String(count);
+                alertEl.classList.toggle('hidden', !isAlert);
+            }
 
             const labelEl = host.querySelector('.sidebar-label');
             if (labelEl) {
-                const label = labels[key] || '';
-                labelEl.textContent = label;
-                labelEl.classList.toggle('hidden', !label);
+                labelEl.textContent = labels[key] || '';
+                labelEl.classList.toggle('hidden', !labels[key]);
             }
         });
     }

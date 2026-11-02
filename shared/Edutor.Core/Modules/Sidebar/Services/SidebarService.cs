@@ -17,6 +17,9 @@ public sealed class SidebarService(AppDbContext db) : ISidebarService
     // Heç vaxt baxılmamış bölmələr üçün "yeni" pəncərəsi — ilk yükləmədə hər şey işarələnməsin.
     private static readonly TimeSpan UnseenWindow = TimeSpan.FromDays(7);
 
+    // Müraciət/mesaj/bildiriş kimi bölmələr: sayğac zəng + qırmızı nişan kimi göstərilir.
+    private static readonly string[] AlertKeys = ["group-request", "addon-request", "tenant", "feedback", "notification"];
+
     public async Task<SidebarSummaryResponse> GetSummaryAsync(long userId, CancellationToken ct = default)
     {
         var seen = userId > 0
@@ -27,6 +30,7 @@ public sealed class SidebarService(AppDbContext db) : ISidebarService
             : [];
 
         var response = new SidebarSummaryResponse();
+        response.AlertKeys.AddRange(AlertKeys);
 
         async Task CountWithNewAsync<T>(string key, IQueryable<T> query) where T : BaseEntity
         {
@@ -54,6 +58,8 @@ public sealed class SidebarService(AppDbContext db) : ISidebarService
         var plans = await db.SubscriptionPlans.AsNoTracking().CountAsync(ct);
         response.Counts["plan"] = plans;
         response.Counts["plan-catalog"] = plans;
+
+        response.Counts["notification"] = await db.Notifications.AsNoTracking().CountAsync(ct);
 
         var pendingJoins = await db.GroupJoinRequests.AsNoTracking()
             .CountAsync(x => x.Status == GroupJoinStatus.Pending, ct);
