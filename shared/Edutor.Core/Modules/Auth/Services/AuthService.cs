@@ -203,9 +203,25 @@ public sealed class AuthService(
     public async Task<StudentResponse> ChangeImageAsync(long studentId, IFormFile file, CancellationToken ct = default)
     {
         var student = await GetStudentAsync(studentId, ct);
-        var path = await storage.UploadAsync(file, "student", ct);
+
+        // Hər yükləməyə unikal ad: eyni ad eyni URL-i qaytarır və brauzer köhnə
+        // şəkli keşdən göstərir — istifadəçi dəyişikliyi görmür.
+        var name = $"avatar-{DateTimeOffset.UtcNow.ToUnixTimeMilliseconds()}{Path.GetExtension(file.FileName)}";
+        await using var stream = file.OpenReadStream();
+        var copy = new FormFile(stream, 0, file.Length, file.Name, name)
+        {
+            Headers = file.Headers,
+            ContentType = file.ContentType
+        };
+
+        var previous = student.Image;
+        var path = await storage.UploadAsync(copy, "student", ct);
+
         student.Image = path;
         await db.SaveChangesAsync(ct);
+
+        if (!string.IsNullOrWhiteSpace(previous)) await storage.DeleteAsync(previous, ct);
+
         return ToResponse(student);
     }
 

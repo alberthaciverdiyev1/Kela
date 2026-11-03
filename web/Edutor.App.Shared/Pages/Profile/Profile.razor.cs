@@ -42,6 +42,8 @@ public partial class Profile
     private string? _phoneError;
     private string? _nameError;
     private string? _passwordError;
+    private string? _imageError;
+    private string? _imageSaved;
     private List<PrivacyPolicyDto> _privacy = new();
     private List<SavedAccount> _accounts = new();
     private bool _accountBusy;
@@ -75,16 +77,75 @@ public partial class Profile
         var file = e.File;
         if (file is null) return;
 
+        _imageError = null;
+        _imageSaved = null;
         _imageBusy = true;
+
         try
         {
-            await using var stream = file.OpenReadStream(maxAllowedSize: 5_000_000);
-            var user = await Api.ChangeImageAsync(stream, file.Name, file.ContentType);
+            // Orijinal şəkil yaddaşa alınır və kırpma brauzerdə aparılır; yüklənən
+            // nəticə 512×512 JPEG-dir — böyük telefon fotoları da limitsiz keçir.
+            using var source = new MemoryStream();
+            await using (var read = file.OpenReadStream(maxAllowedSize: 20_000_000))
+            {
+                await read.CopyToAsync(source);
+            }
+
+            var contentType = string.IsNullOrWhiteSpace(file.ContentType) ? "image/jpeg" : file.ContentType;
+            var dataUrl = $"data:{contentType};base64,{Convert.ToBase64String(source.ToArray())}";
+
+            CropResult? cropped = null;
+            var cropUnavailable = false;
+
+            try
+            {
+                cropped = await JS.InvokeAsync<CropResult?>("edutorPhotoCrop.open", dataUrl, new
+                {
+                    title = L["PhotoCrop_Title"],
+                    hint = L["PhotoCrop_Hint"],
+                    zoom = L["PhotoCrop_Zoom"],
+                    cancel = L["Common_Cancel"],
+                    save = L["Common_Save"]
+                });
+            }
+            catch
+            {
+                // Kırpma modulu yüklənməyibsə şəkil olduğu kimi göndərilir.
+                cropUnavailable = true;
+            }
+
+            if (cropped is null && !cropUnavailable) return; // istifadəçi ləğv etdi
+
+            byte[] bytes;
+            string fileName, uploadType;
+
+            if (cropped is not null)
+            {
+                var comma = cropped.DataUrl.IndexOf(',');
+                bytes = Convert.FromBase64String(comma >= 0 ? cropped.DataUrl[(comma + 1)..] : cropped.DataUrl);
+                fileName = "avatar.jpg";
+                uploadType = cropped.ContentType;
+            }
+            else
+            {
+                bytes = source.ToArray();
+                fileName = file.Name;
+                uploadType = contentType;
+            }
+
+            using var upload = new MemoryStream(bytes);
+            var user = await Api.ChangeImageAsync(upload, fileName, uploadType);
             Auth.SetUser(user);
+            _imageSaved = L["Profile_ImageUpdated"];
         }
-        catch { /* səssiz */ }
+        catch
+        {
+            _imageError = L["Profile_ImageFailed"];
+        }
         finally { _imageBusy = false; }
     }
+
+    private sealed record CropResult(string DataUrl, string ContentType);
 
     private void OpenPhone()
     {

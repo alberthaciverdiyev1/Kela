@@ -6,6 +6,7 @@
 @inject TokenStore Store
 @inject ApiClient ApiClient
 @inject PushTokenService Push
+@inject IJSRuntime JS
 
 <PageTitle>@L["Nav_Profile"]</PageTitle>
 
@@ -41,7 +42,13 @@
             {
                 <div class="flex size-[82px] items-center justify-center rounded-full bg-brand-103 text-3xl font-black text-brand-835">@(Auth.User?.Initial ?? "L")</div>
             }
-            <label class="absolute -bottom-1 -right-1 flex size-7 cursor-pointer items-center justify-center rounded-full bg-brand-743 text-white ring-4 ring-brand-022" aria-label="@L["Profile_ChangePhoto"]">
+            @if (_imageBusy)
+            {
+                <div class="absolute inset-0 flex items-center justify-center rounded-full bg-black/45">
+                    <span class="size-6 animate-spin rounded-full border-2 border-white/40 border-t-white"></span>
+                </div>
+            }
+            <label class="absolute -bottom-1 -right-1 flex size-7 cursor-pointer items-center justify-center rounded-full bg-brand-743 text-white ring-4 ring-brand-022 @(_imageBusy ? "pointer-events-none" : null)" aria-label="@L["Profile_ChangePhoto"]">
                 <Icon Name="edit" Class="size-3" />
                 <InputFile OnChange="OnImageSelected" accept="image/*" class="hidden" />
             </label>
@@ -52,6 +59,18 @@
             @if (!string.IsNullOrWhiteSpace(Auth.User?.Phone))
             {
                 <p class="mt-3 text-[11px] font-medium text-sage-355">@Auth.User!.Phone</p>
+            }
+            @if (_imageBusy)
+            {
+                <p class="mt-2 text-[11px] font-semibold text-sage-459">@L["Profile_ImageUploading"]</p>
+            }
+            else if (!string.IsNullOrEmpty(_imageError))
+            {
+                <p class="mt-2 text-[11px] font-semibold text-danger-539">@_imageError</p>
+            }
+            else if (!string.IsNullOrEmpty(_imageSaved))
+            {
+                <p class="mt-2 text-[11px] font-semibold text-brand-671">@_imageSaved</p>
             }
         </div>
     </div>
@@ -145,7 +164,7 @@
 
 <Modal Open="_phoneOpen" Title="@L["Profile_ChangePhone"]" OnClose="() => _phoneOpen = false">
     <input @bind="_phone" placeholder="+994..." class="w-full rounded-xl border border-brand-104 bg-brand-024 px-4 py-3 text-sm outline-none focus:border-brand-467" />
-    @if (_imageBusy) { <p class="mt-2 text-xs text-sage-410">@L["Profile_ImageUploading"]</p> } { <p class="mt-2 text-xs font-semibold text-danger-539">@_phoneError</p> }
+    @if (!string.IsNullOrEmpty(_phoneError)) { <p class="mt-2 text-xs font-semibold text-danger-539">@_phoneError</p> }
     <button type="button" @onclick="SavePhoneAsync" disabled="@_busy" class="mt-4 w-full rounded-xl bg-brand-671 py-3 text-sm font-bold text-white disabled:opacity-60">@L["Common_Save"]</button>
 </Modal>
 
