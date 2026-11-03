@@ -6,6 +6,7 @@ using Edutor.Core.Modules.User.Abstractions;
 using Edutor.Core.Modules.User.Requests;
 using Microsoft.AspNetCore.Mvc;
 using Edutor.Admin.Infrastructure;
+using Edutor.Admin.Models.Ui;
 
 namespace Edutor.Admin.Controllers;
 
@@ -13,6 +14,7 @@ namespace Edutor.Admin.Controllers;
 public sealed class SubjectController(
     ISubjectService service,
     IUserService users,
+    Edutor.Core.Modules.Group.Abstractions.IGroupService groups,
     IValidator<SubjectUpsertRequest> validator) : AdminControllerBase
 {
     [HttpGet]
@@ -27,6 +29,18 @@ public sealed class SubjectController(
             Type = Edutor.Core.Modules.User.Entities.UserTypes.Teacher
         }, ct);
         ViewData["MultipleTeachers"] = staff.Total > 1;
+
+        // Fənn yaradılarkən qrupa əlavə etmək üçün seçim (könüllü).
+        var groupPage = await groups.ListAsync(new Edutor.Core.Modules.Group.Requests.GroupListRequest
+        {
+            PerPage = 500,
+            UserId = User.IsAdmin() ? null : User.CurrentUserId(),
+            SortBy = "name",
+            SortDir = "asc"
+        }, ct);
+        ViewData["Groups"] = groupPage.Data
+            .Select(g => new SelectOption { Value = g.Id.ToString(), Text = g.Name })
+            .ToList();
 
         return View();
     }

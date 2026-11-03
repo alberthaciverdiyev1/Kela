@@ -3606,4 +3606,16 @@
   <data name="Table_Reset" xml:space="preserve">
     <value>Reset</value>
   </data>
+  <data name="Subject_Group" xml:space="preserve">
+    <value>Group</value>
+  </data>
+  <data name="Subject_NewGroup" xml:space="preserve">
+    <value>Create a new group</value>
+  </data>
+  <data name="Subject_NewGroupName" xml:space="preserve">
+    <value>New group name</value>
+  </data>
+  <data name="Subject_NewGroupPlaceholder" xml:space="preserve">
+    <value>Group name</value>
+  </data>
 </root>

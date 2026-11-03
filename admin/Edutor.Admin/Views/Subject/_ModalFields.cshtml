@@ -1,3 +1,9 @@
+@{
+    var groupOptions = new List<SelectOption> { new() { Value = "", Text = L["Common_None"] } };
+    groupOptions.AddRange((List<SelectOption>)ViewData["Groups"]!);
+    groupOptions.Add(new() { Value = "new", Text = L["Subject_NewGroup"] });
+}
+
 <form id="entityForm" class="space-y-4 p-6">
     <input type="hidden" id="entityId" />
     <partial name="Ui/_Input" model="@(new InputModel { Name = "name", Id = "name", Label = L["Common_Name"], Required = true })" />
@@ -5,6 +11,10 @@
     {
         <partial name="Ui/_Switch" model="@(new SwitchModel { Name = "is_shared", Id = "is_shared", Label = L["Subject_Shared"], Checked = false })" />
     }
+    <partial name="Ui/_Select" model="@(new SelectModel { Name = "group_id", Id = "group_id", Label = L["Subject_Group"], Options = groupOptions })" />
+    <div id="newGroupField" class="hidden">
+        <partial name="Ui/_Input" model="@(new InputModel { Name = "new_group_name", Id = "new_group_name", Label = L["Subject_NewGroupName"], Placeholder = L["Subject_NewGroupPlaceholder"] })" />
+    </div>
     <div class="flex justify-end gap-3 pt-2">
         <partial name="Ui/_Button" model="@(new ButtonModel { Text = L["Common_Cancel"], Variant = "secondary", Dismiss = true })" />
         <partial name="Ui/_Button" model="@(new ButtonModel { Text = L["Common_Save"], Type = "submit" })" />

@@ -16,7 +16,8 @@ using Edutor.Core.Common.Authorization;
 
 public sealed class SubjectService(
     AppDbContext db,
-    Edutor.Core.Modules.Subscription.Abstractions.ISubscriptionService subscription) : ISubjectService
+    Edutor.Core.Modules.Subscription.Abstractions.ISubscriptionService subscription,
+    Edutor.Core.Modules.Group.Abstractions.IGroupService groups) : ISubjectService
 {
     public async Task<PagedResponse<SubjectResponse>> ListAsync(SubjectListRequest request, CancellationToken ct = default)
     {
@@ -66,7 +67,33 @@ public sealed class SubjectService(
         db.Subjects.Add(category);
         await db.SaveChangesAsync(ct);
 
+        await AttachToGroupAsync(category, request, ct);
+
         return ToResponse(category);
+    }
+
+    // Fənn yaradılarkən istifadəçi mövcud qrupu seçə və ya ad verib yeni qrup yarada bilər.
+    private async Task AttachToGroupAsync(Subject subject, SubjectUpsertRequest request, CancellationToken ct)
+    {
+        long? groupId = request.GroupId;
+
+        if (!string.IsNullOrWhiteSpace(request.NewGroupName))
+        {
+            var group = await groups.CreateAsync(new Edutor.Core.Modules.Group.Requests.GroupUpsertRequest
+            {
+                Name = request.NewGroupName.Trim(),
+                UserId = request.UserId
+            }, ct);
+            groupId = group.Id;
+        }
+
+        if (groupId is not long id) return;
+
+        await groups.AssignSubjectsAsync(id, new Edutor.Core.Modules.Group.Requests.AssignSubjectsRequest
+        {
+            SubjectIds = [subject.Id],
+            LessonIds = []
+        }, request.UserId, ct);
     }
 
     public async Task<SubjectResponse> UpdateAsync(long id, SubjectUpsertRequest request, long? ownerId = null, CancellationToken ct = default)

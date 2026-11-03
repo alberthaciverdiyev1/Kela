@@ -3606,4 +3606,16 @@
   <data name="Table_Reset" xml:space="preserve">
     <value>Сбросить</value>
   </data>
+  <data name="Subject_Group" xml:space="preserve">
+    <value>Группа</value>
+  </data>
+  <data name="Subject_NewGroup" xml:space="preserve">
+    <value>Создать новую группу</value>
+  </data>
+  <data name="Subject_NewGroupName" xml:space="preserve">
+    <value>Название новой группы</value>
+  </data>
+  <data name="Subject_NewGroupPlaceholder" xml:space="preserve">
+    <value>Название группы</value>
+  </data>
 </root>

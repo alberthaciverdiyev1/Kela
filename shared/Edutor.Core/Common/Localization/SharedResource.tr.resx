@@ -3606,4 +3606,16 @@
   <data name="Table_Reset" xml:space="preserve">
     <value>Sıfırla</value>
   </data>
+  <data name="Subject_Group" xml:space="preserve">
+    <value>Grup</value>
+  </data>
+  <data name="Subject_NewGroup" xml:space="preserve">
+    <value>Yeni grup oluştur</value>
+  </data>
+  <data name="Subject_NewGroupName" xml:space="preserve">
+    <value>Yeni grubun adı</value>
+  </data>
+  <data name="Subject_NewGroupPlaceholder" xml:space="preserve">
+    <value>Grup adı</value>
+  </data>
 </root>
