@@ -28,6 +28,55 @@
 
     document.getElementById('subject_filter').addEventListener('change', () => window.filterQuizLessons(''));
 
+    // Yaratma modalında dərs seçiləndə həmin fənnin sual və qrupları təklif olunur.
+    const extrasBox = document.getElementById('createExtras');
+    const questionListBox = document.getElementById('createQuestionList');
+    const groupListBox = document.getElementById('createGroupList');
+
+    // Dərs sürətlə dəyişərsə köhnə cavab yeni siyahının üstünə yazılmasın.
+    let extrasToken = 0;
+
+    function renderChecks(box, items, labelOf) {
+        box.innerHTML = items.length
+            ? items.map(o => `<label class="flex cursor-pointer items-center gap-2 rounded px-1 py-0.5 hover:bg-slate-50">
+                    <input type="checkbox" value="${o.id}" class="h-4 w-4 rounded border-slate-300 text-primary focus:ring-primary" />
+                    <span class="truncate text-sm text-slate-600">${AdminUI.escapeHtml(labelOf(o))}</span>
+                </label>`).join('')
+            : `<div class="text-sm text-slate-400">${AdminUI.escapeHtml(L["Js_Empty"])}</div>`;
+    }
+
+    function checkedIds(box) {
+        return [...box.querySelectorAll('input[type=checkbox]:checked')].map(i => Number(i.value));
+    }
+
+    async function loadCreateExtras() {
+        const lessonId = lessonSelect.value;
+        const token = ++extrasToken;
+
+        if (!lessonId) {
+            extrasBox.classList.add('hidden');
+            questionListBox.innerHTML = '';
+            groupListBox.innerHTML = '';
+            return;
+        }
+
+        extrasBox.classList.remove('hidden');
+        const subjectId = (window.LESSON_SUBJECTS || {})[lessonId] ?? '';
+
+        const [questions, groups] = await Promise.all([
+            AdminUI.get('/quiz/options?lesson_id=' + encodeURIComponent(lessonId)),
+            AdminUI.get('/quiz/group-options?subject_id=' + encodeURIComponent(subjectId))
+        ]);
+        if (token !== extrasToken) return;
+
+        renderChecks(questionListBox, questions, q => q.text);
+        renderChecks(groupListBox, groups, g => g.name);
+    }
+
+    lessonSelect.addEventListener('change', () => {
+        if (!document.getElementById('entityId').value) loadCreateExtras();
+    });
+
     window.buildQuizForm = function () {
         const fd = new FormData();
         fd.append('lesson_id', document.getElementById('lesson_id').value);
@@ -52,6 +101,10 @@
         document.getElementById('type').value = 'lesson';
         document.getElementById('is_active').checked = true;
         document.getElementById('is_repeat').checked = false;
+        extrasToken++;
+        extrasBox.classList.add('hidden');
+        questionListBox.innerHTML = '';
+        groupListBox.innerHTML = '';
         AdminUI.openModal('modal');
     };
 
@@ -60,7 +113,26 @@
         if (document.getElementById('entityId').value) return; // update.js
 
         const res = await AdminUI.postForm('/quiz', window.buildQuizForm());
-        if (res.ok) { AdminUI.notify(L["Js_Added"]); AdminUI.closeModal('modal'); loadList(1); return; }
+        if (res.ok) {
+            const quizId = res.data?.id;
+            const questionIds = checkedIds(questionListBox);
+            const groupIds = checkedIds(groupListBox);
+
+            // İmtahan yaradıldıqdan sonra seçilmiş sual/qruplar bağlanır; uğursuzluq
+            // imtahanın özünü ləğv etmir — istifadəçi onları sonra da əlavə edə bilər.
+            if (quizId && questionIds.length) {
+                await AdminUI.postJson(`/quiz/${quizId}/questions`, { questionIds });
+            }
+            if (quizId && groupIds.length) {
+                const link = await AdminUI.postJson(`/quiz/${quizId}/groups`, { groupIds });
+                if (!link.ok) AdminUI.error(AdminUI.errText(link));
+            }
+
+            AdminUI.notify(L["Js_Added"]);
+            AdminUI.closeModal('modal');
+            loadList(1);
+            return;
+        }
 
         errBox.textContent = AdminUI.errText(res);
         errBox.classList.remove('hidden');

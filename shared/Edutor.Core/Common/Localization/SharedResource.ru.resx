@@ -3618,4 +3618,10 @@
   <data name="Subject_NewGroupPlaceholder" xml:space="preserve">
     <value>Название группы</value>
   </data>
+  <data name="Quiz_QuestionsHint" xml:space="preserve">
+    <value>Вопросы отфильтрованы по предмету урока. Выбор необязателен — их можно добавить позже.</value>
+  </data>
+  <data name="Quiz_GroupsHint" xml:space="preserve">
+    <value>Показаны только группы с предметом экзамена. Выбор необязателен.</value>
+  </data>
 </root>

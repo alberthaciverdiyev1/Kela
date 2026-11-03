@@ -3618,4 +3618,10 @@
   <data name="Subject_NewGroupPlaceholder" xml:space="preserve">
     <value>Group name</value>
   </data>
+  <data name="Quiz_QuestionsHint" xml:space="preserve">
+    <value>Questions are filtered by the lesson subject. Selection is optional — you can add them later.</value>
+  </data>
+  <data name="Quiz_GroupsHint" xml:space="preserve">
+    <value>Only groups that have the exam subject are listed. Selection is optional.</value>
+  </data>
 </root>

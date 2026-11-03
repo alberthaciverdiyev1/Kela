@@ -193,6 +193,12 @@ public sealed class QuizService(AppDbContext db, IFileStorage storage) : IQuizSe
         await EnsureQuizAccessibleAsync(quizId, ownerId, ct);
         var subjectId = await QuizSubjectIdAsync(quizId, ct);
 
+        return await ListGroupOptionsBySubjectAsync(subjectId, ownerId, ct);
+    }
+
+    public async Task<IReadOnlyList<QuizGroupResponse>> ListGroupOptionsBySubjectAsync(
+        long? subjectId, long? ownerId = null, CancellationToken ct = default)
+    {
         var query = db.Groups.AsNoTracking();
 
         if (ownerId is long id) query = query.Where(x => x.UserId == id);

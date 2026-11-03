@@ -3618,4 +3618,10 @@
   <data name="Subject_NewGroupPlaceholder" xml:space="preserve">
     <value>Qrup adı</value>
   </data>
+  <data name="Quiz_QuestionsHint" xml:space="preserve">
+    <value>Suallar dərsin fənninə görə süzülür. Seçim könüllüdür — sonra da əlavə etmək olar.</value>
+  </data>
+  <data name="Quiz_GroupsHint" xml:space="preserve">
+    <value>Yalnız imtahanın fənnini tədris edən qruplar göstərilir. Seçim könüllüdür.</value>
+  </data>
 </root>

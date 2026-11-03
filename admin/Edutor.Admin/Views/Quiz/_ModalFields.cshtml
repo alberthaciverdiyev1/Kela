@@ -29,6 +29,21 @@
         <partial name="Ui/_Switch" model="@(new SwitchModel { Name = "is_active", Id = "is_active", Label = L["Common_Active"], Checked = true })" />
         <partial name="Ui/_Switch" model="@(new SwitchModel { Name = "is_repeat", Id = "is_repeat", Label = L["Quiz_Repeat"], Checked = false })" />
     </div>
+    @* Yaratma zamanı sual və qrup seçimi — dərs seçiləndə JS yükləyir. *@
+    <div id="createExtras" class="hidden space-y-4">
+        <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+            <div>
+                <label class="mb-1 block text-sm font-medium text-slate-700">@L["Common_Questions"]</label>
+                <div id="createQuestionList" class="max-h-44 space-y-1 overflow-y-auto rounded-lg border border-slate-200 p-2"></div>
+                <p class="mt-1 text-xs text-slate-400">@L["Quiz_QuestionsHint"]</p>
+            </div>
+            <div>
+                <label class="mb-1 block text-sm font-medium text-slate-700">@L["Nav_Groups"]</label>
+                <div id="createGroupList" class="max-h-44 space-y-1 overflow-y-auto rounded-lg border border-slate-200 p-2"></div>
+                <p class="mt-1 text-xs text-slate-400">@L["Quiz_GroupsHint"]</p>
+            </div>
+        </div>
+    </div>
     <div class="flex justify-end gap-3 pt-2">
         <partial name="Ui/_Button" model="@(new ButtonModel { Text = L["Common_Cancel"], Variant = "secondary", Dismiss = true })" />
         <partial name="Ui/_Button" model="@(new ButtonModel { Text = L["Common_Save"], Type = "submit" })" />

@@ -110,19 +110,24 @@ public sealed class QuizController(
     // --- Suallar ---
 
     [HttpGet("options")]
-    public async Task<IActionResult> Options([FromQuery(Name = "quiz_id")] long? quizId, CancellationToken ct)
+    public async Task<IActionResult> Options(
+        [FromQuery(Name = "quiz_id")] long? quizId,
+        [FromQuery(Name = "lesson_id")] long? lessonId,
+        CancellationToken ct)
     {
         // İmtahan hansı dərsə/fənnə bağlıdırsa yalnız həmin fənnin sualları təklif olunur.
+        // Yaratma modalında imtahan hələ yoxdur — fənn seçilmiş dərsdən götürülür.
         long? subjectId = null;
 
         if (quizId is long id)
         {
             var quiz = await service.GetAsync(id, OwnerScope, ct);
+            lessonId = quiz.LessonId;
+        }
 
-            if (quiz.LessonId is long lessonId)
-            {
-                subjectId = (await lessons.GetAsync(lessonId, OwnerScope, ct)).SubjectId;
-            }
+        if (lessonId is long lid)
+        {
+            subjectId = (await lessons.GetAsync(lid, OwnerScope, ct)).SubjectId;
         }
 
         var list = await questions.ListAsync(new QuestionListRequest
@@ -160,6 +165,11 @@ public sealed class QuizController(
     [HttpGet("{id:long}/groups")]
     public async Task<IActionResult> Groups(long id, CancellationToken ct)
         => Json(await service.ListGroupsAsync(id, OwnerScope, ct));
+
+    [HttpGet("group-options")]
+    public async Task<IActionResult> GroupOptionsBySubject(
+        [FromQuery(Name = "subject_id")] long? subjectId, CancellationToken ct)
+        => Json(await service.ListGroupOptionsBySubjectAsync(subjectId, OwnerScope, ct));
 
     [HttpGet("{id:long}/group-options")]
     public async Task<IActionResult> GroupOptions(long id, CancellationToken ct)

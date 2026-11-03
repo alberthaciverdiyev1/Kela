@@ -31,6 +31,10 @@ public interface IQuizService
     /// <summary>İmtahana bağlana bilən qruplar — imtahanın fənni qrupda varsa.</summary>
     Task<IReadOnlyList<QuizGroupResponse>> ListGroupOptionsAsync(long quizId, long? ownerId = null, CancellationToken ct = default);
 
+    /// <summary>İmtahan hələ yaradılmamışdan fənnə uyğun qrup seçimləri.</summary>
+    Task<IReadOnlyList<QuizGroupResponse>> ListGroupOptionsBySubjectAsync(
+        long? subjectId, long? ownerId = null, CancellationToken ct = default);
+
     Task<IReadOnlyList<QuizGroupResponse>> AssignGroupsAsync(long quizId, AssignGroupsRequest request, long? ownerId = null, CancellationToken ct = default);
 
     Task RemoveGroupAsync(long quizId, long groupId, long? ownerId = null, CancellationToken ct = default);
