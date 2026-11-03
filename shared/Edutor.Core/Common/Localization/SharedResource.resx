@@ -3597,4 +3597,13 @@
   <data name="Common_Logo" xml:space="preserve">
     <value>Logo</value>
   </data>
+  <data name="Table_Columns" xml:space="preserve">
+    <value>Columns</value>
+  </data>
+  <data name="Table_ColumnsHint" xml:space="preserve">
+    <value>Choose visible columns and drag to change their order.</value>
+  </data>
+  <data name="Table_Reset" xml:space="preserve">
+    <value>Reset</value>
+  </data>
 </root>

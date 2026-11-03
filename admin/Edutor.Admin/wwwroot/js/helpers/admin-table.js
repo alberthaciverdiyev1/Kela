@@ -18,6 +18,8 @@ window.AdminUI = window.AdminUI || {};
     function decorateTable(table) {
         const headRow = table?.tHead?.rows?.[0];
         if (!headRow) return;
+        // İstifadəçinin sütun sırası/görünürlüyü etiketlərdən əvvəl tətbiq olunur.
+        UI.applyTableColumns?.(table);
         const labels = [...headRow.cells].map(th => (th.textContent || '').trim());
         table.querySelectorAll('tbody tr').forEach(tr => {
             const cells = [...tr.cells];

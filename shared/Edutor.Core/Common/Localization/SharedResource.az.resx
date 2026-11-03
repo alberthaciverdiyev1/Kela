@@ -3597,4 +3597,13 @@
   <data name="Common_Logo" xml:space="preserve">
     <value>Loqo</value>
   </data>
+  <data name="Table_Columns" xml:space="preserve">
+    <value>Sütunlar</value>
+  </data>
+  <data name="Table_ColumnsHint" xml:space="preserve">
+    <value>Göstəriləcək sütunları seçin, sırasını sürüşdürərək dəyişin.</value>
+  </data>
+  <data name="Table_Reset" xml:space="preserve">
+    <value>Sıfırla</value>
+  </data>
 </root>

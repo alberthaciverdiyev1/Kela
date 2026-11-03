@@ -3597,4 +3597,13 @@
   <data name="Common_Logo" xml:space="preserve">
     <value>Логотип</value>
   </data>
+  <data name="Table_Columns" xml:space="preserve">
+    <value>Столбцы</value>
+  </data>
+  <data name="Table_ColumnsHint" xml:space="preserve">
+    <value>Выберите отображаемые столбцы и перетащите, чтобы изменить порядок.</value>
+  </data>
+  <data name="Table_Reset" xml:space="preserve">
+    <value>Сбросить</value>
+  </data>
 </root>
