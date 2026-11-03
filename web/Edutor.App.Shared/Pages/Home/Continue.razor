@@ -1,0 +1,52 @@
+@inherits RefreshablePage
+@using Edutor.App.Shared.Services.Localization
+@using Edutor.App.Shared.Dtos.Progress
+@inject Localizer L
+@inject AppApi Api
+@page "/continue"
+
+<PageTitle>@L["Continue_Title"]</PageTitle>
+<PageHeader Title="@L["Continue_Title"]" Back="/" />
+
+<div @key="_loading" class="px-5 pb-28 pt-6 lg:mx-auto lg:max-w-[900px] @(!_loading ? "page-fade" : null)">
+    @if (_loading)
+    {
+        <SkeletonList Count="6" />
+    }
+    else if (_error is not null)
+    {
+        <p class="rounded-xl bg-[#fdecef] px-3 py-2 text-[12px] font-semibold text-danger-539">@_error</p>
+    }
+    else if (_items.Count == 0)
+    {
+        <EmptyState Text="@L["Continue_Empty"]" Class="mt-8 text-center text-[13px] text-sage-410" />
+    }
+    else
+    {
+        @foreach (var group in _items.GroupBy(i => new { i.LessonId, i.LessonTitle }))
+        {
+            <section class="mt-6 first:mt-0">
+                <div class="mb-2 flex items-center justify-between gap-2">
+                    <a href="/lessons/@group.Key.LessonId" class="min-w-0 truncate text-[13px] font-bold text-brand-784 hover:underline">@group.Key.LessonTitle</a>
+                    <span class="shrink-0 text-[11px] font-bold text-sage-410">@group.Count()</span>
+                </div>
+                <div class="overflow-hidden rounded-2xl border border-brand-090 bg-white">
+                    @foreach (var item in group)
+                    {
+                        <a href="/lessons/@item.LessonId/content/@item.ContentId"
+                           class="flex items-center gap-3 border-b border-brand-075 px-4 py-3 last:border-b-0">
+                            <span class="flex size-9 shrink-0 items-center justify-center rounded-xl bg-brand-081 text-brand-671">
+                                <Icon Name="@IconFor(item.Type)" Class="size-4" />
+                            </span>
+                            <span class="min-w-0 flex-1">
+                                <span class="block truncate text-[13px] font-semibold text-brand-776">@item.Title</span>
+                                <span class="mt-0.5 block text-[10px] font-semibold text-sage-410">@L.TypeLabel(item.Type)</span>
+                            </span>
+                            <Icon Name="chevron-right" Class="size-4 shrink-0 text-sage-300" />
+                        </a>
+                    }
+                </div>
+            </section>
+        }
+    }
+</div>

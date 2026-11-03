@@ -13,6 +13,15 @@ public record ProgressItemResponse(
 
 public record ProgressResponse(string Type, IReadOnlyList<ProgressItemResponse> Items);
 
+public record ContinueItemResponse(
+    long ContentId,
+    long LessonId,
+    string LessonTitle,
+    string Title,
+    string? Type,
+    int LessonOrder,
+    int ContentOrder);
+
 public record MarkProgressResponse(long ContentId, string Status);
 
 public record StatisticsOverview(int TotalLessons, int TotalContents, int CompletedContents, int CompletionPercent);

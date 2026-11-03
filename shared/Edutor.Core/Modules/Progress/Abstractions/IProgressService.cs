@@ -9,5 +9,7 @@ public interface IProgressService
 
     Task<ProgressResponse> GetProgressAsync(long studentId, CancellationToken ct = default);
 
+    Task<IReadOnlyList<ContinueItemResponse>> GetContinueAsync(long studentId, CancellationToken ct = default);
+
     Task<StatisticsResponse> GetStatisticsAsync(long studentId, CancellationToken ct = default);
 }

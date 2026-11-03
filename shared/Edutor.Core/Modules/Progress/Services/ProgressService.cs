@@ -1,6 +1,7 @@
 using Edutor.Core.Common.Exceptions;
 using Edutor.Core.Common.Storage;
 using Edutor.Core.Data;
+using Edutor.Core.Modules.Media.Entities;
 using Edutor.Core.Modules.Progress.Requests;
 using Edutor.Core.Modules.Progress.Responses;
 using Edutor.Core.Modules.StudentApp.Services;
@@ -81,7 +82,7 @@ public sealed class ProgressService(
 
         var items = lessons.Select(lesson =>
         {
-            var lessonContents = contents.Where(c => c.LessonId == lesson.Id).ToList();
+            var lessonContents = contents.Where(c => c.LessonId == lesson.Id && IsOpenable(c)).ToList();
             var total = lessonContents.Count;
             var done = lessonContents.Count(c => completed.Contains(c.Id));
             var next = lessonContents.FirstOrDefault(c => !completed.Contains(c.Id));
@@ -99,6 +100,46 @@ public sealed class ProgressService(
         return new ProgressResponse("lesson", items);
     }
 
+    public async Task<IReadOnlyList<ContinueItemResponse>> GetContinueAsync(
+        long studentId, CancellationToken ct = default)
+    {
+        var subjectIds = await access.AccessibleSubjectIdsAsync(studentId, ct);
+
+        var lessons = await db.Lessons.AsNoTracking()
+            .Where(l => subjectIds.Contains(l.SubjectId) && l.IsActive)
+            .OrderBy(l => l.SortOrder).ThenBy(l => l.Id)
+            .ToListAsync(ct);
+
+        var lessonIds = lessons.Select(l => l.Id).ToList();
+
+        var contents = await db.LessonContents.AsNoTracking()
+            .Where(c => lessonIds.Contains(c.LessonId) && c.IsActive)
+            .Include(c => c.Video).Include(c => c.MediaFile).Include(c => c.VoiceRecord)
+            .OrderBy(c => c.SortOrder).ThenBy(c => c.Id)
+            .ToListAsync(ct);
+
+        var completed = (await db.LessonProgress
+            .Where(p => p.StudentId == studentId)
+            .Select(p => p.LessonContentId)
+            .ToListAsync(ct)).ToHashSet();
+
+        var lessonOrder = lessons.Select((l, i) => new { l.Id, Order = i }).ToDictionary(x => x.Id, x => x.Order);
+        var lessonTitles = lessons.ToDictionary(l => l.Id, l => l.Title);
+
+        return contents
+            .Where(c => !completed.Contains(c.Id) && IsOpenable(c))
+            .Select(c => new ContinueItemResponse(
+                c.Id,
+                c.LessonId,
+                lessonTitles[c.LessonId],
+                c.Title,
+                ContentType(c),
+                lessonOrder[c.LessonId],
+                c.SortOrder))
+            .OrderBy(x => x.LessonOrder).ThenBy(x => x.ContentOrder)
+            .ToList();
+    }
+
     public async Task<StatisticsResponse> GetStatisticsAsync(long studentId, CancellationToken ct = default)
     {
         var subjectIds = await access.AccessibleSubjectIdsAsync(studentId, ct);
@@ -111,7 +152,10 @@ public sealed class ProgressService(
 
         var contents = await db.LessonContents.AsNoTracking()
             .Where(c => lessonIds.Contains(c.LessonId) && c.IsActive)
+            .Include(c => c.Video).Include(c => c.MediaFile).Include(c => c.VoiceRecord)
             .ToListAsync(ct);
+
+        contents = contents.Where(IsOpenable).ToList();
 
         var completed = (await db.LessonProgress
             .Where(p => p.StudentId == studentId)
@@ -155,5 +199,20 @@ public sealed class ProgressService(
         if (content.MediaFile is not null) return "file";
         if (content.VoiceRecord is not null) return "voice";
         return null;
+    }
+
+    // "Davam et" yalnız həqiqətən açıla bilən materiala aparmalıdır: faylı olmayan
+    // PDF və ya konversiyası alınmayan video seçilərsə, istifadəçi boş/xətalı səhifə görür.
+    private static bool IsOpenable(LessonContent content)
+    {
+        if (content.Video is not null)
+        {
+            return !string.IsNullOrWhiteSpace(content.Video.Path)
+                   && content.Video.ConversionStatus != VideoStatus.Failed;
+        }
+
+        if (content.MediaFile is not null) return !string.IsNullOrWhiteSpace(content.MediaFile.Path);
+        if (content.VoiceRecord is not null) return !string.IsNullOrWhiteSpace(content.VoiceRecord.Path);
+        return false;
     }
 }

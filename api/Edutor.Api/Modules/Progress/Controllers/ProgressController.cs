@@ -22,6 +22,10 @@ public sealed class ProgressController(IProgressService service, IStringLocalize
     public async Task<ActionResult<ApiResponse<ProgressResponse>>> Get(CancellationToken ct)
         => Success(await service.GetProgressAsync(StudentId, ct));
 
+    [HttpGet("continue")]
+    public async Task<ActionResult<ApiResponse<IReadOnlyList<ContinueItemResponse>>>> Continue(CancellationToken ct)
+        => Success(await service.GetContinueAsync(StudentId, ct));
+
     [HttpPost]
     public async Task<ActionResult<ApiResponse<MarkProgressResponse>>> Mark(
         [FromBody] MarkProgressRequest request, CancellationToken ct)

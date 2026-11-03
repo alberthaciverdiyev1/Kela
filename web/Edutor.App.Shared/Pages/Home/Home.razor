@@ -101,8 +101,11 @@ else
                 @if (_continue.Count > 0)
                 {
                     <section>
-                <div class="mb-4">
-                    <h2 class="mt-1 text-[22px] font-semibold tracking-[-0.04em]">@L["Home_ContinueTitle"]</h2>
+                <div class="mb-4 flex items-end justify-between">
+                    <div>
+                        <h2 class="mt-1 text-[22px] font-semibold tracking-[-0.04em]">@L["Home_ContinueTitle"]</h2>
+                    </div>
+                    <a href="/continue" class="flex items-center gap-1 text-[12px] font-semibold text-brand-671">@L["Home_ViewAll"] <Icon Name="chevron-right" Class="size-3.5" /></a>
                 </div>
                 <div class="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
                     @foreach (var item in _continue)
