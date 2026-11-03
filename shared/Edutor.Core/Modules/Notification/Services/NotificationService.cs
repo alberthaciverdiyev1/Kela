@@ -105,8 +105,10 @@ public sealed class NotificationService(
         // Token dəyəri qlobal unikaldır (cihaz tokeni tenant-a bağlı deyil), ona görə
         // tenant filtri də keçilməlidir — yoxsa başqa tenant-da olan token yenidən
         // yazılmağa çalışılır və unikal indeks pozulur (500).
+        // "Active" filtri də keçilir: söndürülmüş (is_active=false) sətir görünməsə,
+        // yenidən aktivləşdirmə insert edir və unikal indeksə düşür.
         var token = await db.NotificationTokens
-            .IgnoreQueryFilters(new[] { "SoftDelete", "Tenant" })
+            .IgnoreQueryFilters(new[] { "SoftDelete", "Tenant", "Active" })
             .FirstOrDefaultAsync(t => t.Token == request.Token, ct);
 
         if (token is null)
@@ -132,7 +134,7 @@ public sealed class NotificationService(
             }
 
             var existing = await db.NotificationTokens
-                .IgnoreQueryFilters(new[] { "SoftDelete", "Tenant" })
+                .IgnoreQueryFilters(new[] { "SoftDelete", "Tenant", "Active" })
                 .FirstOrDefaultAsync(t => t.Token == request.Token, ct);
 
             if (existing is null) throw;
