@@ -56,6 +56,35 @@
     <script src="_content/Edutor.App.Shared/js/pull-refresh.js"></script>
     <script src="_content/Edutor.App.Shared/js/push-sound.js"></script>
     <script src="_content/Edutor.App.Shared/js/web-push.js"></script>
+    <script>
+        /* Blazor mount olmamışdan əvvəl göstərilən yükləmə ekranı — dil localStorage-dadır
+           (Localizer "lms.lang" açarı ilə yazır), ona görə burada da həmin dəyər oxunur. */
+        (function () {
+            var texts = {
+                az: { loading: 'Yüklənir...', wait: 'Bir az gözləyin', error: 'Xəta baş verdi.', reload: 'Yenilə', aria: 'Yüklənir' },
+                en: { loading: 'Loading...', wait: 'Please wait a moment', error: 'An error occurred.', reload: 'Reload', aria: 'Loading' },
+                ru: { loading: 'Загрузка...', wait: 'Подождите немного', error: 'Произошла ошибка.', reload: 'Обновить', aria: 'Загрузка' },
+                tr: { loading: 'Yükleniyor...', wait: 'Biraz bekleyin', error: 'Bir hata oluştu.', reload: 'Yenile', aria: 'Yükleniyor' }
+            };
+
+            var lang = 'az';
+            try { lang = localStorage.getItem('lms.lang') || 'az'; } catch (e) { }
+            var text = texts[lang] || texts.az;
+
+            document.documentElement.lang = lang;
+            document.querySelector('.lms-boot').setAttribute('aria-label', text.aria);
+            document.querySelector('.lms-boot-title').textContent = text.loading;
+            document.querySelector('.lms-boot-sub').textContent = text.wait;
+
+            var errorBox = document.getElementById('blazor-error-ui');
+            errorBox.textContent = text.error + ' ';
+            var reload = document.createElement('a');
+            reload.href = '.';
+            reload.className = 'reload';
+            reload.textContent = text.reload;
+            errorBox.appendChild(reload);
+        })();
+    </script>
     <script src="_framework/blazor.webassembly#[.{fingerprint}].js"></script>
 </body>
 </html>
