@@ -4,6 +4,8 @@ using Edutor.Core.Modules.Subscription.Abstractions;
 using Edutor.Core.Modules.Subscription.Requests;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Edutor.Core.Common.Localization;
+using Microsoft.Extensions.Localization;
 
 namespace Edutor.Admin.Controllers;
 
@@ -15,7 +17,8 @@ namespace Edutor.Admin.Controllers;
 [Route("[controller]")]
 public sealed class PlatformFinanceController(
     IPlatformFinanceService finance,
-    ISubscriptionService subscriptions) : Controller
+    ISubscriptionService subscriptions,
+    IStringLocalizer<SharedResource> L) : Controller
 {
     [HttpGet]
     public async Task<IActionResult> Index(CancellationToken ct)
@@ -30,7 +33,7 @@ public sealed class PlatformFinanceController(
             "~/js/pages/platform-finance/index.js",
             "~/js/pages/platform-finance/subscriptions.js"
         };
-        ViewData["Title"] = "Platform gəliri";
+        ViewData["Title"] = L["Revenue_Title"];
         return View(await finance.GetAsync(12, ct));
     }
 
@@ -47,7 +50,7 @@ public sealed class PlatformFinanceController(
         if (!User.IsPlatformOwner())
         {
             return StatusCode(StatusCodes.Status403Forbidden,
-                new { message = "Abunəliyi yalnız platform administratoru idarə edə bilər." });
+                new { message = L["PlatformFinance_PlatformOnly"].Value });
         }
 
         try

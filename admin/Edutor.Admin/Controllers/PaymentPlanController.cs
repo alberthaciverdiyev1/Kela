@@ -6,21 +6,23 @@ using Edutor.Core.Modules.Subscription;
 using Edutor.Core.Modules.Subscription.Abstractions;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Edutor.Core.Common.Localization;
+using Microsoft.Extensions.Localization;
 
 namespace Edutor.Admin.Controllers;
 
 /// <summary>Tələbəyə ödəniş planı təyin edərkən seçilən hazır plan şablonları.</summary>
 [Route("[controller]")]
 [Authorize(Policy = AuthPolicies.Admin)]
-public sealed class PaymentPlanController(IStudentPaymentService payments, ISubscriptionService subscriptions)
-    : Controller
+public sealed class PaymentPlanController(IStudentPaymentService payments, ISubscriptionService subscriptions,
+    IStringLocalizer<SharedResource> L) : Controller
 {
     [HttpGet]
     public async Task<IActionResult> Index(CancellationToken ct)
     {
         var enabled = await subscriptions.HasFeatureAsync(SubscriptionFeatures.PaymentTemplates, ct);
 
-        ViewData["Title"] = "Plan şablonları";
+        ViewData["Title"] = L["PaymentPlan_Title"];
         ViewData["TemplatesEnabled"] = enabled;
 
         if (enabled)
@@ -60,7 +62,7 @@ public sealed class PaymentPlanController(IStudentPaymentService payments, ISubs
     {
         if (!await subscriptions.HasFeatureAsync(SubscriptionFeatures.PaymentTemplates, ct))
         {
-            throw new ForbiddenException("Plan şablonları cari abunəlik planında yoxdur. Planı yüksəldin.");
+            throw new ForbiddenException(L["PaymentPlan_NotInPlan"]);
         }
     }
 }

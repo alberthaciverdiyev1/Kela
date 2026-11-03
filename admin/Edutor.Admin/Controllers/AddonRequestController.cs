@@ -5,6 +5,8 @@ using Edutor.Core.Modules.Subscription.Requests;
 using Edutor.Core.Modules.Tenant.Abstractions;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Edutor.Core.Common.Localization;
+using Microsoft.Extensions.Localization;
 
 namespace Edutor.Admin.Controllers;
 
@@ -16,7 +18,8 @@ namespace Edutor.Admin.Controllers;
 [Route("[controller]")]
 public sealed class AddonRequestController(
     ISubscriptionService subscriptions,
-    ITenantService tenants) : AdminControllerBase
+    ITenantService tenants,
+    IStringLocalizer<SharedResource> L) : AdminControllerBase
 {
     [HttpGet]
     public IActionResult Index()
@@ -108,7 +111,7 @@ public sealed class AddonRequestController(
 
     private ObjectResult Denied()
         => StatusCode(StatusCodes.Status403Forbidden,
-            new { message = "Limit paketləri üzrə qərarı yalnız superadmin verir." });
+            new { message = L["Addon_SuperOnlyDecision"].Value });
 
     /// <summary>Superadmin tenant seçmədən bütün müraciətləri görür.</summary>
     private long? ScopeTenantId()

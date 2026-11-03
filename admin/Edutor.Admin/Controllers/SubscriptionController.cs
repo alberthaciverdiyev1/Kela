@@ -5,6 +5,8 @@ using Edutor.Core.Modules.Subscription.Responses;
 using Edutor.Core.Modules.Tenant.Abstractions;
 using Edutor.Core.Modules.User.Entities;
 using Microsoft.AspNetCore.Mvc;
+using Edutor.Core.Common.Localization;
+using Microsoft.Extensions.Localization;
 
 namespace Edutor.Admin.Controllers;
 
@@ -12,7 +14,8 @@ namespace Edutor.Admin.Controllers;
 [Route("[controller]")]
 public sealed class SubscriptionController(
     ISubscriptionService service,
-    ITenantService tenants) : AdminControllerBase
+    ITenantService tenants,
+    IStringLocalizer<SharedResource> L) : AdminControllerBase
 {
     [HttpGet]
     public async Task<IActionResult> Index([FromQuery(Name = "tenant_id")] long? tenantId, CancellationToken ct)
@@ -79,13 +82,13 @@ public sealed class SubscriptionController(
 
     private IActionResult Forbidden()
         => StatusCode(StatusCodes.Status403Forbidden,
-            new { message = "Bu məlumatı yalnız platform administratoru görə bilər." });
+            new { message = L["Subscription_PlatformOnly"].Value });
 
     [HttpGet("data")]
     public async Task<IActionResult> Data([FromQuery(Name = "tenant_id")] long? tenantId, CancellationToken ct)
     {
         var selected = await ResolveTenantAsync(tenantId, ct);
-        if (selected is not long id) return BadRequest(new { message = "Tenant seçilməyib" });
+        if (selected is not long id) return BadRequest(new { message = L["Tenant_NotSelected"].Value });
 
         return Json(await service.GetAsync(id, ct));
     }
@@ -103,13 +106,13 @@ public sealed class SubscriptionController(
         if (!User.IsInRole(UserTypes.SuperAdmin))
         {
             return StatusCode(StatusCodes.Status403Forbidden,
-                new { message = "Limit paketini yalnız platform administratoru əlavə edə bilər." });
+                new { message = L["Subscription_PlatformOnlyAddon"].Value });
         }
 
         var tenantId = request.TenantId
             ?? await ResolveTenantAsync(null, ct);
 
-        if (tenantId is not > 0) return BadRequest(new { message = "Tenant seçilməyib" });
+        if (tenantId is not > 0) return BadRequest(new { message = L["Tenant_NotSelected"].Value });
 
         try
         {
@@ -125,7 +128,7 @@ public sealed class SubscriptionController(
     public async Task<IActionResult> Addons([FromQuery(Name = "tenant_id")] long? tenantId, CancellationToken ct)
     {
         var selected = await ResolveTenantAsync(tenantId, ct);
-        if (selected is not long id) return BadRequest(new { message = "Tenant seçilməyib" });
+        if (selected is not long id) return BadRequest(new { message = L["Tenant_NotSelected"].Value });
 
         return Json(await service.ListAddonsAsync(id, ct));
     }
@@ -136,7 +139,7 @@ public sealed class SubscriptionController(
     public async Task<IActionResult> CreateAddonRequest([FromForm] AddonRequestBody request, CancellationToken ct)
     {
         var tenantId = User.CurrentTenantId();
-        if (tenantId <= 0) return BadRequest(new { message = "Tenant seçilməyib" });
+        if (tenantId <= 0) return BadRequest(new { message = L["Tenant_NotSelected"].Value });
 
         try
         {
@@ -155,7 +158,7 @@ public sealed class SubscriptionController(
     public async Task<IActionResult> AddonRequests([FromQuery(Name = "tenant_id")] long? tenantId, string? status, CancellationToken ct)
     {
         var selected = await ResolveTenantAsync(tenantId, ct);
-        if (selected is not long id) return BadRequest(new { message = "Tenant seçilməyib" });
+        if (selected is not long id) return BadRequest(new { message = L["Tenant_NotSelected"].Value });
 
         // Admin/müəllim yalnız öz müraciətlərini görür; superadmin hamısını.
         var ownUserId = User.IsInRole(UserTypes.SuperAdmin) ? null : User.CurrentUserId();

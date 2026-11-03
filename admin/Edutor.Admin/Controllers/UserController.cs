@@ -9,6 +9,8 @@ using Edutor.Core.Modules.User.Requests;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Edutor.Admin.Infrastructure;
+using Edutor.Core.Common.Localization;
+using Microsoft.Extensions.Localization;
 
 namespace Edutor.Admin.Controllers;
 
@@ -17,7 +19,8 @@ namespace Edutor.Admin.Controllers;
 public sealed class UserController(
     IUserService service,
     IStudentManagementService students,
-    IValidator<UserUpsertRequest> validator) : AdminControllerBase
+    IValidator<UserUpsertRequest> validator,
+    IStringLocalizer<SharedResource> L) : AdminControllerBase
 {
     [HttpGet]
     public IActionResult Index()
@@ -94,7 +97,7 @@ public sealed class UserController(
         // Öz hesabını silmək kilidlənmə riskidir — heç bir rol üçün icazə verilmir.
         if (id == User.CurrentUserId())
         {
-            throw new ForbiddenException("Öz hesabınızı silə bilməzsiniz");
+            throw new ForbiddenException(L["User_CannotDeleteSelf"]);
         }
 
         var target = await service.GetAsync(id, ct);
@@ -102,7 +105,7 @@ public sealed class UserController(
         // Admin hesablarını yalnız superadmin silə bilər.
         if (!User.IsInRole(AuthRoles.SuperAdmin) && target.Type is UserTypes.Admin or UserTypes.SuperAdmin)
         {
-            throw new ForbiddenException("Admin hesabını yalnız superadmin silə bilər");
+            throw new ForbiddenException(L["User_OnlySuperCanDeleteAdmin"]);
         }
 
         await service.DeleteAsync(id, ct);
@@ -113,7 +116,7 @@ public sealed class UserController(
     {
         if (type == UserTypes.SuperAdmin && !User.IsInRole(AuthRoles.SuperAdmin))
         {
-            throw new ForbiddenException("Yalnız superadmin başqa superadmin təyin edə bilər");
+            throw new ForbiddenException(L["User_OnlySuperCanAssignSuper"]);
         }
     }
 

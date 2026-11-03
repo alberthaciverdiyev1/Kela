@@ -7,6 +7,8 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.RateLimiting;
+using Edutor.Core.Common.Localization;
+using Microsoft.Extensions.Localization;
 
 namespace Edutor.Admin.Controllers;
 
@@ -14,7 +16,8 @@ namespace Edutor.Admin.Controllers;
 [Route("[controller]")]
 public sealed class LoginController(
     IUserAuthService service,
-    IValidator<UserLoginRequest> validator) : Controller
+    IValidator<UserLoginRequest> validator,
+    IStringLocalizer<SharedResource> L) : Controller
 {
     [HttpGet]
     public IActionResult Index(CancellationToken ct)
@@ -46,7 +49,7 @@ public sealed class LoginController(
         }
         catch (UnauthorizedAccessException)
         {
-            return LoginView("E-poçt və ya şifrə yanlışdır.");
+            return LoginView(L["Login_InvalidCredentials"]);
         }
     }
 

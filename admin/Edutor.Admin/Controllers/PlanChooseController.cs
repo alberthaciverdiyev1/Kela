@@ -2,6 +2,8 @@ using Edutor.Admin.Infrastructure;
 using Edutor.Core.Modules.Subscription.Abstractions;
 using Edutor.Core.Modules.Tenant.Abstractions;
 using Microsoft.AspNetCore.Mvc;
+using Edutor.Core.Common.Localization;
+using Microsoft.Extensions.Localization;
 
 namespace Edutor.Admin.Controllers;
 
@@ -12,7 +14,8 @@ namespace Edutor.Admin.Controllers;
 [Route("plan-choose")]
 public sealed class PlanChooseController(
     ISubscriptionService subscriptions,
-    ITenantService tenants) : AdminControllerBase
+    ITenantService tenants,
+    IStringLocalizer<SharedResource> L) : AdminControllerBase
 {
     [HttpGet]
     public async Task<IActionResult> Index(CancellationToken ct)
@@ -29,7 +32,7 @@ public sealed class PlanChooseController(
         var plans = await subscriptions.ListPlansAsync(onlyActive: true, ct);
         if (plans.Count == 0) return RedirectToAction("Index", "Dashboard");
 
-        ViewData["Title"] = "Plan seçimi";
+        ViewData["Title"] = L["PlanChoose_Title"];
         ViewData["TenantName"] = tenant.Name;
         return View(plans);
     }

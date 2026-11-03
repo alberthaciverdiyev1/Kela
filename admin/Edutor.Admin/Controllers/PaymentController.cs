@@ -6,6 +6,8 @@ using Edutor.Core.Modules.Subscription;
 using Edutor.Core.Modules.Subscription.Abstractions;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Edutor.Core.Common.Localization;
+using Microsoft.Extensions.Localization;
 
 namespace Edutor.Admin.Controllers;
 
@@ -14,12 +16,13 @@ namespace Edutor.Admin.Controllers;
 public sealed class PaymentController(
     IStudentPaymentService payments,
     IStudentManagementService students,
-    ISubscriptionService subscriptions) : Controller
+    ISubscriptionService subscriptions,
+    IStringLocalizer<SharedResource> L) : Controller
 {
     [HttpGet]
     public async Task<IActionResult> Index(CancellationToken ct)
     {
-        ViewData["Title"] = "Ödənişlər";
+        ViewData["Title"] = L["Payment_Title"];
         ViewData["Scripts"] = new[] { "~/js/pages/payment/index.js" };
         ViewData["TemplatesEnabled"] = await subscriptions.HasFeatureAsync(SubscriptionFeatures.PaymentTemplates, ct);
         return View();
