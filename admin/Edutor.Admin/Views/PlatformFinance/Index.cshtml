@@ -1,6 +1,6 @@
 @model Edutor.Core.Modules.Subscription.Responses.PlatformFinanceResponse
 @{
-    ViewData["Title"] = "Platform gəliri";
+    ViewData["Title"] = L["Revenue_Title"];
 
     var payload = new
     {
@@ -145,7 +145,7 @@
                     </tr>
                 </thead>
                 <tbody id="pfSubscriptions">
-                    <tr><td colspan="7" class="p-4 text-center text-sm text-slate-400">Yüklənir…</td></tr>
+                    <tr><td colspan="7" class="p-4 text-center text-sm text-slate-400">@L["Common_LoadingDots"]</td></tr>
                 </tbody>
             </table>
         </div>

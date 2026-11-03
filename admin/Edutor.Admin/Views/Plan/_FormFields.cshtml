@@ -11,77 +11,76 @@
     <input type="hidden" id="monthly_video_minutes" value="0" />
 
     <div class="grid gap-3 sm:grid-cols-3">
-        <partial name="Ui/_Input" model="@(new InputModel { Name = "code", Id = "code", Label = "Kod", Placeholder = "basic", NativeRequired = true })" />
-        <partial name="Ui/_Input" model="@(new InputModel { Name = "name", Id = "name", Label = "Ad", Placeholder = "Basic", NativeRequired = true })" />
-        <partial name="Ui/_Input" model="@(new InputModel { Name = "monthly_price", Id = "monthly_price", Label = "Aylıq qiymət", Type = "number", Step = "0.01", Min = "0" })" />
+        <partial name="Ui/_Input" model="@(new InputModel { Name = "code", Id = "code", Label = L["Common_Code"], Placeholder = "basic", NativeRequired = true })" />
+        <partial name="Ui/_Input" model="@(new InputModel { Name = "name", Id = "name", Label = L["Common_Name"], Placeholder = "Basic", NativeRequired = true })" />
+        <partial name="Ui/_Input" model="@(new InputModel { Name = "monthly_price", Id = "monthly_price", Label = L["Plan_MonthlyPrice"], Type = "number", Step = "0.01", Min = "0" })" />
     </div>
 
-    <partial name="Ui/_Input" model="@(new InputModel { Name = "description", Id = "description", Label = "Təsvir" })" />
+    <partial name="Ui/_Input" model="@(new InputModel { Name = "description", Id = "description", Label = L["Common_Description"] })" />
 
     <div class="grid gap-3 sm:grid-cols-5">
-        <partial name="Ui/_Input" model="@(new InputModel { Name = "currency", Id = "currency", Label = "Valyuta", Value = "AZN" })" />
-        <partial name="Ui/_Input" model="@(new InputModel { Name = "yearly_free_months", Id = "yearly_free_months", Label = "İllik pulsuz ay", Type = "number", Min = "0", Value = "2" })" />
-        <partial name="Ui/_Input" model="@(new InputModel { Name = "trial_days", Id = "trial_days", Label = "Sınaq (gün)", Type = "number", Min = "0", Value = "14" })" />
-        <partial name="Ui/_Input" model="@(new InputModel { Name = "sort_order", Id = "sort_order", Label = "Sıra", Type = "number", Value = "0" })" />
+        <partial name="Ui/_Input" model="@(new InputModel { Name = "currency", Id = "currency", Label = L["Common_Currency"], Value = "AZN" })" />
+        <partial name="Ui/_Input" model="@(new InputModel { Name = "yearly_free_months", Id = "yearly_free_months", Label = L["Plan_YearlyFreeMonths"], Type = "number", Min = "0", Value = "2" })" />
+        <partial name="Ui/_Input" model="@(new InputModel { Name = "trial_days", Id = "trial_days", Label = L["Plan_TrialDays"], Type = "number", Min = "0", Value = "14" })" />
+        <partial name="Ui/_Input" model="@(new InputModel { Name = "sort_order", Id = "sort_order", Label = L["Common_Order"], Type = "number", Value = "0" })" />
         <div>
             <label class="mb-1 block text-sm font-semibold text-slate-600">Status</label>
             <select id="is_active" class="admin-field">
-                <option value="true">Aktiv</option>
-                <option value="false">Deaktiv</option>
+                <option value="true">@L["Common_Active"]</option>
+                <option value="false">@L["Common_Inactive"]</option>
             </select>
         </div>
     </div>
 
     <div>
-        <p class="mb-1 text-xs font-bold uppercase tracking-wide text-slate-400">Yükləmə icazələri</p>
-        <p class="mb-3 text-sm text-slate-500">Bağlanmış növ bu planı olan tenant-larda yüklənə bilməz.</p>
+        <p class="mb-1 text-xs font-bold uppercase tracking-wide text-slate-400">@L["Plan_UploadPermissions"]</p>
+        <p class="mb-3 text-sm text-slate-500">@L["Plan_UploadPermissionsHint"]</p>
         <div class="grid gap-3 sm:grid-cols-3">
-            <partial name="Ui/_Switch" model="@(new SwitchModel { Name = "allow_video_upload", Id = "allow_video_upload", Label = "Video" })" />
-            <partial name="Ui/_Switch" model="@(new SwitchModel { Name = "allow_audio_upload", Id = "allow_audio_upload", Label = "Səs" })" />
-            <partial name="Ui/_Switch" model="@(new SwitchModel { Name = "allow_file_upload", Id = "allow_file_upload", Label = "PDF / fayl" })" />
+            <partial name="Ui/_Switch" model="@(new SwitchModel { Name = "allow_video_upload", Id = "allow_video_upload", Label = L["Common_Video"] })" />
+            <partial name="Ui/_Switch" model="@(new SwitchModel { Name = "allow_audio_upload", Id = "allow_audio_upload", Label = L["Common_Audio"] })" />
+            <partial name="Ui/_Switch" model="@(new SwitchModel { Name = "allow_file_upload", Id = "allow_file_upload", Label = L["Common_File"] })" />
         </div>
     </div>
 
     <div>
-        <p class="mb-2 text-xs font-bold uppercase tracking-wide text-slate-400">Limitlər (0 = limitsiz)</p>
+        <p class="mb-2 text-xs font-bold uppercase tracking-wide text-slate-400">@L["Plan_Limits"]</p>
         <div class="grid gap-3 sm:grid-cols-3">
-            <partial name="Ui/_Input" model="@(new InputModel { Name = "max_students", Id = "max_students", Label = "Tələbə", Type = "number", Min = "0" })" />
-            <partial name="Ui/_Input" model="@(new InputModel { Name = "max_groups", Id = "max_groups", Label = "Qrup", Type = "number", Min = "0" })" />
-            <partial name="Ui/_Input" model="@(new InputModel { Name = "monthly_video_hours", Id = "monthly_video_hours", Label = "Video (saat/ay)", Type = "number", Min = "0", Step = "0.5" })" />
+            <partial name="Ui/_Input" model="@(new InputModel { Name = "max_students", Id = "max_students", Label = L["Common_Student"], Type = "number", Min = "0" })" />
+            <partial name="Ui/_Input" model="@(new InputModel { Name = "max_groups", Id = "max_groups", Label = L["Common_Group"], Type = "number", Min = "0" })" />
+            <partial name="Ui/_Input" model="@(new InputModel { Name = "monthly_video_hours", Id = "monthly_video_hours", Label = L["Plan_VideoHoursMonth"], Type = "number", Min = "0", Step = "0.5" })" />
         </div>
     </div>
 
     <div>
-        <p class="mb-2 text-xs font-bold uppercase tracking-wide text-slate-400">Limit artımının qiyməti</p>
+        <p class="mb-2 text-xs font-bold uppercase tracking-wide text-slate-400">@L["Plan_AddonPricing"]</p>
         <p class="mb-3 text-sm text-slate-500">
-            Müştəri istənilən sayda əlavə yer ala bilər — qiymət bir vahid üçündür.
+            @L["Plan_AddonPricingHint"]
         </p>
         <div class="grid gap-3 sm:grid-cols-3">
-            <partial name="Ui/_Input" model="@(new InputModel { Name = "price_per_student", Id = "price_per_student", Label = "1 tələbə (AZN)", Type = "number", Min = "0", Step = "0.01" })" />
-            <partial name="Ui/_Input" model="@(new InputModel { Name = "price_per_group", Id = "price_per_group", Label = "1 qrup (AZN)", Type = "number", Min = "0", Step = "0.01" })" />
-            <partial name="Ui/_Input" model="@(new InputModel { Name = "price_per_video_hour", Id = "price_per_video_hour", Label = "1 video saatı (AZN)", Type = "number", Min = "0", Step = "0.01" })" />
+            <partial name="Ui/_Input" model="@(new InputModel { Name = "price_per_student", Id = "price_per_student", Label = L["Plan_PricePerStudent"], Type = "number", Min = "0", Step = "0.01" })" />
+            <partial name="Ui/_Input" model="@(new InputModel { Name = "price_per_group", Id = "price_per_group", Label = L["Plan_PricePerGroup"], Type = "number", Min = "0", Step = "0.01" })" />
+            <partial name="Ui/_Input" model="@(new InputModel { Name = "price_per_video_hour", Id = "price_per_video_hour", Label = L["Plan_PricePerVideoHour"], Type = "number", Min = "0", Step = "0.01" })" />
         </div>
     </div>
 
     <div>
-        <p class="mb-1 text-xs font-bold uppercase tracking-wide text-slate-400">Limit ödənişi</p>
+        <p class="mb-1 text-xs font-bold uppercase tracking-wide text-slate-400">@L["Plan_AddonBilling"]</p>
         <p class="mb-3 text-sm text-slate-500">
-            Aktivdirsə limit paketlərinin ödənişi ay sonunda planla birlikdə qəbul olunur və aylıq paket verilə bilər.
-            Bağlıdırsa müştəri yalnız indi ödəyə bilər.
+            @L["Plan_AddonBillingHint"]
         </p>
-        <partial name="Ui/_Switch" model="@(new SwitchModel { Name = "bill_addons_with_plan", Id = "bill_addons_with_plan", Label = "Planla birlikdə ödəniş" })" />
+        <partial name="Ui/_Switch" model="@(new SwitchModel { Name = "bill_addons_with_plan", Id = "bill_addons_with_plan", Label = L["Plan_BillWithPlan"] })" />
     </div>
 
     <div>
-        <p class="mb-1 text-xs font-bold uppercase tracking-wide text-slate-400">Modullar</p>
+        <p class="mb-1 text-xs font-bold uppercase tracking-wide text-slate-400">@L["Plan_Modules"]</p>
         <p class="mb-3 text-sm text-slate-500">
-            Bağlı modul bu planı olan tenant-larda görünmür — istifadəçi həmin işi əl ilə görür.
+            @L["Plan_ModulesHint"]
         </p>
-        <partial name="Ui/_Switch" model="@(new SwitchModel { Name = "feature_payment_templates", Id = "feature_payment_templates", Label = "Plan şablonları" })" />
+        <partial name="Ui/_Switch" model="@(new SwitchModel { Name = "feature_payment_templates", Id = "feature_payment_templates", Label = L["Plan_PaymentTemplates"] })" />
     </div>
 
     <div class="flex justify-end gap-2 border-t border-border pt-4">
-        <partial name="Ui/_Button" model="@(new ButtonModel { Text = "Ləğv et", Variant = "secondary", Dismiss = true })" />
-        <partial name="Ui/_Button" model="@(new ButtonModel { Text = "Yadda saxla", Type = "submit" })" />
+        <partial name="Ui/_Button" model="@(new ButtonModel { Text = L["Common_Cancel"], Variant = "secondary", Dismiss = true })" />
+        <partial name="Ui/_Button" model="@(new ButtonModel { Text = L["Common_Save"], Type = "submit" })" />
     </div>
 </form>

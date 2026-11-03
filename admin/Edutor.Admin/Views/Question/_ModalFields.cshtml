@@ -35,7 +35,7 @@
     <div id="variantsImageBlock" class="hidden space-y-3">
         @foreach (var v in new[] { "A", "B", "C", "D", "E" })
         {
-            <partial name="Ui/_FileUpload" model="@(new FileUploadModel { Name = $"variant_{v.ToLower()}_image", Id = $"variant_{v.ToLower()}_image", Label = $"Variant {v} şəkli", Accept = "image/*" })" />
+            <partial name="Ui/_FileUpload" model="@(new FileUploadModel { Name = $"variant_{v.ToLower()}_image", Id = $"variant_{v.ToLower()}_image", Label = L["Question_VariantImage", v], Accept = "image/*" })" />
         }
     </div>
 

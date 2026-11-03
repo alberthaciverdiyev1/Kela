@@ -33,8 +33,8 @@
 <section class="admin-page">
     <div class="flex flex-wrap items-center justify-between gap-3">
         <div>
-            <h1 class="text-xl font-extrabold text-slate-900">Kassa</h1>
-            <p class="mt-1 text-sm text-slate-500">Tələbələrdən daxil olan ödənişlər və aylıq gəlir.</p>
+            <h1 class="text-xl font-extrabold text-slate-900">@L["Cashbox_Title"]</h1>
+            <p class="mt-1 text-sm text-slate-500">@L["Cashbox_Subtitle"]</p>
         </div>
         <div class="flex flex-wrap items-center gap-2">
             @if (Model.Currencies.Select(c => c.Currency).Distinct().Count() > 1)
@@ -47,7 +47,7 @@
                 </select>
             }
             <button type="button" class="admin-button-primary" data-action="CashboxPage.openPayment">
-                Ödəniş qeyd et
+                @L["Payment_Record"]
             </button>
         </div>
     </div>
@@ -55,12 +55,12 @@
     <div class="grid grid-cols-2 gap-4 lg:grid-cols-3">
         @foreach (var card in new (string Id, string Label, string Hint)[]
         {
-            ("k-today", "Bu gün", "bugünkü mədaxil"),
-            ("k-this", "Bu ay yığılıb", "cari ay üzrə"),
-            ("k-expected", "Bu ay gözlənilən", "vaxtı keçmiş + bu ay ödənilməli"),
-            ("k-last", "Keçən ay", "əvvəlki ay üzrə"),
-            ("k-projection", "Gələn ay (proqnoz)", "aktiv planlara əsasən"),
-            ("k-overdue", "Ödənilməmiş borc", "vaxtı keçmiş planlar")
+            ("k-today", L["Cashbox_Today"], L["Cashbox_TodayHint"]),
+            ("k-this", L["Cashbox_ThisMonth"], L["Cashbox_ThisMonthHint"]),
+            ("k-expected", L["Cashbox_Expected"], L["Cashbox_ExpectedHint"]),
+            ("k-last", L["Cashbox_LastMonth"], L["Cashbox_LastMonthHint"]),
+            ("k-projection", L["Cashbox_Projection"], L["Cashbox_ProjectionHint"]),
+            ("k-overdue", L["Cashbox_OverdueDebt"], L["Cashbox_OverdueDebtHint"])
         })
         {
             <div class="admin-card p-4">
@@ -73,7 +73,7 @@
 
     <div class="admin-card p-5">
         <div class="flex flex-wrap items-center justify-between gap-2">
-            <h3 class="text-base font-bold text-slate-900">Son 12 ay</h3>
+            <h3 class="text-base font-bold text-slate-900">@L["Cashbox_Last12"]</h3>
             <span id="cashboxDelta" class="text-sm font-semibold text-slate-500"></span>
         </div>
         <div id="cashboxMonths" class="mt-4 flex h-36 items-end gap-1.5"></div>
@@ -83,10 +83,10 @@
         @foreach (var cell in new (string Label, int Value, string Tone)[]
         {
             ("Aktiv plan", Model.ActivePlans, "text-slate-900"),
-            ("Gecikmiş", Model.OverduePlans, "text-danger"),
-            ("7 gündə bitir", Model.DueSoonPlans, "text-warning"),
-            ("Ödəyən tələbə", Model.PayingStudents, "text-primary"),
-            ("Aktiv tələbə", Model.StudentCount, "text-slate-900")
+            (L["Cashbox_Overdue"], Model.OverduePlans, "text-danger"),
+            (L["Cashbox_DueSoon"], Model.DueSoonPlans, "text-warning"),
+            (L["Cashbox_PayingStudents"], Model.PayingStudents, "text-primary"),
+            (L["Cashbox_ActiveStudents"], Model.StudentCount, "text-slate-900")
         })
         {
             <div class="admin-card px-4 py-3">
@@ -99,30 +99,30 @@
     <div class="admin-card">
         <div class="admin-toolbar flex flex-wrap items-center gap-2">
             <div class="min-w-0">
-                <h3 class="text-base font-bold text-slate-900">Son ödənişlər</h3>
+                <h3 class="text-base font-bold text-slate-900">@L["Cashbox_RecentPayments"]</h3>
                 <p id="cashboxRangeTotal" class="text-xs font-semibold text-slate-500"></p>
             </div>
             <div class="ml-auto flex flex-wrap items-center gap-2">
-                <partial name="Ui/_DatePicker" model="@(new DatePickerModel { Id = "cashboxFrom", Type = "date", Class = "!h-9 w-36", AriaLabel = "Başlanğıc tarixi" })" />
+                <partial name="Ui/_DatePicker" model="@(new DatePickerModel { Id = "cashboxFrom", Type = "date", Class = "!h-9 w-36", AriaLabel = L["Common_FromDate"] })" />
                 <span class="text-slate-400">–</span>
-                <partial name="Ui/_DatePicker" model="@(new DatePickerModel { Id = "cashboxTo", Type = "date", Class = "!h-9 w-36", AriaLabel = "Son tarix" })" />
-                <button type="button" class="admin-button-secondary" data-action="CashboxPage.applyRange">Filtrələ</button>
-                <button type="button" class="admin-button-ghost" data-action="CashboxPage.clearRange">Sıfırla</button>
+                <partial name="Ui/_DatePicker" model="@(new DatePickerModel { Id = "cashboxTo", Type = "date", Class = "!h-9 w-36", AriaLabel = L["Common_ToDate"] })" />
+                <button type="button" class="admin-button-secondary" data-action="CashboxPage.applyRange">@L["Common_Filter"]</button>
+                <button type="button" class="admin-button-ghost" data-action="CashboxPage.clearRange">@L["Common_Reset"]</button>
             </div>
         </div>
         <div class="overflow-x-auto">
             <table class="admin-table">
                 <thead>
                     <tr>
-                        <th>Tarix</th>
-                        <th>Tələbə</th>
-                        <th class="text-right">Məbləğ</th>
-                        <th>Qeyd</th>
-                        <th class="text-right">Əməliyyat</th>
+                        <th>@L["Common_Date"]</th>
+                        <th>@L["Common_Student"]</th>
+                        <th class="text-right">@L["Common_Amount"]</th>
+                        <th>@L["Common_Note"]</th>
+                        <th class="text-right">@L["Common_Actions"]</th>
                     </tr>
                 </thead>
                 <tbody id="cashboxRecent">
-                    <tr><td colspan="5" class="text-sm text-slate-400">Yüklənir...</td></tr>
+                    <tr><td colspan="5" class="text-sm text-slate-400">@L["Common_LoadingDots"]</td></tr>
                 </tbody>
             </table>
         </div>
@@ -137,7 +137,7 @@
 {
     Id = "cashboxPaymentModal",
     TitleId = "cashboxPaymentTitle",
-    Title = "Ödəniş qeyd et",
+    Title = L["Payment_Record"],
     WidthClass = "max-w-lg",
     ShowError = false,
     Body = paymentBody

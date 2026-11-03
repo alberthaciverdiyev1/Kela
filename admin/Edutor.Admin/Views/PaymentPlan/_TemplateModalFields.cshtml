@@ -1,19 +1,19 @@
 @using Edutor.Core.Modules.Payments.Entities
 <form id="template-form" class="space-y-4 p-6">
     <input type="hidden" id="template-id" />
-    <partial name="Ui/_Input" model="@(new InputModel { NativeRequired = true, Name = "template_name", Id = "template-name", Label = "Şablon adı", Required = true })" />
+    <partial name="Ui/_Input" model="@(new InputModel { NativeRequired = true, Name = "template_name", Id = "template-name", Label = L["PaymentPlan_Name"], Required = true })" />
     <div class="grid gap-4 sm:grid-cols-2">
-        <partial name="Ui/_Input" model="@(new InputModel { NativeRequired = true, Name = "template_amount", Id = "template-amount", Label = "Məbləğ", Type = "number", Required = true })" />
+        <partial name="Ui/_Input" model="@(new InputModel { NativeRequired = true, Name = "template_amount", Id = "template-amount", Label = L["Common_Amount"], Type = "number", Required = true })" />
         <partial name="Ui/_Select" model="@(new SelectModel {
             Name = "template_currency", Id = "template-currency", Label = "Valyuta",
             Options = Enum.GetNames<PaymentCurrency>().Select(c => new SelectOption { Value = c, Text = c }).ToList()
         })" />
         <partial name="Ui/_Select" model="@(new SelectModel {
             Name = "template_frequency", Id = "template-frequency", Label = "Period",
-            Options = new List<SelectOption> { new() { Value = "monthly", Text = "Aylıq" }, new() { Value = "custom", Text = "Xüsusi gün sayı" } }
+            Options = new List<SelectOption> { new() { Value = "monthly", Text = L["PaymentPlan_IntervalMonthly"] }, new() { Value = "custom", Text = L["PaymentPlan_IntervalCustom"] } }
         })" />
         <div id="template-interval-wrap" class="hidden">
-            <partial name="Ui/_Input" model="@(new InputModel { Name = "template_interval", Id = "template-interval", Label = "Neçə gündən bir", Type = "number", Value = "30" })" />
+            <partial name="Ui/_Input" model="@(new InputModel { Name = "template_interval", Id = "template-interval", Label = L["PaymentPlan_IntervalDays"], Type = "number", Value = "30" })" />
         </div>
     </div>
     <partial name="Ui/_Editor" model="@(new EditorModel { Id = "template-note", Name = "template-note", Label = "Qeyd", Compact = true })" />

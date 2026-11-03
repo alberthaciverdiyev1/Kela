@@ -4,27 +4,27 @@
     @if (ViewData["TemplatesEnabled"] is true)
     {
         <partial name="Ui/_Select" model="@(new SelectModel {
-            Name = "plan_template", Id = "plan-template", Label = "Şablon plan seç",
-            Options = new List<SelectOption> { new() { Value = "", Text = "— Əl ilə daxil et —" } }
+            Name = "plan_template", Id = "plan-template", Label = L["PaymentPlan_Select"],
+            Options = new List<SelectOption> { new() { Value = "", Text = L["PaymentPlan_Manual"] } }
         })" />
     }
     <div class="grid gap-4 sm:grid-cols-2">
-        <partial name="Ui/_Input" model="@(new InputModel { NativeRequired = true, Name = "plan_joined", Id = "plan-joined", Label = "Qoşulma tarixi", Type = "date", Required = true })" />
-        <partial name="Ui/_Input" model="@(new InputModel { NativeRequired = true, Name = "plan_due", Id = "plan-due", Label = "Növbəti ödəniş", Type = "date", Required = true })" />
-        <partial name="Ui/_Input" model="@(new InputModel { NativeRequired = true, Name = "plan_amount", Id = "plan-amount", Label = "Məbləğ", Type = "number", Required = true })" />
+        <partial name="Ui/_Input" model="@(new InputModel { NativeRequired = true, Name = "plan_joined", Id = "plan-joined", Label = L["Common_JoinedDate"], Type = "date", Required = true })" />
+        <partial name="Ui/_Input" model="@(new InputModel { NativeRequired = true, Name = "plan_due", Id = "plan-due", Label = L["Payment_NextDue"], Type = "date", Required = true })" />
+        <partial name="Ui/_Input" model="@(new InputModel { NativeRequired = true, Name = "plan_amount", Id = "plan-amount", Label = L["Common_Amount"], Type = "number", Required = true })" />
         <partial name="Ui/_Select" model="@(new SelectModel { Name = "plan_currency", Id = "plan-currency", Label = "Valyuta", Options = Enum.GetNames<PaymentCurrency>().Select(c => new SelectOption { Value = c, Text = c }).ToList() })" />
         <partial name="Ui/_Select" model="@(new SelectModel {
             Name = "plan_frequency", Id = "plan-frequency", Label = "Period",
-            Options = new List<SelectOption> { new() { Value = "monthly", Text = "Aylıq" }, new() { Value = "custom", Text = "Xüsusi gün sayı" } }
+            Options = new List<SelectOption> { new() { Value = "monthly", Text = L["PaymentPlan_IntervalMonthly"] }, new() { Value = "custom", Text = L["PaymentPlan_IntervalCustom"] } }
         })" />
         <div id="interval-wrap" class="hidden">
-            <partial name="Ui/_Input" model="@(new InputModel { Name = "plan_interval", Id = "plan-interval", Label = "Neçə gündən bir", Type = "number", Value = "30" })" />
+            <partial name="Ui/_Input" model="@(new InputModel { Name = "plan_interval", Id = "plan-interval", Label = L["PaymentPlan_IntervalDays"], Type = "number", Value = "30" })" />
         </div>
     </div>
     <partial name="Ui/_Editor" model="@(new EditorModel { Id = "plan-note", Name = "plan-note", Label = "Qeyd", Compact = true })" />
     <label id="plan-first-paid-wrap" class="flex items-start gap-2.5 rounded-xl bg-primary-light px-3.5 py-3 text-sm font-medium text-primary">
         <input type="checkbox" id="plan-first-paid" class="mt-0.5 h-4 w-4 rounded border-slate-300 text-primary focus:ring-primary" />
-        <span>İlk ödənişi indi qeyd et (bu gün üçün)</span>
+        <span>@L["Plan_FirstPaymentNow"]</span>
     </label>
     <div class="flex justify-end gap-3 pt-1">
         <button type="button" class="admin-button-secondary" data-modal-close>@L["Common_Cancel"]</button>

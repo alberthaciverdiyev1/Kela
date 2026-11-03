@@ -1,12 +1,12 @@
 @{
-    ViewData["Title"] = "Ödənişlər";
+    ViewData["Title"] = L["Payment_Title"];
     var statusOptions = new List<SelectOption>
     {
-        new() { Value = "", Text = "Hamısı" },
-        new() { Value = "upcoming", Text = "Yaxınlaşan" },
-        new() { Value = "overdue", Text = "Gecikən" },
-        new() { Value = "unpaid", Text = "Plan yoxdur" },
-        new() { Value = "current", Text = "Aktiv plan" }
+        new() { Value = "", Text = L["Common_All"] },
+        new() { Value = "upcoming", Text = L["Payment_Upcoming"] },
+        new() { Value = "overdue", Text = L["Payment_Overdue"] },
+        new() { Value = "unpaid", Text = L["Payment_NoPlan"] },
+        new() { Value = "current", Text = L["Payment_ActivePlan"] }
     };
 }
 <section class="admin-page">
@@ -14,15 +14,15 @@
     <partial name="Ui/_PageHeader" model="@(new PageHeaderModel())" />
 
     <div class="mb-4 grid grid-cols-2 gap-3 xl:grid-cols-4">
-        <partial name="Ui/_StatCard" model="@(new StatCardModel { Id = "count-upcoming", Label = "Yaxınlaşan", Value = "0", Compact = true, ValueClass = "text-warning" })" />
-        <partial name="Ui/_StatCard" model="@(new StatCardModel { Id = "count-overdue", Label = "Gecikən", Value = "0", Compact = true, ValueClass = "text-danger" })" />
-        <partial name="Ui/_StatCard" model="@(new StatCardModel { Id = "count-unpaid", Label = "Plan yoxdur", Value = "0", Compact = true, ValueClass = "text-slate-700" })" />
-        <partial name="Ui/_StatCard" model="@(new StatCardModel { Id = "count-current", Label = "Aktiv plan", Value = "0", Compact = true, ValueClass = "text-success" })" />
+        <partial name="Ui/_StatCard" model="@(new StatCardModel { Id = "count-upcoming", Label = L["Payment_Upcoming"], Value = "0", Compact = true, ValueClass = "text-warning" })" />
+        <partial name="Ui/_StatCard" model="@(new StatCardModel { Id = "count-overdue", Label = L["Payment_Overdue"], Value = "0", Compact = true, ValueClass = "text-danger" })" />
+        <partial name="Ui/_StatCard" model="@(new StatCardModel { Id = "count-unpaid", Label = L["Payment_NoPlan"], Value = "0", Compact = true, ValueClass = "text-slate-700" })" />
+        <partial name="Ui/_StatCard" model="@(new StatCardModel { Id = "count-current", Label = L["Payment_ActivePlan"], Value = "0", Compact = true, ValueClass = "text-success" })" />
     </div>
 
     <div class="admin-card">
         <partial name="Ui/_FilterBar" model="@(new FilterBarModel {
-            SearchPlaceholder = "Şagird adı və ya email ilə axtar...",
+            SearchPlaceholder = L["Payment_SearchPlaceholder"],
             Selects = new List<FilterSelectModel> {
                 new() { WidthClass = "w-48", Select = new SelectModel { Name = "status", Id = "payment-status", Label = "Status", Options = statusOptions } }
             },
@@ -35,10 +35,10 @@ BodyId = "payment-rows",
 Columns = new List<TableColumnModel>
 {
 new() { Label = L["Common_Student"] },
-new() { Label = "Qoşulma tarixi", WidthClass = "w-32" },
-new() { Label = "Növbəti ödəniş", WidthClass = "w-32" },
-new() { Label = "Məbləğ", WidthClass = "w-32" },
-new() { Label = "Period", WidthClass = "w-32" },
+new() { Label = L["Common_JoinedDate"], WidthClass = "w-32" },
+new() { Label = L["Payment_NextDue"], WidthClass = "w-32" },
+new() { Label = L["Common_Amount"], WidthClass = "w-32" },
+new() { Label = L["Common_Period"], WidthClass = "w-32" },
 new() { Label = L["Common_Status"], WidthClass = "w-28" },
 new() { Label = L["Common_Actions"], Right = true }
 }
@@ -54,7 +54,7 @@ new() { Label = L["Common_Actions"], Right = true }
 <partial name="Ui/_Modal" model="@(new ModalModel
 {
     Id = "recordModal",
-    Title = "Ödəniş qeyd et",
+    Title = L["Payment_Record"],
     WidthClass = "max-w-lg",
     ShowError = false,
     Body = recordBody
@@ -64,7 +64,7 @@ new() { Label = L["Common_Actions"], Right = true }
 {
     Id = "planModal",
     TitleId = "planModalTitle",
-    Title = "Ödəniş planı",
+    Title = L["Payment_Plan"],
     WidthClass = "max-w-lg",
     ShowError = false,
     Body = planBody

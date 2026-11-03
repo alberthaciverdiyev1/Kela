@@ -2,7 +2,7 @@
 @using Edutor.Core.Modules.Tenant.Responses
 @using Edutor.Admin.Models.Ui
 @{
-    ViewData["Title"] = "Planlar";
+    ViewData["Title"] = L["PlanCatalog_Title"];
     var tenants = ViewData["Tenants"] as IReadOnlyList<TenantResponse>;
     var selectedTenantId = ViewData["SelectedTenantId"] as long?;
     var plans = ViewData["Plans"] as IReadOnlyList<Edutor.Core.Modules.Subscription.Responses.PlanResponse> ?? [];
@@ -12,16 +12,16 @@
     var userEmail = User.FindFirst(System.Security.Claims.ClaimTypes.Email)?.Value ?? "";
     var userName = User.Identity?.Name ?? "";
 
-    string Limit(int value) => value > 0 ? value.ToString() : "limitsiz";
-    string Storage(long bytes) => bytes > 0 ? $"{Math.Round(bytes / 1073741824.0)} GB" : "limitsiz";
+    string Limit(int value) => value > 0 ? value.ToString() : L["Subscription_Unlimited"];
+    string Storage(long bytes) => bytes > 0 ? $"{Math.Round(bytes / 1073741824.0)} GB" : L["Subscription_Unlimited"];
 
     string UploadList(bool video, bool file, bool audio)
     {
         var items = new List<string>();
         if (video) items.Add("video");
         if (file) items.Add("PDF");
-        if (audio) items.Add("səs");
-        return items.Count > 0 ? string.Join(", ", items) : "bağlı";
+        if (audio) items.Add(L["Common_Audio"]);
+        return items.Count > 0 ? string.Join(", ", items) : L["PlanCatalog_Off"];
     }
 
     bool HasTemplates(string? featuresJson)
@@ -96,17 +96,17 @@
         <div class="admin-card p-5">
             <p class="text-sm text-slate-500">
                 @(tenants is { Count: > 0 }
-                    ? "Tenant seçin — mövcud planlar göstəriləcək."
-                    : "Hələ plan təyin edilməyib. Administratorla əlaqə saxlayın.")
+                    ? L["PlanCatalog_SelectTenantHint"]
+                    : L["Subscription_NoPlanHint"])
             </p>
         </div>
     }
     else if (plans.Count > 0)
     {
         <div class="admin-card p-5">
-            <h3 class="mb-1 text-base font-bold text-slate-900">Mövcud planlar</h3>
+            <h3 class="mb-1 text-base font-bold text-slate-900">@L["PlanCatalog_Available"]</h3>
             <p class="mb-4 text-sm text-slate-500">
-                Plan seçdikdə müraciət WhatsApp vasitəsilə göndərilir — aktivləşdirmə əl ilə aparılır.
+                @L["PlanCatalog_Intro"]
             </p>
 
             <div class="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
@@ -118,7 +118,7 @@
                             <p class="font-bold text-slate-900">@plan.Name</p>
                             @if (isCurrent)
                             {
-                                <span class="badge badge-success">Cari plan</span>
+                                <span class="badge badge-success">@L["Subscription_CurrentPlan"]</span>
                             }
                         </div>
 
@@ -129,23 +129,23 @@
 
                         <p class="mt-2 text-lg font-extrabold text-primary">
                             @plan.MonthlyPrice @plan.Currency
-                            <span class="text-xs font-medium text-slate-400">/ ay</span>
+                            <span class="text-xs font-medium text-slate-400">@L["Common_PerMonth"]</span>
                         </p>
 
                         <ul class="mt-3 space-y-1 text-sm text-slate-600">
-                            <li>@Limit(plan.MaxStudents) tələbə</li>
-                            <li>@Limit(plan.MaxGroups) qrup</li>
-                            <li>@(plan.MonthlyVideoMinutes > 0 ? (plan.MonthlyVideoMinutes / 60).ToString() : "Limitsiz") video saatı / ay</li>
-                            <li>@Storage(plan.StorageBytes) yaddaş</li>
-                            <li>Maks. keyfiyyət: @(plan.MaxVideoHeight > 0 ? $"{plan.MaxVideoHeight}p" : "limitsiz")</li>
-                            <li>Yükləmə: @UploadList(plan.AllowVideoUpload, plan.AllowFileUpload, plan.AllowAudioUpload)</li>
-                            <li>Plan şablonları: @(HasTemplates(plan.Features) ? "açıq" : "bağlı")</li>
+                            <li>@L["Common_StudentCount", Limit(plan.MaxStudents)]</li>
+                            <li>@L["Common_GroupCount", Limit(plan.MaxGroups)]</li>
+                            <li>@(plan.MonthlyVideoMinutes > 0 ? L["PlanCatalog_VideoPerMonth", plan.MonthlyVideoMinutes / 60] : L["PlanCatalog_VideoUnlimited"])</li>
+                            <li>@L["PlanCatalog_Storage", Storage(plan.StorageBytes)]</li>
+                            <li>@L["PlanCatalog_MaxQuality", plan.MaxVideoHeight > 0 ? $"{plan.MaxVideoHeight}p" : L["Subscription_Unlimited"].Value]</li>
+                            <li>@L["PlanCatalog_Uploads", UploadList(plan.AllowVideoUpload, plan.AllowFileUpload, plan.AllowAudioUpload)]</li>
+                            <li>@L["PlanCatalog_Templates", HasTemplates(plan.Features) ? L["PlanCatalog_On"].Value : L["PlanCatalog_Off"].Value]</li>
                         </ul>
 
                         <button type="button" class="admin-button-primary mt-4 w-full"
                                 data-action="PlanCatalogPage.choosePlan" data-args='[@plan.Id]'
                                 @(isCurrent ? "disabled" : null)>
-                            @(isCurrent ? "Seçilib" : "Bu planı seç")
+                            @(isCurrent ? L["PlanCatalog_Selected"] : L["PlanCatalog_ChooseThis"])
                         </button>
                     </div>
                 }

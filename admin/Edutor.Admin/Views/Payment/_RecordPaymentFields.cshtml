@@ -2,8 +2,8 @@
     <input type="hidden" id="record-student-id" />
     <p id="record-summary" class="rounded-xl bg-surface-secondary px-3.5 py-2.5 text-sm font-medium text-slate-600"></p>
     <div class="grid gap-4 sm:grid-cols-2">
-        <partial name="Ui/_Input" model="@(new InputModel { NativeRequired = true, Name = "record_paid_on", Id = "record-paid-on", Label = "Ödəniş tarixi", Type = "date", Required = true })" />
-        <partial name="Ui/_Input" model="@(new InputModel { NativeRequired = true, Name = "record_amount", Id = "record-amount", Label = "Məbləğ", Type = "number", Required = true })" />
+        <partial name="Ui/_Input" model="@(new InputModel { NativeRequired = true, Name = "record_paid_on", Id = "record-paid-on", Label = L["Payment_PaidOn"], Type = "date", Required = true })" />
+        <partial name="Ui/_Input" model="@(new InputModel { NativeRequired = true, Name = "record_amount", Id = "record-amount", Label = L["Common_Amount"], Type = "number", Required = true })" />
     </div>
     <partial name="Ui/_Editor" model="@(new EditorModel { Id = "record-note", Name = "record-note", Label = "Qeyd", Compact = true })" />
     <div class="flex justify-end gap-3 pt-1">

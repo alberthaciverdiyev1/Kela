@@ -29,7 +29,8 @@
             }
 
             <form method="post" action="/register" enctype="multipart/form-data" class="mt-7 space-y-6"
-                  data-register-form data-start-step="@(ViewData["Error"] is string ? "2" : "1")">
+                  data-register-form data-start-step="@(ViewData["Error"] is string ? "2" : "1")"
+                  data-show-password="@L["User_ShowPassword"]" data-hide-password="@L["User_HidePassword"]">
                 @Html.AntiForgeryToken()
 
                 <div data-register-step="1" class="space-y-5">

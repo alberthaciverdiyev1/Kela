@@ -1,19 +1,19 @@
 <form id="cashboxPaymentForm" class="space-y-4 p-6">
     <partial name="Ui/_Select" model="@(new SelectModel
     {
-        Name = "student_id", Id = "cashboxStudent", Label = "Tələbə",
+        Name = "student_id", Id = "cashboxStudent", Label = L["Common_Student"],
         Options = new List<SelectOption>()
     })" />
 
     <partial name="Ui/_Select" model="@(new SelectModel
     {
-        Name = "plan_id", Id = "cashboxPlan", Label = "Ödəniş planı",
+        Name = "plan_id", Id = "cashboxPlan", Label = L["Payment_Plan"],
         Options = new List<SelectOption>()
     })" />
 
     <div class="grid gap-4 sm:grid-cols-2">
         <div>
-            <label for="cashboxAmount" class="mb-1 block text-sm font-semibold text-slate-600">Məbləğ</label>
+            <label for="cashboxAmount" class="mb-1 block text-sm font-semibold text-slate-600">@L["Common_Amount"]</label>
             <input id="cashboxAmount" type="number" step="0.01" min="0.01" class="admin-field" />
         </div>
         <partial name="Ui/_DatePicker" model="@(new DatePickerModel { Id = "cashboxPaidOn", Type = "date", Label = "Tarix" })" />
@@ -21,7 +21,7 @@
 
     <div>
         <label for="cashboxNote" class="mb-1 block text-sm font-semibold text-slate-600">Qeyd</label>
-        <input id="cashboxNote" type="text" class="admin-field" placeholder="İstəyə bağlı" />
+        <input id="cashboxNote" type="text" class="admin-field" placeholder="@L["Common_Optional"]" />
     </div>
 
     <p id="cashboxStudentHint" class="text-xs text-slate-400"></p>

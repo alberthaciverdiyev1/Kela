@@ -1,7 +1,7 @@
 @{
-    ViewData["Title"] = "Abunəlik planları";
+    ViewData["Title"] = L["Plan_Title"];
     var headerExtra = new Microsoft.AspNetCore.Html.HtmlString(
-        @"<button type=""button"" class=""admin-button-primary"" data-action=""PlanPage.create"">+ Yeni plan</button>");
+        $@"<button type=""button"" class=""admin-button-primary"" data-action=""PlanPage.create"">{L["Plan_New"]}</button>");
     var planModalBody = await Html.PartialAsync("_FormFields");
 }
 
@@ -13,16 +13,16 @@
             <table class="admin-table">
                 <thead>
                     <tr>
-                        <th>Plan</th>
-                        <th>Qiymət</th>
-                        <th>Sınaq</th>
-                        <th>Tələbə</th>
-                        <th>Qrup</th>
-                        <th>Video (saat/ay)</th>
-                        <th>Yükləmə</th>
-                        <th>Şablonlar</th>
-                        <th>Status</th>
-                        <th class="text-right">Əməliyyat</th>
+                        <th>@L["Plan_Column"]</th>
+                        <th>@L["Plan_Price"]</th>
+                        <th>@L["Plan_Trial"]</th>
+                        <th>@L["Common_Student"]</th>
+                        <th>@L["Common_Group"]</th>
+                        <th>@L["Plan_VideoHoursMonth"]</th>
+                        <th>@L["Subscription_Uploads"]</th>
+                        <th>@L["Plan_Templates"]</th>
+                        <th>@L["Common_Status"]</th>
+                        <th class="text-right">@L["Common_Actions"]</th>
                     </tr>
                 </thead>
                 <tbody id="rows"></tbody>
@@ -35,7 +35,7 @@
 {
     Id = "planModal",
     TitleId = "planTitle",
-    Title = "Plan",
+    Title = L["Plan_Column"],
     WidthClass = "max-w-3xl",
     ShowError = false,
     Body = planModalBody

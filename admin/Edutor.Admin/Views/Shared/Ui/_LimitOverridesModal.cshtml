@@ -1,8 +1,8 @@
 <div id="limitsModal" data-modal class="fixed inset-0 z-40 hidden items-center justify-center bg-slate-950/40 p-4">
     <div data-modal-panel class="w-full max-w-md rounded-2xl border border-border bg-white p-5 shadow-xl">
-        <h3 class="mb-1 text-lg font-bold text-slate-900">Fərdi limitlər</h3>
+        <h3 class="mb-1 text-lg font-bold text-slate-900">@L["LimitOverrides_Title"]</h3>
         <p class="mb-4 text-sm text-slate-500">
-            Bu müştəriyə plan limitindən fərqli limit verin. Boş sahə plan limitini saxlayır, 0 = limitsiz.
+            @L["LimitOverrides_Hint"]
         </p>
 
         <form id="limitsForm">
@@ -10,7 +10,7 @@
 
             <div class="grid gap-3 sm:grid-cols-2">
                 <label class="block text-sm font-semibold text-slate-600">
-                    Tələbə limiti
+                    @L["LimitOverrides_Students"]
                     <input id="limitsStudents" name="max_students" type="number" min="0" class="admin-field mt-1" />
                 </label>
 
@@ -20,7 +20,7 @@
                 </label>
 
                 <label class="block text-sm font-semibold text-slate-600">
-                    Aylıq video (dəqiqə)
+                    @L["LimitOverrides_VideoMinutes"]
                     <input id="limitsVideoMinutes" name="max_video_minutes" type="number" min="0" class="admin-field mt-1" />
                 </label>
 
@@ -31,7 +31,7 @@
             </div>
 
             <div class="mt-5 flex justify-end gap-2">
-                <button type="button" onclick="LimitOverridesModal.close()" class="admin-button admin-button-secondary">Ləğv et</button>
+                <button type="button" onclick="LimitOverridesModal.close()" class="admin-button admin-button-secondary">@L["Common_Cancel"]</button>
                 <button type="submit" class="admin-button admin-button-primary">Yadda saxla</button>
             </div>
         </form>

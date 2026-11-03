@@ -2,7 +2,7 @@
 
 <div id="planModal" data-modal class="fixed inset-0 z-40 hidden items-center justify-center bg-slate-950/40 p-4">
     <div data-modal-panel class="w-full max-w-md rounded-2xl border border-border bg-white p-5 shadow-xl">
-        <h3 class="mb-4 text-lg font-bold text-slate-900">Abunəlik planı</h3>
+        <h3 class="mb-4 text-lg font-bold text-slate-900">@L["Payment_Plan"]</h3>
 
         <form id="planForm">
             <input type="hidden" id="planTenantId" />
@@ -10,15 +10,15 @@
             <label class="mb-1 block text-sm font-semibold text-slate-600">Plan</label>
             <select id="planSelect" class="admin-field"></select>
 
-            <label class="mb-1 block text-sm font-semibold text-slate-600 mt-3">Bitmə tarixi (boş = müddətsiz)</label>
+            <label class="mb-1 block text-sm font-semibold text-slate-600 mt-3">@L["PlanModal_ExpiresAt"]</label>
             <partial name="Ui/_DatePicker" model="@(new DatePickerModel { Id = "planExpires", Type = "date" })" />
 
             <div class="mt-4 rounded-xl bg-surface-secondary p-3 text-sm text-slate-600">
-                Ödənişdən sonra əlavə paket də əlavə edə bilərsiniz — plan limitinə dərhal təsir edir.
+                @L["PlanModal_AddonHint"]
             </div>
 
             <div class="mt-5 flex justify-end gap-2">
-                <button type="button" onclick="PlanModal.close()" class="admin-button admin-button-secondary">Ləğv et</button>
+                <button type="button" onclick="PlanModal.close()" class="admin-button admin-button-secondary">@L["Common_Cancel"]</button>
                 <button type="submit" class="admin-button admin-button-primary">Yadda saxla</button>
             </div>
         </form>

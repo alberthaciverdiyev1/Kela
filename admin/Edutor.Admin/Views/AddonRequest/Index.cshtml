@@ -1,24 +1,24 @@
 @{
-    ViewData["Title"] = "Limit müraciətləri";
+    ViewData["Title"] = L["AddonRequest_Title"];
     var isSuperAdmin = User.IsInRole(AuthRoles.SuperAdmin);
 }
 
 <section class="admin-page space-y-5">
     <div class="flex flex-wrap items-center justify-between gap-3">
         <div>
-            <h1 class="text-2xl font-extrabold tracking-tight text-slate-900">Limit müraciətləri</h1>
+            <h1 class="text-2xl font-extrabold tracking-tight text-slate-900">@L["AddonRequest_Title"]</h1>
             <p class="mt-1 text-sm text-slate-500">
                 @(isSuperAdmin
-                    ? "Bütün tenantların planı dəyişmədən limit artırma müraciətləri. Paketin birdəfəlik/aylıq formasını və ödəniş vaxtını superadmin təsdiq zamanı müəyyən edir."
-                    : "Planı dəyişmədən limit artırmaq üçün göndərdiyiniz müraciətlər. Paketin formasını və ödəniş vaxtını platform administratoru təsdiq zamanı müəyyən edir.")
+                    ? L["AddonRequest_AdminDesc"]
+                    : L["AddonRequest_UserDesc"])
             </p>
         </div>
 
         <div class="flex flex-wrap gap-2">
-            <button type="button" class="admin-button-secondary" data-filter="">Hamısı</button>
-            <button type="button" class="admin-button-secondary" data-filter="pending">Gözləyən</button>
-            <button type="button" class="admin-button-secondary" data-filter="approved">Təsdiqlənən</button>
-            <button type="button" class="admin-button-secondary" data-filter="rejected">Rədd edilən</button>
+            <button type="button" class="admin-button-secondary" data-filter="">@L["Common_All"]</button>
+            <button type="button" class="admin-button-secondary" data-filter="pending">@L["Requests_Pending"]</button>
+            <button type="button" class="admin-button-secondary" data-filter="approved">@L["Requests_Approved"]</button>
+            <button type="button" class="admin-button-secondary" data-filter="rejected">@L["Requests_Rejected"]</button>
         </div>
     </div>
 
@@ -31,18 +31,18 @@
                     {
                         <th>Tenant</th>
                     }
-                    <th>Növ</th>
-                    <th>Miqdar</th>
-                    <th>Ödəniş vaxtı</th>
-                    <th>Məbləğ</th>
-                    <th>Müraciət edən</th>
-                    <th>Tarix</th>
-                    <th>Status</th>
-                    <th class="text-right">Əməliyyat</th>
+                    <th>@L["Common_Type"]</th>
+                    <th>@L["Subscription_Quantity"]</th>
+                    <th>@L["Subscription_PaymentTiming"]</th>
+                    <th>@L["Common_Amount"]</th>
+                    <th>@L["AddonRequest_Requester"]</th>
+                    <th>@L["Common_Date"]</th>
+                    <th>@L["Common_Status"]</th>
+                    <th class="text-right">@L["Common_Actions"]</th>
                 </tr>
                 </thead>
                 <tbody id="addonRequestRows">
-                <tr><td colspan="9" class="p-6 text-center text-sm text-slate-400">Yüklənir…</td></tr>
+                <tr><td colspan="9" class="p-6 text-center text-sm text-slate-400">@L["Common_LoadingDots"]</td></tr>
                 </tbody>
             </table>
         </div>
