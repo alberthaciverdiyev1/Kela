@@ -3,6 +3,23 @@
     const errBox = document.getElementById('formError');
 
     const lessonSelect = document.getElementById('lesson_id');
+    const typeSelect = document.getElementById('type');
+    const lessonFields = document.getElementById('lessonFields');
+
+    const isGeneral = () => typeSelect.value === 'general';
+
+    // Ümumi imtahanda dərs seçimi mənasızdır — gizlədilir və göndərilmir.
+    window.syncQuizTypeFields = function () {
+        const general = isGeneral();
+        lessonFields.classList.toggle('hidden', general);
+        // Gizli sahə də form validasiyasından çıxarılmalıdır.
+        lessonSelect.dataset.required = general ? 'false' : 'true';
+    };
+
+    typeSelect.addEventListener('change', () => {
+        window.syncQuizTypeFields();
+        if (!document.getElementById('entityId').value) loadCreateExtras();
+    });
 
     // Fənn filtri üçün ilkin siyahı; variant mətni artıq "Fənn — Dərs" formatındadır.
     const allLessons = [...lessonSelect.options].map(o => ({
@@ -50,10 +67,12 @@
     }
 
     async function loadCreateExtras() {
-        const lessonId = lessonSelect.value;
         const token = ++extrasToken;
+        const general = isGeneral();
+        const lessonId = lessonSelect.value;
 
-        if (!lessonId) {
+        // Ümumi imtahanda bütün suallar və qruplar təklif olunur.
+        if (!general && !lessonId) {
             extrasBox.classList.add('hidden');
             questionListBox.innerHTML = '';
             groupListBox.innerHTML = '';
@@ -64,8 +83,8 @@
         const subjectId = (window.LESSON_SUBJECTS || {})[lessonId] ?? '';
 
         const [questions, groups] = await Promise.all([
-            AdminUI.get('/quiz/options?lesson_id=' + encodeURIComponent(lessonId)),
-            AdminUI.get('/quiz/group-options?subject_id=' + encodeURIComponent(subjectId))
+            AdminUI.get(general ? '/quiz/options' : '/quiz/options?lesson_id=' + encodeURIComponent(lessonId)),
+            AdminUI.get(general ? '/quiz/group-options' : '/quiz/group-options?subject_id=' + encodeURIComponent(subjectId))
         ]);
         if (token !== extrasToken) return;
 
@@ -79,7 +98,7 @@
 
     window.buildQuizForm = function () {
         const fd = new FormData();
-        fd.append('lesson_id', document.getElementById('lesson_id').value);
+        if (!isGeneral()) fd.append('lesson_id', lessonSelect.value);
         fd.append('title', document.getElementById('title').value);
         fd.append('duration_minutes', document.getElementById('duration_minutes').value || '1');
         const sortOrder = document.getElementById('sort_order').value;
@@ -98,7 +117,8 @@
         window.filterQuizLessons('');
         document.getElementById('title').value = '';
         document.getElementById('duration_minutes').value = 1;
-        document.getElementById('type').value = 'lesson';
+        typeSelect.value = 'lesson';
+        window.syncQuizTypeFields();
         document.getElementById('is_active').checked = true;
         document.getElementById('is_repeat').checked = false;
         extrasToken++;

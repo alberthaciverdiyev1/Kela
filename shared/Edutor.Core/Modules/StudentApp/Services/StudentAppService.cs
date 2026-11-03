@@ -376,7 +376,8 @@ public sealed class StudentAppService(
 
         if (general)
         {
-            quizzes = quizzes.Where(q => q.LessonId == null);
+            // Köhnə ümumi imtahanlarda lesson_id boş qalmamışdı — növə görə də qəbul edilir.
+            quizzes = quizzes.Where(q => q.Type == "general" || q.LessonId == null);
         }
 
         if (subjectId is long sid)

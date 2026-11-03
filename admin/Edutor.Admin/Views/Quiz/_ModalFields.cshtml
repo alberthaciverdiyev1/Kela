@@ -16,7 +16,8 @@
 <form id="entityForm" class="space-y-4 p-6">
     <input type="hidden" id="entityId" />
     <input type="hidden" id="sort_order" />
-    <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+    @* Ümumi imtahanda dərs olmur — JS bu bloku gizlədir. *@
+    <div id="lessonFields" class="grid grid-cols-1 gap-4 sm:grid-cols-2">
         <partial name="Ui/_Select" model="@(new SelectModel { Name = "subject_filter", Id = "subject_filter", Label = L["Common_Subject"], Options = subjectFilterOptions })" />
         <partial name="Ui/_Select" model="@(new SelectModel { Name = "lesson_id", Id = "lesson_id", Label = L["Common_Lesson"], Required = true, Options = lessonOptions })" />
     </div>

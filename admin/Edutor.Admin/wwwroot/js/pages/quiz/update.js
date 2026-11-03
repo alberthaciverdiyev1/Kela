@@ -18,6 +18,8 @@
         document.getElementById('type').value = d.type;
         document.getElementById('is_active').checked = d.isActive;
         document.getElementById('is_repeat').checked = d.isRepeat;
+        // Ümumi imtahanda dərs seçimi göstərilmir.
+        window.syncQuizTypeFields?.();
         // Sual/qrup seçimi yalnız yaratma modalına aiddir.
         document.getElementById('createExtras').classList.add('hidden');
         AdminUI.openModal('modal');

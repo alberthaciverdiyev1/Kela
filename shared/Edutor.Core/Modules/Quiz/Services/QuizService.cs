@@ -63,15 +63,18 @@ public sealed class QuizService(AppDbContext db, IFileStorage storage) : IQuizSe
 
     public async Task<QuizResponse> CreateAsync(QuizUpsertRequest request, CancellationToken ct = default)
     {
-        if (request.LessonId.HasValue)
+        // Ümumi imtahan dərsə bağlı deyil — web tərəfi onları lesson_id boş olanlardan seçir.
+        var lessonId = request.Type == "general" ? null : request.LessonId;
+
+        if (lessonId.HasValue)
         {
-            await EnsureLessonExistsAsync(request.LessonId.Value, ct);
-            if (request.UserId is long ownerId) await EnsureLessonAccessibleAsync(request.LessonId.Value, ownerId, ct);
+            await EnsureLessonExistsAsync(lessonId.Value, ct);
+            if (request.UserId is long ownerId) await EnsureLessonAccessibleAsync(lessonId.Value, ownerId, ct);
         }
 
         var quiz = new Quiz
         {
-            LessonId = request.LessonId,
+            LessonId = lessonId,
             Title = request.Title,
             DurationMinutes = request.DurationMinutes,
             Type = request.Type,
@@ -96,13 +99,15 @@ public sealed class QuizService(AppDbContext db, IFileStorage storage) : IQuizSe
 
         OwnershipGuard.EnsureOwned(ownerId, quiz.UserId, "You can only modify your own quiz");
 
-        if (request.LessonId.HasValue)
+        var lessonId = request.Type == "general" ? null : request.LessonId;
+
+        if (lessonId.HasValue)
         {
-            await EnsureLessonExistsAsync(request.LessonId.Value, ct);
-            if (ownerId.HasValue) await EnsureLessonAccessibleAsync(request.LessonId.Value, ownerId.Value, ct);
+            await EnsureLessonExistsAsync(lessonId.Value, ct);
+            if (ownerId.HasValue) await EnsureLessonAccessibleAsync(lessonId.Value, ownerId.Value, ct);
         }
 
-        quiz.LessonId = request.LessonId;
+        quiz.LessonId = lessonId;
         quiz.Title = request.Title;
         quiz.DurationMinutes = request.DurationMinutes;
         quiz.Type = request.Type;
