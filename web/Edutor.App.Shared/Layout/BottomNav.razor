@@ -9,8 +9,10 @@
     <BottomItem Href="/exams" Label="@L["Nav_Exam"]" IconName="file" />
     <BottomItem Href="/homeworks" Label="@L["Nav_Homeworks"]" IconName="clipboard-check" />
     <button type="button" @onclick="() => _moreOpen = true"
-            class="flex min-w-0 flex-1 flex-col items-center gap-1 text-center text-[10px] font-semibold @(MoreActive ? "text-brand-671" : "text-sage-369")">
-        <Icon Name="sliders" Class="size-5" />
+            class="flex min-w-0 flex-1 flex-col items-center gap-0.5 rounded-xl pb-1 pt-1.5 text-center text-[10px] @(MoreActive ? "font-extrabold text-brand-743" : "font-semibold text-sage-369")">
+        <span class="grid size-8 place-items-center rounded-full transition @(MoreActive ? "bg-brand-073" : null)">
+            <Icon Name="sliders" Class="@($"size-5 {(MoreActive ? "text-brand-671" : "")}")" />
+        </span>
         <span class="w-full truncate">@L["Nav_More"]</span>
     </button>
 </nav>

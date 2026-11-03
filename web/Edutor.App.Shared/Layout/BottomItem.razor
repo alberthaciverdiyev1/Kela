@@ -4,6 +4,8 @@
 @* @onclick:preventDefault: default keçid ləğv olunur, naviqasiyanı özümüz edirik ki
    niyyət (sekme) naviqasiyadan ƏVVƏL qeyd olunsun. *@
 <a href="@Href" @onclick="Open" @onclick:preventDefault class="@Css">
-    <Icon Name="@IconName" Class="size-5" />
+    <span class="grid size-8 place-items-center rounded-full transition @(Active ? "bg-brand-073" : null)">
+        <Icon Name="@IconName" Class="@($"size-5 {IconActiveCss}")" />
+    </span>
     <span class="w-full truncate">@Label</span>
 </a>

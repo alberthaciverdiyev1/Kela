@@ -39,6 +39,8 @@ public partial class BottomItem
     }
 
     private string Css =>
-        "flex min-w-0 flex-1 flex-col items-center gap-1 text-center text-[10px] font-semibold " +
-        (Active ? "text-brand-671" : "text-sage-369");
+        "flex min-w-0 flex-1 flex-col items-center gap-0.5 rounded-xl pb-1 pt-1.5 text-center text-[10px] " +
+        (Active ? "font-extrabold text-brand-743" : "font-semibold text-sage-369");
+
+    private string IconActiveCss => Active ? "text-brand-671" : "";
 }
