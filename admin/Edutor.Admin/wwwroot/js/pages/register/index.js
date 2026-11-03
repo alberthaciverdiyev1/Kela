@@ -79,14 +79,14 @@
         const btn = document.createElement('button');
         btn.type = 'button';
         btn.className = 'absolute right-2 top-1/2 grid h-8 w-8 -translate-y-1/2 place-items-center rounded-lg text-slate-400 transition hover:bg-surface-secondary hover:text-slate-600';
-        btn.setAttribute('aria-label', 'Şifrəni göstər');
+        btn.setAttribute('aria-label', form?.dataset.showPassword || '');
         btn.innerHTML = EYE;
 
         btn.addEventListener('click', () => {
             const visible = input.type === 'text';
             input.type = visible ? 'password' : 'text';
             btn.innerHTML = visible ? EYE : EYE_OFF;
-            btn.setAttribute('aria-label', visible ? 'Şifrəni göstər' : 'Şifrəni gizlət');
+            btn.setAttribute('aria-label', visible ? (form?.dataset.showPassword || '') : (form?.dataset.hidePassword || ''));
             input.focus();
         });
 

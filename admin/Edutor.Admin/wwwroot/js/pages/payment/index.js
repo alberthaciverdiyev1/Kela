@@ -15,10 +15,10 @@ const ROW_TONE = {
 };
 
 const STATUS = {
-    upcoming: { label: 'Yaxınlaşır', tone: 'warning' },
-    overdue:  { label: 'Gecikib',    tone: 'danger' },
-    unpaid:   { label: 'Plan yoxdur', tone: 'neutral' },
-    current:  { label: 'Aktiv plan',  tone: 'success' }
+    upcoming: { label: L["Payment_StatusUpcoming"], tone: "warning" },
+    overdue:  { label: L["Payment_StatusOverdue"],  tone: "danger" },
+    unpaid:   { label: L["Payment_StatusUnpaid"],  tone: "neutral" },
+    current:  { label: L["Payment_ActivePlan"],  tone: "success" }
 };
 
 
@@ -31,7 +31,7 @@ async function loadTemplateOptions() {
         TEMPLATES.length = 0;
         items.forEach(t => TEMPLATES.push(t));
 
-        sel.innerHTML = '<option value="">— Əl ilə daxil et —</option>' +
+        sel.innerHTML = '<option value="">' + L["PaymentPlan_Manual"] + '</option>' +
             items.map(t => `<option value="${t.id}">${AdminUI.escapeHtml(t.name)}</option>`).join('');
     } catch { /* şablon yoxdursa əl ilə */ }
 }
@@ -60,9 +60,9 @@ async function loadPayments(page) {
     const rows = data.data.map((x, i) => {
         const meta = STATUS[x.status] ?? STATUS.unpaid;
         const actions = AdminUI.rowActions([
-            AdminUI.actionButton('Plan', `openPlan(${x.studentId})`, { tone: 'primary' }),
-            x.amount != null ? AdminUI.actionButton('Ödəniş al', `recordPayment(${x.studentId})`) : '',
-            AdminUI.actionLink('Tarixçə', `/payment/${x.studentId}/history`)
+            AdminUI.actionButton(L["Plan_Column"], `openPlan(${x.studentId})`, { tone: 'primary' }),
+            x.amount != null ? AdminUI.actionButton(L["Payment_Receive"], `recordPayment(${x.studentId})`) : '',
+            AdminUI.actionLink(L["Payment_HistoryButton"], `/payment/${x.studentId}/history`)
         ]);
 
         return [
@@ -71,7 +71,7 @@ async function loadPayments(page) {
             { html: fmtDate(x.joinedOn) },
             { html: fmtDate(x.nextDueOn) },
             { html: x.amount == null ? '—' : `${fmtMoney(x.amount)} ${AdminUI.escapeHtml(x.currency)}` },
-            { html: x.frequency === 'custom' ? `${x.intervalDays} gündən bir` : x.frequency ? 'Aylıq' : '—' },
+            { html: x.frequency === 'custom' ? L["Common_EveryNDays"].replace('{0}', x.intervalDays) : x.frequency ? L["Limit_Monthly"] : '—' },
             { html: AdminUI.badge(meta.label, meta.tone) },
             { html: actions, cls: 'text-right' }
         ];
@@ -227,11 +227,11 @@ document.getElementById('record-payment-form').addEventListener('submit', async 
     const note = document.getElementById('record-note').value;
 
     const answer = await AdminUI.swal({
-        title: 'Ödəniş qeyd edilsin?',
+        title: L["Payment_RecordConfirm"],
         text: `${fmtMoney(amount)} — ${paidOn}`,
         icon: 'question',
         showCancelButton: true,
-        confirmButtonText: 'Bəli, qeyd et',
+        confirmButtonText: L["Payment_RecordYes"],
         cancelButtonText: L["Common_Cancel"]
     });
     if (!answer.isConfirmed) return;
@@ -240,7 +240,7 @@ document.getElementById('record-payment-form').addEventListener('submit', async 
     if (!res.ok) { AdminUI.error(res.data?.message || L["Js_ErrorOccured"]); return; }
 
     AdminUI.closeModal('recordModal');
-    AdminUI.notify('Ödəniş qeyd edildi');
+    AdminUI.notify(L["Payment_Recorded"]);
     await Promise.all([loadPayments(pager.page), loadSummary()]);
 });
 

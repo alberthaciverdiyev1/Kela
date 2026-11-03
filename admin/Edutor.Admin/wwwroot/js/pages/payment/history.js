@@ -1,6 +1,6 @@
 // Ödəniş tarixçəsi — qeydi silmək.
 window.deletePayment = async function (id) {
-    const ok = await AdminUI.confirmDelete('Bu ödəniş qeydi silinsin? Vade tarixi yenidən hesablanacaq.');
+    const ok = await AdminUI.confirmDelete(L["Payment_DeleteConfirm"]);
     if (!ok) return;
 
     const res = await AdminUI.del(`/payment/payments/${id}`);

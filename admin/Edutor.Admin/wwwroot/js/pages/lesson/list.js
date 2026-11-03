@@ -70,7 +70,7 @@ AdminUI.listPage({
                     <div>
                         <a href="/lesson-content?lesson_id=${l.id}" class="font-bold text-slate-950 hover:text-primary">${AdminUI.escapeHtml(l.title)}</a>
                         <p class="mt-0.5 flex items-center gap-2 text-sm text-slate-500">
-                            <span>${subjectName} dərsi</span>
+                            <span>${L["Common_SubjectSuffix"].replace('{0}', subjectName)}</span>
                             ${l.isShared ? AdminUI.badge(L["Lesson_Shared"], 'primary') : ''}
                         </p>
                     </div>

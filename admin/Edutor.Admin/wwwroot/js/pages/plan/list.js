@@ -1,16 +1,16 @@
 window.PlanPage = (function () {
-    const limit = (value) => value > 0 ? value : 'limitsiz';
+    const limit = (value) => value > 0 ? value : L["Subscription_Unlimited"];
 
     function uploads(plan) {
         const allowed = [
             plan.allowVideoUpload && 'video',
             plan.allowFileUpload && 'PDF',
-            plan.allowAudioUpload && 'səs'
+            plan.allowAudioUpload && L["Common_Audio"]
         ].filter(Boolean);
 
         return allowed.length
             ? allowed.map(x => AdminUI.badge(x, 'success')).join(' ')
-            : AdminUI.badge('bağlı', 'danger');
+            : AdminUI.badge(L["PlanCatalog_Off"], "danger");
     }
 
     function features(plan) {
@@ -23,20 +23,20 @@ window.PlanPage = (function () {
         AdminUI.table('rows', (plans || []).map(p => [
             { html: `<span class="font-bold text-slate-900">${AdminUI.escapeHtml(p.name)}</span><br><code class="text-xs text-slate-400">${AdminUI.escapeHtml(p.code)}</code>` },
             { html: `<span class="font-semibold">${p.monthlyPrice} ${p.currency}</span>` },
-            { html: p.trialDays > 0 ? `${p.trialDays} gün` : '—' },
+            { html: p.trialDays > 0 ? L["Common_NDays"].replace('{0}', p.trialDays) : '—' },
             { html: limit(p.maxStudents) },
             { html: limit(p.maxGroups) },
-            { html: p.monthlyVideoMinutes > 0 ? Math.round(p.monthlyVideoMinutes / 60) : 'limitsiz' },
+            { html: p.monthlyVideoMinutes > 0 ? Math.round(p.monthlyVideoMinutes / 60) : L["Subscription_Unlimited"] },
             { html: uploads(p) },
-            { html: features(p).paymentTemplates === true ? AdminUI.badge('açıq', 'success') : AdminUI.badge('bağlı', 'neutral') },
-            { html: p.isActive ? AdminUI.badge('Aktiv', 'success') : AdminUI.badge('Deaktiv', 'neutral') },
+            { html: features(p).paymentTemplates === true ? AdminUI.badge(L["PlanCatalog_On"], "success") : AdminUI.badge(L["PlanCatalog_Off"], "neutral") },
+            { html: p.isActive ? AdminUI.badge(L["Common_Active"], "success") : AdminUI.badge(L["Common_Inactive"], "neutral") },
             {
                 html: `<div class="flex justify-end gap-1">
-                    <button type="button" class="inline-flex items-center rounded-lg px-2.5 py-1.5 text-sm font-semibold text-primary hover:bg-primary-light" onclick="PlanPage.edit(${p.id})">Redaktə</button>
-                    <button type="button" class="inline-flex items-center rounded-lg px-2.5 py-1.5 text-sm font-semibold text-danger hover:bg-danger-light" onclick="PlanPage.remove(${p.id})">Sil</button>
+                    <button type="button" class="inline-flex items-center rounded-lg px-2.5 py-1.5 text-sm font-semibold text-primary hover:bg-primary-light" onclick="PlanPage.edit(${p.id})">${L["Js_Edit"]}</button>
+                    <button type="button" class="inline-flex items-center rounded-lg px-2.5 py-1.5 text-sm font-semibold text-danger hover:bg-danger-light" onclick="PlanPage.remove(${p.id})">${L["Common_Delete"]}</button>
                 </div>`, cls: 'text-right'
             }
-        ]), 10, { empty: 'Plan yoxdur' });
+        ]), 10, { empty: L["Plan_NoPlans"] });
     }
 
     async function remove(id) {

@@ -24,8 +24,8 @@ window.CashboxPage = (function () {
 
     function periodLabel(template) {
         return template.frequency === 'custom'
-            ? `${template.intervalDays || 30} gün`
-            : 'aylıq';
+            ? L["Common_NDays"].replace('{0}', template.intervalDays || 30)
+            : L["Cashbox_Monthly"];
     }
 
     function statsFor(code) {
@@ -44,12 +44,12 @@ window.CashboxPage = (function () {
 
         const deltaBox = document.getElementById('cashboxDelta');
         if (!s.lastMonth) {
-            deltaBox.textContent = s.thisMonth ? 'Keçən ay ödəniş olmayıb' : '';
+            deltaBox.textContent = s.thisMonth ? L["Cashbox_NoLastMonth"] : '';
             return;
         }
 
         const pct = Math.round((s.thisMonth - s.lastMonth) * 100 / s.lastMonth);
-        deltaBox.textContent = `${pct > 0 ? '+' : ''}${pct}% keçən aya nisbətən`;
+        deltaBox.textContent = L["Cashbox_VsLastMonth"].replace('{0}', `${pct > 0 ? '+' : ''}${pct}`);
         deltaBox.className = `text-sm font-semibold ${pct >= 0 ? 'text-primary' : 'text-danger'}`;
     }
 
@@ -84,7 +84,7 @@ window.CashboxPage = (function () {
     }
 
     function renderRecent() {
-        renderPayments(data.recent, 'Hələ ödəniş qeydə alınmayıb.');
+        renderPayments(data.recent, L["Cashbox_NoPaymentsYet"]);
     }
 
     async function applyRange() {
@@ -96,7 +96,7 @@ window.CashboxPage = (function () {
         if (to) query.set('to', to);
 
         const rows = await AdminUI.get('/cashbox/payments' + (query.toString() ? '?' + query : ''));
-        renderPayments(rows, 'Seçilmiş aralıqda ödəniş yoxdur.');
+        renderPayments(rows, L["Cashbox_NoPaymentsRange"]);
 
         const totals = rows.reduce((acc, r) => {
             acc[r.currency] = (acc[r.currency] || 0) + Number(r.amount || 0);
@@ -104,7 +104,7 @@ window.CashboxPage = (function () {
         }, {});
 
         const text = Object.entries(totals).map(([code, total]) => amountText(total, code)).join(' · ');
-        document.getElementById('cashboxRangeTotal').textContent = text ? `Aralıq mədaxili: ${text}` : '';
+        document.getElementById('cashboxRangeTotal').textContent = text ? L["Cashbox_RangeTotal"].replace('{0}', text) : '';
     }
 
     function clearRange() {
@@ -120,7 +120,7 @@ window.CashboxPage = (function () {
     function fillStudentSelect() {
         const select = document.getElementById('cashboxStudent');
 
-        select.innerHTML = '<option value="">Tələbə seçin</option>' + students.map(s => {
+        select.innerHTML = '<option value="">' + L["Cashbox_SelectStudent"] + '</option>' + students.map(s => {
             const plan = s.amount ? ` — ${money(s.amount)} ${s.currency}` : '';
             return `<option value="${s.id}">${esc(s.name)}${plan}</option>`;
         }).join('');
@@ -138,12 +138,12 @@ window.CashboxPage = (function () {
 
         if (student?.amount) {
             const period = student.frequency === 'custom'
-                ? `${student.intervalDays || 30} gün`
-                : 'aylıq';
-            html += `<option value="current">Mövcud plan — ${money(student.amount)} ${student.currency} (${period})</option>`;
+                ? L["Common_NDays"].replace('{0}', student.intervalDays || 30)
+                : L["Cashbox_Monthly"];
+            html += '<option value="current">' + L["Cashbox_CurrentPlanOption"].replace('{0}', money(student.amount)).replace('{1}', student.currency).replace('{2}', period) + '</option>';
         }
 
-        html += '<option value="">Plan seçilməyib</option>' + planTemplates.map(t =>
+        html += '<option value="">' + L["Cashbox_NoPlanOption"] + '</option>' + planTemplates.map(t =>
             `<option value="${t.id}">${esc(t.name)} — ${money(t.amount)} ${t.currency} (${periodLabel(t)})</option>`
         ).join('');
 
@@ -175,14 +175,14 @@ window.CashboxPage = (function () {
 
         if (plan) {
             amount.value = plan.amount;
-            hint.textContent = `Seçilmiş plan: ${plan.name} · ${money(plan.amount)} ${plan.currency} · ${periodLabel(plan)}`;
+            hint.textContent = L["Cashbox_SelectedPlanHint"].replace('{0}', plan.name).replace('{1}', money(plan.amount)).replace('{2}', plan.currency).replace('{3}', periodLabel(plan));
             return;
         }
 
         if (keepsCurrentPlan() && student) {
             amount.value = student.amount;
-            hint.textContent = `Mövcud plan: ${money(student.amount)} ${student.currency}` +
-                (student.nextDueOn ? ` · növbəti ödəniş: ${student.nextDueOn}` : '');
+            hint.textContent = L["Cashbox_CurrentPlanHint"].replace('{0}', money(student.amount)).replace('{1}', student.currency) +
+                (student.nextDueOn ? L["Cashbox_NextDueSuffix"].replace('{0}', student.nextDueOn) : '');
             return;
         }
 
@@ -191,9 +191,9 @@ window.CashboxPage = (function () {
         if (!student) { hint.textContent = ''; return; }
 
         hint.textContent = student.amount
-            ? `Mövcud plan: ${money(student.amount)} ${student.currency}` +
-              (student.nextDueOn ? ` · növbəti ödəniş: ${student.nextDueOn}` : '')
-            : 'Bu tələbənin ödəniş planı yoxdur — yuxarıdan plan seçin.';
+            ? L["Cashbox_CurrentPlanHint"].replace('{0}', money(student.amount)).replace('{1}', student.currency) +
+              (student.nextDueOn ? L["Cashbox_NextDueSuffix"].replace('{0}', student.nextDueOn) : '')
+            : L["Cashbox_NoPlanForStudent"];
     }
 
     async function openPayment() {
@@ -223,7 +223,7 @@ window.CashboxPage = (function () {
     }
 
     async function removePayment(id) {
-        if (!await AdminUI.confirmDelete('Bu ödəniş silinsin? Planın vade tarixi yenidən hesablanacaq.')) return;
+        if (!await AdminUI.confirmDelete(L["Cashbox_DeleteConfirm"])) return;
 
         const res = await AdminUI.del(`/cashbox/payments/${id}`);
         if (res.ok) { AdminUI.notify(L["Js_Deleted"]); location.reload(); }
@@ -244,10 +244,10 @@ window.CashboxPage = (function () {
         const amount = Number(document.getElementById('cashboxAmount').value);
         const paidOn = document.getElementById('cashboxPaidOn').value || today();
 
-        if (!student) { AdminUI.error('Tələbə seçin'); return; }
-        if (!(amount > 0)) { AdminUI.error('Məbləğ sıfırdan böyük olmalıdır'); return; }
+        if (!student) { AdminUI.error(L["Cashbox_StudentRequired"]); return; }
+        if (!(amount > 0)) { AdminUI.error(L["Cashbox_AmountPositive"]); return; }
         if (!plan && !keepsCurrentPlan() && !student.amount) {
-            AdminUI.error('Bu tələbənin ödəniş planı yoxdur — plan seçin');
+            AdminUI.error(L["Cashbox_NoPlanSelected"]);
             return;
         }
 

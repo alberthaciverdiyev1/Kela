@@ -1,14 +1,14 @@
 window.AddonRequestPage = (function () {
-    const kindLabels = { students: 'Tələbə', groups: 'Qrup', video: 'Video saatı' };
-    const timingLabels = { now: 'İndi ödəniş', with_plan: 'Planla birlikdə' };
+    const kindLabels = { students: L["Common_Student"], groups: L["Common_Group"], video: L["Sub_KindVideoHours"] };
+    const timingLabels = { now: L["Sub_TimingNow"], with_plan: L["Sub_WithPlanShort"] };
     const isSuperAdmin = !!(window.ADMIN && ADMIN.isSuperAdmin);
 
     let status = '';
 
     const statusBadge = (value) => ({
-        pending: AdminUI.badge('Gözləyir', 'warning'),
-        approved: AdminUI.badge('Təsdiqlənib', 'success'),
-        rejected: AdminUI.badge('Rədd edilib', 'danger')
+        pending: AdminUI.badge(L["Sub_StatusWaiting"], "warning"),
+        approved: AdminUI.badge(L["Sub_StatusApproved"], "success"),
+        rejected: AdminUI.badge(L["Sub_StatusRejected"], "danger")
     }[value] || value);
 
     const date = (value) => value ? new Date(value).toLocaleDateString('az-AZ') : '—';
@@ -37,7 +37,7 @@ window.AddonRequestPage = (function () {
             );
 
             return cells;
-        }), 9, { empty: 'Müraciət yoxdur' });
+        }), 9, { empty: L["Requests_NoRequests"] });
     }
 
     function actions(r) {
@@ -47,13 +47,13 @@ window.AddonRequestPage = (function () {
 
         if (r.status === 'pending') {
             return `<div class="flex justify-end gap-1">
-                <button type="button" class="inline-flex items-center rounded-lg px-2.5 py-1.5 text-sm font-semibold text-primary hover:bg-primary-light" onclick="AddonRequestPage.approve(${r.id})">Təsdiq</button>
-                <button type="button" class="inline-flex items-center rounded-lg px-2.5 py-1.5 text-sm font-semibold text-danger hover:bg-danger-light" onclick="AddonRequestPage.reject(${r.id})">Rədd</button>
+                <button type="button" class="inline-flex items-center rounded-lg px-2.5 py-1.5 text-sm font-semibold text-primary hover:bg-primary-light" onclick="AddonRequestPage.approve(${r.id})">${L["Requests_Approve"]}</button>
+                <button type="button" class="inline-flex items-center rounded-lg px-2.5 py-1.5 text-sm font-semibold text-danger hover:bg-danger-light" onclick="AddonRequestPage.reject(${r.id})">${L["Requests_Reject"]}</button>
             </div>`;
         }
 
         if (r.status === 'approved' && r.mode === 'monthly' && r.addonId) {
-            return `<button type="button" class="inline-flex items-center rounded-lg px-2.5 py-1.5 text-sm font-semibold text-danger hover:bg-danger-light" onclick="AddonRequestPage.cancelAddon(${r.addonId})">Dayandır</button>`;
+            return `<button type="button" class="inline-flex items-center rounded-lg px-2.5 py-1.5 text-sm font-semibold text-danger hover:bg-danger-light" onclick="AddonRequestPage.cancelAddon(${r.addonId})">${L["Sub_Stop"]}</button>`;
         }
 
         return `<span class="text-xs text-slate-400">${AdminUI.escapeHtml(r.reviewedByName || '')}</span>`;
@@ -63,14 +63,14 @@ window.AddonRequestPage = (function () {
         // Paketin formasını (birdəfəlik/aylıq) superadmin müəyyən edir — ödəniş
         // də buna görə hesablanır. Aylıq paket planla birlikdə ödənilir.
         const result = await AdminUI.swal({
-            title: 'Müraciəti təsdiqlə',
-            text: 'Paketin formasını seçin. Təsdiqdən sonra limit dərhal artırılacaq.',
+            title: L["Addon_ApproveTitle"],
+            text: L["Addon_ApproveText"],
             input: 'select',
-            inputOptions: { one_time: 'Birdəfəlik', monthly: 'Aylıq (planla birlikdə)' },
+            inputOptions: { one_time: L["Limit_OneTime"], monthly: L["Sub_ModeMonthlyWithPlan"] },
             inputValue: 'one_time',
             icon: 'question',
             showCancelButton: true,
-            confirmButtonText: 'Təsdiqlə',
+            confirmButtonText: L["Group_JoinApprove"],
             cancelButtonText: L["Common_Cancel"]
         });
 
@@ -83,12 +83,12 @@ window.AddonRequestPage = (function () {
 
     async function reject(id) {
         const result = await AdminUI.swal({
-            title: 'Müraciəti rədd et',
+            title: L["Addon_RejectTitle"],
             input: 'text',
-            inputPlaceholder: 'Səbəb (istəyə bağlı)',
+            inputPlaceholder: L["Addon_RejectReason"],
             icon: 'warning',
             showCancelButton: true,
-            confirmButtonText: 'Rədd et',
+            confirmButtonText: L["Group_JoinReject"],
             cancelButtonText: L["Common_Cancel"],
             customClass: Object.assign({}, AdminUI.SWAL_BASE.customClass, { confirmButton: 'admin-button-danger' })
         });
@@ -101,7 +101,7 @@ window.AddonRequestPage = (function () {
     }
 
     async function cancelAddon(addonId) {
-        if (!await AdminUI.confirmDelete('Aylıq paket dayandırılsın? Növbəti aylarda limitə əlavə olunmayacaq.')) return;
+        if (!await AdminUI.confirmDelete(L["Sub_CancelAddonConfirm"])) return;
 
         const res = await AdminUI.del(`/addon-request/addons/${addonId}`);
         if (res.ok) { AdminUI.notify(L["Js_Deleted"]); load(); }

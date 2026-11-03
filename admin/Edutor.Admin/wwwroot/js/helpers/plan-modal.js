@@ -52,7 +52,7 @@ window.PlanModal = (function () {
             const planId = byId('planSelect').value;
             const expires = byId('planExpires').value;
 
-            if (!planId) { AdminUI.error('Plan seçin'); return; }
+            if (!planId) { AdminUI.error(L["Plan_SelectPrompt"]); return; }
 
             const fd = new FormData();
             fd.append('plan_id', planId);

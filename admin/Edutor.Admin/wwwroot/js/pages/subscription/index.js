@@ -21,17 +21,17 @@ window.SubscriptionPage = (function () {
     }
 
     async function addAddon(kind) {
-        const labels = { students: 'tələbə', groups: 'qrup', video: 'saat' };
+        const labels = { students: L["Sub_UnitStudent"], groups: L["Sub_UnitGroup"], video: L["Sub_UnitVideoHour"] };
 
         const ctx = window.SUBSCRIPTION_CONTEXT;
         const result = await AdminUI.swal({
-            title: 'Limit artırımı',
-            text: `Neçə ${labels[kind] || 'vahid'} əlavə edilsin?`,
+            title: L["Subscription_AddonTitle"],
+            text: (L["Sub_AddonQty"] || '{0}').replace('{0}', labels[kind] || L["Sub_UnitGeneric"]),
             input: 'number',
             inputValue: 1,
             inputAttributes: { min: 1, max: 10000 },
             showCancelButton: true,
-            confirmButtonText: 'Davam et',
+            confirmButtonText: L["Sub_Continue"],
             cancelButtonText: L["Common_Cancel"]
         });
 
@@ -39,16 +39,16 @@ window.SubscriptionPage = (function () {
 
         // Aylıq paket planla birlikdə ödənilir — plan icazə vermirsə seçim yoxdur.
         const modeOptions = ctx?.billAddonsWithPlan
-            ? { one_time: 'Birdəfəlik', monthly: 'Aylıq (planla birlikdə)' }
-            : { one_time: 'Birdəfəlik' };
+            ? { one_time: L["Limit_OneTime"], monthly: L["Sub_ModeMonthlyWithPlan"] }
+            : { one_time: L["Limit_OneTime"] };
 
         const modeResult = await AdminUI.swal({
-            title: 'Ödəniş forması',
+            title: L["Sub_FormTitle"],
             input: 'select',
             inputOptions: modeOptions,
             inputValue: 'one_time',
             showCancelButton: true,
-            confirmButtonText: 'Əlavə et',
+            confirmButtonText: L["Subscription_Add"],
             cancelButtonText: L["Common_Cancel"]
         });
 
@@ -60,12 +60,12 @@ window.SubscriptionPage = (function () {
         // Plan limit ödənişini planla birlikdə qəbul edirsə, superadmin vaxtı seçir.
         if (payload.mode === 'one_time' && ctx?.billAddonsWithPlan) {
             const timing = await AdminUI.swal({
-                title: 'Ödəniş vaxtı',
+                title: L["Limit_PayTiming"],
                 input: 'select',
-                inputOptions: { now: 'İndi ödəniş', with_plan: 'Ay sonunda planla birlikdə' },
+                inputOptions: { now: L["Sub_TimingNow"], with_plan: L["Limit_PayWithPlan"] },
                 inputValue: 'now',
                 showCancelButton: true,
-                confirmButtonText: 'Əlavə et',
+                confirmButtonText: L["Subscription_Add"],
                 cancelButtonText: L["Common_Cancel"]
             });
 
@@ -84,19 +84,19 @@ window.SubscriptionPage = (function () {
 
     // ---- Limit artırma müraciətləri ----
 
-    const kindLabels = { students: 'Tələbə', groups: 'Qrup', video: 'Video saatı' };
-    const modeLabels = { one_time: 'Birdəfəlik', monthly: 'Aylıq' };
-    const timingLabels = { now: 'İndi', with_plan: 'Planla birlikdə' };
+    const kindLabels = { students: L["Common_Student"], groups: L["Common_Group"], video: L["Sub_KindVideoHours"] };
+    const modeLabels = { one_time: L["Limit_OneTime"], monthly: L["Limit_Monthly"] };
+    const timingLabels = { now: L["Sub_TimingNowShort"], with_plan: L["Sub_WithPlanShort"] };
     const paymentBadge = (a) => a.paidAt
-        ? AdminUI.badge('Ödənilib', 'success')
-        : AdminUI.badge('Gözləyir', 'warning');
+        ? AdminUI.badge(L["Sub_StatusPaid"], "success")
+        : AdminUI.badge(L["Sub_StatusWaiting"], "warning");
     const requestBadge = (value) => ({
-        pending: AdminUI.badge('Gözləyir', 'warning'),
-        approved: AdminUI.badge('Təsdiqlənib', 'success'),
-        rejected: AdminUI.badge('Rədd edilib', 'danger')
+        pending: AdminUI.badge(L["Sub_StatusWaiting"], "warning"),
+        approved: AdminUI.badge(L["Sub_StatusApproved"], "success"),
+        rejected: AdminUI.badge(L["Sub_StatusRejected"], "danger")
     }[value] || value);
 
-    const shortDate = (value) => value ? new Date(value).toLocaleDateString('az-AZ') : '—';
+    const shortDate = (value) => value ? new Date(value).toLocaleDateString(window.LANG || 'az') : '—';
 
     // Superadmin başqa tenant-a baxırsa sorğulara tenant_id əlavə olunur.
     function tenantQuery() {
@@ -114,7 +114,7 @@ window.SubscriptionPage = (function () {
             { html: timingLabels[r.paymentTiming] || r.paymentTiming },
             { html: requestBadge(r.status) },
             { html: AdminUI.escapeHtml(r.reviewNote || r.note || '—') }
-        ]), 6, { empty: 'Müraciət yoxdur' });
+        ]), 6, { empty: L["Sub_NoRequests"] });
     }
 
     async function loadAddons() {
@@ -131,15 +131,15 @@ window.SubscriptionPage = (function () {
                 html: actions(a),
                 cls: 'text-right'
             }
-        ]), 7, { empty: 'Əlavə paket yoxdur' });
+        ]), 7, { empty: L["Sub_NoAddons"] });
     }
 
     function actions(a) {
         const cancel = a.mode === 'monthly'
-            ? `<button type="button" class="inline-flex items-center rounded-lg px-2.5 py-1.5 text-sm font-semibold text-danger hover:bg-danger-light" onclick="SubscriptionPage.cancelAddon(${a.id})">Dayandır</button>`
+            ? `<button type="button" class="inline-flex items-center rounded-lg px-2.5 py-1.5 text-sm font-semibold text-danger hover:bg-danger-light" onclick="SubscriptionPage.cancelAddon(${a.id})">${L["Sub_Stop"]}</button>`
             : '';
         const paid = !a.paidAt
-            ? `<button type="button" class="inline-flex items-center rounded-lg px-2.5 py-1.5 text-sm font-semibold text-primary hover:bg-primary-light" onclick="SubscriptionPage.markPaid(${a.id})">Ödənişi qeyd et</button>`
+            ? `<button type="button" class="inline-flex items-center rounded-lg px-2.5 py-1.5 text-sm font-semibold text-primary hover:bg-primary-light" onclick="SubscriptionPage.markPaid(${a.id})">${L["Sub_RecordPayment"]}</button>`
             : '';
 
         return `<div class="flex justify-end gap-1">${paid}${cancel}</div>`;
@@ -149,13 +149,13 @@ window.SubscriptionPage = (function () {
 
     async function toggleSuspend(id, active) {
         const result = await AdminUI.swal({
-            title: active ? 'Abunəlik dayandırılsın?' : 'Abunəlik davam etdirilsin?',
+            title: active ? L["Sub_SuspendTitle"] : L["Sub_ResumeTitle"],
             text: active
-                ? 'Tenant istifadəçiləri giriş edə bilməyəcək. Məlumat silinmir — abunəlik bərpa ediləndə hər şey yerində qalır.'
-                : 'Tenant yenidən aktivləşdiriləcək və istifadəçilər giriş edə biləcək.',
+                ? L["Sub_SuspendText"]
+                : L["Sub_ResumeText"],
             icon: 'warning',
             showCancelButton: true,
-            confirmButtonText: active ? 'Dayandır' : 'Davam etdir',
+            confirmButtonText: active ? L["Sub_Stop"] : L["Sub_Resume"],
             cancelButtonText: L["Common_Cancel"]
         });
 
@@ -184,15 +184,15 @@ window.SubscriptionPage = (function () {
             { html: r.addonStudents },
             { html: r.addonGroups },
             { html: Math.round(r.addonVideoMinutes / 60) }
-        ]), 6, { empty: 'İstifadə qeydi yoxdur' });
+        ]), 6, { empty: L["Sub_NoUsage"] });
     }
 
     async function markPaid(id) {
         const result = await AdminUI.swal({
-            title: 'Ödəniş qeydə alınsın?',
+            title: L["Sub_MarkPaidTitle"],
             icon: 'question',
             showCancelButton: true,
-            confirmButtonText: 'Qeyd et',
+            confirmButtonText: L["Sub_MarkPaid"],
             cancelButtonText: L["Common_Cancel"]
         });
 
@@ -204,7 +204,7 @@ window.SubscriptionPage = (function () {
     }
 
     async function cancelAddon(id) {
-        if (!await AdminUI.confirmDelete('Aylıq paket dayandırılsın? Növbəti aylarda limitə əlavə olunmayacaq.')) return;
+        if (!await AdminUI.confirmDelete(L["Sub_CancelAddonConfirm"])) return;
 
         const res = await AdminUI.del(`/addon-request/addons/${id}`);
         if (res.ok) { AdminUI.notify(L["Js_Deleted"]); loadAddons(); }
@@ -221,7 +221,7 @@ window.SubscriptionPage = (function () {
         if (button) { button.disabled = false; button.classList.remove('is-loading'); }
 
         if (res.ok) {
-            AdminUI.notify('Müraciət göndərildi. Administrator təsdiqindən sonra limit artırılacaq.');
+            AdminUI.notify(L["Sub_RequestSent"]);
             loadRequests();
         } else {
             AdminUI.error(AdminUI.errText(res));

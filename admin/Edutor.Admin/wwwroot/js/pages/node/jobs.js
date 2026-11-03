@@ -30,7 +30,7 @@ window.JobsPage = (function () {
                 { html: AdminUI.rowNo(job, i, pager.page, pager.perPage), cls: 'text-slate-400' },
                 { html: `<span class="font-medium text-slate-800">${AdminUI.escapeHtml(job.videoTitle || '#' + job.videoId)}</span>` },
                 { html: `<span class="text-sm font-semibold text-slate-600">${AdminUI.escapeHtml(job.resolution)}</span>` },
-                { html: AdminUI.badge(job.status, statusVariant(job.status)) + (job.skipped ? ' <span class="text-xs text-slate-400">(atlanıb)</span>' : '') },
+                { html: AdminUI.badge(job.status, statusVariant(job.status)) + (job.skipped ? ' <span class="text-xs text-slate-400">${L["Js_Skipped"]}</span>' : '') },
                 { html: bar },
                 { html: `<span class="text-sm text-slate-500">${AdminUI.escapeHtml(job.nodeName || '—')}</span>` },
                 { html: `<span class="text-sm text-slate-500">${job.attempts}/${job.maxAttempts}</span>` },

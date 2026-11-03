@@ -21,19 +21,19 @@ async function loadTemplates() {
         { html: `<strong>${escT(t.name)}</strong>` },
         { html: Number(t.amount).toFixed(2) },
         { html: escT(t.currency) },
-        { html: t.frequency === 'custom' ? `${t.intervalDays} gündən bir` : 'Aylıq' },
+        { html: t.frequency === 'custom' ? L["Common_EveryNDays"].replace('{0}', t.intervalDays) : L["PaymentPlan_IntervalMonthly"] },
         {
             html: AdminUI.rowActions([
                 AdminUI.actionButton(L["Js_Edit"], `openTemplate(${t.id})`, { tone: 'primary' }),
                 AdminUI.actionButton(L["Common_Delete"], `removeTemplate(${t.id})`, { tone: 'danger' })
             ]), cls: 'text-right'
         }
-    ]), 6, { empty: 'Hələ plan şablonu yoxdur.' });
+    ]), 6, { empty: L["PaymentPlan_NoTemplates"] });
 }
 
 window.openTemplate = function (id) {
     const t = TEMPLATES.find(x => x.id === id);
-    document.getElementById('templateModalTitle').textContent = t ? 'Şablonu redaktə et' : 'Yeni plan şablonu';
+    document.getElementById('templateModalTitle').textContent = t ? L["PaymentPlan_EditTemplate"] : L["PaymentPlan_NewTemplate"];
     document.getElementById('template-id').value = t?.id ?? '';
     document.getElementById('template-name').value = t?.name ?? '';
     document.getElementById('template-amount').value = t?.amount ?? '';
@@ -46,7 +46,7 @@ window.openTemplate = function (id) {
 };
 
 window.removeTemplate = async function (id) {
-    const ok = await AdminUI.confirmDelete('Bu plan şablonu silinsin?');
+    const ok = await AdminUI.confirmDelete(L["PaymentPlan_DeleteConfirm"]);
     if (!ok) return;
 
     const res = await AdminUI.del(`/payment-plan/${id}`);

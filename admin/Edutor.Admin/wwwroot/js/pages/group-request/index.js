@@ -2,12 +2,12 @@ window.GroupRequestPage = (function () {
     let status = '';
 
     const statusBadge = (value) => ({
-        pending: AdminUI.badge('Gözləyir', 'warning'),
-        approved: AdminUI.badge('Təsdiqlənib', 'success'),
-        rejected: AdminUI.badge('Rədd edilib', 'danger')
+        pending: AdminUI.badge(L["Sub_StatusWaiting"], "warning"),
+        approved: AdminUI.badge(L["Sub_StatusApproved"], "success"),
+        rejected: AdminUI.badge(L["Sub_StatusRejected"], "danger")
     }[value] || value);
 
-    const date = (value) => value ? new Date(value).toLocaleDateString('az-AZ') : '—';
+    const date = (value) => value ? new Date(value).toLocaleDateString(window.LANG || 'az') : '—';
 
     async function load() {
         const query = status ? `?status=${encodeURIComponent(status)}` : '';
@@ -20,7 +20,7 @@ window.GroupRequestPage = (function () {
             { html: date(r.createdAt) },
             { html: statusBadge(r.status) },
             { html: actions(r), cls: 'text-right' }
-        ]), 6, { empty: 'Müraciət yoxdur' });
+        ]), 6, { empty: L["Requests_NoRequests"] });
     }
 
     function actions(r) {
@@ -29,8 +29,8 @@ window.GroupRequestPage = (function () {
         }
 
         return `<div class="flex justify-end gap-1">
-            <button type="button" class="inline-flex items-center rounded-lg px-2.5 py-1.5 text-sm font-semibold text-primary hover:bg-primary-light" onclick="GroupRequestPage.approve(${r.groupId}, ${r.id})">Təsdiq</button>
-            <button type="button" class="inline-flex items-center rounded-lg px-2.5 py-1.5 text-sm font-semibold text-danger hover:bg-danger-light" onclick="GroupRequestPage.reject(${r.groupId}, ${r.id})">Rədd</button>
+            <button type="button" class="inline-flex items-center rounded-lg px-2.5 py-1.5 text-sm font-semibold text-primary hover:bg-primary-light" onclick="GroupRequestPage.approve(${r.groupId}, ${r.id})">${L["Requests_Approve"]}</button>
+            <button type="button" class="inline-flex items-center rounded-lg px-2.5 py-1.5 text-sm font-semibold text-danger hover:bg-danger-light" onclick="GroupRequestPage.reject(${r.groupId}, ${r.id})">${L["Requests_Reject"]}</button>
         </div>`;
     }
 
@@ -38,13 +38,13 @@ window.GroupRequestPage = (function () {
         const approve = action === 'approve';
 
         const result = await AdminUI.swal({
-            title: approve ? 'Müraciət təsdiqlənsin?' : 'Müraciət rədd edilsin?',
+            title: approve ? L["GroupRequest_ApproveTitle"] : L["GroupRequest_RejectTitle"],
             text: approve
-                ? 'Şagird dərhal qrupa üzv olacaq.'
-                : 'Şagird qrupa əlavə olunmayacaq.',
+                ? L["GroupRequest_ApproveText"]
+                : L["GroupRequest_RejectText"],
             icon: approve ? 'question' : 'warning',
             showCancelButton: true,
-            confirmButtonText: approve ? 'Təsdiqlə' : 'Rədd et',
+            confirmButtonText: approve ? L["Group_JoinApprove"] : L["Group_JoinReject"],
             cancelButtonText: L["Common_Cancel"],
             customClass: approve
                 ? undefined
