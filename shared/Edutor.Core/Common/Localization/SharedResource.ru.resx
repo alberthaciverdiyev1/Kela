@@ -1702,28 +1702,28 @@
     <value>Всего вопросов</value>
   </data>
   <data name="Nav_Nodes" xml:space="preserve">
-    <value>Dönüştürme cihazları</value>
+    <value>Устройства конвертации</value>
   </data>
   <data name="Node_Title" xml:space="preserve">
-    <value>Dönüştürme düğümleri</value>
+    <value>Узлы конвертации</value>
   </data>
   <data name="Node_Devices" xml:space="preserve">
-    <value>Cihazlar</value>
+    <value>Устройства</value>
   </data>
   <data name="Node_Codes" xml:space="preserve">
-    <value>Kayıt kodları</value>
+    <value>Коды регистрации</value>
   </data>
   <data name="Node_Jobs" xml:space="preserve">
-    <value>Görevler</value>
+    <value>Задания</value>
   </data>
   <data name="Node_Name" xml:space="preserve">
-    <value>Ad</value>
+    <value>Имя</value>
   </data>
   <data name="Node_Status" xml:space="preserve">
-    <value>Durum</value>
+    <value>Статус</value>
   </data>
   <data name="Node_Platform" xml:space="preserve">
-    <value>Platform</value>
+    <value>Платформа</value>
   </data>
   <data name="Node_Cpu" xml:space="preserve">
     <value>CPU</value>
@@ -1732,139 +1732,139 @@
     <value>RAM</value>
   </data>
   <data name="Node_Disk" xml:space="preserve">
-    <value>Disk</value>
+    <value>Диск</value>
   </data>
   <data name="Node_Encoders" xml:space="preserve">
-    <value>Kodlayıcılar</value>
+    <value>Кодеки</value>
   </data>
   <data name="Node_Gpu" xml:space="preserve">
     <value>GPU</value>
   </data>
   <data name="Node_Benchmark" xml:space="preserve">
-    <value>Benchmark</value>
+    <value>Бенчмарк</value>
   </data>
   <data name="Node_Score" xml:space="preserve">
-    <value>Puan</value>
+    <value>Балл</value>
   </data>
   <data name="Node_LastSeen" xml:space="preserve">
-    <value>Son görülme</value>
+    <value>Последняя связь</value>
   </data>
   <data name="Node_Registered" xml:space="preserve">
-    <value>Kayıt</value>
+    <value>Регистрация</value>
   </data>
   <data name="Node_Online" xml:space="preserve">
-    <value>Çevrimiçi</value>
+    <value>Онлайн</value>
   </data>
   <data name="Node_Offline" xml:space="preserve">
-    <value>Çevrimdışı</value>
+    <value>Офлайн</value>
   </data>
   <data name="Node_Disabled" xml:space="preserve">
-    <value>Devre dışı</value>
+    <value>Отключено</value>
   </data>
   <data name="Node_GenerateCode" xml:space="preserve">
-    <value>Yeni kod</value>
+    <value>Новый код</value>
   </data>
   <data name="Node_Code" xml:space="preserve">
-    <value>Kod</value>
+    <value>Код</value>
   </data>
   <data name="Node_Note" xml:space="preserve">
-    <value>Not</value>
+    <value>Заметка</value>
   </data>
   <data name="Node_Expires" xml:space="preserve">
-    <value>Sona erme</value>
+    <value>Истекает</value>
   </data>
   <data name="Node_NoExpiry" xml:space="preserve">
-    <value>Süresiz</value>
+    <value>Без срока</value>
   </data>
   <data name="Node_Used" xml:space="preserve">
-    <value>Kullanıldı</value>
+    <value>Использован</value>
   </data>
   <data name="Node_Unused" xml:space="preserve">
-    <value>Kullanılmadı</value>
+    <value>Не использован</value>
   </data>
   <data name="Node_ExpiresHours" xml:space="preserve">
-    <value>Geçerlilik (saat)</value>
+    <value>Действует (часов)</value>
   </data>
   <data name="Node_Revoke" xml:space="preserve">
-    <value>Erişimi iptal et</value>
+    <value>Отозвать доступ</value>
   </data>
   <data name="Node_Enable" xml:space="preserve">
-    <value>Etkinleştir</value>
+    <value>Включить</value>
   </data>
   <data name="Node_Disable" xml:space="preserve">
-    <value>Devre dışı bırak</value>
+    <value>Отключить</value>
   </data>
   <data name="Node_NoDevices" xml:space="preserve">
-    <value>Henüz cihaz bağlanmadı</value>
+    <value>Устройства ещё не подключены</value>
   </data>
   <data name="Node_NoCodes" xml:space="preserve">
-    <value>Kayıt kodu yok</value>
+    <value>Нет кодов регистрации</value>
   </data>
   <data name="Node_ConfirmRevoke" xml:space="preserve">
-    <value>Bu cihazın erişimi iptal edilsin mi? Yeni kayıt kodu gerekecek.</value>
+    <value>Отозвать доступ устройства? Потребуется новый код регистрации.</value>
   </data>
   <data name="Node_Total" xml:space="preserve">
-    <value>Cihazlar</value>
+    <value>Устройства</value>
   </data>
   <data name="Node_ActiveJobs" xml:space="preserve">
-    <value>Çalışan görevler</value>
+    <value>Активные задания</value>
   </data>
   <data name="Node_PendingJobs" xml:space="preserve">
-    <value>Kuyrukta</value>
+    <value>В очереди</value>
   </data>
   <data name="Node_CompletedJobs" xml:space="preserve">
-    <value>Tamamlanan</value>
+    <value>Завершено</value>
   </data>
   <data name="Node_FailedJobs" xml:space="preserve">
-    <value>Başarısız</value>
+    <value>Ошибки</value>
   </data>
   <data name="Node_VideosProcessing" xml:space="preserve">
-    <value>İşlenen videolar</value>
+    <value>Видео в работе</value>
   </data>
   <data name="Node_Requeue" xml:space="preserve">
-    <value>Yeniden kuyruğa</value>
+    <value>Повторить</value>
   </data>
   <data name="Node_ConfirmRequeue" xml:space="preserve">
-    <value>Görev yeniden kuyruğa alınsın mı? Video baştan dönüştürülecek.</value>
+    <value>Повторить задание? Видео будет сконвертировано заново.</value>
   </data>
   <data name="Job_Resolution" xml:space="preserve">
-    <value>Çözünürlük</value>
+    <value>Разрешение</value>
   </data>
   <data name="Job_Progress" xml:space="preserve">
-    <value>İlerleme</value>
+    <value>Прогресс</value>
   </data>
   <data name="Job_Attempts" xml:space="preserve">
-    <value>Denemeler</value>
+    <value>Попытки</value>
   </data>
   <data name="Job_Node" xml:space="preserve">
-    <value>Cihaz</value>
+    <value>Устройство</value>
   </data>
   <data name="Job_Video" xml:space="preserve">
-    <value>Video</value>
+    <value>Видео</value>
   </data>
   <data name="Job_Created" xml:space="preserve">
-    <value>Oluşturuldu</value>
+    <value>Создано</value>
   </data>
   <data name="Job_Error" xml:space="preserve">
-    <value>Hata</value>
+    <value>Ошибка</value>
   </data>
   <data name="Node_All" xml:space="preserve">
-    <value>Tümü</value>
+    <value>Все</value>
   </data>
   <data name="Node_Copied" xml:space="preserve">
-    <value>Kod kopyalandı</value>
+    <value>Код скопирован</value>
   </data>
   <data name="Node_Subtitle" xml:space="preserve">
-    <value>Yüklenen videoları HLS'e dönüştüren cihazlar</value>
+    <value>Устройства, конвертирующие видео в HLS</value>
   </data>
   <data name="Node_NotePlaceholder" xml:space="preserve">
-    <value>örn. Ofis bilgisayarı</value>
+    <value>напр. Офисный ПК</value>
   </data>
   <data name="Node_Expired" xml:space="preserve">
-    <value>Süresi geçti</value>
+    <value>Истёк</value>
   </data>
   <data name="Node_AutoRefresh" xml:space="preserve">
-    <value>Otomatik yenileme</value>
+    <value>Автообновление</value>
   </data>
   <data name="Lesson_Shared" xml:space="preserve">
     <value>Доступно всем учителям</value>
@@ -2302,52 +2302,52 @@
     <value>Текст не должен превышать 2000 символов</value>
   </data>
   <data name="Nav_Notes" xml:space="preserve">
-    <value>Notlar</value>
+    <value>Заметки</value>
   </data>
   <data name="Nav_Calendar" xml:space="preserve">
-    <value>Takvim</value>
+    <value>Календарь</value>
   </data>
   <data name="Note_Create" xml:space="preserve">
-    <value>Yeni not</value>
+    <value>Новая заметка</value>
   </data>
   <data name="Note_Search" xml:space="preserve">
-    <value>Not ara</value>
+    <value>Поиск заметок</value>
   </data>
   <data name="Note_Body" xml:space="preserve">
-    <value>Metin</value>
+    <value>Текст</value>
   </data>
   <data name="Note_BodyPlaceholder" xml:space="preserve">
-    <value>Notun içeriği</value>
+    <value>Содержание заметки</value>
   </data>
   <data name="Note_Date" xml:space="preserve">
-    <value>Tarih (isteğe bağlı)</value>
+    <value>Дата (необязательно)</value>
   </data>
   <data name="Note_Done" xml:space="preserve">
-    <value>Tamamlandı</value>
+    <value>Выполнено</value>
   </data>
   <data name="Note_Pending" xml:space="preserve">
-    <value>Bekliyor</value>
+    <value>Ожидает</value>
   </data>
   <data name="Note_TitlePlaceholder" xml:space="preserve">
-    <value>Not başlığı</value>
+    <value>Заголовок заметки</value>
   </data>
   <data name="Calendar_NoEvents" xml:space="preserve">
-    <value>Bu ay için etkinlik yok.</value>
+    <value>В этом месяце событий нет.</value>
   </data>
   <data name="Calendar_NoDayEvents" xml:space="preserve">
-    <value>Bu gün için etkinlik yok.</value>
+    <value>На этот день событий нет.</value>
   </data>
   <data name="Calendar_SelectDay" xml:space="preserve">
-    <value>Bir gün seçin</value>
+    <value>Выберите день</value>
   </data>
   <data name="Calendar_Homework" xml:space="preserve">
-    <value>Ev ödevi</value>
+    <value>Домашнее задание</value>
   </data>
   <data name="Calendar_Note" xml:space="preserve">
-    <value>Not</value>
+    <value>Заметка</value>
   </data>
   <data name="Calendar_Summary" xml:space="preserve">
-    <value>{0} etkinlik</value>
+    <value>{0} событий</value>
   </data>
   <data name="Nav_Config" xml:space="preserve">
     <value>Конфигурация</value>
@@ -2464,64 +2464,64 @@
     <value>Нет плана</value>
   </data>
   <data name="Note_Share" xml:space="preserve">
-    <value>Paylaşım</value>
+    <value>Доступ</value>
   </data>
   <data name="Note_Private" xml:space="preserve">
-    <value>Özel</value>
+    <value>Личная</value>
   </data>
   <data name="Note_Shared" xml:space="preserve">
-    <value>Paylaşılan</value>
+    <value>Общая</value>
   </data>
   <data name="Note_ShareWith" xml:space="preserve">
-    <value>Kimlerle paylaşılsın</value>
+    <value>Кому доступна</value>
   </data>
   <data name="Note_SearchUsers" xml:space="preserve">
-    <value>Kullanıcı ara</value>
+    <value>Поиск пользователя</value>
   </data>
   <data name="Note_ShareTargetRequired" xml:space="preserve">
-    <value>En az bir kullanıcı seçin</value>
+    <value>Выберите хотя бы одного пользователя</value>
   </data>
   <data name="Note_ShareTargetInvalid" xml:space="preserve">
-    <value>Seçilen kullanıcılardan bazıları mevcut değil</value>
+    <value>Некоторые из выбранных пользователей недоступны</value>
   </data>
   <data name="Note_InvalidVisibility" xml:space="preserve">
-    <value>Geçersiz paylaşım modu</value>
+    <value>Недопустимый режим доступа</value>
   </data>
   <data name="Note_InvalidPosition" xml:space="preserve">
-    <value>Geçersiz zaman değeri</value>
+    <value>Недопустимое значение времени</value>
   </data>
   <data name="Note_Material" xml:space="preserve">
-    <value>Materyal</value>
+    <value>Материал</value>
   </data>
   <data name="Note_SearchMaterial" xml:space="preserve">
-    <value>Materyal ara</value>
+    <value>Поиск материала</value>
   </data>
   <data name="Note_NoMaterial" xml:space="preserve">
-    <value>Materyal seçilmedi</value>
+    <value>Материал не выбран</value>
   </data>
   <data name="Note_Position" xml:space="preserve">
-    <value>Zaman (saniye)</value>
+    <value>Время (секунды)</value>
   </data>
   <data name="Note_Author" xml:space="preserve">
-    <value>Yazar</value>
+    <value>Автор</value>
   </data>
   <data name="Note_SharedBy" xml:space="preserve">
-    <value>Paylaşan</value>
+    <value>Поделился</value>
   </data>
   <data name="Note_MineFilter" xml:space="preserve">
-    <value>Benim</value>
+    <value>Мои</value>
   </data>
   <data name="Note_SharedFilter" xml:space="preserve">
-    <value>Benimle paylaşılan</value>
+    <value>Со мной поделились</value>
   </data>
   <data name="Note_SharedWith" xml:space="preserve">
-    <value>Paylaşıldı</value>
+    <value>Доступно</value>
   </data>
   <data name="Note_NoShareTargets" xml:space="preserve">
-    <value>Kullanıcı bulunamadı</value>
+    <value>Пользователи не найдены</value>
   </data>
   <data name="Note_ScopeAll" xml:space="preserve">
-    <value>Tümü</value>
+    <value>Все</value>
   </data>
   <data name="Note_OpenComposer" xml:space="preserve">
     <value>Открыть редактор</value>
@@ -2687,5 +2687,914 @@
   </data>
   <data name="Sidebar_NewHint" xml:space="preserve">
     <value>Есть новое</value>
+  </data>
+  <data name="Subscription_Title" xml:space="preserve">
+    <value>Лимиты</value>
+  </data>
+  <data name="Subscription_Unlimited" xml:space="preserve">
+    <value>без ограничений</value>
+  </data>
+  <data name="Subscription_StatusReadonly" xml:space="preserve">
+    <value>Режим чтения</value>
+  </data>
+  <data name="Subscription_StatusSuspended" xml:space="preserve">
+    <value>Приостановлена</value>
+  </data>
+  <data name="Subscription_StatusActive" xml:space="preserve">
+    <value>Активна</value>
+  </data>
+  <data name="Subscription_GaugeStudent" xml:space="preserve">
+    <value>Ученики</value>
+  </data>
+  <data name="Subscription_GaugeGroup" xml:space="preserve">
+    <value>Группы</value>
+  </data>
+  <data name="Subscription_GaugeVideo" xml:space="preserve">
+    <value>Видео (в месяц, часы)</value>
+  </data>
+  <data name="Subscription_LimitsNear" xml:space="preserve">
+    <value>Приближение к лимитам</value>
+  </data>
+  <data name="Subscription_LimitsNearHint" xml:space="preserve">
+    <value>при достижении лимита новые добавления блокируются, имеющиеся данные сохраняются.</value>
+  </data>
+  <data name="Subscription_SelectTenantHint" xml:space="preserve">
+    <value>Выберите тенанта — будут показаны его план, лимиты и использование.</value>
+  </data>
+  <data name="Subscription_NoPlanHint" xml:space="preserve">
+    <value>План ещё не назначен. Обратитесь к администратору.</value>
+  </data>
+  <data name="Subscription_AssignPlan" xml:space="preserve">
+    <value>Назначить план</value>
+  </data>
+  <data name="Subscription_CurrentPlan" xml:space="preserve">
+    <value>Текущий план</value>
+  </data>
+  <data name="Common_PerMonth" xml:space="preserve">
+    <value>/ мес</value>
+  </data>
+  <data name="Subscription_ChangePlan" xml:space="preserve">
+    <value>Обновить / изменить план</value>
+  </data>
+  <data name="Subscription_Uploads" xml:space="preserve">
+    <value>Загрузка</value>
+  </data>
+  <data name="Subscription_Duration" xml:space="preserve">
+    <value>Срок</value>
+  </data>
+  <data name="Subscription_DaysLeft" xml:space="preserve">
+    <value>осталось дней: {0}</value>
+  </data>
+  <data name="Subscription_ExpiredHint" xml:space="preserve">
+    <value>Срок истёк — обновите план</value>
+  </data>
+  <data name="Subscription_NoExpiry" xml:space="preserve">
+    <value>Без даты окончания</value>
+  </data>
+  <data name="Subscription_Suspend" xml:space="preserve">
+    <value>Приостановить подписку</value>
+  </data>
+  <data name="Subscription_Resume" xml:space="preserve">
+    <value>Возобновить подписку</value>
+  </data>
+  <data name="Subscription_VideoThisMonth" xml:space="preserve">
+    <value>Видео (в этом месяце)</value>
+  </data>
+  <data name="Subscription_Hours" xml:space="preserve">
+    <value>часов</value>
+  </data>
+  <data name="Subscription_Usage" xml:space="preserve">
+    <value>Использование</value>
+  </data>
+  <data name="Subscription_CustomizeLimits" xml:space="preserve">
+    <value>Настроить лимиты</value>
+  </data>
+  <data name="Subscription_AddonTitle" xml:space="preserve">
+    <value>Увеличение лимита</value>
+  </data>
+  <data name="Subscription_AddonAdminHint" xml:space="preserve">
+    <value>Вы можете добавить любое количество дополнительных мест, не меняя план. Супер-администратор определяет, будет пакет разовым или месячным; месячный пакет действует каждый месяц до отмены.</value>
+  </data>
+  <data name="Subscription_Add" xml:space="preserve">
+    <value>Добавить</value>
+  </data>
+  <data name="Subscription_AddonUserHint" xml:space="preserve">
+    <value>Отправьте запрос на увеличение лимита без изменения плана. Форму пакета (разовый/месячный) и время оплаты определяет администратор платформы при подтверждении.</value>
+  </data>
+  <data name="Subscription_NoAddonOffers" xml:space="preserve">
+    <value>Для этого плана дополнительные пакеты лимитов не предусмотрены.</value>
+  </data>
+  <data name="Subscription_Quantity" xml:space="preserve">
+    <value>Количество</value>
+  </data>
+  <data name="Subscription_PaymentTiming" xml:space="preserve">
+    <value>Время оплаты</value>
+  </data>
+  <data name="Subscription_PayNow" xml:space="preserve">
+    <value>Оплатить сейчас</value>
+  </data>
+  <data name="Subscription_PayWithPlan" xml:space="preserve">
+    <value>В конце месяца вместе с планом</value>
+  </data>
+  <data name="Subscription_PayWithPlanDisabled" xml:space="preserve">
+    <value>В этом плане лимиты нельзя оплатить вместе с планом — доступна только оплата сейчас.</value>
+  </data>
+  <data name="Subscription_NoteOptional" xml:space="preserve">
+    <value>Примечание (необязательно)</value>
+  </data>
+  <data name="Common_Note" xml:space="preserve">
+    <value>Примечание</value>
+  </data>
+  <data name="Subscription_SendRequest" xml:space="preserve">
+    <value>Отправить запрос</value>
+  </data>
+  <data name="Subscription_MyRequests" xml:space="preserve">
+    <value>Мои заявки</value>
+  </data>
+  <data name="Subscription_ActiveAddons" xml:space="preserve">
+    <value>Активные доп. пакеты</value>
+  </data>
+  <data name="Subscription_UsageHistory" xml:space="preserve">
+    <value>История использования</value>
+  </data>
+  <data name="Subscription_Form" xml:space="preserve">
+    <value>Форма</value>
+  </data>
+  <data name="Common_Payment" xml:space="preserve">
+    <value>Оплата</value>
+  </data>
+  <data name="Common_Amount" xml:space="preserve">
+    <value>Сумма</value>
+  </data>
+  <data name="Subscription_VideoHours" xml:space="preserve">
+    <value>Видео (часы)</value>
+  </data>
+  <data name="Subscription_Storage" xml:space="preserve">
+    <value>Хранилище</value>
+  </data>
+  <data name="Subscription_ExtraStudents" xml:space="preserve">
+    <value>Доп. ученики</value>
+  </data>
+  <data name="Subscription_ExtraGroups" xml:space="preserve">
+    <value>Доп. группы</value>
+  </data>
+  <data name="Subscription_ExtraVideoHours" xml:space="preserve">
+    <value>Доп. видеочасы</value>
+  </data>
+  <data name="Common_Period" xml:space="preserve">
+    <value>Период</value>
+  </data>
+  <data name="Common_LoadingDots" xml:space="preserve">
+    <value>Загрузка…</value>
+  </data>
+  <data name="Common_Free" xml:space="preserve">
+    <value>Бесплатно</value>
+  </data>
+  <data name="Common_JoinedDate" xml:space="preserve">
+    <value>Дата присоединения</value>
+  </data>
+  <data name="Common_New" xml:space="preserve">
+    <value>Новый</value>
+  </data>
+  <data name="Common_Optional" xml:space="preserve">
+    <value>Необязательно</value>
+  </data>
+  <data name="Common_Audio" xml:space="preserve">
+    <value>Аудио</value>
+  </data>
+  <data name="Common_Video" xml:space="preserve">
+    <value>Видео</value>
+  </data>
+  <data name="Common_Pdf" xml:space="preserve">
+    <value>PDF</value>
+  </data>
+  <data name="Common_FromDate" xml:space="preserve">
+    <value>Дата начала</value>
+  </data>
+  <data name="Common_ToDate" xml:space="preserve">
+    <value>Дата окончания</value>
+  </data>
+  <data name="Common_Filter" xml:space="preserve">
+    <value>Фильтровать</value>
+  </data>
+  <data name="Common_Reset" xml:space="preserve">
+    <value>Сбросить</value>
+  </data>
+  <data name="Common_GoToPayments" xml:space="preserve">
+    <value>Перейти к платежам</value>
+  </data>
+  <data name="Common_ViewPlans" xml:space="preserve">
+    <value>Посмотреть планы</value>
+  </data>
+  <data name="Requests_Pending" xml:space="preserve">
+    <value>Ожидает</value>
+  </data>
+  <data name="Requests_Approved" xml:space="preserve">
+    <value>Подтверждено</value>
+  </data>
+  <data name="Requests_Rejected" xml:space="preserve">
+    <value>Отклонено</value>
+  </data>
+  <data name="Payment_Title" xml:space="preserve">
+    <value>Платежи</value>
+  </data>
+  <data name="Payment_Count" xml:space="preserve">
+    <value>Количество платежей</value>
+  </data>
+  <data name="Payment_TotalAmount" xml:space="preserve">
+    <value>Общая сумма</value>
+  </data>
+  <data name="Payment_History" xml:space="preserve">
+    <value>История платежей</value>
+  </data>
+  <data name="Payment_HistoryEmpty" xml:space="preserve">
+    <value>История платежей пуста.</value>
+  </data>
+  <data name="Payment_Upcoming" xml:space="preserve">
+    <value>Предстоящие</value>
+  </data>
+  <data name="Payment_Overdue" xml:space="preserve">
+    <value>Просроченные</value>
+  </data>
+  <data name="Payment_NoPlan" xml:space="preserve">
+    <value>Нет плана</value>
+  </data>
+  <data name="Payment_ActivePlan" xml:space="preserve">
+    <value>Активный план</value>
+  </data>
+  <data name="Payment_SearchPlaceholder" xml:space="preserve">
+    <value>Поиск по имени ученика или email...</value>
+  </data>
+  <data name="Payment_NextDue" xml:space="preserve">
+    <value>Следующий платёж</value>
+  </data>
+  <data name="Payment_Record" xml:space="preserve">
+    <value>Записать платёж</value>
+  </data>
+  <data name="Payment_Plan" xml:space="preserve">
+    <value>План платежей</value>
+  </data>
+  <data name="AddonRequest_Title" xml:space="preserve">
+    <value>Заявки на лимиты</value>
+  </data>
+  <data name="AddonRequest_AdminDesc" xml:space="preserve">
+    <value>Заявки всех тенантов на увеличение лимита без смены плана. Форму пакета (разовый/месячный) и время оплаты супер-администратор определяет при подтверждении.</value>
+  </data>
+  <data name="AddonRequest_UserDesc" xml:space="preserve">
+    <value>Отправленные вами заявки на увеличение лимита без смены плана. Форму пакета и время оплаты определяет администратор платформы при подтверждении.</value>
+  </data>
+  <data name="AddonRequest_Requester" xml:space="preserve">
+    <value>Заявитель</value>
+  </data>
+  <data name="GroupRequest_Title" xml:space="preserve">
+    <value>Заявки в группы</value>
+  </data>
+  <data name="GroupRequest_Desc" xml:space="preserve">
+    <value>Заявки учеников, желающих присоединиться по ссылке. После подтверждения ученик становится участником группы.</value>
+  </data>
+  <data name="Plan_Title" xml:space="preserve">
+    <value>Планы подписки</value>
+  </data>
+  <data name="Plan_New" xml:space="preserve">
+    <value>+ Новый план</value>
+  </data>
+  <data name="Plan_Column" xml:space="preserve">
+    <value>План</value>
+  </data>
+  <data name="Plan_Price" xml:space="preserve">
+    <value>Цена</value>
+  </data>
+  <data name="Plan_Trial" xml:space="preserve">
+    <value>Пробный период</value>
+  </data>
+  <data name="Plan_VideoHoursMonth" xml:space="preserve">
+    <value>Видео (часы/мес)</value>
+  </data>
+  <data name="Plan_Templates" xml:space="preserve">
+    <value>Шаблоны</value>
+  </data>
+  <data name="Plan_MonthlyPrice" xml:space="preserve">
+    <value>Месячная цена</value>
+  </data>
+  <data name="Plan_YearlyFreeMonths" xml:space="preserve">
+    <value>Бесплатных месяцев в год</value>
+  </data>
+  <data name="Plan_TrialDays" xml:space="preserve">
+    <value>Пробный период (дней)</value>
+  </data>
+  <data name="Plan_UploadPermissions" xml:space="preserve">
+    <value>Разрешения на загрузку</value>
+  </data>
+  <data name="Plan_UploadPermissionsHint" xml:space="preserve">
+    <value>Отключённый тип нельзя загрузить у тенантов с этим планом.</value>
+  </data>
+  <data name="Plan_Limits" xml:space="preserve">
+    <value>Лимиты (0 = без ограничений)</value>
+  </data>
+  <data name="Plan_AddonPricing" xml:space="preserve">
+    <value>Цена увеличения лимита</value>
+  </data>
+  <data name="Plan_AddonPricingHint" xml:space="preserve">
+    <value>Клиент может добавить любое количество дополнительных мест — цена за единицу.</value>
+  </data>
+  <data name="Plan_PricePerStudent" xml:space="preserve">
+    <value>1 ученик (AZN)</value>
+  </data>
+  <data name="Plan_PricePerGroup" xml:space="preserve">
+    <value>1 группа (AZN)</value>
+  </data>
+  <data name="Plan_PricePerVideoHour" xml:space="preserve">
+    <value>1 видеочас (AZN)</value>
+  </data>
+  <data name="Plan_AddonBilling" xml:space="preserve">
+    <value>Оплата лимитов</value>
+  </data>
+  <data name="Plan_AddonBillingHint" xml:space="preserve">
+    <value>Если включено, оплата пакетов лимитов принимается в конце месяца вместе с планом и может быть выдан месячный пакет. Если выключено, клиент может оплатить только сейчас.</value>
+  </data>
+  <data name="Plan_BillWithPlan" xml:space="preserve">
+    <value>Оплата вместе с планом</value>
+  </data>
+  <data name="Plan_Modules" xml:space="preserve">
+    <value>Модули</value>
+  </data>
+  <data name="Plan_ModulesHint" xml:space="preserve">
+    <value>Отключённый модуль не отображается у тенантов с этим планом — пользователь выполняет задачу вручную.</value>
+  </data>
+  <data name="Plan_PaymentTemplates" xml:space="preserve">
+    <value>Шаблоны платежей</value>
+  </data>
+  <data name="PlanChoose_Title" xml:space="preserve">
+    <value>Выбор плана</value>
+  </data>
+  <data name="PlanChoose_Heading" xml:space="preserve">
+    <value>Выберите план</value>
+  </data>
+  <data name="PlanChoose_Intro" xml:space="preserve">
+    <value>Выберите подходящий план для {0}. Бесплатный план активируется сразу; платные планы с пробным периодом можно использовать бесплатно в течение этого периода.</value>
+  </data>
+  <data name="PlanChoose_NoExpiry" xml:space="preserve">
+    <value>бессрочно</value>
+  </data>
+  <data name="PlanChoose_TrialDays" xml:space="preserve">
+    <value>{0} дней бесплатно</value>
+  </data>
+  <data name="Common_StudentCount" xml:space="preserve">
+    <value>{0} учеников</value>
+  </data>
+  <data name="PlanChoose_UnlimitedStudents" xml:space="preserve">
+    <value>Без ограничений учеников</value>
+  </data>
+  <data name="Common_GroupCount" xml:space="preserve">
+    <value>{0} групп</value>
+  </data>
+  <data name="PlanChoose_UnlimitedGroups" xml:space="preserve">
+    <value>Без ограничений групп</value>
+  </data>
+  <data name="Common_TeacherCount" xml:space="preserve">
+    <value>{0} преподавателей</value>
+  </data>
+  <data name="PlanChoose_UnlimitedTeachers" xml:space="preserve">
+    <value>Без ограничений преподавателей</value>
+  </data>
+  <data name="Plan_AllowVideo" xml:space="preserve">
+    <value>Загрузка видео</value>
+  </data>
+  <data name="Plan_AllowAudio" xml:space="preserve">
+    <value>Загрузка аудио</value>
+  </data>
+  <data name="Plan_AllowFile" xml:space="preserve">
+    <value>Загрузка файлов / PDF</value>
+  </data>
+  <data name="PlanChoose_StartFree" xml:space="preserve">
+    <value>Начать бесплатно</value>
+  </data>
+  <data name="PlanChoose_StartTrial" xml:space="preserve">
+    <value>Начать пробный период</value>
+  </data>
+  <data name="PlanChoose_Select" xml:space="preserve">
+    <value>Выбрать план</value>
+  </data>
+  <data name="PlanChoose_ContactAdmin" xml:space="preserve">
+    <value>Чтобы сменить план позже, обратитесь к супер-администратору.</value>
+  </data>
+  <data name="PlanCatalog_Title" xml:space="preserve">
+    <value>Планы</value>
+  </data>
+  <data name="PlanCatalog_SelectTenantHint" xml:space="preserve">
+    <value>Выберите тенанта — будут показаны доступные планы.</value>
+  </data>
+  <data name="PlanCatalog_Available" xml:space="preserve">
+    <value>Доступные планы</value>
+  </data>
+  <data name="PlanCatalog_Intro" xml:space="preserve">
+    <value>При выборе плана заявка отправляется через WhatsApp — активация выполняется вручную.</value>
+  </data>
+  <data name="PlanCatalog_Unlimited" xml:space="preserve">
+    <value>Без ограничений</value>
+  </data>
+  <data name="PlanCatalog_VideoPerMonth" xml:space="preserve">
+    <value>{0} видеочасов / мес</value>
+  </data>
+  <data name="PlanCatalog_VideoUnlimited" xml:space="preserve">
+    <value>Без ограничений видеочасов / мес</value>
+  </data>
+  <data name="PlanCatalog_Storage" xml:space="preserve">
+    <value>{0} хранилища</value>
+  </data>
+  <data name="PlanCatalog_MaxQuality" xml:space="preserve">
+    <value>Макс. качество: {0}</value>
+  </data>
+  <data name="PlanCatalog_Uploads" xml:space="preserve">
+    <value>Загрузка: {0}</value>
+  </data>
+  <data name="PlanCatalog_Templates" xml:space="preserve">
+    <value>Шаблоны платежей: {0}</value>
+  </data>
+  <data name="PlanCatalog_On" xml:space="preserve">
+    <value>вкл.</value>
+  </data>
+  <data name="PlanCatalog_Off" xml:space="preserve">
+    <value>выкл.</value>
+  </data>
+  <data name="PlanCatalog_Selected" xml:space="preserve">
+    <value>Выбрано</value>
+  </data>
+  <data name="PlanCatalog_ChooseThis" xml:space="preserve">
+    <value>Выбрать этот план</value>
+  </data>
+  <data name="Cashbox_Title" xml:space="preserve">
+    <value>Касса</value>
+  </data>
+  <data name="Cashbox_Subtitle" xml:space="preserve">
+    <value>Поступления от учеников и месячный доход.</value>
+  </data>
+  <data name="Cashbox_Today" xml:space="preserve">
+    <value>Сегодня</value>
+  </data>
+  <data name="Cashbox_TodayHint" xml:space="preserve">
+    <value>поступления за сегодня</value>
+  </data>
+  <data name="Cashbox_ThisMonth" xml:space="preserve">
+    <value>Собрано за месяц</value>
+  </data>
+  <data name="Cashbox_ThisMonthHint" xml:space="preserve">
+    <value>за текущий месяц</value>
+  </data>
+  <data name="Cashbox_Expected" xml:space="preserve">
+    <value>Ожидается за месяц</value>
+  </data>
+  <data name="Cashbox_ExpectedHint" xml:space="preserve">
+    <value>просрочено + к оплате в этом месяце</value>
+  </data>
+  <data name="Cashbox_LastMonth" xml:space="preserve">
+    <value>Прошлый месяц</value>
+  </data>
+  <data name="Cashbox_LastMonthHint" xml:space="preserve">
+    <value>за предыдущий месяц</value>
+  </data>
+  <data name="Cashbox_Projection" xml:space="preserve">
+    <value>Следующий месяц (прогноз)</value>
+  </data>
+  <data name="Cashbox_ProjectionHint" xml:space="preserve">
+    <value>на основе активных планов</value>
+  </data>
+  <data name="Cashbox_OverdueDebt" xml:space="preserve">
+    <value>Неоплаченный долг</value>
+  </data>
+  <data name="Cashbox_OverdueDebtHint" xml:space="preserve">
+    <value>просроченные планы</value>
+  </data>
+  <data name="Cashbox_Last12" xml:space="preserve">
+    <value>Последние 12 месяцев</value>
+  </data>
+  <data name="Cashbox_Overdue" xml:space="preserve">
+    <value>Просрочено</value>
+  </data>
+  <data name="Cashbox_DueSoon" xml:space="preserve">
+    <value>Заканчивается через 7 дней</value>
+  </data>
+  <data name="Cashbox_PayingStudents" xml:space="preserve">
+    <value>Платящие ученики</value>
+  </data>
+  <data name="Cashbox_ActiveStudents" xml:space="preserve">
+    <value>Активные ученики</value>
+  </data>
+  <data name="Cashbox_RecentPayments" xml:space="preserve">
+    <value>Последние платежи</value>
+  </data>
+  <data name="PaymentPlan_Title" xml:space="preserve">
+    <value>Шаблоны платежей</value>
+  </data>
+  <data name="PaymentPlan_New" xml:space="preserve">
+    <value>Новый шаблон</value>
+  </data>
+  <data name="PaymentPlan_Name" xml:space="preserve">
+    <value>Название шаблона</value>
+  </data>
+  <data name="PaymentPlan_ModalTitle" xml:space="preserve">
+    <value>Шаблон платежа</value>
+  </data>
+  <data name="PaymentPlan_EmptyTitle" xml:space="preserve">
+    <value>Шаблоны платежей не входят в ваш план</value>
+  </data>
+  <data name="PaymentPlan_EmptyBody" xml:space="preserve">
+    <value>Текущий план подписки не позволяет использовать готовые шаблоны платежей. Вы можете вводить платежи вручную; для шаблонов обновите план.</value>
+  </data>
+  <data name="PaymentPlan_IntervalMonthly" xml:space="preserve">
+    <value>Ежемесячно</value>
+  </data>
+  <data name="PaymentPlan_IntervalCustom" xml:space="preserve">
+    <value>Свой интервал в днях</value>
+  </data>
+  <data name="PaymentPlan_IntervalDays" xml:space="preserve">
+    <value>Каждые N дней</value>
+  </data>
+  <data name="PaymentPlan_Select" xml:space="preserve">
+    <value>Выберите шаблон плана</value>
+  </data>
+  <data name="PaymentPlan_Manual" xml:space="preserve">
+    <value>— Ввести вручную —</value>
+  </data>
+  <data name="Plan_FirstPaymentNow" xml:space="preserve">
+    <value>Записать первый платёж сейчас (за сегодня)</value>
+  </data>
+  <data name="Common_Code" xml:space="preserve">
+    <value>Код</value>
+  </data>
+  <data name="Common_Currency" xml:space="preserve">
+    <value>Валюта</value>
+  </data>
+  <data name="LimitOverrides_Title" xml:space="preserve">
+    <value>Индивидуальные лимиты</value>
+  </data>
+  <data name="LimitOverrides_Hint" xml:space="preserve">
+    <value>Задайте этому клиенту лимит, отличный от плана. Пустое поле оставляет лимит плана, 0 = без ограничений.</value>
+  </data>
+  <data name="LimitOverrides_Students" xml:space="preserve">
+    <value>Лимит учеников</value>
+  </data>
+  <data name="LimitOverrides_VideoMinutes" xml:space="preserve">
+    <value>Видео в месяц (минуты)</value>
+  </data>
+  <data name="PlanModal_ExpiresAt" xml:space="preserve">
+    <value>Дата окончания (пусто = бессрочно)</value>
+  </data>
+  <data name="PlanModal_AddonHint" xml:space="preserve">
+    <value>После оплаты вы также можете добавить дополнительные пакеты — они сразу влияют на лимит плана.</value>
+  </data>
+  <data name="Nav_PlanManagement" xml:space="preserve">
+    <value>Управление планами</value>
+  </data>
+  <data name="Payment_PaidOn" xml:space="preserve">
+    <value>Дата платежа</value>
+  </data>
+  <data name="LessonContent_HintVideo" xml:space="preserve">
+    <value>Видеофайл — mp4, mkv, mov и др.</value>
+  </data>
+  <data name="LessonContent_HintVoice" xml:space="preserve">
+    <value>Аудиофайл — mp3, wav, m4a и др.</value>
+  </data>
+  <data name="LessonContent_HintFile" xml:space="preserve">
+    <value>pdf, документ, изображение, архив (видео и аудио выбрать нельзя)</value>
+  </data>
+  <data name="LessonContent_HintVideoLarge" xml:space="preserve">
+    <value>Большие видео загружаются напрямую в R2</value>
+  </data>
+  <data name="Question_VariantImage" xml:space="preserve">
+    <value>Изображение варианта {0}</value>
+  </data>
+  <data name="Sub_UnitStudent" xml:space="preserve">
+    <value>учеников</value>
+  </data>
+  <data name="Sub_UnitGroup" xml:space="preserve">
+    <value>групп</value>
+  </data>
+  <data name="Sub_UnitVideoHour" xml:space="preserve">
+    <value>часов</value>
+  </data>
+  <data name="Sub_UnitGeneric" xml:space="preserve">
+    <value>единиц</value>
+  </data>
+  <data name="Sub_AddonQty" xml:space="preserve">
+    <value>Сколько {0} добавить?</value>
+  </data>
+  <data name="Sub_Continue" xml:space="preserve">
+    <value>Продолжить</value>
+  </data>
+  <data name="Sub_ModeMonthlyWithPlan" xml:space="preserve">
+    <value>Ежемесячно (вместе с планом)</value>
+  </data>
+  <data name="Sub_FormTitle" xml:space="preserve">
+    <value>Форма оплаты</value>
+  </data>
+  <data name="Sub_TimingNow" xml:space="preserve">
+    <value>Оплатить сейчас</value>
+  </data>
+  <data name="Sub_TimingNowShort" xml:space="preserve">
+    <value>Сейчас</value>
+  </data>
+  <data name="Sub_WithPlanShort" xml:space="preserve">
+    <value>Вместе с планом</value>
+  </data>
+  <data name="Sub_KindVideoHours" xml:space="preserve">
+    <value>Видеочасы</value>
+  </data>
+  <data name="Sub_StatusPaid" xml:space="preserve">
+    <value>Оплачено</value>
+  </data>
+  <data name="Sub_StatusWaiting" xml:space="preserve">
+    <value>Ожидает</value>
+  </data>
+  <data name="Sub_StatusApproved" xml:space="preserve">
+    <value>Подтверждено</value>
+  </data>
+  <data name="Sub_StatusRejected" xml:space="preserve">
+    <value>Отклонено</value>
+  </data>
+  <data name="Sub_NoRequests" xml:space="preserve">
+    <value>Заявок нет</value>
+  </data>
+  <data name="Sub_NoAddons" xml:space="preserve">
+    <value>Нет доп. пакетов</value>
+  </data>
+  <data name="Sub_NoUsage" xml:space="preserve">
+    <value>Нет записей использования</value>
+  </data>
+  <data name="Sub_Stop" xml:space="preserve">
+    <value>Остановить</value>
+  </data>
+  <data name="Sub_RecordPayment" xml:space="preserve">
+    <value>Записать платёж</value>
+  </data>
+  <data name="Sub_SuspendTitle" xml:space="preserve">
+    <value>Приостановить подписку?</value>
+  </data>
+  <data name="Sub_ResumeTitle" xml:space="preserve">
+    <value>Возобновить подписку?</value>
+  </data>
+  <data name="Sub_SuspendText" xml:space="preserve">
+    <value>Пользователи тенанта не смогут войти. Данные не удаляются — всё остаётся на месте после восстановления подписки.</value>
+  </data>
+  <data name="Sub_ResumeText" xml:space="preserve">
+    <value>Тенант будет повторно активирован, и пользователи смогут войти.</value>
+  </data>
+  <data name="Sub_Resume" xml:space="preserve">
+    <value>Возобновить</value>
+  </data>
+  <data name="Sub_MarkPaidTitle" xml:space="preserve">
+    <value>Записать платёж?</value>
+  </data>
+  <data name="Sub_MarkPaid" xml:space="preserve">
+    <value>Записать</value>
+  </data>
+  <data name="Sub_CancelAddonConfirm" xml:space="preserve">
+    <value>Остановить ежемесячный пакет? В следующие месяцы он не будет добавлен к лимиту.</value>
+  </data>
+  <data name="Sub_RequestSent" xml:space="preserve">
+    <value>Заявка отправлена. Лимит будет увеличен после подтверждения администратором.</value>
+  </data>
+  <data name="Payment_Receive" xml:space="preserve">
+    <value>Принять платёж</value>
+  </data>
+  <data name="Payment_HistoryButton" xml:space="preserve">
+    <value>История</value>
+  </data>
+  <data name="Common_EveryNDays" xml:space="preserve">
+    <value>Каждые {0} дней</value>
+  </data>
+  <data name="Payment_RecordConfirm" xml:space="preserve">
+    <value>Записать платёж?</value>
+  </data>
+  <data name="Payment_RecordYes" xml:space="preserve">
+    <value>Да, записать</value>
+  </data>
+  <data name="Payment_Recorded" xml:space="preserve">
+    <value>Платёж записан</value>
+  </data>
+  <data name="Payment_DeleteConfirm" xml:space="preserve">
+    <value>Удалить эту запись платежа? Срок оплаты будет пересчитан.</value>
+  </data>
+  <data name="Cashbox_Monthly" xml:space="preserve">
+    <value>ежемесячно</value>
+  </data>
+  <data name="Cashbox_Days" xml:space="preserve">
+    <value>{0} дней</value>
+  </data>
+  <data name="Cashbox_NoLastMonth" xml:space="preserve">
+    <value>В прошлом месяце платежей не было</value>
+  </data>
+  <data name="Cashbox_VsLastMonth" xml:space="preserve">
+    <value>{0}% к прошлому месяцу</value>
+  </data>
+  <data name="Cashbox_NoPaymentsYet" xml:space="preserve">
+    <value>Платежи ещё не записаны.</value>
+  </data>
+  <data name="Cashbox_NoPaymentsRange" xml:space="preserve">
+    <value>В выбранном диапазоне платежей нет.</value>
+  </data>
+  <data name="Cashbox_RangeTotal" xml:space="preserve">
+    <value>Поступления за период: {0}</value>
+  </data>
+  <data name="Cashbox_SelectStudent" xml:space="preserve">
+    <value>Выберите ученика</value>
+  </data>
+  <data name="Cashbox_CurrentPlanOption" xml:space="preserve">
+    <value>Текущий план — {0} {1} ({2})</value>
+  </data>
+  <data name="Cashbox_NoPlanOption" xml:space="preserve">
+    <value>План не выбран</value>
+  </data>
+  <data name="Cashbox_SelectedPlanHint" xml:space="preserve">
+    <value>Выбранный план: {0} · {1} {2} · {3}</value>
+  </data>
+  <data name="Cashbox_CurrentPlanHint" xml:space="preserve">
+    <value>Текущий план: {0} {1}</value>
+  </data>
+  <data name="Cashbox_NextDueSuffix" xml:space="preserve">
+    <value> · следующий платёж: {0}</value>
+  </data>
+  <data name="Cashbox_NoPlanForStudent" xml:space="preserve">
+    <value>У этого ученика нет плана платежей — выберите план выше.</value>
+  </data>
+  <data name="Cashbox_DeleteConfirm" xml:space="preserve">
+    <value>Удалить этот платёж? Срок оплаты плана будет пересчитан.</value>
+  </data>
+  <data name="Cashbox_StudentRequired" xml:space="preserve">
+    <value>Выберите ученика</value>
+  </data>
+  <data name="Cashbox_AmountPositive" xml:space="preserve">
+    <value>Сумма должна быть больше нуля</value>
+  </data>
+  <data name="Cashbox_NoPlanSelected" xml:space="preserve">
+    <value>У этого ученика нет плана платежей — выберите план</value>
+  </data>
+  <data name="Addon_ApproveTitle" xml:space="preserve">
+    <value>Подтвердить заявку</value>
+  </data>
+  <data name="Addon_ApproveText" xml:space="preserve">
+    <value>Выберите форму пакета. После подтверждения лимит будет сразу увеличен.</value>
+  </data>
+  <data name="Addon_RejectTitle" xml:space="preserve">
+    <value>Отклонить заявку</value>
+  </data>
+  <data name="Addon_RejectReason" xml:space="preserve">
+    <value>Причина (необязательно)</value>
+  </data>
+  <data name="Requests_Approve" xml:space="preserve">
+    <value>Подтвердить</value>
+  </data>
+  <data name="Requests_Reject" xml:space="preserve">
+    <value>Отклонить</value>
+  </data>
+  <data name="Requests_NoRequests" xml:space="preserve">
+    <value>Заявок нет</value>
+  </data>
+  <data name="GroupRequest_ApproveTitle" xml:space="preserve">
+    <value>Подтвердить заявку?</value>
+  </data>
+  <data name="GroupRequest_RejectTitle" xml:space="preserve">
+    <value>Отклонить заявку?</value>
+  </data>
+  <data name="GroupRequest_ApproveText" xml:space="preserve">
+    <value>Ученик сразу станет участником группы.</value>
+  </data>
+  <data name="GroupRequest_RejectText" xml:space="preserve">
+    <value>Ученик не будет добавлен в группу.</value>
+  </data>
+  <data name="PlanCatalog_WaConfirmText" xml:space="preserve">
+    <value>Отправить заявку на план «{0}» через WhatsApp?</value>
+  </data>
+  <data name="PlanCatalog_Send" xml:space="preserve">
+    <value>Отправить</value>
+  </data>
+  <data name="PlanCatalog_WaGreeting" xml:space="preserve">
+    <value>Здравствуйте! Заявка на изменение плана подписки:</value>
+  </data>
+  <data name="PlanCatalog_WaOrg" xml:space="preserve">
+    <value>Организация: {0}</value>
+  </data>
+  <data name="PlanCatalog_WaRequester" xml:space="preserve">
+    <value>Заявитель: {0}</value>
+  </data>
+  <data name="PlanCatalog_WaEmail" xml:space="preserve">
+    <value>E-mail: {0}</value>
+  </data>
+  <data name="PlanCatalog_WaCurrent" xml:space="preserve">
+    <value>Текущий план: {0}</value>
+  </data>
+  <data name="PlanCatalog_WaSelected" xml:space="preserve">
+    <value>Выбранный план: {0} ({1})</value>
+  </data>
+  <data name="PlanCatalog_WaPrice" xml:space="preserve">
+    <value>Цена: {0} {1}/мес</value>
+  </data>
+  <data name="PlanCatalog_WaStudents" xml:space="preserve">
+    <value>Лимит учеников: {0}</value>
+  </data>
+  <data name="PlanCatalog_WaGroups" xml:space="preserve">
+    <value>Лимит групп: {0}</value>
+  </data>
+  <data name="PlanCatalog_WaVideo" xml:space="preserve">
+    <value>Видео (в месяц): {0}</value>
+  </data>
+  <data name="PlanCatalog_WaStorage" xml:space="preserve">
+    <value>Хранилище: {0}</value>
+  </data>
+  <data name="PlanCatalog_WaMaxQuality" xml:space="preserve">
+    <value>Макс. качество видео: {0}</value>
+  </data>
+  <data name="PlanCatalog_WaDate" xml:space="preserve">
+    <value>Дата: {0}</value>
+  </data>
+  <data name="PlanCatalog_Hours" xml:space="preserve">
+    <value>{0} часов</value>
+  </data>
+  <data name="Common_NDays" xml:space="preserve">
+    <value>{0} дней</value>
+  </data>
+  <data name="Common_SubjectSuffix" xml:space="preserve">
+    <value>{0} — урок</value>
+  </data>
+  <data name="Plan_NoPlans" xml:space="preserve">
+    <value>Планов нет</value>
+  </data>
+  <data name="PaymentPlan_NoTemplates" xml:space="preserve">
+    <value>Шаблонов платежей ещё нет.</value>
+  </data>
+  <data name="PaymentPlan_EditTemplate" xml:space="preserve">
+    <value>Редактировать шаблон</value>
+  </data>
+  <data name="PaymentPlan_NewTemplate" xml:space="preserve">
+    <value>Новый шаблон платежа</value>
+  </data>
+  <data name="PaymentPlan_DeleteConfirm" xml:space="preserve">
+    <value>Удалить этот шаблон платежа?</value>
+  </data>
+  <data name="Js_Skipped" xml:space="preserve">
+    <value>(пропущено)</value>
+  </data>
+  <data name="Plan_SelectPrompt" xml:space="preserve">
+    <value>Выберите план</value>
+  </data>
+  <data name="Error_Title" xml:space="preserve">
+    <value>Ошибка</value>
+  </data>
+  <data name="User_CannotDeleteSelf" xml:space="preserve">
+    <value>Вы не можете удалить свою учётную запись</value>
+  </data>
+  <data name="User_OnlySuperCanDeleteAdmin" xml:space="preserve">
+    <value>Удалить учётную запись администратора может только суперадмин</value>
+  </data>
+  <data name="User_OnlySuperCanAssignSuper" xml:space="preserve">
+    <value>Назначить другого суперадмина может только суперадмин</value>
+  </data>
+  <data name="Editor_NoImage" xml:space="preserve">
+    <value>Изображение не выбрано</value>
+  </data>
+  <data name="Editor_ImageTooLarge" xml:space="preserve">
+    <value>Изображение не может быть больше 5 МБ</value>
+  </data>
+  <data name="Editor_ImageTypes" xml:space="preserve">
+    <value>Поддерживаются только изображения JPG, PNG, GIF и WEBP</value>
+  </data>
+  <data name="Addon_SuperOnlyDecision" xml:space="preserve">
+    <value>Решение по пакетам лимитов принимает только суперадмин.</value>
+  </data>
+  <data name="Subscription_PlatformOnly" xml:space="preserve">
+    <value>Эту информацию может просматривать только администратор платформы.</value>
+  </data>
+  <data name="Subscription_PlatformOnlyAddon" xml:space="preserve">
+    <value>Добавить пакет лимитов может только администратор платформы.</value>
+  </data>
+  <data name="Tenant_NotSelected" xml:space="preserve">
+    <value>Клиент не выбран</value>
+  </data>
+  <data name="Login_InvalidCredentials" xml:space="preserve">
+    <value>Неверный адрес электронной почты или пароль.</value>
+  </data>
+  <data name="PaymentPlan_NotInPlan" xml:space="preserve">
+    <value>Шаблоны платежей не входят в текущий план подписки. Обновите план.</value>
+  </data>
+  <data name="PlatformFinance_PlatformOnly" xml:space="preserve">
+    <value>Управлять подпиской может только администратор платформы.</value>
+  </data>
+  <data name="Error_Heading" xml:space="preserve">
+    <value>Ошибка.</value>
+  </data>
+  <data name="Error_Message" xml:space="preserve">
+    <value>При обработке запроса произошла ошибка.</value>
+  </data>
+  <data name="Error_RequestId" xml:space="preserve">
+    <value>ID запроса</value>
+  </data>
+  <data name="Common_Previous" xml:space="preserve">
+    <value>Предыдущий</value>
+  </data>
+  <data name="Common_Language" xml:space="preserve">
+    <value>Язык</value>
+  </data>
+  <data name="Common_Logo" xml:space="preserve">
+    <value>Логотип</value>
   </data>
 </root>

@@ -1702,28 +1702,28 @@
     <value>Toplam soru</value>
   </data>
   <data name="Nav_Nodes" xml:space="preserve">
-    <value>Устройства конвертации</value>
+    <value>Dönüştürme cihazları</value>
   </data>
   <data name="Node_Title" xml:space="preserve">
-    <value>Узлы конвертации</value>
+    <value>Dönüştürme düğümleri</value>
   </data>
   <data name="Node_Devices" xml:space="preserve">
-    <value>Устройства</value>
+    <value>Cihazlar</value>
   </data>
   <data name="Node_Codes" xml:space="preserve">
-    <value>Коды регистрации</value>
+    <value>Kayıt kodları</value>
   </data>
   <data name="Node_Jobs" xml:space="preserve">
-    <value>Задания</value>
+    <value>Görevler</value>
   </data>
   <data name="Node_Name" xml:space="preserve">
-    <value>Имя</value>
+    <value>Ad</value>
   </data>
   <data name="Node_Status" xml:space="preserve">
-    <value>Статус</value>
+    <value>Durum</value>
   </data>
   <data name="Node_Platform" xml:space="preserve">
-    <value>Платформа</value>
+    <value>Platform</value>
   </data>
   <data name="Node_Cpu" xml:space="preserve">
     <value>CPU</value>
@@ -1732,139 +1732,139 @@
     <value>RAM</value>
   </data>
   <data name="Node_Disk" xml:space="preserve">
-    <value>Диск</value>
+    <value>Disk</value>
   </data>
   <data name="Node_Encoders" xml:space="preserve">
-    <value>Кодеки</value>
+    <value>Kodlayıcılar</value>
   </data>
   <data name="Node_Gpu" xml:space="preserve">
     <value>GPU</value>
   </data>
   <data name="Node_Benchmark" xml:space="preserve">
-    <value>Бенчмарк</value>
+    <value>Benchmark</value>
   </data>
   <data name="Node_Score" xml:space="preserve">
-    <value>Балл</value>
+    <value>Puan</value>
   </data>
   <data name="Node_LastSeen" xml:space="preserve">
-    <value>Последняя связь</value>
+    <value>Son görülme</value>
   </data>
   <data name="Node_Registered" xml:space="preserve">
-    <value>Регистрация</value>
+    <value>Kayıt</value>
   </data>
   <data name="Node_Online" xml:space="preserve">
-    <value>Онлайн</value>
+    <value>Çevrimiçi</value>
   </data>
   <data name="Node_Offline" xml:space="preserve">
-    <value>Офлайн</value>
+    <value>Çevrimdışı</value>
   </data>
   <data name="Node_Disabled" xml:space="preserve">
-    <value>Отключено</value>
+    <value>Devre dışı</value>
   </data>
   <data name="Node_GenerateCode" xml:space="preserve">
-    <value>Новый код</value>
+    <value>Yeni kod</value>
   </data>
   <data name="Node_Code" xml:space="preserve">
-    <value>Код</value>
+    <value>Kod</value>
   </data>
   <data name="Node_Note" xml:space="preserve">
-    <value>Заметка</value>
+    <value>Not</value>
   </data>
   <data name="Node_Expires" xml:space="preserve">
-    <value>Истекает</value>
+    <value>Sona erme</value>
   </data>
   <data name="Node_NoExpiry" xml:space="preserve">
-    <value>Без срока</value>
+    <value>Süresiz</value>
   </data>
   <data name="Node_Used" xml:space="preserve">
-    <value>Использован</value>
+    <value>Kullanıldı</value>
   </data>
   <data name="Node_Unused" xml:space="preserve">
-    <value>Не использован</value>
+    <value>Kullanılmadı</value>
   </data>
   <data name="Node_ExpiresHours" xml:space="preserve">
-    <value>Действует (часов)</value>
+    <value>Geçerlilik (saat)</value>
   </data>
   <data name="Node_Revoke" xml:space="preserve">
-    <value>Отозвать доступ</value>
+    <value>Erişimi iptal et</value>
   </data>
   <data name="Node_Enable" xml:space="preserve">
-    <value>Включить</value>
+    <value>Etkinleştir</value>
   </data>
   <data name="Node_Disable" xml:space="preserve">
-    <value>Отключить</value>
+    <value>Devre dışı bırak</value>
   </data>
   <data name="Node_NoDevices" xml:space="preserve">
-    <value>Устройства ещё не подключены</value>
+    <value>Henüz cihaz bağlanmadı</value>
   </data>
   <data name="Node_NoCodes" xml:space="preserve">
-    <value>Нет кодов регистрации</value>
+    <value>Kayıt kodu yok</value>
   </data>
   <data name="Node_ConfirmRevoke" xml:space="preserve">
-    <value>Отозвать доступ устройства? Потребуется новый код регистрации.</value>
+    <value>Bu cihazın erişimi iptal edilsin mi? Yeni kayıt kodu gerekecek.</value>
   </data>
   <data name="Node_Total" xml:space="preserve">
-    <value>Устройства</value>
+    <value>Cihazlar</value>
   </data>
   <data name="Node_ActiveJobs" xml:space="preserve">
-    <value>Активные задания</value>
+    <value>Çalışan görevler</value>
   </data>
   <data name="Node_PendingJobs" xml:space="preserve">
-    <value>В очереди</value>
+    <value>Kuyrukta</value>
   </data>
   <data name="Node_CompletedJobs" xml:space="preserve">
-    <value>Завершено</value>
+    <value>Tamamlanan</value>
   </data>
   <data name="Node_FailedJobs" xml:space="preserve">
-    <value>Ошибки</value>
+    <value>Başarısız</value>
   </data>
   <data name="Node_VideosProcessing" xml:space="preserve">
-    <value>Видео в работе</value>
+    <value>İşlenen videolar</value>
   </data>
   <data name="Node_Requeue" xml:space="preserve">
-    <value>Повторить</value>
+    <value>Yeniden kuyruğa</value>
   </data>
   <data name="Node_ConfirmRequeue" xml:space="preserve">
-    <value>Повторить задание? Видео будет сконвертировано заново.</value>
+    <value>Görev yeniden kuyruğa alınsın mı? Video baştan dönüştürülecek.</value>
   </data>
   <data name="Job_Resolution" xml:space="preserve">
-    <value>Разрешение</value>
+    <value>Çözünürlük</value>
   </data>
   <data name="Job_Progress" xml:space="preserve">
-    <value>Прогресс</value>
+    <value>İlerleme</value>
   </data>
   <data name="Job_Attempts" xml:space="preserve">
-    <value>Попытки</value>
+    <value>Denemeler</value>
   </data>
   <data name="Job_Node" xml:space="preserve">
-    <value>Устройство</value>
+    <value>Cihaz</value>
   </data>
   <data name="Job_Video" xml:space="preserve">
-    <value>Видео</value>
+    <value>Video</value>
   </data>
   <data name="Job_Created" xml:space="preserve">
-    <value>Создано</value>
+    <value>Oluşturuldu</value>
   </data>
   <data name="Job_Error" xml:space="preserve">
-    <value>Ошибка</value>
+    <value>Hata</value>
   </data>
   <data name="Node_All" xml:space="preserve">
-    <value>Все</value>
+    <value>Tümü</value>
   </data>
   <data name="Node_Copied" xml:space="preserve">
-    <value>Код скопирован</value>
+    <value>Kod kopyalandı</value>
   </data>
   <data name="Node_Subtitle" xml:space="preserve">
-    <value>Устройства, конвертирующие видео в HLS</value>
+    <value>Yüklenen videoları HLS'e dönüştüren cihazlar</value>
   </data>
   <data name="Node_NotePlaceholder" xml:space="preserve">
-    <value>напр. Офисный ПК</value>
+    <value>örn. Ofis bilgisayarı</value>
   </data>
   <data name="Node_Expired" xml:space="preserve">
-    <value>Истёк</value>
+    <value>Süresi geçti</value>
   </data>
   <data name="Node_AutoRefresh" xml:space="preserve">
-    <value>Автообновление</value>
+    <value>Otomatik yenileme</value>
   </data>
   <data name="Lesson_Shared" xml:space="preserve">
     <value>Tüm öğretmenlerle paylaşılır</value>
@@ -2302,52 +2302,52 @@
     <value>Metin 2000 karakterden uzun olamaz</value>
   </data>
   <data name="Nav_Notes" xml:space="preserve">
-    <value>Заметки</value>
+    <value>Notlar</value>
   </data>
   <data name="Nav_Calendar" xml:space="preserve">
-    <value>Календарь</value>
+    <value>Takvim</value>
   </data>
   <data name="Note_Create" xml:space="preserve">
-    <value>Новая заметка</value>
+    <value>Yeni not</value>
   </data>
   <data name="Note_Search" xml:space="preserve">
-    <value>Поиск заметок</value>
+    <value>Not ara</value>
   </data>
   <data name="Note_Body" xml:space="preserve">
-    <value>Текст</value>
+    <value>Metin</value>
   </data>
   <data name="Note_BodyPlaceholder" xml:space="preserve">
-    <value>Содержание заметки</value>
+    <value>Notun içeriği</value>
   </data>
   <data name="Note_Date" xml:space="preserve">
-    <value>Дата (необязательно)</value>
+    <value>Tarih (isteğe bağlı)</value>
   </data>
   <data name="Note_Done" xml:space="preserve">
-    <value>Выполнено</value>
+    <value>Tamamlandı</value>
   </data>
   <data name="Note_Pending" xml:space="preserve">
-    <value>Ожидает</value>
+    <value>Bekliyor</value>
   </data>
   <data name="Note_TitlePlaceholder" xml:space="preserve">
-    <value>Заголовок заметки</value>
+    <value>Not başlığı</value>
   </data>
   <data name="Calendar_NoEvents" xml:space="preserve">
-    <value>В этом месяце событий нет.</value>
+    <value>Bu ay için etkinlik yok.</value>
   </data>
   <data name="Calendar_NoDayEvents" xml:space="preserve">
-    <value>На этот день событий нет.</value>
+    <value>Bu gün için etkinlik yok.</value>
   </data>
   <data name="Calendar_SelectDay" xml:space="preserve">
-    <value>Выберите день</value>
+    <value>Bir gün seçin</value>
   </data>
   <data name="Calendar_Homework" xml:space="preserve">
-    <value>Домашнее задание</value>
+    <value>Ev ödevi</value>
   </data>
   <data name="Calendar_Note" xml:space="preserve">
-    <value>Заметка</value>
+    <value>Not</value>
   </data>
   <data name="Calendar_Summary" xml:space="preserve">
-    <value>{0} событий</value>
+    <value>{0} etkinlik</value>
   </data>
   <data name="Nav_Config" xml:space="preserve">
     <value>Konfiqurasiya</value>
@@ -2464,64 +2464,64 @@
     <value>Plan yok</value>
   </data>
   <data name="Note_Share" xml:space="preserve">
-    <value>Доступ</value>
+    <value>Paylaşım</value>
   </data>
   <data name="Note_Private" xml:space="preserve">
-    <value>Личная</value>
+    <value>Özel</value>
   </data>
   <data name="Note_Shared" xml:space="preserve">
-    <value>Общая</value>
+    <value>Paylaşılan</value>
   </data>
   <data name="Note_ShareWith" xml:space="preserve">
-    <value>Кому доступна</value>
+    <value>Kimlerle paylaşılsın</value>
   </data>
   <data name="Note_SearchUsers" xml:space="preserve">
-    <value>Поиск пользователя</value>
+    <value>Kullanıcı ara</value>
   </data>
   <data name="Note_ShareTargetRequired" xml:space="preserve">
-    <value>Выберите хотя бы одного пользователя</value>
+    <value>En az bir kullanıcı seçin</value>
   </data>
   <data name="Note_ShareTargetInvalid" xml:space="preserve">
-    <value>Некоторые из выбранных пользователей недоступны</value>
+    <value>Seçilen kullanıcılardan bazıları mevcut değil</value>
   </data>
   <data name="Note_InvalidVisibility" xml:space="preserve">
-    <value>Недопустимый режим доступа</value>
+    <value>Geçersiz paylaşım modu</value>
   </data>
   <data name="Note_InvalidPosition" xml:space="preserve">
-    <value>Недопустимое значение времени</value>
+    <value>Geçersiz zaman değeri</value>
   </data>
   <data name="Note_Material" xml:space="preserve">
-    <value>Материал</value>
+    <value>Materyal</value>
   </data>
   <data name="Note_SearchMaterial" xml:space="preserve">
-    <value>Поиск материала</value>
+    <value>Materyal ara</value>
   </data>
   <data name="Note_NoMaterial" xml:space="preserve">
-    <value>Материал не выбран</value>
+    <value>Materyal seçilmedi</value>
   </data>
   <data name="Note_Position" xml:space="preserve">
-    <value>Время (секунды)</value>
+    <value>Zaman (saniye)</value>
   </data>
   <data name="Note_Author" xml:space="preserve">
-    <value>Автор</value>
+    <value>Yazar</value>
   </data>
   <data name="Note_SharedBy" xml:space="preserve">
-    <value>Поделился</value>
+    <value>Paylaşan</value>
   </data>
   <data name="Note_MineFilter" xml:space="preserve">
-    <value>Мои</value>
+    <value>Benim</value>
   </data>
   <data name="Note_SharedFilter" xml:space="preserve">
-    <value>Со мной поделились</value>
+    <value>Benimle paylaşılan</value>
   </data>
   <data name="Note_SharedWith" xml:space="preserve">
-    <value>Доступно</value>
+    <value>Paylaşıldı</value>
   </data>
   <data name="Note_NoShareTargets" xml:space="preserve">
-    <value>Пользователи не найдены</value>
+    <value>Kullanıcı bulunamadı</value>
   </data>
   <data name="Note_ScopeAll" xml:space="preserve">
-    <value>Все</value>
+    <value>Tümü</value>
   </data>
   <data name="Note_OpenComposer" xml:space="preserve">
     <value>Düzenleyiciyi aç</value>
@@ -2687,5 +2687,914 @@
   </data>
   <data name="Sidebar_NewHint" xml:space="preserve">
     <value>Yeni bilgi var</value>
+  </data>
+  <data name="Subscription_Title" xml:space="preserve">
+    <value>Limitler</value>
+  </data>
+  <data name="Subscription_Unlimited" xml:space="preserve">
+    <value>sınırsız</value>
+  </data>
+  <data name="Subscription_StatusReadonly" xml:space="preserve">
+    <value>Salt okunur</value>
+  </data>
+  <data name="Subscription_StatusSuspended" xml:space="preserve">
+    <value>Askıya alındı</value>
+  </data>
+  <data name="Subscription_StatusActive" xml:space="preserve">
+    <value>Aktif</value>
+  </data>
+  <data name="Subscription_GaugeStudent" xml:space="preserve">
+    <value>Öğrenciler</value>
+  </data>
+  <data name="Subscription_GaugeGroup" xml:space="preserve">
+    <value>Gruplar</value>
+  </data>
+  <data name="Subscription_GaugeVideo" xml:space="preserve">
+    <value>Video (aylık, saat)</value>
+  </data>
+  <data name="Subscription_LimitsNear" xml:space="preserve">
+    <value>Limitlere yaklaşılıyor</value>
+  </data>
+  <data name="Subscription_LimitsNearHint" xml:space="preserve">
+    <value>limit dolduğunda yeni eklemeler engellenir; mevcut veriler silinmez.</value>
+  </data>
+  <data name="Subscription_SelectTenantHint" xml:space="preserve">
+    <value>Tenant seçin — seçilen tenant'ın planı, limitleri ve kullanımı gösterilecek.</value>
+  </data>
+  <data name="Subscription_NoPlanHint" xml:space="preserve">
+    <value>Henüz plan atanmadı. Yöneticiyle iletişime geçin.</value>
+  </data>
+  <data name="Subscription_AssignPlan" xml:space="preserve">
+    <value>Plan ata</value>
+  </data>
+  <data name="Subscription_CurrentPlan" xml:space="preserve">
+    <value>Mevcut plan</value>
+  </data>
+  <data name="Common_PerMonth" xml:space="preserve">
+    <value>/ ay</value>
+  </data>
+  <data name="Subscription_ChangePlan" xml:space="preserve">
+    <value>Planı yenile / değiştir</value>
+  </data>
+  <data name="Subscription_Uploads" xml:space="preserve">
+    <value>Yükleme</value>
+  </data>
+  <data name="Subscription_Duration" xml:space="preserve">
+    <value>Süre</value>
+  </data>
+  <data name="Subscription_DaysLeft" xml:space="preserve">
+    <value>{0} gün kaldı</value>
+  </data>
+  <data name="Subscription_ExpiredHint" xml:space="preserve">
+    <value>Süresi doldu — planı yenileyin</value>
+  </data>
+  <data name="Subscription_NoExpiry" xml:space="preserve">
+    <value>Bitiş tarihi yok</value>
+  </data>
+  <data name="Subscription_Suspend" xml:space="preserve">
+    <value>Aboneliği askıya al</value>
+  </data>
+  <data name="Subscription_Resume" xml:space="preserve">
+    <value>Aboneliği devam ettir</value>
+  </data>
+  <data name="Subscription_VideoThisMonth" xml:space="preserve">
+    <value>Video (bu ay)</value>
+  </data>
+  <data name="Subscription_Hours" xml:space="preserve">
+    <value>saat</value>
+  </data>
+  <data name="Subscription_Usage" xml:space="preserve">
+    <value>Kullanım</value>
+  </data>
+  <data name="Subscription_CustomizeLimits" xml:space="preserve">
+    <value>Limitleri özelleştir</value>
+  </data>
+  <data name="Subscription_AddonTitle" xml:space="preserve">
+    <value>Limit artırımı</value>
+  </data>
+  <data name="Subscription_AddonAdminHint" xml:space="preserve">
+    <value>Planı değiştirmeden istediğiniz kadar ek kontenjan alabilirsiniz. Paketin tek seferlik mi yoksa aylık mı olacağını süper yönetici belirler; aylık paket iptal edilene kadar her ay uygulanır.</value>
+  </data>
+  <data name="Subscription_Add" xml:space="preserve">
+    <value>Ekle</value>
+  </data>
+  <data name="Subscription_AddonUserHint" xml:space="preserve">
+    <value>Planı değiştirmeden limit artırmak için başvuru gönderin. Paketin biçimini (tek seferlik/aylık) ve ödeme zamanını onay sırasında platform yöneticisi belirler.</value>
+  </data>
+  <data name="Subscription_NoAddonOffers" xml:space="preserve">
+    <value>Bu plan için ek limit paketi öngörülmemiş.</value>
+  </data>
+  <data name="Subscription_Quantity" xml:space="preserve">
+    <value>Miktar</value>
+  </data>
+  <data name="Subscription_PaymentTiming" xml:space="preserve">
+    <value>Ödeme zamanı</value>
+  </data>
+  <data name="Subscription_PayNow" xml:space="preserve">
+    <value>Şimdi öde</value>
+  </data>
+  <data name="Subscription_PayWithPlan" xml:space="preserve">
+    <value>Ay sonunda planla birlikte</value>
+  </data>
+  <data name="Subscription_PayWithPlanDisabled" xml:space="preserve">
+    <value>Bu planda limit ödemesi planla birlikte alınmaz — yalnızca şimdi ödenebilir.</value>
+  </data>
+  <data name="Subscription_NoteOptional" xml:space="preserve">
+    <value>Not (isteğe bağlı)</value>
+  </data>
+  <data name="Common_Note" xml:space="preserve">
+    <value>Not</value>
+  </data>
+  <data name="Subscription_SendRequest" xml:space="preserve">
+    <value>Başvuru gönder</value>
+  </data>
+  <data name="Subscription_MyRequests" xml:space="preserve">
+    <value>Başvurularım</value>
+  </data>
+  <data name="Subscription_ActiveAddons" xml:space="preserve">
+    <value>Aktif ek paketler</value>
+  </data>
+  <data name="Subscription_UsageHistory" xml:space="preserve">
+    <value>Kullanım geçmişi</value>
+  </data>
+  <data name="Subscription_Form" xml:space="preserve">
+    <value>Biçim</value>
+  </data>
+  <data name="Common_Payment" xml:space="preserve">
+    <value>Ödeme</value>
+  </data>
+  <data name="Common_Amount" xml:space="preserve">
+    <value>Tutar</value>
+  </data>
+  <data name="Subscription_VideoHours" xml:space="preserve">
+    <value>Video (saat)</value>
+  </data>
+  <data name="Subscription_Storage" xml:space="preserve">
+    <value>Depolama</value>
+  </data>
+  <data name="Subscription_ExtraStudents" xml:space="preserve">
+    <value>Ek öğrenciler</value>
+  </data>
+  <data name="Subscription_ExtraGroups" xml:space="preserve">
+    <value>Ek gruplar</value>
+  </data>
+  <data name="Subscription_ExtraVideoHours" xml:space="preserve">
+    <value>Ek video saati</value>
+  </data>
+  <data name="Common_Period" xml:space="preserve">
+    <value>Dönem</value>
+  </data>
+  <data name="Common_LoadingDots" xml:space="preserve">
+    <value>Yükleniyor…</value>
+  </data>
+  <data name="Common_Free" xml:space="preserve">
+    <value>Ücretsiz</value>
+  </data>
+  <data name="Common_JoinedDate" xml:space="preserve">
+    <value>Katılma tarixi</value>
+  </data>
+  <data name="Common_New" xml:space="preserve">
+    <value>Yeni</value>
+  </data>
+  <data name="Common_Optional" xml:space="preserve">
+    <value>İsteğe bağlı</value>
+  </data>
+  <data name="Common_Audio" xml:space="preserve">
+    <value>Ses</value>
+  </data>
+  <data name="Common_Video" xml:space="preserve">
+    <value>Video</value>
+  </data>
+  <data name="Common_Pdf" xml:space="preserve">
+    <value>PDF</value>
+  </data>
+  <data name="Common_FromDate" xml:space="preserve">
+    <value>Başlangıç tarihi</value>
+  </data>
+  <data name="Common_ToDate" xml:space="preserve">
+    <value>Bitiş tarihi</value>
+  </data>
+  <data name="Common_Filter" xml:space="preserve">
+    <value>Filtrele</value>
+  </data>
+  <data name="Common_Reset" xml:space="preserve">
+    <value>Sıfırla</value>
+  </data>
+  <data name="Common_GoToPayments" xml:space="preserve">
+    <value>Ödemelere git</value>
+  </data>
+  <data name="Common_ViewPlans" xml:space="preserve">
+    <value>Planları gör</value>
+  </data>
+  <data name="Requests_Pending" xml:space="preserve">
+    <value>Bekleyen</value>
+  </data>
+  <data name="Requests_Approved" xml:space="preserve">
+    <value>Onaylanan</value>
+  </data>
+  <data name="Requests_Rejected" xml:space="preserve">
+    <value>Reddedilen</value>
+  </data>
+  <data name="Payment_Title" xml:space="preserve">
+    <value>Ödemeler</value>
+  </data>
+  <data name="Payment_Count" xml:space="preserve">
+    <value>Ödeme sayısı</value>
+  </data>
+  <data name="Payment_TotalAmount" xml:space="preserve">
+    <value>Toplam tutar</value>
+  </data>
+  <data name="Payment_History" xml:space="preserve">
+    <value>Ödeme geçmişi</value>
+  </data>
+  <data name="Payment_HistoryEmpty" xml:space="preserve">
+    <value>Ödeme geçmişi boş.</value>
+  </data>
+  <data name="Payment_Upcoming" xml:space="preserve">
+    <value>Yaklaşan</value>
+  </data>
+  <data name="Payment_Overdue" xml:space="preserve">
+    <value>Geciken</value>
+  </data>
+  <data name="Payment_NoPlan" xml:space="preserve">
+    <value>Plan yok</value>
+  </data>
+  <data name="Payment_ActivePlan" xml:space="preserve">
+    <value>Aktif plan</value>
+  </data>
+  <data name="Payment_SearchPlaceholder" xml:space="preserve">
+    <value>Öğrenci adı veya e-posta ile ara...</value>
+  </data>
+  <data name="Payment_NextDue" xml:space="preserve">
+    <value>Sonraki ödeme</value>
+  </data>
+  <data name="Payment_Record" xml:space="preserve">
+    <value>Ödeme kaydet</value>
+  </data>
+  <data name="Payment_Plan" xml:space="preserve">
+    <value>Ödeme planı</value>
+  </data>
+  <data name="AddonRequest_Title" xml:space="preserve">
+    <value>Limit başvuruları</value>
+  </data>
+  <data name="AddonRequest_AdminDesc" xml:space="preserve">
+    <value>Tüm tenant'ların planı değiştirmeden limit artırma başvuruları. Paketin tek seferlik/aylık biçimini ve ödeme zamanını süper yönetici onay sırasında belirler.</value>
+  </data>
+  <data name="AddonRequest_UserDesc" xml:space="preserve">
+    <value>Planı değiştirmeden limit artırmak için gönderdiğiniz başvurular. Paketin biçimini ve ödeme zamanını platform yöneticisi onay sırasında belirler.</value>
+  </data>
+  <data name="AddonRequest_Requester" xml:space="preserve">
+    <value>Başvuran</value>
+  </data>
+  <data name="GroupRequest_Title" xml:space="preserve">
+    <value>Grup başvuruları</value>
+  </data>
+  <data name="GroupRequest_Desc" xml:space="preserve">
+    <value>Link ile katılmak isteyen öğrencilerin başvuruları. Onaylandığında öğrenci gruba üye olur.</value>
+  </data>
+  <data name="Plan_Title" xml:space="preserve">
+    <value>Abonelik planları</value>
+  </data>
+  <data name="Plan_New" xml:space="preserve">
+    <value>+ Yeni plan</value>
+  </data>
+  <data name="Plan_Column" xml:space="preserve">
+    <value>Plan</value>
+  </data>
+  <data name="Plan_Price" xml:space="preserve">
+    <value>Fiyat</value>
+  </data>
+  <data name="Plan_Trial" xml:space="preserve">
+    <value>Deneme</value>
+  </data>
+  <data name="Plan_VideoHoursMonth" xml:space="preserve">
+    <value>Video (saat/ay)</value>
+  </data>
+  <data name="Plan_Templates" xml:space="preserve">
+    <value>Şablonlar</value>
+  </data>
+  <data name="Plan_MonthlyPrice" xml:space="preserve">
+    <value>Aylık fiyat</value>
+  </data>
+  <data name="Plan_YearlyFreeMonths" xml:space="preserve">
+    <value>Yıllık ücretsiz ay</value>
+  </data>
+  <data name="Plan_TrialDays" xml:space="preserve">
+    <value>Deneme (gün)</value>
+  </data>
+  <data name="Plan_UploadPermissions" xml:space="preserve">
+    <value>Yükleme izinleri</value>
+  </data>
+  <data name="Plan_UploadPermissionsHint" xml:space="preserve">
+    <value>Kapatılan tür, bu plana sahip tenant'larda yüklenemez.</value>
+  </data>
+  <data name="Plan_Limits" xml:space="preserve">
+    <value>Limitler (0 = sınırsız)</value>
+  </data>
+  <data name="Plan_AddonPricing" xml:space="preserve">
+    <value>Limit artırım fiyatı</value>
+  </data>
+  <data name="Plan_AddonPricingHint" xml:space="preserve">
+    <value>Müşteri istediği kadar ek kontenjan alabilir — fiyat birim başınadır.</value>
+  </data>
+  <data name="Plan_PricePerStudent" xml:space="preserve">
+    <value>1 öğrenci (AZN)</value>
+  </data>
+  <data name="Plan_PricePerGroup" xml:space="preserve">
+    <value>1 grup (AZN)</value>
+  </data>
+  <data name="Plan_PricePerVideoHour" xml:space="preserve">
+    <value>1 video saati (AZN)</value>
+  </data>
+  <data name="Plan_AddonBilling" xml:space="preserve">
+    <value>Limit ödemesi</value>
+  </data>
+  <data name="Plan_AddonBillingHint" xml:space="preserve">
+    <value>Açıksa, limit paketlerinin ödemesi ay sonunda planla birlikte alınır ve aylık paket verilebilir. Kapalıysa müşteri yalnızca şimdi ödeyebilir.</value>
+  </data>
+  <data name="Plan_BillWithPlan" xml:space="preserve">
+    <value>Planla birlikte ödeme</value>
+  </data>
+  <data name="Plan_Modules" xml:space="preserve">
+    <value>Modüller</value>
+  </data>
+  <data name="Plan_ModulesHint" xml:space="preserve">
+    <value>Kapatılan modül bu plana sahip tenant'larda görünmez — kullanıcı o işi elle yapar.</value>
+  </data>
+  <data name="Plan_PaymentTemplates" xml:space="preserve">
+    <value>Plan şablonları</value>
+  </data>
+  <data name="PlanChoose_Title" xml:space="preserve">
+    <value>Plan seçimi</value>
+  </data>
+  <data name="PlanChoose_Heading" xml:space="preserve">
+    <value>Plan seçin</value>
+  </data>
+  <data name="PlanChoose_Intro" xml:space="preserve">
+    <value>{0} için uygun planı seçin. Ücretsiz plan hemen açılır; deneme süresi olan ücretli planları o süre boyunca ücretsiz kullanabilirsiniz.</value>
+  </data>
+  <data name="PlanChoose_NoExpiry" xml:space="preserve">
+    <value>süresiz</value>
+  </data>
+  <data name="PlanChoose_TrialDays" xml:space="preserve">
+    <value>{0} gün ücretsiz deneme</value>
+  </data>
+  <data name="Common_StudentCount" xml:space="preserve">
+    <value>{0} öğrenci</value>
+  </data>
+  <data name="PlanChoose_UnlimitedStudents" xml:space="preserve">
+    <value>Sınırsız öğrenci</value>
+  </data>
+  <data name="Common_GroupCount" xml:space="preserve">
+    <value>{0} grup</value>
+  </data>
+  <data name="PlanChoose_UnlimitedGroups" xml:space="preserve">
+    <value>Sınırsız grup</value>
+  </data>
+  <data name="Common_TeacherCount" xml:space="preserve">
+    <value>{0} öğretmen</value>
+  </data>
+  <data name="PlanChoose_UnlimitedTeachers" xml:space="preserve">
+    <value>Sınırsız öğretmen</value>
+  </data>
+  <data name="Plan_AllowVideo" xml:space="preserve">
+    <value>Video yükleme</value>
+  </data>
+  <data name="Plan_AllowAudio" xml:space="preserve">
+    <value>Ses yükleme</value>
+  </data>
+  <data name="Plan_AllowFile" xml:space="preserve">
+    <value>Dosya / PDF yükleme</value>
+  </data>
+  <data name="PlanChoose_StartFree" xml:space="preserve">
+    <value>Ücretsiz başla</value>
+  </data>
+  <data name="PlanChoose_StartTrial" xml:space="preserve">
+    <value>Denemeyi başlat</value>
+  </data>
+  <data name="PlanChoose_Select" xml:space="preserve">
+    <value>Planı seç</value>
+  </data>
+  <data name="PlanChoose_ContactAdmin" xml:space="preserve">
+    <value>Planı sonradan değiştirmek için süper yöneticiyle iletişime geçin.</value>
+  </data>
+  <data name="PlanCatalog_Title" xml:space="preserve">
+    <value>Planlar</value>
+  </data>
+  <data name="PlanCatalog_SelectTenantHint" xml:space="preserve">
+    <value>Tenant seçin — mevcut planlar gösterilecek.</value>
+  </data>
+  <data name="PlanCatalog_Available" xml:space="preserve">
+    <value>Mevcut planlar</value>
+  </data>
+  <data name="PlanCatalog_Intro" xml:space="preserve">
+    <value>Plan seçildiğinde başvuru WhatsApp üzerinden gönderilir — etkinleştirme elle yapılır.</value>
+  </data>
+  <data name="PlanCatalog_Unlimited" xml:space="preserve">
+    <value>Sınırsız</value>
+  </data>
+  <data name="PlanCatalog_VideoPerMonth" xml:space="preserve">
+    <value>{0} video saati / ay</value>
+  </data>
+  <data name="PlanCatalog_VideoUnlimited" xml:space="preserve">
+    <value>Sınırsız video saati / ay</value>
+  </data>
+  <data name="PlanCatalog_Storage" xml:space="preserve">
+    <value>{0} depolama</value>
+  </data>
+  <data name="PlanCatalog_MaxQuality" xml:space="preserve">
+    <value>Maks. kalite: {0}</value>
+  </data>
+  <data name="PlanCatalog_Uploads" xml:space="preserve">
+    <value>Yükleme: {0}</value>
+  </data>
+  <data name="PlanCatalog_Templates" xml:space="preserve">
+    <value>Plan şablonları: {0}</value>
+  </data>
+  <data name="PlanCatalog_On" xml:space="preserve">
+    <value>açık</value>
+  </data>
+  <data name="PlanCatalog_Off" xml:space="preserve">
+    <value>kapalı</value>
+  </data>
+  <data name="PlanCatalog_Selected" xml:space="preserve">
+    <value>Seçildi</value>
+  </data>
+  <data name="PlanCatalog_ChooseThis" xml:space="preserve">
+    <value>Bu planı seç</value>
+  </data>
+  <data name="Cashbox_Title" xml:space="preserve">
+    <value>Kasa</value>
+  </data>
+  <data name="Cashbox_Subtitle" xml:space="preserve">
+    <value>Öğrencilerden gelen ödemeler ve aylık gelir.</value>
+  </data>
+  <data name="Cashbox_Today" xml:space="preserve">
+    <value>Bugün</value>
+  </data>
+  <data name="Cashbox_TodayHint" xml:space="preserve">
+    <value>bugünkü tahsilat</value>
+  </data>
+  <data name="Cashbox_ThisMonth" xml:space="preserve">
+    <value>Bu ay toplanan</value>
+  </data>
+  <data name="Cashbox_ThisMonthHint" xml:space="preserve">
+    <value>cari ay itibarıyla</value>
+  </data>
+  <data name="Cashbox_Expected" xml:space="preserve">
+    <value>Bu ay beklenen</value>
+  </data>
+  <data name="Cashbox_ExpectedHint" xml:space="preserve">
+    <value>vadesi geçmiş + bu ay ödenecek</value>
+  </data>
+  <data name="Cashbox_LastMonth" xml:space="preserve">
+    <value>Geçen ay</value>
+  </data>
+  <data name="Cashbox_LastMonthHint" xml:space="preserve">
+    <value>önceki ay itibarıyla</value>
+  </data>
+  <data name="Cashbox_Projection" xml:space="preserve">
+    <value>Gelecek ay (tahmin)</value>
+  </data>
+  <data name="Cashbox_ProjectionHint" xml:space="preserve">
+    <value>aktif planlara göre</value>
+  </data>
+  <data name="Cashbox_OverdueDebt" xml:space="preserve">
+    <value>Ödenmemiş borç</value>
+  </data>
+  <data name="Cashbox_OverdueDebtHint" xml:space="preserve">
+    <value>vadesi geçmiş planlar</value>
+  </data>
+  <data name="Cashbox_Last12" xml:space="preserve">
+    <value>Son 12 ay</value>
+  </data>
+  <data name="Cashbox_Overdue" xml:space="preserve">
+    <value>Gecikmiş</value>
+  </data>
+  <data name="Cashbox_DueSoon" xml:space="preserve">
+    <value>7 günde bitiyor</value>
+  </data>
+  <data name="Cashbox_PayingStudents" xml:space="preserve">
+    <value>Ödeyen öğrenci</value>
+  </data>
+  <data name="Cashbox_ActiveStudents" xml:space="preserve">
+    <value>Aktif öğrenci</value>
+  </data>
+  <data name="Cashbox_RecentPayments" xml:space="preserve">
+    <value>Son ödemeler</value>
+  </data>
+  <data name="PaymentPlan_Title" xml:space="preserve">
+    <value>Plan şablonları</value>
+  </data>
+  <data name="PaymentPlan_New" xml:space="preserve">
+    <value>Yeni şablon</value>
+  </data>
+  <data name="PaymentPlan_Name" xml:space="preserve">
+    <value>Şablon adı</value>
+  </data>
+  <data name="PaymentPlan_ModalTitle" xml:space="preserve">
+    <value>Plan şablonu</value>
+  </data>
+  <data name="PaymentPlan_EmptyTitle" xml:space="preserve">
+    <value>Plan şablonları planınızda yok</value>
+  </data>
+  <data name="PaymentPlan_EmptyBody" xml:space="preserve">
+    <value>Mevcut abonelik planı hazır plan şablonlarını kullanmaya izin vermiyor. Ödemeleri elle girebilirsiniz; şablonlar için planı yükseltin.</value>
+  </data>
+  <data name="PaymentPlan_IntervalMonthly" xml:space="preserve">
+    <value>Aylık</value>
+  </data>
+  <data name="PaymentPlan_IntervalCustom" xml:space="preserve">
+    <value>Özel gün sayısı</value>
+  </data>
+  <data name="PaymentPlan_IntervalDays" xml:space="preserve">
+    <value>Kaç günde bir</value>
+  </data>
+  <data name="PaymentPlan_Select" xml:space="preserve">
+    <value>Şablon plan seç</value>
+  </data>
+  <data name="PaymentPlan_Manual" xml:space="preserve">
+    <value>— Elle gir —</value>
+  </data>
+  <data name="Plan_FirstPaymentNow" xml:space="preserve">
+    <value>İlk ödemeyi şimdi kaydet (bugün için)</value>
+  </data>
+  <data name="Common_Code" xml:space="preserve">
+    <value>Kod</value>
+  </data>
+  <data name="Common_Currency" xml:space="preserve">
+    <value>Para birimi</value>
+  </data>
+  <data name="LimitOverrides_Title" xml:space="preserve">
+    <value>Özel limitler</value>
+  </data>
+  <data name="LimitOverrides_Hint" xml:space="preserve">
+    <value>Bu müşteriye plan limitinden farklı bir limit verin. Boş alan plan limitini korur, 0 = sınırsız.</value>
+  </data>
+  <data name="LimitOverrides_Students" xml:space="preserve">
+    <value>Öğrenci limiti</value>
+  </data>
+  <data name="LimitOverrides_VideoMinutes" xml:space="preserve">
+    <value>Aylık video (dakika)</value>
+  </data>
+  <data name="PlanModal_ExpiresAt" xml:space="preserve">
+    <value>Bitiş tarihi (boş = süresiz)</value>
+  </data>
+  <data name="PlanModal_AddonHint" xml:space="preserve">
+    <value>Ödemeden sonra ek paket de ekleyebilirsiniz — plan limitine hemen etki eder.</value>
+  </data>
+  <data name="Nav_PlanManagement" xml:space="preserve">
+    <value>Plan yönetimi</value>
+  </data>
+  <data name="Payment_PaidOn" xml:space="preserve">
+    <value>Ödeme tarihi</value>
+  </data>
+  <data name="LessonContent_HintVideo" xml:space="preserve">
+    <value>Video dosyası — mp4, mkv, mov vb.</value>
+  </data>
+  <data name="LessonContent_HintVoice" xml:space="preserve">
+    <value>Ses dosyası — mp3, wav, m4a vb.</value>
+  </data>
+  <data name="LessonContent_HintFile" xml:space="preserve">
+    <value>pdf, belge, görsel, arşiv (video ve ses seçilemez)</value>
+  </data>
+  <data name="LessonContent_HintVideoLarge" xml:space="preserve">
+    <value>Video büyükse doğrudan R2'ye yüklenir</value>
+  </data>
+  <data name="Question_VariantImage" xml:space="preserve">
+    <value>Varyant {0} görseli</value>
+  </data>
+  <data name="Sub_UnitStudent" xml:space="preserve">
+    <value>öğrenci</value>
+  </data>
+  <data name="Sub_UnitGroup" xml:space="preserve">
+    <value>grup</value>
+  </data>
+  <data name="Sub_UnitVideoHour" xml:space="preserve">
+    <value>saat</value>
+  </data>
+  <data name="Sub_UnitGeneric" xml:space="preserve">
+    <value>birim</value>
+  </data>
+  <data name="Sub_AddonQty" xml:space="preserve">
+    <value>Kaç {0} eklensin?</value>
+  </data>
+  <data name="Sub_Continue" xml:space="preserve">
+    <value>Devam et</value>
+  </data>
+  <data name="Sub_ModeMonthlyWithPlan" xml:space="preserve">
+    <value>Aylık (planla birlikte)</value>
+  </data>
+  <data name="Sub_FormTitle" xml:space="preserve">
+    <value>Ödeme biçimi</value>
+  </data>
+  <data name="Sub_TimingNow" xml:space="preserve">
+    <value>Şimdi ödeme</value>
+  </data>
+  <data name="Sub_TimingNowShort" xml:space="preserve">
+    <value>Şimdi</value>
+  </data>
+  <data name="Sub_WithPlanShort" xml:space="preserve">
+    <value>Planla birlikte</value>
+  </data>
+  <data name="Sub_KindVideoHours" xml:space="preserve">
+    <value>Video saati</value>
+  </data>
+  <data name="Sub_StatusPaid" xml:space="preserve">
+    <value>Ödendi</value>
+  </data>
+  <data name="Sub_StatusWaiting" xml:space="preserve">
+    <value>Bekliyor</value>
+  </data>
+  <data name="Sub_StatusApproved" xml:space="preserve">
+    <value>Onaylandı</value>
+  </data>
+  <data name="Sub_StatusRejected" xml:space="preserve">
+    <value>Reddedildi</value>
+  </data>
+  <data name="Sub_NoRequests" xml:space="preserve">
+    <value>Başvuru yok</value>
+  </data>
+  <data name="Sub_NoAddons" xml:space="preserve">
+    <value>Ek paket yok</value>
+  </data>
+  <data name="Sub_NoUsage" xml:space="preserve">
+    <value>Kullanım kaydı yok</value>
+  </data>
+  <data name="Sub_Stop" xml:space="preserve">
+    <value>Durdur</value>
+  </data>
+  <data name="Sub_RecordPayment" xml:space="preserve">
+    <value>Ödemeyi kaydet</value>
+  </data>
+  <data name="Sub_SuspendTitle" xml:space="preserve">
+    <value>Abonelik askıya alınsın mı?</value>
+  </data>
+  <data name="Sub_ResumeTitle" xml:space="preserve">
+    <value>Abonelik devam ettirilsin mi?</value>
+  </data>
+  <data name="Sub_SuspendText" xml:space="preserve">
+    <value>Tenant kullanıcıları giriş yapamayacak. Veriler silinmez — abonelik geri yüklendiğinde her şey yerinde kalır.</value>
+  </data>
+  <data name="Sub_ResumeText" xml:space="preserve">
+    <value>Tenant yeniden etkinleştirilecek ve kullanıcılar giriş yapabilecek.</value>
+  </data>
+  <data name="Sub_Resume" xml:space="preserve">
+    <value>Devam ettir</value>
+  </data>
+  <data name="Sub_MarkPaidTitle" xml:space="preserve">
+    <value>Ödeme kaydedilsin mi?</value>
+  </data>
+  <data name="Sub_MarkPaid" xml:space="preserve">
+    <value>Kaydet</value>
+  </data>
+  <data name="Sub_CancelAddonConfirm" xml:space="preserve">
+    <value>Aylık paket durdurulsun mu? Sonraki aylarda limite eklenmeyecek.</value>
+  </data>
+  <data name="Sub_RequestSent" xml:space="preserve">
+    <value>Başvuru gönderildi. Yönetici onayından sonra limit artırılacak.</value>
+  </data>
+  <data name="Payment_Receive" xml:space="preserve">
+    <value>Ödeme al</value>
+  </data>
+  <data name="Payment_HistoryButton" xml:space="preserve">
+    <value>Geçmiş</value>
+  </data>
+  <data name="Common_EveryNDays" xml:space="preserve">
+    <value>{0} günde bir</value>
+  </data>
+  <data name="Payment_RecordConfirm" xml:space="preserve">
+    <value>Ödeme kaydedilsin mi?</value>
+  </data>
+  <data name="Payment_RecordYes" xml:space="preserve">
+    <value>Evet, kaydet</value>
+  </data>
+  <data name="Payment_Recorded" xml:space="preserve">
+    <value>Ödeme kaydedildi</value>
+  </data>
+  <data name="Payment_DeleteConfirm" xml:space="preserve">
+    <value>Bu ödeme kaydı silinsin mi? Vade tarihi yeniden hesaplanacak.</value>
+  </data>
+  <data name="Cashbox_Monthly" xml:space="preserve">
+    <value>aylık</value>
+  </data>
+  <data name="Cashbox_Days" xml:space="preserve">
+    <value>{0} gün</value>
+  </data>
+  <data name="Cashbox_NoLastMonth" xml:space="preserve">
+    <value>Geçen ay ödeme olmadı</value>
+  </data>
+  <data name="Cashbox_VsLastMonth" xml:space="preserve">
+    <value>Geçen aya göre {0}%</value>
+  </data>
+  <data name="Cashbox_NoPaymentsYet" xml:space="preserve">
+    <value>Henüz ödeme kaydedilmedi.</value>
+  </data>
+  <data name="Cashbox_NoPaymentsRange" xml:space="preserve">
+    <value>Seçilen aralıkta ödeme yok.</value>
+  </data>
+  <data name="Cashbox_RangeTotal" xml:space="preserve">
+    <value>Aralık tahsilatı: {0}</value>
+  </data>
+  <data name="Cashbox_SelectStudent" xml:space="preserve">
+    <value>Öğrenci seçin</value>
+  </data>
+  <data name="Cashbox_CurrentPlanOption" xml:space="preserve">
+    <value>Mevcut plan — {0} {1} ({2})</value>
+  </data>
+  <data name="Cashbox_NoPlanOption" xml:space="preserve">
+    <value>Plan seçilmedi</value>
+  </data>
+  <data name="Cashbox_SelectedPlanHint" xml:space="preserve">
+    <value>Seçilen plan: {0} · {1} {2} · {3}</value>
+  </data>
+  <data name="Cashbox_CurrentPlanHint" xml:space="preserve">
+    <value>Mevcut plan: {0} {1}</value>
+  </data>
+  <data name="Cashbox_NextDueSuffix" xml:space="preserve">
+    <value> · sonraki ödeme: {0}</value>
+  </data>
+  <data name="Cashbox_NoPlanForStudent" xml:space="preserve">
+    <value>Bu öğrencinin ödeme planı yok — yukarıdan plan seçin.</value>
+  </data>
+  <data name="Cashbox_DeleteConfirm" xml:space="preserve">
+    <value>Bu ödeme silinsin mi? Planın vade tarihi yeniden hesaplanacak.</value>
+  </data>
+  <data name="Cashbox_StudentRequired" xml:space="preserve">
+    <value>Öğrenci seçin</value>
+  </data>
+  <data name="Cashbox_AmountPositive" xml:space="preserve">
+    <value>Tutar sıfırdan büyük olmalıdır</value>
+  </data>
+  <data name="Cashbox_NoPlanSelected" xml:space="preserve">
+    <value>Bu öğrencinin ödeme planı yok — plan seçin</value>
+  </data>
+  <data name="Addon_ApproveTitle" xml:space="preserve">
+    <value>Başvuruyu onayla</value>
+  </data>
+  <data name="Addon_ApproveText" xml:space="preserve">
+    <value>Paketin biçimini seçin. Onaydan sonra limit hemen artırılacak.</value>
+  </data>
+  <data name="Addon_RejectTitle" xml:space="preserve">
+    <value>Başvuruyu reddet</value>
+  </data>
+  <data name="Addon_RejectReason" xml:space="preserve">
+    <value>Sebep (isteğe bağlı)</value>
+  </data>
+  <data name="Requests_Approve" xml:space="preserve">
+    <value>Onayla</value>
+  </data>
+  <data name="Requests_Reject" xml:space="preserve">
+    <value>Reddet</value>
+  </data>
+  <data name="Requests_NoRequests" xml:space="preserve">
+    <value>Başvuru yok</value>
+  </data>
+  <data name="GroupRequest_ApproveTitle" xml:space="preserve">
+    <value>Başvuru onaylansın mı?</value>
+  </data>
+  <data name="GroupRequest_RejectTitle" xml:space="preserve">
+    <value>Başvuru reddedilsin mi?</value>
+  </data>
+  <data name="GroupRequest_ApproveText" xml:space="preserve">
+    <value>Öğrenci hemen gruba üye olacak.</value>
+  </data>
+  <data name="GroupRequest_RejectText" xml:space="preserve">
+    <value>Öğrenci gruba eklenmeyecek.</value>
+  </data>
+  <data name="PlanCatalog_WaConfirmText" xml:space="preserve">
+    <value>«{0}» planı için WhatsApp ile başvuru gönderilsin mi?</value>
+  </data>
+  <data name="PlanCatalog_Send" xml:space="preserve">
+    <value>Gönder</value>
+  </data>
+  <data name="PlanCatalog_WaGreeting" xml:space="preserve">
+    <value>Merhaba! Abonelik planı değişikliği için başvuru:</value>
+  </data>
+  <data name="PlanCatalog_WaOrg" xml:space="preserve">
+    <value>Kurum: {0}</value>
+  </data>
+  <data name="PlanCatalog_WaRequester" xml:space="preserve">
+    <value>Başvuran: {0}</value>
+  </data>
+  <data name="PlanCatalog_WaEmail" xml:space="preserve">
+    <value>E-posta: {0}</value>
+  </data>
+  <data name="PlanCatalog_WaCurrent" xml:space="preserve">
+    <value>Mevcut plan: {0}</value>
+  </data>
+  <data name="PlanCatalog_WaSelected" xml:space="preserve">
+    <value>Seçilen plan: {0} ({1})</value>
+  </data>
+  <data name="PlanCatalog_WaPrice" xml:space="preserve">
+    <value>Fiyat: {0} {1}/ay</value>
+  </data>
+  <data name="PlanCatalog_WaStudents" xml:space="preserve">
+    <value>Öğrenci limiti: {0}</value>
+  </data>
+  <data name="PlanCatalog_WaGroups" xml:space="preserve">
+    <value>Grup limiti: {0}</value>
+  </data>
+  <data name="PlanCatalog_WaVideo" xml:space="preserve">
+    <value>Video (aylık): {0}</value>
+  </data>
+  <data name="PlanCatalog_WaStorage" xml:space="preserve">
+    <value>Depolama: {0}</value>
+  </data>
+  <data name="PlanCatalog_WaMaxQuality" xml:space="preserve">
+    <value>Maks. video kalitesi: {0}</value>
+  </data>
+  <data name="PlanCatalog_WaDate" xml:space="preserve">
+    <value>Tarih: {0}</value>
+  </data>
+  <data name="PlanCatalog_Hours" xml:space="preserve">
+    <value>{0} saat</value>
+  </data>
+  <data name="Common_NDays" xml:space="preserve">
+    <value>{0} gün</value>
+  </data>
+  <data name="Common_SubjectSuffix" xml:space="preserve">
+    <value>{0} dersi</value>
+  </data>
+  <data name="Plan_NoPlans" xml:space="preserve">
+    <value>Plan yok</value>
+  </data>
+  <data name="PaymentPlan_NoTemplates" xml:space="preserve">
+    <value>Henüz plan şablonu yok.</value>
+  </data>
+  <data name="PaymentPlan_EditTemplate" xml:space="preserve">
+    <value>Şablonu düzenle</value>
+  </data>
+  <data name="PaymentPlan_NewTemplate" xml:space="preserve">
+    <value>Yeni plan şablonu</value>
+  </data>
+  <data name="PaymentPlan_DeleteConfirm" xml:space="preserve">
+    <value>Bu plan şablonu silinsin mi?</value>
+  </data>
+  <data name="Js_Skipped" xml:space="preserve">
+    <value>(atlandı)</value>
+  </data>
+  <data name="Plan_SelectPrompt" xml:space="preserve">
+    <value>Plan seçin</value>
+  </data>
+  <data name="Error_Title" xml:space="preserve">
+    <value>Hata</value>
+  </data>
+  <data name="User_CannotDeleteSelf" xml:space="preserve">
+    <value>Kendi hesabınızı silemezsiniz</value>
+  </data>
+  <data name="User_OnlySuperCanDeleteAdmin" xml:space="preserve">
+    <value>Yönetici hesabını yalnızca süper yönetici silebilir</value>
+  </data>
+  <data name="User_OnlySuperCanAssignSuper" xml:space="preserve">
+    <value>Yalnızca süper yönetici başka bir süper yönetici atayabilir</value>
+  </data>
+  <data name="Editor_NoImage" xml:space="preserve">
+    <value>Görsel seçilmedi</value>
+  </data>
+  <data name="Editor_ImageTooLarge" xml:space="preserve">
+    <value>Görsel 5 MB'dan büyük olamaz</value>
+  </data>
+  <data name="Editor_ImageTypes" xml:space="preserve">
+    <value>Yalnızca JPG, PNG, GIF ve WEBP görselleri desteklenir</value>
+  </data>
+  <data name="Addon_SuperOnlyDecision" xml:space="preserve">
+    <value>Limit paketleriyle ilgili kararı yalnızca süper yönetici verir.</value>
+  </data>
+  <data name="Subscription_PlatformOnly" xml:space="preserve">
+    <value>Bu bilgiyi yalnızca platform yöneticisi görebilir.</value>
+  </data>
+  <data name="Subscription_PlatformOnlyAddon" xml:space="preserve">
+    <value>Limit paketini yalnızca platform yöneticisi ekleyebilir.</value>
+  </data>
+  <data name="Tenant_NotSelected" xml:space="preserve">
+    <value>Kurum seçilmedi</value>
+  </data>
+  <data name="Login_InvalidCredentials" xml:space="preserve">
+    <value>E-posta veya şifre yanlış.</value>
+  </data>
+  <data name="PaymentPlan_NotInPlan" xml:space="preserve">
+    <value>Ödeme şablonları mevcut abonelik planınızda yok. Planınızı yükseltin.</value>
+  </data>
+  <data name="PlatformFinance_PlatformOnly" xml:space="preserve">
+    <value>Aboneliği yalnızca platform yöneticisi yönetebilir.</value>
+  </data>
+  <data name="Error_Heading" xml:space="preserve">
+    <value>Hata.</value>
+  </data>
+  <data name="Error_Message" xml:space="preserve">
+    <value>İsteğiniz işlenirken bir hata oluştu.</value>
+  </data>
+  <data name="Error_RequestId" xml:space="preserve">
+    <value>İstek ID</value>
+  </data>
+  <data name="Common_Previous" xml:space="preserve">
+    <value>Önceki</value>
+  </data>
+  <data name="Common_Language" xml:space="preserve">
+    <value>Dil</value>
+  </data>
+  <data name="Common_Logo" xml:space="preserve">
+    <value>Logo</value>
   </data>
 </root>

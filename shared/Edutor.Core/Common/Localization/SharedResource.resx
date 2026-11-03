@@ -2590,25 +2590,25 @@
     <value>End time must be after the start time</value>
   </data>
   <data name="SubMgmt_Title" xml:space="preserve">
-    <value>Abunəlik idarəetməsi</value>
+    <value>Subscription management</value>
   </data>
   <data name="SubMgmt_Subtitle" xml:space="preserve">
-    <value>Ödəniş vaxtı yaxınlaşan tenantları görün, planı yeniləyin və ya müddəti uzadın.</value>
+    <value>See tenants whose payment is due soon, renew their plan or extend the period.</value>
   </data>
   <data name="SubMgmt_All" xml:space="preserve">
-    <value>Hamısı</value>
+    <value>All</value>
   </data>
   <data name="SubMgmt_Expiring" xml:space="preserve">
-    <value>Yaxınlaşan (30 gün)</value>
+    <value>Expiring (30 days)</value>
   </data>
   <data name="SubMgmt_Expired" xml:space="preserve">
-    <value>Vaxtı keçmiş</value>
+    <value>Expired</value>
   </data>
   <data name="SubMgmt_NoPlan" xml:space="preserve">
-    <value>Plansız</value>
+    <value>No plan</value>
   </data>
   <data name="SubMgmt_Search" xml:space="preserve">
-    <value>Tenant axtar</value>
+    <value>Search tenant</value>
   </data>
   <data name="SubMgmt_Tenant" xml:space="preserve">
     <value>Tenant</value>
@@ -2620,46 +2620,46 @@
     <value>Status</value>
   </data>
   <data name="SubMgmt_ExpiresAt" xml:space="preserve">
-    <value>Bitmə tarixi</value>
+    <value>Expires on</value>
   </data>
   <data name="SubMgmt_DaysLeft" xml:space="preserve">
-    <value>Qalan gün</value>
+    <value>Days left</value>
   </data>
   <data name="SubMgmt_Monthly" xml:space="preserve">
-    <value>Aylıq ödəniş</value>
+    <value>Monthly payment</value>
   </data>
   <data name="SubMgmt_Renew" xml:space="preserve">
-    <value>Yenilə / uzat</value>
+    <value>Renew / extend</value>
   </data>
   <data name="SubMgmt_RenewTitle" xml:space="preserve">
-    <value>Abunəliyi yenilə</value>
+    <value>Renew subscription</value>
   </data>
   <data name="SubMgmt_Mode" xml:space="preserve">
-    <value>Yeniləmə üsulu</value>
+    <value>Renewal mode</value>
   </data>
   <data name="SubMgmt_ModeReset" xml:space="preserve">
-    <value>Bugündən yeni dövr</value>
+    <value>New period from today</value>
   </data>
   <data name="SubMgmt_ModeExtend" xml:space="preserve">
-    <value>Mövcud tarixə əlavə et</value>
+    <value>Add to current date</value>
   </data>
   <data name="SubMgmt_Months" xml:space="preserve">
-    <value>Dövr (ay)</value>
+    <value>Period (months)</value>
   </data>
   <data name="SubMgmt_ExtraDays" xml:space="preserve">
-    <value>Əlavə gün</value>
+    <value>Extra days</value>
   </data>
   <data name="SubMgmt_NewExpiry" xml:space="preserve">
-    <value>Yeni bitmə tarixi</value>
+    <value>New expiry date</value>
   </data>
   <data name="SubMgmt_Unlimited" xml:space="preserve">
-    <value>Müddətsiz</value>
+    <value>Unlimited</value>
   </data>
   <data name="SubMgmt_Empty" xml:space="preserve">
-    <value>Uyğun tenant yoxdur</value>
+    <value>No matching tenants</value>
   </data>
   <data name="SubMgmt_DaysUnit" xml:space="preserve">
-    <value>gün</value>
+    <value>days</value>
   </data>
   <data name="Nav_SidebarLabels" xml:space="preserve">
     <value>Menu labels</value>
@@ -2687,5 +2687,914 @@
   </data>
   <data name="Sidebar_NewHint" xml:space="preserve">
     <value>There is something new</value>
+  </data>
+  <data name="Subscription_Title" xml:space="preserve">
+    <value>Limits</value>
+  </data>
+  <data name="Subscription_Unlimited" xml:space="preserve">
+    <value>unlimited</value>
+  </data>
+  <data name="Subscription_StatusReadonly" xml:space="preserve">
+    <value>Read-only</value>
+  </data>
+  <data name="Subscription_StatusSuspended" xml:space="preserve">
+    <value>Suspended</value>
+  </data>
+  <data name="Subscription_StatusActive" xml:space="preserve">
+    <value>Active</value>
+  </data>
+  <data name="Subscription_GaugeStudent" xml:space="preserve">
+    <value>Students</value>
+  </data>
+  <data name="Subscription_GaugeGroup" xml:space="preserve">
+    <value>Groups</value>
+  </data>
+  <data name="Subscription_GaugeVideo" xml:space="preserve">
+    <value>Video (monthly, hours)</value>
+  </data>
+  <data name="Subscription_LimitsNear" xml:space="preserve">
+    <value>Approaching limits</value>
+  </data>
+  <data name="Subscription_LimitsNearHint" xml:space="preserve">
+    <value>further additions are blocked when the limit is reached; existing data is kept.</value>
+  </data>
+  <data name="Subscription_SelectTenantHint" xml:space="preserve">
+    <value>Select a tenant — the selected tenant's plan, limits and usage will be shown.</value>
+  </data>
+  <data name="Subscription_NoPlanHint" xml:space="preserve">
+    <value>No plan has been assigned yet. Contact the administrator.</value>
+  </data>
+  <data name="Subscription_AssignPlan" xml:space="preserve">
+    <value>Assign a plan</value>
+  </data>
+  <data name="Subscription_CurrentPlan" xml:space="preserve">
+    <value>Current plan</value>
+  </data>
+  <data name="Common_PerMonth" xml:space="preserve">
+    <value>/ month</value>
+  </data>
+  <data name="Subscription_ChangePlan" xml:space="preserve">
+    <value>Renew / change plan</value>
+  </data>
+  <data name="Subscription_Uploads" xml:space="preserve">
+    <value>Uploads</value>
+  </data>
+  <data name="Subscription_Duration" xml:space="preserve">
+    <value>Duration</value>
+  </data>
+  <data name="Subscription_DaysLeft" xml:space="preserve">
+    <value>{0} days left</value>
+  </data>
+  <data name="Subscription_ExpiredHint" xml:space="preserve">
+    <value>Expired — renew the plan</value>
+  </data>
+  <data name="Subscription_NoExpiry" xml:space="preserve">
+    <value>No expiry date</value>
+  </data>
+  <data name="Subscription_Suspend" xml:space="preserve">
+    <value>Suspend subscription</value>
+  </data>
+  <data name="Subscription_Resume" xml:space="preserve">
+    <value>Resume subscription</value>
+  </data>
+  <data name="Subscription_VideoThisMonth" xml:space="preserve">
+    <value>Video (this month)</value>
+  </data>
+  <data name="Subscription_Hours" xml:space="preserve">
+    <value>hours</value>
+  </data>
+  <data name="Subscription_Usage" xml:space="preserve">
+    <value>Usage</value>
+  </data>
+  <data name="Subscription_CustomizeLimits" xml:space="preserve">
+    <value>Customize limits</value>
+  </data>
+  <data name="Subscription_AddonTitle" xml:space="preserve">
+    <value>Limit increase</value>
+  </data>
+  <data name="Subscription_AddonAdminHint" xml:space="preserve">
+    <value>You can add as many extra slots as you like without changing the plan. A superadmin decides whether the package is one-time or monthly; a monthly package applies every month until it is cancelled.</value>
+  </data>
+  <data name="Subscription_Add" xml:space="preserve">
+    <value>Add</value>
+  </data>
+  <data name="Subscription_AddonUserHint" xml:space="preserve">
+    <value>Send a request to increase the limit without changing the plan. The platform administrator sets the package form (one-time/monthly) and the payment timing when approving.</value>
+  </data>
+  <data name="Subscription_NoAddonOffers" xml:space="preserve">
+    <value>No extra limit package is available for this plan.</value>
+  </data>
+  <data name="Subscription_Quantity" xml:space="preserve">
+    <value>Quantity</value>
+  </data>
+  <data name="Subscription_PaymentTiming" xml:space="preserve">
+    <value>Payment timing</value>
+  </data>
+  <data name="Subscription_PayNow" xml:space="preserve">
+    <value>Pay now</value>
+  </data>
+  <data name="Subscription_PayWithPlan" xml:space="preserve">
+    <value>With the plan at month end</value>
+  </data>
+  <data name="Subscription_PayWithPlanDisabled" xml:space="preserve">
+    <value>This plan does not accept limit payments together with the plan — you can only pay now.</value>
+  </data>
+  <data name="Subscription_NoteOptional" xml:space="preserve">
+    <value>Note (optional)</value>
+  </data>
+  <data name="Common_Note" xml:space="preserve">
+    <value>Note</value>
+  </data>
+  <data name="Subscription_SendRequest" xml:space="preserve">
+    <value>Send request</value>
+  </data>
+  <data name="Subscription_MyRequests" xml:space="preserve">
+    <value>My requests</value>
+  </data>
+  <data name="Subscription_ActiveAddons" xml:space="preserve">
+    <value>Active add-on packages</value>
+  </data>
+  <data name="Subscription_UsageHistory" xml:space="preserve">
+    <value>Usage history</value>
+  </data>
+  <data name="Subscription_Form" xml:space="preserve">
+    <value>Form</value>
+  </data>
+  <data name="Common_Payment" xml:space="preserve">
+    <value>Payment</value>
+  </data>
+  <data name="Common_Amount" xml:space="preserve">
+    <value>Amount</value>
+  </data>
+  <data name="Subscription_VideoHours" xml:space="preserve">
+    <value>Video (hours)</value>
+  </data>
+  <data name="Subscription_Storage" xml:space="preserve">
+    <value>Storage</value>
+  </data>
+  <data name="Subscription_ExtraStudents" xml:space="preserve">
+    <value>Extra students</value>
+  </data>
+  <data name="Subscription_ExtraGroups" xml:space="preserve">
+    <value>Extra groups</value>
+  </data>
+  <data name="Subscription_ExtraVideoHours" xml:space="preserve">
+    <value>Extra video hours</value>
+  </data>
+  <data name="Common_Period" xml:space="preserve">
+    <value>Period</value>
+  </data>
+  <data name="Common_LoadingDots" xml:space="preserve">
+    <value>Loading…</value>
+  </data>
+  <data name="Common_Free" xml:space="preserve">
+    <value>Free</value>
+  </data>
+  <data name="Common_JoinedDate" xml:space="preserve">
+    <value>Join date</value>
+  </data>
+  <data name="Common_New" xml:space="preserve">
+    <value>New</value>
+  </data>
+  <data name="Common_Optional" xml:space="preserve">
+    <value>Optional</value>
+  </data>
+  <data name="Common_Audio" xml:space="preserve">
+    <value>Audio</value>
+  </data>
+  <data name="Common_Video" xml:space="preserve">
+    <value>Video</value>
+  </data>
+  <data name="Common_Pdf" xml:space="preserve">
+    <value>PDF</value>
+  </data>
+  <data name="Common_FromDate" xml:space="preserve">
+    <value>Start date</value>
+  </data>
+  <data name="Common_ToDate" xml:space="preserve">
+    <value>End date</value>
+  </data>
+  <data name="Common_Filter" xml:space="preserve">
+    <value>Filter</value>
+  </data>
+  <data name="Common_Reset" xml:space="preserve">
+    <value>Reset</value>
+  </data>
+  <data name="Common_GoToPayments" xml:space="preserve">
+    <value>Go to payments</value>
+  </data>
+  <data name="Common_ViewPlans" xml:space="preserve">
+    <value>View plans</value>
+  </data>
+  <data name="Requests_Pending" xml:space="preserve">
+    <value>Pending</value>
+  </data>
+  <data name="Requests_Approved" xml:space="preserve">
+    <value>Approved</value>
+  </data>
+  <data name="Requests_Rejected" xml:space="preserve">
+    <value>Rejected</value>
+  </data>
+  <data name="Payment_Title" xml:space="preserve">
+    <value>Payments</value>
+  </data>
+  <data name="Payment_Count" xml:space="preserve">
+    <value>Payment count</value>
+  </data>
+  <data name="Payment_TotalAmount" xml:space="preserve">
+    <value>Total amount</value>
+  </data>
+  <data name="Payment_History" xml:space="preserve">
+    <value>Payment history</value>
+  </data>
+  <data name="Payment_HistoryEmpty" xml:space="preserve">
+    <value>The payment history is empty.</value>
+  </data>
+  <data name="Payment_Upcoming" xml:space="preserve">
+    <value>Upcoming</value>
+  </data>
+  <data name="Payment_Overdue" xml:space="preserve">
+    <value>Overdue</value>
+  </data>
+  <data name="Payment_NoPlan" xml:space="preserve">
+    <value>No plan</value>
+  </data>
+  <data name="Payment_ActivePlan" xml:space="preserve">
+    <value>Active plan</value>
+  </data>
+  <data name="Payment_SearchPlaceholder" xml:space="preserve">
+    <value>Search by student name or email...</value>
+  </data>
+  <data name="Payment_NextDue" xml:space="preserve">
+    <value>Next payment</value>
+  </data>
+  <data name="Payment_Record" xml:space="preserve">
+    <value>Record a payment</value>
+  </data>
+  <data name="Payment_Plan" xml:space="preserve">
+    <value>Payment plan</value>
+  </data>
+  <data name="AddonRequest_Title" xml:space="preserve">
+    <value>Limit requests</value>
+  </data>
+  <data name="AddonRequest_AdminDesc" xml:space="preserve">
+    <value>Limit-increase requests from all tenants without changing their plan. A superadmin sets the package form (one-time/monthly) and the payment timing when approving.</value>
+  </data>
+  <data name="AddonRequest_UserDesc" xml:space="preserve">
+    <value>Requests you sent to increase the limit without changing the plan. The platform administrator sets the package form and payment timing when approving.</value>
+  </data>
+  <data name="AddonRequest_Requester" xml:space="preserve">
+    <value>Requester</value>
+  </data>
+  <data name="GroupRequest_Title" xml:space="preserve">
+    <value>Group requests</value>
+  </data>
+  <data name="GroupRequest_Desc" xml:space="preserve">
+    <value>Requests from students who want to join via a link. Once approved, the student becomes a group member.</value>
+  </data>
+  <data name="Plan_Title" xml:space="preserve">
+    <value>Subscription plans</value>
+  </data>
+  <data name="Plan_New" xml:space="preserve">
+    <value>+ New plan</value>
+  </data>
+  <data name="Plan_Column" xml:space="preserve">
+    <value>Plan</value>
+  </data>
+  <data name="Plan_Price" xml:space="preserve">
+    <value>Price</value>
+  </data>
+  <data name="Plan_Trial" xml:space="preserve">
+    <value>Trial</value>
+  </data>
+  <data name="Plan_VideoHoursMonth" xml:space="preserve">
+    <value>Video (hours/month)</value>
+  </data>
+  <data name="Plan_Templates" xml:space="preserve">
+    <value>Templates</value>
+  </data>
+  <data name="Plan_MonthlyPrice" xml:space="preserve">
+    <value>Monthly price</value>
+  </data>
+  <data name="Plan_YearlyFreeMonths" xml:space="preserve">
+    <value>Free months per year</value>
+  </data>
+  <data name="Plan_TrialDays" xml:space="preserve">
+    <value>Trial (days)</value>
+  </data>
+  <data name="Plan_UploadPermissions" xml:space="preserve">
+    <value>Upload permissions</value>
+  </data>
+  <data name="Plan_UploadPermissionsHint" xml:space="preserve">
+    <value>A disabled type cannot be uploaded in tenants on this plan.</value>
+  </data>
+  <data name="Plan_Limits" xml:space="preserve">
+    <value>Limits (0 = unlimited)</value>
+  </data>
+  <data name="Plan_AddonPricing" xml:space="preserve">
+    <value>Limit increase pricing</value>
+  </data>
+  <data name="Plan_AddonPricingHint" xml:space="preserve">
+    <value>The customer can add any number of extra slots — the price is per unit.</value>
+  </data>
+  <data name="Plan_PricePerStudent" xml:space="preserve">
+    <value>1 student (AZN)</value>
+  </data>
+  <data name="Plan_PricePerGroup" xml:space="preserve">
+    <value>1 group (AZN)</value>
+  </data>
+  <data name="Plan_PricePerVideoHour" xml:space="preserve">
+    <value>1 video hour (AZN)</value>
+  </data>
+  <data name="Plan_AddonBilling" xml:space="preserve">
+    <value>Limit billing</value>
+  </data>
+  <data name="Plan_AddonBillingHint" xml:space="preserve">
+    <value>When enabled, limit packages are billed with the plan at month end and a monthly package can be granted. When disabled, the customer can only pay now.</value>
+  </data>
+  <data name="Plan_BillWithPlan" xml:space="preserve">
+    <value>Bill with the plan</value>
+  </data>
+  <data name="Plan_Modules" xml:space="preserve">
+    <value>Modules</value>
+  </data>
+  <data name="Plan_ModulesHint" xml:space="preserve">
+    <value>A disabled module is hidden in tenants on this plan — the user does the task manually.</value>
+  </data>
+  <data name="Plan_PaymentTemplates" xml:space="preserve">
+    <value>Payment templates</value>
+  </data>
+  <data name="PlanChoose_Title" xml:space="preserve">
+    <value>Plan selection</value>
+  </data>
+  <data name="PlanChoose_Heading" xml:space="preserve">
+    <value>Choose a plan</value>
+  </data>
+  <data name="PlanChoose_Intro" xml:space="preserve">
+    <value>Choose a suitable plan for {0}. The free plan activates immediately; paid plans with a trial period can be used free of charge for that period.</value>
+  </data>
+  <data name="PlanChoose_NoExpiry" xml:space="preserve">
+    <value>no expiry</value>
+  </data>
+  <data name="PlanChoose_TrialDays" xml:space="preserve">
+    <value>{0} days free trial</value>
+  </data>
+  <data name="Common_StudentCount" xml:space="preserve">
+    <value>{0} students</value>
+  </data>
+  <data name="PlanChoose_UnlimitedStudents" xml:space="preserve">
+    <value>Unlimited students</value>
+  </data>
+  <data name="Common_GroupCount" xml:space="preserve">
+    <value>{0} groups</value>
+  </data>
+  <data name="PlanChoose_UnlimitedGroups" xml:space="preserve">
+    <value>Unlimited groups</value>
+  </data>
+  <data name="Common_TeacherCount" xml:space="preserve">
+    <value>{0} teachers</value>
+  </data>
+  <data name="PlanChoose_UnlimitedTeachers" xml:space="preserve">
+    <value>Unlimited teachers</value>
+  </data>
+  <data name="Plan_AllowVideo" xml:space="preserve">
+    <value>Video upload</value>
+  </data>
+  <data name="Plan_AllowAudio" xml:space="preserve">
+    <value>Audio upload</value>
+  </data>
+  <data name="Plan_AllowFile" xml:space="preserve">
+    <value>File / PDF upload</value>
+  </data>
+  <data name="PlanChoose_StartFree" xml:space="preserve">
+    <value>Start for free</value>
+  </data>
+  <data name="PlanChoose_StartTrial" xml:space="preserve">
+    <value>Start the trial</value>
+  </data>
+  <data name="PlanChoose_Select" xml:space="preserve">
+    <value>Choose the plan</value>
+  </data>
+  <data name="PlanChoose_ContactAdmin" xml:space="preserve">
+    <value>Contact a superadmin to change the plan later.</value>
+  </data>
+  <data name="PlanCatalog_Title" xml:space="preserve">
+    <value>Plans</value>
+  </data>
+  <data name="PlanCatalog_SelectTenantHint" xml:space="preserve">
+    <value>Select a tenant — available plans will be shown.</value>
+  </data>
+  <data name="PlanCatalog_Available" xml:space="preserve">
+    <value>Available plans</value>
+  </data>
+  <data name="PlanCatalog_Intro" xml:space="preserve">
+    <value>Choosing a plan sends a request via WhatsApp — activation is done manually.</value>
+  </data>
+  <data name="PlanCatalog_Unlimited" xml:space="preserve">
+    <value>Unlimited</value>
+  </data>
+  <data name="PlanCatalog_VideoPerMonth" xml:space="preserve">
+    <value>{0} video hours / month</value>
+  </data>
+  <data name="PlanCatalog_VideoUnlimited" xml:space="preserve">
+    <value>Unlimited video hours / month</value>
+  </data>
+  <data name="PlanCatalog_Storage" xml:space="preserve">
+    <value>{0} storage</value>
+  </data>
+  <data name="PlanCatalog_MaxQuality" xml:space="preserve">
+    <value>Max quality: {0}</value>
+  </data>
+  <data name="PlanCatalog_Uploads" xml:space="preserve">
+    <value>Uploads: {0}</value>
+  </data>
+  <data name="PlanCatalog_Templates" xml:space="preserve">
+    <value>Payment templates: {0}</value>
+  </data>
+  <data name="PlanCatalog_On" xml:space="preserve">
+    <value>on</value>
+  </data>
+  <data name="PlanCatalog_Off" xml:space="preserve">
+    <value>off</value>
+  </data>
+  <data name="PlanCatalog_Selected" xml:space="preserve">
+    <value>Selected</value>
+  </data>
+  <data name="PlanCatalog_ChooseThis" xml:space="preserve">
+    <value>Choose this plan</value>
+  </data>
+  <data name="Cashbox_Title" xml:space="preserve">
+    <value>Cashbox</value>
+  </data>
+  <data name="Cashbox_Subtitle" xml:space="preserve">
+    <value>Payments received from students and monthly revenue.</value>
+  </data>
+  <data name="Cashbox_Today" xml:space="preserve">
+    <value>Today</value>
+  </data>
+  <data name="Cashbox_TodayHint" xml:space="preserve">
+    <value>today's receipts</value>
+  </data>
+  <data name="Cashbox_ThisMonth" xml:space="preserve">
+    <value>Collected this month</value>
+  </data>
+  <data name="Cashbox_ThisMonthHint" xml:space="preserve">
+    <value>for the current month</value>
+  </data>
+  <data name="Cashbox_Expected" xml:space="preserve">
+    <value>Expected this month</value>
+  </data>
+  <data name="Cashbox_ExpectedHint" xml:space="preserve">
+    <value>overdue + due this month</value>
+  </data>
+  <data name="Cashbox_LastMonth" xml:space="preserve">
+    <value>Last month</value>
+  </data>
+  <data name="Cashbox_LastMonthHint" xml:space="preserve">
+    <value>for the previous month</value>
+  </data>
+  <data name="Cashbox_Projection" xml:space="preserve">
+    <value>Next month (forecast)</value>
+  </data>
+  <data name="Cashbox_ProjectionHint" xml:space="preserve">
+    <value>based on active plans</value>
+  </data>
+  <data name="Cashbox_OverdueDebt" xml:space="preserve">
+    <value>Unpaid debt</value>
+  </data>
+  <data name="Cashbox_OverdueDebtHint" xml:space="preserve">
+    <value>overdue plans</value>
+  </data>
+  <data name="Cashbox_Last12" xml:space="preserve">
+    <value>Last 12 months</value>
+  </data>
+  <data name="Cashbox_Overdue" xml:space="preserve">
+    <value>Overdue</value>
+  </data>
+  <data name="Cashbox_DueSoon" xml:space="preserve">
+    <value>Ends in 7 days</value>
+  </data>
+  <data name="Cashbox_PayingStudents" xml:space="preserve">
+    <value>Paying students</value>
+  </data>
+  <data name="Cashbox_ActiveStudents" xml:space="preserve">
+    <value>Active students</value>
+  </data>
+  <data name="Cashbox_RecentPayments" xml:space="preserve">
+    <value>Recent payments</value>
+  </data>
+  <data name="PaymentPlan_Title" xml:space="preserve">
+    <value>Payment templates</value>
+  </data>
+  <data name="PaymentPlan_New" xml:space="preserve">
+    <value>New template</value>
+  </data>
+  <data name="PaymentPlan_Name" xml:space="preserve">
+    <value>Template name</value>
+  </data>
+  <data name="PaymentPlan_ModalTitle" xml:space="preserve">
+    <value>Payment template</value>
+  </data>
+  <data name="PaymentPlan_EmptyTitle" xml:space="preserve">
+    <value>Payment templates are not included in your plan</value>
+  </data>
+  <data name="PaymentPlan_EmptyBody" xml:space="preserve">
+    <value>Your current subscription plan does not allow using ready-made payment templates. You can enter payments manually; upgrade the plan to use templates.</value>
+  </data>
+  <data name="PaymentPlan_IntervalMonthly" xml:space="preserve">
+    <value>Monthly</value>
+  </data>
+  <data name="PaymentPlan_IntervalCustom" xml:space="preserve">
+    <value>Custom day count</value>
+  </data>
+  <data name="PaymentPlan_IntervalDays" xml:space="preserve">
+    <value>Every N days</value>
+  </data>
+  <data name="PaymentPlan_Select" xml:space="preserve">
+    <value>Choose a template plan</value>
+  </data>
+  <data name="PaymentPlan_Manual" xml:space="preserve">
+    <value>— Enter manually —</value>
+  </data>
+  <data name="Plan_FirstPaymentNow" xml:space="preserve">
+    <value>Record the first payment now (for today)</value>
+  </data>
+  <data name="Common_Code" xml:space="preserve">
+    <value>Code</value>
+  </data>
+  <data name="Common_Currency" xml:space="preserve">
+    <value>Currency</value>
+  </data>
+  <data name="LimitOverrides_Title" xml:space="preserve">
+    <value>Custom limits</value>
+  </data>
+  <data name="LimitOverrides_Hint" xml:space="preserve">
+    <value>Give this customer a limit different from the plan. An empty field keeps the plan limit, 0 = unlimited.</value>
+  </data>
+  <data name="LimitOverrides_Students" xml:space="preserve">
+    <value>Student limit</value>
+  </data>
+  <data name="LimitOverrides_VideoMinutes" xml:space="preserve">
+    <value>Monthly video (minutes)</value>
+  </data>
+  <data name="PlanModal_ExpiresAt" xml:space="preserve">
+    <value>Expiry date (empty = no expiry)</value>
+  </data>
+  <data name="PlanModal_AddonHint" xml:space="preserve">
+    <value>After payment you can also add extra packages — they affect the plan limit immediately.</value>
+  </data>
+  <data name="Nav_PlanManagement" xml:space="preserve">
+    <value>Plan management</value>
+  </data>
+  <data name="Payment_PaidOn" xml:space="preserve">
+    <value>Payment date</value>
+  </data>
+  <data name="LessonContent_HintVideo" xml:space="preserve">
+    <value>Video file — mp4, mkv, mov, etc.</value>
+  </data>
+  <data name="LessonContent_HintVoice" xml:space="preserve">
+    <value>Audio file — mp3, wav, m4a, etc.</value>
+  </data>
+  <data name="LessonContent_HintFile" xml:space="preserve">
+    <value>pdf, document, image, archive (video and audio cannot be selected)</value>
+  </data>
+  <data name="LessonContent_HintVideoLarge" xml:space="preserve">
+    <value>Large videos are uploaded directly to R2</value>
+  </data>
+  <data name="Question_VariantImage" xml:space="preserve">
+    <value>Variant {0} image</value>
+  </data>
+  <data name="Sub_UnitStudent" xml:space="preserve">
+    <value>students</value>
+  </data>
+  <data name="Sub_UnitGroup" xml:space="preserve">
+    <value>groups</value>
+  </data>
+  <data name="Sub_UnitVideoHour" xml:space="preserve">
+    <value>hours</value>
+  </data>
+  <data name="Sub_UnitGeneric" xml:space="preserve">
+    <value>units</value>
+  </data>
+  <data name="Sub_AddonQty" xml:space="preserve">
+    <value>How many {0} should be added?</value>
+  </data>
+  <data name="Sub_Continue" xml:space="preserve">
+    <value>Continue</value>
+  </data>
+  <data name="Sub_ModeMonthlyWithPlan" xml:space="preserve">
+    <value>Monthly (with the plan)</value>
+  </data>
+  <data name="Sub_FormTitle" xml:space="preserve">
+    <value>Payment form</value>
+  </data>
+  <data name="Sub_TimingNow" xml:space="preserve">
+    <value>Pay now</value>
+  </data>
+  <data name="Sub_TimingNowShort" xml:space="preserve">
+    <value>Now</value>
+  </data>
+  <data name="Sub_WithPlanShort" xml:space="preserve">
+    <value>With the plan</value>
+  </data>
+  <data name="Sub_KindVideoHours" xml:space="preserve">
+    <value>Video hours</value>
+  </data>
+  <data name="Sub_StatusPaid" xml:space="preserve">
+    <value>Paid</value>
+  </data>
+  <data name="Sub_StatusWaiting" xml:space="preserve">
+    <value>Waiting</value>
+  </data>
+  <data name="Sub_StatusApproved" xml:space="preserve">
+    <value>Approved</value>
+  </data>
+  <data name="Sub_StatusRejected" xml:space="preserve">
+    <value>Rejected</value>
+  </data>
+  <data name="Sub_NoRequests" xml:space="preserve">
+    <value>No requests</value>
+  </data>
+  <data name="Sub_NoAddons" xml:space="preserve">
+    <value>No add-on packages</value>
+  </data>
+  <data name="Sub_NoUsage" xml:space="preserve">
+    <value>No usage records</value>
+  </data>
+  <data name="Sub_Stop" xml:space="preserve">
+    <value>Stop</value>
+  </data>
+  <data name="Sub_RecordPayment" xml:space="preserve">
+    <value>Record payment</value>
+  </data>
+  <data name="Sub_SuspendTitle" xml:space="preserve">
+    <value>Suspend the subscription?</value>
+  </data>
+  <data name="Sub_ResumeTitle" xml:space="preserve">
+    <value>Resume the subscription?</value>
+  </data>
+  <data name="Sub_SuspendText" xml:space="preserve">
+    <value>Tenant users will not be able to sign in. No data is deleted — everything stays in place when the subscription is restored.</value>
+  </data>
+  <data name="Sub_ResumeText" xml:space="preserve">
+    <value>The tenant will be reactivated and users will be able to sign in.</value>
+  </data>
+  <data name="Sub_Resume" xml:space="preserve">
+    <value>Resume</value>
+  </data>
+  <data name="Sub_MarkPaidTitle" xml:space="preserve">
+    <value>Record the payment?</value>
+  </data>
+  <data name="Sub_MarkPaid" xml:space="preserve">
+    <value>Record</value>
+  </data>
+  <data name="Sub_CancelAddonConfirm" xml:space="preserve">
+    <value>Stop the monthly package? It will not be added to the limit in the coming months.</value>
+  </data>
+  <data name="Sub_RequestSent" xml:space="preserve">
+    <value>The request has been sent. The limit will be increased after the administrator approves.</value>
+  </data>
+  <data name="Payment_Receive" xml:space="preserve">
+    <value>Receive payment</value>
+  </data>
+  <data name="Payment_HistoryButton" xml:space="preserve">
+    <value>History</value>
+  </data>
+  <data name="Common_EveryNDays" xml:space="preserve">
+    <value>Every {0} days</value>
+  </data>
+  <data name="Payment_RecordConfirm" xml:space="preserve">
+    <value>Record the payment?</value>
+  </data>
+  <data name="Payment_RecordYes" xml:space="preserve">
+    <value>Yes, record it</value>
+  </data>
+  <data name="Payment_Recorded" xml:space="preserve">
+    <value>Payment recorded</value>
+  </data>
+  <data name="Payment_DeleteConfirm" xml:space="preserve">
+    <value>Delete this payment record? The due date will be recalculated.</value>
+  </data>
+  <data name="Cashbox_Monthly" xml:space="preserve">
+    <value>monthly</value>
+  </data>
+  <data name="Cashbox_Days" xml:space="preserve">
+    <value>{0} days</value>
+  </data>
+  <data name="Cashbox_NoLastMonth" xml:space="preserve">
+    <value>No payments last month</value>
+  </data>
+  <data name="Cashbox_VsLastMonth" xml:space="preserve">
+    <value>{0}% vs. last month</value>
+  </data>
+  <data name="Cashbox_NoPaymentsYet" xml:space="preserve">
+    <value>No payments recorded yet.</value>
+  </data>
+  <data name="Cashbox_NoPaymentsRange" xml:space="preserve">
+    <value>No payments in the selected range.</value>
+  </data>
+  <data name="Cashbox_RangeTotal" xml:space="preserve">
+    <value>Range receipts: {0}</value>
+  </data>
+  <data name="Cashbox_SelectStudent" xml:space="preserve">
+    <value>Select a student</value>
+  </data>
+  <data name="Cashbox_CurrentPlanOption" xml:space="preserve">
+    <value>Current plan — {0} {1} ({2})</value>
+  </data>
+  <data name="Cashbox_NoPlanOption" xml:space="preserve">
+    <value>No plan selected</value>
+  </data>
+  <data name="Cashbox_SelectedPlanHint" xml:space="preserve">
+    <value>Selected plan: {0} · {1} {2} · {3}</value>
+  </data>
+  <data name="Cashbox_CurrentPlanHint" xml:space="preserve">
+    <value>Current plan: {0} {1}</value>
+  </data>
+  <data name="Cashbox_NextDueSuffix" xml:space="preserve">
+    <value> · next payment: {0}</value>
+  </data>
+  <data name="Cashbox_NoPlanForStudent" xml:space="preserve">
+    <value>This student has no payment plan — select a plan above.</value>
+  </data>
+  <data name="Cashbox_DeleteConfirm" xml:space="preserve">
+    <value>Delete this payment? The plan's due date will be recalculated.</value>
+  </data>
+  <data name="Cashbox_StudentRequired" xml:space="preserve">
+    <value>Select a student</value>
+  </data>
+  <data name="Cashbox_AmountPositive" xml:space="preserve">
+    <value>The amount must be greater than zero</value>
+  </data>
+  <data name="Cashbox_NoPlanSelected" xml:space="preserve">
+    <value>This student has no payment plan — select a plan</value>
+  </data>
+  <data name="Addon_ApproveTitle" xml:space="preserve">
+    <value>Approve the request</value>
+  </data>
+  <data name="Addon_ApproveText" xml:space="preserve">
+    <value>Choose the package form. The limit will be increased immediately after approval.</value>
+  </data>
+  <data name="Addon_RejectTitle" xml:space="preserve">
+    <value>Reject the request</value>
+  </data>
+  <data name="Addon_RejectReason" xml:space="preserve">
+    <value>Reason (optional)</value>
+  </data>
+  <data name="Requests_Approve" xml:space="preserve">
+    <value>Approve</value>
+  </data>
+  <data name="Requests_Reject" xml:space="preserve">
+    <value>Reject</value>
+  </data>
+  <data name="Requests_NoRequests" xml:space="preserve">
+    <value>No requests</value>
+  </data>
+  <data name="GroupRequest_ApproveTitle" xml:space="preserve">
+    <value>Approve the request?</value>
+  </data>
+  <data name="GroupRequest_RejectTitle" xml:space="preserve">
+    <value>Reject the request?</value>
+  </data>
+  <data name="GroupRequest_ApproveText" xml:space="preserve">
+    <value>The student will become a group member immediately.</value>
+  </data>
+  <data name="GroupRequest_RejectText" xml:space="preserve">
+    <value>The student will not be added to the group.</value>
+  </data>
+  <data name="PlanCatalog_WaConfirmText" xml:space="preserve">
+    <value>Send a request for the “{0}” plan via WhatsApp?</value>
+  </data>
+  <data name="PlanCatalog_Send" xml:space="preserve">
+    <value>Send</value>
+  </data>
+  <data name="PlanCatalog_WaGreeting" xml:space="preserve">
+    <value>Hello! Request to change the subscription plan:</value>
+  </data>
+  <data name="PlanCatalog_WaOrg" xml:space="preserve">
+    <value>Organization: {0}</value>
+  </data>
+  <data name="PlanCatalog_WaRequester" xml:space="preserve">
+    <value>Requester: {0}</value>
+  </data>
+  <data name="PlanCatalog_WaEmail" xml:space="preserve">
+    <value>Email: {0}</value>
+  </data>
+  <data name="PlanCatalog_WaCurrent" xml:space="preserve">
+    <value>Current plan: {0}</value>
+  </data>
+  <data name="PlanCatalog_WaSelected" xml:space="preserve">
+    <value>Selected plan: {0} ({1})</value>
+  </data>
+  <data name="PlanCatalog_WaPrice" xml:space="preserve">
+    <value>Price: {0} {1}/month</value>
+  </data>
+  <data name="PlanCatalog_WaStudents" xml:space="preserve">
+    <value>Student limit: {0}</value>
+  </data>
+  <data name="PlanCatalog_WaGroups" xml:space="preserve">
+    <value>Group limit: {0}</value>
+  </data>
+  <data name="PlanCatalog_WaVideo" xml:space="preserve">
+    <value>Video (monthly): {0}</value>
+  </data>
+  <data name="PlanCatalog_WaStorage" xml:space="preserve">
+    <value>Storage: {0}</value>
+  </data>
+  <data name="PlanCatalog_WaMaxQuality" xml:space="preserve">
+    <value>Max video quality: {0}</value>
+  </data>
+  <data name="PlanCatalog_WaDate" xml:space="preserve">
+    <value>Date: {0}</value>
+  </data>
+  <data name="PlanCatalog_Hours" xml:space="preserve">
+    <value>{0} hours</value>
+  </data>
+  <data name="Common_NDays" xml:space="preserve">
+    <value>{0} days</value>
+  </data>
+  <data name="Common_SubjectSuffix" xml:space="preserve">
+    <value>{0} lesson</value>
+  </data>
+  <data name="Plan_NoPlans" xml:space="preserve">
+    <value>No plans</value>
+  </data>
+  <data name="PaymentPlan_NoTemplates" xml:space="preserve">
+    <value>No payment templates yet.</value>
+  </data>
+  <data name="PaymentPlan_EditTemplate" xml:space="preserve">
+    <value>Edit template</value>
+  </data>
+  <data name="PaymentPlan_NewTemplate" xml:space="preserve">
+    <value>New payment template</value>
+  </data>
+  <data name="PaymentPlan_DeleteConfirm" xml:space="preserve">
+    <value>Delete this payment template?</value>
+  </data>
+  <data name="Js_Skipped" xml:space="preserve">
+    <value>(skipped)</value>
+  </data>
+  <data name="Plan_SelectPrompt" xml:space="preserve">
+    <value>Select a plan</value>
+  </data>
+  <data name="Error_Title" xml:space="preserve">
+    <value>Error</value>
+  </data>
+  <data name="User_CannotDeleteSelf" xml:space="preserve">
+    <value>You cannot delete your own account</value>
+  </data>
+  <data name="User_OnlySuperCanDeleteAdmin" xml:space="preserve">
+    <value>Only a superadmin can delete an admin account</value>
+  </data>
+  <data name="User_OnlySuperCanAssignSuper" xml:space="preserve">
+    <value>Only a superadmin can assign another superadmin</value>
+  </data>
+  <data name="Editor_NoImage" xml:space="preserve">
+    <value>No image selected</value>
+  </data>
+  <data name="Editor_ImageTooLarge" xml:space="preserve">
+    <value>Image cannot be larger than 5 MB</value>
+  </data>
+  <data name="Editor_ImageTypes" xml:space="preserve">
+    <value>Only JPG, PNG, GIF and WEBP images are supported</value>
+  </data>
+  <data name="Addon_SuperOnlyDecision" xml:space="preserve">
+    <value>Only a superadmin can decide on limit packages.</value>
+  </data>
+  <data name="Subscription_PlatformOnly" xml:space="preserve">
+    <value>Only a platform administrator can see this information.</value>
+  </data>
+  <data name="Subscription_PlatformOnlyAddon" xml:space="preserve">
+    <value>Only a platform administrator can add a limit package.</value>
+  </data>
+  <data name="Tenant_NotSelected" xml:space="preserve">
+    <value>No tenant selected</value>
+  </data>
+  <data name="Login_InvalidCredentials" xml:space="preserve">
+    <value>Incorrect email or password.</value>
+  </data>
+  <data name="PaymentPlan_NotInPlan" xml:space="preserve">
+    <value>Payment templates are not included in your current subscription plan. Upgrade your plan.</value>
+  </data>
+  <data name="PlatformFinance_PlatformOnly" xml:space="preserve">
+    <value>Only a platform administrator can manage the subscription.</value>
+  </data>
+  <data name="Error_Heading" xml:space="preserve">
+    <value>Error.</value>
+  </data>
+  <data name="Error_Message" xml:space="preserve">
+    <value>An error occurred while processing your request.</value>
+  </data>
+  <data name="Error_RequestId" xml:space="preserve">
+    <value>Request ID</value>
+  </data>
+  <data name="Common_Previous" xml:space="preserve">
+    <value>Previous</value>
+  </data>
+  <data name="Common_Language" xml:space="preserve">
+    <value>Language</value>
+  </data>
+  <data name="Common_Logo" xml:space="preserve">
+    <value>Logo</value>
   </data>
 </root>
