@@ -3654,4 +3654,37 @@
   <data name="StudentView_NotConfigured" xml:space="preserve">
     <value>Şagird tətbiqinin ünvanı (App:BaseUrl) təyin edilməyib.</value>
   </data>
+  <data name="PlanCatalog_GroupIndividuals" xml:space="preserve">
+    <value>Fərdi müəllimlər üçün</value>
+  </data>
+  <data name="PlanCatalog_GroupInstitutions" xml:space="preserve">
+    <value>Kurslar və tədris mərkəzləri üçün</value>
+  </data>
+  <data name="PlanCatalog_GroupOther" xml:space="preserve">
+    <value>Digər paketlər</value>
+  </data>
+  <data name="PlanCatalog_Features" xml:space="preserve">
+    <value>Əlavə imkanlar</value>
+  </data>
+  <data name="PlanFeature_Certificates" xml:space="preserve">
+    <value>Sertifikatlar</value>
+  </data>
+  <data name="PlanFeature_Payments" xml:space="preserve">
+    <value>Ödənişlər</value>
+  </data>
+  <data name="PlanFeature_PaymentTemplates" xml:space="preserve">
+    <value>Ödəniş şablonları</value>
+  </data>
+  <data name="PlanFeature_Crm" xml:space="preserve">
+    <value>CRM</value>
+  </data>
+  <data name="PlanFeature_Chat" xml:space="preserve">
+    <value>Çat</value>
+  </data>
+  <data name="PlanFeature_Branding" xml:space="preserve">
+    <value>Brendinq</value>
+  </data>
+  <data name="PlanFeature_Api" xml:space="preserve">
+    <value>API</value>
+  </data>
 </root>

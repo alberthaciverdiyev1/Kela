@@ -3654,4 +3654,37 @@
   <data name="StudentView_NotConfigured" xml:space="preserve">
     <value>Адрес приложения ученика (App:BaseUrl) не указан.</value>
   </data>
+  <data name="PlanCatalog_GroupIndividuals" xml:space="preserve">
+    <value>Для частных преподавателей</value>
+  </data>
+  <data name="PlanCatalog_GroupInstitutions" xml:space="preserve">
+    <value>Для курсов и учебных центров</value>
+  </data>
+  <data name="PlanCatalog_GroupOther" xml:space="preserve">
+    <value>Другие планы</value>
+  </data>
+  <data name="PlanCatalog_Features" xml:space="preserve">
+    <value>Возможности</value>
+  </data>
+  <data name="PlanFeature_Certificates" xml:space="preserve">
+    <value>Сертификаты</value>
+  </data>
+  <data name="PlanFeature_Payments" xml:space="preserve">
+    <value>Платежи</value>
+  </data>
+  <data name="PlanFeature_PaymentTemplates" xml:space="preserve">
+    <value>Шаблоны платежей</value>
+  </data>
+  <data name="PlanFeature_Crm" xml:space="preserve">
+    <value>CRM</value>
+  </data>
+  <data name="PlanFeature_Chat" xml:space="preserve">
+    <value>Чат</value>
+  </data>
+  <data name="PlanFeature_Branding" xml:space="preserve">
+    <value>Брендинг</value>
+  </data>
+  <data name="PlanFeature_Api" xml:space="preserve">
+    <value>API</value>
+  </data>
 </root>

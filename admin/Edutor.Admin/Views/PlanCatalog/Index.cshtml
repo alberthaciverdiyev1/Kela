@@ -24,20 +24,53 @@
         return items.Count > 0 ? string.Join(", ", items) : L["PlanCatalog_Off"];
     }
 
-    bool HasTemplates(string? featuresJson)
+    IReadOnlyList<string> BusinessFeatures(string? featuresJson)
     {
+        var names = new List<string>();
+        if (string.IsNullOrWhiteSpace(featuresJson)) return names;
+
         try
         {
-            using var document = System.Text.Json.JsonDocument.Parse(featuresJson ?? "{}");
-            return document.RootElement.TryGetProperty(
-                Edutor.Core.Modules.Subscription.SubscriptionFeatures.PaymentTemplates, out var on)
-                && on.ValueKind == System.Text.Json.JsonValueKind.True;
+            using var document = System.Text.Json.JsonDocument.Parse(featuresJson);
+            var root = document.RootElement;
+
+            bool On(string key) =>
+                root.TryGetProperty(key, out var value)
+                && value.ValueKind == System.Text.Json.JsonValueKind.True;
+
+            if (On(Edutor.Core.Modules.Subscription.SubscriptionFeatures.Certificates)) names.Add(L["PlanFeature_Certificates"]);
+            if (On(Edutor.Core.Modules.Subscription.SubscriptionFeatures.Payments)) names.Add(L["PlanFeature_Payments"]);
+            if (On(Edutor.Core.Modules.Subscription.SubscriptionFeatures.PaymentTemplates)) names.Add(L["PlanFeature_PaymentTemplates"]);
+            if (On(Edutor.Core.Modules.Subscription.SubscriptionFeatures.Crm)) names.Add(L["PlanFeature_Crm"]);
+            if (On(Edutor.Core.Modules.Subscription.SubscriptionFeatures.Chat)) names.Add(L["PlanFeature_Chat"]);
+            if (On(Edutor.Core.Modules.Subscription.SubscriptionFeatures.Branding)) names.Add(L["PlanFeature_Branding"]);
+            if (On(Edutor.Core.Modules.Subscription.SubscriptionFeatures.Api)) names.Add(L["PlanFeature_Api"]);
         }
         catch (System.Text.Json.JsonException)
         {
-            return false;
+            return names;
         }
+
+        return names;
     }
+
+    // Paketlər hədəf auditoriyaya görə bölünür ki, müəllim özünə uyğun sıranı
+    // dərhal tapsın; kod naməlum olsa "Digər" qrupuna düşür.
+    var individualCodes = new[] { "free", "basic", "pro" };
+    var institutionCodes = new[] { "premium", "advanced" };
+    var orderedPlans = plans.OrderBy(p => p.SortOrder).ThenBy(p => p.Id).ToList();
+
+    var planGroups = new List<(string Title, IReadOnlyList<Edutor.Core.Modules.Subscription.Responses.PlanResponse> Plans)>
+    {
+        (L["PlanCatalog_GroupIndividuals"], orderedPlans.Where(p => individualCodes.Contains(p.Code)).ToList()),
+        (L["PlanCatalog_GroupInstitutions"], orderedPlans.Where(p => institutionCodes.Contains(p.Code)).ToList())
+    };
+
+    var otherPlans = orderedPlans
+        .Where(p => !individualCodes.Contains(p.Code) && !institutionCodes.Contains(p.Code))
+        .ToList();
+
+    if (otherPlans.Count > 0) planGroups.Add((L["PlanCatalog_GroupOther"], otherPlans));
 
     var tenantSelect = tenants is { Count: > 0 }
         ? new SelectModel
@@ -62,7 +95,10 @@
         maxGroups = p.MaxGroups,
         videoMinutes = p.MonthlyVideoMinutes,
         storageBytes = p.StorageBytes,
-        maxVideoHeight = p.MaxVideoHeight
+        maxVideoHeight = p.MaxVideoHeight,
+        allowVideoUpload = p.AllowVideoUpload,
+        allowAudioUpload = p.AllowAudioUpload,
+        allowFileUpload = p.AllowFileUpload
     }).ToList();
 }
 @if (plans.Count > 0)
@@ -109,47 +145,66 @@
                 @L["PlanCatalog_Intro"]
             </p>
 
-            <div class="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
-                @foreach (var plan in plans)
-                {
-                    var isCurrent = plan.Id == currentPlanId;
-                    <div class="flex flex-col rounded-xl border p-4 @(isCurrent ? "border-primary bg-primary-light/40" : "border-border bg-surface-secondary")">
-                        <div class="flex items-center justify-between gap-2">
-                            <p class="font-bold text-slate-900">@plan.Name</p>
-                            @if (isCurrent)
+            @foreach (var group in planGroups.Where(g => g.Plans.Count > 0))
+            {
+                <p class="mb-3 mt-6 text-[11px] font-bold uppercase tracking-wider text-slate-400 first:mt-0">@group.Title</p>
+
+                <div class="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
+                    @foreach (var plan in group.Plans)
+                    {
+                        var isCurrent = plan.Id == currentPlanId;
+                        var uploads = plan.AllowVideoUpload || plan.AllowAudioUpload || plan.AllowFileUpload;
+                        var features = BusinessFeatures(plan.Features);
+
+                        <div class="flex flex-col rounded-xl border p-4 @(isCurrent ? "border-primary bg-primary-light/40" : "border-border bg-surface-secondary")">
+                            <div class="flex items-center justify-between gap-2">
+                                <p class="font-bold text-slate-900">@plan.Name</p>
+                                @if (isCurrent)
+                                {
+                                    <span class="badge badge-success">@L["Subscription_CurrentPlan"]</span>
+                                }
+                            </div>
+
+                            @if (!string.IsNullOrWhiteSpace(plan.Description))
                             {
-                                <span class="badge badge-success">@L["Subscription_CurrentPlan"]</span>
+                                <p class="mt-1 text-xs text-slate-500">@plan.Description</p>
                             }
+
+                            <p class="mt-2 text-lg font-extrabold text-primary">
+                                @plan.MonthlyPrice @plan.Currency
+                                <span class="text-xs font-medium text-slate-400">@L["Common_PerMonth"]</span>
+                            </p>
+
+                            <ul class="mt-3 space-y-1 text-sm text-slate-600">
+                                <li>@L["Common_StudentCount", Limit(plan.MaxStudents)]</li>
+                                <li>@L["Common_GroupCount", Limit(plan.MaxGroups)]</li>
+                                @* Video yükləmə bağlıdırsa video saatı, keyfiyyət və yaddaş limiti
+                                   göstərilmir — "limitsiz" yazısı açıqlama ilə ziddiyyət yaradırdı. *@
+                                @if (plan.AllowVideoUpload)
+                                {
+                                    <li>@(plan.MonthlyVideoMinutes > 0 ? L["PlanCatalog_VideoPerMonth", plan.MonthlyVideoMinutes / 60] : L["PlanCatalog_VideoUnlimited"])</li>
+                                    <li>@L["PlanCatalog_MaxQuality", plan.MaxVideoHeight > 0 ? $"{plan.MaxVideoHeight}p" : L["Subscription_Unlimited"].Value]</li>
+                                }
+                                @if (uploads)
+                                {
+                                    <li>@L["PlanCatalog_Storage", Storage(plan.StorageBytes)]</li>
+                                }
+                                <li>@L["PlanCatalog_Uploads", UploadList(plan.AllowVideoUpload, plan.AllowFileUpload, plan.AllowAudioUpload)]</li>
+                                <li>
+                                    @L["PlanCatalog_Features"]:
+                                    @(features.Count > 0 ? string.Join(", ", features) : "—")
+                                </li>
+                            </ul>
+
+                            <button type="button" class="admin-button-primary mt-4 w-full"
+                                    data-action="PlanCatalogPage.choosePlan" data-args='[@plan.Id]'
+                                    @(isCurrent ? "disabled" : null)>
+                                @(isCurrent ? L["PlanCatalog_Selected"] : L["PlanCatalog_ChooseThis"])
+                            </button>
                         </div>
-
-                        @if (!string.IsNullOrWhiteSpace(plan.Description))
-                        {
-                            <p class="mt-1 text-xs text-slate-500">@plan.Description</p>
-                        }
-
-                        <p class="mt-2 text-lg font-extrabold text-primary">
-                            @plan.MonthlyPrice @plan.Currency
-                            <span class="text-xs font-medium text-slate-400">@L["Common_PerMonth"]</span>
-                        </p>
-
-                        <ul class="mt-3 space-y-1 text-sm text-slate-600">
-                            <li>@L["Common_StudentCount", Limit(plan.MaxStudents)]</li>
-                            <li>@L["Common_GroupCount", Limit(plan.MaxGroups)]</li>
-                            <li>@(plan.MonthlyVideoMinutes > 0 ? L["PlanCatalog_VideoPerMonth", plan.MonthlyVideoMinutes / 60] : L["PlanCatalog_VideoUnlimited"])</li>
-                            <li>@L["PlanCatalog_Storage", Storage(plan.StorageBytes)]</li>
-                            <li>@L["PlanCatalog_MaxQuality", plan.MaxVideoHeight > 0 ? $"{plan.MaxVideoHeight}p" : L["Subscription_Unlimited"].Value]</li>
-                            <li>@L["PlanCatalog_Uploads", UploadList(plan.AllowVideoUpload, plan.AllowFileUpload, plan.AllowAudioUpload)]</li>
-                            <li>@L["PlanCatalog_Templates", HasTemplates(plan.Features) ? L["PlanCatalog_On"].Value : L["PlanCatalog_Off"].Value]</li>
-                        </ul>
-
-                        <button type="button" class="admin-button-primary mt-4 w-full"
-                                data-action="PlanCatalogPage.choosePlan" data-args='[@plan.Id]'
-                                @(isCurrent ? "disabled" : null)>
-                            @(isCurrent ? L["PlanCatalog_Selected"] : L["PlanCatalog_ChooseThis"])
-                        </button>
-                    </div>
-                }
-            </div>
+                    }
+                </div>
+            }
         </div>
     }
 </section>

@@ -3654,4 +3654,37 @@
   <data name="StudentView_NotConfigured" xml:space="preserve">
     <value>The student app URL (App:BaseUrl) is not configured.</value>
   </data>
+  <data name="PlanCatalog_GroupIndividuals" xml:space="preserve">
+    <value>For individual teachers</value>
+  </data>
+  <data name="PlanCatalog_GroupInstitutions" xml:space="preserve">
+    <value>For courses and tutoring centers</value>
+  </data>
+  <data name="PlanCatalog_GroupOther" xml:space="preserve">
+    <value>Other plans</value>
+  </data>
+  <data name="PlanCatalog_Features" xml:space="preserve">
+    <value>Features</value>
+  </data>
+  <data name="PlanFeature_Certificates" xml:space="preserve">
+    <value>Certificates</value>
+  </data>
+  <data name="PlanFeature_Payments" xml:space="preserve">
+    <value>Payments</value>
+  </data>
+  <data name="PlanFeature_PaymentTemplates" xml:space="preserve">
+    <value>Payment templates</value>
+  </data>
+  <data name="PlanFeature_Crm" xml:space="preserve">
+    <value>CRM</value>
+  </data>
+  <data name="PlanFeature_Chat" xml:space="preserve">
+    <value>Chat</value>
+  </data>
+  <data name="PlanFeature_Branding" xml:space="preserve">
+    <value>Branding</value>
+  </data>
+  <data name="PlanFeature_Api" xml:space="preserve">
+    <value>API</value>
+  </data>
 </root>

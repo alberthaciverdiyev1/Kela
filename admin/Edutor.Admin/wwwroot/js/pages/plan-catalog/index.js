@@ -51,12 +51,20 @@ window.PlanCatalogPage = (function () {
             L["PlanCatalog_WaSelected"].replace('{0}', plan.name).replace('{1}', plan.code),
             L["PlanCatalog_WaPrice"].replace('{0}', plan.price).replace('{1}', plan.currency),
             L["PlanCatalog_WaStudents"].replace('{0}', limitLabel(plan.maxStudents)),
-            L["PlanCatalog_WaGroups"].replace('{0}', limitLabel(plan.maxGroups)),
-            L["PlanCatalog_WaVideo"].replace('{0}', plan.videoMinutes > 0 ? L["PlanCatalog_Hours"].replace('{0}', Math.round(plan.videoMinutes / 60)) : L["Subscription_Unlimited"]),
-            L["PlanCatalog_WaStorage"].replace('{0}', storageLabel(plan.storageBytes)),
-            L["PlanCatalog_WaMaxQuality"].replace('{0}', plan.maxVideoHeight > 0 ? plan.maxVideoHeight + 'p' : L["Subscription_Unlimited"]),
-            L["PlanCatalog_WaDate"].replace('{0}', new Date().toLocaleString(window.LANG || 'az'))
+            L["PlanCatalog_WaGroups"].replace('{0}', limitLabel(plan.maxGroups))
         ];
+
+        // Video yükləmə bağlı olan paketdə video saatı/keyfiyyət/yaddaş yazılmır.
+        if (plan.allowVideoUpload) {
+            lines.push(L["PlanCatalog_WaVideo"].replace('{0}', plan.videoMinutes > 0 ? L["PlanCatalog_Hours"].replace('{0}', Math.round(plan.videoMinutes / 60)) : L["Subscription_Unlimited"]));
+            lines.push(L["PlanCatalog_WaMaxQuality"].replace('{0}', plan.maxVideoHeight > 0 ? plan.maxVideoHeight + 'p' : L["Subscription_Unlimited"]));
+        }
+
+        if (plan.allowVideoUpload || plan.allowAudioUpload || plan.allowFileUpload) {
+            lines.push(L["PlanCatalog_WaStorage"].replace('{0}', storageLabel(plan.storageBytes)));
+        }
+
+        lines.push(L["PlanCatalog_WaDate"].replace('{0}', new Date().toLocaleString(window.LANG || 'az')));
 
         window.open(`https://wa.me/${ctx.whatsapp}?text=${encodeURIComponent(lines.join('\n'))}`, '_blank', 'noopener');
     }
