@@ -7,7 +7,8 @@ namespace Edutor.Nodes.Worker;
 /// <summary>İstifadəçinin tənzimlədiyi və diskdə saxlanılan worker konfiqurasiyası.</summary>
 public sealed class WorkerSettings
 {
-    public string ApiUrl { get; set; } = "http://localhost:5080";
+    /// <summary>Default olaraq production API — istifadəçi Tənzimləmələrdə dəyişə bilər.</summary>
+    public string ApiUrl { get; set; } = "https://api.bubora.online";
 
     /// <summary>Qeydiyyatdan sonra alınan access token. Açıq mətn kimi yalnız bu cihazda saxlanılır.</summary>
     public string AccessToken { get; set; } = string.Empty;
