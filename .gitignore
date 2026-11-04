@@ -41,3 +41,6 @@ web/Edutor.App.Shared/wwwroot/css/app.css
 
 # Şəxsi qeydlər — commit olunmur (CLAUDE.md)
 api/Edutor.Api/ToDo/
+
+# Worker paketləri (package.sh)
+worker/dist/

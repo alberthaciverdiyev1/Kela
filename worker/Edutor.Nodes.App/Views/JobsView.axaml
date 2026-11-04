@@ -45,7 +45,7 @@
               <Grid ColumnDefinitions="80,90,110,90,*" Margin="0,4">
                 <TextBlock Grid.Column="0" Text="{Binding JobId, StringFormat='#{0}'}" Classes="value" />
                 <TextBlock Grid.Column="1" Text="{Binding Resolution}" Classes="value" FontWeight="SemiBold" />
-                <TextBlock Grid.Column="2" Text="{Binding Success}" Classes="value" />
+                <TextBlock Grid.Column="2" Text="{Binding Success, Converter={StaticResource SuccessText}}" Classes="value" />
                 <TextBlock Grid.Column="3" Text="{Binding DurationSeconds, StringFormat='{}{0:0}s'}" Classes="value" />
                 <TextBlock Grid.Column="4" Text="{Binding Error}" Classes="value" TextTrimming="CharacterEllipsis" />
               </Grid>

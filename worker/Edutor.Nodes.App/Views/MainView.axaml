@@ -17,20 +17,25 @@
     <Border x:Name="NavHost" Grid.Column="0" Grid.Row="0" Background="{DynamicResource SidebarBackground}"
             BorderBrush="{DynamicResource CardBorder}" BorderThickness="0,0,1,0">
       <DockPanel x:Name="NavPanel" Margin="12">
-        <StackPanel DockPanel.Dock="Top" Margin="4,8,4,20">
+        <StackPanel x:Name="BrandBlock" DockPanel.Dock="Top" Margin="4,8,4,20">
           <TextBlock Text="Edutor Nodes" Classes="h1" />
           <TextBlock Text="Video konversiya worker-i" Classes="label" Margin="0,2,0,0" />
         </StackPanel>
 
-        <StackPanel x:Name="NavItems" DockPanel.Dock="Top" Spacing="4">
-          <Button Classes="nav" Content="Dashboard" Click="OnNav" Tag="dashboard" />
-          <Button Classes="nav" Content="Tapşırıqlar" Click="OnNav" Tag="jobs" />
-          <Button Classes="nav" Content="Cihaz" Click="OnNav" Tag="devices" />
-          <Button Classes="nav" Content="Tənzimləmələr" Click="OnNav" Tag="settings" />
-          <Button Classes="nav" Content="Jurnallar" Click="OnNav" Tag="logs" />
+        <StackPanel DockPanel.Dock="Top" Spacing="4">
+          <ScrollViewer x:Name="NavScroll" HorizontalScrollBarVisibility="Auto"
+                        VerticalScrollBarVisibility="Disabled">
+            <StackPanel x:Name="NavItems" Orientation="Vertical" Spacing="4">
+              <Button Classes="nav" Content="Dashboard" Click="OnNav" Tag="dashboard" />
+              <Button Classes="nav" Content="Tapşırıqlar" Click="OnNav" Tag="jobs" />
+              <Button Classes="nav" Content="Cihaz" Click="OnNav" Tag="devices" />
+              <Button Classes="nav" Content="Tənzimləmələr" Click="OnNav" Tag="settings" />
+              <Button Classes="nav" Content="Jurnallar" Click="OnNav" Tag="logs" />
+            </StackPanel>
+          </ScrollViewer>
         </StackPanel>
 
-        <StackPanel DockPanel.Dock="Bottom" Spacing="8">
+        <StackPanel x:Name="ThemeBlock" DockPanel.Dock="Bottom" Spacing="8">
           <ToggleSwitch IsChecked="{Binding IsDark}" OnContent="Tünd" OffContent="İşıqlı" />
         </StackPanel>
       </DockPanel>
@@ -48,13 +53,14 @@
           <TextBlock Grid.Column="2" Text="{Binding PausedReason}" Margin="16,0,0,0" VerticalAlignment="Center"
                      IsVisible="{Binding HasPausedReason}" Foreground="#B54708" TextWrapping="NoWrap" />
           <StackPanel Grid.Column="3" Orientation="Horizontal" Spacing="8">
+            <Button x:Name="ThemeButton" Classes="ghost" Content="☾" Click="OnToggleTheme" IsVisible="False" />
             <Button Classes="primary" Content="{Binding StartButtonText}" Command="{Binding StartCommand}" />
           </StackPanel>
         </Grid>
       </Border>
 
-      <ScrollViewer Padding="16">
-        <ContentControl Content="{Binding CurrentPage}" />
+      <ScrollViewer x:Name="PageScroll" Padding="16" HorizontalScrollBarVisibility="Auto">
+        <ContentControl x:Name="PageContent" Content="{Binding CurrentPage}" />
       </ScrollViewer>
     </DockPanel>
   </Grid>

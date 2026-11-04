@@ -21,6 +21,18 @@ public sealed class ToneBrushConverter : IValueConverter
         => throw new NotSupportedException();
 }
 
+/// <summary>İşin nəticəsini oxunaqlı mətnə çevirir (True/False əvəzinə).</summary>
+public sealed class SuccessTextConverter : IValueConverter
+{
+    public static readonly SuccessTextConverter Instance = new();
+
+    public object Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
+        => value is true ? "uğurlu" : "alınmadı";
+
+    public object ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture)
+        => throw new NotSupportedException();
+}
+
 /// <summary>0..1 aralığındaki faizi 0..100-ə çevirir (ProgressBar üçün).</summary>
 public sealed class FractionConverter : IValueConverter
 {

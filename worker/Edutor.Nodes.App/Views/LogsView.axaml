@@ -10,7 +10,7 @@
     </Grid>
 
     <Border Classes="card" Padding="10">
-      <ScrollViewer>
+      <ScrollViewer x:Name="LogScroll" Height="420" HorizontalScrollBarVisibility="Auto">
         <ItemsControl ItemsSource="{Binding Entries}">
           <ItemsControl.ItemTemplate>
             <DataTemplate>

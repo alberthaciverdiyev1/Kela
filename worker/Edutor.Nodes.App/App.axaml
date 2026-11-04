@@ -6,6 +6,7 @@
   <Application.Resources>
     <local:ToneBrushConverter x:Key="ToneBrush" />
     <local:FractionConverter x:Key="Fraction" />
+    <local:SuccessTextConverter x:Key="SuccessText" />
   </Application.Resources>
   <Application.Styles>
     <FluentTheme />

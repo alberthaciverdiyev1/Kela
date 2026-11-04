@@ -56,6 +56,9 @@ public sealed partial class MainView : UserControl
         var navPanel = this.FindControl<DockPanel>("NavPanel");
         var navItems = this.FindControl<StackPanel>("NavItems");
         var pageHost = this.FindControl<DockPanel>("PageHost");
+        var brand = this.FindControl<StackPanel>("BrandBlock");
+        var themeBlock = this.FindControl<StackPanel>("ThemeBlock");
+        var themeButton = this.FindControl<Button>("ThemeButton");
 
         if (shell is null || navHost is null || navPanel is null || navItems is null || pageHost is null) return;
 
@@ -91,7 +94,48 @@ public sealed partial class MainView : UserControl
             navItems.Spacing = 4;
         }
 
+        // Dar ekranda başlıq və alt keçid yer tutmasın: qısa adlar + başlıqda tema düyməsi.
+        if (brand is not null) brand.IsVisible = !narrow;
+        if (themeBlock is not null) themeBlock.IsVisible = !narrow;
+        if (themeButton is not null) themeButton.IsVisible = narrow;
+
+        // Cədvəl sətirləri telefon eninə sığmır — səhifə üfüqi sürüşdürülə bilsin.
+        var pageContent = this.FindControl<ContentControl>("PageContent");
+        if (pageContent is not null) pageContent.MinWidth = narrow ? 560 : 0;
+
+        foreach (var button in navItems.Children.OfType<Button>())
+        {
+            if (button.Tag is not string tag) continue;
+
+            button.Content = narrow ? ShortLabel(tag) : LongLabel(tag);
+            button.Padding = narrow ? new Thickness(10, 6) : new Thickness(12, 10);
+            button.FontSize = narrow ? 12 : 13;
+        }
+
         Highlight(CurrentPage());
+    }
+
+    private static string LongLabel(string page) => page switch
+    {
+        "jobs" => "Tapşırıqlar",
+        "devices" => "Cihaz",
+        "settings" => "Tənzimləmələr",
+        "logs" => "Jurnallar",
+        _ => "Dashboard"
+    };
+
+    private static string ShortLabel(string page) => page switch
+    {
+        "jobs" => "İşlər",
+        "devices" => "Cihaz",
+        "settings" => "Ayarlar",
+        "logs" => "Jurnal",
+        _ => "Panel"
+    };
+
+    private void OnToggleTheme(object? sender, RoutedEventArgs e)
+    {
+        if (DataContext is MainViewModel model) model.IsDark = !model.IsDark;
     }
 
     private string CurrentPage() => DataContext is MainViewModel model ? model.Page : "dashboard";

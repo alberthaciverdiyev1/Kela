@@ -142,7 +142,27 @@ dotnet run --project worker/Edutor.Nodes.App --framework net10.0
 3. Kodu **Tənzimləmələr → Cihaz qeydiyyatı** sahəsinə yaz, "Qeydiyyatdan keç".
 4. Dashboard → **İşə sal**.
 
-Android: `dotnet build worker/Edutor.Nodes.App -p:BuildAndroid=true -f net10.0-android`
+### Hazır paketlər
+
+İnkişaf mühitindən çıxış üçün paketləri bir əmrlə qurmaq olar:
+
+```bash
+worker/package.sh              # hamısı: linux + mac + android
+worker/package.sh linux        # linux-x64 (self-contained, .desktop faylı ilə)
+worker/package.sh mac          # osx-arm64 + osx-x64 (.app bundle)
+worker/package.sh android      # arm64 APK
+```
+
+Nəticələr `worker/dist/` qovluğuna düşür. Paketlər **self-contained**-dır —
+istifadəçi .NET quraşdırmır, yalnız ffmpeg lazımdır (Linux/macOS-da sistemdən,
+Android-də APK-nın içindəki `libffmpeg.so`-dan).
+
+Android və macOS paketi imzalanmayıb (yalnız lokal istifadə üçün). Sabit imza
+lazımdırsa, `EDUTOR_KEYSTORE`, `EDUTOR_KEY_ALIAS`, `EDUTOR_KEYSTORE_PASSWORD`
+dəyişənlərini verin — açarlar repo-ya düşmür.
+
+Android quruluşu üçün JDK və Android SDK tələb olunur:
+`ANDROID_HOME` (default `~/Android/Sdk`) və `JavaSdkDirectory` (default `~/Android/jdk`).
 
 ## Testlər
 
@@ -167,7 +187,7 @@ dotnet test tests/Edutor.Tests --filter "FullyQualifiedName~Nodes"
 | Linux x64 | ✅ sınaqdan keçirilib (NVENC + libx264) |
 | Windows x64 | ✅ kod platformadan asılı deyil; ffmpeg PATH-dən tapılır |
 | **Android arm64** | ✅ sınaqdan keçirilib (MediaCodec + libx264) |
-| macOS | ❌ dəstəklənmir (tələb olunmur) |
+| macOS (arm64 / x64) | ✅ paketlənir (`worker/package.sh mac`); real Mac-də sınaq gözlənir |
 | Android armv7 / x86 | ❌ dəstəklənmir — APK yalnız `arm64-v8a` üçün qurulur |
 
 Android paketi qəsdən yalnız `arm64-v8a` üçündür: ffmpeg ikililəri də yalnız o ABI
@@ -181,4 +201,7 @@ heç nə edə bilməzdi.
   üzərində 4-dən çox iş getmir. Model genişlənməyə hazırdır, amma tətbiq olunmayıb.
 - **Yük testi aparılmayıb.** İki cihaz və ~200 iş ilə sınaqdan keçirilib; yüzlərlə
   eyni vaxtlı cihazda davranış ölçülməyib.
-- Android paketi **Debug** quruluşudur — paylama üçün Release/AOT tövsiyə olunur.
+- Android paketi **Release** quruluşudur, amma AOT deyil — ilk açılış bir neçə saniyə
+  çəkir. Play Store yayımı üçün `AndroidEnableProfiledAot` və düzgün imza lazımdır.
+- macOS paketi imzalanmayıb və notarizasiya olunmayıb; ilk açılışda Gatekeeper
+  xəbərdarlığı verir (paket içindəki README-də keçmə yolu yazılıb).

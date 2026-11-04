@@ -18,7 +18,8 @@ public sealed class App : Avalonia.Application
         {
             case IClassicDesktopStyleApplicationLifetime desktop:
                 desktop.MainWindow = new MainWindow { DataContext = model };
-                desktop.ShutdownRequested += (_, _) => model.Engine.StopAsync().GetAwaiter().GetResult();
+                // Bağlanma bloklanmasın: dayandırma üçün sonlu vaxt verilir.
+                desktop.ShutdownRequested += (_, _) => model.Engine.StopAsync().Wait(TimeSpan.FromSeconds(5));
                 break;
 
             // Android və iOS tək görünüş işlədir: Window yox, birbaşa idarə elementi verilir.
