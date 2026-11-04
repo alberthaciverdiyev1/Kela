@@ -48,7 +48,10 @@ window.AdminUI = window.AdminUI || {};
         const saved = read(table);
         const known = new Set(cols.map(c => c.index));
         const order = (saved?.order || []).filter(i => known.has(i));
-        cols.forEach(c => { if (!order.includes(c.index)) order.push(c.index); });
+        // Standart sıra həmişə orijinal sütun indeksinə görədir — DOM artıq
+        // dəyişdirilmiş olsa belə "sıfırla" düzgün bərpa edir.
+        cols.map(c => c.index).sort((a, b) => a - b)
+            .forEach(i => { if (!order.includes(i)) order.push(i); });
         const hidden = new Set((saved?.hidden || []).filter(i => known.has(i)));
         cols.forEach(c => { if (c.fixed) hidden.delete(c.index); });
         return { order, hidden };
@@ -85,14 +88,17 @@ window.AdminUI = window.AdminUI || {};
                 const col = byIndex.get(i);
                 if (col) head.appendChild(col.th);
             });
-            rows.forEach(tr => {
-                const cells = new Map([...tr.cells].map(td => [Number(td.dataset.col), td]));
-                order.forEach(i => {
-                    const td = cells.get(i);
-                    if (td) tr.appendChild(td);
-                });
-            });
         }
+
+        // Sətirlər siyahı yeniləndikcə yenidən çəkilir və orijinal sırada gəlir;
+        // hər dəfə sütun sırasına uyğunlaşdırılır ki, başlıqla üst-üstə düşsün.
+        rows.forEach(tr => {
+            const cells = new Map([...tr.cells].map(td => [Number(td.dataset.col), td]));
+            const wanted = order.filter(i => cells.has(i));
+            const current = [...tr.cells].map(td => Number(td.dataset.col));
+            if (current.length === wanted.length && current.every((v, k) => v === wanted[k])) return;
+            wanted.forEach(i => tr.appendChild(cells.get(i)));
+        });
 
         order.forEach(i => {
             const col = byIndex.get(i);
@@ -132,13 +138,18 @@ window.AdminUI = window.AdminUI || {};
         let bar = wrap.querySelector(':scope > .table-col-tools');
         if (bar) return bar;
 
+        // Düymə cədvəl başlığının sağ küncündə üç nöqtə kimi görünür — cədvəlin
+        // öz başlığının hissəsi kimi oxunur, ayrıca alət paneli kimi yox.
         bar = document.createElement('div');
-        bar.className = 'table-col-tools flex justify-end px-3 pt-2';
+        bar.className = 'table-col-tools pointer-events-none absolute right-0 top-0 z-20';
         const btn = document.createElement('button');
         btn.type = 'button';
-        btn.className = 'admin-button-secondary inline-flex items-center gap-1.5 !px-3 !py-1.5 text-xs';
-        btn.innerHTML = '<svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16"/></svg><span></span>';
-        btn.querySelector('span').textContent = L["Table_Columns"];
+        btn.className = 'table-col-trigger pointer-events-auto grid h-[46px] w-10 place-items-center text-slate-500 transition hover:text-slate-800';
+        btn.title = L["Table_Columns"];
+        btn.setAttribute('aria-label', L["Table_Columns"]);
+        btn.setAttribute('aria-haspopup', 'dialog');
+        btn.setAttribute('aria-expanded', 'false');
+        btn.innerHTML = '<svg class="h-5 w-5" fill="currentColor" viewBox="0 0 20 20"><circle cx="10" cy="4" r="1.5"/><circle cx="10" cy="10" r="1.5"/><circle cx="10" cy="16" r="1.5"/></svg>';
         btn.addEventListener('click', (e) => {
             e.stopPropagation();
             togglePanel(table, bar, btn);
@@ -160,7 +171,7 @@ window.AdminUI = window.AdminUI || {};
         btn.setAttribute('aria-expanded', 'true');
 
         const panel = document.createElement('div');
-        panel.className = 'table-col-panel absolute right-3 top-11 z-30 w-64 rounded-xl border border-border bg-white p-3 shadow-lg';
+        panel.className = 'table-col-panel pointer-events-auto absolute right-2 top-[46px] z-30 w-64 rounded-xl border border-border bg-white p-3 shadow-lg';
 
         const hint = document.createElement('p');
         hint.className = 'mb-2 text-xs text-slate-500';
@@ -243,6 +254,41 @@ window.AdminUI = window.AdminUI || {};
             });
 
             row.append(handle, label);
+
+            // Sürüşdürmə toxunma ekranlarda işləmir — oxlarla da sıralamaq mümkündür.
+            const arrows = document.createElement('div');
+            arrows.className = 'flex shrink-0 items-center';
+            const chevron = up =>
+                `<svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="${up ? 'm6 15 6-6 6 6' : 'm6 9 6 6 6-6'}"/></svg>`;
+
+            const moveBy = (delta) => {
+                const prefs = prefsOf(table);
+                const from = prefs.order.indexOf(index);
+                const to = from + delta;
+                if (from < 0 || to < 0 || to >= prefs.order.length) return;
+                const list2 = [...prefs.order];
+                [list2[from], list2[to]] = [list2[to], list2[from]];
+                write(table, { order: list2, hidden: [...prefs.hidden] });
+                apply(table);
+                renderPanelList(table, list);
+            };
+
+            const up = document.createElement('button');
+            up.type = 'button';
+            up.className = 'grid h-6 w-5 place-items-center rounded text-slate-400 transition hover:bg-surface-secondary hover:text-primary disabled:opacity-30 disabled:hover:bg-transparent';
+            up.innerHTML = chevron(true);
+            up.disabled = position === 0;
+            up.addEventListener('click', () => moveBy(-1));
+
+            const down = document.createElement('button');
+            down.type = 'button';
+            down.className = up.className;
+            down.innerHTML = chevron(false);
+            down.disabled = position === ordered.length - 1;
+            down.addEventListener('click', () => moveBy(1));
+
+            arrows.append(up, down);
+            row.appendChild(arrows);
             list.appendChild(row);
         });
     }
@@ -262,6 +308,9 @@ window.AdminUI = window.AdminUI || {};
 
     document.addEventListener('DOMContentLoaded', () => setupAll());
     document.addEventListener('click', (e) => {
+        // Sıralama zamanı siyahı yenidən çəkilir — kliklənən düymə DOM-dan düşür
+        // və closest() null qaytarır. Bu halda panelin bağlanması səhv olardı.
+        if (e.target instanceof Element && !e.target.isConnected) return;
         if (!e.target.closest?.('.table-col-tools')) closePanels();
     });
     document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closePanels(); });

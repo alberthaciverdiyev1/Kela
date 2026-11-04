@@ -1,10 +1,15 @@
 // Şəxsi qeydlər: admin dizaynına uyğun kartlar + zəngin mətn redaktoru.
 (function () {
-    // Qeyd rəngi yalnız kartın yuxarı zolağında istifadə olunur.
+    // Qeyd rəngi kartın fonunda (yumşaq ton) və sərhədində istifadə olunur.
     const ACCENTS = {
         default: '#94a3b8', red: '#ef4444', orange: '#f59e0b', yellow: '#eab308',
         green: '#10b981', teal: '#14b8a6', blue: '#3b82f6', purple: '#8b5cf6',
         pink: '#ec4899', gray: '#64748b', brown: '#a16207'
+    };
+    const TINTS = {
+        default: '#f8fafc', red: '#fef2f2', orange: '#fff7ed', yellow: '#fefce8',
+        green: '#f0fdf4', teal: '#f0fdfa', blue: '#eff6ff', purple: '#f5f3ff',
+        pink: '#fdf2f8', gray: '#f8fafc', brown: '#faf5ef'
     };
 
     let notes = [];
@@ -21,6 +26,10 @@
 
     function accent(value) {
         return ACCENTS[colorName(value)];
+    }
+
+    function tint(value) {
+        return TINTS[colorName(value)];
     }
 
     function paletteButtons(active) {
@@ -57,8 +66,8 @@
             : `<svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M14.5 3 21 9.5l-2 2-2.5-.5-4.4 4.4.9 3-1.5 1.5-4-4L3.9 21H3v-.9l5.1-5.1-4-4L5.5 9.5l3 .9L12.9 6l-.5-2.5 2-2Z"/></svg>`;
 
         return `
-            <article class="admin-card flex flex-col overflow-hidden">
-                <span class="h-1.5 w-full shrink-0" style="background:${accent(note.color)}"></span>
+            <article class="admin-card flex flex-col overflow-hidden"
+                     style="background:${tint(note.color)};border-color:${accent(note.color)}40">
                 <div class="flex flex-1 flex-col p-4">
                     <div class="flex items-start gap-2">
                         <h3 class="min-w-0 flex-1 break-words text-sm font-bold text-slate-900">${AdminUI.escapeHtml(note.title)}</h3>

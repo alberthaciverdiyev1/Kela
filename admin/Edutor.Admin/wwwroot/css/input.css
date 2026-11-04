@@ -228,6 +228,11 @@
     white-space: nowrap;
   }
 
+  /* Sütun alətinin üç nöqtəsi sonuncu başlığın üzərinə düşməsin. */
+  .relative:has(> .table-col-tools) .admin-table thead th:last-child {
+    padding-right: 44px;
+  }
+
   .admin-table tbody td {
     border-top: 1px solid var(--border);
     padding: 14px 16px;
