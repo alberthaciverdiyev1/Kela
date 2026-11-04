@@ -220,6 +220,11 @@
       window.addEventListener('focus', onFocus);
       window.addEventListener('pagehide', onPageHide);
       window.addEventListener('pageshow', onPageShow);
+      // Parol meneceri kimi yerli pəncərələr "blur" yaradır, amma səhifə görünür qalır —
+      // istifadəçi yenidən yazmağa başlayanda ekran dərhal açılmalıdır.
+      document.addEventListener('focusin', onFocus, true);
+      document.addEventListener('keydown', onFocus, true);
+      document.addEventListener('pointerdown', onFocus, true);
     }
 
     patchDisplayCapture();
@@ -242,6 +247,9 @@
     window.removeEventListener('focus', onFocus);
     window.removeEventListener('pagehide', onPageHide);
     window.removeEventListener('pageshow', onPageShow);
+    document.removeEventListener('focusin', onFocus, true);
+    document.removeEventListener('keydown', onFocus, true);
+    document.removeEventListener('pointerdown', onFocus, true);
 
     stopClock();
     const el = document.getElementById(WM_ID);

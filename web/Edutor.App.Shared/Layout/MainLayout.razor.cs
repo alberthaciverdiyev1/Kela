@@ -107,6 +107,7 @@ public partial class MainLayout
         {
             await Push.UnregisterAsync();
             await ScreenGuard.ClearWatermarkAsync();
+            await ScreenGuard.DisableAsync();
         }
     }
 

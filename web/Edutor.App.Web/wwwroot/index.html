@@ -52,6 +52,12 @@
     <script src="_content/Edutor.App.Shared/lib/hls/hls.min.js"></script>
     <script src="_content/Edutor.App.Shared/lib/pdfjs/pdf.min.js"></script>
     <script src="_content/Edutor.App.Shared/js/video-player.js"></script>
+    <script>
+        /* Giriş səhifəsində qoruma olmamalıdır: parol meneceri pəncərə fokusunu
+           aldıqda ekran bulanıqlaşır və istifadəçi yazdığını görmür.
+           Qoruma yalnız daxil olduqdan sonra MainLayout tərəfindən açılır. */
+        window.LmsGuardConfig = { autoStart: false };
+    </script>
     <script src="_content/Edutor.App.Shared/js/lms-guard.js"></script>
     <script src="_content/Edutor.App.Shared/js/pull-refresh.js"></script>
     <script src="_content/Edutor.App.Shared/js/push-sound.js"></script>
