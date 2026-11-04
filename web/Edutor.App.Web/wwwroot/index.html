@@ -19,7 +19,7 @@
         .lms-boot-ring { position: relative; display: flex; height: 88px; width: 88px; align-items: center; justify-content: center; }
         .lms-boot-ring i { position: absolute; inset: 0; border-radius: 9999px; border: 1.5px solid transparent; border-top-color: #2D8063; border-right-color: #A5CEB6; animation: lms-rot 2.1s linear infinite; }
         .lms-boot-ring i.inner { inset: 11px; border-top-color: transparent; border-right-color: transparent; border-bottom-color: #61AB85; border-left-color: #C0DECC; animation: lms-rot 2.8s linear infinite reverse; }
-        .lms-boot-core { display: flex; height: 37px; width: 37px; align-items: center; justify-content: center; border-radius: 13px; background: linear-gradient(135deg, #439C76, #246D50); box-shadow: 0 10px 15px -3px rgba(0,0,0,.15); }
+        .lms-boot-core { display: block; height: 52px; width: 52px; object-fit: contain; mix-blend-mode: multiply; }
         .lms-boot-title { margin: 28px 0 0; font-size: 15px; font-weight: 600; color: #234D3B; }
         .lms-boot-sub { margin: 6px 0 0; font-size: 12px; color: #8AA598; }
         .lms-boot-bar { margin-top: 20px; height: 3px; width: 112px; overflow: hidden; border-radius: 9999px; background: #DCE9DF; }
@@ -34,12 +34,7 @@
         <div class="lms-boot" role="status" aria-label="Yüklənir">
             <div class="lms-boot-ring">
                 <i></i><i class="inner"></i>
-                <div class="lms-boot-core">
-                    <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.8"
-                         stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M12 20V11M12 14C7 14 5 10 5 5c5 0 7 3 7 7M12 16c0-5 2-8 7-8 0 5-2 8-7 8" />
-                    </svg>
-                </div>
+                <img class="lms-boot-core" src="_content/Edutor.App.Shared/images/logo/logo-small.png" alt="" />
             </div>
             <p class="lms-boot-title">Yüklənir...</p>
             <p class="lms-boot-sub">Bir az gözləyin</p>

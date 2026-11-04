@@ -32,21 +32,14 @@
         @if (!string.IsNullOrWhiteSpace(brandLogo))
         {
             <img src="@brandLogo" alt="@L["Common_Logo"]" class="h-10 w-10 shrink-0 rounded-xl object-contain"/>
+            <div class="min-w-0">
+                <p class="text-xs font-medium text-slate-400">@L["Sidebar_AdminPanel"]</p>
+            </div>
         }
         else
         {
-            <div
-                class="grid h-10 w-10 place-items-center rounded-xl bg-gradient-to-br from-primary to-primary-700 text-white shadow-sm">
-                <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.9">
-                    <path stroke-linecap="round" stroke-linejoin="round"
-                          d="M4 19V6.5A2.5 2.5 0 0 1 6.5 4H11v15H6.5A2.5 2.5 0 0 0 4 19Zm16 0V6.5A2.5 2.5 0 0 0 17.5 4H13v15h4.5A2.5 2.5 0 0 1 20 19Z"/>
-                </svg>
-            </div>
+            <img src="~/img/logo.png" alt="Bubora" class="h-8 w-auto shrink-0 mix-blend-multiply" />
         }
-        <div class="min-w-0">
-            <p class="text-base font-extrabold leading-none tracking-tight text-slate-900">Edutor</p>
-            <p class="mt-1 text-xs font-medium text-slate-400">@L["Sidebar_AdminPanel"]</p>
-        </div>
         <button type="button" id="navEditBtn" title="@L["Sidebar_Customize"]"
                 aria-label="@L["Sidebar_Customize"]"
                 class="ml-auto grid h-9 w-9 shrink-0 place-items-center rounded-xl text-slate-400 transition hover:bg-surface-secondary hover:text-slate-700">
