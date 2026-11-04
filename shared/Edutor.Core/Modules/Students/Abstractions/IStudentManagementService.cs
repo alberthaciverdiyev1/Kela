@@ -32,4 +32,7 @@ public interface IStudentManagementService
 
     /// <summary>Şagird müəllimin qruplarından ən azı birindədir.</summary>
     Task<bool> IsInTeacherGroupsAsync(long studentId, long teacherId, CancellationToken ct = default);
+
+    /// <summary>Verilmiş e-poçtla şagird hesabı varmı (şagird görünüşündə giriş imkanı üçün).</summary>
+    Task<bool> ExistsByEmailAsync(string email, CancellationToken ct = default);
 }

@@ -135,6 +135,15 @@ public sealed class StudentManagementService(
             sg => sg.StudentId == studentId
                   && db.Groups.Any(g => g.Id == sg.GroupId && g.UserId == teacherId), ct);
 
+    public Task<bool> ExistsByEmailAsync(string email, CancellationToken ct = default)
+    {
+        var normalized = (email ?? string.Empty).Trim().ToLowerInvariant();
+        if (normalized.Length == 0) return Task.FromResult(false);
+
+        return db.Students.IgnoreQueryFilters(new[] { "SoftDelete" })
+            .AnyAsync(s => s.Email == normalized, ct);
+    }
+
     private IQueryable<Student> Query(StudentListRequest request)
     {
         var query = db.Students.AsNoTracking();

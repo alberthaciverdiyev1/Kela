@@ -1,0 +1,71 @@
+@{
+    ViewData["Title"] = L["Nav_StudentView"];
+    var appBaseUrl = ViewData["AppBaseUrl"] as string ?? "";
+    var studentEmail = ViewData["StudentEmail"] as string ?? "";
+    var hasStudentAccount = ViewData["HasStudentAccount"] is true;
+}
+<section class="admin-page">
+    <div class="admin-card flex flex-wrap items-center justify-between gap-3 p-3 sm:p-4">
+        <div class="admin-tabs" id="viewSizeTabs">
+            <button type="button" class="admin-tab is-active" data-view-size="desktop">
+                <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M3 5.5A1.5 1.5 0 0 1 4.5 4h15A1.5 1.5 0 0 1 21 5.5v9a1.5 1.5 0 0 1-1.5 1.5h-15A1.5 1.5 0 0 1 3 14.5v-9ZM8 20h8M12 16v4"/>
+                </svg>
+                @L["StudentView_Desktop"]
+            </button>
+            <button type="button" class="admin-tab" data-view-size="mobile">
+                <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M7 2.75h10A1.25 1.25 0 0 1 18.25 4v16A1.25 1.25 0 0 1 17 21.25H7A1.25 1.25 0 0 1 5.75 20V4A1.25 1.25 0 0 1 7 2.75ZM11 18.25h2"/>
+                </svg>
+                @L["StudentView_Mobile"]
+            </button>
+        </div>
+
+        <div class="flex flex-wrap items-center gap-2">
+            <span class="hidden text-xs font-medium text-slate-400 sm:inline">@appBaseUrl</span>
+            <a href="/students" class="admin-button-secondary">@L["StudentView_ManageStudents"]</a>
+            @if (!string.IsNullOrEmpty(appBaseUrl))
+            {
+                <button type="button" id="reloadFrame" class="admin-button-secondary">
+                    <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M4 4v6h6M20 20v-6h-6M5.07 16a7.5 7.5 0 0 0 12.6 1.7M18.93 8A7.5 7.5 0 0 0 6.33 6.3"/>
+                    </svg>
+                    @L["StudentView_Reload"]
+                </button>
+                <a href="@appBaseUrl" target="_blank" rel="noopener" class="admin-button-primary">
+                    @L["StudentView_OpenNewTab"]
+                </a>
+            }
+        </div>
+    </div>
+
+    @if (!hasStudentAccount && !string.IsNullOrEmpty(studentEmail))
+    {
+        <div class="admin-card flex flex-wrap items-center justify-between gap-3 border border-warning/40 bg-warning-bg p-4">
+            <div class="flex min-w-0 items-start gap-3">
+                <svg class="mt-0.5 h-5 w-5 shrink-0 text-warning" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.9">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m0 3h.008M10.34 3.94a1.92 1.92 0 0 1 3.32 0l7.5 12.98A1.92 1.92 0 0 1 19.5 20h-15a1.92 1.92 0 0 1-1.66-3.08l7.5-12.98Z"/>
+                </svg>
+                <div class="min-w-0">
+                    <p class="text-sm font-bold text-warning">@L["StudentView_NoAccountTitle"]</p>
+                    <p class="mt-1 text-sm text-slate-700">@string.Format(L["StudentView_NoAccountText"], studentEmail)</p>
+                </div>
+            </div>
+            <a href="/students" class="admin-button-primary shrink-0">@L["StudentView_AddStudent"]</a>
+        </div>
+    }
+
+    @if (string.IsNullOrEmpty(appBaseUrl))
+    {
+        <div class="admin-card border border-warning/40 bg-warning-bg p-4">
+            <p class="text-sm font-bold text-warning">@L["StudentView_NotConfigured"]</p>
+        </div>
+    }
+    else
+    {
+        <div class="admin-card overflow-hidden p-2">
+            <iframe id="studentViewFrame" src="@appBaseUrl" title="@L["Nav_StudentView"]"
+                    class="admin-webview mx-auto block w-full rounded-xl border border-border bg-white"></iframe>
+        </div>
+    }
+</section>

@@ -472,6 +472,18 @@
   box-shadow: 0 2px 8px rgba(15, 23, 42, 0.08);
 }
 
+/* ---------- Şagird görünüşü (webview) ----------
+   Topbar və səhifə boşluqları çıxıldıqdan sonra qalan hündürlüyü tutur. */
+.admin-webview {
+  height: calc(100dvh - 15rem);
+  min-height: 480px;
+  transition: max-width 200ms ease;
+}
+
+.admin-webview.is-mobile {
+  max-width: 420px;
+}
+
 /* ---------- Rich editor (Quill) ---------- */
 .admin-editor {
   border-radius: 12px;

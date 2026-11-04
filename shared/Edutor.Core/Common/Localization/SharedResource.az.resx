@@ -3624,4 +3624,34 @@
   <data name="Quiz_GroupsHint" xml:space="preserve">
     <value>Yalnız imtahanın fənnini tədris edən qruplar göstərilir. Seçim könüllüdür.</value>
   </data>
+  <data name="Nav_StudentView" xml:space="preserve">
+    <value>Şagird görünüşü</value>
+  </data>
+  <data name="StudentView_Desktop" xml:space="preserve">
+    <value>Kompüter</value>
+  </data>
+  <data name="StudentView_Mobile" xml:space="preserve">
+    <value>Mobil</value>
+  </data>
+  <data name="StudentView_Reload" xml:space="preserve">
+    <value>Yenilə</value>
+  </data>
+  <data name="StudentView_OpenNewTab" xml:space="preserve">
+    <value>Yeni tabda aç</value>
+  </data>
+  <data name="StudentView_ManageStudents" xml:space="preserve">
+    <value>Şagirdlər</value>
+  </data>
+  <data name="StudentView_NoAccountTitle" xml:space="preserve">
+    <value>Şagird hesabınız yoxdur</value>
+  </data>
+  <data name="StudentView_NoAccountText" xml:space="preserve">
+    <value>E-poçtunuzla ({0}) şagird hesabı yaradın, sonra bu səhifədə həmin hesabla daxil olaraq şagird tətbiqini gəzə bilərsiniz.</value>
+  </data>
+  <data name="StudentView_AddStudent" xml:space="preserve">
+    <value>Şagird əlavə et</value>
+  </data>
+  <data name="StudentView_NotConfigured" xml:space="preserve">
+    <value>Şagird tətbiqinin ünvanı (App:BaseUrl) təyin edilməyib.</value>
+  </data>
 </root>

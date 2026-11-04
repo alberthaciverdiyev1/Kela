@@ -3624,4 +3624,34 @@
   <data name="Quiz_GroupsHint" xml:space="preserve">
     <value>Yalnızca sınavın konusunu içeren gruplar listelenir. Seçim isteğe bağlıdır.</value>
   </data>
+  <data name="Nav_StudentView" xml:space="preserve">
+    <value>Öğrenci görünümü</value>
+  </data>
+  <data name="StudentView_Desktop" xml:space="preserve">
+    <value>Bilgisayar</value>
+  </data>
+  <data name="StudentView_Mobile" xml:space="preserve">
+    <value>Mobil</value>
+  </data>
+  <data name="StudentView_Reload" xml:space="preserve">
+    <value>Yenile</value>
+  </data>
+  <data name="StudentView_OpenNewTab" xml:space="preserve">
+    <value>Yeni sekmede aç</value>
+  </data>
+  <data name="StudentView_ManageStudents" xml:space="preserve">
+    <value>Öğrenciler</value>
+  </data>
+  <data name="StudentView_NoAccountTitle" xml:space="preserve">
+    <value>Öğrenci hesabınız yok</value>
+  </data>
+  <data name="StudentView_NoAccountText" xml:space="preserve">
+    <value>E-postanızla ({0}) bir öğrenci hesabı oluşturun, ardından burada o hesapla giriş yaparak öğrenci uygulamasında gezinebilirsiniz.</value>
+  </data>
+  <data name="StudentView_AddStudent" xml:space="preserve">
+    <value>Öğrenci ekle</value>
+  </data>
+  <data name="StudentView_NotConfigured" xml:space="preserve">
+    <value>Öğrenci uygulamasının adresi (App:BaseUrl) tanımlı değil.</value>
+  </data>
 </root>
