@@ -1252,3 +1252,34 @@ video:fullscreen {
 
   .admin-table-footer { padding: 12px; }
 }
+
+/* Sidebar: bölmə yığılması və nazik, brend rəngli sürüşdürmə çubuğu. */
+/* Layered deyil: Tailwind-in utilities layı (flex) components-ı üstələyir. */
+.sidebar-section[data-collapsed] > :not(.sidebar-section-head) {
+  display: none;
+}
+
+@layer components {
+
+  .sidebar-nav {
+    scrollbar-width: thin;
+    scrollbar-color: #a5e6d5 transparent;
+  }
+
+  .sidebar-nav::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  .sidebar-nav::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  .sidebar-nav::-webkit-scrollbar-thumb {
+    background: #b8ead9;
+    border-radius: 999px;
+  }
+
+  .sidebar-nav::-webkit-scrollbar-thumb:hover {
+    background: var(--primary);
+  }
+}

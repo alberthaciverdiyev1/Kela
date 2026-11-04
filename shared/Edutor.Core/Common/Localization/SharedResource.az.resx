@@ -609,6 +609,30 @@
   <data name="Sidebar_SectionFinance" xml:space="preserve">
     <value>Maliyyə</value>
   </data>
+  <data name="Sidebar_SectionPayments" xml:space="preserve">
+    <value>Tədris ödənişləri</value>
+  </data>
+  <data name="Sidebar_SectionSubscription" xml:space="preserve">
+    <value>Abunəlik və limitlər</value>
+  </data>
+  <data name="Nav_MySubscription" xml:space="preserve">
+    <value>Abunəliyim</value>
+  </data>
+  <data name="Nav_MyLimits" xml:space="preserve">
+    <value>Limitlərim</value>
+  </data>
+  <data name="Nav_IncreaseLimits" xml:space="preserve">
+    <value>Limit artırma</value>
+  </data>
+  <data name="Nav_PaymentTemplates" xml:space="preserve">
+    <value>Ödəniş şablonları</value>
+  </data>
+  <data name="Nav_StudentPayments" xml:space="preserve">
+    <value>Tələbə ödənişləri</value>
+  </data>
+  <data name="Nav_Cashbox" xml:space="preserve">
+    <value>Kassa</value>
+  </data>
   <data name="Sidebar_SectionContent" xml:space="preserve">
     <value>Kontent</value>
   </data>

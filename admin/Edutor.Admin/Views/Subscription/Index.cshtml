@@ -120,7 +120,7 @@
     else
     {
         var used = usage!;
-        <div class="grid gap-4 sm:grid-cols-3">
+        <div id="plan" class="grid scroll-mt-20 gap-4 sm:grid-cols-3">
             <div class="admin-card p-5">
                 <p class="text-xs font-semibold uppercase tracking-wide text-slate-400">@L["Subscription_CurrentPlan"]</p>
                 <p class="mt-1 text-2xl font-extrabold text-slate-900">@Model.Plan.Name</p>
@@ -190,7 +190,7 @@
             </div>
         </div>
 
-        <div class="admin-card p-5">
+        <div id="limits" class="admin-card scroll-mt-20 p-5">
             <div class="mb-4 flex flex-wrap items-center justify-between gap-2">
                 <h3 class="text-base font-bold text-slate-900">@L["Subscription_Usage"]</h3>
 

@@ -609,6 +609,30 @@
   <data name="Sidebar_SectionFinance" xml:space="preserve">
     <value>Finance</value>
   </data>
+  <data name="Sidebar_SectionPayments" xml:space="preserve">
+    <value>Tuition payments</value>
+  </data>
+  <data name="Sidebar_SectionSubscription" xml:space="preserve">
+    <value>Subscription &amp; limits</value>
+  </data>
+  <data name="Nav_MySubscription" xml:space="preserve">
+    <value>My subscription</value>
+  </data>
+  <data name="Nav_MyLimits" xml:space="preserve">
+    <value>My limits</value>
+  </data>
+  <data name="Nav_IncreaseLimits" xml:space="preserve">
+    <value>Increase limits</value>
+  </data>
+  <data name="Nav_PaymentTemplates" xml:space="preserve">
+    <value>Payment templates</value>
+  </data>
+  <data name="Nav_StudentPayments" xml:space="preserve">
+    <value>Student payments</value>
+  </data>
+  <data name="Nav_Cashbox" xml:space="preserve">
+    <value>Cashbox</value>
+  </data>
   <data name="Sidebar_SectionContent" xml:space="preserve">
     <value>Content</value>
   </data>

@@ -56,10 +56,81 @@
         if (link) markSeen(link.getAttribute('data-nav-key'));
     });
 
+    // Sidebar bölmələri yığıla bilər. Vəziyyət cookie-də saxlanılır; ilk render-də
+    // server onu tətbiq etdiyi üçün məzmun açılıb sonra yox olmur.
+    function initSidebarSections() {
+        const nav = document.querySelector('#sidebar .sidebar-nav');
+        if (!nav) return;
+
+        const collapsed = new Set(
+            [...nav.querySelectorAll('.sidebar-section[data-collapsed]')].map(s => s.dataset.section));
+
+        function saveState() {
+            document.cookie = 'sidebar_collapsed=' + [...collapsed].join(',') +
+                ';path=/;max-age=31536000;samesite=lax';
+        }
+
+        nav.querySelectorAll('[data-section-toggle]').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const section = btn.closest('.sidebar-section');
+                const nowCollapsed = !section.hasAttribute('data-collapsed');
+                section.toggleAttribute('data-collapsed', nowCollapsed);
+                if (nowCollapsed) collapsed.add(section.dataset.section);
+                else collapsed.delete(section.dataset.section);
+                section.querySelector('.sidebar-chevron')?.classList.toggle('rotate-180', !nowCollapsed);
+                saveState();
+            });
+        });
+
+        // Uyğunlaşdırma rejimində bütün bölmələr açılır — gizlədiləcək sətirlər görünməlidir.
+        document.getElementById('navEditBtn')?.addEventListener('click', () => {
+            setTimeout(() => {
+                if (document.getElementById('sidebar').dataset.editing !== 'true') return;
+                nav.querySelectorAll('.sidebar-section[data-collapsed]').forEach(section => {
+                    section.removeAttribute('data-collapsed');
+                    section.querySelector('.sidebar-chevron')?.classList.add('rotate-180');
+                });
+            }, 0);
+        });
+    }
+    initSidebarSections();
+
+    // "Abunəliyim" və "Limitlərim" eyni səhifəyə aparır — aktiv görünən hash ilə seçilir.
+    function syncSubnavActive() {
+        const items = document.querySelectorAll('#sidebar [data-subnav]');
+        if (!items.length) return;
+        const onPage = location.pathname.replace(/\/+$/, '') === '/subscription';
+        const current = location.hash === '#limits' ? 'limits' : 'plan';
+        items.forEach(el => {
+            const active = onPage && el.dataset.subnav === current;
+            el.classList.toggle('bg-primary-light', active);
+            el.classList.toggle('text-primary', active);
+            el.classList.toggle('text-slate-600', !active);
+            el.classList.toggle('hover:bg-surface-secondary', !active);
+            el.classList.toggle('hover:text-slate-900', !active);
+        });
+    }
+    // Scroll konteyneri <main>-dir; brauzerin ilk hash-sürüşdürməsi burada işləmir.
+    function scrollToSubnav() {
+        const id = location.hash.replace('#', '');
+        if (id !== 'plan' && id !== 'limits') return;
+        document.getElementById(id)?.scrollIntoView({ block: 'start', behavior: 'instant' });
+    }
+
+    syncSubnavActive();
+    scrollToSubnav();
+    // Şəkillər/şriftlər yükləndikcə hündürlük dəyişir — səhifə tam hazır olanda təkrarla.
+    window.addEventListener('load', scrollToSubnav);
+    window.addEventListener('hashchange', () => {
+        syncSubnavActive();
+        scrollToSubnav();
+    });
+
     // Köhnə çağırışlar (səhifələr müraciət edir) — artıq vahid yeniləməyə yönəlir.
     window.refreshGroupJoinBadge = refreshSidebar;
     window.refreshTenantPendingBadge = refreshSidebar;
-    refreshSidebar();
+    // Sayğaclar serverdə çəkilirsə ilk sorğu lazımsızdır — nişanlar yanıb-sönməsin.
+    if (!document.getElementById('sidebar')?.dataset.sidebarRendered) refreshSidebar();
     document.addEventListener('visibilitychange', () => {
         if (document.visibilityState === 'visible') refreshSidebar();
     });

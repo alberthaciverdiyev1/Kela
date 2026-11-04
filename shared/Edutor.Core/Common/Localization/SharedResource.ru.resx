@@ -609,6 +609,30 @@
   <data name="Sidebar_SectionFinance" xml:space="preserve">
     <value>Финансы</value>
   </data>
+  <data name="Sidebar_SectionPayments" xml:space="preserve">
+    <value>Учебные платежи</value>
+  </data>
+  <data name="Sidebar_SectionSubscription" xml:space="preserve">
+    <value>Подписка и лимиты</value>
+  </data>
+  <data name="Nav_MySubscription" xml:space="preserve">
+    <value>Моя подписка</value>
+  </data>
+  <data name="Nav_MyLimits" xml:space="preserve">
+    <value>Мои лимиты</value>
+  </data>
+  <data name="Nav_IncreaseLimits" xml:space="preserve">
+    <value>Увеличение лимитов</value>
+  </data>
+  <data name="Nav_PaymentTemplates" xml:space="preserve">
+    <value>Шаблоны платежей</value>
+  </data>
+  <data name="Nav_StudentPayments" xml:space="preserve">
+    <value>Платежи учеников</value>
+  </data>
+  <data name="Nav_Cashbox" xml:space="preserve">
+    <value>Касса</value>
+  </data>
   <data name="Sidebar_SectionContent" xml:space="preserve">
     <value>Контент</value>
   </data>
