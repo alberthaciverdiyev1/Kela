@@ -13,7 +13,7 @@ public partial class Notifications
     private bool _loading = true;
     private bool _busy;
     private bool _pushBusy;
-    private string _pushState = "hidden"; // hidden | prompt | blocked
+    private string _pushState = "hidden"; // hidden | prompt | blocked | install
     private bool _deniedModalOpen;
     private string _webPushKey = string.Empty;
     private int _page;
@@ -38,6 +38,13 @@ public partial class Notifications
     {
         try
         {
+            // iOS Safari tabında icazə soruşula bilmir; əvvəlcə ana ekrana əlavə etmək lazımdır.
+            if (await JS.InvokeAsync<bool>("edutorPush.needsInstall"))
+            {
+                _pushState = "install";
+                return;
+            }
+
             if (!await JS.InvokeAsync<bool>("edutorPush.supported")) return;
 
             var permission = await JS.InvokeAsync<string>("edutorPush.permission");

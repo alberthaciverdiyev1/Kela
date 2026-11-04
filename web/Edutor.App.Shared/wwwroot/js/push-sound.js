@@ -1,7 +1,8 @@
 // Tətbiq görünən halda push gələndə qısa bildiriş səsi çalır.
 // Service worker (push-worker.js) görünən səhifəyə { type: 'edutor-push' } göndərir.
 window.edutorSound = (function () {
-    const src = '_content/Edutor.App.Shared/sounds/notification-2.wav';
+    // Mütləq yol: nisbi yol /notifications kimi route-larda səhv ünvana düşürdü.
+    const src = '/_content/Edutor.App.Shared/sounds/notification-2.wav';
     let audio;
     let unlocked = false;
 

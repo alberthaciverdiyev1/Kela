@@ -20,6 +20,7 @@ public partial class MainLayout
     private bool _ready;
     private bool _pushPrompted;
     private bool _pushPromptOpen;
+    private bool _pushInstallOpen;
     private bool _pushBusy;
     private string _webPushKey = string.Empty;
     private readonly List<string> _trail = [];
@@ -117,6 +118,16 @@ public partial class MainLayout
     {
         try
         {
+            // iOS Safari tabında icazə pəncərəsi heç vaxt açılmır — quraşdırma təlimatı göstərilir.
+            if (await JS.InvokeAsync<bool>("edutorPush.needsInstall"))
+            {
+                if (Nav.ToBaseRelativePath(Nav.Uri).StartsWith("notifications", StringComparison.OrdinalIgnoreCase)) return;
+
+                _pushInstallOpen = true;
+                await InvokeAsync(StateHasChanged);
+                return;
+            }
+
             if (!await JS.InvokeAsync<bool>("edutorPush.supported")) return;
 
             var permission = await JS.InvokeAsync<string>("edutorPush.permission");

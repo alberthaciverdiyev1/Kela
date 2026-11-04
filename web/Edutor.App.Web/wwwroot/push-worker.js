@@ -20,6 +20,9 @@ self.addEventListener('push', event => {
             icon: payload.image || '/icon-192.png',
             badge: '/icon-192.png',
             silent: visible.length > 0,
+            // Səs faylı mütləq yolla verilir; dəstəkləməyən brauzerlər (iOS) OS səsi çalır.
+            sound: '/_content/Edutor.App.Shared/sounds/notification-2.wav',
+            vibrate: visible.length > 0 ? undefined : [200, 100, 200],
             data: { url: (payload.data && payload.data.url) || '/notifications' }
         });
     })());
