@@ -73,7 +73,7 @@ public sealed class StudentPanelController(
 
     [HttpGet("{id:long}/homeworks")]
     public async Task<IActionResult> Homeworks(long id, CancellationToken ct)
-        => Json(await homework.ListAsync(id, ct));
+        => Json(await homework.ListAsync(id, ct: ct));
 
     [HttpGet("{id:long}/attendance")]
     public async Task<IActionResult> Attendance(long id, CancellationToken ct)

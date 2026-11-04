@@ -967,6 +967,10 @@ namespace Edutor.Core.Data.Migrations
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("published_at");
 
+                    b.Property<long?>("SubjectId")
+                        .HasColumnType("bigint")
+                        .HasColumnName("subject_id");
+
                     b.Property<long>("TenantId")
                         .HasColumnType("bigint")
                         .HasColumnName("tenant_id");
@@ -990,6 +994,8 @@ namespace Edutor.Core.Data.Migrations
                     b.HasIndex("DeletedAt");
 
                     b.HasIndex("IsPublished");
+
+                    b.HasIndex("SubjectId");
 
                     b.HasIndex("UserId");
 
@@ -4032,6 +4038,16 @@ namespace Edutor.Core.Data.Migrations
                     b.Navigation("Group");
 
                     b.Navigation("Student");
+                });
+
+            modelBuilder.Entity("Edutor.Core.Modules.Homework.Entities.Homework", b =>
+                {
+                    b.HasOne("Edutor.Core.Modules.Subject.Entities.Subject", "Subject")
+                        .WithMany()
+                        .HasForeignKey("SubjectId")
+                        .OnDelete(DeleteBehavior.SetNull);
+
+                    b.Navigation("Subject");
                 });
 
             modelBuilder.Entity("Edutor.Core.Modules.Homework.Entities.HomeworkAssignment", b =>

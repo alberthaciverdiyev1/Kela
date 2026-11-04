@@ -14,6 +14,10 @@ public sealed class HomeworkUpsertRequestValidator : AbstractValidator<HomeworkU
             .NotEmpty().WithMessage(L["Validation_TitleRequired"])
             .MaximumLength(190).WithMessage(L["Validation_TitleMaxLength190"]);
 
+        RuleFor(x => x.SubjectId)
+            .NotNull().WithMessage(L["Homework_SubjectRequired"])
+            .GreaterThan(0).WithMessage(L["Homework_SubjectRequired"]);
+
         // Rich editor HTML saxlayır — limit mətn limitindən böyükdür.
         RuleFor(x => x.Description).MaximumLength(20000);
 

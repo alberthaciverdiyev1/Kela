@@ -3601,7 +3601,7 @@
     <value>Sütunlar</value>
   </data>
   <data name="Table_ColumnsHint" xml:space="preserve">
-    <value>Göstəriləcək sütunları seçin, sırasını sürüşdürərək dəyişin.</value>
+    <value>Göstəriləcək sütunları seçin; sırasını oxlarla və ya sürüşdürməklə dəyişin.</value>
   </data>
   <data name="Table_Reset" xml:space="preserve">
     <value>Sıfırla</value>
@@ -3686,5 +3686,14 @@
   </data>
   <data name="PlanFeature_Api" xml:space="preserve">
     <value>API</value>
+  </data>
+  <data name="Homework_Subject" xml:space="preserve">
+    <value>Fənn</value>
+  </data>
+  <data name="Homework_SubjectRequired" xml:space="preserve">
+    <value>Ev tapşırığı mütləq bir fənnə bağlı olmalıdır</value>
+  </data>
+  <data name="Homework_SubjectNotFound" xml:space="preserve">
+    <value>Fənn tapılmadı</value>
   </data>
 </root>

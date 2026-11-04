@@ -4,8 +4,9 @@ namespace Edutor.App.Shared.Services.Api;
 
 public sealed partial class AppApi
 {
-    public Task<List<StudentHomeworkSummaryDto>> HomeworksAsync()
-        => _api.GetAsync<List<StudentHomeworkSummaryDto>>("/api/student-homework");
+    public Task<List<StudentHomeworkSummaryDto>> HomeworksAsync(long? subjectId = null)
+        => _api.GetAsync<List<StudentHomeworkSummaryDto>>(
+            subjectId is long id ? $"/api/student-homework?subject_id={id}" : "/api/student-homework");
 
     public Task<StudentHomeworkDetailDto> HomeworkAsync(long id)
         => _api.GetAsync<StudentHomeworkDetailDto>($"/api/student-homework/{id}");

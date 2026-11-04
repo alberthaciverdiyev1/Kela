@@ -3601,7 +3601,7 @@
     <value>Столбцы</value>
   </data>
   <data name="Table_ColumnsHint" xml:space="preserve">
-    <value>Выберите отображаемые столбцы и перетащите, чтобы изменить порядок.</value>
+    <value>Выберите отображаемые столбцы; меняйте порядок стрелками или перетаскиванием.</value>
   </data>
   <data name="Table_Reset" xml:space="preserve">
     <value>Сбросить</value>
@@ -3686,5 +3686,14 @@
   </data>
   <data name="PlanFeature_Api" xml:space="preserve">
     <value>API</value>
+  </data>
+  <data name="Homework_Subject" xml:space="preserve">
+    <value>Предмет</value>
+  </data>
+  <data name="Homework_SubjectRequired" xml:space="preserve">
+    <value>Домашнее задание должно быть привязано к предмету</value>
+  </data>
+  <data name="Homework_SubjectNotFound" xml:space="preserve">
+    <value>Предмет не найден</value>
   </data>
 </root>

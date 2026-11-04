@@ -3601,7 +3601,7 @@
     <value>Columns</value>
   </data>
   <data name="Table_ColumnsHint" xml:space="preserve">
-    <value>Choose visible columns and drag to change their order.</value>
+    <value>Choose visible columns; reorder them with the arrows or by dragging.</value>
   </data>
   <data name="Table_Reset" xml:space="preserve">
     <value>Reset</value>
@@ -3686,5 +3686,14 @@
   </data>
   <data name="PlanFeature_Api" xml:space="preserve">
     <value>API</value>
+  </data>
+  <data name="Homework_Subject" xml:space="preserve">
+    <value>Subject</value>
+  </data>
+  <data name="Homework_SubjectRequired" xml:space="preserve">
+    <value>Homework must belong to a subject</value>
+  </data>
+  <data name="Homework_SubjectNotFound" xml:space="preserve">
+    <value>Subject not found</value>
   </data>
 </root>

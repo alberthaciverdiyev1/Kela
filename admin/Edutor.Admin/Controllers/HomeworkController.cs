@@ -6,6 +6,8 @@ using Edutor.Core.Modules.Homework.Abstractions;
 using Edutor.Core.Modules.Homework.Requests;
 using Edutor.Core.Modules.Quiz.Abstractions;
 using Edutor.Core.Modules.Quiz.Requests;
+using Edutor.Core.Modules.Subject.Abstractions;
+using Edutor.Core.Modules.Subject.Requests;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Edutor.Admin.Controllers;
@@ -16,6 +18,7 @@ public sealed class HomeworkController(
     IHomeworkService service,
     IGroupService groups,
     IQuizService quizzes,
+    ISubjectService subjects,
     IValidator<HomeworkUpsertRequest> validator) : AdminControllerBase
 {
     [HttpGet]
@@ -29,6 +32,11 @@ public sealed class HomeworkController(
         };
 
         ViewData["Groups"] = await LoadGroupsAsync(ct);
+        ViewData["Subjects"] = await subjects.ListAsync(new SubjectListRequest
+        {
+            PerPage = 500,
+            UserId = User.IsAdmin() ? null : User.CurrentUserId()
+        }, ct);
         ViewData["SelectedGroupId"] = groupId?.ToString() ?? "";
         ViewData["Quizzes"] = await quizzes.ListAsync(new QuizListRequest
         {

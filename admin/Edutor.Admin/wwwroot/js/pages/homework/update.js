@@ -11,6 +11,7 @@
         document.getElementById('entityId').value = h.id;
         document.getElementById('title').value = h.title;
         document.getElementById('description').value = h.description || '';
+        document.getElementById('subject_id').value = h.subjectId || '';
 
         ['group_ids', 'quiz_ids'].forEach(selectId => {
             const select = document.getElementById(selectId);
@@ -23,7 +24,7 @@
         document.getElementById('quiz_ids').disabled = h.isPublished;
         document.getElementById('publishedHint').classList.toggle('hidden', !h.isPublished);
 
-        ['group_ids', 'quiz_ids'].forEach(id => {
+        ['subject_id', 'group_ids', 'quiz_ids'].forEach(id => {
             const select = document.getElementById(id);
             if (AdminUI.syncSelect) AdminUI.syncSelect(select);
         });

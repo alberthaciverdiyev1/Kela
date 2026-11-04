@@ -18,8 +18,9 @@ public sealed class StudentHomeworkController(IStudentHomeworkService service) :
     private long StudentId => long.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
 
     [HttpGet]
-    public async Task<ActionResult<ApiResponse<IReadOnlyList<StudentHomeworkSummaryResponse>>>> List(CancellationToken ct)
-        => Success(await service.ListAsync(StudentId, ct));
+    public async Task<ActionResult<ApiResponse<IReadOnlyList<StudentHomeworkSummaryResponse>>>> List(
+        [FromQuery(Name = "subject_id")] long? subjectId, CancellationToken ct)
+        => Success(await service.ListAsync(StudentId, subjectId, ct));
 
     [HttpGet("{id:long}")]
     public async Task<ActionResult<ApiResponse<StudentHomeworkDetailResponse>>> Get(long id, CancellationToken ct)

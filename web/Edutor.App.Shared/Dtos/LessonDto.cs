@@ -1,6 +1,6 @@
 namespace Edutor.App.Shared.Dtos;
 
-public record LessonDto(long Id, string Title, int SortOrder, string? Image = null)
+public record LessonDto(long Id, string Title, int SortOrder, string? Image = null, long SubjectId = 0)
 {
     public bool HasImage => !string.IsNullOrWhiteSpace(Image)
                             && !Image.Contains("noPhoto", StringComparison.OrdinalIgnoreCase);

@@ -47,6 +47,7 @@ public sealed class HomeworkService(
         var total = await query.CountAsync(ct);
 
         var items = await query
+            .Include(x => x.Subject)
             .Include(x => x.Groups).ThenInclude(g => g.Group)
             .Include(x => x.Quizzes).ThenInclude(q => q.Quiz)
             .OrderByDescending(x => x.Id)
@@ -77,11 +78,13 @@ public sealed class HomeworkService(
 
         var groups = await ValidateGroupsAsync(request.GroupIds, ownerId, ct);
         var quizzes = await ValidateQuizzesAsync(request.QuizIds, ownerId, ct);
+        var subjectId = await ValidateSubjectAsync(request.SubjectId, ct);
         var settings = ReadGroupSettings(request);
 
         var homework = new Homework
         {
             UserId = ownerId ?? request.UserId,
+            SubjectId = subjectId,
             Title = request.Title.Trim(),
             Description = SanitizeDescription(request.Description)
         };
@@ -140,6 +143,7 @@ public sealed class HomeworkService(
 
         homework.Title = request.Title.Trim();
         homework.Description = SanitizeDescription(request.Description);
+        homework.SubjectId = await ValidateSubjectAsync(request.SubjectId, ct);
 
         await db.SaveChangesAsync(ct);
         return await GetAsync(homework.Id, ownerId, ct);
@@ -328,6 +332,7 @@ public sealed class HomeworkService(
         var query = tracked ? db.Homeworks : db.Homeworks.AsNoTracking();
 
         var homework = await query
+            .Include(x => x.Subject)
             .Include(x => x.Groups).ThenInclude(g => g.Group)
             .Include(x => x.Quizzes).ThenInclude(q => q.Quiz)
             .FirstOrDefaultAsync(x => x.Id == id, ct)
@@ -387,6 +392,17 @@ public sealed class HomeworkService(
         }
 
         return ids;
+    }
+
+    private async Task<long> ValidateSubjectAsync(long? subjectId, CancellationToken ct)
+    {
+        if (subjectId is not long id || id <= 0) throw new ArgumentException(L["Homework_SubjectRequired"]);
+        if (!await db.Subjects.AsNoTracking().AnyAsync(x => x.Id == id, ct))
+        {
+            throw new ArgumentException(L["Homework_SubjectNotFound"]);
+        }
+
+        return id;
     }
 
     private async Task<List<long>> ValidateQuizzesAsync(IEnumerable<long> quizIds, long? ownerId, CancellationToken ct)
@@ -481,6 +497,8 @@ public sealed class HomeworkService(
             homework.PublishedAt,
             homework.IsActive,
             homework.UserId,
+            homework.SubjectId,
+            homework.Subject?.Name,
             homework.Groups.OrderBy(x => x.Id)
                 .Select(x => new HomeworkGroupInfoResponse(
                     x.GroupId, x.Group?.Name ?? string.Empty, x.DueDate, x.MaxScore)).ToList(),

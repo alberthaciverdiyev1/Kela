@@ -12,6 +12,8 @@ public record HomeworkResponse(
     DateTimeOffset? PublishedAt,
     bool IsActive,
     long? UserId,
+    long? SubjectId,
+    string? SubjectName,
     IReadOnlyList<HomeworkGroupInfoResponse> Groups,
     IReadOnlyList<HomeworkQuizInfoResponse> Quizzes,
     int AssignedCount,

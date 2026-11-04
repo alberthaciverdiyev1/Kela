@@ -62,7 +62,7 @@ AdminUI.listPage({
     }),
     row: (h, i, ctx) => [
         { html: AdminUI.rowNo(h, i, ctx.page, ctx.perPage), cls: 'text-slate-400' },
-        { html: `<span class="font-semibold text-slate-900">${AdminUI.escapeHtml(h.title)}</span>${h.quizzes.length ? `<div class="mt-0.5 text-xs text-slate-400">${AdminUI.escapeHtml(h.quizzes.map(q => q.title).join(', '))}</div>` : ''}` },
+        { html: `<span class="font-semibold text-slate-900">${AdminUI.escapeHtml(h.title)}</span>${h.subjectName ? `<div class="mt-0.5 text-xs text-slate-500">${AdminUI.escapeHtml(h.subjectName)}</div>` : ''}${h.quizzes.length ? `<div class="mt-0.5 text-xs text-slate-400">${AdminUI.escapeHtml(h.quizzes.map(q => q.title).join(', '))}</div>` : ''}` },
         { html: AdminUI.escapeHtml(h.groups.map(g => g.name).join(', ') || '—'), cls: 'text-slate-500' },
         dueCell(h),
         { html: h.isPublished ? `${h.submittedCount + h.gradedCount + h.returnedCount} / ${h.assignedCount}` : '—', cls: 'text-slate-500' },

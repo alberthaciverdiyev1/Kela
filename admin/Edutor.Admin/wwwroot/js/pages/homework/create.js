@@ -12,7 +12,7 @@
     };
 
     function syncSelects() {
-        ['group_ids', 'quiz_ids'].forEach(id => {
+        ['subject_id', 'group_ids', 'quiz_ids'].forEach(id => {
             const select = document.getElementById(id);
             if (select && AdminUI.syncSelect) AdminUI.syncSelect(select);
         });
@@ -88,7 +88,7 @@
         // Qrup səhifəsindən gəlmişiksə (/homework?group_id=X) həmin qrup seçili olsun.
         const presetGroup = window.HOMEWORK_GROUP_ID || '';
 
-        ['group_ids', 'quiz_ids'].forEach(id => {
+        ['subject_id', 'group_ids', 'quiz_ids'].forEach(id => {
             const select = document.getElementById(id);
             select.disabled = false;
             [...select.options].forEach(o => { o.selected = false; });
@@ -108,6 +108,7 @@
         const fd = new FormData();
         fd.append('title', document.getElementById('title').value.trim());
         fd.append('description', window.homeworkDescription());
+        fd.append('subject_id', document.getElementById('subject_id').value);
 
         [...document.getElementById('group_ids').selectedOptions].forEach(o => {
             fd.append('group_ids', o.value);

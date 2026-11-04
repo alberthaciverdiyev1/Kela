@@ -85,10 +85,24 @@ public class HomeworkTests(ApiFactory factory)
         return group.Id;
     }
 
-    private static HomeworkUpsertRequest Request(long groupId, long? quizId = null) => new()
+    private async Task<long> CreateSubjectAsync(long? ownerId = null)
+    {
+        using var scope = factory.Services.CreateScope();
+        var subjects = scope.ServiceProvider.GetRequiredService<ISubjectService>();
+        var subject = await subjects.CreateAsync(new SubjectUpsertRequest
+        {
+            Name = $"S-{Guid.NewGuid():N}",
+            UserId = ownerId
+        });
+
+        return subject.Id;
+    }
+
+    private async Task<HomeworkUpsertRequest> RequestAsync(long groupId, long? quizId = null) => new()
     {
         Title = $"HW-{Guid.NewGuid():N}",
         Description = "Test homework",
+        SubjectId = await CreateSubjectAsync(),
         GroupIds = [groupId],
         GroupDueDates = [DateTimeOffset.UtcNow.AddDays(1)],
         GroupScores = [100],
@@ -110,6 +124,7 @@ public class HomeworkTests(ApiFactory factory)
         var draft = await service.CreateAsync(new HomeworkUpsertRequest
         {
             Title = "Snapshot",
+            SubjectId = await CreateSubjectAsync(),
             GroupIds = [g1, g2],
             GroupDueDates = [DateTimeOffset.UtcNow.AddDays(1), DateTimeOffset.UtcNow.AddDays(2)],
             GroupScores = [100, 80]
@@ -141,6 +156,7 @@ public class HomeworkTests(ApiFactory factory)
         var homework = await homeworkService.CreateAsync(new HomeworkUpsertRequest
         {
             Title = "Per-group terms",
+            SubjectId = await CreateSubjectAsync(),
             GroupIds = [earlyGroup, lateGroup],
             GroupDueDates = [DateTimeOffset.UtcNow.AddDays(-1), DateTimeOffset.UtcNow.AddDays(5)],
             GroupScores = [40, 90]
@@ -179,11 +195,11 @@ public class HomeworkTests(ApiFactory factory)
         using var scope = factory.Services.CreateScope();
         var service = scope.ServiceProvider.GetRequiredService<IHomeworkService>();
 
-        await Assert.ThrowsAsync<ForbiddenException>(() =>
-            service.CreateAsync(Request(foreignGroup), teacherA));
+        var foreignRequest = await RequestAsync(foreignGroup);
+        await Assert.ThrowsAsync<ForbiddenException>(() => service.CreateAsync(foreignRequest, teacherA));
 
         var ownGroup = await CreateGroupAsync(teacherA);
-        var homework = await service.CreateAsync(Request(ownGroup), teacherA);
+        var homework = await service.CreateAsync(await RequestAsync(ownGroup), teacherA);
 
         await Assert.ThrowsAsync<ForbiddenException>(() => service.GetAsync(homework.Id, teacherB));
     }
@@ -196,10 +212,10 @@ public class HomeworkTests(ApiFactory factory)
         using var scope = factory.Services.CreateScope();
         var service = scope.ServiceProvider.GetRequiredService<IHomeworkService>();
 
-        var homework = await service.CreateAsync(Request(group), teacherA);
+        var homework = await service.CreateAsync(await RequestAsync(group), teacherA);
         await service.PublishAsync(homework.Id, teacherA);
 
-        var update = Request(group);
+        var update = await RequestAsync(group);
         update.GroupScores = [50];
 
         await Assert.ThrowsAsync<ArgumentException>(() => service.UpdateAsync(homework.Id, update, teacherA));
@@ -216,7 +232,7 @@ public class HomeworkTests(ApiFactory factory)
         var homeworkService = scope.ServiceProvider.GetRequiredService<IHomeworkService>();
         var studentService = scope.ServiceProvider.GetRequiredService<IStudentHomeworkService>();
 
-        var request = Request(group);
+        var request = await RequestAsync(group);
         request.GroupDueDates = [DateTimeOffset.UtcNow.AddDays(-1)]; // gecikmiş
         var homework = await homeworkService.CreateAsync(request, teacherA);
         await homeworkService.PublishAsync(homework.Id, teacherA);
@@ -278,7 +294,7 @@ public class HomeworkTests(ApiFactory factory)
         var homeworkService = scope.ServiceProvider.GetRequiredService<IHomeworkService>();
         var studentService = scope.ServiceProvider.GetRequiredService<IStudentHomeworkService>();
 
-        var homework = await homeworkService.CreateAsync(Request(group, quiz.Id), teacherA);
+        var homework = await homeworkService.CreateAsync(await RequestAsync(group, quiz.Id), teacherA);
         await homeworkService.PublishAsync(homework.Id, teacherA);
 
         using (var dbScope = factory.Services.CreateScope())
@@ -363,7 +379,7 @@ public class HomeworkTests(ApiFactory factory)
         var studentService = scope.ServiceProvider.GetRequiredService<IStudentHomeworkService>();
         var studentQuizService = scope.ServiceProvider.GetRequiredService<IStudentQuizService>();
 
-        var homework = await homeworkService.CreateAsync(Request(group, quiz.Id), teacherA);
+        var homework = await homeworkService.CreateAsync(await RequestAsync(group, quiz.Id), teacherA);
         await homeworkService.PublishAsync(homework.Id, teacherA);
 
         var before = await studentService.GetAsync(studentId, homework.Id);
@@ -412,7 +428,7 @@ public class HomeworkTests(ApiFactory factory)
 
         using var scope = factory.Services.CreateScope();
         var service = scope.ServiceProvider.GetRequiredService<IHomeworkService>();
-        var homework = await service.CreateAsync(Request(group), teacherA);
+        var homework = await service.CreateAsync(await RequestAsync(group), teacherA);
         await service.PublishAsync(homework.Id, teacherA);
 
         var anonymous = factory.CreateClient();

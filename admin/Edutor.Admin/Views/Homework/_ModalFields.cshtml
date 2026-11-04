@@ -1,7 +1,9 @@
 @{
     var groups = (PagedResponse<GroupResponse>)ViewData["Groups"]!;
     var quizzes = (PagedResponse<QuizResponse>)ViewData["Quizzes"]!;
+    var subjects = (PagedResponse<SubjectResponse>)ViewData["Subjects"]!;
 
+    var subjectOptions = subjects.Data.Select(s => new SelectOption { Value = s.Id.ToString(), Text = s.Name }).ToList();
     var groupOptions = groups.Data.Select(g => new SelectOption { Value = g.Id.ToString(), Text = g.Name }).ToList();
     var quizOptions = quizzes.Data.Select(q => new SelectOption { Value = q.Id.ToString(), Text = q.Title }).ToList();
 }
@@ -12,6 +14,8 @@
     <partial name="Ui/_Input" model="@(new InputModel { Name = "title", Id = "title", Label = L["Homework_Title"], Required = true })" />
 
     <partial name="Ui/_Editor" model="@(new EditorModel { Name = "description", Id = "description", Label = L["Homework_Description"] })" />
+
+    <partial name="Ui/_Select" model="@(new SelectModel { Name = "subject_id", Id = "subject_id", Label = L["Homework_Subject"], Required = true, Options = subjectOptions })" />
 
     <div class="grid gap-4 sm:grid-cols-2">
         <div>

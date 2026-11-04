@@ -24,11 +24,13 @@ public sealed class StudentHomeworkService(
     IHomeworkQuizSubmissionService quizSubmissions,
     IStringLocalizer<SharedResource> L) : IStudentHomeworkService
 {
-    public async Task<IReadOnlyList<StudentHomeworkSummaryResponse>> ListAsync(long studentId, CancellationToken ct = default)
+    public async Task<IReadOnlyList<StudentHomeworkSummaryResponse>> ListAsync(
+        long studentId, long? subjectId = null, CancellationToken ct = default)
     {
         var rows = await db.HomeworkAssignments.AsNoTracking()
             .Where(x => x.StudentId == studentId)
-            .Join(db.Homeworks.Where(h => h.IsPublished && h.IsActive),
+            .Join(db.Homeworks.Where(h => h.IsPublished && h.IsActive
+                    && (subjectId == null || h.SubjectId == subjectId)),
                 a => a.HomeworkId, h => h.Id, (a, h) => new { Assignment = a, Homework = h })
             .OrderBy(x => x.Assignment.DueDate)
             .ToListAsync(ct);

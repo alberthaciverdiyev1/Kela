@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Components.Web;
 using Microsoft.JSInterop;
 using Edutor.App.Shared.Dtos;
 using Edutor.App.Shared.Dtos.Auth;
+using Edutor.App.Shared.Dtos.Homework;
 using Edutor.App.Shared.Dtos.Progress;
 using Edutor.App.Shared.Dtos.Quiz;
 using Edutor.App.Shared.Services;
@@ -18,6 +19,7 @@ public partial class LessonDetail
     private string? Title;
     private List<ContentItemDto> _contents = new();
     private List<QuizDto> _quizzes = new();
+    private List<StudentHomeworkSummaryDto> _homeworks = new();
 
     private List<ContentItemDto> _videos => _contents.Where(c => c.Type == "video").ToList();
     private List<ContentItemDto> _files => _contents.Where(c => c.Type == "file").ToList();
@@ -35,9 +37,15 @@ public partial class LessonDetail
     {
         try
         {
-            Title = (await Api.LessonAsync(LessonId)).Title;
+            var lesson = await Api.LessonAsync(LessonId);
+            Title = lesson.Title;
             _contents = await Api.ContentsAsync(LessonId);
             _quizzes = await Api.LessonQuizzesAsync(LessonId);
+
+            // Ev tapşırıqları fənnə bağlıdır — dərsin fənni üzrə olanlar göstərilir.
+            _homeworks = lesson.SubjectId > 0
+                ? await Api.HomeworksAsync(lesson.SubjectId)
+                : new List<StudentHomeworkSummaryDto>();
         }
         catch { }
     }

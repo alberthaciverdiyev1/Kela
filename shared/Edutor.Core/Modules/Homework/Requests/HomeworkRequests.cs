@@ -25,6 +25,9 @@ public class HomeworkUpsertRequest
 
     public string? Description { get; set; }
 
+    [FromForm(Name = "subject_id")]
+    public long? SubjectId { get; set; }
+
     [FromForm(Name = "group_ids")]
     public List<long> GroupIds { get; set; } = new();
 

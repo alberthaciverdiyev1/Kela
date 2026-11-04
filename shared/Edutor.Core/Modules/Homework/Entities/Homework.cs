@@ -2,11 +2,18 @@ using Edutor.Core.Common.Entities;
 
 namespace Edutor.Core.Modules.Homework.Entities;
 
+using Subject = Edutor.Core.Modules.Subject.Entities.Subject;
+
 /// <summary>Qruplara verilən ev tapşırığı. Qaralama kimi yaranır, sonra yayımlanır.</summary>
 public class Homework : BaseEntity
 {
     /// <summary>Müəllim (admin yaradıbsa null).</summary>
     public long? UserId { get; set; }
+
+    /// <summary>Tapşırığın bağlı olduğu fənn (köhnə qeydlərdə null ola bilər).</summary>
+    public long? SubjectId { get; set; }
+
+    public Subject? Subject { get; set; }
 
     public string Title { get; set; } = string.Empty;
 
