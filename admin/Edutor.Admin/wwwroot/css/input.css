@@ -734,12 +734,41 @@
 /* Seçilmiş günün işarəsi — qrup dəyişsə də qalır. */
 #calendar .att-selected { outline: 2px solid var(--primary); outline-offset: 1px; }
 
-/* Gün panelindəki şagird sətri: işarə "qayıb" deməkdir, ona görə vəziyyət
-   hər an görünür — qeyd olunmamış günlə qarışmasın. */
+/* Gün panelindəki şagird sətri iştirak vəziyyətinə görə rənglənir:
+   yaşıl = iştirak edib, qırmızı = iştirak etməyib. */
 .att-row.att-present { border-color: #a7f3d0; background-color: #ecfdf5; }
 .att-row.att-absent  { border-color: #fecaca; background-color: #fef2f2; }
 .att-row.att-present .att-state { color: #047857; }
 .att-row.att-absent  .att-state { color: #b91c1c; }
+
+/* Adın önündəki iştirak işarəsi: boş = qeyd yoxdur, yaşıl ✓ = iştirak edib,
+   qırmızı ✕ = iştirak etməyib. Klik vəziyyəti dəyişir. */
+.att-mark {
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  flex-shrink: 0;
+  border-radius: 9999px;
+  border: 2px solid #e2e8f0;
+  background: #fff;
+  color: #94a3b8;
+  transition: background-color 140ms ease, border-color 140ms ease, color 140ms ease;
+}
+
+.att-mark:hover { border-color: #cbd5e1; background: #f8fafc; }
+
+.att-mark svg { width: 18px; height: 18px; }
+.att-mark .att-mark-check,
+.att-mark .att-mark-x { display: none; }
+
+.att-mark.is-present { border-color: #10b981; background: #10b981; color: #fff; }
+.att-mark.is-present .att-mark-none { display: none; }
+.att-mark.is-present .att-mark-check { display: block; }
+
+.att-mark.is-absent { border-color: #ef4444; background: #ef4444; color: #fff; }
+.att-mark.is-absent .att-mark-none { display: none; }
+.att-mark.is-absent .att-mark-x { display: block; }
 
 /* --- Yoklama təqvimi ---
    Gün hüceyrəsinin rəngi həmin günün iştirak faizini göstərir. */

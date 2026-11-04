@@ -170,9 +170,13 @@ async function loadDay() {
         <div class="mt-4 space-y-2">
             ${data.students.map(s => `
                 <div class="att-row flex flex-wrap items-center gap-3 rounded-xl border px-3 py-2 transition"
-                       data-student="${s.studentId}">
-                    <input type="checkbox" class="att-check size-4" data-student="${s.studentId}"
-                           data-recorded="${s.isRecorded ? '1' : '0'}" ${s.isPresent ? 'checked' : ''} />
+                       data-student="${s.studentId}"
+                       data-present="${s.isPresent ? '1' : (s.isRecorded ? '0' : '')}">
+                    <button type="button" class="att-mark" data-student="${s.studentId}">
+                        <svg class="att-mark-none" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.4"><path stroke-linecap="round" d="M7 12h10"/></svg>
+                        <svg class="att-mark-check" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.8"><path stroke-linecap="round" stroke-linejoin="round" d="m5 12.5 4.5 4.5L19 7.5"/></svg>
+                        <svg class="att-mark-x" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.8"><path stroke-linecap="round" d="M6 6l12 12M18 6 6 18"/></svg>
+                    </button>
                     <span class="min-w-0 flex-1 basis-40">
                         <span class="block truncate text-sm font-medium text-slate-800">${AdminUI.escapeHtml(s.fullName)}</span>
                         <span class="block truncate text-xs text-slate-400">${AdminUI.escapeHtml(s.email)}</span>
@@ -187,35 +191,50 @@ async function loadDay() {
                 </div>`).join('')}
         </div>`;
 
-    // İşarə "qayıb" deməkdir, ona görə vəziyyət canlı göstərilir ki,
-    // "qayıb" ilə "qeyd olunmayıb" qarışmasın.
+    // İkon iştirak vəziyyətini göstərir; klik "iştirak edib" ↔ "iştirak etməyib"
+    // arasında keçir, ilk klikdən əvvəl vəziyyət "qeyd yoxdur" olur.
     panel.querySelectorAll('.att-row').forEach(row => {
-        const box = row.querySelector('.att-check');
-        // Sətir yalnız açıq şəkildə "qayıb" olanda qırmızıdır: ya əvvəl qeyd
-        // olunub, ya da istifadəçi indi işarəni götürüb.
-        const paint = (explicit) => {
-            const absent = !box.checked && (explicit || box.dataset.recorded === '1');
-            row.classList.toggle('att-present', box.checked);
+        const mark = row.querySelector('.att-mark');
+
+        const paint = () => {
+            const present = row.dataset.present === '1';
+            const absent = row.dataset.present === '0';
+
+            mark.classList.toggle('is-present', present);
+            mark.classList.toggle('is-absent', absent);
+            mark.classList.toggle('is-neutral', !present && !absent);
+            mark.setAttribute('aria-pressed', present ? 'true' : 'false');
+            mark.title = present
+                ? L["Attendance_Present"]
+                : (absent ? L["Attendance_Absent"] : L["Attendance_LegendNone"]);
+
+            row.classList.toggle('att-present', present);
             row.classList.toggle('att-absent', absent);
             row.querySelector('.att-state').textContent =
-                box.checked ? L["Attendance_Present"] : (absent ? L["Attendance_Absent"] : '');
+                present ? L["Attendance_Present"] : (absent ? L["Attendance_Absent"] : '');
 
             const el = document.getElementById('dayCount');
             if (el) {
-                const checked = panel.querySelectorAll('.att-check:checked').length;
-                const total = panel.querySelectorAll('.att-check').length;
+                const checked = panel.querySelectorAll('.att-row[data-present="1"]').length;
+                const total = panel.querySelectorAll('.att-row').length;
                 el.textContent = checked + ' / ' + total;
             }
         };
-        box.addEventListener('change', () => paint(true));
-        paint(false);
+
+        mark.addEventListener('click', () => {
+            row.dataset.present = row.dataset.present === '1' ? '0' : '1';
+            paint();
+        });
+
+        row.refreshAttendance = paint;
+        paint();
     });
 }
 
 function markAll(present) {
-    document.querySelectorAll('.att-check').forEach(c => {
-        c.checked = present;
-        c.dispatchEvent(new Event('change', { bubbles: true }));
+    document.querySelectorAll('.att-row').forEach(row => {
+        row.dataset.present = present ? '1' : '0';
+        row.refreshAttendance();
     });
 }
 
@@ -227,7 +246,7 @@ async function saveDay() {
         const note = row.querySelector('.att-note').value.trim();
         return {
             studentId: Number(row.dataset.student),
-            isPresent: row.querySelector('.att-check').checked,
+            isPresent: row.dataset.present === '1',
             point: point === '' ? null : Number(point),
             note: note === '' ? null : note
         };
