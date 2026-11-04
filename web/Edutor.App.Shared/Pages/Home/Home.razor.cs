@@ -1,10 +1,11 @@
+using System.Globalization;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.JSInterop;
 using Edutor.App.Shared.Dtos;
 using Edutor.App.Shared.Dtos.Auth;
+using Edutor.App.Shared.Dtos.Homework;
 using Edutor.App.Shared.Dtos.Progress;
-using Edutor.App.Shared.Dtos.Quiz;
 using Edutor.App.Shared.Services;
 using Edutor.App.Shared.Services.Api;
 
@@ -15,7 +16,6 @@ public partial class Home
     private bool _loading = true;
     private bool _storyOpen;
     private int _storyIndex;
-    private int _quizCount;
     private int _overallPercent;
     private int _completedContents;
     private int _totalContents;
@@ -26,6 +26,7 @@ public partial class Home
     [Inject] private IJSRuntime JS { get; set; } = default!;
     private List<GroupDto> _studentGroups = [];
     private List<ProgressItemDto> _continue = [];
+    private List<StudentHomeworkSummaryDto> _upcoming = [];
 
     private void OpenStory(int index)
     {
@@ -77,13 +78,19 @@ public partial class Home
     {
         try
         {
-            var quizzes = await Api.QuizzesAsync();
             // Vaxtı keçmiş story-lər göstərilmir (API də filtr edir — burada əlavə qoruma).
             var today = DateOnly.FromDateTime(DateTime.Now);
             _banners = (await Api.BannersAsync())
                 .Where(b => b.ActiveUntil is null || b.ActiveUntil.Value >= today)
                 .ToList();
-            _quizCount = quizzes.Count;
+
+            // Son tarixi olan, hələ təhvil verilməmiş tapşırıqlar — ən yaxın tarix əvvəldə.
+            var now = DateTimeOffset.UtcNow;
+            _upcoming = (await Api.HomeworksAsync())
+                .Where(h => h.SubmittedAt is null && h.DueDate > now)
+                .OrderBy(h => h.DueDate)
+                .Take(5)
+                .ToList();
             // Qruplar — hər qrupun progressi backend-də hesablanıb gəlir
             _studentGroups = await Api.StudentGroupsAsync();
 
