@@ -23,6 +23,7 @@ public partial class LessonContentDetail
     private ElementReference _videoRef;
     private string? _url;
     private long? _attachedKey;
+    private List<AudioTrack> _playlist = new();
 
     private List<StudentNoteDto> _notes = new();
     private List<GroupDto> _noteGroups = new();
@@ -75,6 +76,10 @@ public partial class LessonContentDetail
                 ? new()
                 : all.Where(c => c.Id != ContentId && c.Type == _content.Type).ToList();
             _url = Absolute(_content?.PlaybackUrl ?? _content?.Url);
+            _playlist = all
+                .Where(c => c.Type == "voice")
+                .Select(c => new AudioTrack(Absolute(c.PlaybackUrl ?? c.Url), c.Title, c.Id))
+                .ToList();
 
             if (_content is not null && (IsVideo || IsVoice))
             {
@@ -98,12 +103,24 @@ public partial class LessonContentDetail
     private void PlayAudio()
     {
         if (_content is null || string.IsNullOrEmpty(_url)) return;
-        Player.Play(_url, _content.Title);
+        var index = _playlist.FindIndex(t => t.ContentId == _content.Id);
+        if (_playlist.Count > 0) Player.Play(_playlist, index < 0 ? 0 : index);
+        else Player.Play(_url, _content.Title);
     }
 
-    private void OnAudioEnded() => _ = InvokeAsync(async () =>
+    // Pleyer bitən səsin növbətisinə keçir — hər bitən səs üçün tamamlanma qeyd olunur.
+    private void OnAudioEnded(AudioTrack? track) => _ = InvokeAsync(async () =>
     {
-        if (IsVoice) await MarkAsync();
+        if (!IsVoice) return;
+        var id = track?.ContentId ?? _content?.Id;
+        if (id is not long contentId) return;
+        if (contentId == _content?.Id && _done) return;
+        try
+        {
+            await Api.MarkCompletedAsync(contentId);
+            if (contentId == _content?.Id) _done = true;
+        }
+        catch { }
     });
 
     private void OpenDocument()
@@ -119,6 +136,7 @@ public partial class LessonContentDetail
         {
             await Api.MarkCompletedAsync(_content.Id);
             _done = true;
+            StateHasChanged();
         }
         catch { }
     }
@@ -216,7 +234,7 @@ public partial class LessonContentDetail
             }
             else if (IsVoice && _content is not null && !string.IsNullOrEmpty(_url))
             {
-                if (Player.Url != _url) Player.Play(_url, _content.Title);
+                if (Player.Url != _url) PlayAudio();
                 Player.RequestSeek(seconds);
             }
         }

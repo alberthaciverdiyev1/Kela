@@ -1,12 +1,8 @@
+using System.Globalization;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.JSInterop;
-using Edutor.App.Shared.Dtos;
-using Edutor.App.Shared.Dtos.Auth;
-using Edutor.App.Shared.Dtos.Progress;
-using Edutor.App.Shared.Dtos.Quiz;
 using Edutor.App.Shared.Services;
-using Edutor.App.Shared.Services.Api;
 
 namespace Edutor.App.Shared.Components.Media;
 
@@ -19,10 +15,20 @@ public partial class AudioPlayerBar
     private double _rate = 1;
     private bool _paused = true;
     private bool _wasPlaying;
-    private string? _loadedUrl;
+    private bool _queueOpen;
+    private bool _dragging;
+    private string? _loadedKey;
+    private ElementReference _trackRef;
+    private ElementReference _barRef;
     private CancellationTokenSource? _cts;
 
     private record AudioState(double current, double duration, bool paused, double rate);
+
+    private string LoadKey => $"{Player.Index}|{Player.Url}";
+
+    private string PctValue => _duration > 0
+        ? Math.Clamp(_current / _duration * 100, 0, 100).ToString("0.###", CultureInfo.InvariantCulture)
+        : "0";
 
     protected override void OnInitialized()
     {
@@ -32,12 +38,22 @@ public partial class AudioPlayerBar
         StartPolling();
     }
 
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        try
+        {
+            if (Player.IsActive) await JS.InvokeVoidAsync("lmsAudio.reserveFab", _barRef);
+            else await JS.InvokeVoidAsync("lmsAudio.releaseFab");
+        }
+        catch { /* JS hazır deyil */ }
+    }
+
     private void OnChanged() => _ = InvokeAsync(async () => { await SyncAsync(); StateHasChanged(); });
 
     private void OnSeekRequested(double seconds) => _ = InvokeAsync(async () =>
     {
         if (!Player.IsActive) return;
-        _loadedUrl = Player.Url;
+        _loadedKey = LoadKey;
         _paused = false;
         try { await JS.InvokeVoidAsync("lmsAudio.loadAt", Player.Url, seconds); }
         catch { /* JS hazır deyil */ }
@@ -59,8 +75,12 @@ public partial class AudioPlayerBar
                     try
                     {
                         var st = await JS.InvokeAsync<AudioState>("lmsAudio.state");
-                        _current = st.current;
-                        _duration = st.duration;
+                        // Sürükləmə zamanı serverin köhnə vaxtı thumb-u geri dartmamalıdır.
+                        if (!_dragging)
+                        {
+                            _current = st.current;
+                            _duration = st.duration;
+                        }
                         _paused = st.paused;
                         _rate = st.rate;
 
@@ -84,16 +104,21 @@ public partial class AudioPlayerBar
     {
         if (!Player.IsActive)
         {
-            _loadedUrl = null;
+            _loadedKey = null;
+            _queueOpen = false;
             _current = 0;
             _duration = 0;
             _paused = true;
             return;
         }
 
-        if (_loadedUrl != Player.Url)
+        // Eyni URL-li iki səs ola bilər — yükləmə açarı indekslə birlikdə tutulur.
+        if (_loadedKey != LoadKey)
         {
-            _loadedUrl = Player.Url;
+            _loadedKey = LoadKey;
+            _current = 0;
+            _duration = 0;
+            _wasPlaying = false;
             await JS.InvokeVoidAsync("lmsAudio.load", Player.Url);
             await JS.InvokeVoidAsync("lmsAudio.setRate", _rate);
             await JS.InvokeVoidAsync("lmsAudio.play");
@@ -115,14 +140,39 @@ public partial class AudioPlayerBar
         }
     }
 
-    private async Task SeekAsync(ChangeEventArgs e)
+    private async Task OnPointerDownAsync(PointerEventArgs e)
     {
-        if (double.TryParse(e.Value?.ToString(), out var t))
-        {
-            await JS.InvokeVoidAsync("lmsAudio.seek", t);
-            _current = t;
-        }
+        _dragging = true;
+        await SeekToPointerAsync(e);
     }
+
+    private async Task OnPointerMoveAsync(PointerEventArgs e)
+    {
+        if (_dragging) await SeekToPointerAsync(e);
+    }
+
+    private void EndDrag() => _dragging = false;
+
+    private async Task SeekToPointerAsync(PointerEventArgs e)
+    {
+        try
+        {
+            var ratio = await JS.InvokeAsync<double>("lmsAudio.seekFromPointer", _trackRef, e.ClientX);
+            if (_duration > 0) _current = ratio * _duration;
+            StateHasChanged();
+        }
+        catch { /* JS hazır deyil */ }
+    }
+
+    private async Task PlayAtAsync(int index)
+    {
+        Player.PlayAt(index);
+        StateHasChanged();
+    }
+
+    private Task NextAsync() { Player.Next(); return Task.CompletedTask; }
+
+    private Task PreviousAsync() { Player.Previous(); return Task.CompletedTask; }
 
     private async Task SetRateAsync(double rate)
     {
@@ -133,7 +183,7 @@ public partial class AudioPlayerBar
     private async Task StopAsync()
     {
         await JS.InvokeVoidAsync("lmsAudio.stop");
-        _loadedUrl = null;
+        _loadedKey = null;
         Player.Stop();
     }
 
@@ -146,7 +196,7 @@ public partial class AudioPlayerBar
             : $"{t.Minutes}:{t.Seconds:00}";
     }
 
-    private static string FmtRate(double r) => r == Math.Floor(r) ? $"{(int)r}x" : $"{r.ToString(System.Globalization.CultureInfo.InvariantCulture)}x";
+    private static string FmtRate(double r) => r == Math.Floor(r) ? $"{(int)r}x" : $"{r.ToString(CultureInfo.InvariantCulture)}x";
 
     public void Dispose()
     {
@@ -154,5 +204,11 @@ public partial class AudioPlayerBar
         Player.SeekRequested -= OnSeekRequested;
         _cts?.Cancel();
         _cts?.Dispose();
+        _ = ReleaseFabAsync();
+    }
+
+    private async Task ReleaseFabAsync()
+    {
+        try { await JS.InvokeVoidAsync("lmsAudio.releaseFab"); } catch { }
     }
 }

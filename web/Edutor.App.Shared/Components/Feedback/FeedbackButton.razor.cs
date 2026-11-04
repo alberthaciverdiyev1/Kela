@@ -10,6 +10,11 @@ namespace Edutor.App.Shared.Components.Feedback;
 public partial class FeedbackButton : IAsyncDisposable
 {
     [Inject] private ApiClient Api { get; set; } = default!;
+    [Inject] private AudioPlayerService Player { get; set; } = default!;
+
+    protected override void OnInitialized() => Player.Changed += OnPlayerChanged;
+
+    private void OnPlayerChanged() => _ = InvokeAsync(StateHasChanged);
 
     private bool _open;
     private bool _busy;
@@ -139,6 +144,7 @@ public partial class FeedbackButton : IAsyncDisposable
 
     public async ValueTask DisposeAsync()
     {
+        Player.Changed -= OnPlayerChanged;
         if (_hub is not null) await _hub.DisposeAsync();
     }
 

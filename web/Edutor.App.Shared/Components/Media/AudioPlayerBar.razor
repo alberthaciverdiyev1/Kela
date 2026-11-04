@@ -1,26 +1,77 @@
 @using Edutor.App.Shared.Services.Localization
 @inject Localizer L
-@* Alt bölmə audio pleyeri: timeline (seek) + sürət seçimləri (1x, 1.25x, 1.5x, 2x). *@
+@* Alt bölmə audio pleyeri: dərsin səs siyahısı, timeline (seek) və sürət seçimləri. *@
 @implements IDisposable
 @inject AudioPlayerService Player
 @inject IJSRuntime JS
 
 @if (Player.IsActive)
 {
-    <div class="fixed inset-x-0 bottom-[72px] z-30 mx-auto w-full max-w-[430px] border-t border-brand-104 bg-white/95 px-4 py-3 shadow-[0_-6px_20px_rgba(23,61,48,0.06)] backdrop-blur lg:bottom-0 lg:left-[236px] lg:max-w-none">
+    @* Mobilde alt menyunun üstündə; md-dən sonra menyu gizləndiyi üçün tam en, ekranın altına. *@
+    <div @ref="_barRef" class="fixed inset-x-0 bottom-[72px] z-30 mx-auto w-full max-w-[430px] border-t border-brand-104 bg-white/95 px-4 py-3 shadow-[0_-6px_20px_rgba(23,61,48,0.06)] backdrop-blur md:bottom-0 md:max-w-none">
+        @if (_queueOpen && Player.TrackCount > 1)
+        {
+            <div class="mb-3 max-h-56 overflow-y-auto rounded-xl border border-brand-104" aria-label="@L["Audio_Playlist"]">
+                @for (var i = 0; i < Player.TrackCount; i++)
+                {
+                    var index = i;
+                    var track = Player.Tracks[i];
+                    var isCurrent = i == Player.Index;
+                    <button type="button" @onclick="() => PlayAtAsync(index)"
+                            class="flex w-full items-center gap-3 px-3 py-2.5 text-left transition @(isCurrent ? "bg-brand-081" : "hover:bg-brand-041")">
+                        <span class="w-5 shrink-0 text-center text-[11px] font-bold tabular-nums @(isCurrent ? "text-brand-671" : "text-sage-410")">
+                            @(isCurrent ? "▸" : (i + 1).ToString())
+                        </span>
+                        <span class="min-w-0 flex-1 truncate text-[13px] @(isCurrent ? "font-bold text-brand-671" : "font-medium text-brand-776")">@track.Title</span>
+                    </button>
+                }
+            </div>
+        }
+
         <div class="flex items-center gap-3">
             <div class="flex size-9 shrink-0 items-center justify-center rounded-xl bg-brand-081 text-brand-698"><Icon Name="chart" Class="size-4" /></div>
             <p class="min-w-0 flex-1 truncate text-[13px] font-semibold text-brand-776">@Player.Title</p>
+
+            @if (Player.TrackCount > 1)
+            {
+                <button type="button" @onclick="PreviousAsync" disabled="@(Player.Index <= 0)" aria-label="@L["Audio_Previous"]"
+                        class="rounded-lg p-2 text-sage-478 transition hover:bg-brand-041 disabled:opacity-30">
+                    <Icon Name="chevron-left" Class="size-4" />
+                </button>
+                <button type="button" @onclick="NextAsync" disabled="@(Player.Index >= Player.TrackCount - 1)" aria-label="@L["Audio_Next"]"
+                        class="rounded-lg p-2 text-sage-478 transition hover:bg-brand-041 disabled:opacity-30">
+                    <Icon Name="chevron-right" Class="size-4" />
+                </button>
+            }
+
             <button type="button" @onclick="ToggleAsync" class="flex size-9 items-center justify-center rounded-full bg-brand-671 text-white" aria-label="@(_paused ? L["Audio_Play"] : L["Audio_Pause"])">
                 <Icon Name="@(_paused ? "play" : "pause")" Class="size-4" />
             </button>
+
+            @if (Player.TrackCount > 1)
+            {
+                <button type="button" @onclick="() => _queueOpen = !_queueOpen" aria-label="@L["Audio_Playlist"]" aria-expanded="@_queueOpen"
+                        class="rounded-lg p-2 text-[11px] font-bold tabular-nums transition @(_queueOpen ? "bg-brand-081 text-brand-671" : "text-sage-478 hover:bg-brand-041")">
+                    @(Player.Index + 1)/@Player.TrackCount
+                </button>
+            }
+
             <button type="button" @onclick="StopAsync" class="rounded-lg p-2 text-sage-478" aria-label="@L["Common_Close"]"><Icon Name="x" Class="size-4" /></button>
         </div>
 
         <div class="mt-2 flex items-center gap-2">
             <span class="w-9 text-right text-[10px] tabular-nums text-sage-410">@Fmt(_current)</span>
-            <input type="range" min="0" max="@(_duration > 0 ? _duration : 0)" step="0.1" value="@_current"
-                   @onchange="SeekAsync" class="h-1 flex-1 accent-brand-671" aria-label="@L["Common_Timeline"]" />
+            <div @ref="_trackRef" role="slider" tabindex="0" aria-label="@L["Common_Timeline"]"
+                 aria-valuemin="0" aria-valuemax="@Math.Round(_duration)" aria-valuenow="@Math.Round(_current)"
+                 class="group relative h-4 flex-1 cursor-pointer touch-none select-none"
+                 @onpointerdown="OnPointerDownAsync" @onpointermove="OnPointerMoveAsync"
+                 @onpointerup="EndDrag" @onpointercancel="EndDrag" @onpointerleave="EndDrag">
+                <div class="absolute inset-x-0 top-1/2 h-1 -translate-y-1/2 rounded-full bg-brand-104">
+                    <div class="h-full rounded-full bg-brand-671" style="width:@PctValue%"></div>
+                </div>
+                <span class="absolute top-1/2 size-3 -translate-x-1/2 -translate-y-1/2 rounded-full bg-brand-671 shadow"
+                      style="left:@PctValue%"></span>
+            </div>
             <span class="w-9 text-[10px] tabular-nums text-sage-410">@Fmt(_duration)</span>
         </div>
 

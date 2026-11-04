@@ -238,6 +238,32 @@ window.lmsAudio = {
             seekTo();
         }
     },
+    // Uzun fayllarda brauzer əvvəlcə duration = Infinity verir — o zaman seekable aralığa düşürük,
+    // əks halda timeline sesin uzunluğuna uyğunlaşmır.
+    _duration: function (a) {
+        if (isFinite(a.duration) && a.duration > 0) return a.duration;
+        try {
+            if (a.seekable && a.seekable.length) return a.seekable.end(a.seekable.length - 1);
+        } catch (e) { /* noop */ }
+        return 0;
+    },
+    seekFromPointer: function (el, clientX) {
+        var a = this._get();
+        var rect = el.getBoundingClientRect();
+        var ratio = rect.width > 0 ? (clientX - rect.left) / rect.width : 0;
+        ratio = Math.min(1, Math.max(0, ratio));
+        try { a.currentTime = ratio * this._duration(a); } catch (e) { /* noop */ }
+        return ratio;
+    },
+    // Pleyer hündürlüyü növbə açılanda dəyişir — geri bildiriş düyməsi həmişə onun üstündə qalmalıdır.
+    reserveFab: function (el) {
+        var rect = el.getBoundingClientRect();
+        var gap = window.innerHeight - rect.top + 12;
+        document.documentElement.style.setProperty('--fab-bottom', gap + 'px');
+    },
+    releaseFab: function () {
+        document.documentElement.style.removeProperty('--fab-bottom');
+    },
     setRate: function (r) { try { this._get().playbackRate = r || 1; } catch (e) { /* noop */ } },
     stop: function () {
         var a = this._get();
@@ -249,7 +275,7 @@ window.lmsAudio = {
         var a = this._get();
         return {
             current: a.currentTime || 0,
-            duration: (isFinite(a.duration) ? a.duration : 0),
+            duration: this._duration(a),
             paused: a.paused,
             rate: a.playbackRate || 1
         };
