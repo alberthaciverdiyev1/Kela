@@ -56,7 +56,9 @@
         <div id="overlay" class="fixed inset-0 z-20 hidden bg-slate-950/40 backdrop-blur-sm lg:hidden"></div>
 
         <div class="flex min-h-0 min-w-0 flex-1 flex-col">
-            <header class="z-10 flex h-16 shrink-0 items-center justify-between gap-4 border-b border-border bg-white/85 px-4 backdrop-blur sm:px-6">
+            @* backdrop-filter burada işlədilmir: özü üçün containing block yaradır və
+               içindəki fixed mobil dil menyusu ekranın altına deyil, header-in içinə düşür. *@
+            <header class="z-10 flex h-16 shrink-0 items-center justify-between gap-4 border-b border-border bg-white px-4 sm:px-6">
                 <div class="flex min-w-0 items-center gap-3">
                     <button id="menuToggle" class="grid h-10 w-10 place-items-center rounded-xl text-slate-600 hover:bg-surface-secondary lg:hidden">
                         <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" d="M4 6h16M4 12h16M4 18h16" /></svg>
