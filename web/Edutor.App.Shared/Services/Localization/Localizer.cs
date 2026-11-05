@@ -32,10 +32,17 @@ public sealed class Localizer(IJSRuntime js)
         try
         {
             var saved = await js.InvokeAsync<string?>("localStorage.getItem", Key);
-            if (!string.IsNullOrWhiteSpace(saved) && Supported.Contains(saved)) Current = saved;
+
+            // İstifadəçi dil seçməyibsə cihazın/brauzerin dili götürülür.
+            // Seçim saxlanılmır — işletim sistemi dili dəyişsə tətbiq onu izləyir.
+            Current = !string.IsNullOrWhiteSpace(saved) && Supported.Contains(saved)
+                ? saved
+                : await BrowserLanguageAsync();
         }
         catch { /* JS hazır deyil */ }
+
         _map = All.TryGetValue(Current, out var m) ? m : All["az"];
+        await ApplyHtmlLangAsync();
     }
 
     public async Task SetAsync(string lang)
@@ -44,7 +51,41 @@ public sealed class Localizer(IJSRuntime js)
         Current = lang;
         _map = All.TryGetValue(lang, out var m) ? m : All["az"];
         try { await js.InvokeVoidAsync("localStorage.setItem", Key, lang); } catch { /* noop */ }
+        await ApplyHtmlLangAsync();
         Changed?.Invoke();
+    }
+
+    private async Task<string> BrowserLanguageAsync()
+    {
+        try
+        {
+            // JS interop verilən dəyəri funksiya kimi çağırır — xassələr "eval" ilə oxunur.
+            var tags = await js.InvokeAsync<string[]>("eval", "navigator.languages");
+            foreach (var tag in tags)
+            {
+                if (Match(tag) is { } lang) return lang;
+            }
+
+            if (Match(await js.InvokeAsync<string?>("eval", "navigator.language")) is { } single) return single;
+        }
+        catch { /* JS hazır deyil */ }
+
+        return "az";
+    }
+
+    /// <summary>"tr-TR" / "en_US" → dəstəklənən iki hərfli kod; dəstəklənmirsə null.</summary>
+    private static string? Match(string? tag)
+    {
+        if (string.IsNullOrWhiteSpace(tag)) return null;
+
+        var code = tag.Split('-', '_')[0].ToLowerInvariant();
+        return Supported.Contains(code) ? code : null;
+    }
+
+    private async Task ApplyHtmlLangAsync()
+    {
+        try { await js.InvokeVoidAsync("document.documentElement.setAttribute", "lang", Current); }
+        catch { /* noop */ }
     }
 
     private static readonly Dictionary<string, Dictionary<string, string>> All = new()
