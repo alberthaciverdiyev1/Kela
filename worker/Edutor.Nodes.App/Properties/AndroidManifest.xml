@@ -6,8 +6,11 @@
   <!-- Uzun konversiyalar ekran bağlıykən də davam etməlidir. -->
   <uses-permission android:name="android.permission.WAKE_LOCK" />
   <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
-  <!-- Android 14+ üçün xidmətin növü mütləqdir. -->
-  <uses-permission android:name="android.permission.FOREGROUND_SERVICE_DATA_SYNC" />
+  <!--
+    Xidmətin növü specialUse-dur (konversiya worker-i daimi işləyir). dataSync
+    Android 15-də 24 saatda 6 saatla məhdudlaşır və BOOT_COMPLETED-dən başladıla bilmir.
+  -->
+  <uses-permission android:name="android.permission.FOREGROUND_SERVICE_SPECIAL_USE" />
   <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
 
   <uses-permission android:name="android.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS" />

@@ -148,8 +148,8 @@ dotnet run --project worker/Edutor.Nodes.App --framework net10.0
 
 ```bash
 worker/package.sh              # hamısı: linux + mac + android
-worker/package.sh linux        # linux-x64 (self-contained, .desktop faylı ilə)
-worker/package.sh mac          # osx-arm64 + osx-x64 (.app bundle)
+worker/package.sh linux        # .deb + quraşdırma skriptli tar.gz
+worker/package.sh mac          # osx-arm64 + osx-x64 (.app + Install.command)
 worker/package.sh android      # arm64 APK
 ```
 
@@ -157,12 +157,42 @@ Nəticələr `worker/dist/` qovluğuna düşür. Paketlər **self-contained**-d�
 istifadəçi .NET quraşdırmır, yalnız ffmpeg lazımdır (Linux/macOS-da sistemdən,
 Android-də APK-nın içindəki `libffmpeg.so`-dan).
 
+| Platforma | Fayl | Quraşdırma |
+|---|---|---|
+| Linux (Debian/Ubuntu) | `edutor-nodes_<versiya>_amd64.deb` | `sudo apt install ./edutor-nodes_*.deb` |
+| Linux (digər) | `edutor-nodes-linux-x64-<versiya>.tar.gz` | aç → `./install.sh` (sudo lazım deyil, `~/.local` altına) |
+| macOS | `edutor-nodes-macos-<arch>-<versiya>.tar.gz` | aç → `Install.command` (iki klik, `/Applications` altına) |
+| Android | `edutor-nodes-<versiya>.apk` | APK-nı telefona köçürüb aç (arm64) |
+
+`.deb` faylı `dpkg-deb` olmayan sistemlərdə də (`ar` + `tar` ilə) yığılır.
+
 Android və macOS paketi imzalanmayıb (yalnız lokal istifadə üçün). Sabit imza
 lazımdırsa, `EDUTOR_KEYSTORE`, `EDUTOR_KEY_ALIAS`, `EDUTOR_KEYSTORE_PASSWORD`
 dəyişənlərini verin — açarlar repo-ya düşmür.
 
 Android quruluşu üçün JDK və Android SDK tələb olunur:
 `ANDROID_HOME` (default `~/Android/Sdk`) və `JavaSdkDirectory` (default `~/Android/jdk`).
+
+### Arxa planda işləmə
+
+Worker "qur, unut" prinsipi ilə işləyir:
+
+- **Masaüstü (Linux/macOS/Windows):** pəncərəni bağlamaq tətbiqi dayandırmır —
+  treyə keçir, encoding davam edir. Trey menyusu: pəncərəni aç · işə sal/dayandır ·
+  çıxış. Tam çıxış yalnız "Çıxış" ilə olur. Trey backend-i olmayan Linux
+  masaüstlərində pəncərə bağlananda tətbiq dayanır (adətən davranış).
+- **Sistem açılışı:** ilk açılışdan sonra tətbiq özünü avtomatik başlatmaya yazır
+  (Linux XDG autostart, macOS LaunchAgent, Windows `Run` açarı) və gizli
+  (`--minimized`) işə düşür. Tənzimləmələr → Arxa plan bölməsindən söndürmək olar.
+- **Tək nüsxə:** ikinci nüsxə açılsa, o dərhal bağlanır və artıq işləyən pəncərə
+  önə çıxarılır (named pipe) — avtomatik başlayan nüsxə ilə əl ilə açılan nüsxə
+  eyni işi iki dəfə aparmır.
+- **Android:** foreground xidməti (`specialUse`) prosesi canlı saxlayır, bildiriş
+  cari tapşırığı göstərir, cihaz yenidən başladıqda `BOOT_COMPLETED` xidməti geri
+  qaldırır və worker özü qoşulur (UI açılmasa da).
+  `dataSync` tipi seçilməyib: Android 15-də 24 saatda 6 saatla məhdudlaşır və
+  BOOT_COMPLETED-dən başladıla bilmir. `specialUse` daimi encoding worker-i üçün
+  nəzərdə tutulmuş istisna tipdir (Play Store-a yayım üçün əsaslandırma tələb edir).
 
 ## Testlər
 
@@ -184,10 +214,10 @@ dotnet test tests/Edutor.Tests --filter "FullyQualifiedName~Nodes"
 
 | Platforma | Status |
 |---|---|
-| Linux x64 | ✅ sınaqdan keçirilib (NVENC + libx264) |
-| Windows x64 | ✅ kod platformadan asılı deyil; ffmpeg PATH-dən tapılır |
-| **Android arm64** | ✅ sınaqdan keçirilib (MediaCodec + libx264) |
-| macOS (arm64 / x64) | ✅ paketlənir (`worker/package.sh mac`); real Mac-də sınaq gözlənir |
+| Linux x64 | ✅ sınaqdan keçirilib (NVENC + libx264); `.deb` və tar.gz quraşdırıcı |
+| Windows x64 | ✅ kod platformadan asılı deyil; ffmpeg PATH-dən tapılır; trey + autostart |
+| **Android arm64** | ✅ sınaqdan keçirilib (MediaCodec + libx264); boot-dan sonra avtomatik qalxır |
+| macOS (arm64 / x64) | ✅ paketlənir (`worker/package.sh mac`, `Install.command`); real Mac-də sınaq gözlənir |
 | Android armv7 / x86 | ❌ dəstəklənmir — APK yalnız `arm64-v8a` üçün qurulur |
 
 Android paketi qəsdən yalnız `arm64-v8a` üçündür: ffmpeg ikililəri də yalnız o ABI

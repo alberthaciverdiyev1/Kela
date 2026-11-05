@@ -42,4 +42,10 @@ public sealed class NoPlatformExtras : IPlatformExtras
 public static class PlatformExtras
 {
     public static IPlatformExtras Current { get; set; } = new NoPlatformExtras();
+
+    /// <summary>
+    /// Sistem açılışında avtomatik başlatmanı qeyd edir. Yalnız masaüstündə verilir —
+    /// Android-də bu işi BootCompletedReceiver görür.
+    /// </summary>
+    public static Action<bool>? StartupRegistration { get; set; }
 }

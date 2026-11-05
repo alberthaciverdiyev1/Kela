@@ -3,8 +3,8 @@
 # Edutor Nodes — platforma paketləri.
 #
 #   ./package.sh            hamısı (linux, mac, android)
-#   ./package.sh linux      yalnız Linux (linux-x64)
-#   ./package.sh mac        macOS (osx-arm64 + osx-x64, .app bundle)
+#   ./package.sh linux      Linux: .deb + quraşdırma skriptli tar.gz
+#   ./package.sh mac        macOS (osx-arm64 + osx-x64, .app + Install.command)
 #   ./package.sh android    Android (imzalı APK, arm64)
 #
 # Nəticələr `worker/dist/` qovluğuna yazılır. Hər paket öz içində .NET runtime
@@ -40,6 +40,20 @@ make_icon() {
     magick "$ICON" -resize "${size}x${size}" "$out"
 }
 
+desktop_entry() {
+    local exec_path=$1
+    cat <<EOF
+[Desktop Entry]
+Type=Application
+Name=Edutor Nodes
+Comment=Video konversiya worker-i
+Exec="$exec_path"
+Icon=edutor-nodes
+Terminal=false
+Categories=Network;Utility;
+EOF
+}
+
 # ---------------------------------------------------------------- linux
 
 build_linux() {
@@ -54,34 +68,143 @@ build_linux() {
 
     make_icon 256 "$stage/edutor-nodes.png" || true
 
-    cat > "$stage/edutor-nodes.desktop" <<EOF
+    # .deb içində /usr/share altında istifadə olunur; tar.gz-də istifadəçi
+    # tərəfindən ~/.local altına quraşdırılır.
+    cat > "$stage/install.sh" <<'EOF'
+#!/usr/bin/env bash
+# Edutor Nodes — cari istifadəçi üçün quraşdırma (~/.local). Sudo lazım deyil.
+set -eu
+
+HERE=$(cd "$(dirname "$0")" && pwd)
+PREFIX=${PREFIX:-$HOME/.local}
+APP=$PREFIX/opt/edutor-nodes
+
+mkdir -p "$APP" "$PREFIX/bin" "$PREFIX/share/applications" \
+         "$PREFIX/share/icons/hicolor/256x256/apps"
+
+cp -a "$HERE"/. "$APP"/
+ln -sf "$APP/Edutor.Nodes.App" "$PREFIX/bin/edutor-nodes"
+cp "$APP/edutor-nodes.png" "$PREFIX/share/icons/hicolor/256x256/apps/" 2>/dev/null || true
+
+cat > "$PREFIX/share/applications/edutor-nodes.desktop" <<DESKTOP
 [Desktop Entry]
 Type=Application
 Name=Edutor Nodes
 Comment=Video konversiya worker-i
-Exec=$APP_NAME
+Exec="$APP/Edutor.Nodes.App"
 Icon=edutor-nodes
 Terminal=false
 Categories=Network;Utility;
+DESKTOP
+
+echo "Quraşdırıldı: $APP"
+echo "Menyudan və ya 'edutor-nodes' əmri ilə açılır."
+echo "İlk açılışdan sonra tətbiq sistem açılışında avtomatik başlayır."
+
+# Komanda PATH-də deyilsə istifadəçiyə xəbər verilir.
+case ":$PATH:" in
+    *":$PREFIX/bin:"*) ;;
+    *) echo "Qeyd: $PREFIX/bin PATH-də deyil — ~/.profile faylına əlavə edin." ;;
+esac
 EOF
+
+    cat > "$stage/uninstall.sh" <<'EOF'
+#!/usr/bin/env bash
+# Quraşdırılmış Edutor Nodes-u silir (tənzimləmələr və keş qalır).
+set -eu
+
+PREFIX=${PREFIX:-$HOME/.local}
+
+rm -rf "$PREFIX/opt/edutor-nodes"
+rm -f "$PREFIX/bin/edutor-nodes" \
+      "$PREFIX/share/applications/edutor-nodes.desktop" \
+      "$PREFIX/share/icons/hicolor/256x256/apps/edutor-nodes.png" \
+      "$HOME/.config/autostart/edutor-nodes.desktop"
+
+echo "Silindi. Tənzimləmələr: ~/.config/EdutorNodes"
+EOF
+
+    chmod +x "$stage/install.sh" "$stage/uninstall.sh"
 
     cat > "$stage/README.txt" <<'EOF'
 Edutor Nodes (Linux)
 
-1. Bu qovluğu istədiyiniz yerə çıxarın (məs. ~/EdutorNodes).
-2. `./Edutor.Nodes.App` faylını işə salın.
-3. Menyu qeydiyyatı üçün:
-   cp edutor-nodes.desktop ~/.local/share/applications/
-   cp edutor-nodes.png ~/.local/share/icons/hicolor/256x256/apps/
-   (edutor-nodes.desktop faylındakı Exec sətrini tam yolla dəyişin.)
+QURAŞDIRMA (tövsiyə olunur):
+  ./install.sh
+  -> ~/.local/opt/edutor-nodes altına yazır, menyu qeydi yaradır.
+
+və ya yalnız bu qovluqdan işlətmək üçün:
+  ./Edutor.Nodes.App
+
+SİLİNMƏ:
+  ./uninstall.sh
+
+ARXA PLAN:
+Pəncərəni bağlamaq tətbiqi dayandırmır — treyə keçir və konversiya davam edir.
+Tam çıxış üçün trey menyusunda "Çıxış" seçin. Tətbiq ilk açılışdan sonra
+sistem açılışında avtomatik (gizli) başlayır; bunu Tənzimləmələr → Arxa plan
+bölməsindən söndürmək olar.
 
 ffmpeg sistemdə olmalıdır:  sudo apt install ffmpeg   (və ya distro ekvivalenti)
 ffmpeg başqa yerdədirsə, Tənzimləmələr bölməsində yolunu göstərin.
 EOF
 
     tar -czf "$DIST/edutor-nodes-linux-x64-$VERSION.tar.gz" -C "$DIST" edutor-nodes-linux-x64
-    rm -rf "$stage"
     log "linux → $DIST/edutor-nodes-linux-x64-$VERSION.tar.gz"
+
+    build_deb "$stage"
+    rm -rf "$stage"
+}
+
+# dpkg-deb olmayan sistemlərdə (məs. Arch) .deb ar + tar ilə əl ilə yığılır.
+build_deb() {
+    local src=$1
+    local arch=amd64
+    local deb=$DIST/edutor-nodes_${VERSION}_${arch}.deb
+    local work=$ROOT/obj/deb
+
+    rm -rf "$work"
+    mkdir -p "$work/data/opt/edutor-nodes" \
+             "$work/data/usr/bin" \
+             "$work/data/usr/share/applications" \
+             "$work/data/usr/share/icons/hicolor/256x256/apps" \
+             "$work/control"
+
+    cp -a "$src"/. "$work/data/opt/edutor-nodes"/
+    rm -f "$work/data/opt/edutor-nodes/install.sh" \
+          "$work/data/opt/edutor-nodes/uninstall.sh" \
+          "$work/data/opt/edutor-nodes/README.txt"
+
+    ln -s /opt/edutor-nodes/Edutor.Nodes.App "$work/data/usr/bin/edutor-nodes"
+    desktop_entry /usr/bin/edutor-nodes > "$work/data/usr/share/applications/edutor-nodes.desktop"
+    cp "$src/edutor-nodes.png" "$work/data/usr/share/icons/hicolor/256x256/apps/" 2>/dev/null || true
+
+    local size
+    size=$(du -sk --exclude=DEBIAN "$work/data" | cut -f1)
+
+    cat > "$work/control/control" <<EOF
+Package: edutor-nodes
+Version: $VERSION
+Section: net
+Priority: optional
+Architecture: $arch
+Installed-Size: $size
+Maintainer: Edutor <support@bubora.online>
+Depends: libx11-6, libice6, libsm6, libfontconfig1, libxrandr2, libxi6, libgl1
+Recommends: ffmpeg
+Description: Edutor Nodes - video conversion worker
+ Distributes HLS video encoding jobs from the Edutor API to this device.
+ Runs in the system tray and keeps encoding in the background.
+EOF
+
+    ( cd "$work/control" && tar --owner=0 --group=0 -czf "$work/control.tar.gz" . )
+    ( cd "$work/data" && tar --owner=0 --group=0 -czf "$work/data.tar.gz" . )
+    echo "2.0" > "$work/debian-binary"
+
+    rm -f "$deb"
+    ( cd "$work" && ar r "$deb" debian-binary control.tar.gz data.tar.gz 2>/dev/null )
+
+    log "linux → $deb"
 }
 
 # ---------------------------------------------------------------- macOS
@@ -99,15 +222,16 @@ build_mac() {
     chmod +x "$app/Edutor Nodes.app/Contents/MacOS/$APP_NAME"
 
     if command -v magick >/dev/null; then
-        local iconset=$ROOT/obj/icon.iconset iconset_dir=$ROOT/obj/AppIcon.iconset
+        local iconset_dir=$ROOT/obj/AppIcon.iconset
         rm -rf "$iconset_dir"; mkdir -p "$iconset_dir"
         for size in 16 32 128 256 512; do
             magick "$ICON" -resize ${size}x${size} "$iconset_dir/icon_${size}x${size}.png"
             magick "$ICON" -resize $((size * 2))x$((size * 2)) "$iconset_dir/icon_${size}x${size}@2x.png"
         done
-        # icns yalnız macOS-da (iconutil) hazırlanır; başqa OS-də PNG saxlanılır.
         if command -v iconutil >/dev/null; then
             iconutil -c icns "$iconset_dir" -o "$app/Edutor Nodes.app/Contents/Resources/AppIcon.icns"
+        else
+            cp "$iconset_dir/icon_256x256.png" "$app/Edutor Nodes.app/Contents/Resources/AppIcon.png"
         fi
     fi
 
@@ -125,23 +249,58 @@ build_mac() {
     <key>CFBundleExecutable</key>      <string>$APP_NAME</string>
     <key>CFBundleIconFile</key>        <string>AppIcon</string>
     <key>LSMinimumSystemVersion</key>  <string>11.0</string>
+    <key>LSBackgroundOnly</key>        <false/>
     <key>NSHighResolutionCapable</key> <true/>
-    <key>NSHumanReadableCopyright</key><string>Edutor</string>
 </dict>
 </plist>
 EOF
 
+    cat > "$app/Install.command" <<'EOF'
+#!/bin/bash
+# İki kliklə quraşdırma: tətbiqi /Applications qovluğuna köçürür və açır.
+set -e
+
+HERE="$(cd "$(dirname "$0")" && pwd)"
+DEST="/Applications/Edutor Nodes.app"
+
+echo "Edutor Nodes quraşdırılır…"
+
+rm -rf "$DEST"
+cp -R "$HERE/Edutor Nodes.app" "$DEST"
+
+# Paket imzalanmadığı üçün Gatekeeper karantin işarəsi silinir.
+xattr -dr com.apple.quarantine "$DEST" 2>/dev/null || true
+
+echo "Quraşdırıldı: $DEST"
+echo "Tətbiq ilk açılışdan sonra sistem açılışında arxa planda başlayır."
+echo
+
+open "$DEST"
+EOF
+
+    chmod +x "$app/Install.command"
+
     cat > "$app/README.txt" <<'EOF'
 Edutor Nodes (macOS)
 
-1. "Edutor Nodes.app" faylını Applications qovluğuna köçürün.
-2. İlk açılışda Gatekeeper xəbərdarlıq verə bilər (paket imzalanmayıb):
-   sağ klik → Open, və ya:
-   xattr -dr com.apple.quarantine "Edutor Nodes.app"
-3. ffmpeg lazımdır:  brew install ffmpeg
+QURAŞDIRMA:
+  "Install.command" faylına iki klik edin.
+  -> Tətbiq /Applications qovluğuna köçürülür və açılır.
 
-Qeyd: Apple silicon üçün ayrıca build var (Edutor Nodes (arm64).app).
-Intel Mac-lər üçün "Edutor Nodes (x64).app" istifadə edin.
+  Terminaldan:  ./Install.command
+
+Əl ilə quraşdırma:
+  "Edutor Nodes.app" faylını /Applications qovluğuna sürüşdürün.
+  İlk açılışda Gatekeeper xəbərdarlıq verə bilər (paket imzalanmayıb):
+  sağ klik → Open, və ya:
+  xattr -dr com.apple.quarantine "/Applications/Edutor Nodes.app"
+
+ARXA PLAN:
+Pəncərəni bağlamaq tətbiqi dayandırmır — treyə keçir və konversiya davam edir.
+Tam çıxış üçün trey menyusunda "Çıxış" seçin. Tətbiq ilk açılışdan sonra
+sistem açılışında avtomatik (gizli) başlayır; Tənzimləmələr → Arxa plan.
+
+ffmpeg lazımdır:  brew install ffmpeg
 EOF
 
     tar -czf "$DIST/edutor-nodes-macos-$arch-$VERSION.tar.gz" -C "$DIST" "Edutor Nodes ($arch)"

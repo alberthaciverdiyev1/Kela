@@ -1,7 +1,7 @@
 using Android.App;
 using Android.Content;
+using Android.Content.PM;
 using Android.OS;
-using Android.Runtime;
 using Edutor.Nodes.Worker;
 
 namespace Edutor.Nodes.App.Platforms.Android;
@@ -9,17 +9,24 @@ namespace Edutor.Nodes.App.Platforms.Android;
 /// <summary>
 /// Uzun süren konversiyalar üçün foreground xidməti. Android arxa fonda işləyən
 /// prosesi dayandırdığı üçün worker yalnız bu xidmət altında etibarlı işləyir.
-/// Bildiriş cari tapşırığın vəziyyətini göstərir.
+///
+/// Tip <c>specialUse</c>-dur: <c>dataSync</c> Android 15-də 24 saatda 6 saatla
+/// məhdudlaşır və BOOT_COMPLETED-dən başladıla bilmir. Bu tətbiq daimi işləyən
+/// encoding worker-idir, ona görə istisna tip seçilib.
 /// </summary>
 [Service(
     Exported = false,
-    ForegroundServiceType = global::Android.Content.PM.ForegroundService.TypeDataSync)]
+    ForegroundServiceType = global::Android.Content.PM.ForegroundService.TypeSpecialUse)]
+[Property(
+    PackageManager.PropertySpecialUseFgsSubtype,
+    Value = "Always-on video encoding worker for the Edutor LMS")]
 public sealed class NodeForegroundService : Service
 {
     private const string ChannelId = "edutor-nodes";
     private const int NotificationId = 1001;
 
     private static NodeForegroundService? _current;
+    private static bool _bridgeAttached;
 
     /// <summary>Xidmətin göstərəcəyi mətn — UI tərəfindən yenilənir.</summary>
     public static void Publish(string title, string text)
@@ -46,12 +53,27 @@ public sealed class NodeForegroundService : Service
         base.OnCreate();
         _current = this;
 
+        // Xidmət UI olmadan da (telefon yenidən başladıqda) işə düşür, ona görə
+        // platforma imkanları burada da qeydiyyatdan keçir.
+        PlatformExtras.Current = new AndroidPlatformExtras(this);
+
         CreateChannel();
-        StartForeground(NotificationId, BuildNotification("Edutor Nodes", "Konversiya worker-i hazırdır"));
+        Start();
+
+        if (!_bridgeAttached)
+        {
+            AndroidNotificationBridge.Attach(WorkerHost.Engine);
+            _bridgeAttached = true;
+        }
+
+        WorkerHost.TryAutoStart();
     }
 
     public override StartCommandResult OnStartCommand(Intent? intent, StartCommandFlags flags, int startId)
-        => StartCommandResult.Sticky;
+    {
+        WorkerHost.TryAutoStart();
+        return StartCommandResult.Sticky;
+    }
 
     public override IBinder? OnBind(Intent? intent) => null;
 
@@ -59,6 +81,20 @@ public sealed class NodeForegroundService : Service
     {
         _current = null;
         base.OnDestroy();
+    }
+
+    private void Start()
+    {
+        var notification = BuildNotification("Edutor Nodes", "Konversiya worker-i hazırdır");
+
+        if (Build.VERSION.SdkInt >= BuildVersionCodes.UpsideDownCake)
+        {
+            StartForeground(NotificationId, notification, global::Android.Content.PM.ForegroundService.TypeSpecialUse);
+        }
+        else
+        {
+            StartForeground(NotificationId, notification);
+        }
     }
 
     private void CreateChannel()

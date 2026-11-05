@@ -19,6 +19,14 @@ public sealed class BootCompletedReceiver : BroadcastReceiver
     {
         if (context is null) return;
 
-        NodeForegroundService.Start(context);
+        try
+        {
+            NodeForegroundService.Start(context);
+        }
+        catch (Exception ex) when (ex is ForegroundServiceStartNotAllowedException or Java.Lang.SecurityException)
+        {
+            // Bəzi ROM-lar boot-da foreground xidmətini bağlayır: istifadəçi tətbiqi
+            // əl ilə açanda işə düşür — başqa çıxış yolu yoxdur.
+        }
     }
 }

@@ -25,7 +25,13 @@ public sealed class WorkerSettings
     public bool CleanupAfterJob { get; set; } = true;
 
     /// <summary>Tətbiq açılanda worker özü işə düşsün.</summary>
-    public bool AutoStart { get; set; }
+    public bool AutoStart { get; set; } = true;
+
+    /// <summary>
+    /// Tətbiq sistem açılışında (istifadəçi daxil olanda) arxa planda işə düşsün.
+    /// Yalnız masaüstündə istifadə olunur — Android-də boot qəbuledicisi var.
+    /// </summary>
+    public bool RunAtStartup { get; set; } = true;
 
     /// <summary>
     /// Bu müddətdən qısa VƏ 480p-dən kiçik videolar "yüngül" sayılır: ağır iş
@@ -70,7 +76,24 @@ public sealed class WorkerSettings
     public string SettingsPath { get; set; } = DefaultSettingsPath();
 
     public static string DefaultSettingsPath()
-        => Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "EdutorNodes", "settings.json");
+        => Path.Combine(ConfigDirectory(), "settings.json");
+
+    /// <summary>
+    /// Konfiqurasiya qovluğu. .NET 10 XDG_CONFIG_HOME təyin olunmayanda
+    /// <see cref="Environment.SpecialFolder.ApplicationData"/> üçün boş sətir qaytarır —
+    /// o halda settings.json işçi qovluğuna yazılardı.
+    /// </summary>
+    public static string ConfigDirectory()
+    {
+        var root = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
+
+        if (string.IsNullOrEmpty(root))
+        {
+            root = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), ".config");
+        }
+
+        return Path.Combine(root, "EdutorNodes");
+    }
 
     private static readonly JsonSerializerOptions Options = new()
     {

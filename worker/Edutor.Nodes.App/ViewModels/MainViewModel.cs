@@ -22,16 +22,9 @@ public sealed partial class MainViewModel : ObservableObject
 
     public MainViewModel()
     {
-        Settings = WorkerSettings.Load();
-
-        // Android-də ikililər yalnız native kitabxana qovluğundan icra olunur.
-        if (PlatformExtras.Current.NativeBinaryDirectory is { Length: > 0 } binaries)
-        {
-            Settings.PlatformBinaryDirectory = binaries;
-        }
-        Log = new WorkerLog();
-        // Batareya və temperatur yalnız Android-də ölçülür; masaüstündə null qalır.
-        Engine = new WorkerEngine(Settings, Log, PlatformExtras.Current.PowerStatus);
+        Settings = WorkerHost.Settings;
+        Log = WorkerHost.Log;
+        Engine = WorkerHost.Engine;
 
         Dashboard = new DashboardViewModel(this);
         Jobs = new JobsViewModel(this);

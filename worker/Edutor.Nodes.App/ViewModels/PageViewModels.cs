@@ -202,6 +202,7 @@ public sealed class SettingsViewModel : ObservableObject
     private bool _pauseOnHighTemperature;
     private bool _cleanupAfterJob;
     private bool _autoStart;
+    private bool _runAtStartup;
 
     public SettingsViewModel(MainViewModel main)
     {
@@ -216,6 +217,7 @@ public sealed class SettingsViewModel : ObservableObject
         _preferredEncoder = settings.PreferredEncoder;
         _cleanupAfterJob = settings.CleanupAfterJob;
         _autoStart = settings.AutoStart;
+        _runAtStartup = settings.RunAtStartup;
         _maxConcurrentJobs = limits.MaxConcurrentJobs;
         _maxCpuThreads = limits.MaxCpuThreads;
         _maxCacheMb = limits.MaxCacheMb;
@@ -246,6 +248,9 @@ public sealed class SettingsViewModel : ObservableObject
 
     /// <summary>Yalnız Android-də göstərilir.</summary>
     public bool ShowAndroid => PlatformExtras.Current.IsSupported;
+
+    /// <summary>Sistem açılışı qeydiyyatı yalnız masaüstündə mövcuddur.</summary>
+    public bool ShowDesktop => !PlatformExtras.Current.IsSupported;
 
     public string AndroidStatus => PlatformExtras.Current.Status();
 
@@ -314,6 +319,8 @@ public sealed class SettingsViewModel : ObservableObject
 
     public bool AutoStart { get => _autoStart; set => Set(ref _autoStart, value); }
 
+    public bool RunAtStartup { get => _runAtStartup; set => Set(ref _runAtStartup, value); }
+
     public string Message
     {
         get => _message;
@@ -336,6 +343,7 @@ public sealed class SettingsViewModel : ObservableObject
         settings.PreferredEncoder = PreferredEncoder.Trim();
         settings.CleanupAfterJob = CleanupAfterJob;
         settings.AutoStart = AutoStart;
+        settings.RunAtStartup = RunAtStartup;
 
         settings.Limits.Profile = NodePerformanceProfile.Normalize(SelectedProfile);
         settings.Limits.MaxConcurrentJobs = (int)Math.Clamp(MaxConcurrentJobs, 0, 8);
@@ -347,6 +355,7 @@ public sealed class SettingsViewModel : ObservableObject
         settings.Limits.PauseOnHighTemperature = PauseOnHighTemperature;
 
         settings.Save();
+        PlatformExtras.StartupRegistration?.Invoke(settings.RunAtStartup);
 
         Message = "Yadda saxlanıldı";
         Raise(nameof(TokenState));

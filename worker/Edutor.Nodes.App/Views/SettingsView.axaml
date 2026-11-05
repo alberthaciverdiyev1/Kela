@@ -78,6 +78,15 @@
       </StackPanel>
     </Border>
 
+    <Border Classes="card" IsVisible="{Binding ShowDesktop}">
+      <StackPanel Spacing="8">
+        <TextBlock Text="Arxa plan" Classes="label" />
+        <TextBlock Classes="value" TextWrapping="Wrap"
+                   Text="Pəncərə bağlananda tətbiq treyə keçir və konversiya davam edir. Tamamilə çıxmaq üçün trey menyusundan «Çıxış» seçin." />
+        <CheckBox Content="Sistem açılışında arxa planda başlat" IsChecked="{Binding RunAtStartup}" />
+      </StackPanel>
+    </Border>
+
     <Border Classes="card">
       <StackPanel Spacing="10">
         <TextBlock Text="Keş və encoder" Classes="label" />
