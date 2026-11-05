@@ -28,7 +28,7 @@ public static class StartupRegistration
         }
         catch (Exception ex) when (ex is IOException or UnauthorizedAccessException or System.Security.SecurityException)
         {
-            // Avtomatik başlatma alınmasa tətbiq əl ilə açılır — qəbir xəta deyil.
+            // Avtomatik başlatma alınmasa tətbiq əl ilə açılır — kritik xəta deyil.
         }
 #endif
     }
