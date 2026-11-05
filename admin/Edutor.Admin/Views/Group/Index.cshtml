@@ -38,6 +38,7 @@
 @{
     var modalBody = await Html.PartialAsync("_ModalFields");
     var joinLinkBody = await Html.PartialAsync("_JoinLinkBody");
+    var quickSubjectBody = await Html.PartialAsync("_QuickSubject");
 }
 
 <partial name="Ui/_Modal" model="@(new ModalModel
@@ -56,6 +57,16 @@
     WidthClass = "max-w-lg",
     ShowError = false,
     Body = joinLinkBody
+})" />
+
+<partial name="Ui/_Modal" model="@(new ModalModel
+{
+    Id = "quickSubjectModal",
+    TitleId = "quickSubjectTitle",
+    Title = L["Subject_Create"],
+    WidthClass = "max-w-sm",
+    ShowError = false,
+    Body = quickSubjectBody
 })" />
 
 

@@ -717,6 +717,9 @@
   <data name="Group_PickSubjectsFirst" xml:space="preserve">
     <value>Əvvəlcə fənn seçin</value>
   </data>
+  <data name="Group_NoSubjects" xml:space="preserve">
+    <value>Fənn yoxdur</value>
+  </data>
   <data name="Group_StepInfo" xml:space="preserve">
     <value>Məlumat</value>
   </data>

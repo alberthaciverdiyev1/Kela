@@ -1,0 +1,9 @@
+@* Qrup yaradılarkən fənn yoxdursa açılan kiçik modal: yalnız ad. *@
+<form id="quickSubjectForm" class="space-y-4 p-6">
+    <partial name="Ui/_Input" model="@(new InputModel { Name = "quick_subject_name", Id = "quick_subject_name", Label = L["Common_Name"], Required = true })" />
+    <div id="quickSubjectError" class="hidden rounded-xl bg-danger-bg px-3 py-2 text-sm font-semibold text-danger"></div>
+    <div class="flex justify-end gap-3">
+        <partial name="Ui/_Button" model="@(new ButtonModel { Text = L["Common_Cancel"], Variant = "secondary", Dismiss = true })" />
+        <partial name="Ui/_Button" model="@(new ButtonModel { Text = L["Common_Save"], Type = "submit" })" />
+    </div>
+</form>

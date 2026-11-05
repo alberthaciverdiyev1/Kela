@@ -717,6 +717,9 @@
   <data name="Group_PickSubjectsFirst" xml:space="preserve">
     <value>Pick the subjects first</value>
   </data>
+  <data name="Group_NoSubjects" xml:space="preserve">
+    <value>No subjects yet</value>
+  </data>
   <data name="Group_StepInfo" xml:space="preserve">
     <value>Info</value>
   </data>

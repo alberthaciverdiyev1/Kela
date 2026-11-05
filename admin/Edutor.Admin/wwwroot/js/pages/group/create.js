@@ -129,10 +129,28 @@
             .map(c => Number(c.value));
     }
 
+    // Fənn yoxdursa boş siyahı yerine izah + kiçik "əlavə et" modalu göstərilir.
+    function renderSubjects() {
+        const box = document.getElementById('subjectsList');
+        const subjects = options?.subjects || [];
+
+        if (!subjects.length) {
+            box.innerHTML = `
+                <div class="flex flex-col items-center gap-2 p-4 text-center">
+                    <p class="text-sm text-slate-400">${L["Group_NoSubjects"]}</p>
+                    <button type="button" class="admin-button-secondary" data-subject-add>${L["Subject_Create"]}</button>
+                </div>`;
+            updateCounts();
+            return;
+        }
+
+        renderCheckList('subjectsList', subjects);
+    }
+
     async function loadOptions() {
         if (options) return;
         options = await AdminUI.get('/group/options');
-        renderCheckList('subjectsList', options.subjects || []);
+        renderSubjects();
         renderQuizzes();
     }
 
@@ -185,6 +203,39 @@
         if (file) fd.append('Image', file);
         return fd;
     };
+
+    // --- Kiçik "yeni fənn" modalu ---
+
+    document.getElementById('subjectsList')?.addEventListener('click', (e) => {
+        if (!e.target.closest('[data-subject-add]')) return;
+        document.getElementById('quick_subject_name').value = '';
+        document.getElementById('quickSubjectError').classList.add('hidden');
+        AdminUI.openModal('quickSubjectModal');
+        document.getElementById('quick_subject_name').focus();
+    });
+
+    document.getElementById('quickSubjectForm')?.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const name = document.getElementById('quick_subject_name').value.trim();
+        if (!name) return;
+
+        const quickErr = document.getElementById('quickSubjectError');
+        const res = await AdminUI.post('/subject', { name });
+        if (!res.ok) {
+            quickErr.textContent = AdminUI.errText(res);
+            quickErr.classList.remove('hidden');
+            return;
+        }
+
+        AdminUI.closeModal('quickSubjectModal');
+        AdminUI.notify(L["Js_Added"]);
+
+        // Siyahı yenidən yüklənir və yeni fənn dərhal seçilir.
+        options = null;
+        await loadOptions();
+        const created = document.querySelector(`#subjectsList input[value="${res.data.id}"]`);
+        if (created) { created.checked = true; updateCounts(); }
+    });
 
     // Qrup yaradıldıqdan sonra dəvət linki ilə təsdiq modalı.
     function showJoinLink(group) {
