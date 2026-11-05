@@ -145,8 +145,16 @@ public sealed partial class MainViewModel : ObservableObject
 
     private async Task ToggleAsync()
     {
-        if (Engine.IsRunning) await Engine.StopAsync();
-        else await Engine.StartAsync();
+        try
+        {
+            if (Engine.IsRunning) await Engine.StopAsync();
+            else await Engine.StartAsync();
+        }
+        catch (Exception ex)
+        {
+            // Başlanğıc xətası dialoq kimi çıxmasın: səbəb jurnalda qalsın.
+            Log.Error("worker", ex.ToString());
+        }
 
         Raise(nameof(StartButtonText));
         Refresh();

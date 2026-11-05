@@ -29,8 +29,21 @@ public static class WorkerHost
         if (!state.Settings.IsRegistered || !state.Settings.AutoStart) return false;
         if (state.Engine.IsRunning) return true;
 
-        _ = state.Engine.StartAsync();
+        _ = StartSafelyAsync(state);
         return true;
+    }
+
+    /// <summary>Arxa planda çağırılır: xəta prosesi çökdürməməlidir.</summary>
+    private static async Task StartSafelyAsync(State state)
+    {
+        try
+        {
+            await state.Engine.StartAsync();
+        }
+        catch (Exception ex)
+        {
+            state.Log.Error("worker", ex.ToString());
+        }
     }
 
     private static State Create()
