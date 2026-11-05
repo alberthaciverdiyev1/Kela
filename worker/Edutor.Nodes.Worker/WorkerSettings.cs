@@ -7,8 +7,10 @@ namespace Edutor.Nodes.Worker;
 /// <summary>İstifadəçinin tənzimlədiyi və diskdə saxlanılan worker konfiqurasiyası.</summary>
 public sealed class WorkerSettings
 {
+    public const string DefaultApiUrl = "https://api.bubora.online";
+
     /// <summary>Default olaraq production API — istifadəçi Tənzimləmələrdə dəyişə bilər.</summary>
-    public string ApiUrl { get; set; } = "https://api.bubora.online";
+    public string ApiUrl { get; set; } = DefaultApiUrl;
 
     /// <summary>Qeydiyyatdan sonra alınan access token. Açıq mətn kimi yalnız bu cihazda saxlanılır.</summary>
     public string AccessToken { get; set; } = string.Empty;
@@ -116,6 +118,14 @@ public sealed class WorkerSettings
                 if (loaded is not null)
                 {
                     loaded.SettingsPath = target;
+
+                    // Köhnə domenlər 301 ilə yönləndirilirdi; POST yönləndirmədə
+                    // metodunu itirdiyi üçün worker qoşula bilmirdi — ünvan köçürülür.
+                    if (loaded.ApiUrl.Contains("foxsoft.online", StringComparison.OrdinalIgnoreCase))
+                    {
+                        loaded.ApiUrl = DefaultApiUrl;
+                    }
+
                     return loaded;
                 }
             }
